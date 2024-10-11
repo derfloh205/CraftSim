@@ -42,7 +42,7 @@ function CraftSim.LOCAL_PT:GetData()
     [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
     "Multicriação dá uma probabilidade de fabricar mais objetos do que uma receita normalmente fabricaria.\n\nA quantidade adicional está entre 1 e 2.5y\nonde y = quantidade normal que uma criação fornece.",
     [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
-    "A qualidade dos seus reagentes podem dar até um máximo de 40% de perícia adicional da receita base.\n\nTodos os Reagentes de Q1: 0% Bônus\nTodos os Reagentes de Q2: 20% Bônus\nTodos os Reagentes de Q3: 40% Bônus\n\nA habilidade é calculada pela quantidade de reagentes de cada qualidade, ponderada de acordo com sua qualidade \ne um valor de peso específico que é único para cada item de reagente de criação com qualidade.\n\nNo entanto, é diferente quando se trata de Recraft (Recriação). No Recraft, o máximo que os reagentes podem aumentar a qualidade\ndepende da qualidade dos reagentes com os quais o item foi originalmente criado.\nO funcionamento exato disso, é desconhecido.\nTodavia, o CraftSim compara, internamente, a perícia alcançada com todos os de qualidade 3 (Q3) e calcula\no aumento máximo de perícia com base nisso.",
+    "A qualidade dos seus reagentes podem aumentar até um máximo de 40% de perícia adicional da receita base.\n\nTodos os Reagentes de Q1: 0% Bônus\nTodos os Reagentes de Q2: 20% Bônus\nTodos os Reagentes de Q3: 40% Bônus\n\nA perícia é calculada pela quantidade de reagentes, levando em conta o grau de qualidade de cada um \ne um valor específico que é único para cada item de reagente de criação com graus de qualidade.\n\nNo entanto, é diferente quando se trata de Recraft (Recriação). No Recraft, o máximo que os reagentes podem aumentar a qualidade do recraft\ndepende da qualidade dos reagentes com os quais o item foi originalmente criado.\nO funcionamento exato disso, é desconhecido.\nTodavia, o CraftSim compara, internamente, a perícia alcançada com todos os de qualidade 3 (Q3) e calcula\no aumento máximo de perícia com base nisso.",
     [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] =
     "O máximo que os reagentes podem contribuir para uma receita é, na maioria das vezes, 40% da dificuldade base da receita.\n\nMas, no caso de Recraft (Recriação), esse valor pode variar com base nas criações anteriores\n e na qualidade dos reagentes que foram utilizados.",
 
@@ -53,7 +53,7 @@ function CraftSim.LOCAL_PT:GetData()
     [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] =
     "O Modo de Simulação CraftSim torna possível testar combinações de uma receita sem restrições",
     [CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL] = "Opcional #",
-    [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Acabamento #",
+    [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Finalizante #",
     [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP] = "Maximizar Todos Reagentes de Qualidade ",
     [CraftSim.CONST.TEXT.SIMULATION_MODE_CLEAR_BUTTON] = "Limpar",
     [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION] = " Concentração",
@@ -75,10 +75,10 @@ function CraftSim.LOCAL_PT:GetData()
 
     -- Popups
     [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Nenhuma fonte de preços suportada disponível",
-    [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Aviso de fonte de preço CraftSim",
+    [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Aviso de fonte de preços CraftSim",
     [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
-    "Nenhuma fonte de preço encontrada!\n\nVocê precisa instalar ao menos um dos\naddons de fonte de preços a seguir para\nutilizar os cálculos de lucro do CraftSim:\n\n\n",
-    [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Não mostrar aviso novamente",
+    "Nenhuma fonte de preços encontrada!\n\nVocê precisa instalar ao menos um dos\naddons de fonte de preços a seguir para\nutilizar os cálculos de lucro do CraftSim:\n\n\n",
+    [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Não exibir aviso novamente",
     [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",
 
     -- Reagents Frame
@@ -96,7 +96,7 @@ function CraftSim.LOCAL_PT:GetData()
         f.bb("O Lucro Médio por Criação") .. " quando utilizando " .. f.l("esta distribuição de reagentes"),
     [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Melhores Reagentes Atribuídos",
     [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentração: ",
-    [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + BEM nos números para linkar o item no chat",
+    [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + Botão Esquerdo nos números para linkar o item no chat",
     [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Otimizar",
     [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
         f.r("Experimental: ") ..
@@ -104,7 +104,7 @@ function CraftSim.LOCAL_PT:GetData()
         f.gold("Maior Valor de Ouro") .. " por ponto de concentração",
 
     -- Specialization Info Frame
-    [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Informações de Especialização CraftSim",
+    [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Informações de Espec. CraftSim",
     [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simular Distribuição de Conhecimento",
     [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "Este nó lhe concede os seguintes atributos para esta receita:",
     [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Informações de Especialização\nTrabalho em Andamento",
@@ -119,10 +119,10 @@ function CraftSim.LOCAL_PT:GetData()
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5] = "Probabilidade: ",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFTED_ITEMS] = "Itens Criados",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT] = "Lucro da Sessão",
-     [CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA] = "Resetar Dados",
+     [CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA] = "Zerar Dados",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON] = "Exportar JSON",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS] = "Estatísticas da Receita",
-     [CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING] = "Nada criado ainda!",
+     [CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING] = "Nada foi criado ainda!",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1] = "Criações: ",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2] = "Lucro Ø Estimado: ",
      [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3] = "Lucro Ø Real: ",
@@ -150,9 +150,9 @@ function CraftSim.LOCAL_PT:GetData()
    -- Stats Weight Frame
    [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Lucro Médio do CraftSim",
    [CraftSim.CONST.TEXT.EXPLANATIONS_TITLE] = "Explicação do Lucro Médio do CraftSim",
-   [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON] = "Mostrar Explicação",
+   [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON] = "Exibir Explicação",
    [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON] = "Esconder Explicação",
-   [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "Mostrar Estatísticas",
+   [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "Exibir Estatísticas",
    [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Esconder Estatísticas",
    [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Lucro / de Criação: ",
    [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Cálculo Básico de Lucro",
@@ -228,14 +228,14 @@ function CraftSim.LOCAL_PT:GetData()
   [CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM] = "Lucro/Item",
 
   -- Price Override Frame
-  [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "Substituir Preços do CraftSim",
+  [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "Trocar Preços do CraftSim",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "Reagentes Necessários",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS] = "Reagentes Opcionais",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS] = "Reagentes Finalizantes",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS] = "Resultado dos Itens",
-  [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES] = "Ativar Substituições",
+  [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES] = "Ativar Trocas",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP] =
-  "'(como resultado)' -> substituição de preço considerada apenas quando o item é resultado de uma receita",
+  "'(como resultado)' -> trocas de preço consideradas apenas quando o item é resultado de uma receita",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_CLEAR_ALL] = "Limpar Tudo",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE] = "Salvar",
   [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVED] = "Salvo",
@@ -250,12 +250,12 @@ function CraftSim.LOCAL_PT:GetData()
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING] = "Verificando",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED] = "Incluir Não Aprendidas",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP] =
-  "Inclui receitas que você ainda não aprendeu na verificação",
+  "Inclui receitas que você ainda não aprendeu na varredura",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND] = "Incluir Vinculadas",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP] =
-  "Inclui receitas vinculadas na verificação.\n\nRecomenda-se definir uma substituição de preço (por exemplo, para simular uma comissão desejada)\nno Módulo de Substituição de Preço para os itens criados dessa receita",
+  "Inclui receitas vinculadas na varredura.\n\nRecomenda-se definir uma troca de preço (por exemplo, para simular uma comissão desejada)\nno Módulo de Troca de Preço para os itens criados dessa receita",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR] = "Incluir Equipamento",
-  [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Inclui todos os tipos de equipamentos de profissão na verificação",
+  [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Inclui todos os tipos de equipamentos de profissão na varredura",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Otimizar Ferramentas de Profissão",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] =
   "Otimiza suas ferramentas de profissão para obter maior lucro em cada receita\n\n",
@@ -266,8 +266,8 @@ function CraftSim.LOCAL_PT:GetData()
   [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Aprendido",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Resultado",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Lucro Médio",
-  [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "Valor C.",
-  [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER] = "Custo C.",
+  [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "Valor Conc.",
+  [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER] = "Conc.",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Top Gear",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Classificar por lucro %",
@@ -288,7 +288,7 @@ function CraftSim.LOCAL_PT:GetData()
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Lucro Relativo",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_VALUE] = "Valor de Concentração",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST] = "Custo de Concentração",
-  [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Filtrar Expansão",
+  [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Expansões",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Profissões dos Alts",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY] = "Escanear Profissões",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING] = "Verificando...",
@@ -303,7 +303,7 @@ function CraftSim.LOCAL_PT:GetData()
       f.l("CraftSim") ..
       " vai memorizar ela.\n\nSomente as receitas dos seus alts que " ..
       f.l("CraftSim") .. " pode memorizar serão escaneadas com " .. f.bb("RecipeScan\n\n") ..
-      "A quantidade real de receitas escaneadas é baseada nas " .. f.e("Opções de Escaneamento de Receitas"),
+      "A quantidade real de receitas escaneadas é baseada nas " .. f.e("Opções do Scan de Receitas"),
   [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE] = " Concentração",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE_TOOLTIP] = "Ativar Concentração",
   [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES] = "Otimizar Sub-Receitas " .. f.bb("(experimental)"),
@@ -341,7 +341,7 @@ function CraftSim.LOCAL_PT:GetData()
   [CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE] = "Fonte de Preço",
   [CraftSim.CONST.TEXT.OPTIONS_GENERAL_CURRENT_PRICE_SOURCE] = "Fonte Atual de Preços: ",
   [CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE] = "Nenhum Addon Compatível de Preços Carregado!",
-  [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT] = "Mostrar Porcentagem de Lucro",
+  [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT] = "Exibir Porcentagem de Lucro",
   [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP] =
   "Exibe a porcentagem de lucro em relação aos custos de criação, além do valor em ouro",
   [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Lembrar Última Receita Selecionada",
@@ -386,47 +386,47 @@ function CraftSim.LOCAL_PT:GetData()
   -- Control Panel
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Fila de Criação",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP] =
-  "Coloque suas receitas na fila e fabrique todas em um só lugar!",
+  "Coloque suas receitas na fila e crie todas em um só lugar!",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Top Gear",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] =
-  "Mostra a melhor combinação disponível de equipamento de profissão com base no modo selecionado",
+  "Exibir a melhor combinação disponível de equipamentos de profissão com base no modo selecionado",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL] = "Detalhes dos Preços",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP] =
-  "Mostra uma visão geral do preço de venda e do lucro com base na qualidade do item resultante",
+  "Exibir uma visão geral do preço de venda e do lucro de cada grau de qualidade do item",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Lucro Médio",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
-  "Mostra o lucro médio com base nas estatísticas da sua profissão e os pesos das estatísticas de lucro como ouro por ponto.",
+  "Exibir o lucro médio com base nas estatísticas da sua profissão e os pesos das estatísticas de lucro, como ouro, por ponto.",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Otimização de Reagentes",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
   "Sugere os reagentes mais baratos para atingir os limites de qualidade específicos.",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Substituições de preço",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Troca de Preço",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
-  "Substitui preços de quaisquer reagentes e resultados de criação, para todas as receitas ou para uma receita específica.",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Informações de Especialização",
+  "Substitua preços de quaisquer reagentes e resultados de criação, para todas as receitas ou para uma receita específica.",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Info Spec",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
-  "Mostra como suas especializações de profissão afetam essa receita e permite simular qualquer configuração!",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Resultados das Criações",
+  "Exibe como suas especializações de profissão impactam a receita atual e permite simular resultados!",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Resultados",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP] =
-  "Exibe um registro de criações e estatísticas sobre suas criações!",
+  "Exibe o registro dos itens criados e dados estatísticos!",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Otimização de Custo",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
-  "Módulo que mostra informações detalhadas e auxilia na otimização dos custos de criação.",
+  "Módulo que exibe informações detalhadas e auxilia na otimização dos custos de criação.",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL] = "Estatísticas",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP] =
-  "Módulo que mostra informações detalhadas e auxilia na otimização dos custos de criação",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Escaneamento de Receitas",
+  "Módulo que exibe informações detalhadas e auxilia na otimização dos custos de criação",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Scan de Receitas",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
   "Módulo que analisa sua lista de receitas com base em várias opções",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Histórico de Clientes",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Reg. Clientes",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] =
-  "Módulo que fornece um histórico de conversas com clientes, itens confeccionados e comissões.",
+  "Módulo que guarda um histórico de conversas com clientes, itens criados e respectivas comissões.",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL] = "Buffs de Criação",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP] =
-  "Módulo que mostra seus Buffs de Criação ativos e faltantes.",
+  "Módulo que exibe seus Buffs de Criação ativos e faltantes.",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "Explicações",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP] =
       "Módulo que fornece várias explicações de como o" .. f.l(" CraftSim") .. " calcula as coisas",
-  [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Redefinir Posições das Janelas",
+  [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "ResetJanelas",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Opções",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Novidades",
   [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = " Exportar" .. f.l("Easycraft") ..,
@@ -465,7 +465,7 @@ function CraftSim.LOCAL_PT:GetData()
    [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
        "Se a qualidade mínima não puder ser alcançada, use " .. f.l("Concentração") .. " se possível",
    [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Limpar Tudo",
-   [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Reabastecer a partir do Escaneamento de Receitas",
+   [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Reabastecer a partir do Scan de Receitas",
    [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Profissão Incorreta",
    [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "Em Recarga",
    [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Fabricante Errado",
@@ -566,7 +566,7 @@ maior ou igual ao limite de taxa de venda configurado.
   [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Cargas Completas",
   [CraftSim.CONST.TEXT.COOLDOWNS_TAB_OVERVIEW] = "Visão Geral",
   [CraftSim.CONST.TEXT.COOLDOWNS_TAB_OPTIONS] = "Opções",
-  [CraftSim.CONST.TEXT.COOLDOWNS_EXPANSION_FILTER_BUTTON] = "Filtrar Expansão",
+  [CraftSim.CONST.TEXT.COOLDOWNS_EXPANSION_FILTER_BUTTON] = "Expansões",
   [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP] = f.bb("\n\nReceitas compartilhando essa Recarga:\n"),
   [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_READY] = f.g("Disponível"),
 
