@@ -290,8 +290,6 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
         optimizeSubRecipes and "SUB_RECIPES",
     }
 
-    CraftSim.DEBUG:InspectTable(optimizationTaskList, "optimizationTaskList")
-
     CraftSim.RECIPE_SCAN.rowScanFrameDistributor = GUTIL.FrameDistributor {
         iterationTable = recipeInfos,
         iterationsPerFrame = 1,
