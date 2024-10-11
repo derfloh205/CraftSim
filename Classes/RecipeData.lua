@@ -965,12 +965,22 @@ function CraftSim.RecipeData:GetConcentrationValue()
         return 0, 0
     end
 
+    local function calculateConcentrationValue(profit, cost)
+        return profit / cost
+    end
+
+    local ingenuityChance = self.professionStats.ingenuity:GetPercent(true)
+    local ingenuityRefund = 0.5 + self.professionStats.ingenuity:GetExtraValue()
+
+    local averageConcentrationCost = self.concentrationCost -
+        (self.concentrationCost * ingenuityChance * ingenuityRefund)
+
     if self.concentrating then
         local averageProfitConcentration = self.averageProfitCached
         self.concentrating = false
         self:Update()
 
-        local concentrationValue = averageProfitConcentration / self.concentrationCost
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
 
         self.concentrating = true
         self:Update()
@@ -981,7 +991,7 @@ function CraftSim.RecipeData:GetConcentrationValue()
         self:Update()
 
         local averageProfitConcentration = self.averageProfitCached
-        local concentrationValue = averageProfitConcentration / self.concentrationCost
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
 
         self.concentrating = false
         self:Update()
