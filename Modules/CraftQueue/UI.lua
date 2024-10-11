@@ -1792,8 +1792,7 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     end
     editRecipeFrame.content.craftingCostsValue:SetText(GUTIL:ColorizeText(
         CraftSim.UTIL:FormatMoney(craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
-    local concentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
-        recipeData.averageProfitCached)
+    local concentrationValue = recipeData:GetConcentrationValue()
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
 
     local reagentFrames = editRecipeFrame.content.reagentFrames

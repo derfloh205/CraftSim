@@ -920,8 +920,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local lastProfit = self.averageProfitCached
             local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
             local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
-            local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self,
-                self.averageProfitCached)
+            local currentConcentrationValue = self:GetConcentrationValue()
 
             -- not worthwile to upgrade
             if bestConcentrationPointCost >= currentConcentrationValue then
@@ -943,7 +942,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local boughtConcentration = lastConcentrationCost - currentConcentrationCost
             local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
             local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
-            currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+            currentConcentrationValue = self:GetConcentrationValue()
 
             if averageConcentrationBuyPrice >= currentConcentrationValue then
                 self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
@@ -957,6 +956,48 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
     }:Continue()
 
     -- recipe should now be optimized
+end
+
+---@return number concentrationValue
+---@return number concentrationProfit
+function CraftSim.RecipeData:GetConcentrationValue()
+    if not self.supportsQualities or self.concentrationCost <= 0 then
+        return 0, 0
+    end
+
+    local function calculateConcentrationValue(profit, cost)
+        return profit / cost
+    end
+
+    local ingenuityChance = self.professionStats.ingenuity:GetPercent(true)
+    local ingenuityRefund = 0.5 + self.professionStats.ingenuity:GetExtraValue()
+
+    local averageConcentrationCost = self.concentrationCost -
+        (self.concentrationCost * ingenuityChance * ingenuityRefund)
+
+    if self.concentrating then
+        local averageProfitConcentration = self.averageProfitCached
+        self.concentrating = false
+        self:Update()
+
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+
+        self.concentrating = true
+        self:Update()
+
+        return concentrationValue, averageProfitConcentration
+    else
+        self.concentrating = true
+        self:Update()
+
+        local averageProfitConcentration = self.averageProfitCached
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+
+        self.concentrating = false
+        self:Update()
+
+        return concentrationValue, averageProfitConcentration
+    end
 end
 
 ---@return number
