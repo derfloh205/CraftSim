@@ -770,15 +770,14 @@ function CraftSim.RecipeData:GetSkillContributionMap()
 end
 
 ---@class CraftSim.RecipeData.OptimizeConcentration.Options
----@field frameDistributedCallback? function if omitted calculations will be instant inframe, otherwise callback will be called when finished
+---@field frameDistributedCallback function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 
 --- Optimizes gold value per concentration point sync or async
+---@async
 ---@param options CraftSim.RecipeData.OptimizeConcentration.Options?
 function CraftSim.RecipeData:OptimizeConcentration(options)
     options = options or {}
-
-    local inFrame = options.frameDistributedCallback == nil
 
     local skillContributionMap = self:GetSkillContributionMap()
 
@@ -862,15 +861,9 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
 
-    local iterationsPerFrame = 2
-
-    if inFrame then
-        iterationsPerFrame = 0
-    end
-
     GUTIL.FrameDistributor {
         maxIterations = 1500,
-        iterationsPerFrame = iterationsPerFrame,
+        iterationsPerFrame = 2,
         finally = function()
             if options.frameDistributedCallback then
                 options.frameDistributedCallback()
@@ -1050,6 +1043,50 @@ function CraftSim.RecipeData:OptimizeProfit(options)
     end
 
     CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(self)
+end
+
+---@class CraftSim.RecipeData.Optimize.Options
+---@field optimizeGear? boolean
+---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
+---@field optimizeConcentration? boolean
+---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
+---@field finally function callback when optimization is finished
+
+--- TODO Work in Progress: General Async Optimize Method
+---@async
+---@param options CraftSim.RecipeData.Optimize.Options
+function CraftSim.RecipeData:Optimize(options)
+    options = options or {}
+
+    if options.optimizeGear then
+        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+    end
+
+    GUTIL:NextFrameIF(options.optimizeGear, function()
+        if options.optimizeReagentOptions then
+            self:OptimizeReagents(options.optimizeReagentOptions)
+        end
+
+        GUTIL:NextFrameIF(options.optimizeReagentOptions ~= nil, function()
+            if options.optimizeConcentration then
+                self:OptimizeConcentration({
+                    frameDistributedCallback = function()
+                        if options.optimizeSubRecipesOptions then
+                            self:SetSubRecipeCostsUsage(true)
+                            self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                        end
+                        options.finally()
+                    end
+                })
+            else
+                if options.optimizeSubRecipesOptions then
+                    self:SetSubRecipeCostsUsage(true)
+                    self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                end
+                options.finally()
+            end
+        end)
+    end)
 end
 
 ---@param idLinkOrMixin number | string | ItemMixin
