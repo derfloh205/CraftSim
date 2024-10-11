@@ -890,9 +890,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.concentrationWeight = 0
             row.concentrationProfit = 0
             if enableConcentration then
-                row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(
-                    recipeData,
-                    averageProfit)
+                row.concentrationWeight, row.concentrationProfit = recipeData:GetConcentrationValue()
             end
 
             if enableConcentration and (row.concentrationProfit > 0) then
