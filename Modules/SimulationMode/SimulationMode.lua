@@ -214,8 +214,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     end
 
     local itemIDs = {}
-    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
-        local itemID = dropdown.selectedItem and dropdown.selectedItem:GetItemID()
+    for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+        local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
         if itemID then
             -- try to set spark if available else put to optional/finishing
             if tContains(possibleSparkItemIDs, itemID) then
@@ -293,6 +293,27 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
             for i = 1, 3, 1 do
                 local input = currentInput["inputq" .. i]
                 input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
+            end
+        end
+    end
+
+
+
+    --- TODO Rework with more beauty when sim mode is reworked
+    for i, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
+        for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+            ---@type GGUI.ItemSelector
+            local optionalReagentItemSelector = optionalReagentItemSelector
+
+            if #optionalReagentItemSelector.selectionFrame.itemSlots > 0 then
+                -- if same slot
+                local sameSlot = optionalReagentItemSelector.selectionFrame.itemSlots[1].item:GetItemID() ==
+                    finishingSlot.possibleReagents[1].item:GetItemID()
+
+                if sameSlot then
+                    optionalReagentItemSelector:SetSelectedItem(finishingSlot.activeReagent and
+                        finishingSlot.activeReagent.item)
+                end
             end
         end
     end

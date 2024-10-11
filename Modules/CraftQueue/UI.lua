@@ -1002,6 +1002,10 @@ function CraftSim.CRAFTQ.UI:Init()
         adjustWidth = true,
         sizeX = 15,
         label = "+ CraftQueue",
+        tooltipOptions = {
+            anchor = "ANCHOR_CURSOR_RIGHT",
+            text = "Hold " .. f.bb("Shift") .. " to queue without optimizations",
+        },
         clickCallback = function(_, _)
             CraftSim.CRAFTQ:QueueOpenRecipe()
         end,
@@ -1376,10 +1380,13 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.professionGearTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -50,
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), sizeX = 150,
         clickCallback = function(optimizeButton)
+            -- TODO: Rewrite using task list schema and export into module function
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 local optimizeProfessionGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
                 local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION")
+                local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get(
+                    "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
 
                 if optimizeProfessionGear then
                     recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
@@ -1393,20 +1400,56 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     if recipeData.supportsQualities and optimizeConcentration then
                         optimizeButton:SetEnabled(false)
                         recipeData:OptimizeConcentration {
-                            frameDistributedCallback = function()
-                                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-                                optimizeButton:SetEnabled(true)
-                                optimizeButton:SetText(L(CraftSim.CONST.TEXT
-                                    .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                            finally = function()
+                                if optimizeFinishingReagents then
+                                    recipeData:OptimizeFinishingReagents {
+                                        finally = function()
+                                            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                                            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
+                                                .craftQueueItem)
+                                            optimizeButton:SetEnabled(true)
+                                            optimizeButton:SetText(L(CraftSim.CONST.TEXT
+                                                .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                        end,
+                                        progressUpdateCallback = function(progress)
+                                            optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
+                                        end
+                                    }
+                                else
+                                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                                    optimizeButton:SetEnabled(true)
+                                    optimizeButton:SetText(L(CraftSim.CONST.TEXT
+                                        .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                end
                             end,
                             progressUpdateCallback = function(progress)
-                                optimizeButton:SetText(string.format("%.0f%%", progress))
+                                optimizeButton:SetText(string.format("CON: %.0f%%", progress))
                             end
                         }
                     else
-                        CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                        CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                        if optimizeFinishingReagents then
+                            optimizeButton:SetEnabled(false)
+                            recipeData:OptimizeFinishingReagents {
+                                finally = function()
+                                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
+                                        .craftQueueItem)
+                                    optimizeButton:SetEnabled(true)
+                                    optimizeButton:SetText(L(CraftSim.CONST.TEXT
+                                        .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                end,
+                                progressUpdateCallback = function(progress)
+                                    optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
+                                end
+                            }
+                        else
+                            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                            optimizeButton:SetEnabled(true)
+                            optimizeButton:SetText(L(CraftSim.CONST.TEXT
+                                .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                        end
                     end
                 end)
             end
@@ -1448,6 +1491,14 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION", not value)
                         end)
                 end
+                rootDescription:CreateCheckbox(
+                    "Optimize " .. f.bb("Finishing Reagents"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS", not value)
+                    end)
             end)
         end
     }
@@ -1783,10 +1834,16 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
             GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
             " " .. f.gold(editRecipeFrame.craftQueueItem.recipeData.concentrationCost)
     end
+
+    local craftingCosts
+    if recipeData.orderData then
+        craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents
+    else
+        craftingCosts = recipeData.priceData.craftingCosts
+    end
     editRecipeFrame.content.craftingCostsValue:SetText(GUTIL:ColorizeText(
-        CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
-    local concentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
-        recipeData.averageProfitCached)
+        CraftSim.UTIL:FormatMoney(craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
+    local concentrationValue = recipeData:GetConcentrationValue()
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
 
     local reagentFrames = editRecipeFrame.content.reagentFrames
@@ -2050,7 +2107,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     recipeData.priceData:Update()
     recipeData:GetAverageProfit()
 
-    row.craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+    if recipeData.orderData then
+        row.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents * craftQueueItem.amount
+    else
+        row.craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+    end
 
     row.averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) *
         craftQueueItem.amount

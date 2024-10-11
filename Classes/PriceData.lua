@@ -19,6 +19,7 @@ function CraftSim.PriceData:new(recipeData)
     self.craftingCosts = 0
     self.craftingCostsRequired = 0
     self.craftingCostsFixed = 0
+    self.craftingCostsNoOrderReagents = 0
     self.expectedCostsPerItem = 0
     self.resourcefulnessSavedCosts = 0
     self.resourcefulnessSavedCostsAverage = 0
@@ -66,6 +67,7 @@ function CraftSim.PriceData:Update()
     self.craftingCosts = 0
     self.craftingCostsRequired = 0
     self.craftingCostsFixed = 0
+    self.craftingCostsNoOrderReagents = 0
     self.expectedCostsPerItem = 0
     self.resourcefulnessSavedCosts = 0
     self.resourcefulnessSavedCostsAverage = 0
@@ -80,6 +82,8 @@ function CraftSim.PriceData:Update()
     print("Using subrecipes: " .. tostring(useSubRecipes))
 
     print("Calculating Crafting Costs: ")
+
+    local isWorkOrder = self.recipeData.orderData ~= 0
 
     if self.recipeData.isSalvageRecipe then
         if reagentData.salvageReagentSlot.activeItem then
@@ -98,6 +102,7 @@ function CraftSim.PriceData:Update()
     else
         print("Summing reagents:")
         for _, reagent in pairs(reagentData.requiredReagents) do
+            local isOrderReagent = isWorkOrder and reagent:IsOrderReagentIn(self.recipeData)
             if reagent.hasQuality then
                 local totalQuantity = 0
                 local totalPrice = 0
@@ -106,7 +111,8 @@ function CraftSim.PriceData:Update()
                     local itemID = reagentItem.item:GetItemID()
                     local reagentPriceInfo = self.reagentPriceInfos[itemID]
                     totalPrice = totalPrice + reagentPriceInfo.itemPrice * reagentItem.quantity
-                    if reagentPriceInfo.priceInfo.isExpectedCost then
+
+                    if not isOrderReagent and reagentPriceInfo.priceInfo.isExpectedCost then
                         tinsert(self.selfCraftedReagents, itemID)
                     end
                 end
@@ -121,22 +127,31 @@ function CraftSim.PriceData:Update()
                     local reagentPriceInfoQ3 = self.reagentPriceInfos[itemIDQ3]
                     local cheapestItemPrice = math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice,
                         reagentPriceInfoQ3.itemPrice)
-
-                    self.craftingCosts = self.craftingCosts + cheapestItemPrice * reagent.requiredQuantity
+                    local reagentCosts = cheapestItemPrice * reagent.requiredQuantity
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                    if not isOrderReagent then
+                        self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                    end
                 else
                     self.craftingCosts = self.craftingCosts + totalPrice
+                    if not isOrderReagent then
+                        self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + totalPrice
+                    end
                 end
             else
                 local itemID = reagent.items[1].item:GetItemID()
                 local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
-                self.craftingCosts = self.craftingCosts + reagentPriceInfo.itemPrice * reagent.requiredQuantity
-                self.craftingCostsFixed = self.craftingCostsFixed +
-                    reagentPriceInfo.itemPrice *
-                    reagent.requiredQuantity -- always max
+                local reagentCosts = reagentPriceInfo.itemPrice * reagent.requiredQuantity
 
-                if reagentPriceInfo.priceInfo.isExpectedCost then
-                    tinsert(self.selfCraftedReagents, itemID)
+                self.craftingCosts = self.craftingCosts + reagentCosts
+                self.craftingCostsFixed = self.craftingCostsFixed + reagentCosts -- always max
+
+                if not isOrderReagent then
+                    self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                    if reagentPriceInfo.priceInfo.isExpectedCost then
+                        tinsert(self.selfCraftedReagents, itemID)
+                    end
                 end
             end
         end
@@ -159,14 +174,19 @@ function CraftSim.PriceData:Update()
         print("num active optionals: " .. #activeOptionalReagents)
         for _, activeOptionalReagent in pairs(activeOptionalReagents) do
             if activeOptionalReagent then
+                local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
                 print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
                 local itemID = activeOptionalReagent.item:GetItemID()
                 local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
-                self.craftingCosts = self.craftingCosts + (reagentPriceInfo.itemPrice * (quantityMap[itemID] or 1))
+                local reagentCosts = (reagentPriceInfo.itemPrice * (quantityMap[itemID] or 1))
+                self.craftingCosts = self.craftingCosts + reagentCosts
 
-                if reagentPriceInfo.priceInfo.isExpectedCost then
-                    tinsert(self.selfCraftedReagents, itemID)
+                if not isOrderReagent then
+                    self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                    if reagentPriceInfo.priceInfo.isExpectedCost then
+                        tinsert(self.selfCraftedReagents, itemID)
+                    end
                 end
             end
         end

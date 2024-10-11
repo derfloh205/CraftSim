@@ -177,11 +177,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
         [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimize",
+        [CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON] = "Advanced Optimization",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
-            f.r("Experimental: ") ..
-            "Performance Heavy and Resets on Edit.\nOptimizes for " ..
-            f.gold("Highest Gold Value") .. " per concentration point",
+            "(Resets on Edit)\nEnables " ..
+            f.gold("Concentration Value") .. " and " .. f.bb("Finishing Reagent ") .. " Optimization",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Specialization Info",

@@ -273,6 +273,23 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, false)
     CraftSim.RECIPE_SCAN.UI:ResetResults(row)
 
+    local optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
+    local concentrationEnabled = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+    local optimizeSubRecipes = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
+    local optimizeConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
+    local optimizeTopProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+    local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS")
+    local optimizationScanMode = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+        CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
+
+    local optimizationTaskList = {
+        optimizeGear and "GEAR",
+        "REAGENTS",
+        concentrationEnabled and optimizeConcentration and "CONCENTRATION",
+        optimizeFinishingReagents and "FINISHING_REAGENTS",
+        optimizeSubRecipes and "SUB_RECIPES",
+    }
+
     CraftSim.RECIPE_SCAN.rowScanFrameDistributor = GUTIL.FrameDistributor {
         iterationTable = recipeInfos,
         iterationsPerFrame = 1,
@@ -284,15 +301,6 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             local content = row.content
 
             CraftSim.DEBUG:StartProfiling("Single Recipe Scan")
-
-            local optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
-            local concentrationEnabled = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
-            local optimizeSubRecipes = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
-            local optimizeConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
-            local optimizeTopProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
-            local optimizationScanMode = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
-                CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
-
 
             -- update button
             content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) ..
@@ -329,54 +337,70 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 recipeData:Update()
             end
 
-            -- if optimizing subrecipes
-            if optimizeSubRecipes then
-                printS("Optimizing SubRecipes..")
-                recipeData:SetSubRecipeCostsUsage(true)
-                recipeData:OptimizeSubRecipes({
-                    optimizeGear = optimizeGear,
-                    optimizeReagentOptions = {
-                        highestProfit = false,
-                        maxQuality = recipeData.maxQuality,
-                    },
-                })
-                printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
-            end
-
-            --optimize top gear first cause optimized reagents might change depending on the gear
-            if optimizeGear or optimizationScanMode then
-                printS("Optimizing...")
-                if not optimizationScanMode then
-                    CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-                end
-                -- Optimize gear and/or reagents
-                recipeData:OptimizeProfit({
-                    optimizeGear = optimizeGear,
-                    optimizeReagentOptions = optimizationScanMode and {
-                        maxQuality = recipeData.maxQuality,
-                        highestProfit = optimizeTopProfit
-                    },
-                })
-
-                if recipeData.supportsQualities and concentrationEnabled and optimizeConcentration then
-                    printS("Optimize Concentration Value")
-                    recipeData:OptimizeConcentration {
-                        frameDistributedCallback = function()
-                            finalizeRecipeAndContinue()
-                            content.optimizationProgressStatusText:SetText("")
-                        end,
-                        progressUpdateCallback = function(progress)
-                            content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-                                " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20))
-                        end
-                    }
-                else
+            GUTIL.FrameDistributor {
+                iterationTable = optimizationTaskList,
+                finally = function()
                     finalizeRecipeAndContinue()
+                end,
+                continue = function(frameDistributorTasks, _, optimizationTask, _, _)
+                    if optimizationTask == "GEAR" then
+                        recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+                        frameDistributorTasks:Continue()
+                    elseif optimizationTask == "REAGENTS" then
+                        if optimizationScanMode then
+                            recipeData:OptimizeReagents {
+                                highestProfit = optimizeTopProfit,
+                                maxQuality = math.max(recipeData.maxQuality, 1),
+                            }
+                        else
+                            CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
+                        end
+                        frameDistributorTasks:Continue()
+                    elseif optimizationTask == "CONCENTRATION" then
+                        if recipeData.supportsQualities then
+                            printS("Optimize Concentration Value")
+                            recipeData:OptimizeConcentration {
+                                finally = function()
+                                    frameDistributorTasks:Continue()
+                                    content.optimizationProgressStatusText:SetText("")
+                                end,
+                                progressUpdateCallback = function(progress)
+                                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                                        " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                                        GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
+                                end
+                            }
+                        else
+                            frameDistributorTasks:Continue()
+                        end
+                    elseif optimizationTask == "FINISHING_REAGENTS" then
+                        recipeData:OptimizeFinishingReagents {
+                            finally = function()
+                                frameDistributorTasks:Continue()
+                                content.optimizationProgressStatusText:SetText("")
+                            end,
+                            progressUpdateCallback = function(progress)
+                                content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                                    " " ..
+                                    GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                                    CreateAtlasMarkup("Banker", 20, 20))
+                            end
+                        }
+                    elseif optimizationTask == "SUB_RECIPES" then
+                        recipeData:SetSubRecipeCostsUsage(true)
+                        recipeData:OptimizeSubRecipes({
+                            optimizeGear = optimizeGear,
+                            optimizeReagentOptions = {
+                                highestProfit = false,
+                                maxQuality = recipeData.maxQuality,
+                            },
+                        })
+                        frameDistributorTasks:Continue()
+                    else
+                        frameDistributorTasks:Continue()
+                    end
                 end
-            else
-                CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-                finalizeRecipeAndContinue()
-            end
+            }:Continue()
         end,
         cancel = function()
             return not CraftSim.RECIPE_SCAN.isScanning

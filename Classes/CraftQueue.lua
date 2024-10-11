@@ -254,6 +254,7 @@ function CraftSim.CraftQueue:RestoreFromDB()
 end
 
 function CraftSim.CraftQueue:FilterSortByPriority()
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
     -- first append all recipes of the current crafter character that do not have any subrecipes
     local characterRecipesNoAltDependency, restRecipes = GUTIL:Split(self.craftQueueItems, function(cqi)
         local noActiveSubRecipes = not cqi.hasActiveSubRecipes
@@ -263,6 +264,16 @@ function CraftSim.CraftQueue:FilterSortByPriority()
     end)
     local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
         function(a, b)
+            if claimedOrder and claimedOrder.isFulfillable then
+                local aSubmittable = a.recipeData.orderData and a.recipeData.orderData.orderID == claimedOrder.orderID
+                local bSubmittable = b.recipeData.orderData and b.recipeData.orderData.orderID == claimedOrder.orderID
+                if aSubmittable and not bSubmittable then
+                    return true
+                elseif not aSubmittable and bSubmittable then
+                    return false
+                end
+            end
+
             if a.allowedToCraft and not b.allowedToCraft then
                 return true
             elseif not a.allowedToCraft and b.allowedToCraft then

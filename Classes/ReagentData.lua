@@ -375,6 +375,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
         function(optionalReagentSlot)
             return optionalReagentSlot:HasItem(multiplier, crafterUID, excludeWarbankTemp)
         end)
+
+    -- CraftSim.DEBUG:SystemPrint("Has Enough:")
+    -- CraftSim.DEBUG:SystemPrint("hasRequiredReagents: " .. tostring(hasRequiredReagents))
+    -- CraftSim.DEBUG:SystemPrint("hasOptionalReagents: " .. tostring(hasOptionalReagents))
     local hasSparkReagent = true
     if self:HasSparkSlot() then
         hasSparkReagent = self.sparkReagentSlot:HasItem(multiplier, crafterUID, excludeWarbankTemp)
@@ -406,7 +410,6 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
             .ENCHANTING_VELLUM_ID, true)
         hasVellumIfneeded = itemCount >= multiplier
     end
-
 
     return hasRequiredReagents and hasOptionalReagents and hasSparkReagent and hasVellumIfneeded
 end

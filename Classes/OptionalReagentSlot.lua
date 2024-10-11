@@ -31,7 +31,7 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     end
 end
 
----@param itemID number
+---@param itemID number?
 function CraftSim.OptionalReagentSlot:SetReagent(itemID)
     if not itemID then
         self.activeReagent = nil

@@ -10,12 +10,15 @@ CraftSim.TopGearResult = CraftSim.CraftSimObject:extend()
 ---@param relativeStats CraftSim.ProfessionStats
 ---@param expectedQuality number
 ---@param expectedQualityUpgrade number
-function CraftSim.TopGearResult:new(professionGearSet, averageProfit, relativeProfit, relativeStats, expectedQuality,
+function CraftSim.TopGearResult:new(professionGearSet, averageProfit, relativeProfit, concentrationValue,
+                                    relativeConcentrationValue, relativeStats, expectedQuality,
                                     expectedQualityUpgrade)
     self.relativeStats = relativeStats
     self.professionGearSet = professionGearSet
     self.averageProfit = averageProfit
     self.relativeProfit = relativeProfit
+    self.concentrationValue = concentrationValue
+    self.relativeConcentrationValue = relativeConcentrationValue
     self.expectedQuality = expectedQuality
     self.expectedQualityUpgrade = expectedQualityUpgrade
 end

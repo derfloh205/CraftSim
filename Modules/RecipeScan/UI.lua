@@ -764,16 +764,6 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
         end
     }
 
-    -- content.useInsightCB = GGUI.Checkbox {
-    --     parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-    --     label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX),
-    --     tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP),
-    --     initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_USE_INSIGHT"),
-    --     clickCallback = function(_, checked)
-    --         CraftSim.DB.OPTIONS:Save("RECIPESCAN_USE_INSIGHT", checked)
-    --     end
-    -- }
-
     content.optimizeSubRecipes = GGUI.Checkbox {
         parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),
@@ -786,7 +776,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
     content.optimizeReagentsTopProfit = GGUI.Checkbox {
         parent = content, anchorParent = content.optimizeSubRecipes.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize Reagents - Top Profit Max Quality",
+        label = "Optimize Reagents - " .. f.g("Top Profit Max Quality"),
         tooltip = "If enabled, all recipes will be optimized for their most profitable result quality instead of max quality reachable",
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"),
         clickCallback = function(_, checked)
@@ -796,11 +786,21 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
     content.optimizeConcentrationValue = GGUI.Checkbox {
         parent = content, anchorParent = content.optimizeReagentsTopProfit.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize Concentration Value",
-        tooltip = "If enabled, all recipes will be optimized for their best concentration gold value per point\n" .. f.r("!!High Performance Usage!!"),
+        label = "Optimize " .. f.gold("Concentration Value"),
+        tooltip = "If enabled, all recipes will be optimized for their best concentration gold value per point",
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE", checked)
+        end
+    }
+
+    content.optimizeFinishingReagents = GGUI.Checkbox {
+        parent = content, anchorParent = content.optimizeConcentrationValue.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize " .. f.bb("Finishing Reagents"),
+        tooltip = "If enabled, all recipes will be optimized for their most profitable " .. f.bb("Finishing Reagents"),
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS", checked)
         end
     }
 
@@ -819,7 +819,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
             return a.selectionID > b.selectionID
         end),
         parent = content,
-        anchorPoints = { { anchorParent = content.optimizeConcentrationValue.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 25 } },
+        anchorPoints = { { anchorParent = content.optimizeFinishingReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 25 } },
         sizeX = 30,
         sizeY = 25,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON),
@@ -890,9 +890,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.concentrationWeight = 0
             row.concentrationProfit = 0
             if enableConcentration then
-                row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(
-                    recipeData,
-                    averageProfit)
+                row.concentrationWeight, row.concentrationProfit = recipeData:GetConcentrationValue()
             end
 
             if enableConcentration and (row.concentrationProfit > 0) then

@@ -770,15 +770,14 @@ function CraftSim.RecipeData:GetSkillContributionMap()
 end
 
 ---@class CraftSim.RecipeData.OptimizeConcentration.Options
----@field frameDistributedCallback? function if omitted calculations will be instant inframe, otherwise callback will be called when finished
+---@field finally function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 
 --- Optimizes gold value per concentration point sync or async
+---@async
 ---@param options CraftSim.RecipeData.OptimizeConcentration.Options?
 function CraftSim.RecipeData:OptimizeConcentration(options)
     options = options or {}
-
-    local inFrame = options.frameDistributedCallback == nil
 
     local skillContributionMap = self:GetSkillContributionMap()
 
@@ -862,18 +861,12 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
 
-    local iterationsPerFrame = 2
-
-    if inFrame then
-        iterationsPerFrame = 0
-    end
-
     GUTIL.FrameDistributor {
         maxIterations = 1500,
-        iterationsPerFrame = iterationsPerFrame,
+        iterationsPerFrame = 2,
         finally = function()
-            if options.frameDistributedCallback then
-                options.frameDistributedCallback()
+            if options.finally then
+                options.finally()
             end
             CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
         end,
@@ -920,8 +913,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local lastProfit = self.averageProfitCached
             local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
             local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
-            local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self,
-                self.averageProfitCached)
+            local currentConcentrationValue = self:GetConcentrationValue()
 
             -- not worthwile to upgrade
             if bestConcentrationPointCost >= currentConcentrationValue then
@@ -943,7 +935,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local boughtConcentration = lastConcentrationCost - currentConcentrationCost
             local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
             local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
-            currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+            currentConcentrationValue = self:GetConcentrationValue()
 
             if averageConcentrationBuyPrice >= currentConcentrationValue then
                 self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
@@ -957,6 +949,158 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
     }:Continue()
 
     -- recipe should now be optimized
+end
+
+---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
+---@field includeLocked? boolean
+---@field includeSoulbound? boolean
+---@field finally function callback will be called when finished
+---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
+
+---@param options CraftSim.RecipeData.OptimizeFinishingReagents.Options
+function CraftSim.RecipeData:OptimizeFinishingReagents(options)
+    options = options or {}
+
+    local reagentData = self.reagentData
+
+    if #reagentData.finishingReagentSlots == 0 then
+        options.finally()
+        return
+    end
+
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        slot:SetReagent(nil)
+    end
+    self:Update()
+
+    local totalPossibleItems = GUTIL:Fold(reagentData.finishingReagentSlots, 0, function(total, nextSlot)
+        return total + #nextSlot.possibleReagents
+    end)
+    local currentItemCount = 0
+
+    local percentStep = totalPossibleItems / 100
+
+    GUTIL.FrameDistributor {
+        iterationTable = reagentData.finishingReagentSlots,
+        iterationsPerFrame = 1,
+        finally = function()
+            options.finally()
+        end,
+        continue = function(frameDistributor, _, slot, _, _)
+            ---@type CraftSim.OptionalReagentSlot
+            local slot = slot
+
+            if not options.includeLocked and slot.locked then
+                frameDistributor:Continue()
+                return
+            end
+
+            local possibleReagents = slot.possibleReagents
+
+            -- set base
+            local slotSimulationResults = { {
+                averageProfit = self.averageProfitCached,
+                concentrationValue = self:GetConcentrationValue(),
+                itemID = nil,
+            } }
+
+            GUTIL.FrameDistributor {
+                iterationTable = possibleReagents,
+                iterationsPerFrame = 1,
+                finally = function()
+                    local bestResult =
+                        GUTIL:Fold(slotSimulationResults, slotSimulationResults[1], function(bestResult, nextResult)
+                            if self.concentrating then
+                                if nextResult.concentrationValue > bestResult.concentrationValue then
+                                    return nextResult
+                                else
+                                    return bestResult
+                                end
+                            else
+                                if nextResult.averageProfit > bestResult.averageProfit then
+                                    return nextResult
+                                else
+                                    return bestResult
+                                end
+                            end
+                        end)
+
+                    -- then set best result
+
+                    slot:SetReagent(bestResult.itemID)
+                    self:Update()
+                    frameDistributor:Continue()
+                end,
+                continue = function(frameDistributor2, _, reagent, _, _)
+                    ---@type CraftSim.OptionalReagent
+                    local finishingReagent = reagent
+                    local itemID = finishingReagent.item:GetItemID()
+
+                    currentItemCount = currentItemCount + 1
+
+                    if not options.includeSoulbound and GUTIL:isItemSoulbound(itemID) then
+                        frameDistributor2:Continue()
+                        return
+                    end
+
+                    slot:SetReagent(finishingReagent.item:GetItemID())
+                    self:Update()
+                    tinsert(slotSimulationResults, {
+                        itemID = itemID,
+                        averageProfit = self.averageProfitCached,
+                        concentrationValue = self:GetConcentrationValue()
+                    })
+
+                    if options.progressUpdateCallback then
+                        options.progressUpdateCallback(currentItemCount / percentStep)
+                    end
+                    frameDistributor2:Continue()
+                end
+            }:Continue()
+        end
+    }:Continue()
+end
+
+---@return number concentrationValue
+---@return number concentrationProfit
+function CraftSim.RecipeData:GetConcentrationValue()
+    if not self.supportsQualities or self.concentrationCost <= 0 then
+        return 0, 0
+    end
+
+    local function calculateConcentrationValue(profit, cost)
+        return profit / cost
+    end
+
+    local ingenuityChance = self.professionStats.ingenuity:GetPercent(true)
+    local ingenuityRefund = 0.5 + self.professionStats.ingenuity:GetExtraValue()
+
+    local averageConcentrationCost = self.concentrationCost -
+        (self.concentrationCost * ingenuityChance * ingenuityRefund)
+
+    if self.concentrating then
+        local averageProfitConcentration = self.averageProfitCached
+        self.concentrating = false
+        self:Update()
+
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+
+        self.concentrating = true
+        self:Update()
+
+        return concentrationValue, averageProfitConcentration
+    else
+        self.concentrating = true
+        self:Update()
+
+        local averageProfitConcentration = self.averageProfitCached
+        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+
+        self.concentrating = false
+        self:Update()
+
+        return concentrationValue, averageProfitConcentration
+    end
 end
 
 ---@return number
@@ -997,6 +1141,7 @@ end
 ---@field optimizeGear? boolean
 ---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
 
+---@deprecated
 ---Optimizes the recipeData's reagents and gear for highest profit and caches result for crafter
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
 function CraftSim.RecipeData:OptimizeProfit(options)
@@ -1009,6 +1154,50 @@ function CraftSim.RecipeData:OptimizeProfit(options)
     end
 
     CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(self)
+end
+
+---@class CraftSim.RecipeData.Optimize.Options
+---@field optimizeGear? boolean
+---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
+---@field optimizeConcentration? boolean
+---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
+---@field finally function callback when optimization is finished
+
+--- TODO Work in Progress: General Async Optimize Method using a main frame FrameDistributor and a list of optimizations to go through 1 by 1
+---@async
+---@param options CraftSim.RecipeData.Optimize.Options
+function CraftSim.RecipeData:Optimize(options)
+    options = options or {}
+
+    if options.optimizeGear then
+        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+    end
+
+    GUTIL:NextFrameIF(options.optimizeGear, function()
+        if options.optimizeReagentOptions then
+            self:OptimizeReagents(options.optimizeReagentOptions)
+        end
+
+        GUTIL:NextFrameIF(options.optimizeReagentOptions ~= nil, function()
+            if options.optimizeConcentration then
+                self:OptimizeConcentration({
+                    finally = function()
+                        if options.optimizeSubRecipesOptions then
+                            self:SetSubRecipeCostsUsage(true)
+                            self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                        end
+                        options.finally()
+                    end
+                })
+            else
+                if options.optimizeSubRecipesOptions then
+                    self:SetSubRecipeCostsUsage(true)
+                    self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                end
+                options.finally()
+            end
+        end)
+    end)
 end
 
 ---@param idLinkOrMixin number | string | ItemMixin
@@ -1269,6 +1458,12 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
+
+    -- CraftSim.DEBUG:SystemPrint("CanCraft")
+    -- CraftSim.DEBUG:SystemPrint("excludeWarbankTemp: " .. tostring(excludeWarbankTemp))
+    -- CraftSim.DEBUG:SystemPrint("hasEnoughReagents: " .. tostring(hasEnoughReagents))
+    -- CraftSim.DEBUG:SystemPrint("craftAbleAmount: " .. tostring(craftAbleAmount))
+
 
     if not isChargeRecipe then
         return hasEnoughReagents, craftAbleAmount

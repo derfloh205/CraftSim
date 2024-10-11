@@ -244,7 +244,7 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                                     distributor:Continue()
                                 end
                                 -- try to optimize for target quality
-                                if order.minQuality then
+                                if order.minQuality and order.minQuality > 0 then
                                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION") then
                                         RunNextFrame(
                                             function()
@@ -784,6 +784,12 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     local optimizeGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_PROFESSION_GEAR")
     local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION")
 
+    if IsShiftKeyDown() then
+        -- just queue without any optimizations
+        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        return
+    end
+
     if optimizeConcentration and recipeData.supportsQualities then
         recipeData.concentrating = true
         recipeData:Update()
@@ -802,7 +808,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     if optimizeConcentration and recipeData.supportsQualities then
         queueButton:SetEnabled(false)
         recipeData:OptimizeConcentration {
-            frameDistributedCallback = function()
+            finally = function()
                 queueButton:SetEnabled(true)
                 queueButton:SetText("+ CraftQueue")
                 CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
