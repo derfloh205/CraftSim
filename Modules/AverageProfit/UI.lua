@@ -172,7 +172,7 @@ function CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(recipeData, statWeights)
         if statWeights.concentrationWeight then
             addToList(L(CraftSim.CONST.TEXT.CONCENTRATION_LABEL),
                 CraftSim.UTIL:FormatMoney(statWeights.concentrationWeight),
-                f.white("Profit increase " .. f.l("per point ") .. f.bb("Concentration")))
+                f.white("Profit " .. f.l("per point ") .. f.bb("Concentration")) .. " considering " .. f.bb("Ingenuity"))
         end
     end
 
