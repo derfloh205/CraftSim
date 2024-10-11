@@ -334,6 +334,8 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     end
 end
 
+---@param recipeData CraftSim.RecipeData
+---@param topGearMode string
 ---@return CraftSim.TopGearResult[] topGearResults
 function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
     topGearMode = topGearMode or CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)
@@ -341,6 +343,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
 
     local previousGear = recipeData.professionGearSet
     local averageProfitPreviousGear = CraftSim.CALC:GetAverageProfit(recipeData)
+    local concentrationValuePreviousGear = recipeData:GetConcentrationValue()
 
     -- convert to top gear results
     ---@type CraftSim.TopGearResult[]
@@ -348,12 +351,15 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         recipeData.professionGearSet = professionGearSet
         recipeData:Update()
         local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
+        local concentrationValue = recipeData:GetConcentrationValue()
         local relativeProfit = averageProfit - averageProfitPreviousGear
+        local relativeConcentrationValue = concentrationValue - concentrationValuePreviousGear
         local relativeStats = professionGearSet.professionStats:Copy()
         local expectedQuality = recipeData.resultData.expectedQuality
         local expectedQualityUpgrade = recipeData.resultData.expectedQualityUpgrade
         relativeStats:subtract(previousGear.professionStats)
-        local result = CraftSim.TopGearResult(professionGearSet, averageProfit, relativeProfit, relativeStats,
+        local result = CraftSim.TopGearResult(professionGearSet, averageProfit, relativeProfit, concentrationValue,
+            relativeConcentrationValue, relativeStats,
             expectedQuality, expectedQualityUpgrade)
         return result
     end)
@@ -373,7 +379,11 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
                 return result.relativeProfit >= 1
             end)
         results = GUTIL:Sort(results, function(resultA, resultB)
-            return resultA.averageProfit > resultB.averageProfit
+            if recipeData.concentrating and recipeData.supportsQualities then
+                return resultA.concentrationValue > resultB.concentrationValue
+            else
+                return resultA.averageProfit > resultB.averageProfit
+            end
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         print("Top Gear Mode: Multicraft")
