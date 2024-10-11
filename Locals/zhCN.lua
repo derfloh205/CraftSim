@@ -169,7 +169,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "已分配最佳材料",
         [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "专注：",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "在数字上按Shift+鼠标左键将物品链接放入聊天中",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "优化",
+        [CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON] = "优化",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("实验性：") ..
             "性能需求繁重，并在编辑时重置。\n为每个集中值的 " ..

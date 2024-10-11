@@ -177,7 +177,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
         [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimize",
+        [CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON] = "Advanced Optimization",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("Experimental: ") ..
             "Performance Heavy and Resets on Edit.\nOptimizes for " ..

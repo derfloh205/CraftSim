@@ -97,7 +97,7 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Melhores Reagentes Atribuídos",
         [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentração: ",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + BEM nos números para linkar o item no chat",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Otimizar",
+        [CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON] = "Otimizar",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("Experimental: ") ..
             "Pesado em Performance e Reseta ao Editar.\nOtimiza para " ..
@@ -539,7 +539,7 @@ maior ou igual ao limite de taxa de venda configurado.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Cria uma " ..
             f.bb("Lista de Compras do Auctionator") .. " apenas para receitas em modo alvo",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white(
-        "Quantidade Não Salva na Fila.\nPressione Enter para Salvar"),
+            "Quantidade Não Salva na Fila.\nPressione Enter para Salvar"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Receita Aprendida"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Não estando em Recarga"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Reagentes Disponíveis"),

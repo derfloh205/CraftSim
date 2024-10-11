@@ -15,7 +15,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTI
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local sizeX = 310
-    local sizeY = 290
+    local sizeY = 380
     local offsetX = -5
     local offsetY = -125
 
@@ -156,6 +156,23 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             justifyOptions = { type = "H", align = "LEFT" },
         }
 
+        frame.content.concentrationValueLabel = GGUI.Text {
+            parent = frame.content,
+            anchorParent = frame.content.concentrationCostLabel.frame,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
+            justifyOptions = { type = "H", align = "RIGHT" },
+            text = "Con. Value: ",
+        }
+
+        frame.content.concentrationValueValue = GGUI.Text {
+            parent = frame.content,
+            anchorPoints = {
+                { anchorParent = frame.content.concentrationValueLabel.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 },
+            },
+            justifyOptions = { type = "H", align = "LEFT" },
+            text = CraftSim.UTIL:FormatMoney(0, true)
+        }
+
         frame.content.allocateButton = GGUI.Button({
             parent = frame.content,
             anchorParent = frame.content.qualityIcon.frame,
@@ -171,35 +188,41 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         })
 
-        local optimizeConcentrationButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON) ..
-            " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1)
+        local advancedOptimizationButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON)
 
-        frame.content.optimizeConcentrationButton = GGUI.Button({
+        frame.content.advancedOptimizationButton = GGUI.Button({
             parent = frame.content,
-            anchorParent = frame.content.concentrationCostValue.frame,
-            anchorA = "LEFT",
-            anchorB = "RIGHT",
-            offsetX = 20,
-            label = optimizeConcentrationButtonLabel,
+            anchorParent = frame.content,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            offsetX = 0,
+            offsetY = -145,
+            label = advancedOptimizationButtonLabel,
             initialStatusID = "ENABLED",
-            sizeX = 15,
+            sizeX = 70,
             sizeY = 20,
-            adjustWidth = true,
             clickCallback = function()
                 local reagentOptimizationFrame = CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
                 if reagentOptimizationFrame then
-                    local optimizeConcentrationButton = reagentOptimizationFrame.content
-                        .optimizeConcentrationButton --[[@as GGUI.Button]]
-                    optimizeConcentrationButton:SetEnabled(false)
+                    local advancedOptimizationButton = reagentOptimizationFrame.content
+                        .advancedOptimizationButton --[[@as GGUI.Button]]
+                    advancedOptimizationButton:SetEnabled(false)
                     CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration({
-                        frameDistributedCallback = function()
-                            CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(
-                                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
-                            optimizeConcentrationButton:SetEnabled(false) -- keep disabled until update from init
-                            optimizeConcentrationButton:SetText("Optimized")
+                        finally = function()
+                            CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeFinishingReagents {
+                                finally = function()
+                                    CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(
+                                        CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+                                    advancedOptimizationButton:SetEnabled(false) -- keep disabled until update from init
+                                    advancedOptimizationButton:SetText("Optimized")
+                                end,
+                                progressUpdateCallback = function(progress)
+                                    advancedOptimizationButton:SetText(string.format("Optimizing - %.2f%%", progress))
+                                end
+                            }
                         end,
                         progressUpdateCallback = function(progress)
-                            optimizeConcentrationButton:SetText(string.format("Calc %00d", progress), 15, true)
+                            advancedOptimizationButton:SetText(string.format("Optimizing - %.2f%%", progress))
                         end
                     })
                 end
@@ -210,11 +233,11 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             }
         })
 
-        frame.content.optimizeConcentrationButton:SetStatusList {
+        frame.content.advancedOptimizationButton:SetStatusList {
             {
                 statusID = "ENABLED",
                 enabled = true,
-                label = optimizeConcentrationButtonLabel,
+                label = advancedOptimizationButtonLabel,
                 sizeX = 15,
                 adjustWidth = true
             }
@@ -226,7 +249,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 
         frame.content.reagentList = GGUI.FrameList {
             parent = frame.content,
-            anchorPoints = { { anchorParent = frame.content, offsetY = -140, anchorA = "TOP", anchorB = "TOP", offsetX = -13 } },
+            anchorPoints = { { anchorParent = frame.content, offsetY = -190, anchorA = "TOP", anchorB = "TOP", offsetX = -13 } },
             sizeY = 150, hideScrollbar = true,
             columnOptions = {
                 {
@@ -296,6 +319,25 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             text = f.g(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED)), hide = true,
         }
 
+        local finishingReagentIconsOffsetX = 13
+        local finishingReagentIconsOffsetY = 0
+        local finishingReagentIconsSize = 30
+
+        frame.content.finishingReagentSlots = {
+            GGUI.Icon {
+                parent = frame.content, anchorParent = frame.content.reagentList.frame,
+                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX, offsetY = finishingReagentIconsOffsetY,
+                sizeX = finishingReagentIconsSize, sizeY = finishingReagentIconsSize, qualityIconScale = 1.2,
+                texturePath = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
+            },
+            GGUI.Icon {
+                parent = frame.content, anchorParent = frame.content.reagentList.frame, offsetY = finishingReagentIconsOffsetY,
+                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX + finishingReagentIconsSize + 5,
+                sizeX = finishingReagentIconsSize, sizeY = finishingReagentIconsSize, qualityIconScale = 1.2,
+                texturePath = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
+            }
+        }
+
         frame:Hide()
     end
 
@@ -314,18 +356,22 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param exportMode number
 function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
     local reagentOptimizationFrame = self:GetFrameByExportMode()
 
     if not reagentOptimizationFrame then return end
 
     CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = recipeData
-    local optimizeConcentrationButton = reagentOptimizationFrame.content
-    .optimizeConcentrationButton --[[@as GGUI.Button]]
-    optimizeConcentrationButton:SetStatus("ENABLED")
+    local advancedOptimizationButton = reagentOptimizationFrame.content
+        .advancedOptimizationButton --[[@as GGUI.Button]]
+    advancedOptimizationButton:SetStatus("ENABLED")
 
     local maxQualityDropdown = reagentOptimizationFrame.content.maxQualityDropdown --[[@as GGUI.Dropdown]]
+    local finishingSlots = reagentOptimizationFrame.content.finishingReagentSlots
+
+    for _, slot in ipairs(finishingSlots) do
+        slot:Hide()
+    end
 
     maxQualityDropdown:SetVisible(recipeData.supportsQualities)
     reagentOptimizationFrame.content.maxQualityLabel:SetVisible(recipeData.supportsQualities)
@@ -337,6 +383,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         recipeData.priceData.craftingCosts))
 
     reagentOptimizationFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
+    reagentOptimizationFrame.content.concentrationValueValue:SetText(CraftSim.UTIL:FormatMoney(
+        recipeData:GetConcentrationValue(), true))
 
     if recipeData.supportsQualities then
         local recipeMaxQualities = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
@@ -371,6 +419,20 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
                 return reagent.hasQuality
             end))
 
+    local equalsFinishingAllocation = true
+    for i, _ in ipairs(recipeData.reagentData.finishingReagentSlots) do
+        local itemIDA = recipeData.reagentData.finishingReagentSlots[i] and
+            recipeData.reagentData.finishingReagentSlots[i].activeReagent and
+            recipeData.reagentData.finishingReagentSlots[i].activeReagent.item:GetItemID()
+        local itemIDB = CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i] and
+            CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i].activeReagent and
+            CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i].activeReagent.item:GetItemID()
+        equalsFinishingAllocation = equalsFinishingAllocation and
+            (itemIDA == itemIDB)
+    end
+
+    isSameAllocation = isSameAllocation and equalsFinishingAllocation
+
     reagentOptimizationFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive and not isSameAllocation)
 
     local reagentList = reagentOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
@@ -380,6 +442,17 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
     reagentOptimizationFrame.content.sameAllocationText:SetVisible(isSameAllocation)
     reagentOptimizationFrame.content.infoIcon:SetVisible(not isSameAllocation)
     reagentList:SetVisible(not isSameAllocation)
+
+    if not isSameAllocation then
+        for i, uiSlot in ipairs(finishingSlots) do
+            local slot = recipeData.reagentData.finishingReagentSlots[i]
+            if slot then
+                uiSlot:SetItem(slot.activeReagent and slot.activeReagent.item:GetItemID())
+                uiSlot:Show()
+            end
+        end
+    end
+
 
     if not isSameAllocation then
         for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do

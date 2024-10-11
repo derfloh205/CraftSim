@@ -802,7 +802,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     if optimizeConcentration and recipeData.supportsQualities then
         queueButton:SetEnabled(false)
         recipeData:OptimizeConcentration {
-            frameDistributedCallback = function()
+            finally = function()
                 queueButton:SetEnabled(true)
                 queueButton:SetText("+ CraftQueue")
                 CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })

@@ -361,7 +361,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 if recipeData.supportsQualities and concentrationEnabled and optimizeConcentration then
                     printS("Optimize Concentration Value")
                     recipeData:OptimizeConcentration {
-                        frameDistributedCallback = function()
+                        finally = function()
                             finalizeRecipeAndContinue()
                             content.optimizationProgressStatusText:SetText("")
                         end,

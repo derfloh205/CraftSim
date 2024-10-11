@@ -168,7 +168,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
         "Keine Preisquelle gefunden!\n\nDu musst mindestens eines der\nfolgenden Preisquellen-Addons installiert haben, um\ndie Gewinnberechnungen von CraftSim zu nutzen:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Warnung nicht mehr anzeigen",
-        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",																		  
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",
 
         -- Materialfenster
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Reagenzien Optimierung",
@@ -182,11 +182,13 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY] = "Maximale Qualität: ",
         [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL] = "Ø Gewinn: ",
         [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP] =
-            f.bb("Der durchschnittliche Gewinn pro Herstellung") .. " bei Verwendung von " .. f.l("dieser Reagenzienverteilung"),
+            f.bb("Der durchschnittliche Gewinn pro Herstellung") ..
+            " bei Verwendung von " .. f.l("dieser Reagenzienverteilung"),
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Beste Reagenzien zugewiesen",
         [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Konzentration: ",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMT auf die Zahlen, um den Gegenstandslink in den Chat einzufügen",
-        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimieren",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] =
+        "Shift + LMT auf die Zahlen, um den Gegenstandslink in den Chat einzufügen",
+        [CraftSim.CONST.TEXT.ADVANCED_OPTIMIZATION_BUTTON] = "Optimieren",
         [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("Experimentell: ") ..
             "Leistungsintensiv und wird bei Änderungen zurückgesetzt.\nOptimiert für den " ..
@@ -283,7 +285,8 @@ function CraftSim.LOCAL_DE:GetData()
             "Wenn aktiviert, berücksichtigt " ..
             f.l("CraftSim") .. " die Reagenzienqualität, selbst wenn Konzentration erforderlich ist.",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "Abklingzeit Rezepte einbeziehen",
-        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] = "Wenn aktiviert, ignoriert " ..
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] =
+            "Wenn aktiviert, ignoriert " ..
             f.l("CraftSim") .. " die Abklingzeiten von Rezepten bei der Berechnung selbst hergestellter Reagenzien.",
 
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "Rezepthersteller auswählen",
@@ -469,7 +472,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Spezialisierungsinfo-Modul",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] =
         "Maximale Nachrichtenanzahl pro Kunde in der Kundenhistorie",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Maximale Verlaufseinträge pro Client",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] =
+        "Maximale Verlaufseinträge pro Client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Fertigkeitsschwellenwerte um 1 verschieben",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "Die Vorschläge zur Reagenzienkombination versuchen, den Schwellenwert + 1 zu erreichen, anstatt die genau erforderliche Fertigkeit zu erreichen",

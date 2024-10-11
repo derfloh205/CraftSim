@@ -297,5 +297,10 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
         end
     end
 
+    for i, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
+        CraftSim.SIMULATION_MODE.recipeData.reagentData.finishingReagentSlots[i]:SetReagent(finishingSlot.activeReagent and
+            finishingSlot.activeReagent.item:GetItemID())
+    end
+
     CraftSim.INIT:TriggerModuleUpdate()
 end
