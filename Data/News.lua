@@ -26,6 +26,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Is now used as the main comparison point between",
         f.a .. "  gear, qualities and more when concentration",
         f.a .. "  is toggled on",
+        f.s .. f.bb("+ CraftQueue") .. " button can now be shift clicked",
+        f.a .. "- This will ignore any optimizations and queue the recipe as is",
         f.p .. "Major internal code improvements for optimization processes",
         newP("18.3.1"),
         f.p .. "Fixed 'Submittable' queued patron orders not",
