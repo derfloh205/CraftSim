@@ -980,8 +980,19 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
 
     local percentStep = totalPossibleItems / 100
 
+    -- workaround to first process the skill increase reagents
+    local slotsReversed = {}
+    if #reagentData.finishingReagentSlots == 2 then
+        slotsReversed = {
+            reagentData.finishingReagentSlots[2],
+            reagentData.finishingReagentSlots[1],
+        }
+    else
+        slotsReversed = reagentData.finishingReagentSlots
+    end
+
     GUTIL.FrameDistributor {
-        iterationTable = reagentData.finishingReagentSlots,
+        iterationTable = slotsReversed,
         iterationsPerFrame = 1,
         finally = function()
             options.finally()
