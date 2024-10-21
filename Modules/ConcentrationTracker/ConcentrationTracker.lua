@@ -29,12 +29,23 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
 
     local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
 
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
+    local profession = professionInfo and professionInfo.profession
+
     -- if not shown profession's expac dont show
     if not expansionID or expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then return end
 
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
     if cached and cached.currencyID then
         cached:Update()
+
+        -- update the saved db data always
+        CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(playerCrafterUID,
+            profession,
+            CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
+            cached)
+
         return cached
     end
 
@@ -46,8 +57,8 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
         local concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB
-        CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(CraftSim.UTIL:GetPlayerCrafterUID(),
-            C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID).profession,
+        CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(playerCrafterUID,
+            profession,
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             concentrationData)
         CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = concentrationData
