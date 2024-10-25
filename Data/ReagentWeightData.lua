@@ -1159,15 +1159,6 @@ CraftSim.REAGENT_DATA = {
 	[219894] = {
 		weight = 97,
 	},
-	[219895] = {
-		weight = 85,
-	},
-	[219896] = {
-		weight = 85,
-	},
-	[219897] = {
-		weight = 85,
-	},
 	[219898] = {
 		weight = 62,
 	},

@@ -2724,7 +2724,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221626] = {
 		qualityID = 1,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2733,7 +2733,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221629] = {
 		qualityID = 1,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2742,7 +2742,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221632] = {
 		qualityID = 1,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2751,7 +2751,43 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221635] = {
 		qualityID = 1,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221726] = {
+		qualityID = 1,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221729] = {
+		qualityID = 1,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221732] = {
+		qualityID = 1,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221735] = {
+		qualityID = 1,
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2760,7 +2796,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222392] = {
 		qualityID = 1,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2769,7 +2805,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222393] = {
 		qualityID = 1,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2778,7 +2814,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222394] = {
 		qualityID = 1,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2787,7 +2823,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222395] = {
 		qualityID = 1,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2796,7 +2832,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222396] = {
 		qualityID = 1,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2805,7 +2841,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222397] = {
 		qualityID = 1,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2814,7 +2850,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222398] = {
 		qualityID = 1,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2823,7 +2859,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222399] = {
 		qualityID = 1,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2832,7 +2868,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222400] = {
 		qualityID = 1,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2841,7 +2877,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222401] = {
 		qualityID = 1,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2850,7 +2886,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222402] = {
 		qualityID = 1,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2859,7 +2895,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[222403] = {
 		qualityID = 1,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2868,7 +2904,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221627] = {
 		qualityID = 2,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2877,7 +2913,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221630] = {
 		qualityID = 2,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2886,7 +2922,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221633] = {
 		qualityID = 2,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2895,7 +2931,43 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221636] = {
 		qualityID = 2,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221727] = {
+		qualityID = 2,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221730] = {
+		qualityID = 2,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221733] = {
+		qualityID = 2,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221736] = {
+		qualityID = 2,
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2904,7 +2976,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221628] = {
 		qualityID = 3,
-		name = "Preserving Pocket Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2913,7 +2985,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221631] = {
 		qualityID = 3,
-		name = "Bright Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2922,7 +2994,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221634] = {
 		qualityID = 3,
-		name = "Weaverthread Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
@@ -2931,7 +3003,43 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	},
 	[221637] = {
 		qualityID = 3,
-		name = "Gritty Polishing Cloth",
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221728] = {
+		qualityID = 3,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221731] = {
+		qualityID = 3,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221734] = {
+		qualityID = 3,
+		name = "zzOld Do Not Use (DNT)",
+		expansionID = 10,
+		stats = {
+			ingenuityrefundincrease = 12,
+			ingenuity = 50,
+		},
+	},
+	[221737] = {
+		qualityID = 3,
+		name = "zzOld Do Not Use (DNT)",
 		expansionID = 10,
 		stats = {
 			ingenuityrefundincrease = 12,
