@@ -589,13 +589,14 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
             local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
             local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
             if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                local allocatedQuantity = quantityMap[itemID] or 1
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = qualityID,
-                    quantity = quantityMap[itemID] or 1
+                    quantity = allocatedQuantity
                 }
                 reagentMap[itemID].quantity = reagentMap[itemID]
-                    .quantity * craftQueueItem.amount
+                    .quantity + allocatedQuantity * craftQueueItem.amount
             end
         end
     end
