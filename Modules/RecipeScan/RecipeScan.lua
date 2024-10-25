@@ -350,7 +350,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         if optimizationScanMode then
                             recipeData:OptimizeReagents {
                                 highestProfit = optimizeTopProfit,
-                                maxQuality = math.max(recipeData.maxQuality, 1),
+                                maxQuality = math.max(recipeData.maxQuality or 1, 1)
                             }
                         else
                             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
