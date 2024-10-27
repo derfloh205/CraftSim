@@ -19,6 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("19.2.0"),
         f.p .. "Restock Favorites Feature added",
+        f.a .. f.bb("Experimental") .. " - More Options will come soon", 
         newP("19.1.0"),
         f.p .. "11.0.5 Updates",
         newP("19.0.1"),
