@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.2.0"),
+        f.p .. "Restock Favorites Feature added",
         newP("19.1.0"),
         f.p .. "11.0.5 Updates",
         newP("19.0.1"),

@@ -145,7 +145,6 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
             function(row, userInput)
                 print("in selection callback!")
                 CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(row, userInput)
-                CraftSim.CRAFTQ.UI:UpdateRecipeScanRestockButton(row.currentResults)
             end
     },
         columnOptions = {

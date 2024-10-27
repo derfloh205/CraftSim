@@ -115,7 +115,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .recipeScanScanMode
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_FILTERED_EXPANSIONS] = CraftSimOptions
                 .recipeScanFilteredExpansions
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_IMPORT_ALL_PROFESSIONS] = CraftSimOptions
+            CraftSimDB.optionsDB.data["RECIPESCAN_IMPORT_ALL_PROFESSIONS"] = CraftSimOptions
                 .recipeScanImportAllProfessions
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_SUBRECIPES] = CraftSimOptions
                 .recipeScanOptimizeSubRecipes
@@ -160,15 +160,15 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .craftResultsDisable
 
             -- CRAFT QUEUE
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD"] =
                 CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT"] =
                 CraftSimOptions.craftQueueGeneralRestockRestockAmount
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"] =
                 CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold
             CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"] =
                 CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS"] =
                 CraftSimOptions.craftQueueRestockPerRecipeOptions
             CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"] =
                 CraftSimOptions.craftQueueShoppingListTargetMode
@@ -264,6 +264,17 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data["TSM_PRICE_KEY_REAGENTS"] = CraftSimDB.optionsDB.data["TSM_PRICE_KEY_MATERIALS"]
         CraftSimDB.optionsDB.data["MODULE_REAGENT_OPTIMIZATION"] = CraftSimDB.optionsDB.data["MODULE_MATERIALS"]
         CraftSimDB.optionsDB.version = 9
+    end
+
+    -- option removal
+    if CraftSimDB.optionsDB.version == 9 then
+        CraftSimDB.optionsDB.data["RECIPESCAN_IMPORT_ALL_PROFESSIONS"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS"] = nil
+        CraftSimDB.optionsDB.version = 10
     end
 end
 

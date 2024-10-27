@@ -309,174 +309,131 @@ function CraftSim.CRAFTQ:ClearAll()
     CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
----@param recipeData CraftSim.RecipeData
-function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instead of : is on purpose here
-    local f = GUTIL:GetFormatter()
-    print("Filtering: " .. tostring(recipeData.recipeName), false, true)
-    if not recipeData.learned then
-        print(f.r("Not learned"))
-        return false
-    end
-
-    local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-
-    recipeData.concentrating = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
-    recipeData:Update() -- update recipe before importing
-
-
-    if not restockOptions.enabled then
-        print("restockOptions.disabled")
-        -- use general options
-        local profitThresholdReached = false
-        if recipeData.relativeProfitCached then
-            profitThresholdReached = recipeData.relativeProfitCached >=
-                (CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD") or 0)
-        end
-        local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil,
-            CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"))
-        print("profitThresholdReached: " .. tostring(profitThresholdReached))
-        print("saleRateReached: " .. tostring(saleRateReached))
-        print("relativeProfitCached: " .. tostring(recipeData.relativeProfitCached))
-        local include = profitThresholdReached and saleRateReached
-        if include then
-            print(f.g("include"))
-        else
-            print(f.r("not include"))
-        end
-        return include
-    end
-    print("restockOptions.enabled")
-    local profitMarginReached = false
-
-    -- else use recipe specific restock options to filter
-    if recipeData.relativeProfitCached then
-        profitMarginReached = recipeData.relativeProfitCached >= (restockOptions.profitMarginThreshold)
-    end
-
-    local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions
-        .saleRatePerQuality, restockOptions.saleRateThreshold)
-
-    print("profitMarginReached: " .. tostring(profitMarginReached))
-    print("saleRateReached: " .. tostring(saleRateReached))
-    print("relativeProfitCached: " .. tostring(recipeData.relativeProfitCached))
-
-    local include = profitMarginReached and saleRateReached
-    if include then
-        print(f.g("include"))
-    else
-        print(f.r("not include"))
-    end
-    return include
-end
-
-function CraftSim.CRAFTQ:ImportRecipeScan()
+function CraftSim.CRAFTQ:RestockFavorites()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
-    local recipeScanTabContent = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
-        .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
-    local professionList = recipeScanTabContent.professionList
-    local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
-    if not selectedRow then return end -- nil check .. who knows..
-    if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_IMPORT_ALL_PROFESSIONS") then
-        ---@type CraftSim.RecipeData[]
-        local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
-        for _, recipeData in pairs(filteredRecipes) do
-            local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-            local restockAmount = CraftSim.CRAFTQ:GetRestockQuantity(recipeData.resultData.expectedItem)
 
-            if restockOptions.enabled then
-                restockAmount = restockOptions.restockAmount
-
-                for qualityID, use in pairs(restockOptions.restockPerQuality) do
-                    if use then
-                        local item = recipeData.resultData.itemsByQuality[qualityID]
-                        if item then
-                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(),
-                                item:GetItemID())
-                            restockAmount = restockAmount - itemCount
-                        end
-                    end
-                end
-            end
-
-            if restockAmount > 0 then
-                if recipeData.cooldownData.isCooldownRecipe then
-                    local charges = recipeData.cooldownData:GetCurrentCharges()
-                    if charges > 0 then
-                        CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                            recipeData = recipeData,
-                            amount = math.min(restockAmount,
-                                charges)
-                        })
-                    end
-                else
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = restockAmount })
-                end
-            end
-        end
-
-        CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-    else
-        local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
-        local importButton = queueTab.content.importRecipeScanButton
-        local numImportProfessions = GUTIL:Count(professionList.activeRows,
-            function(row) return row.columns[1].checkbox:GetChecked() end)
-        GUTIL:FrameDistributedIteration(professionList.activeRows,
-            ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
-            function(_, row, counter)
-                --- update button
-                local checkBoxColumn = row.columns[1] --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.CHECKBOX_COLUMN]]
-                if not checkBoxColumn.checkbox:GetChecked() then
-                    return
-                end
-
-                importButton:SetText("Importing: " .. tostring(counter) .. "/" .. tostring(numImportProfessions), 15,
-                    true)
-                importButton:SetEnabled(false)
-
-                ---@type CraftSim.RecipeData[]
-                local filteredRecipes = GUTIL:Filter(row.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
-                for _, recipeData in pairs(filteredRecipes) do
-                    local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-                    local restockAmount = CraftSim.CRAFTQ:GetRestockQuantity(recipeData.resultData.expectedItem)
-
-                    if restockOptions.enabled then
-                        restockAmount = restockOptions.restockAmount
-
-                        for qualityID, use in pairs(restockOptions.restockPerQuality) do
-                            if use then
-                                local item = recipeData.resultData.itemsByQuality[qualityID]
-                                if item then
-                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(
-                                        recipeData:GetCrafterUID(), item:GetItemID())
-                                    restockAmount = restockAmount - itemCount
-                                end
-                            end
-                        end
-                    end
-
-                    if restockAmount > 0 then
-                        if recipeData.cooldownData.isCooldownRecipe then
-                            local charges = recipeData.cooldownData:GetCurrentCharges()
-                            if charges > 0 then
-                                CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                                    recipeData = recipeData,
-                                    amount = math.min(
-                                        restockAmount, charges)
-                                })
-                            end
-                        else
-                            CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = restockAmount })
-                        end
-                    end
-                end
-
-                CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-            end, function()
-                -- finally update all subrecipes and update display one last time
-                CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-                importButton:SetStatus("Ready")
-            end)
+    local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    local favoriteRecipeIDs = GUTIL:Filter(C_TradeSkillUI.GetAllRecipeIDs(), function(recipeID)
+        ---@diagnostic disable-next-line: return-type-mismatch
+        return C_TradeSkillUI.IsRecipeFavorite(recipeID)
+    end)
+    if favoriteRecipeIDs and #favoriteRecipeIDs > 0 then
+        CraftSim.DB.CRAFTER:SaveFavoriteRecipes(CraftSim.UTIL:GetPlayerCrafterUID(), profession, favoriteRecipeIDs)
     end
+
+    -- optimize and queue
+
+    local restockButton = CraftSim.CRAFTQ.frame.content.queueTab.content.restockFavoritesButton --[[@as GGUI.Button]]
+
+    restockButton:SetEnabled(false)
+
+    local optimizedRecipes = {}
+
+    local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
+    local currentConcentration = concentrationData:GetCurrentAmount()
+
+    GUTIL.FrameDistributor {
+        iterationTable = favoriteRecipeIDs,
+        iterationsPerFrame = 1,
+        maxIterations = 1000,
+        finally = function()
+            restockButton:SetStatus("Ready")
+
+            if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
+                ---@type CraftSim.RecipeData[]
+                optimizedRecipes = GUTIL:Filter(optimizedRecipes,
+                    ---@param recipeData CraftSim.RecipeData
+                    function(recipeData)
+                        return recipeData.concentrationCost <= currentConcentration
+                    end)
+
+                -- sort by most profitable per concentration point
+                table.sort(optimizedRecipes,
+                    ---@param recipeDataA CraftSim.RecipeData
+                    ---@param recipeDataB CraftSim.RecipeData
+                    function(recipeDataA, recipeDataB)
+                        return recipeDataA:GetConcentrationValue() > recipeDataB:GetConcentrationValue()
+                    end)
+
+                for _, recipeData in ipairs(optimizedRecipes) do
+                    if recipeData.concentrationCost > 0 then
+                        local concentrationCosts = recipeData.concentrationCost
+                        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT") then
+                            concentrationCosts = concentrationCosts -
+                            (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
+                        end
+                        local queueableAmount = math.floor(currentConcentration / recipeData.concentrationCost)
+                        if queueableAmount > 0 then
+                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount }
+                            currentConcentration = currentConcentration -
+                                (recipeData.concentrationCost * queueableAmount)
+                        end
+                    end
+                end
+
+                CraftSim.CRAFTQ.UI:UpdateDisplay()
+            end
+        end,
+        continue = function(frameDistributor, _, recipeID, _, progress)
+            restockButton:SetText(string.format("%.0f%%", progress))
+
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+            if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+                frameDistributor:Continue()
+                return
+            end
+
+            local recipeData = CraftSim.RecipeData { recipeID = recipeID }
+
+            if not recipeData then
+                frameDistributor:Continue()
+                return
+            end
+
+            recipeData:SetEquippedProfessionGearSet()
+            recipeData:SetCheapestQualityReagentsMax()
+            recipeData:Update()
+
+            if recipeData.supportsQualities then
+                recipeData.concentrating = true
+                recipeData:Update()
+            end
+
+            local iconSize = 15
+
+            recipeData:Optimize {
+                optimizeReagentOptions = {
+                    highestProfit = true,
+                },
+                optimizeConcentration = true,
+                optimizeConcentrationProgressCallback = function(conProgress)
+                    restockButton:SetText(string.format("%.0f%% - %s %s - %.0f%%",
+                        progress,
+                        GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize),
+                        GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize),
+                        conProgress))
+                end,
+                optimizeFinishingReagents = true,
+                optimizeFinishingReagentsProgressCallback = function(frProgress)
+                    restockButton:SetText(string.format("%.0f%% - %s %s - %.0f%%",
+                        progress,
+                        GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize),
+                        CreateAtlasMarkup("Banker", iconSize, iconSize),
+                        frProgress))
+                end,
+                finally = function()
+                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
+                        tinsert(optimizedRecipes, recipeData)
+                    else
+                        CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = 1 }
+                        CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    end
+                    frameDistributor:Continue()
+                end
+            }
+        end
+    }:Continue()
 end
 
 ---@param recipeData CraftSim.RecipeData

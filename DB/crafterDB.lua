@@ -26,6 +26,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field class ClassFile
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
 ---@field concentrationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.ConcentrationData.Serialized>>
+---@field favoriteRecipes table<Enum.Profession, RecipeID[]>
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -423,6 +424,26 @@ function CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID, ex
 
     return CraftSimDB.crafterDB.data[crafterUID]
         .concentrationData[expansionID]
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return RecipeID[]
+function CraftSim.DB.CRAFTER:GetFavoriteRecipes(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes = CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes or {}
+    CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession] = CraftSimDB.crafterDB.data[crafterUID]
+        .favoriteRecipes[profession] or {}
+    return CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession]
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param recipeIDs RecipeID[]
+function CraftSim.DB.CRAFTER:SaveFavoriteRecipes(crafterUID, profession, recipeIDs)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes = CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes or {}
+    CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession] = recipeIDs
 end
 
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>

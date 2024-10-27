@@ -617,7 +617,7 @@ function CraftSim.LOCAL_DE:GetData()
             "Wenn die Mindestqualität nicht erreicht werden kann, verwende " .. f.l("Konzentration") .. " falls möglich",
 
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Alles löschen",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Aus Rezept-Scan auffüllen",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "Aus Rezept-Scan auffüllen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Falscher Beruf",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "Abklingzeit aktiv",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Falscher Handwerker",

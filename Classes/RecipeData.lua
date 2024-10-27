@@ -1170,45 +1170,71 @@ end
 ---@class CraftSim.RecipeData.Optimize.Options
 ---@field optimizeGear? boolean
 ---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
+---@field optimizeReagentProgressCallback? fun(progress: number)
 ---@field optimizeConcentration? boolean
+---@field optimizeConcentrationProgressCallback? fun(progress: number)
+---@field optimizeFinishingReagents? boolean
+---@field optimizeFinishingReagentsProgressCallback? fun(progress: number)
 ---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
 ---@field finally function callback when optimization is finished
 
---- TODO Work in Progress: General Async Optimize Method using a main frame FrameDistributor and a list of optimizations to go through 1 by 1
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)
     options = options or {}
 
-    if options.optimizeGear then
-        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-    end
+    local optimizationTaskList = {
+        options.optimizeGear and "GEAR",
+        options.optimizeReagentOptions and "REAGENTS",
+        self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
+        options.optimizeFinishingReagents and "FINISHING_REAGENTS",
+        options.optimizeSubRecipesOptions and "SUB_RECIPES",
+    }
 
-    GUTIL:NextFrameIF(options.optimizeGear, function()
-        if options.optimizeReagentOptions then
-            self:OptimizeReagents(options.optimizeReagentOptions)
-        end
-
-        GUTIL:NextFrameIF(options.optimizeReagentOptions ~= nil, function()
-            if options.optimizeConcentration then
-                self:OptimizeConcentration({
+    GUTIL.FrameDistributor {
+        iterationTable = optimizationTaskList,
+        finally = function()
+            options.finally()
+        end,
+        continue = function(frameDistributorTasks, _, optimizationTask, _, _)
+            if optimizationTask == "GEAR" then
+                self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+                frameDistributorTasks:Continue()
+            elseif optimizationTask == "REAGENTS" then
+                self:OptimizeReagents(options.optimizeReagentOptions)
+                frameDistributorTasks:Continue()
+            elseif optimizationTask == "CONCENTRATION" then
+                self:OptimizeConcentration {
                     finally = function()
-                        if options.optimizeSubRecipesOptions then
-                            self:SetSubRecipeCostsUsage(true)
-                            self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                        frameDistributorTasks:Continue()
+                    end,
+                    progressUpdateCallback = function(progress)
+                        if options.optimizeConcentrationProgressCallback then
+                            options.optimizeConcentrationProgressCallback(progress)
                         end
-                        options.finally()
                     end
-                })
+                }
+            elseif optimizationTask == "FINISHING_REAGENTS" then
+                self:OptimizeFinishingReagents {
+                    finally = function()
+                        frameDistributorTasks:Continue()
+                    end,
+                    progressUpdateCallback = function(progress)
+                        if options.optimizeFinishingReagentsProgressCallback then
+                            options.optimizeFinishingReagentsProgressCallback(progress)
+                        end
+                    end
+                }
+            elseif optimizationTask == "SUB_RECIPES" then
+                self:SetSubRecipeCostsUsage(true)
+                -- TODO
+                --self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                frameDistributorTasks:Continue()
             else
-                if options.optimizeSubRecipesOptions then
-                    self:SetSubRecipeCostsUsage(true)
-                    self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
-                end
-                options.finally()
+                frameDistributorTasks:Continue()
             end
-        end)
-    end)
+        end
+    }:Continue()
 end
 
 ---@param idLinkOrMixin number | string | ItemMixin

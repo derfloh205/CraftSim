@@ -95,8 +95,6 @@ function CraftSim.RECIPE_SCAN:EndScan(row)
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, true)
     CraftSim.RECIPE_SCAN.isScanning = false
 
-    CraftSim.CRAFTQ.UI:UpdateRecipeScanRestockButton(row.currentResults)
-
     local resultList = row.content.resultList
     resultList:UpdateDisplay(self:GetSortFunction())
 
