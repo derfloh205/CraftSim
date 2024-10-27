@@ -471,7 +471,41 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local smartQueueCB = rootDescription:CreateCheckbox(
+                        f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING",
+                                not value)
+                        end)
+                    smartQueueCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, " ..
+                            f.l("CraftSim") ..
+                            " first determines the " ..
+                            f.g("best valued concentration") ..
+                            " recipe. Then queues it for the maximum craftable amount.");
+                    end);
 
+                    local offsetConcentrationCraftsCB = rootDescription:CreateCheckbox(
+                        "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT",
+                                not value)
+                        end)
+                    offsetConcentrationCraftsCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
+                            f.bb("Ingenuity"));
+                    end);
                 end)
             end
         }
