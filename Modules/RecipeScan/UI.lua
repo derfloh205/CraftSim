@@ -182,6 +182,15 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     end,
     }
 
+    content.sendToCraftQueueButton = GGUI.Button {
+        parent = content,
+        anchorPoints = { { anchorParent = content.professionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT" } },
+        label = "Send to Craft Queue",
+        clickCallback = function()
+            CraftSim.RECIPE_SCAN:SendToCraftQueue()
+        end
+    }
+
     content.cancelScanProfessionsButton = GGUI.Button {
         parent = content, anchorParent = content.scanProfessionsButton.frame, anchorA = "LEFT", anchorB = "RIGHT",
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL), offsetX = 5, adjustWidth = true, sizeX = 15,

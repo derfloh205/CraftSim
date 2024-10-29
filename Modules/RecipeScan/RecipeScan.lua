@@ -520,3 +520,17 @@ function CraftSim.RECIPE_SCAN:EndProfessionScan()
         .professionList --[[@as GGUI.FrameList]]
     professionList:SetSelectionEnabled(true)
 end
+
+function CraftSim.RECIPE_SCAN:SendToCraftQueue()
+    local professionList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
+        .professionList --[[@as GGUI.FrameList]]
+    local activeRows = professionList.activeRows --[[@as table<number, CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW>]]
+
+    if #activeRows <= 0 then return end
+
+    local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
+
+    if not selectedRow then
+        return
+    end
+end
