@@ -360,13 +360,13 @@ function CraftSim.CRAFTQ:RestockFavorites()
                         local concentrationCosts = recipeData.concentrationCost
                         if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT") then
                             concentrationCosts = concentrationCosts -
-                            (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
+                                (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
                         end
-                        local queueableAmount = math.floor(currentConcentration / recipeData.concentrationCost)
+                        local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                         if queueableAmount > 0 then
                             CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount }
                             currentConcentration = currentConcentration -
-                                (recipeData.concentrationCost * queueableAmount)
+                                (concentrationCosts * queueableAmount)
                         end
                     end
                 end
