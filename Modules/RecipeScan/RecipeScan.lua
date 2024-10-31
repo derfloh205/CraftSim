@@ -520,3 +520,65 @@ function CraftSim.RECIPE_SCAN:EndProfessionScan()
         .professionList --[[@as GGUI.FrameList]]
     professionList:SetSelectionEnabled(true)
 end
+
+function CraftSim.RECIPE_SCAN:SendToCraftQueue()
+    local professionList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
+        .professionList --[[@as GGUI.FrameList]]
+    local activeRows = professionList.activeRows --[[@as table<number, CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW>]]
+
+    if #activeRows <= 0 then return end
+
+    local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
+
+    if not selectedRow then
+        return
+    end
+
+    local results = selectedRow.currentResults
+
+    if #results == 0 then
+        return
+    end
+
+    local filteredResults = GUTIL:Filter(results, function(recipeData)
+        local marginThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD")
+        local relativeProfit = recipeData.relativeProfitCached
+        return relativeProfit >= marginThreshold;
+    end)
+
+    local sendToCraftQueueButton = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
+        .sendToCraftQueueButton --[[@as GGUI.Button]]
+
+    sendToCraftQueueButton:SetEnabled(false)
+
+    local concentrationEnabled = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+
+    GUTIL.FrameDistributor {
+        iterationTable = filteredResults,
+        iterationsPerFrame = 5,
+        finally = function()
+            sendToCraftQueueButton:SetStatus("Ready")
+        end,
+        continue = function(frameDistributor, _, recipeData, _, progress)
+            recipeData = recipeData --[[@as CraftSim.RecipeData]]
+            sendToCraftQueueButton:SetText(string.format("%.0f%%", progress))
+
+            if concentrationEnabled and recipeData.supportsQualities then
+                recipeData.concentrating = true
+                recipeData:Update()
+            end
+
+            local restockAmount = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT") or 1
+
+            if TSM_API and CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION") then
+                local tsmItemString = TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink())
+                restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"),
+                    tsmItemString) or 1
+            end
+
+            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
+
+            frameDistributor:Continue()
+        end
+    }:Continue()
+end

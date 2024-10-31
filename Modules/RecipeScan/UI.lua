@@ -123,10 +123,6 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
         content.cachedRecipesInfo:SetText("")
         content.cachedRecipesInfoHelpIcon:Hide()
     end
-
-    -- update concentrationToggleCB
-
-    content.concentrationToggleCB:SetChecked(CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"))
 end
 
 ---@param recipeScanTab CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB
@@ -180,6 +176,52 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY), clickCallback = function()
         CraftSim.RECIPE_SCAN:ScanProfessions()
     end,
+    }
+
+    content.sendToCraftQueueButton = GGUI.Button {
+        parent = content,
+        sizeX = 170,
+        anchorPoints = { { anchorParent = content.professionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = 32, offsetY = -45, } },
+        label = "Send to Craft Queue",
+        initialStatusID = "Ready",
+        clickCallback = function()
+            CraftSim.RECIPE_SCAN:SendToCraftQueue()
+        end
+    }
+
+    content.sendToCraftQueueButton:SetStatusList {
+        {
+            statusID = "Ready",
+            label = "Send to Craft Queue",
+            enabled = true,
+        }
+    }
+
+    GGUI.Button {
+        parent = content, anchorPoints = { { anchorParent = content.sendToCraftQueueButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS, sizeX = 20, sizeY = 20,
+        cleanTemplate = true,
+        clickCallback = function(_, _)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                if TSM_API then
+                    local tsmExpressionCB = rootDescription:CreateCheckbox(
+                        "Use " .. f.bb("TSM") .. " Restock Amount Expression",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION",
+                                not value)
+                        end)
+                    tsmExpressionCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, restock amount will be determined by configured " ..
+                            f.bb("TSM Expression") .. " (Options)");
+                    end);
+                end
+            end)
+        end
     }
 
     content.cancelScanProfessionsButton = GGUI.Button {
@@ -330,12 +372,168 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         end
     })
 
+    local expansionItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
+        function(expansionID)
+            ---@type GGUI.CheckboxSelector.CheckboxItem
+            local item = {
+                name = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expansionID]),
+                savedVariableProperty = expansionID,
+            }
+            return item
+        end), function(a, b)
+        return a.savedVariableProperty > b.savedVariableProperty
+    end)
+
+    content.scanOptionsButton = GGUI.Button {
+        parent = content,
+        anchorPoints = { { anchorParent = content.scanButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        cleanTemplate = true,
+        buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+        sizeX = 20, sizeY = 20,
+        clickCallback = function(_, _)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                local concentrationCB = rootDescription:CreateCheckbox(
+                    f.bb("Enable ") .. f.gold("Concentration"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_ENABLE_CONCENTRATION")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION",
+                            not value)
+                    end)
+
+                local favoritesCB = rootDescription:CreateCheckbox(
+                    f.r("Only ") .. f.bb("Favorites"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_ONLY_FAVORITES")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_ONLY_FAVORITES",
+                            not value)
+                    end)
+
+                rootDescription:CreateDivider()
+
+                local soulboundCB = rootDescription:CreateCheckbox(
+                    "Include " .. f.e("Soulbound") .. " Items",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_INCLUDE_SOULBOUND")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_SOULBOUND",
+                            not value)
+                    end)
+
+                local unlearnedCB = rootDescription:CreateCheckbox(
+                    "Include " .. f.r("Unlearned") .. " recipes",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_INCLUDE_NOT_LEARNED")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_NOT_LEARNED",
+                            not value)
+                    end)
+
+                local gearCB = rootDescription:CreateCheckbox(
+                    "Include " .. "Gear",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_INCLUDE_GEAR")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_GEAR",
+                            not value)
+                    end)
+
+                rootDescription:CreateDivider()
+
+                local optimizeTopProfit = rootDescription:CreateCheckbox(
+                    "Autoselect " .. f.g("Top Profit Quality"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT",
+                            not value)
+                    end)
+
+                local optimizeGear = rootDescription:CreateCheckbox(
+                    "Optimize " .. f.bb("Profession Gear"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS",
+                            not value)
+                    end)
+
+                local optimizeConcentration = rootDescription:CreateCheckbox(
+                    "Optimize " .. f.gold("Concentration"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE",
+                            not value)
+                    end)
+
+                local optimizeFinishingReagents = rootDescription:CreateCheckbox(
+                    "Optimize " .. f.bb("Finishing Reagents"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS",
+                            not value)
+                    end)
+
+                local optimizeSubRecipes = rootDescription:CreateCheckbox(
+                    "Optimize " .. f.bb("Sub Recipes ") .. f.r("(Experimental - WIP)"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_OPTIMIZE_SUBRECIPES")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_SUBRECIPES",
+                            not value)
+                    end)
+
+                rootDescription:CreateDivider()
+
+                local includeExpansions = rootDescription:CreateButton("Include Expansion")
+                local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
+
+                for _, expansionItem in ipairs(expansionItems) do
+                    includeExpansions:CreateCheckbox(
+                        expansionItem.name,
+                        function()
+                            return includedExpansions[expansionItem.savedVariableProperty]
+                        end,
+                        function()
+                            includedExpansions[expansionItem.savedVariableProperty] = not includedExpansions
+                                [expansionItem.savedVariableProperty]
+                        end
+                    )
+                end
+            end)
+        end
+    }
+
     content.cancelScanButton = GGUI.Button({
         parent = content,
         anchorParent = content.scanButton.frame,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL),
         anchorA = "LEFT",
         anchorB = "RIGHT",
+        offsetX = 30,
         sizeX = 15,
         sizeY = 25,
         adjustWidth = true,
@@ -344,25 +542,15 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         end
     })
 
-    content.concentrationToggleCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.cancelScanButton.frame, anchorA = "LEFT", anchorB = "RIGHT",
-        labelOptions = { text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE) },
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION", checked)
-        end
-    }
-
     content.resultAmount = GGUI.Text {
         parent = content, anchorParent = content.scanButton.frame, anchorA = "RIGHT", anchorB = "LEFT",
-        offsetX = -15, justifyOptions = { type = "H", align = "RIGHT" }, text = "",
+        offsetX = -10, justifyOptions = { type = "H", align = "RIGHT" }, text = "",
         fixedWidth = 50,
     }
 
     content.optimizationProgressStatusText = GGUI.Text {
         parent = content,
-        anchorPoints = { { anchorParent = content.resultAmount.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -5, offsetY = -1 } },
+        anchorPoints = { { anchorParent = content.resultAmount.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = 5, offsetY = -1 } },
         justifyOptions = { type = "H", align = "RIGHT" },
         text = "",
     }
@@ -656,6 +844,48 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
     ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB.CONTENT : Frame
     local content = scanOptionsTab.content
 
+    content.sendToCraftQueueOptions = GGUI.Frame {
+        sizeX = 300, sizeY = 360,
+        parent = content,
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -20 } },
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        title = f.bb("Send To CraftQueue") .. " Options"
+    }
+
+    local queueOptionsContent = content.sendToCraftQueueOptions.content
+
+    queueOptionsContent.marginThreshold = GGUI.NumericInput {
+        allowDecimals = true,
+        parent = queueOptionsContent, anchorParent = queueOptionsContent, anchorA = "TOP", anchorB = "TOP", offsetX = 73, offsetY = -50,
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
+        borderAdjustHeight = 1.05,
+        borderAdjustWidth = 1.4,
+        sizeX = 30,
+        labelOptions = {
+            text = "Profit Threshold (%): "
+        },
+        onNumberValidCallback = function(input)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD",
+                tonumber(input.currentValue))
+        end
+    }
+
+    queueOptionsContent.defaultQueueAmount = GGUI.NumericInput {
+        allowDecimals = true,
+        parent = queueOptionsContent, anchorParent = queueOptionsContent.marginThreshold.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
+        borderAdjustHeight = 1.05,
+        borderAdjustWidth = 1.4,
+        sizeX = 30,
+        labelOptions = {
+            text = "Default Queue Amount: "
+        },
+        onNumberValidCallback = function(input)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
+                tonumber(input.currentValue))
+        end
+    }
+
     local initialScanModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE")
     local initialScanModeLabel = L(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
 
@@ -709,120 +939,6 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
             CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", value)
         end
     })
-
-    local checkBoxSpacingY = 0
-
-    content.includeSoulboundCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.sortMode.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY, offsetX = -80,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_SOULBOUND", checked)
-        end
-    }
-
-    content.includeNotLearnedCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.includeSoulboundCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_NOT_LEARNED", checked)
-        end
-    }
-
-    content.includeGearCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.includeNotLearnedCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_GEAR", checked)
-        end
-    }
-
-    content.onlyFavorites = GGUI.Checkbox {
-        parent = content, anchorParent = content.includeGearCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_ONLY_FAVORITES", checked)
-        end
-    }
-
-    content.optimizeProfessionToolsCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.onlyFavorites.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY - 10,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP) ..
-            GUTIL:ColorizeText(L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING), GUTIL.COLORS.RED),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS", checked)
-        end
-    }
-
-    content.optimizeSubRecipes = GGUI.Checkbox {
-        parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_SUBRECIPES", checked)
-        end
-    }
-
-    content.optimizeReagentsTopProfit = GGUI.Checkbox {
-        parent = content, anchorParent = content.optimizeSubRecipes.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize Reagents - " .. f.g("Top Profit Max Quality"),
-        tooltip = "If enabled, all recipes will be optimized for their most profitable result quality instead of max quality reachable",
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT", checked)
-        end
-    }
-
-    content.optimizeConcentrationValue = GGUI.Checkbox {
-        parent = content, anchorParent = content.optimizeReagentsTopProfit.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize " .. f.gold("Concentration Value"),
-        tooltip = "If enabled, all recipes will be optimized for their best concentration gold value per point",
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE", checked)
-        end
-    }
-
-    content.optimizeFinishingReagents = GGUI.Checkbox {
-        parent = content, anchorParent = content.optimizeConcentrationValue.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize " .. f.bb("Finishing Reagents"),
-        tooltip = "If enabled, all recipes will be optimized for their most profitable " .. f.bb("Finishing Reagents"),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS", checked)
-        end
-    }
-
-    content.expansionSelector = GGUI.CheckboxSelector {
-        savedVariablesTable = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS"),
-        initialItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
-            function(expansionID)
-                ---@type GGUI.CheckboxSelector.CheckboxItem
-                local item = {
-                    name = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expansionID]),
-                    savedVariableProperty = expansionID,
-                    selectionID = expansionID,
-                }
-                return item
-            end), function(a, b)
-            return a.selectionID > b.selectionID
-        end),
-        parent = content,
-        anchorPoints = { { anchorParent = content.optimizeFinishingReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 25 } },
-        sizeX = 30,
-        sizeY = 25,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON),
-    }
 end
 
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
