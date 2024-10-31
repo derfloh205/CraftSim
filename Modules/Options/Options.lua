@@ -418,7 +418,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
         clickCallback = function()
-            tsmRestockExpression:SetText("")
+            tsmRestockExpression:SetText("1")
         end
     })
 
@@ -431,15 +431,4 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     validationInfoItems:SetPoint("LEFT", tsmRestockExpression, "RIGHT", 5, 0)
     validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-
-    GGUI.Checkbox {
-        parent = TSMTab.content,
-        anchorParent = tsmRestockDefaultButton.frame,
-        anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15, offsetY = -1,
-        tooltip = "Enable TSM Restock Expression",
-        initialValue = CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS_ENABLED"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("TSM_RESTOCK_KEY_ITEMS_ENABLED", checked)
-        end
-    }
 end
