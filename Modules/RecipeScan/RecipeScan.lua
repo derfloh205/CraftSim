@@ -280,13 +280,6 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     local optimizationScanMode = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
         CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 
-    local optimizationTaskList = {
-        optimizeGear and "GEAR",
-        "REAGENTS",
-        concentrationEnabled and optimizeConcentration and "CONCENTRATION",
-        optimizeFinishingReagents and "FINISHING_REAGENTS",
-        optimizeSubRecipes and "SUB_RECIPES",
-    }
 
     CraftSim.RECIPE_SCAN.rowScanFrameDistributor = GUTIL.FrameDistributor {
         iterationTable = recipeInfos,
@@ -328,6 +321,11 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             end
 
             recipeData.professionGearSet:LoadCurrentEquippedSet()
+
+            if not optimizationScanMode then
+                CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
+            end
+
             recipeData:Update()
 
             if recipeData.supportsQualities and concentrationEnabled then
@@ -335,70 +333,99 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 recipeData:Update()
             end
 
-            GUTIL.FrameDistributor {
-                iterationTable = optimizationTaskList,
+            recipeData:Optimize {
                 finally = function()
                     finalizeRecipeAndContinue()
+                    content.optimizationProgressStatusText:SetText("")
                 end,
-                continue = function(frameDistributorTasks, _, optimizationTask, _, _)
-                    if optimizationTask == "GEAR" then
-                        recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-                        frameDistributorTasks:Continue()
-                    elseif optimizationTask == "REAGENTS" then
-                        if optimizationScanMode then
-                            recipeData:OptimizeReagents {
-                                highestProfit = optimizeTopProfit,
-                                maxQuality = math.max(recipeData.maxQuality or 1, 1)
-                            }
-                        else
-                            CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-                        end
-                        frameDistributorTasks:Continue()
-                    elseif optimizationTask == "CONCENTRATION" then
-                        if recipeData.supportsQualities then
-                            printS("Optimize Concentration Value")
-                            recipeData:OptimizeConcentration {
-                                finally = function()
-                                    frameDistributorTasks:Continue()
-                                    content.optimizationProgressStatusText:SetText("")
-                                end,
-                                progressUpdateCallback = function(progress)
-                                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-                                        " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-                                        GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
-                                end
-                            }
-                        else
-                            frameDistributorTasks:Continue()
-                        end
-                    elseif optimizationTask == "FINISHING_REAGENTS" then
-                        recipeData:OptimizeFinishingReagents {
-                            finally = function()
-                                frameDistributorTasks:Continue()
-                                content.optimizationProgressStatusText:SetText("")
-                            end,
-                            progressUpdateCallback = function(progress)
-                                content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-                                    " " ..
-                                    GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-                                    CreateAtlasMarkup("Banker", 20, 20))
-                            end
-                        }
-                    elseif optimizationTask == "SUB_RECIPES" then
-                        recipeData:SetSubRecipeCostsUsage(true)
-                        recipeData:OptimizeSubRecipes({
-                            optimizeGear = optimizeGear,
-                            optimizeReagentOptions = {
-                                highestProfit = false,
-                                maxQuality = recipeData.maxQuality,
-                            },
-                        })
-                        frameDistributorTasks:Continue()
-                    else
-                        frameDistributorTasks:Continue()
-                    end
-                end
-            }:Continue()
+                optimizeConcentration = concentrationEnabled and optimizeConcentration,
+                optimizeFinishingReagents = optimizeFinishingReagents,
+                optimizeGear = optimizeGear,
+                optimizeReagentOptions = optimizationScanMode and {
+                    highestProfit = optimizeTopProfit,
+                },
+                optimizeFinishingReagentsProgressCallback = function(progress)
+                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                        " " ..
+                        GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                        CreateAtlasMarkup("Banker", 20, 20))
+                end,
+                optimizeReagentProgressCallback = function(progress)
+                    -- TODO
+                end,
+                optimizeConcentrationProgressCallback = function(progress)
+                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                        " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                        GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
+                end,
+                optimizeSubRecipesOptions = true, -- TODO
+
+            }
+
+            -- GUTIL.FrameDistributor {
+            --     iterationTable = optimizationTaskList,
+            --     finally = function()
+            --         finalizeRecipeAndContinue()
+            --     end,
+            --     continue = function(frameDistributorTasks, _, optimizationTask, _, _)
+            --         if optimizationTask == "GEAR" then
+            --             recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+            --             frameDistributorTasks:Continue()
+            --         elseif optimizationTask == "REAGENTS" then
+            --             if optimizationScanMode then
+            --                 recipeData:OptimizeReagents {
+            --                     highestProfit = optimizeTopProfit,
+            --                     maxQuality = math.max(recipeData.maxQuality or 1, 1)
+            --                 }
+            --             else
+            --                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
+            --             end
+            --             frameDistributorTasks:Continue()
+            --         elseif optimizationTask == "CONCENTRATION" then
+            --             if recipeData.supportsQualities then
+            --                 printS("Optimize Concentration Value")
+            --                 recipeData:OptimizeConcentration {
+            --                     finally = function()
+            --                         frameDistributorTasks:Continue()
+            --                         content.optimizationProgressStatusText:SetText("")
+            --                     end,
+            --                     progressUpdateCallback = function(progress)
+            --                         content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+            --                             " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+            --                             GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
+            --                     end
+            --                 }
+            --             else
+            --                 frameDistributorTasks:Continue()
+            --             end
+            --         elseif optimizationTask == "FINISHING_REAGENTS" then
+            --             recipeData:OptimizeFinishingReagents {
+            --                 finally = function()
+            --                     frameDistributorTasks:Continue()
+            --                     content.optimizationProgressStatusText:SetText("")
+            --                 end,
+            --                 progressUpdateCallback = function(progress)
+            --                     content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+            --                         " " ..
+            --                         GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+            --                         CreateAtlasMarkup("Banker", 20, 20))
+            --                 end
+            --             }
+            --         elseif optimizationTask == "SUB_RECIPES" then
+            --             recipeData:SetSubRecipeCostsUsage(true)
+            --             recipeData:OptimizeSubRecipes({
+            --                 optimizeGear = optimizeGear,
+            --                 optimizeReagentOptions = {
+            --                     highestProfit = false,
+            --                     maxQuality = recipeData.maxQuality,
+            --                 },
+            --             })
+            --             frameDistributorTasks:Continue()
+            --         else
+            --             frameDistributorTasks:Continue()
+            --         end
+            --     end
+            -- }:Continue()
         end,
         cancel = function()
             return not CraftSim.RECIPE_SCAN.isScanning

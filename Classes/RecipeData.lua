@@ -1227,8 +1227,13 @@ function CraftSim.RecipeData:Optimize(options)
                 }
             elseif optimizationTask == "SUB_RECIPES" then
                 self:SetSubRecipeCostsUsage(true)
-                -- TODO
-                --self:OptimizeSubRecipes(options.optimizeSubRecipesOptions)
+                self:OptimizeSubRecipes({
+                    optimizeGear = false,
+                    optimizeReagentOptions = {
+                        highestProfit = false,
+                        maxQuality = self.maxQuality,
+                    },
+                })
                 frameDistributorTasks:Continue()
             else
                 frameDistributorTasks:Continue()
