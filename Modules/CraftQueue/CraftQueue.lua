@@ -757,7 +757,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
 end
 
 function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
-    GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+    MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
         local recipeData = CraftSim.INIT.currentRecipeData
         if not recipeData then return end
         if recipeData.supportsQualities then

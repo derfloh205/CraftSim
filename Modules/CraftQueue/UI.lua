@@ -470,7 +470,7 @@ function CraftSim.CRAFTQ.UI:Init()
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
-                GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local smartQueueCB = rootDescription:CreateCheckbox(
                         f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
                         function()
@@ -530,7 +530,7 @@ function CraftSim.CRAFTQ.UI:Init()
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
-                GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local acuityCB = rootDescription:CreateCheckbox(
                         L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL),
                         function()
@@ -585,7 +585,7 @@ function CraftSim.CRAFTQ.UI:Init()
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
-                GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
                     orderTypeSubMenu:CreateRadio("Patron Orders", function()
@@ -1266,7 +1266,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS, sizeX = 20, sizeY = 20,
         cleanTemplate = true,
         clickCallback = function(_, _)
-            GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 if recipeData.supportsQualities then
                     rootDescription:CreateCheckbox(

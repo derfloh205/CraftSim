@@ -202,7 +202,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS, sizeX = 20, sizeY = 20,
         cleanTemplate = true,
         clickCallback = function(_, _)
-            GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            local test = MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -288,6 +288,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_TSM_SALERATE_INPUT")
                 end
             end)
+            CraftSim.DEBUG:InspectTable(test or {})
         end
     }
 
@@ -458,7 +459,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
         sizeX = 20, sizeY = 20,
         clickCallback = function(_, _)
-            GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 local concentrationCB = rootDescription:CreateCheckbox(
                     f.bb("Enable ") .. f.gold("Concentration"),
                     function()

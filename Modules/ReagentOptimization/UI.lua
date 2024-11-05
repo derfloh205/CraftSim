@@ -291,7 +291,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             cleanTemplate = true,
             clickCallback = function(_, _)
-                GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local concentrationCB = rootDescription:CreateCheckbox(
                         "Optimize " .. f.gold("Concentration Value"),
                         function()
