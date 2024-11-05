@@ -202,7 +202,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS, sizeX = 20, sizeY = 20,
         cleanTemplate = true,
         clickCallback = function(_, _)
-            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -211,9 +211,9 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
-                        parent = frame, anchorParent = frame.label.frame,
+                        parent = frame, anchorParent = frame,
                         sizeX = 30, sizeY = 25, offsetX = 5,
-                        anchorA = "LEFT", anchorB = "RIGHT",
+                        anchorA = "RIGHT", anchorB = "RIGHT",
                         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
                         borderAdjustWidth = 1.32,
                         allowDecimals = true,
@@ -222,7 +222,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                                 tonumber(input.currentValue))
                         end,
                     }
-                end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_PROFIT_MARGIN_INPUT")
+                end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_PROFIT_MARGIN_INPUT")
 
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
@@ -232,9 +232,9 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
-                        parent = frame, anchorParent = frame.label.frame,
+                        parent = frame, anchorParent = frame,
                         sizeX = 30, sizeY = 25, offsetX = 5,
-                        anchorA = "LEFT", anchorB = "RIGHT",
+                        anchorA = "RIGHT", anchorB = "RIGHT",
                         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
                         borderAdjustWidth = 1.32,
                         minValue = 1,
@@ -243,10 +243,12 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                                 tonumber(input.currentValue))
                         end,
                     }
-                end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_DEFAULT_QUEUE_AMOUNT_INPUT")
+                end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_DEFAULT_QUEUE_AMOUNT_INPUT")
 
                 if TSM_API then
-                    local tsmExpressionCB = rootDescription:CreateCheckbox(
+                    local tsmOptions = rootDescription:CreateButton(f.bb("TSM"))
+
+                    local tsmExpressionCB = tsmOptions:CreateCheckbox(
                         "Use " .. f.bb("TSM") .. " Restock Amount Expression",
                         function()
                             return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
@@ -262,7 +264,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                             f.bb("TSM Expression") .. " (Options)");
                     end);
 
-                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmOptions, function(frame)
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
@@ -270,9 +272,9 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.NumericInput {
-                            parent = frame, anchorParent = frame.label.frame,
+                            parent = frame, anchorParent = frame,
                             sizeX = 30, sizeY = 25, offsetX = 5,
-                            anchorA = "LEFT", anchorB = "RIGHT",
+                            anchorA = "RIGHT", anchorB = "RIGHT",
                             initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"),
                             borderAdjustWidth = 1.32,
                             allowDecimals = true,
@@ -456,7 +458,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
         sizeX = 20, sizeY = 20,
         clickCallback = function(_, _)
-            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            GUTIL:CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 local concentrationCB = rootDescription:CreateCheckbox(
                     f.bb("Enable ") .. f.gold("Concentration"),
                     function()
