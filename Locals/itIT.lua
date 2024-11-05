@@ -286,9 +286,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Solo preferiti",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scansiona solo le tue ricette preferite",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipaggiato",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Qualità materiali 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Qualità materiali 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Qualità materiali 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Ottimizza",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Filtri espansione",
 

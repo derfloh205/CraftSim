@@ -25,13 +25,6 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q3 = "Q3",
     OPTIMIZE = "OPTIMIZE",
 }
----@type table<CraftSim.RecipeScanModes, CraftSim.LOCALIZATION_IDS>
-CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP = {
-    Q1 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1,
-    Q2 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2,
-    Q3 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3,
-    OPTIMIZE = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE,
-}
 
 ---@enum CraftSim.RecipeScanSortModes
 CraftSim.RECIPE_SCAN.SORT_MODES = {
@@ -358,74 +351,9 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
                         GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
                 end,
-                optimizeSubRecipesOptions = true, -- TODO
+                optimizeSubRecipesOptions = optimizeSubRecipes, -- TODO
 
             }
-
-            -- GUTIL.FrameDistributor {
-            --     iterationTable = optimizationTaskList,
-            --     finally = function()
-            --         finalizeRecipeAndContinue()
-            --     end,
-            --     continue = function(frameDistributorTasks, _, optimizationTask, _, _)
-            --         if optimizationTask == "GEAR" then
-            --             recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-            --             frameDistributorTasks:Continue()
-            --         elseif optimizationTask == "REAGENTS" then
-            --             if optimizationScanMode then
-            --                 recipeData:OptimizeReagents {
-            --                     highestProfit = optimizeTopProfit,
-            --                     maxQuality = math.max(recipeData.maxQuality or 1, 1)
-            --                 }
-            --             else
-            --                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-            --             end
-            --             frameDistributorTasks:Continue()
-            --         elseif optimizationTask == "CONCENTRATION" then
-            --             if recipeData.supportsQualities then
-            --                 printS("Optimize Concentration Value")
-            --                 recipeData:OptimizeConcentration {
-            --                     finally = function()
-            --                         frameDistributorTasks:Continue()
-            --                         content.optimizationProgressStatusText:SetText("")
-            --                     end,
-            --                     progressUpdateCallback = function(progress)
-            --                         content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-            --                             " " .. GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-            --                             GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20))
-            --                     end
-            --                 }
-            --             else
-            --                 frameDistributorTasks:Continue()
-            --             end
-            --         elseif optimizationTask == "FINISHING_REAGENTS" then
-            --             recipeData:OptimizeFinishingReagents {
-            --                 finally = function()
-            --                     frameDistributorTasks:Continue()
-            --                     content.optimizationProgressStatusText:SetText("")
-            --                 end,
-            --                 progressUpdateCallback = function(progress)
-            --                     content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-            --                         " " ..
-            --                         GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-            --                         CreateAtlasMarkup("Banker", 20, 20))
-            --                 end
-            --             }
-            --         elseif optimizationTask == "SUB_RECIPES" then
-            --             recipeData:SetSubRecipeCostsUsage(true)
-            --             recipeData:OptimizeSubRecipes({
-            --                 optimizeGear = optimizeGear,
-            --                 optimizeReagentOptions = {
-            --                     highestProfit = false,
-            --                     maxQuality = recipeData.maxQuality,
-            --                 },
-            --             })
-            --             frameDistributorTasks:Continue()
-            --         else
-            --             frameDistributorTasks:Continue()
-            --         end
-            --     end
-            -- }:Continue()
         end,
         cancel = function()
             return not CraftSim.RECIPE_SCAN.isScanning

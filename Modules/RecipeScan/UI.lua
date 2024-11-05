@@ -202,7 +202,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS, sizeX = 20, sizeY = 20,
         cleanTemplate = true,
         clickCallback = function(_, _)
-            local test = MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -288,7 +288,6 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_TSM_SALERATE_INPUT")
                 end
             end)
-            CraftSim.DEBUG:InspectTable(test or {})
         end
     }
 
@@ -518,6 +517,34 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 rootDescription:CreateDivider()
+
+                local reagentAllocation = rootDescription:CreateButton("Reagent Allocation")
+
+                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(1, 20, 20),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+                            CraftSim.RECIPE_SCAN.SCAN_MODES.Q1
+                    end, function()
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q1)
+                    end)
+
+                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(2, 20, 20), function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q2)
+                end)
+
+                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(3, 20, 20), function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q2)
+                end)
+
+                reagentAllocation:CreateRadio(L("RECIPE_SCAN_MODE_OPTIMIZE"), function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
+                end)
 
                 local optimizeTopProfit = rootDescription:CreateCheckbox(
                     "Autoselect " .. f.g("Top Profit Quality"),
@@ -912,40 +939,14 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
     ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB.CONTENT : Frame
     local content = scanOptionsTab.content
 
-    local initialScanModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE")
-    local initialScanModeLabel = L(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
-
-    content.scanMode = GGUI.Dropdown({
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOP",
-        anchorB = "TOP",
-        offsetY = -50,
-        width = 170,
-        initialValue = initialScanModeValue,
-        initialLabel = initialScanModeLabel,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_MODE),
-        initialData = GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES,
-            function(scanMode)
-                local localizationID = CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[scanMode]
-                return {
-                    label = L(localizationID),
-                    value = scanMode
-                }
-            end),
-        clickCallback = function(_, _, value)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", value)
-        end
-    })
-
     local initialSortModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE")
     local initialSortModeLabel = L(CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP[initialSortModeValue])
 
     content.sortMode = GGUI.Dropdown({
         parent = content,
-        anchorParent = content.scanMode.frame,
+        anchorParent = content,
         anchorA = "TOP",
-        anchorB = "BOTTOM",
+        anchorB = "TOP",
         width = 170,
         offsetY = -10,
         initialValue = initialSortModeValue,

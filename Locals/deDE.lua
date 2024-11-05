@@ -381,9 +381,6 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Nur Favoriten",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scanne nur deine Lieblingsrezepte",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Ausgerüstet",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Reagenzien Qualität 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Reagenzien Qualität 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Reagenzien Qualität 3",
 
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Reagenzien optimieren",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Gewinn",
