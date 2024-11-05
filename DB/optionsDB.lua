@@ -276,6 +276,22 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data["CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS"] = nil
         CraftSimDB.optionsDB.version = 10
     end
+
+    if CraftSimDB.optionsDB.version == 10 then
+        --CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = CraftSimDB.optionsDB.data["CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE"]
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION"] = CraftSimDB.optionsDB.data
+            ["CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION"]
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION"] = nil
+
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION"] = CraftSimDB.optionsDB.data
+            ["CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION"]
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION"] = nil
+
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION"] = CraftSimDB.optionsDB.data
+            ["CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION"]
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION"] = nil
+        CraftSimDB.optionsDB.version = 11
+    end
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()

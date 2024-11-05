@@ -565,22 +565,22 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         }
 
-        queueTab.content.addPatronOrdersButton = GGUI.Button({
+        queueTab.content.addWorkOrdersButton = GGUI.Button({
             parent = queueTab.content,
             anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = 0,
             sizeX = fixedButtonWidth,
-            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL),
+            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL),
             clickCallback = function()
                 CraftSim.CRAFTQ:QueuePatronOrders()
             end
         })
 
-        queueTab.content.addPatronOrdersOptions = GGUI.Button {
+        queueTab.content.addWorkOrdersOptions = GGUI.Button {
             parent = queueTab.content,
-            anchorPoints = { { anchorParent = queueTab.content.addPatronOrdersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            anchorPoints = { { anchorParent = queueTab.content.addWorkOrdersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             cleanTemplate = true,
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             sizeX = 20, sizeY = 20,
@@ -589,43 +589,43 @@ function CraftSim.CRAFTQ.UI:Init()
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
                     orderTypeSubMenu:CreateRadio("Patron Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
                             Enum.CraftingOrderType.Npc
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Npc)
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Npc)
                     end)
                     orderTypeSubMenu:CreateRadio("Guild Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
                             Enum.CraftingOrderType.Guild
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Guild)
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Guild)
                     end)
                     orderTypeSubMenu:CreateRadio("Personal Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
                             Enum.CraftingOrderType.Personal
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Personal)
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Personal)
                     end)
 
                     local concentrationCB = rootDescription:CreateCheckbox("Allow " .. f.gold("Concentration"),
                         function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION")
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                         end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION", not value)
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION", not value)
                         end)
 
                     concentrationCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
+                            L("CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
                     end);
 
                     local forceConcentrationCB = rootDescription:CreateCheckbox(f.r("Force " .. f.gold("Concentration")),
                         function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION")
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                         end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION", not value)
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION", not value)
                         end)
 
                     forceConcentrationCB:SetTooltip(function(tooltip, elementDescription)
@@ -708,7 +708,7 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@type GGUI.Button
         queueTab.content.clearAllButton = GGUI.Button({
             parent = queueTab.content,
-            anchorParent = queueTab.content.addPatronOrdersButton.frame,
+            anchorParent = queueTab.content.addWorkOrdersButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = 0,

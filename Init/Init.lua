@@ -552,7 +552,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.CONTROL_PANEL.frame:Show()
 	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	CraftSim.CRAFTQ.frame.content.queueTab.content.addPatronOrdersButton:SetEnabled(professionInfo and
+	CraftSim.CRAFTQ.frame.content.queueTab.content.addWorkOrdersButton:SetEnabled(professionInfo and
 		professionInfo.profession and C_TradeSkillUI
 		.IsNearProfessionSpellFocus(professionInfo.profession))
 
