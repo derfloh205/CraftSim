@@ -57,7 +57,6 @@ function CraftSim.FRAME:InitTabSystem(tabs)
 end
 
 function CraftSim.FRAME:RestoreModulePositions()
-    local controlPanel = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
     local recipeScanFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
     local customerHistoryFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
     local priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
@@ -79,7 +78,6 @@ function CraftSim.FRAME:RestoreModulePositions()
 
     infoFrame:RestoreSavedConfig(UIParent)
     debugFrame:RestoreSavedConfig(UIParent)
-    controlPanel:RestoreSavedConfig(ProfessionsFrame)
     recipeScanFrame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFT_RESULTS.frame:RestoreSavedConfig(ProfessionsFrame)
     customerHistoryFrame:RestoreSavedConfig(ProfessionsFrame)

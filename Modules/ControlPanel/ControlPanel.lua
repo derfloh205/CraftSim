@@ -80,7 +80,6 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 local jb = CraftSim.JSONBuilder()
                 jb.json = jb.json .. "[\n"
                 for index, recipeData in pairs(data) do
-                    print("skill: " .. tostring(recipeData.professionStats.skill.value))
                     local recipeJson = recipeData:GetForgeFinderExport(1)
                     if index == #data then
                         jb.json = jb.json .. recipeJson
@@ -110,24 +109,24 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 end
                 currentIndex = currentIndex + 1
 
-                -- update button
-                local currentPercent = GUTIL:Round(currentIndex / (numRecipes / 100))
+                -- -- update button
+                -- local currentPercent = GUTIL:Round(currentIndex / (numRecipes / 100))
 
-                CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim
-                    .CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " " .. currentPercent .. "%")
+                -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim
+                --     .CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " " .. currentPercent .. "%")
                 RunNextFrame(mapRecipe)
             else
                 -- if finished
                 finishExport()
-                CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetStatus("READY")
+                -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetStatus("READY")
                 CraftSim.DEBUG:StopProfiling("FORGEFINDER_EXPORT")
             end
         end
 
         CraftSim.DEBUG:StartProfiling("FORGEFINDER_EXPORT")
-        CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " 0%")
-        CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetEnabled(false)
+        -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
+        --     .CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " 0%")
+        -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetEnabled(false)
         mapRecipe()
     end
 end
@@ -173,14 +172,6 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
             if not recipeInfo.supportsCraftingStats then
                 return false
             end
-
-            -- -- keeping this for later usage
-            -- -- finally check if its a dragon isle recipe
-
-            -- local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
-            -- if not isDragonIsleRecipe then
-            --     return false
-            -- end
 
             -- finally check if its a The War Within recipe
 
@@ -244,24 +235,24 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
                 end
                 currentIndex = currentIndex + 1
 
-                -- update button
-                local currentPercent = GUTIL:Round(currentIndex / (numRecipes / 100))
+                -- -- update button
+                -- local currentPercent = GUTIL:Round(currentIndex / (numRecipes / 100))
 
-                CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText(CraftSim
-                    .CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING) .. " " .. currentPercent .. "%")
+                -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText(CraftSim
+                --     .CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING) .. " " .. currentPercent .. "%")
                 RunNextFrame(mapRecipe)
             else
                 -- if finished
                 finishExport()
-                CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetStatus("READY")
+                -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetStatus("READY")
                 CraftSim.DEBUG:StopProfiling("EASYCRAFT_EXPORT")
             end
         end
 
         CraftSim.DEBUG:StartProfiling("EASYCRAFT_EXPORT")
-        CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .CONTROL_PANEL_EASYCRAFT_EXPORTING) .. " 0%")
-        CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetEnabled(false)
+        -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
+        --     .CONTROL_PANEL_EASYCRAFT_EXPORTING) .. " 0%")
+        -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetEnabled(false)
         mapRecipe()
     end
 end
@@ -270,6 +261,5 @@ end
 function CraftSim.CONTROL_PANEL:HandleModuleClose(moduleOption)
     return function()
         CraftSim.DB.OPTIONS:Save(moduleOption, false)
-        CraftSim.CONTROL_PANEL.frame.content[moduleOption]:SetChecked(false)
     end
 end
