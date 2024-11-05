@@ -203,6 +203,48 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         cleanTemplate = true,
         clickCallback = function(_, _)
             MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = "Profit Margin Threshold (%): ",
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame.label.frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "LEFT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
+                        borderAdjustWidth = 1.32,
+                        allowDecimals = true,
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD",
+                                tonumber(input.currentValue))
+                        end,
+                    }
+                end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_PROFIT_MARGIN_INPUT")
+
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = "Default Queue Amount: ",
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame.label.frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "LEFT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
+                        borderAdjustWidth = 1.32,
+                        minValue = 1,
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
+                                tonumber(input.currentValue))
+                        end,
+                    }
+                end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_DEFAULT_QUEUE_AMOUNT_INPUT")
+
                 if TSM_API then
                     local tsmExpressionCB = rootDescription:CreateCheckbox(
                         "Use " .. f.bb("TSM") .. " Restock Amount Expression",
@@ -219,6 +261,29 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                             "If enabled, restock amount will be determined by configured " ..
                             f.bb("TSM Expression") .. " (Options)");
                     end);
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame.label.frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "LEFT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"),
+                            borderAdjustWidth = 1.32,
+                            allowDecimals = true,
+                            maxValue = 1,
+                            minValue = 0,
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD",
+                                    tonumber(input.currentValue))
+                            end,
+                        }
+                    end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_TSM_SALERATE_INPUT")
                 end
             end)
         end
@@ -843,48 +908,6 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
     scanOptionsTab = scanOptionsTab
     ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB.CONTENT : Frame
     local content = scanOptionsTab.content
-
-    content.sendToCraftQueueOptions = GGUI.Frame {
-        sizeX = 300, sizeY = 360,
-        parent = content,
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -20 } },
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        title = f.bb("Send To CraftQueue") .. " Options"
-    }
-
-    local queueOptionsContent = content.sendToCraftQueueOptions.content
-
-    queueOptionsContent.marginThreshold = GGUI.NumericInput {
-        allowDecimals = true,
-        parent = queueOptionsContent, anchorParent = queueOptionsContent, anchorA = "TOP", anchorB = "TOP", offsetX = 73, offsetY = -50,
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
-        borderAdjustHeight = 1.05,
-        borderAdjustWidth = 1.4,
-        sizeX = 30,
-        labelOptions = {
-            text = "Profit Threshold (%): "
-        },
-        onNumberValidCallback = function(input)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD",
-                tonumber(input.currentValue))
-        end
-    }
-
-    queueOptionsContent.defaultQueueAmount = GGUI.NumericInput {
-        allowDecimals = true,
-        parent = queueOptionsContent, anchorParent = queueOptionsContent.marginThreshold.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
-        borderAdjustHeight = 1.05,
-        borderAdjustWidth = 1.4,
-        sizeX = 30,
-        labelOptions = {
-            text = "Default Queue Amount: "
-        },
-        onNumberValidCallback = function(input)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
-                tonumber(input.currentValue))
-        end
-    }
 
     local initialScanModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE")
     local initialScanModeLabel = L(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
