@@ -586,6 +586,27 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
+
+                    orderTypeSubMenu:CreateRadio("Patron Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                            Enum.CraftingOrderType.Npc
+                    end, function()
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Npc)
+                    end)
+                    orderTypeSubMenu:CreateRadio("Guild Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                            Enum.CraftingOrderType.Guild
+                    end, function()
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Guild)
+                    end)
+                    orderTypeSubMenu:CreateRadio("Personal Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE") ==
+                            Enum.CraftingOrderType.Personal
+                    end, function()
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Personal)
+                    end)
+
                     local concentrationCB = rootDescription:CreateCheckbox("Allow " .. f.gold("Concentration"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION")
@@ -595,11 +616,8 @@ function CraftSim.CRAFTQ.UI:Init()
                         end)
 
                     concentrationCB:SetTooltip(function(tooltip, elementDescription)
-                        --GameTooltip_SetTitle(tooltip, MenuUtil.GetElementText(elementDescription));
                         GameTooltip_AddInstructionLine(tooltip,
                             L("CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
-                        --GameTooltip_AddNormalLine(tooltip, "Test Tooltip Normal Line");
-                        --GameTooltip_AddErrorLine(tooltip, "Test Tooltip Colored Line");
                     end);
 
                     local forceConcentrationCB = rootDescription:CreateCheckbox(f.r("Force " .. f.gold("Concentration")),

@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.4.0"),
+        f.P .. f.bb("Queue Patron Orders") .. " is now " .. f.g("Queue Work Orders"),
+        f.a .. "- Type of order can now be switched (Default: Patron Orders)",
         f.p .. "Specialization Data Update",
         newP("19.3.0"),
         f.P .. "Reintroduced " .. f.g("Restock from Scan"),

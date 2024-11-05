@@ -129,9 +129,10 @@ end
 
 function CraftSim.CRAFTQ:QueuePatronOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    local orderType = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ORDER_TYPE")
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
         local request = {
-            orderType = Enum.CraftingOrderType.Npc,
+            orderType = orderType,
             searchFavorites = false,
             initialNonPublicSearch = false,
             primarySort = {
@@ -154,21 +155,21 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                         tinsert(orders, claimedOrder)
                     end
 
-                    local queuePatronOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
+                    local queueWorkOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
                         .addPatronOrdersButton --[[@as GGUI.Button]]
-                    queuePatronOrdersButton:SetEnabled(false)
+                    queueWorkOrdersButton:SetEnabled(false)
 
                     GUTIL.FrameDistributor {
                         iterationTable = orders,
                         iterationsPerFrame = 1,
                         maxIterations = 100,
                         finally = function()
-                            queuePatronOrdersButton:SetText(L(CraftSim.CONST.TEXT
+                            queueWorkOrdersButton:SetText(L(CraftSim.CONST.TEXT
                                 .CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL))
-                            queuePatronOrdersButton:SetEnabled(true)
+                            queueWorkOrdersButton:SetEnabled(true)
                         end,
                         continue = function(distributor, _, order, _, progress)
-                            queuePatronOrdersButton:SetText(string.format("%.0f%%", progress))
+                            queueWorkOrdersButton:SetText(string.format("%.0f%%", progress))
 
                             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                             if recipeInfo and recipeInfo.learned then
