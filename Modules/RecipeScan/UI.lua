@@ -69,20 +69,20 @@ function CraftSim.RECIPE_SCAN.UI:Init()
 
         CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(frame.content.recipeScanTab)
 
-        ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB : GGUI.BlizzardTab
-        frame.content.scanOptionsTab = GGUI.BlizzardTab {
-            buttonOptions = {
-                label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS),
-                anchorA = "LEFT", anchorB = "RIGHT", anchorParent = frame.content.recipeScanTab.button
-            },
-            parent = frame.content, anchorParent = frame.content,
-            sizeX = tabSizeX, sizeY = tabSizeY,
-            top = true,
-        }
+        -- ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB : GGUI.BlizzardTab
+        -- frame.content.scanOptionsTab = GGUI.BlizzardTab {
+        --     buttonOptions = {
+        --         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS),
+        --         anchorA = "LEFT", anchorB = "RIGHT", anchorParent = frame.content.recipeScanTab.button
+        --     },
+        --     parent = frame.content, anchorParent = frame.content,
+        --     sizeX = tabSizeX, sizeY = tabSizeY,
+        --     top = true,
+        -- }
 
-        CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(frame.content.scanOptionsTab)
+        --CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(frame.content.scanOptionsTab)
 
-        GGUI.BlizzardTabSystem { frame.content.recipeScanTab, frame.content.scanOptionsTab }
+        GGUI.BlizzardTabSystem { frame.content.recipeScanTab }
     end
 
     createContent(CraftSim.RECIPE_SCAN.frame)
@@ -855,6 +855,70 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         scale = 1.1,
     }
 
+    content.sortButton = CreateFrame("DropdownButton", nil, content, "WowStyle1FilterDropdownTemplate")
+    content.sortButton:SetText("Sort By")
+
+    content.sortButton:SetSize(80, 25)
+    content.sortButton:SetPoint("BOTTOMRIGHT", content.resultList.frame, "TOPRIGHT", 15, 25)
+
+    content.sortButton:HookScript("OnClick", function()
+        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            rootDescription:CreateCheckbox("Ascending", function()
+                return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE_ASCENDING")
+            end, function()
+                local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE_ASCENDING")
+                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE_ASCENDING", not value)
+                CraftSim.RECIPE_SCAN:UpdateResultSort()
+            end)
+
+            rootDescription:CreateRadio(
+                L("RECIPE_SCAN_SORT_MODE_PROFIT"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE") == CraftSim.RECIPE_SCAN.SORT_MODES.PROFIT
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", CraftSim.RECIPE_SCAN.SORT_MODES.PROFIT)
+                    CraftSim.RECIPE_SCAN:UpdateResultSort()
+                end)
+            rootDescription:CreateRadio(
+                L("RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE") ==
+                        CraftSim.RECIPE_SCAN.SORT_MODES.RELATIVE_PROFIT
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE",
+                        CraftSim.RECIPE_SCAN.SORT_MODES.RELATIVE_PROFIT)
+                    CraftSim.RECIPE_SCAN:UpdateResultSort()
+                end)
+            rootDescription:CreateRadio(
+                L("RECIPE_SCAN_SORT_MODE_CONCENTRATION_VALUE"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE") ==
+                        CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_VALUE
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_VALUE)
+                    CraftSim.RECIPE_SCAN:UpdateResultSort()
+                end)
+            rootDescription:CreateRadio(
+                L("RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE") ==
+                        CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_COST
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_COST)
+                    CraftSim.RECIPE_SCAN:UpdateResultSort()
+                end)
+            rootDescription:CreateRadio(
+                L("RECIPE_SCAN_SORT_MODE_CRAFTING_COST"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE") ==
+                        CraftSim.RECIPE_SCAN.SORT_MODES.CRAFTING_COST
+                end, function()
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", CraftSim.RECIPE_SCAN.SORT_MODES.CRAFTING_COST)
+                    CraftSim.RECIPE_SCAN:UpdateResultSort()
+                end)
+        end)
+    end)
+
     return content
 end
 
@@ -938,34 +1002,6 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
     scanOptionsTab = scanOptionsTab
     ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB.CONTENT : Frame
     local content = scanOptionsTab.content
-
-    local initialSortModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE")
-    local initialSortModeLabel = L(CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP[initialSortModeValue])
-
-    content.sortMode = GGUI.Dropdown({
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOP",
-        anchorB = "TOP",
-        width = 170,
-        offsetY = -10,
-        initialValue = initialSortModeValue,
-        initialLabel = initialSortModeLabel,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE),
-        initialData = GUTIL:Sort(GUTIL:Map(CraftSim.RECIPE_SCAN.SORT_MODES,
-            function(sortMode)
-                local localizationID = CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP[sortMode]
-                return {
-                    label = L(localizationID),
-                    value = sortMode
-                }
-            end), function(a, b) -- make the resulting dropdown data table sorted by label alphabetically
-            return a.label > b.label
-        end),
-        clickCallback = function(_, _, value)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", value)
-        end
-    })
 end
 
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
@@ -1041,6 +1077,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             row.averageProfit = averageProfit
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
+            row.craftingCost = recipeData.priceData.craftingCosts
             recipeData.resultData:Update() -- switch back
             row.concentrationCost = recipeData.concentrationCost
             concentrationCostColumn.text:SetText((enableConcentration and row.concentrationCost) or f.grey("-"))

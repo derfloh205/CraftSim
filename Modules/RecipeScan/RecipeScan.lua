@@ -32,13 +32,7 @@ CraftSim.RECIPE_SCAN.SORT_MODES = {
     RELATIVE_PROFIT = "RELATIVE_PROFIT",
     CONCENTRATION_VALUE = "CONCENTRATION_VALUE",
     CONCENTRATION_COST = "CONCENTRATION_COST",
-}
-
-CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP = {
-    PROFIT = CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT,
-    RELATIVE_PROFIT = CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT,
-    CONCENTRATION_VALUE = CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_VALUE,
-    CONCENTRATION_COST = CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST,
+    CRAFTING_COST = "CRAFTING_COST",
 }
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
@@ -64,18 +58,29 @@ end
 
 ---@return fun(a: any, b: any) : boolean
 function CraftSim.RECIPE_SCAN:GetSortFunction()
+    local ascending = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE_ASCENDING")
+    local function compare(a, b)
+        if ascending then
+            return a < b
+        else
+            return a > b
+        end
+    end
     local sortFuncMap = {
         [CraftSim.RECIPE_SCAN.SORT_MODES.PROFIT] = function(a, b)
-            return a.averageProfit > b.averageProfit
+            return compare(a.averageProfit, b.averageProfit)
         end,
         [CraftSim.RECIPE_SCAN.SORT_MODES.RELATIVE_PROFIT] = function(a, b)
-            return a.relativeProfit > b.relativeProfit
+            return compare(a.relativeProfit, b.relativeProfit)
         end,
         [CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_COST] = function(a, b)
-            return a.concentrationCost < b.concentrationCost
+            return compare(a.concentrationCost, b.concentrationCost)
         end,
         [CraftSim.RECIPE_SCAN.SORT_MODES.CONCENTRATION_VALUE] = function(a, b)
-            return a.concentrationWeight > b.concentrationWeight
+            return compare(a.concentrationWeight, b.concentrationWeight)
+        end,
+        [CraftSim.RECIPE_SCAN.SORT_MODES.CRAFTING_COST] = function(a, b)
+            return compare(a.craftingCost, b.craftingCost)
         end,
     }
     return sortFuncMap[CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE")]
@@ -93,6 +98,17 @@ function CraftSim.RECIPE_SCAN:EndScan(row)
 
     if CraftSim.RECIPE_SCAN.isScanningProfessions then
         CraftSim.RECIPE_SCAN:ScanNextProfessionRow()
+    end
+end
+
+function CraftSim.RECIPE_SCAN:UpdateResultSort()
+    local professionList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
+        .professionList --[[@as GGUI.FrameList]]
+    local activeRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
+
+    if activeRow then
+        local resultList = activeRow.content.resultList
+        resultList:UpdateDisplay(self:GetSortFunction())
     end
 end
 
