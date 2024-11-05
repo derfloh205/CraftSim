@@ -3159,7 +3159,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			nodeID = 99058,
 			maxRank = 1,
 			stats = {
-				["dummyeffectfor#tokenization(dnt)"] = 5,
+				["dummyeffectfor#tokenization(dnt)"] = 3,
 			},
 		},
 	},

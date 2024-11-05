@@ -3391,7 +3391,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			nodeID = 100936,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 15,
+				additionalitemscraftedwithmulticraft = 10,
 			},
 		},
 		[100911] = {
@@ -3405,7 +3405,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			nodeID = 100936,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 25,
+				additionalitemscraftedwithmulticraft = 10,
 			},
 		},
 		[100909] = {
@@ -3419,7 +3419,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			nodeID = 100936,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 50,
+				additionalitemscraftedwithmulticraft = 20,
 			},
 		},
 		[100937] = {
@@ -4398,7 +4398,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			maxRank = 1,
 			stats = {
 				skill = 5,
-				additionalitemscraftedwithmulticraft = 50,
+				additionalitemscraftedwithmulticraft = 10,
 			},
 		},
 		[100905] = {
