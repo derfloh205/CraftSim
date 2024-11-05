@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for the war within gold making
 ## Author: genju
-## Version: 19.3.0
+## Version: 19.4.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
