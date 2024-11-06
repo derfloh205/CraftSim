@@ -590,7 +590,6 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
             isExact = true,
             debug = tostring(info.quantity) .. " - " .. tostring((tonumber(totalItemCount) or 0)),
         }
-        CraftSim.DEBUG:InspectTable(searchTerm, info.itemName)
         if searchTerm.quantity == 0 then
             return nil -- do not put into table
         end
