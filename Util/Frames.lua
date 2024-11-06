@@ -35,27 +35,6 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
---> in GGUI.TabSystem
-function CraftSim.FRAME:InitTabSystem(tabs)
-    if #tabs == 0 then
-        return
-    end
-    -- show first tab
-    for _, tab in pairs(tabs) do
-        tab:SetScript("OnClick", function(self)
-            for _, otherTab in pairs(tabs) do
-                otherTab.content:Hide()
-                otherTab:SetEnabled(otherTab.canBeEnabled)
-            end
-            tab.content:Show()
-            tab:SetEnabled(false)
-        end)
-        tab.content:Hide()
-    end
-    tabs[1].content:Show()
-    tabs[1]:SetEnabled(false)
-end
-
 function CraftSim.FRAME:RestoreModulePositions()
     local recipeScanFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
     local customerHistoryFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
@@ -111,46 +90,8 @@ function CraftSim.FRAME:ResetFrames()
     end
 end
 
---> in GGUI.Button
-function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, sizeX, sizeY,
-                                     sizeToText, clickCallback)
-    local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    button:SetText(label)
-    if sizeToText then
-        button:SetSize(button:GetTextWidth() + sizeX, sizeY)
-    else
-        button:SetSize(sizeX, sizeY)
-    end
-
-    button:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
-    button:SetScript("OnClick", function()
-        clickCallback(button)
-    end)
-    return button
-end
-
---> in GGUI.Tab
-function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX,
-                                  contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)
-    local tabExtraWidth = 15
-    local tabButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    tabButton.canBeEnabled = canBeEnabled
-    tabButton:SetText(label)
-    tabButton:SetSize(tabButton:GetTextWidth() + tabExtraWidth, 30)
-    tabButton.ResetWidth = function()
-        tabButton:SetSize(tabButton:GetTextWidth() + tabExtraWidth, 30)
-    end
-    tabButton:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
-
-
-    tabButton.content = CreateFrame("Frame", nil, contentParent)
-    tabButton.content:SetPoint("TOP", contentAnchor, "TOP", contentOffsetX, contentOffsetY)
-    tabButton.content:SetSize(contentX, contentY)
-
-    return tabButton
-end
-
 --> in GGUI.Text
+---@deprecated
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font,
                                    justifyData)
     scale = scale or 1
@@ -179,6 +120,7 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
 end
 
 --> in GGUI.ScrollingMessageFrame
+---@deprecated
 function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, maxLines,
                                                     sizeX, sizeY)
     local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, parent)
@@ -204,6 +146,7 @@ function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchor
 end
 
 --> in GGUI.Checkbox
+---@deprecated
 function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent,
                                                      anchorParent, anchorA, anchorB, offsetX, offsetY)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
@@ -225,6 +168,7 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
 end
 
 --> in GGUI.HelpIcon
+---@deprecated
 function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     helpButton.tooltipText = text
@@ -308,6 +252,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
 end
 
 ---> GGUI
+---@deprecated
 function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetRIGHT, offsetBOTTOM)
     local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
     scrollFrame.scrollChild = CreateFrame("frame")
@@ -324,6 +269,7 @@ function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetR
 end
 
 --> in GGUI.TextInput
+---@deprecated
 function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
                                     initialValue, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
@@ -342,6 +288,7 @@ function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB
 end
 
 --> in GGUI.NumericInput
+---@deprecated
 function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
                                            initialValue, allowNegative, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
