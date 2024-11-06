@@ -551,7 +551,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = qualityID,
-                    quantity = allocatedQuantity
+                    quantity = 0
                 }
                 reagentMap[itemID].quantity = reagentMap[itemID]
                     .quantity + allocatedQuantity * craftQueueItem.amount
@@ -588,7 +588,9 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
             tier = info.qualityID,
             quantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0),
             isExact = true,
+            debug = tostring(info.quantity) .. " - " .. tostring((tonumber(totalItemCount) or 0)),
         }
+        CraftSim.DEBUG:InspectTable(searchTerm, info.itemName)
         if searchTerm.quantity == 0 then
             return nil -- do not put into table
         end
