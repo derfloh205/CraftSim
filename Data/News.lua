@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.4.1"),
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("frFR") .. " by: " .. f.bb("https://github.com/netouss"),
         newP("19.4.0"),
         f.P .. "Overhauled the " .. f.bb("Control Panel"),
         f.a .. "- All of its functionality is now accessible by",
