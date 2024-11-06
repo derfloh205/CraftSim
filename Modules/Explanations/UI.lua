@@ -42,7 +42,7 @@ function CraftSim.EXPLANATIONS.UI:Init()
         frame.content.profitExplanationTab.content.description = GGUI.Text {
             parent = frame.content.profitExplanationTab.content, anchorParent = frame.content.profitExplanationTab.content,
             text = L(CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION), anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            offsetY = -20, justifyOptions = { type = "H", align = "LEFT" }
+            offsetY = -20, justifyOptions = { type = "H", align = "LEFT" }, wrap = true
         }
 
 

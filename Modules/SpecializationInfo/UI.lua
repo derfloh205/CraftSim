@@ -89,6 +89,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
             justifyOptions = { type = 'H', align = "LEFT" },
             offsetX = 20,
             offsetY = -35,
+            wrap = true,
         })
 
         frame.content.nodeList = GGUI.FrameList {
@@ -120,6 +121,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 nameColumn.text = GGUI.Text {
                     parent = nameColumn, anchorParent = nameColumn.iconTexture.frame, justifyOptions = { type = "H", align = "LEFT" },
                     anchorA = "LEFT", anchorB = "RIGHT", offsetX = 2,
+                    fixedWidth = 170,
                 }
 
                 rankColumn.text = GGUI.Text {

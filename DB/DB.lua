@@ -72,3 +72,14 @@ function CraftSim.DB:ClearAll()
         repository:ClearAll()
     end
 end
+
+---@param db CraftSimDB.Database
+---@return fun(from: number, to:number, migrate: function)
+function CraftSim.DB:GetMigrateFunction(db)
+    return function(from, to, migrate)
+        if db.version == from then
+            migrate()
+            db.version = to
+        end
+    end
+end

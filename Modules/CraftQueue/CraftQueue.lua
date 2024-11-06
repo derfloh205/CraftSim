@@ -127,7 +127,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
     self.UI:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ:QueuePatronOrders()
+function CraftSim.CRAFTQ:QueueWorkOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     local orderType = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE")
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
@@ -202,7 +202,7 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                                                 CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS,
                                                 itemID)
                                             local acuityContained = itemID == 210814
-                                            local runeContained = itemID == 224672
+                                            local runeContained = itemID == 224572
                                             if not acuityAllowed and acuityContained then
                                                 return false
                                             end
@@ -551,7 +551,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = qualityID,
-                    quantity = allocatedQuantity
+                    quantity = 0
                 }
                 reagentMap[itemID].quantity = reagentMap[itemID]
                     .quantity + allocatedQuantity * craftQueueItem.amount
@@ -566,7 +566,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     local crafterUIDs = GUTIL:ToSet(crafterUIDs)
 
     -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+    local excludeWarbankTemp = false
 
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
@@ -588,6 +588,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
             tier = info.qualityID,
             quantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0),
             isExact = true,
+            debug = tostring(info.quantity) .. " - " .. tostring((tonumber(totalItemCount) or 0)),
         }
         if searchTerm.quantity == 0 then
             return nil -- do not put into table
