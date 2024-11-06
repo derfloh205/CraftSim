@@ -81,6 +81,7 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.STATISTICS.frameNO_WO:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
     CraftSim.STATISTICS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
     CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
 end
 
 function CraftSim.FRAME:ResetFrames()
