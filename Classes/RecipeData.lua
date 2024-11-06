@@ -1485,7 +1485,7 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = self.orderData and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+    local excludeWarbankTemp = false
 
     -- check amount of reagents in players inventory + bank
     local hasEnoughReagents = self.reagentData:HasEnough(amount, self:GetCrafterUID(), excludeWarbankTemp)

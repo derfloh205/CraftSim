@@ -494,8 +494,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
     local text = ""
 
     -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = self.recipeData.orderData and
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+    local excludeWarbankTemp = false
 
     for _, requiredReagent in pairs(self.requiredReagents) do
         local reagentIcon = requiredReagent.items[1].item:GetItemIcon()

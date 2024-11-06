@@ -687,20 +687,6 @@ function CraftSim.CRAFTQ.UI:Init()
                         GameTooltip_AddInstructionLine(tooltip,
                             "Include Orders with Augment Rune Rewards");
                     end);
-
-                    local warbankCB = rootDescription:CreateCheckbox(
-                        "Exclude " .. f.bb("Warbank") .. " Reagents from Shopping List (Temp)",
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK", not value)
-                        end)
-
-                    warbankCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "Ignore Warbank Reagents when creating Shopping List (Temporary Workaround until 11.0.5)");
-                    end);
                 end)
             end
         }

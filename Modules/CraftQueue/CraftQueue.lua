@@ -566,7 +566,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     local crafterUIDs = GUTIL:ToSet(crafterUIDs)
 
     -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+    local excludeWarbankTemp = false
 
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
