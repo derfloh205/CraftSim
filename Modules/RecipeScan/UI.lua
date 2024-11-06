@@ -535,9 +535,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 end)
 
                 reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(3, 20, 20), function()
-                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3
                 end, function()
-                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q2)
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q3)
                 end)
 
                 reagentAllocation:CreateRadio(L("RECIPE_SCAN_MODE_OPTIMIZE"), function()
