@@ -574,7 +574,7 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = fixedButtonWidth,
             label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL),
             clickCallback = function()
-                CraftSim.CRAFTQ:QueuePatronOrders()
+                CraftSim.CRAFTQ:QueueWorkOrders()
             end
         })
 

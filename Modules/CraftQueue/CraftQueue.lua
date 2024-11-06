@@ -127,7 +127,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
     self.UI:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ:QueuePatronOrders()
+function CraftSim.CRAFTQ:QueueWorkOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     local orderType = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE")
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
@@ -202,7 +202,7 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                                                 CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS,
                                                 itemID)
                                             local acuityContained = itemID == 210814
-                                            local runeContained = itemID == 224672
+                                            local runeContained = itemID == 224572
                                             if not acuityAllowed and acuityContained then
                                                 return false
                                             end
