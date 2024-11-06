@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.4.1"),
+        f.p .. "Fixed " .. f.bb("Cooldowns Module") .. " position memory",
+        f.p .. "Removed Workaround Option for 11.0.5",
         f.p .. "Locals Update",
         f.a .. "- " .. f.bb("frFR") .. " by: " .. f.bb("https://github.com/netouss"),
         newP("19.4.0"),
