@@ -202,6 +202,7 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
+    if not itemID then return 0 end
     local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSimAddonName, itemID)
     if vendorPrice then
         return vendorPrice
@@ -211,6 +212,7 @@ function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
+    if not itemLink then return 0 end
     local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(CraftSimAddonName, itemLink)
     if vendorPrice then
         return vendorPrice
