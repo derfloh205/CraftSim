@@ -21,7 +21,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Fixed " .. f.bb("Salvage Recipes") .. " Crafting Costs",
         f.a .. "- Craft Results and Crafting Costs now support additional reagents",
         f.a .. "- Example: Gem Crushing",
-        f.a .. "- " .. f.r("Accurate profit calculation not yet supported!"),
+        f.a .. "- " .. f.r("Accurate average profit calculation not yet supported!"),
         f.p .. "Fixed " .. f.bb("Queue Work Orders") .. " PvP Recipe Issues",
         f.p .. "Fixed " .. f.bb("Queue First Crafts") .. " Ignore Spark also ignoring PvP Recipes",
         f.p .. "Fixed " .. f.bb("Queue Work Orders") .. " Ignore Spark also ignoring PvP Recipes",
