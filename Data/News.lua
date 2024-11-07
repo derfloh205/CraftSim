@@ -34,6 +34,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Fixed " .. f.bb("Queue Work Orders") .. " Ignore Spark also ignoring PvP Recipes",
         f.p .. "Fixed " .. f.bb("Auctionator Pricing") .. " Error sometimes occuring on init",
         f.p .. "Fixed " .. f.bb("Alt Recipe Scans") .. " Cached Data Deserialization",
+        f.p .. "Specialization Data Update",
         newP("19.4.1"),
         f.p .. "Fixed " .. f.bb("Profession Gear") .. " Ingenuity Recognition",
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " Include Augment Rune Option",
