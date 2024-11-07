@@ -25,6 +25,11 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     ---@type CraftSim.SalvageReagentSlot
     self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
 
+    if self.recipeData.isSalvageRecipe then
+        -- https://www.townlong-yak.com/framexml/live/Blizzard_ProfessionsTemplates/Blizzard_ProfessionsRecipeSchematicForm.lua#1136
+        self.salvageReagentSlot.requiredQuantity = schematicInfo.quantityMax
+    end
+
     if not schematicInfo then
         return
     end
