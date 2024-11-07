@@ -2,6 +2,8 @@
 local CraftSim = select(2, ...)
 local addonName = select(1, ...)
 
+local Auctionator = Auctionator
+
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
