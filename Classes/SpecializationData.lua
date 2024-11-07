@@ -180,8 +180,8 @@ end
 function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     local specializationData = CraftSim.SpecializationData()
     self.isImplemented = recipeData:IsSpecializationInfoImplemented()
-    specializationData.professionStats = CraftSim.ProfessionStats()
-    specializationData.maxProfessionStats = CraftSim.ProfessionStats()
+    specializationData.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
+    specializationData.maxProfessionStats = CraftSim.ProfessionStats:Deserialize(serializedData.maxProfessionStats)
 
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
         return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData)

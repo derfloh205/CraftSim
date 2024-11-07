@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.4.2"),
+        f.p .. "Fixed " .. f.bb("Alt Recipe Scans") .. " Cached Data Deserialization",
         newP("19.4.1"),
         f.p .. "Fixed " .. f.bb("Profession Gear") .. " Ingenuity Recognition",
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " Include Augment Rune Option",

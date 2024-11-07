@@ -548,8 +548,8 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
 
     self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
 
-    -- try to only enable it for simulation mode?
-    if self.concentrationCurveData and CraftSim.SIMULATION_MODE.isActive then
+    -- try to only enable it for simulation mode or if its not the current character
+    if self.concentrationCurveData and (CraftSim.SIMULATION_MODE.isActive or not self:IsCrafter()) then
         return self:GetConcentrationCostForSkill(self.professionStats.skill.value)
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
