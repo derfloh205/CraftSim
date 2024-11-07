@@ -76,6 +76,17 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                                 not value)
                         end)
 
+                    local patronOrderCB = rootDescription:CreateCheckbox(
+                        "Record " .. f.bb("Patron Orders"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CUSTOMER_HISTORY_RECORD_PATRON_ORDERS")
+                            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS",
+                                not value)
+                        end)
+
                     local removeCustomersCategory = rootDescription:CreateButton("Remove Customers")
 
                     local autoRemovalCategory = removeCustomersCategory:CreateButton("Auto Removal")
@@ -137,9 +148,19 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                         }
                     end, 200, 25, "CUSTOMER_HISTORY_OPTIONS_REMOVAL_TIP_THRESHOLD_INPUT")
 
-                    removeCustomersCategory:CreateButton(f.r("Remove Now"), function()
+                    removeCustomersCategory:CreateButton(f.l("Remove below Threshold"), function()
                         CraftSim.CUSTOMER_HISTORY:PurgeCustomers(CraftSim.DB.OPTIONS:Get(
                             "CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD"))
+                    end)
+
+                    removeCustomersCategory:CreateButton(f.r("Remove All Customers"), function()
+                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                            rootDescription:CreateTitle(f.r("Remove ALL Customer Data?"))
+                            rootDescription:CreateButton("Yes", function()
+                                CraftSim.CUSTOMER_HISTORY:PurgeCustomers(math.huge)
+                            end)
+                            rootDescription:CreateButton("No", function() end)
+                        end)
                     end)
                 end)
             end

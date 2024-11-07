@@ -23,6 +23,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field provisionAll number
 ---@field provisionSome number
 ---@field provisionNone number
+---@field npc boolean
 
 ---@class CraftSim.DB.CustomerHistory.ChatMessage
 ---@field fromPlayer boolean

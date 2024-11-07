@@ -67,6 +67,12 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
 
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
     if claimedOrder then
+        if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS") then
+            if claimedOrder.orderType == Enum.CraftingOrderType.Npc then
+                return
+            end
+        end
+
         print("Claimed Order: ", false, true)
         print(claimedOrder, true)
         local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
@@ -90,6 +96,8 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
         elseif customerCraft.reagentState == Enum.CraftingOrderReagentsType.None then
             customerHistory.provisionNone = customerHistory.provisionNone + 1
         end
+
+        customerHistory.npc = claimedOrder.orderType == Enum.CraftingOrderType.Npc
 
         CraftSim.DB.CUSTOMER_HISTORY:Save(customerHistory)
     end
@@ -123,11 +131,12 @@ function CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
 end
 
 function CraftSim.CUSTOMER_HISTORY:AutoPurge()
+    local tipThreshold = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD")
     if CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") == 0 then
         return
     end
     if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE") then
-        CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(0)
+        CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(tipThreshold)
         CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
     else
         local currentTime = C_DateAndTime.GetServerTimeLocal()
@@ -138,7 +147,7 @@ function CraftSim.CUSTOMER_HISTORY:AutoPurge()
 
         if dayDiff >= CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") then
             print("auto purge 0 tip customers.." .. tostring(dayDiff))
-            CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(0)
+            CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(tipThreshold)
             CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
         else
             print("do not purge, daydiff too low: " .. tostring(dayDiff))
