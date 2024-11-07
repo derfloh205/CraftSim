@@ -85,108 +85,106 @@ function CraftSim.PriceData:Update()
 
     local isWorkOrder = self.recipeData.orderData ~= 0
 
-    if self.recipeData.isSalvageRecipe then
-        if reagentData.salvageReagentSlot.activeItem then
-            local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
-            -- only use subrecipe price if the item also has a optimizedSubRecipe in the recipeData
-            local reagentPriceInfo = self.reagentPriceInfos[itemID]
+    if self.recipeData.isSalvageRecipe and reagentData.salvageReagentSlot.activeItem then
+        local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
+        -- only use subrecipe price if the item also has a optimizedSubRecipe in the recipeData
+        local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
-            self.craftingCosts = self.craftingCosts +
-                reagentPriceInfo.itemPrice * reagentData.salvageReagentSlot.requiredQuantity
-            self.craftingCostsRequired = self.craftingCosts
-
-            if reagentPriceInfo.priceInfo.isExpectedCost then
-                tinsert(self.selfCraftedReagents, itemID)
-            end
-        end
-    else
-        print("Summing reagents:")
-        for _, reagent in pairs(reagentData.requiredReagents) do
-            local isOrderReagent = isWorkOrder and reagent:IsOrderReagentIn(self.recipeData)
-            if reagent.hasQuality then
-                local totalQuantity = 0
-                local totalPrice = 0
-                for _, reagentItem in pairs(reagent.items) do
-                    totalQuantity = totalQuantity + reagentItem.quantity
-                    local itemID = reagentItem.item:GetItemID()
-                    local reagentPriceInfo = self.reagentPriceInfos[itemID]
-                    totalPrice = totalPrice + reagentPriceInfo.itemPrice * reagentItem.quantity
-
-                    if not isOrderReagent and reagentPriceInfo.priceInfo.isExpectedCost then
-                        tinsert(self.selfCraftedReagents, itemID)
-                    end
-                end
-
-                if totalQuantity < reagent.requiredQuantity then
-                    -- assume cheapest
-                    local itemIDQ1 = reagent.items[1].item:GetItemID()
-                    local itemIDQ2 = reagent.items[2].item:GetItemID()
-                    local itemIDQ3 = reagent.items[3].item:GetItemID()
-                    local reagentPriceInfoQ1 = self.reagentPriceInfos[itemIDQ1]
-                    local reagentPriceInfoQ2 = self.reagentPriceInfos[itemIDQ2]
-                    local reagentPriceInfoQ3 = self.reagentPriceInfos[itemIDQ3]
-                    local cheapestItemPrice = math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice,
-                        reagentPriceInfoQ3.itemPrice)
-                    local reagentCosts = cheapestItemPrice * reagent.requiredQuantity
-                    self.craftingCosts = self.craftingCosts + reagentCosts
-                    if not isOrderReagent then
-                        self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
-                    end
-                else
-                    self.craftingCosts = self.craftingCosts + totalPrice
-                    if not isOrderReagent then
-                        self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + totalPrice
-                    end
-                end
-            else
-                local itemID = reagent.items[1].item:GetItemID()
-                local reagentPriceInfo = self.reagentPriceInfos[itemID]
-
-                local reagentCosts = reagentPriceInfo.itemPrice * reagent.requiredQuantity
-
-                self.craftingCosts = self.craftingCosts + reagentCosts
-                self.craftingCostsFixed = self.craftingCostsFixed + reagentCosts -- always max
-
-                if not isOrderReagent then
-                    self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
-                    if reagentPriceInfo.priceInfo.isExpectedCost then
-                        tinsert(self.selfCraftedReagents, itemID)
-                    end
-                end
-            end
-        end
-
+        self.craftingCosts = self.craftingCosts +
+            reagentPriceInfo.itemPrice * reagentData.salvageReagentSlot.requiredQuantity
         self.craftingCostsRequired = self.craftingCosts
 
-        -- optionals and finishing
-        local activeOptionalReagents = GUTIL:Concat({
-            GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
-            GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
-        })
-        local quantityMap = {} -- ugly hack
-        if self.recipeData.reagentData:HasRequiredSelectableReagent() then
-            if self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
-                tinsert(activeOptionalReagents, self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent)
-                quantityMap[self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
-                    self.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity
-            end
+        if reagentPriceInfo.priceInfo.isExpectedCost then
+            tinsert(self.selfCraftedReagents, itemID)
         end
-        print("num active optionals: " .. #activeOptionalReagents)
-        for _, activeOptionalReagent in pairs(activeOptionalReagents) do
-            if activeOptionalReagent then
-                local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
-                print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
-                local itemID = activeOptionalReagent.item:GetItemID()
+    end
+
+    print("Summing reagents:")
+    for _, reagent in pairs(reagentData.requiredReagents) do
+        local isOrderReagent = isWorkOrder and reagent:IsOrderReagentIn(self.recipeData)
+        if reagent.hasQuality then
+            local totalQuantity = 0
+            local totalPrice = 0
+            for _, reagentItem in pairs(reagent.items) do
+                totalQuantity = totalQuantity + reagentItem.quantity
+                local itemID = reagentItem.item:GetItemID()
                 local reagentPriceInfo = self.reagentPriceInfos[itemID]
+                totalPrice = totalPrice + reagentPriceInfo.itemPrice * reagentItem.quantity
 
-                local reagentCosts = (reagentPriceInfo.itemPrice * (quantityMap[itemID] or 1))
+                if not isOrderReagent and reagentPriceInfo.priceInfo.isExpectedCost then
+                    tinsert(self.selfCraftedReagents, itemID)
+                end
+            end
+
+            if totalQuantity < reagent.requiredQuantity then
+                -- assume cheapest
+                local itemIDQ1 = reagent.items[1].item:GetItemID()
+                local itemIDQ2 = reagent.items[2].item:GetItemID()
+                local itemIDQ3 = reagent.items[3].item:GetItemID()
+                local reagentPriceInfoQ1 = self.reagentPriceInfos[itemIDQ1]
+                local reagentPriceInfoQ2 = self.reagentPriceInfos[itemIDQ2]
+                local reagentPriceInfoQ3 = self.reagentPriceInfos[itemIDQ3]
+                local cheapestItemPrice = math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice,
+                    reagentPriceInfoQ3.itemPrice)
+                local reagentCosts = cheapestItemPrice * reagent.requiredQuantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
-
                 if not isOrderReagent then
                     self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
-                    if reagentPriceInfo.priceInfo.isExpectedCost then
-                        tinsert(self.selfCraftedReagents, itemID)
-                    end
+                end
+            else
+                self.craftingCosts = self.craftingCosts + totalPrice
+                if not isOrderReagent then
+                    self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + totalPrice
+                end
+            end
+        else
+            local itemID = reagent.items[1].item:GetItemID()
+            local reagentPriceInfo = self.reagentPriceInfos[itemID]
+
+            local reagentCosts = reagentPriceInfo.itemPrice * reagent.requiredQuantity
+
+            self.craftingCosts = self.craftingCosts + reagentCosts
+            self.craftingCostsFixed = self.craftingCostsFixed + reagentCosts -- always max
+
+            if not isOrderReagent then
+                self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                if reagentPriceInfo.priceInfo.isExpectedCost then
+                    tinsert(self.selfCraftedReagents, itemID)
+                end
+            end
+        end
+    end
+
+    self.craftingCostsRequired = self.craftingCosts
+
+    -- optionals and finishing
+    local activeOptionalReagents = GUTIL:Concat({
+        GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
+        GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
+    })
+    local quantityMap = {} -- ugly hack
+    if self.recipeData.reagentData:HasRequiredSelectableReagent() then
+        if self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
+            tinsert(activeOptionalReagents, self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent)
+            quantityMap[self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
+                self.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity
+        end
+    end
+    print("num active optionals: " .. #activeOptionalReagents)
+    for _, activeOptionalReagent in pairs(activeOptionalReagents) do
+        if activeOptionalReagent then
+            local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
+            print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
+            local itemID = activeOptionalReagent.item:GetItemID()
+            local reagentPriceInfo = self.reagentPriceInfos[itemID]
+
+            local reagentCosts = (reagentPriceInfo.itemPrice * (quantityMap[itemID] or 1))
+            self.craftingCosts = self.craftingCosts + reagentCosts
+
+            if not isOrderReagent then
+                self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                if reagentPriceInfo.priceInfo.isExpectedCost then
+                    tinsert(self.selfCraftedReagents, itemID)
                 end
             end
         end
