@@ -78,8 +78,68 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
 
                     local removeCustomersCategory = rootDescription:CreateButton("Remove Customers")
 
+                    local autoRemovalCategory = removeCustomersCategory:CreateButton("Auto Removal")
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(autoRemovalCategory, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL),
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL"),
+                            borderAdjustWidth = 1.32,
+                            allowDecimals = true,
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL",
+                                    tonumber(input.currentValue))
+                            end,
+                        }
+
+                        ---@type GGUI.TooltipOptions
+                        frame.tooltipOptions = {
+                            owner = frame,
+                            anchor = "ANCHOR_TOP",
+                            text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP),
+                        }
+
+                        GGUI:SetTooltipsByTooltipOptions(frame, frame)
+                    end, 200, 25, "CUSTOMER_HISTORY_OPTIONS_AUTO_PURGE_INTERVAL_INPUT")
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(removeCustomersCategory, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = "Tip Threshold: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.CurrencyInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 100, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            borderAdjustWidth = 0.95,
+                            debug = true,
+                            initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD"),
+                            tooltipOptions = {
+                                owner = frame,
+                                anchor = "ANCHOR_TOP",
+                                text = f.white("Format: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                            },
+                            onValueValidCallback = function()
+                                local tipValue = frame.input.total
+                                CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD",
+                                    tonumber(tipValue))
+                            end,
+                        }
+                    end, 200, 25, "CUSTOMER_HISTORY_OPTIONS_REMOVAL_TIP_THRESHOLD_INPUT")
+
                     removeCustomersCategory:CreateButton(f.r("Remove Now"), function()
-                        CraftSim.CUSTOMER_HISTORY:PurgeCustomers(0)
+                        CraftSim.CUSTOMER_HISTORY:PurgeCustomers(CraftSim.DB.OPTIONS:Get(
+                            "CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD"))
                     end)
                 end)
             end
@@ -140,22 +200,6 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                 end
             }
         })
-
-        frame.content.autoPurgeInput = GGUI.NumericInput {
-            parent = frame.content, anchorParent = frame.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX = 7,
-            sizeX = 50, minValue = 0, onNumberValidCallback = function(numericInput)
-            local value = tonumber(numericInput.currentValue)
-            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL", value)
-        end, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL")
-        }
-
-        frame.content.autoPurgeInputLabel = GGUI.Text { parent = frame.content, anchorParent = frame.content.autoPurgeInput.textInput.frame, anchorA = "LEFT", anchorB = "RIGHT",
-            text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX = 5 }
-
-        GGUI.HelpIcon { parent = frame.content, anchorParent = frame.content.autoPurgeInputLabel.frame, anchorA = "LEFT", anchorB = "RIGHT",
-            text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP) }
-
 
         frame.content.customerName = GGUI.Text({
             parent = frame.content,
