@@ -717,9 +717,9 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
 
     local selectorIndex = 1
 
-    local sparkItemSlot = recipeData.reagentData.sparkReagentSlot
+    local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
 
-    for _, optionalReagentSlot in pairs(GUTIL:Concat({ { sparkItemSlot }, optionalReagentSlots, finishingReagentSlots })) do
+    for _, optionalReagentSlot in pairs(GUTIL:Concat({ { requiredSelectableReagentSlot }, optionalReagentSlots, finishingReagentSlots })) do
         local currentSelector = reagentOverwriteFrame.optionalReagentItemSelectors[selectorIndex]
         local possibleReagents = GUTIL:Map(optionalReagentSlot.possibleReagents, function(reagent)
             return reagent.item

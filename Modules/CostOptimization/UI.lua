@@ -57,7 +57,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE) .. " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+                CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -236,7 +237,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
 
                 function usedPriceColumn:SetOverride()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE), CraftSim.GUTIL.COLORS.LEGENDARY))
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE),
+                        CraftSim.GUTIL.COLORS.LEGENDARY))
                 end
 
                 function usedPriceColumn:SetUnknown()
@@ -446,8 +448,8 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     local slots = CraftSim.GUTIL:Concat({ recipeData.reagentData.optionalReagentSlots, recipeData.reagentData
         .finishingReagentSlots })
 
-    if recipeData.reagentData:HasSparkSlot() then
-        tinsert(slots, recipeData.reagentData.sparkReagentSlot)
+    if recipeData.reagentData:HasRequiredSelectableReagent() then
+        tinsert(slots, recipeData.reagentData.requiredSelectableReagentSlot)
     end
 
     for _, slot in pairs(slots) do

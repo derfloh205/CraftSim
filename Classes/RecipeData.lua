@@ -463,7 +463,7 @@ function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
     self:Update()
 end
 
---- also sets a sparkReagentItem if not yet set
+--- also sets a requiredSelectionReagent if not yet set
 function CraftSim.RecipeData:SetNonQualityReagentsMax()
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         if not reagent.hasQuality then
@@ -471,11 +471,13 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
         end
     end
 
-    if self.reagentData:HasSparkSlot() then
-        if not self.reagentData.sparkReagentSlot.activeReagent then
-            local firstPossibleSparkItem = self.reagentData.sparkReagentSlot.possibleReagents[1]
-            if firstPossibleSparkItem then
-                self.reagentData.sparkReagentSlot:SetReagent(firstPossibleSparkItem.item:GetItemID())
+    if self.reagentData:HasRequiredSelectableReagent() then
+        if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
+            local firstPossibleRequiredSelectableReagent = self.reagentData.requiredSelectableReagentSlot
+            .possibleReagents[1]
+            if firstPossibleRequiredSelectableReagent then
+                self.reagentData.requiredSelectableReagentSlot:SetReagent(firstPossibleRequiredSelectableReagent.item
+                :GetItemID())
             end
         end
     end

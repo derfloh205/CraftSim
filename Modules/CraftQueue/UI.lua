@@ -1115,16 +1115,16 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             editRecipeFrame.content.finishingReagentSelectors, OnSelectOptionalReagent)
     end
 
-    editRecipeFrame.content.sparkReagentTitle = GGUI.Text {
+    editRecipeFrame.content.requiredSelectableReagentTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = optionalReagentsFrame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -65,
         text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_SPARK_LABEL), justifyOptions = { type = "H", align = "LEFT" }
     }
 
 
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector[]
-    editRecipeFrame.content.sparkReagentSelectors = {}
-    CreateItemSelector(editRecipeFrame.content, editRecipeFrame.content.sparkReagentTitle.frame,
-        editRecipeFrame.content.sparkReagentSelectors, OnSelectOptionalReagent)
+    editRecipeFrame.content.requiredSelectableReagentSelectors = {}
+    CreateItemSelector(editRecipeFrame.content, editRecipeFrame.content.requiredSelectableReagentTitle.frame,
+        editRecipeFrame.content.requiredSelectableReagentSelectors, OnSelectOptionalReagent)
 
     editRecipeFrame.content.professionGearTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optionalReagentsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 20,
@@ -1626,24 +1626,26 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         end
     end
 
-    -- Spark
-    local sparkSelector = editRecipeFrame.content.sparkReagentSelectors[1]
-    editRecipeFrame.content.sparkReagentTitle:SetVisible(recipeData.reagentData:HasSparkSlot())
-    local sparkSlot = recipeData.reagentData.sparkReagentSlot
-    if sparkSlot then
-        sparkSelector.slot = sparkSlot
-        sparkSelector:SetItems(GUTIL:Map(sparkSlot.possibleReagents, function(reagent)
-            return reagent.item:GetItemID()
-        end))
-        if sparkSlot.activeReagent then
-            sparkSelector:SetSelectedItem(sparkSlot.activeReagent.item)
+    -- Required Selectable
+    local requiredSelectableReagentSelector = editRecipeFrame.content.requiredSelectableReagentSelectors[1]
+    editRecipeFrame.content.requiredSelectableReagentTitle:SetVisible(recipeData.reagentData
+        :HasRequiredSelectableReagent())
+    local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
+    if requiredSelectableReagentSlot then
+        requiredSelectableReagentSelector.slot = requiredSelectableReagentSlot
+        requiredSelectableReagentSelector:SetItems(GUTIL:Map(requiredSelectableReagentSlot.possibleReagents,
+            function(reagent)
+                return reagent.item:GetItemID()
+            end))
+        if requiredSelectableReagentSlot.activeReagent then
+            requiredSelectableReagentSelector:SetSelectedItem(requiredSelectableReagentSlot.activeReagent.item)
         else
-            sparkSelector:SetSelectedItem(nil)
+            requiredSelectableReagentSelector:SetSelectedItem(nil)
         end
-        sparkSelector:Show()
+        requiredSelectableReagentSelector:Show()
     else
-        sparkSelector.slot = nil
-        sparkSelector:Hide()
+        requiredSelectableReagentSelector.slot = nil
+        requiredSelectableReagentSelector:Hide()
     end
 
     local gearSelectors = editRecipeFrame.content.professionGearSelectors

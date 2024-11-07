@@ -176,9 +176,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
                                 if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
-                                    if recipeData.reagentData:HasSparkSlot() then
-                                        if recipeData.reagentData.sparkReagentSlot.activeReagent then
-                                            if not recipeData.reagentData.sparkReagentSlot.activeReagent:IsOrderReagentIn(recipeData) then
+                                    if recipeData.reagentData:HasRequiredSelectableReagent() then
+                                        if recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
+                                            if not recipeData.reagentData.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(recipeData) then
                                                 distributor:Continue()
                                                 return
                                             end
@@ -534,11 +534,12 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         end
         local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
         local quantityMap = {}
-        if craftQueueItem.recipeData.reagentData:HasSparkSlot() then
-            if craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent then
-                tinsert(activeReagents, craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent)
-                quantityMap[craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent.item:GetItemID()] =
-                    craftQueueItem.recipeData.reagentData.sparkReagentSlot.maxQuantity or 1
+        if craftQueueItem.recipeData.reagentData:HasRequiredSelectableReagent() then
+            if craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
+                tinsert(activeReagents, craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
+                    .activeReagent)
+                quantityMap[craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
+                    craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity or 1
             end
         end
         for _, optionalReagent in pairs(activeReagents) do
@@ -817,7 +818,7 @@ function CraftSim.CRAFTQ:AddFirstCrafts()
             local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
             if queueRecipe then
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES") then
-                    if recipeData.reagentData:HasSparkSlot() then
+                    if recipeData.reagentData:HasRequiredSelectableReagent() then
                         frameDistributor:Continue()
                         return
                     end

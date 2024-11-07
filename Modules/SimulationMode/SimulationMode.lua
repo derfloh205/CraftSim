@@ -206,20 +206,22 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
 
-    local possibleSparkItemIDs = {}
-    if recipeData.reagentData:HasSparkSlot() then
-        possibleSparkItemIDs = GUTIL:Map(recipeData.reagentData.sparkReagentSlot.possibleReagents, function(reagent)
-            return reagent.item:GetItemID()
-        end)
+    local possibleRequiredSelectableItemIDs = {}
+    if recipeData.reagentData:HasRequiredSelectableReagent() then
+        possibleRequiredSelectableItemIDs = GUTIL:Map(
+            recipeData.reagentData.requiredSelectableReagentSlot.possibleReagents,
+            function(reagent)
+                return reagent.item:GetItemID()
+            end)
     end
 
     local itemIDs = {}
     for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
         local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
         if itemID then
-            -- try to set spark if available else put to optional/finishing
-            if tContains(possibleSparkItemIDs, itemID) then
-                recipeData.reagentData.sparkReagentSlot:SetReagent(itemID)
+            -- try to set required selectable if available else put to optional/finishing
+            if tContains(possibleRequiredSelectableItemIDs, itemID) then
+                recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
             else
                 table.insert(itemIDs, itemID)
             end

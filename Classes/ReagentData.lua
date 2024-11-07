@@ -21,7 +21,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     ---@type CraftSim.OptionalReagentSlot[]
     self.finishingReagentSlots = {}
     ---@type CraftSim.OptionalReagentSlot?
-    self.sparkReagentSlot = nil
+    self.requiredSelectableReagentSlot = nil
     ---@type CraftSim.SalvageReagentSlot
     self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
 
@@ -35,8 +35,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
             if reagentSlotSchematic.required then
-                -- spark
-                self.sparkReagentSlot = CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic)
+                self.requiredSelectableReagentSlot = CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic)
             else
                 table.insert(self.optionalReagentSlots,
                     CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic))
@@ -81,9 +80,9 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
         totalStats:add(stat)
     end)
 
-    if self:HasSparkSlot() then
-        if self.sparkReagentSlot.activeReagent then
-            totalStats:add(self.sparkReagentSlot.activeReagent.professionStats)
+    if self:HasRequiredSelectableReagent() then
+        if self.requiredSelectableReagentSlot.activeReagent then
+            totalStats:add(self.requiredSelectableReagentSlot.activeReagent.professionStats)
         end
     end
 
@@ -146,9 +145,9 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
         craftingReagentInfoTbl = GUTIL:Concat({ craftingReagentInfoTbl, craftingReagentInfos })
     end
 
-    if self:HasSparkSlot() then
-        if self.sparkReagentSlot.activeReagent then
-            tinsert(craftingReagentInfoTbl, self.sparkReagentSlot:GetCraftingReagentInfo())
+    if self:HasRequiredSelectableReagent() then
+        if self.requiredSelectableReagentSlot.activeReagent then
+            tinsert(craftingReagentInfoTbl, self.requiredSelectableReagentSlot:GetCraftingReagentInfo())
         end
     end
 
@@ -207,14 +206,14 @@ function CraftSim.ReagentData:HasOptionalReagents()
     return false
 end
 
-function CraftSim.ReagentData:HasSparkSlot()
-    return self.sparkReagentSlot ~= nil
+function CraftSim.ReagentData:HasRequiredSelectableReagent()
+    return self.requiredSelectableReagentSlot ~= nil
 end
 
 ---@param itemID ItemID
-function CraftSim.ReagentData:SetSparkItem(itemID)
-    if self:HasSparkSlot() then
-        self.sparkReagentSlot:SetReagent(itemID)
+function CraftSim.ReagentData:SetRequiredSelectableReagent(itemID)
+    if self:HasRequiredSelectableReagent() then
+        self.requiredSelectableReagentSlot:SetReagent(itemID)
     end
 end
 
@@ -379,9 +378,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
     -- CraftSim.DEBUG:SystemPrint("Has Enough:")
     -- CraftSim.DEBUG:SystemPrint("hasRequiredReagents: " .. tostring(hasRequiredReagents))
     -- CraftSim.DEBUG:SystemPrint("hasOptionalReagents: " .. tostring(hasOptionalReagents))
-    local hasSparkReagent = true
-    if self:HasSparkSlot() then
-        hasSparkReagent = self.sparkReagentSlot:HasItem(multiplier, crafterUID, excludeWarbankTemp)
+    local hasrequiredSelectableReagent = true
+    if self:HasRequiredSelectableReagent() then
+        hasrequiredSelectableReagent = self.requiredSelectableReagentSlot:HasItem(multiplier, crafterUID,
+            excludeWarbankTemp)
     end
     -- update item cache for all possible optional reagents if I am the crafter
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
@@ -393,9 +393,9 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
                 CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
             end
         end
-        if self:HasSparkSlot() and hasSparkReagent then
-            for _, possibleSparkReagent in pairs(self.sparkReagentSlot.possibleReagents or {}) do
-                local itemID = possibleSparkReagent.item:GetItemID()
+        if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent then
+            for _, possiblerequiredSelectableReagent in pairs(self.requiredSelectableReagentSlot.possibleReagents or {}) do
+                local itemID = possiblerequiredSelectableReagent.item:GetItemID()
                 CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
             end
         end
@@ -411,7 +411,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
         hasVellumIfneeded = itemCount >= multiplier
     end
 
-    return hasRequiredReagents and hasOptionalReagents and hasSparkReagent and hasVellumIfneeded
+    return hasRequiredReagents and hasOptionalReagents and hasrequiredSelectableReagent and hasVellumIfneeded
 end
 
 ---@param crafterUID CrafterUID
@@ -432,11 +432,11 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID, excludeWarbankTemp)
         end
     end
 
-    if self:HasSparkSlot() then
-        if self.sparkReagentSlot.activeReagent then
-            if not self.sparkReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
+    if self:HasRequiredSelectableReagent() then
+        if self.requiredSelectableReagentSlot.activeReagent then
+            if not self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
                 currentMinimumReagentFit = math.min(
-                    self.sparkReagentSlot:HasQuantityXTimes(crafterUID, excludeWarbankTemp),
+                    self.requiredSelectableReagentSlot:HasQuantityXTimes(crafterUID, excludeWarbankTemp),
                     currentMinimumReagentFit)
             end
         else
@@ -570,16 +570,16 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         end
     end
 
-    if self:HasSparkSlot() then
-        if self.sparkReagentSlot.activeReagent then
-            local itemID = self.sparkReagentSlot.activeReagent.item:GetItemID()
-            local isOrderReagent = self.sparkReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
-            local reagentIcon = self.sparkReagentSlot.activeReagent.item:GetItemIcon()
+    if self:HasRequiredSelectableReagent() then
+        if self.requiredSelectableReagentSlot.activeReagent then
+            local itemID = self.requiredSelectableReagentSlot.activeReagent.item:GetItemID()
+            local isOrderReagent = self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
+            local reagentIcon = self.requiredSelectableReagentSlot.activeReagent.item:GetItemIcon()
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
                 itemID, excludeWarbankTemp)
-            local requiredQuantity = self.sparkReagentSlot.maxQuantity * multiplier
+            local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
             local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
             if itemCount >= requiredQuantity or isOrderReagent then
                 quantityText = f.g(tostring(requiredQuantity))
@@ -725,7 +725,8 @@ function CraftSim.ReagentData:Copy(recipeData)
     copy.requiredReagents = GUTIL:Map(self.requiredReagents, function(r) return r:Copy() end)
     copy.optionalReagentSlots = GUTIL:Map(self.optionalReagentSlots, function(r) return r:Copy(recipeData) end)
     copy.finishingReagentSlots = GUTIL:Map(self.finishingReagentSlots, function(r) return r:Copy(recipeData) end)
-    copy.sparkReagentSlot = self.sparkReagentSlot and self.sparkReagentSlot:Copy(recipeData)
+    copy.requiredSelectableReagentSlot = self.requiredSelectableReagentSlot and
+        self.requiredSelectableReagentSlot:Copy(recipeData)
 
     return copy
 end
@@ -737,7 +738,7 @@ function CraftSim.ReagentData:GetJSON(indent)
     jb:AddList("requiredReagents", self.requiredReagents)
     jb:AddList("optionalReagentSlots", self.optionalReagentSlots)
     jb:AddList("finishingReagentSlots", self.finishingReagentSlots)
-    jb:Add("sparkReagentSlot", self.sparkReagentSlot)
+    jb:Add("requiredSelectableReagentSlot", self.requiredSelectableReagentSlot)
     jb:Add("salvageReagentSlot", self.salvageReagentSlot, true)
     jb:End()
     return jb.json

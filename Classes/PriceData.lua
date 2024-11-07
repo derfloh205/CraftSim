@@ -164,11 +164,11 @@ function CraftSim.PriceData:Update()
             GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
         })
         local quantityMap = {} -- ugly hack
-        if self.recipeData.reagentData:HasSparkSlot() then
-            if self.recipeData.reagentData.sparkReagentSlot.activeReagent then
-                tinsert(activeOptionalReagents, self.recipeData.reagentData.sparkReagentSlot.activeReagent)
-                quantityMap[self.recipeData.reagentData.sparkReagentSlot.activeReagent.item:GetItemID()] =
-                    self.recipeData.reagentData.sparkReagentSlot.maxQuantity
+        if self.recipeData.reagentData:HasRequiredSelectableReagent() then
+            if self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
+                tinsert(activeOptionalReagents, self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent)
+                quantityMap[self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
+                    self.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity
             end
         end
         print("num active optionals: " .. #activeOptionalReagents)
@@ -254,7 +254,7 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
     end
 
     ---@type CraftSim.OptionalReagent[]
-    local possibleOptionals = (reagentData:HasSparkSlot() and CopyTable(reagentData.sparkReagentSlot.possibleReagents, true)) or
+    local possibleOptionals = (reagentData:HasRequiredSelectableReagent() and CopyTable(reagentData.requiredSelectableReagentSlot.possibleReagents, true)) or
         {}
     for _, optionalSlot in ipairs(GUTIL:Concat { reagentData.optionalReagentSlots or {}, reagentData.finishingReagentSlots or {} }) do
         tAppendAll(possibleOptionals, optionalSlot.possibleReagents)
