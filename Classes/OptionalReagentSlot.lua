@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 
 ---@class CraftSim.OptionalReagentSlot : CraftSim.CraftSimObject
 CraftSim.OptionalReagentSlot = CraftSim.CraftSimObject:extend()
@@ -29,6 +31,27 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     for _, reagent in pairs(reagentSlotSchematic.reagents) do
         table.insert(self.possibleReagents, CraftSim.OptionalReagent(reagent))
     end
+end
+
+---@return boolean isAllocated
+function CraftSim.OptionalReagentSlot:IsAllocated()
+    return self.activeReagent ~= nil
+end
+
+---@param itemID ItemID
+---@return boolean isPossibleReagent
+function CraftSim.OptionalReagentSlot:IsPossibleReagent(itemID)
+    return GUTIL:Some(self.possibleReagents, function(possibleReagent)
+        return possibleReagent.item:GetItemID() == itemID
+    end)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return boolean isOrderReagent
+function CraftSim.OptionalReagentSlot:IsOrderReagentIn(recipeData)
+    if not self.activeReagent then return false end
+
+    return self.activeReagent:IsOrderReagentIn(recipeData)
 end
 
 ---@param itemID number?

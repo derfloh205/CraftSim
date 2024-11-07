@@ -176,9 +176,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
                                 if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
-                                    if recipeData.reagentData:HasRequiredSelectableReagent() then
-                                        if recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
-                                            if not recipeData.reagentData.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(recipeData) then
+                                    if recipeData:HasRequiredSelectableReagent() then
+                                        local slot = recipeData.reagentData.requiredSelectableReagentSlot
+                                        if slot and slot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS
+                                                .REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS) then
+                                            if slot:IsAllocated() and not slot:IsOrderReagentIn(recipeData) then
                                                 distributor:Continue()
                                                 return
                                             end
@@ -793,7 +795,7 @@ function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
     end)
 end
 
-function CraftSim.CRAFTQ:AddFirstCrafts()
+function CraftSim.CRAFTQ:QueueFirstCrafts()
     local openRecipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
     local currentSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
@@ -818,9 +820,11 @@ function CraftSim.CRAFTQ:AddFirstCrafts()
             local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
             if queueRecipe then
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES") then
-                    if recipeData.reagentData:HasRequiredSelectableReagent() then
-                        frameDistributor:Continue()
-                        return
+                    if recipeData:HasRequiredSelectableReagent() then
+                        if recipeData.reagentData.requiredSelectableReagentSlot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS.REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS) then
+                            frameDistributor:Continue()
+                            return
+                        end
                     end
                 end
 

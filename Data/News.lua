@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.4.2"),
+        f.p .. "Fixed " .. f.bb("Queue First Crafts") .. " Ignore Spark also ignoring PvP Recipes",
+        f.p .. "Fixed " .. f.bb("Queue Work Orders") .. " Ignore Spark also ignoring PvP Recipes",
         f.p .. "Fixed " .. f.bb("Auctionator Pricing") .. " Error sometimes occuring on init",
         f.p .. "Fixed " .. f.bb("Alt Recipe Scans") .. " Cached Data Deserialization",
         newP("19.4.1"),

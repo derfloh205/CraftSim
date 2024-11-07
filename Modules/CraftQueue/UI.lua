@@ -519,7 +519,7 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = fixedButtonWidth,
             label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL),
             clickCallback = function()
-                CraftSim.CRAFTQ:AddFirstCrafts()
+                CraftSim.CRAFTQ:QueueFirstCrafts()
             end
         })
 
