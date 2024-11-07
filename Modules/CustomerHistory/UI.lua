@@ -48,18 +48,43 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         local columnOptionsCustomerList = {
             {
                 label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CUSTOMER_HEADER),
-                width = 100,
+                width = 150,
             },
             {
                 label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP_HEADER),
-                width = 70,
-            },
-            {
-                label = "", -- the remove column
-                width = 30,
-                justifyOptions = { type = "H", align = "CENTER" }
+                width = 100,
             }
         }
+
+
+        frame.content.customerHistoryOptionsButton = GGUI.Button {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            cleanTemplate = true,
+            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+            sizeX = 20, sizeY = 20,
+            clickCallback = function(_, _)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local enabledCB = rootDescription:CreateCheckbox(
+                        f.bb("Enable ") .. f.gold("History Recording"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CUSTOMER_HISTORY_ENABLED")
+                            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_ENABLED",
+                                not value)
+                        end)
+
+                    local removeCustomersCategory = rootDescription:CreateButton("Remove Customers")
+
+                    removeCustomersCategory:CreateButton(f.r("Remove Now"), function()
+                        CraftSim.CUSTOMER_HISTORY:PurgeCustomers(0)
+                    end)
+                end)
+            end
+        }
+
         frame.content.customerList = GGUI.FrameList({
             sizeY = 390,
             columnOptions = columnOptionsCustomerList,
@@ -98,42 +123,26 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     text = CraftSim.UTIL:FormatMoney(0),
                     scale = rowContentScale
                 })
-                removeColumn.removeButton = GGUI.Button({
-                    parent = removeColumn,
-                    anchorParent = removeColumn,
-                    scale = 0.8,
-                    label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.15),
-                    sizeX = 25,
-                    clickCallback = nil -- set dynamically in Add
-                })
             end,
             selectionOptions = {
                 selectionCallback = function(row)
-                    CraftSim.CUSTOMER_HISTORY.UI:OnCustomerSelected(row.customerHistory)
+                    local customerHistory = row.customerHistory --[[@as CraftSim.DB.CustomerHistory]]
+                    if IsMouseButtonDown("RightButton") then
+                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                            rootDescription:CreateTitle(customerHistory.customer)
+                            rootDescription:CreateButton("Delete Customer", function()
+                                CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
+                            end)
+                        end)
+                    else
+                        CraftSim.CUSTOMER_HISTORY.UI:OnCustomerSelected(customerHistory)
+                    end
                 end
             }
         })
 
-        frame.content.purgeCustomers = GGUI.Button {
-            parent = frame.content, anchorParent = frame.content.customerList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT", offsetY = 20,
-            label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL), adjustWidth = true,
-            clickCallback = function()
-                GGUI:ShowPopup({
-                    sizeY = 120,
-                    title = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
-                    text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
-                    anchorParent = frame.content.purgeCustomers.frame,
-                    anchorA = "CENTER",
-                    anchorB = "CENTER",
-                    onAccept = function()
-                        CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
-                    end
-                })
-            end
-        }
-
         frame.content.autoPurgeInput = GGUI.NumericInput {
-            parent = frame.content, anchorParent = frame.content.purgeCustomers.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT",
+            parent = frame.content, anchorParent = frame.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT",
             label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX = 7,
             sizeX = 50, minValue = 0, onNumberValidCallback = function(numericInput)
             local value = tonumber(numericInput.currentValue)
@@ -147,6 +156,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         GGUI.HelpIcon { parent = frame.content, anchorParent = frame.content.autoPurgeInputLabel.frame, anchorA = "LEFT", anchorB = "RIGHT",
             text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP) }
 
+
         frame.content.customerName = GGUI.Text({
             parent = frame.content,
             anchorParent = frame.content,
@@ -154,7 +164,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
             anchorB = "TOP",
             text = "",
             offsetX = 80,
-            offsetY = -50,
+            offsetY = -37,
             scale = 1.5,
         })
 
@@ -269,7 +279,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
             columnOptions = columnOptionsCraftList,
             showBorder = true,
             rowHeight = 20,
-            sizeY = 150,
+            sizeY = 158,
             rowConstructor = function(columns)
                 local timeColumn = columns[1]
                 local resultColumn = columns[2]
@@ -302,8 +312,10 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_TIP),
                 })
                 reagentColumn.icon = GGUI.HelpIcon({
-                    parent = reagentColumn, anchorParent = reagentColumn, text = L(CraftSim.CONST.TEXT
-                .CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS),
+                    parent = reagentColumn,
+                    anchorParent = reagentColumn,
+                    text = L(CraftSim.CONST.TEXT
+                        .CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS),
                 })
 
                 noteColumn.icon = GGUI.HelpIcon {
@@ -333,24 +345,9 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
                 local columns = row.columns
                 local customerColumn = columns[1]
                 local tipColumn = columns[2]
-                local removeColumn = columns[3]
                 row.customerHistory = customerHistory
                 customerColumn.text:SetText(customerHistory.customer)
                 tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(customerHistory.totalTip or 0))
-                removeColumn.removeButton.clickCallback = function()
-                    GGUI:ShowPopup({
-                        sizeY = 120,
-                        title = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
-                        anchorParent = removeColumn.removeButton.frame,
-                        anchorA = "CENTER",
-                        anchorB = "CENTER",
-                        onAccept = function()
-                            CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
-                        end,
-                        text = string.format(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP),
-                            customerHistory.customer)
-                    })
-                end
             end)
     end
 

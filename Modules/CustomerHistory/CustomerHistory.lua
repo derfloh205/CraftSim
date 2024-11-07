@@ -36,6 +36,9 @@ end
 ---@param message string
 ---@param fromPlayer boolean
 function CraftSim.CUSTOMER_HISTORY:OnWhisper(customer, customerRealm, message, fromPlayer)
+    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED") then return end
+
+
     print("OnWhisper")
     print("sender: " .. tostring(customer))
     print("realm: " .. tostring(customerRealm))
@@ -56,6 +59,8 @@ end
 ---@param result Enum.CraftingOrderResult
 ---@param orderID number
 function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result, orderID)
+    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED") then return end
+
     if result ~= Enum.CraftingOrderResult.Ok then
         return -- do not save any history
     end
@@ -102,8 +107,9 @@ function CraftSim.CUSTOMER_HISTORY:StartWhisper(name)
     ChatFrame_SendTell(name)
 end
 
-function CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
-    CraftSim.DB.CUSTOMER_HISTORY:DeleteZeroTipCustomers()
+---@param minimumTip number
+function CraftSim.CUSTOMER_HISTORY:PurgeCustomers(minimumTip)
+    CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(minimumTip)
     CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
 end
 
@@ -121,7 +127,7 @@ function CraftSim.CUSTOMER_HISTORY:AutoPurge()
         return
     end
     if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE") then
-        CraftSim.DB.CUSTOMER_HISTORY:DeleteZeroTipCustomers()
+        CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(0)
         CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
     else
         local currentTime = C_DateAndTime.GetServerTimeLocal()
@@ -132,7 +138,7 @@ function CraftSim.CUSTOMER_HISTORY:AutoPurge()
 
         if dayDiff >= CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") then
             print("auto purge 0 tip customers.." .. tostring(dayDiff))
-            CraftSim.DB.CUSTOMER_HISTORY:DeleteZeroTipCustomers()
+            CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(0)
             CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
         else
             print("do not purge, daydiff too low: " .. tostring(dayDiff))

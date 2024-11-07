@@ -482,9 +482,6 @@ function CraftSim.LOCAL_RU:GetData()
         "Вы уверены, что хотите удалить все данные\nот клиентов с общей суммой чаевых 0?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] =
         "Вы уверены, что хотите удалить\nвсе данные для %s?",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "Удалить историю клиентов",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] =
-        "Удалить историю клиентов с 0 чаевыми",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Интервал автоматического удаления (Дней)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] =
         "CraftSim автоматически удалит всех клиентов с 0 чаевыми при входе в систему через X дней после последнего удаления.\nЕсли установлено значение 0, CraftSim никогда не будет удалять автоматически.",

@@ -574,9 +574,6 @@ function CraftSim.LOCAL_DE:GetData()
         "Bist du sicher, dass du alle Daten\nvon Kunden mit insgesamt 0 Trinkgeld löschen möchtest?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] =
         "Bist du sicher, dass du alle Daten für %s löschen möchtest?",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "Kundenhistorie löschen",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] =
-        "0 Trinkgeld Kundenhistorie löschen",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Automatisches Entfernen-Intervall (Tage)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] =
         "CraftSim wird alle 0-Trinkgeld-Kunden automatisch löschen, wenn du dich nach X Tagen seit der letzten Löschung einloggst.\nWenn auf 0 gesetzt, wird CraftSim nie automatisch löschen.",
