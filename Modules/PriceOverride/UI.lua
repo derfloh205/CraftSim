@@ -1,6 +1,11 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
+
 ---@class CraftSim.PRICE_OVERRIDE.overrideDropdownData
 ---@field item ItemMixin
 ---@field isResult boolean
@@ -22,7 +27,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
     local sizeX = 450
     local sizeY = 300
 
-    local frameNO_WO = CraftSim.GGUI.Frame({
+    local frameNO_WO = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
         sizeX = sizeX,
@@ -38,14 +43,16 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
-    local frameWO = CraftSim.GGUI.Frame({
+    local frameWO = GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
+            " " ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+                CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -67,9 +74,16 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             overrideOptions:updateButtonStatus()
         end
 
+        GGUI.Text {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -3 } },
+            text = f.r("(You can now override prices directly in the " .. f.bb("Cost Optimization Module") .. ")"),
+            scale = 0.9,
+        }
+
         frame.recipeID = nil
 
-        frame.content.itemDropdown = CraftSim.GGUI.Dropdown({
+        frame.content.itemDropdown = GGUI.Dropdown({
             parent = frame.content,
             anchorParent = frame.title.frame,
             anchorA = "TOP",
@@ -87,7 +101,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
 
         overrideOptions:Hide()
 
-        overrideOptions.itemIcon = CraftSim.GGUI.Icon({
+        overrideOptions.itemIcon = GGUI.Icon({
             parent = overrideOptions,
             anchorParent = overrideOptions,
             offsetX = 20,
@@ -130,7 +144,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             end
         end
 
-        overrideOptions.saveButton = CraftSim.GGUI.Button({
+        overrideOptions.saveButton = GGUI.Button({
             parent = overrideOptions,
             anchorParent = overrideOptions.itemIcon.frame,
             anchorA = "BOTTOMLEFT",
@@ -166,7 +180,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             },
         })
 
-        overrideOptions.removeButton = CraftSim.GGUI.Button({
+        overrideOptions.removeButton = GGUI.Button({
             parent = overrideOptions,
             anchorParent = overrideOptions.saveButton.frame,
             anchorA = "LEFT",
@@ -184,7 +198,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE),
         })
 
-        overrideOptions.currencyInputGold = CraftSim.GGUI.CurrencyInput({
+        overrideOptions.currencyInputGold = GGUI.CurrencyInput({
             parent = overrideOptions,
             anchorParent = overrideOptions.itemIcon.frame,
             anchorA = "LEFT",
@@ -209,7 +223,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             "RIGHT", 3, 0)
 
 
-        frame.content.clearAllButton = CraftSim.GGUI.Button({
+        frame.content.clearAllButton = GGUI.Button({
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_CLEAR_ALL),
             parent = frame.content,
             anchorParent = title,
@@ -232,7 +246,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox,
             frame.content.activeOverridesBox,
             "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, { type = "H", value = "LEFT" })
-        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
+        GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
     end
 
     createContentV2(frameNO_WO)
@@ -244,10 +258,10 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideItem(overrideData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
+        priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
             .PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
     local overrideOptions = priceOverrideFrame.content.overrideOptions
@@ -262,10 +276,10 @@ end
 function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
+        priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
             .PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
     CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideList(priceOverrideFrame)

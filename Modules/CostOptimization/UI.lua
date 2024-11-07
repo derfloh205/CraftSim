@@ -142,6 +142,9 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION)
         })
 
+        ---@type GGUI.CurrencyInput
+        content.contextMenuOverridePriceInput = nil
+
 
         content.reagentList = GGUI.FrameList({
             parent = content,
@@ -154,7 +157,70 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             offsetX = -10,
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
-                noSelectionColor = true
+                noSelectionColor = true,
+                selectionCallback = function(row, userInput)
+                    local item = row.item --[[@as ItemMixin]]
+                    local recipeID = row.recipeID --[[@as RecipeID]]
+
+                    if IsMouseButtonDown("RightButton") then
+                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                            rootDescription:CreateTitle(item:GetItemLink())
+                            rootDescription:CreateDivider()
+
+                            local priceOverrideData = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverride(item:GetItemID())
+                            local currentOverridePrice = 0
+                            if priceOverrideData then
+                                currentOverridePrice = priceOverrideData.price
+                            end
+
+                            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                                frame.label = GGUI.Text {
+                                    parent = frame,
+                                    anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                                    text = "Override Price: ",
+                                    justifyOptions = { type = "H", align = "LEFT" },
+                                }
+                                frame.input = GGUI.CurrencyInput {
+                                    parent = frame, anchorParent = frame,
+                                    sizeX = 100, sizeY = 25, offsetX = 5,
+                                    anchorA = "RIGHT", anchorB = "RIGHT",
+                                    borderAdjustWidth = 0.95,
+                                    debug = true,
+                                    initialValue = currentOverridePrice,
+                                    tooltipOptions = {
+                                        owner = frame,
+                                        anchor = "ANCHOR_TOP",
+                                        text = f.white("Format: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                    },
+                                }
+                                content.contextMenuOverridePriceInput = frame.input
+                            end, 200, 25, "COST_OPTIMIZATION_PRICE_OVERRIDE_INPUT")
+
+                            if content.contextMenuOverridePriceInput then
+                                content.contextMenuOverridePriceInput:SetValue(currentOverridePrice)
+                            end
+
+                            local saveButton = rootDescription:CreateButton(f.g("Save Price Override"), function()
+                                local inputValue = content.contextMenuOverridePriceInput.total or 0
+                                CraftSim.DB.PRICE_OVERRIDE:SaveGlobalOverride({
+                                    itemID = item:GetItemID(),
+                                    price = tonumber(inputValue),
+                                    recipeID = recipeID,
+                                    qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(item:GetItemID())
+                                })
+                                CraftSim.INIT:TriggerModulesByRecipeType()
+                            end)
+
+                            if priceOverrideData then
+                                local deleteButton = rootDescription:CreateButton(f.l("Delete Price Override"),
+                                    function()
+                                        CraftSim.DB.PRICE_OVERRIDE:DeleteGlobalOverride(item:GetItemID())
+                                        CraftSim.INIT:TriggerModulesByRecipeType()
+                                    end)
+                            end
+                        end)
+                    end
+                end
             },
             columnOptions = {
                 {
@@ -413,9 +479,9 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param exportMode number
-function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
+function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
     local costOptimizationFrame = nil
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         costOptimizationFrame = CraftSim.COST_OPTIMIZATION.frameWO
     else
@@ -436,6 +502,12 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
 
     ---@type ItemMixin[]
     local itemList = {}
+
+    if recipeData.isSalvageRecipe then
+        for _, reagent in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
+            tinsert(itemList, reagent)
+        end
+    end
 
     for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
         for _, reagentItem in pairs(reagent.items) do
@@ -475,6 +547,10 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
             local price = reagentPriceInfo.itemPrice
             local priceInfo = reagentPriceInfo.priceInfo
             ahColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceInfo.ahPrice))
+
+            row.item = reagentItemMixin
+            row.recipeID = recipeData.recipeID
+
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip ..
                     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) ..

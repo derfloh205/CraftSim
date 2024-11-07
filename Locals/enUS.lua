@@ -249,7 +249,9 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("Any Name") ..
             " .. Expected Costs from crafting it yourself\n" ..
             f.l("OR") ..
-            " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
+            " will always be used if set. " ..
+            f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH") .. "\n\n" ..
+            f.bb("Right Click") .. " on any reagent to override its price by a custom value",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Crafting Costs: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Item",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "AH Price",

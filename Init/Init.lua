@@ -704,7 +704,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frameWO,
 		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showCostOptimization then
-		CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
+		CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
 	end
 
 	if recipeData and showCraftResults then
