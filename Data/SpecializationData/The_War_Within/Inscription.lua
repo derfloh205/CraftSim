@@ -3986,7 +3986,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA = {
 			nodeID = 101592,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 10,
+				additionalitemscraftedwithmulticraft = 25,
 			},
 		},
 		[101569] = {
@@ -4000,7 +4000,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA = {
 			nodeID = 101592,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 10,
+				additionalitemscraftedwithmulticraft = 25,
 			},
 		},
 		[101567] = {
@@ -4014,7 +4014,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA = {
 			nodeID = 101592,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 10,
+				additionalitemscraftedwithmulticraft = 25,
 			},
 		},
 		[101565] = {
@@ -4028,7 +4028,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA = {
 			nodeID = 101592,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 20,
+				additionalitemscraftedwithmulticraft = 25,
 			},
 		},
 		[101593] = {
