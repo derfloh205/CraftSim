@@ -568,9 +568,6 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
 
     local crafterUIDs = GUTIL:ToSet(crafterUIDs)
 
-    -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = false
-
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
         itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
@@ -579,8 +576,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         end
         -- subtract the total item count of all crafter's cached inventory
         local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
-            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID,
-                excludeWarbankTemp)
+            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             return itemCount + itemCountForCrafter
         end)
 

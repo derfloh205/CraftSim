@@ -58,8 +58,7 @@ end
 --- returns wether the player has enough of the given required item's allocations (times the multiplier) for crafting
 ---@param multiplier number? default: 1
 ---@param crafterUID string
----@param excludeWarbankTemp? boolean
-function CraftSim.ReagentItem:HasItem(multiplier, crafterUID, excludeWarbankTemp)
+function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
     multiplier = multiplier or 1
     if not self.item then
         return false
@@ -67,7 +66,7 @@ function CraftSim.ReagentItem:HasItem(multiplier, crafterUID, excludeWarbankTemp
     -- only count the item actually used in the recipe (originalItem if we have one)
     -- in the case of e.g. rimefin tuna we want to count the non frosted one only (will be the original)
     local itemID = (self.originalItem and self.originalItem:GetItemID()) or self.item:GetItemID()
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbankTemp)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
     return itemCount >= (self.quantity * multiplier)
 end
 

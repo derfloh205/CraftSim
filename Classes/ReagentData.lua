@@ -357,22 +357,21 @@ end
 ---comment
 ---@param multiplier number?
 ---@param crafterUID string
----@param excludeWarbankTemp? boolean
 ---@return boolean
-function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTemp)
+function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     multiplier = multiplier or 1
     -- check required, optional and finished reagents if the player has enough times multiplier in his inventory and bank
 
     local hasRequiredReagents = GUTIL:Every(self.requiredReagents,
         ---@param requiredReagent CraftSim.Reagent
         function(requiredReagent)
-            return requiredReagent:HasItems(multiplier, crafterUID, excludeWarbankTemp)
+            return requiredReagent:HasItems(multiplier, crafterUID)
         end)
 
     local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
         ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
         function(optionalReagentSlot)
-            return optionalReagentSlot:HasItem(multiplier, crafterUID, excludeWarbankTemp)
+            return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
 
     -- CraftSim.DEBUG:SystemPrint("Has Enough:")
@@ -380,8 +379,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
     -- CraftSim.DEBUG:SystemPrint("hasOptionalReagents: " .. tostring(hasOptionalReagents))
     local hasrequiredSelectableReagent = true
     if self:HasRequiredSelectableReagent() then
-        hasrequiredSelectableReagent = self.requiredSelectableReagentSlot:HasItem(multiplier, crafterUID,
-            excludeWarbankTemp)
+        hasrequiredSelectableReagent = self.requiredSelectableReagentSlot:HasItem(multiplier, crafterUID)
     end
     -- update item cache for all possible optional reagents if I am the crafter
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
@@ -415,8 +413,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID, excludeWarbankTe
 end
 
 ---@param crafterUID CrafterUID
----@param excludeWarbankTemp? boolean
-function CraftSim.ReagentData:GetCraftableAmount(crafterUID, excludeWarbankTemp)
+function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
     print("getCraftable amount", false, true)
@@ -424,10 +421,10 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID, excludeWarbankTemp)
     local currentMinimumReagentFit = math.huge
     for _, requiredReagent in pairs(self.requiredReagents) do
         if not requiredReagent:IsOrderReagentIn(self.recipeData) then
-            if not requiredReagent:HasItems(1, crafterUID, excludeWarbankTemp) then
+            if not requiredReagent:HasItems(1, crafterUID) then
                 return 0
             end
-            currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID, excludeWarbankTemp),
+            currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID),
                 currentMinimumReagentFit)
         end
     end
@@ -436,7 +433,7 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID, excludeWarbankTemp)
         if self.requiredSelectableReagentSlot.activeReagent then
             if not self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
                 currentMinimumReagentFit = math.min(
-                    self.requiredSelectableReagentSlot:HasQuantityXTimes(crafterUID, excludeWarbankTemp),
+                    self.requiredSelectableReagentSlot:HasQuantityXTimes(crafterUID),
                     currentMinimumReagentFit)
             end
         else
@@ -451,11 +448,11 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID, excludeWarbankTemp)
     local optionalReagentSlots = GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })
     for _, optionalReagentSlot in pairs(optionalReagentSlots) do
         if optionalReagentSlot.activeReagent and not optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
-            if not optionalReagentSlot:HasItem(1, crafterUID, excludeWarbankTemp) then
+            if not optionalReagentSlot:HasItem(1, crafterUID) then
                 return 0
             end
             currentMinimumReagentFitOptional = math.min(
-                optionalReagentSlot:HasQuantityXTimes(crafterUID, excludeWarbankTemp),
+                optionalReagentSlot:HasQuantityXTimes(crafterUID),
                 currentMinimumReagentFitOptional)
         end
     end
@@ -493,9 +490,6 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
     local iconSize = 25
     local text = ""
 
-    -- TODO: Remove after 11.0.5
-    local excludeWarbankTemp = false
-
     for _, requiredReagent in pairs(self.requiredReagents) do
         local reagentIcon = requiredReagent.items[1].item:GetItemIcon()
         local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
@@ -508,7 +502,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if reagentItem.originalItem then
                 itemID = reagentItem.originalItem:GetItemID()
             end
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbankTemp)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             local quantityText = f.r(tostring(requiredReagent.requiredQuantity * multiplier) ..
                 "(" .. tostring(itemCount) .. ")")
 
@@ -542,7 +536,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 if reagentItem.originalItem then
                     itemID = reagentItem.originalItem:GetItemID()
                 end
-                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbankTemp)
+                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
                 local quantityText = f.r(
                     tostring(reagentItem.quantity * multiplier) .. "(" .. tostring(itemCount) .. ")")
 
@@ -577,8 +571,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local reagentIcon = self.requiredSelectableReagentSlot.activeReagent.item:GetItemIcon()
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
-                itemID, excludeWarbankTemp)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
             local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
             if itemCount >= requiredQuantity or isOrderReagent then
@@ -609,7 +602,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
-                optionalReagentSlot.activeReagent.item:GetItemID(), excludeWarbankTemp)
+                optionalReagentSlot.activeReagent.item:GetItemID())
             local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
             if itemCount >= multiplier then
                 quantityText = f.g(tostring(multiplier))
