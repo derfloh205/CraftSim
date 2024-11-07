@@ -538,12 +538,13 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         end
         local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
         local quantityMap = {}
-        if craftQueueItem.recipeData.reagentData:HasRequiredSelectableReagent() then
-            if craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
-                tinsert(activeReagents, craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
+        if craftQueueItem.recipeData:HasRequiredSelectableReagent() then
+            local slot = craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
+            if slot and slot:IsAllocated() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
+                tinsert(activeReagents, slot
                     .activeReagent)
-                quantityMap[craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
-                    craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity or 1
+                quantityMap[slot.activeReagent.item:GetItemID()] =
+                    slot.maxQuantity or 1
             end
         end
         for _, optionalReagent in pairs(activeReagents) do
