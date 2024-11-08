@@ -651,7 +651,6 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\n订单发布人：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\n最低品质：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\n奖励：",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r("\n\n所有提供的材料都必须在您的库存中才能制作订单！"),
 
         -- craft buffs
 

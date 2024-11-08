@@ -665,8 +665,6 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrder Customer: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRewards:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
-            "\n\nAll supplied reagents have to be in your inventory to craft a work order!"),
 
         -- craft buffs
 

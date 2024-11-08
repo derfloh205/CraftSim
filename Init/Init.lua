@@ -15,7 +15,7 @@ local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.INIT : Frame
-CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD" }
+CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "TRADE_SKILL_FAVORITES_CHANGED" }
 
 CraftSim.INIT.FRAMES = {}
 
@@ -27,6 +27,24 @@ CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.INIT)
+
+
+function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
+	-- adapt cached values
+	local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+
+	if not professionInfo then return end
+
+	local profession = professionInfo.profession
+
+	if not profession then return end
+
+
+
+	CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, profession, recipeID, isFavoriteNow)
+end
+
 function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.INIT.initialLogin = initialLogin
 	CraftSim.INIT.isReloadingUI = isReloadingUI
@@ -365,6 +383,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			CraftSim.DEBUG:StartProfiling("Update Customer History")
 			CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
 			CraftSim.DEBUG:StopProfiling("Update Customer History")
+			CraftSim.CRAFTQ.UI:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()

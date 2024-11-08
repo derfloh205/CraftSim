@@ -17,6 +17,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.4.3"),
+        f.P .. f.bb("Craft Queue"),
+        f.a .. "- Added option to ignore queue amount reduction on ingenuity",
+        f.P .. f.bb("Queue Favorites"),
+        f.a .. "- Added 'Offset Queue Amount' Option",
+        f.a .. "- Added 'Queue Current Main Professions Option'",
         newP("19.4.2"),
         f.P .. f.bb("Cost Optimization"),
         f.a .. "- You can now right click on any reagent to edit its " .. f.l("Price Override"),
