@@ -790,7 +790,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = "Maximum allowed gold cost of 1 Knowledge Point\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false),
+                                text = f.white("Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
                             },
                             onValueValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
