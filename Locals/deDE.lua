@@ -700,8 +700,6 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nBestellung von Kunde: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nnMindestqualität: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nBelohnungen:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
-            "\n\nAlle bereitgestellten Reagenzien müssen sich in deinem Inventar befinden, um einen Arbeitsauftrag auszuführen!"),
 
 
         -- Herstellungs-Buffs

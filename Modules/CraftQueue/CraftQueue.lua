@@ -667,6 +667,7 @@ end
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
     print("onCraftResult")
+    CraftSim.DEBUG:InspectTable(craftingItemResultData, "craftingItemResultData")
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end

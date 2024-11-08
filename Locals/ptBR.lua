@@ -558,8 +558,6 @@ maior ou igual ao limite de taxa de venda configurado.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrdem do Cliente: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nQualidade Mínima: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRecompensas:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
-            "\n\nTodos os reagentes fornecidos devem estar no seu inventário para criar uma ordem de serviço!"),
 
         -- cooldowns module
 

@@ -1937,7 +1937,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     if recipeData.orderData and recipeData.orderData.npcOrderRewards then
         craftOrderInfoText = craftOrderInfoText .. L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS)
-        local craftOrderWarning = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY)
         local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
             return {
                 count = reward.count,
@@ -1956,7 +1955,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             row.tooltipOptions = {
                 text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                         craftQueueItem.recipeData:GetCrafterUID()) ..
-                    f.white(craftOrderInfoText) .. craftOrderWarning,
+                    f.white(craftOrderInfoText),
                 owner = row.frame,
                 anchor = "ANCHOR_CURSOR",
             }

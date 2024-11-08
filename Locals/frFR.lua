@@ -650,7 +650,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Créer une " ..
             f.bb("Liste d'achats Auctionator") .. " uniquement pour les recettes en mode cible",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white(
-        "Quantité en file d'attente non enregistrée.\nAppuyez sur Entrée pour enregistrer"),
+            "Quantité en file d'attente non enregistrée.\nAppuyez sur Entrée pour enregistrer"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recette apprise"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Pas en recharge"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Matériaux disponibles"),
@@ -673,8 +673,6 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nClient de la commande: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nQualité minimale: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRécompenses:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
-            "\n\nTous les matériaux fournis doivent être dans votre inventaire pour fabriquer une commande d'artisanat'!"),
 
         -- craft buffs
 
@@ -688,7 +686,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.COOLDOWNS_TITLE] = "Temps de recharge CraftSim",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL] = "Temps de recharge",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP] = "Aperçu des " ..
-        f.bb("temps de recharge de profession") .. " de votre compte",
+            f.bb("temps de recharge de profession") .. " de votre compte",
         [CraftSim.CONST.TEXT.COOLDOWNS_CRAFTER_HEADER] = "Artisan",
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_HEADER] = "Recette",
         [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Charges",
@@ -698,7 +696,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.COOLDOWNS_TAB_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.COOLDOWNS_EXPANSION_FILTER_BUTTON] = "Filtre d'extension",
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP] = f.bb(
-        "\n\nRecettes partageant ce temps de recharge:\n"),
+            "\n\nRecettes partageant ce temps de recharge:\n"),
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_READY] = f.g("Prêt"),
 
         -- concentration module

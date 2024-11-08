@@ -392,7 +392,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
     if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
 
     local ignoreIngenuityProc = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS") and
-        craftingItemResultData.isCrit
+        craftingItemResultData.hasIngenuityProc
 
     -- decrement by one and refresh list (only when not work order recipe and when not ignoring ingenuity)
     if not craftQueueItem.recipeData.orderData and not ignoreIngenuityProc then

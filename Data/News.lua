@@ -19,7 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("19.4.3"),
         f.P .. f.bb("Craft Queue"),
-        f.a .. "- Added option to ignore queue amount reduction on ingenuity procs",
+        f.a .. "- Added option to ignore queue amount reduction on ingenuity",
         f.P .. f.bb("Queue Favorites"),
         f.a .. "- Added 'Offset Queue Amount' Option",
         f.a .. "- Added 'Queue Current Main Professions Option'",
