@@ -1283,6 +1283,11 @@ function CraftSim.RecipeData:IsResult(idLinkOrMixin)
     return self:GetResultQuality(idLinkOrMixin) ~= nil
 end
 
+---@return boolean
+function CraftSim.RecipeData:IsWorkOrder()
+    return self.orderData ~= nil
+end
+
 function CraftSim.RecipeData:GetJSON(indent)
     indent = indent or 0
 

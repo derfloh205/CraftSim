@@ -56,7 +56,7 @@ function CraftSim.CRAFTQ.UI:Init()
             clickCallback = function(_, _)
                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
-                        f.r("Ignore ") .. " Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
+                        f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
                         end, function()
@@ -65,6 +65,22 @@ function CraftSim.CRAFTQ.UI:Init()
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_IGNORE_INGENUITY_PROCS",
                                 not value)
                         end)
+
+                    local dequeueConcentrationCB = rootDescription:CreateCheckbox(
+                        f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
+                                not value)
+                        end)
+
+                    dequeueConcentrationCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Autoremove a crafted recipe when remaining concentration does not allow further crafts.");
+                    end);
                 end)
             end
         }

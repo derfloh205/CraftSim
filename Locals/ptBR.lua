@@ -17,7 +17,7 @@ function CraftSim.LOCAL_PT:GetData()
 
         -- OPTIONAL (Defaulting to EN if not available):
 
-          -- shared prof cds
+        -- shared prof cds
         [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutations",
 
         -- expansions
@@ -33,7 +33,7 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
         [CraftSim.CONST.TEXT.EXPANSION_THE_WAR_WITHIN] = "The War Within",
-        
+
         -- professions
 
         [CraftSim.CONST.TEXT.PROFESSIONS_BLACKSMITHING] = "Ferraria",
@@ -60,7 +60,7 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Menor Uso de Concentração",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Descoberta de Frasco",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Descoberta de Poção",
-        
+
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "A Devolução de recursos proca para cada reagente individualmente e então economiza cerca de 30% da quantidade.\n\nO valor médio economizado é o valor médio de TODAS as combinações e suas chances.\n(Procar todos os reagentes ao mesmo tempo é muito improvável, mas economiza bastante).\n\nO custo total médio de reagentes economizados é a soma dos custos economizados de todos os reagentes, ponderados pela chance de proc.",
@@ -152,7 +152,7 @@ function CraftSim.LOCAL_PT:GetData()
             "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
-        
+
         -- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Nenhuma fonte de preços suportada disponível",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Aviso de fonte de preço CraftSim",
@@ -396,7 +396,8 @@ function CraftSim.LOCAL_PT:GetData()
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "Top Gear CraftSim",
         [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC] = "Automático",
-        [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP] = "Simula automaticamente o Melhor Equipamento para o modo selecionado sempre que uma receita for atualizada.\n\nDesativar essa opção pode melhorar o desempenho.",
+        [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP] =
+        "Simula automaticamente o Melhor Equipamento para o modo selecionado sempre que uma receita for atualizada.\n\nDesativar essa opção pode melhorar o desempenho.",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE] = "Simular Top Gear",
         [CraftSim.CONST.TEXT.TOP_GEAR_EQUIP] = "Equipar",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY] = "Qualidade: ",
@@ -442,8 +443,9 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Módulo Top Gear",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Módulo de Visão Geral de Custo",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Módulo de Informações de Especialização",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] "Número Máximo de Mensagens por Cliente",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Máximo de Entradas de Histórico por Cliente",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "Número Máximo de Mensagens por Cliente",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] =
+        "Máximo de Entradas de Histórico por Cliente",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Ajustar limites críticos de pontos de perícia em 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "A sugestão de combinação de reagentes tentará alcançar o ponto crítico + 1 em vez de corresponder exatamente à perícia exigida",
@@ -460,7 +462,8 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP] = "Habilite para Esconder o Botão do " ..
             f.l("CraftSim") .. " do Minimapa",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX] = "Utilizar Texturas de Moedas: ",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP] = "Utiliza ícones de moedas para formatar dinheiro",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP] =
+        "Utiliza ícones de moedas para formatar dinheiro",
 
         -- Control Panel
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Fila de Crafts",
@@ -639,11 +642,13 @@ maior ou igual ao limite de taxa de venda configurado.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX] = " Concentração",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Por Personagem",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Cria uma " ..
-            f.bb("Lista de Compras do Auctionator") .. " para cada personagem\nao invés de uma lista de compras para todos",
+            f.bb("Lista de Compras do Auctionator") ..
+            " para cada personagem\nao invés de uma lista de compras para todos",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Apenas Modo Alvo",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Cria uma " ..
-        f.bb("Lista de Compras do Auctionator") .. " apenas para receitas em modo alvo",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Quantidade Não Salva na Fila.\nPressione Enter para Salvar"),
+            f.bb("Lista de Compras do Auctionator") .. " apenas para receitas em modo alvo",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white(
+            "Quantidade Não Salva na Fila.\nPressione Enter para Salvar"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Receita Aprendida"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Não estando em Recarga"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Reagentes Disponíveis"),
@@ -670,7 +675,7 @@ maior ou igual ao limite de taxa de venda configurado.
         [CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON] = "Simular Buffs",
         [CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP] = f.bb("Wrath of the Lich King Toy.") ..
             "\nRequires Northrend Cooking\nSets Crafting Speed to " .. f.g("0.5 seconds"),
-            
+
         -- cooldowns module
 
         [CraftSim.CONST.TEXT.COOLDOWNS_TITLE] = "Recargas CraftSim",

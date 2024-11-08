@@ -20,6 +20,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("19.4.3"),
         f.P .. f.bb("Craft Queue"),
         f.a .. "- Added option to ignore queue amount reduction on ingenuity",
+        f.a .. "- Added option to remove a concentration recipe on craft",
+        f.a .. "  if no more concentration is available for it",
         f.P .. f.bb("Queue Favorites"),
         f.a .. "- Added 'Offset Queue Amount' Option",
         f.a .. "- Added 'Queue Current Main Professions Option'",
