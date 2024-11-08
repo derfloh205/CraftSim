@@ -439,7 +439,7 @@ function CraftSim.CRAFTQ.UI:Init()
         local craftQueueButtonsOffsetY = -5
         local fixedButtonWidth = 180
         ---@type GGUI.Button
-        queueTab.content.restockFavoritesButton = GGUI.Button({
+        queueTab.content.queueFavoritesButton = GGUI.Button({
             parent = queueTab.content,
             anchorParent = queueTab.content.craftList.frame,
             anchorA = "TOPLEFT",
@@ -450,11 +450,11 @@ function CraftSim.CRAFTQ.UI:Init()
             label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL),
             initialStatusID = "Ready",
             clickCallback = function()
-                CraftSim.CRAFTQ:RestockFavorites()
+                CraftSim.CRAFTQ:QueueFavorites()
             end
         })
 
-        queueTab.content.restockFavoritesButton:SetStatusList {
+        queueTab.content.queueFavoritesButton:SetStatusList {
             {
                 statusID = "Ready",
                 enabled = true,
@@ -463,9 +463,9 @@ function CraftSim.CRAFTQ.UI:Init()
             },
         }
 
-        queueTab.content.restockFavoritesButtonOptions = GGUI.Button {
+        queueTab.content.queueFavoritesButtonOptions = GGUI.Button {
             parent = queueTab.content,
-            anchorPoints = { { anchorParent = queueTab.content.restockFavoritesButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            anchorPoints = { { anchorParent = queueTab.content.queueFavoritesButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             cleanTemplate = true,
             buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
             sizeX = 20, sizeY = 20,
@@ -490,7 +490,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             " recipe. Then queues it for the maximum craftable amount.");
                     end);
 
-                    local offsetConcentrationCraftsCB = rootDescription:CreateCheckbox(
+                    local concentrationCraftsCB = rootDescription:CreateCheckbox(
                         "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
@@ -501,18 +501,44 @@ function CraftSim.CRAFTQ.UI:Init()
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT",
                                 not value)
                         end)
-                    offsetConcentrationCraftsCB:SetTooltip(function(tooltip, elementDescription)
+                    concentrationCraftsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
                             "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
                             f.bb("Ingenuity"));
                     end);
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = "Offset Queue Amount: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT"),
+                            borderAdjustWidth = 1.32,
+                            minValue = 1,
+                            tooltipOptions = {
+                                anchor = "ANCHOR_TOP",
+                                owner = frame,
+                                text = "Always add given amount to the number of queued crafts",
+                            },
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT",
+                                    tonumber(input.currentValue))
+                            end,
+                        }
+                    end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_OFFSET_QUEUE_AMOUNT_INPUT")
                 end)
             end
         }
 
         queueTab.content.addAllFirstCraftsButton = GGUI.Button({
             parent = queueTab.content,
-            anchorParent = queueTab.content.restockFavoritesButton.frame,
+            anchorParent = queueTab.content.queueFavoritesButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = 0,
@@ -739,7 +765,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
         queueTab.content.totalAverageProfitLabel = GGUI.Text({
             parent = queueTab.content,
-            anchorParent = queueTab.content.restockFavoritesButton.frame,
+            anchorParent = queueTab.content.queueFavoritesButton.frame,
             scale = 1,
             anchorA = "LEFT",
             anchorB = "RIGHT",

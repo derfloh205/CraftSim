@@ -446,6 +446,27 @@ function CraftSim.DB.CRAFTER:SaveFavoriteRecipes(crafterUID, profession, recipeI
     CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession] = recipeIDs
 end
 
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param recipeID RecipeID
+---@param isFavoriteNow boolean
+function CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, profession, recipeID, isFavoriteNow)
+    local currentFavorites = self:GetFavoriteRecipes(crafterUID, profession)
+
+    if isFavoriteNow then
+        tinsert(currentFavorites, recipeID)
+        self:SaveFavoriteRecipes(crafterUID, profession, currentFavorites)
+    else
+        local _, index = GUTIL:Find(currentFavorites, function(_recipeID)
+            return recipeID == _recipeID
+        end)
+        if index then
+            tremove(currentFavorites, index)
+            self:SaveFavoriteRecipes(crafterUID, profession, currentFavorites)
+        end
+    end
+end
+
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>
 function CraftSim.DB.CRAFTER:GetAll()
     return CraftSimDB.crafterDB.data

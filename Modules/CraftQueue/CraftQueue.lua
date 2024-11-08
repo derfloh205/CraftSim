@@ -314,7 +314,7 @@ function CraftSim.CRAFTQ:ClearAll()
     CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ:RestockFavorites()
+function CraftSim.CRAFTQ:QueueFavorites()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
@@ -328,7 +328,7 @@ function CraftSim.CRAFTQ:RestockFavorites()
 
     -- optimize and queue
 
-    local restockButton = CraftSim.CRAFTQ.frame.content.queueTab.content.restockFavoritesButton --[[@as GGUI.Button]]
+    local restockButton = CraftSim.CRAFTQ.frame.content.queueTab.content.queueFavoritesButton --[[@as GGUI.Button]]
 
     restockButton:SetEnabled(false)
 
@@ -369,9 +369,12 @@ function CraftSim.CRAFTQ:RestockFavorites()
                         end
                         local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                         if queueableAmount > 0 then
-                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount }
+                            local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
+                                "RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT"))
+                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount + offsetAmount }
                             currentConcentration = currentConcentration -
                                 (concentrationCosts * queueableAmount)
+                            break -- only queue first recipe in this mode
                         end
                     end
                 end
@@ -431,7 +434,7 @@ function CraftSim.CRAFTQ:RestockFavorites()
                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                         tinsert(optimizedRecipes, recipeData)
                     else
-                        CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = 1 }
+                        CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = 1 + tonumber(CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT")) }
                         CraftSim.CRAFTQ.UI:UpdateDisplay()
                     end
                     frameDistributor:Continue()
