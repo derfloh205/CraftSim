@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.bb("Queue Favorites"),
         f.a .. "- Added 'Offset Queue Amount' Option",
         f.a .. "- Added 'Queue Current Main Professions Option'",
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("ptBR") .. " by: " .. f.bb("https://github.com/cconolly"),
         newP("19.4.2"),
         f.P .. f.bb("Cost Optimization"),
         f.a .. "- You can now right click on any reagent to edit its " .. f.l("Price Override"),
