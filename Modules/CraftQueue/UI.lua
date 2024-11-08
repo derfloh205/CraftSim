@@ -507,6 +507,22 @@ function CraftSim.CRAFTQ.UI:Init()
                             f.bb("Ingenuity"));
                     end);
 
+                    local mainProfessionsCB = rootDescription:CreateCheckbox(
+                        "Queue " .. f.bb("Current Main Professions"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS",
+                                not value)
+                        end)
+                    mainProfessionsCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will process both main professions of the current character at once");
+                    end);
+
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                         frame.label = GGUI.Text {
                             parent = frame,
@@ -518,7 +534,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             parent = frame, anchorParent = frame,
                             sizeX = 30, sizeY = 25, offsetX = 5,
                             anchorA = "RIGHT", anchorB = "RIGHT",
-                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT"),
+                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"),
                             borderAdjustWidth = 1.32,
                             minValue = 1,
                             tooltipOptions = {
@@ -527,7 +543,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                 text = "Always add given amount to the number of queued crafts",
                             },
                             onNumberValidCallback = function(input)
-                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_OFFSET_QUEUE_AMOUNT",
+                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT",
                                     tonumber(input.currentValue))
                             end,
                         }

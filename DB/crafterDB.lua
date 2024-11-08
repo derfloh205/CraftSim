@@ -438,6 +438,14 @@ function CraftSim.DB.CRAFTER:GetFavoriteRecipes(crafterUID, profession)
 end
 
 ---@param crafterUID CrafterUID
+---@return table<Enum.Profession, RecipeID[]>
+function CraftSim.DB.CRAFTER:GetFavoriteRecipeProfessions(crafterUID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes = CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes or {}
+    return CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes
+end
+
+---@param crafterUID CrafterUID
 ---@param profession Enum.Profession
 ---@param recipeIDs RecipeID[]
 function CraftSim.DB.CRAFTER:SaveFavoriteRecipes(crafterUID, profession, recipeIDs)
