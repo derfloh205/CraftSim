@@ -47,6 +47,28 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@class CraftSim.CraftQueue.Frame.Content : Frame
         frame.content = frame.content
 
+        frame.content.craftQueueOptionsButton = GGUI.Button {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            cleanTemplate = true,
+            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+            sizeX = 20, sizeY = 20,
+            clickCallback = function(_, _)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
+                        f.r("Ignore ") .. " Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_IGNORE_INGENUITY_PROCS",
+                                not value)
+                        end)
+                end)
+            end
+        }
+
         ---@type GGUI.BlizzardTab
         frame.content.queueTab = GGUI.BlizzardTab({
             buttonOptions = {

@@ -379,7 +379,8 @@ function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
+---@param craftingItemResultData CraftingItemResultData
+function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
     local craftQueueItem = self:FindRecipe(recipeData)
 
     if not craftQueueItem then return end
@@ -390,8 +391,11 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
 
     if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
 
-    -- decrement by one and refresh list (only when not work order recipe)
-    if not craftQueueItem.recipeData.orderData then
+    local ignoreIngenuityProc = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS") and
+        craftingItemResultData.isCrit
+
+    -- decrement by one and refresh list (only when not work order recipe and when not ignoring ingenuity)
+    if not craftQueueItem.recipeData.orderData and not ignoreIngenuityProc then
         local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(recipeData, -1, true)
         if newAmount and newAmount <= 0 and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED") then
             FlashClientIcon()
