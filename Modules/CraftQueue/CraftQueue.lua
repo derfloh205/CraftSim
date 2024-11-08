@@ -132,6 +132,7 @@ end
 function CraftSim.CRAFTQ:QueueWorkOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     local orderType = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE")
+    local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
         local request = {
             orderType = orderType,
@@ -171,7 +172,17 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                             queueWorkOrdersButton:SetEnabled(true)
                         end,
                         continue = function(distributor, _, order, _, progress)
+                            order = order --[[@as CraftingOrderInfo]]
                             queueWorkOrdersButton:SetText(string.format("%.0f%%", progress))
+
+                            if order.orderType == Enum.CraftingOrderType.Guild then
+                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
+                                    if not tContains(crafterUIDs, order.customerName) then
+                                        distributor:Continue()
+                                        return
+                                    end
+                                end
+                            end
 
                             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                             if recipeInfo and recipeInfo.learned then

@@ -261,6 +261,12 @@ function CraftSim.DB.OPTIONS:Migrate()
     migrate(11, 12, function()
         CraftSimDB.optionsDB.data["CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK"] = nil
     end)
+
+    migrate(12, 13, function()
+        if CraftSimDB.optionsDB.data["RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"] == 1 then
+            CraftSimDB.optionsDB.data["RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"] = 0
+        end
+    end)
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()

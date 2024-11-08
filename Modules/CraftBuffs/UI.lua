@@ -148,12 +148,12 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
                 statusColumn.SetActive = function(self, active)
                     self.active = active
                     if active then
-                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CRAFT_BUFF_ACTIVE)
+                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK)
                         nameColumn.spellIcon:Saturate()
                         nameColumn.itemIcon:Saturate()
                         nameColumn.text:SetColor()
                     else
-                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CRAFT_BUFF_NOT_ACTIVE)
+                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CROSS)
                         nameColumn.spellIcon:Desaturate()
                         nameColumn.itemIcon:Desaturate()
                         nameColumn.text:SetColor(GUTIL.COLORS.GREY)
