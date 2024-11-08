@@ -175,7 +175,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                             order = order --[[@as CraftingOrderInfo]]
                             queueWorkOrdersButton:SetText(string.format("%.0f%%", progress))
 
-                            if order.orderType == Enum.CraftingOrderType.Guild then
+                            local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
+                            local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
+                            local knowledgePointsRewarded = 0
+
+                            if isGuildOrder then
                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
                                     if not tContains(crafterUIDs, order.customerName) then
                                         distributor:Continue()
@@ -203,7 +207,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 recipeData:SetOrder(order)
 
-                                if recipeData.orderData and recipeData.orderData.npcOrderRewards then
+                                if recipeData.orderData and isPatronOrder then
                                     local rewardAllowed = GUTIL:Every(recipeData.orderData.npcOrderRewards,
                                         function(reward)
                                             local itemID = GUTIL:GetItemIDByLink(reward.itemLink)
@@ -213,9 +217,19 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 "CRAFTQUEUE_PATRON_ORDERS_ACUITY")
                                             local runeAllowed = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
-                                            local knowledgeContained = tContains(
-                                                CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS,
-                                                itemID)
+
+                                            local knowledgeContained = false
+                                            if tContains(
+                                                    CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS.WEEKLY,
+                                                    itemID) then
+                                                knowledgePointsRewarded = 2
+                                                knowledgeContained = true
+                                            elseif tContains(
+                                                    CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS.CATCHUP,
+                                                    itemID) then
+                                                knowledgePointsRewarded = 1
+                                                knowledgeContained = true
+                                            end
                                             local acuityContained = itemID == 210814
                                             local runeContained = itemID == 224572
                                             if not acuityAllowed and acuityContained then
@@ -237,6 +251,17 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                                 recipeData:Update()
+
+                                if isPatronOrder and knowledgePointsRewarded > 0 and recipeData.averageProfitCached < 0 then
+                                    local maxKPCost = CraftSim.DB.OPTIONS:Get(
+                                        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+                                    local kpCost = math.abs(recipeData.averageProfitCached / knowledgePointsRewarded)
+
+                                    if kpCost >= maxKPCost then
+                                        distributor:Continue()
+                                        return
+                                    end
+                                end
 
                                 local function queueRecipe()
                                     local allowConcentration = CraftSim.DB.OPTIONS:Get(
@@ -261,7 +286,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 end
                                 -- try to optimize for target quality
                                 if order.minQuality and order.minQuality > 0 then
-                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION") then
+                                    if isPatronOrder and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION") then
                                         RunNextFrame(
                                             function()
                                                 recipeData:OptimizeReagents({

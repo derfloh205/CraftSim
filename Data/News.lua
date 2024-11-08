@@ -17,7 +17,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("19.4.3"),
+        newP("19.5.0"),
         f.P .. f.bb("Craft Queue"),
         f.a .. "- General UI Improvements for the queue list",
         f.a .. "- " .. f.l("Delete Function") .. " moved to context menu",
@@ -33,6 +33,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.bb("Queue Favorites"),
         f.a .. "- Added 'Offset Queue Amount' Option",
         f.a .. "- Added 'Queue Current Main Professions Option'",
+        f.P .. f.bb("Queue Work Orders"),
+        f.a .. "- Added option to " .. f.g("cap costs of knowledge points"),
         f.p .. "Locals Update",
         f.a .. "- " .. f.bb("ptBR") .. " by: " .. f.bb("https://github.com/cconolly"),
         newP("19.4.2"),

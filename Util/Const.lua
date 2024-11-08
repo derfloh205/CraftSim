@@ -408,6 +408,7 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     CRAFTQUEUE_IGNORE_INGENUITY_PROCS = "CRAFTQUEUE_IGNORE_INGENUITY_PROCS",
     CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED = "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
     CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY = "CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY",
+    CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
 
     -- COST OPTIMIZATION
     COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION = "COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION",
@@ -550,6 +551,7 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_IGNORE_INGENUITY_PROCS] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY] = false,
+    [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST] = 10000 * 5000,
 
     -- COST OPTIMIZATION
     [CraftSim.CONST.GENERAL_OPTIONS.COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION] = false,
@@ -1494,20 +1496,24 @@ CraftSim.CONST.FONT_FILES = {
 }
 
 CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
-    ---alchemy
-    228724, 228725,
-    ---blacksmithing
-    228726, 228727,
-    ---enchanting
-    228728, 228729,
-    ---engineering
-    228730, 228731,
-    ---inscription
-    228732, 228733,
-    ---jewelcrafting
-    228734, 228735,
-    ---leatherworking
-    228736, 228737,
-    ---Tailoring
-    228738, 228739,
+    CATCHUP = {
+        228725, -- alchemy
+        228726, --blacksmithing
+        228728, --enchanting
+        228730, --engineering
+        228732, --inscription
+        228734, --jewelcrafting
+        228736, --leatherworking
+        228738, --tailoring
+    },
+    WEEKLY = {
+        228724, -- alchemy
+        228727, --blacksmithing
+        228729, --enchanting
+        228731, --engineering
+        228733, --inscription
+        228735, --jewelcrafting
+        228737, --leatherworking
+        228739, --tailoring
+    },
 }

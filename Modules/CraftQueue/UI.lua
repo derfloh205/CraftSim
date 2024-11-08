@@ -16,7 +16,7 @@ local f = GUTIL:GetFormatter()
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 function CraftSim.CRAFTQ.UI:Init()
-    local sizeX = 800
+    local sizeX = 880
     local sizeY = 420
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
@@ -659,6 +659,19 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = 20, sizeY = 20,
             clickCallback = function(_, _)
                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local concentrationCB = rootDescription:CreateCheckbox("Allow " .. f.gold("Concentration"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION", not value)
+                        end)
+
+                    concentrationCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L("CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
+                    end);
+
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
                     orderTypeSubMenu:CreateRadio("Patron Orders", function()
@@ -689,21 +702,10 @@ function CraftSim.CRAFTQ.UI:Init()
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY", not value)
                         end)
 
+                    local patronOrderOptions = rootDescription:CreateButton("Patron Orders")
 
-                    local concentrationCB = rootDescription:CreateCheckbox("Allow " .. f.gold("Concentration"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION", not value)
-                        end)
-
-                    concentrationCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
-                    end);
-
-                    local forceConcentrationCB = rootDescription:CreateCheckbox(f.r("Force " .. f.gold("Concentration")),
+                    local forceConcentrationCB = patronOrderOptions:CreateCheckbox(
+                        f.r("Force " .. f.gold("Concentration")),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                         end, function()
@@ -716,7 +718,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             "Force the use of concentration for all patron orders if possible");
                     end);
 
-                    local sparkCB = rootDescription:CreateCheckbox("Include " .. f.e("Spark") .. " Recipes",
+                    local sparkCB = patronOrderOptions:CreateCheckbox("Include " .. f.e("Spark") .. " Recipes",
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES")
                         end, function()
@@ -729,21 +731,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             "Include Orders that use a Spark as Reagent");
                     end);
 
-                    local knowledgeCB = rootDescription:CreateCheckbox(
-                        "Include " .. f.bb("Knowledge Point") .. " Rewards",
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS", not value)
-                        end)
-
-                    knowledgeCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "Include Orders with Knowledge Point Rewards");
-                    end);
-
-                    local acuityCB = rootDescription:CreateCheckbox(
+                    local acuityCB = patronOrderOptions:CreateCheckbox(
                         "Include " .. f.bb("Acuity") .. " Rewards",
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ACUITY")
@@ -757,7 +745,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             "Include Orders with Acuity Rewards");
                     end);
 
-                    local powerRuneCB = rootDescription:CreateCheckbox(
+                    local powerRuneCB = patronOrderOptions:CreateCheckbox(
                         "Include " .. f.bb("Augment Rune") .. " Rewards",
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
@@ -770,6 +758,46 @@ function CraftSim.CRAFTQ.UI:Init()
                         GameTooltip_AddInstructionLine(tooltip,
                             "Include Orders with Augment Rune Rewards");
                     end);
+
+                    local knowledgeCB = patronOrderOptions:CreateCheckbox(
+                        "Include " .. f.bb("Knowledge Point") .. " Rewards",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS", not value)
+                        end)
+
+                    knowledgeCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Include Orders with Knowledge Point Rewards");
+                    end);
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("Knowledge Point") .. " Max Cost: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.CurrencyInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 60, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST"),
+                            borderAdjustWidth = 1,
+                            minValue = 0.94,
+                            tooltipOptions = {
+                                anchor = "ANCHOR_TOP",
+                                owner = frame,
+                                text = "Maximum allowed gold cost of 1 Knowledge Point\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false),
+                            },
+                            onValueValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
+                                    tonumber(input.total))
+                            end,
+                        }
+                    end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST_INPUT")
                 end)
             end
         }
@@ -810,7 +838,9 @@ function CraftSim.CRAFTQ.UI:Init()
                 anchorA = "BOTTOM",
                 anchorB = "BOTTOM",
                 adjustWidth = true,
-                offsetY = 0,
+                sizeX = 15,
+                offsetY = -2,
+                offsetX = 5,
                 clickCallback = function()
                     CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                 end,
@@ -822,11 +852,12 @@ function CraftSim.CRAFTQ.UI:Init()
 
         queueTab.content.totalAverageProfitLabel = GGUI.Text({
             parent = queueTab.content,
-            anchorParent = queueTab.content.queueFavoritesButton.frame,
-            scale = 1,
-            anchorA = "LEFT",
-            anchorB = "RIGHT",
-            offsetX = 300,
+            anchorParent = queueTab.content.craftList.frame,
+            scale = 0.95,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetX = 0,
+            offsetY = -15,
             text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL),
             justifyOptions = { type = "H", align = "RIGHT" }
         })
@@ -843,7 +874,7 @@ function CraftSim.CRAFTQ.UI:Init()
         queueTab.content.totalCraftingCostsLabel = GGUI.Text({
             parent = queueTab.content,
             anchorParent = queueTab.content.totalAverageProfitLabel.frame,
-            scale = 1,
+            scale = 0.95,
             anchorA = "TOPRIGHT",
             anchorB = "BOTTOMRIGHT",
             offsetY = -19,
