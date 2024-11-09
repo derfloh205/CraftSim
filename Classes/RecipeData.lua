@@ -473,7 +473,7 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
 
     if self.reagentData:HasRequiredSelectableReagent() then
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
-        	if not self.orderData.reagents then
+        	if self.orderData.reagents then
         		for _, reagent in ipairs(self.orderData.reagents) do
         			if not reagent.isBasicReagent then
         				self.reagentData.requiredSelectableReagentSlot:SetReagent(reagent.reagent.itemID)
