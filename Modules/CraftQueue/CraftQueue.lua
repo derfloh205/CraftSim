@@ -926,7 +926,7 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                     end
                 end
 
-                recipeData.reagentData:SetReagentsMaxByQuality(1)
+                recipeData:SetCheapestQualityReagentsMax()
                 self:AddRecipe({ recipeData = recipeData })
                 frameDistributor:Continue()
             end

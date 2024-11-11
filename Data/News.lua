@@ -21,6 +21,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.l("Cached Profession Data") .. " is now removed when unlearning",
         f.P .. f.bb("Recipe Scan"),
         f.a .. "Added " .. f.g("Right Click -> Remove") .. " Feature to list of professions",
+        f.p .. "Fixed " .. f.bb("Queue First Crafts") .. " not using cheapest reagents",
         newP("19.5.0"),
         f.P .. f.bb("Craft Queue"),
         f.a .. "- General UI Improvements for the queue list",
