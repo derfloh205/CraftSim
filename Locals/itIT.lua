@@ -160,7 +160,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "Esporta JSON",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "Statistiche Ricetta",
         [CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING] = "Nessuna creazione al momento!",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1] = "Creazioni: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX] = "Creazioni: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2] = "Profitto Ø Previsto: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3] = "Profitto Ø Reale: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4] = "Profitto Reale: ",
@@ -169,8 +169,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7] = "Creazione Multipla: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8] = "- Ø Oggetti aggiuntivi: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9] = "Attivazioni Parsimonia: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Risparmio: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Profitto: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø Risparmio: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Profitto: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Reagenti risparmiati",
 
         -- Stats Weight Frame

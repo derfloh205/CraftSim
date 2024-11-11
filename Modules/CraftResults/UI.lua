@@ -282,28 +282,51 @@ end
 
 function CraftSim.CRAFT_LOG.UI:InitDetailsFrame(frame)
     local tabSizeX = 700
-    local tabSizeY = 450
+    local tabSizeY = 340
 
     ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
     frame = frame
+
+    frame.content.recipeHeader = GGUI.Text {
+        parent = frame.content, anchorPoints = {
+        { anchorParent = frame.content,     anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -11, offsetX = 10 },
+        { anchorParent = frame.title.frame, anchorA = "RIGHT",   anchorB = "LEFT" },
+    },
+        scale = 1
+    }
+
+    ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB : GGUI.BlizzardTab
+    frame.content.calculationComparisonTab = GGUI.BlizzardTab {
+        buttonOptions = {
+            label = "Calculation Comparison",
+            offsetY = -3,
+        },
+        parent = frame.content, anchorParent = frame.content,
+        sizeX = tabSizeX, sizeY = tabSizeY, initialTab = true,
+        top = true,
+    }
+
+    self:InitCalculationComparisonTab(frame.content.calculationComparisonTab)
 
     ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB : GGUI.BlizzardTab
     frame.content.statDetailsTab = GGUI.BlizzardTab {
         buttonOptions = {
             label = L("CRAFT_LOG_STAT_DETAILS_TAB"),
-            offsetY = -3,
+            anchorParent = frame.content.calculationComparisonTab.button,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
         },
-        parent = frame.content, anchorParent = frame.content, initialTab = true,
+        parent = frame.content, anchorParent = frame.content,
         sizeX = tabSizeX, sizeY = tabSizeY,
         top = true,
     }
 
     self:InitStatDetailsTab(frame.content.statDetailsTab)
 
-    ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
-    frame.content.statisticsTrackerTab = GGUI.BlizzardTab {
+    ---@class CraftSim.CRAFT_LOG.RESULT_DETAILS_TAB : GGUI.BlizzardTab
+    frame.content.resultDetailsTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB),
+            label = L("CRAFT_LOG_RESULT_DETAILS_TAB"),
             anchorParent = frame.content.statDetailsTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
@@ -313,9 +336,9 @@ function CraftSim.CRAFT_LOG.UI:InitDetailsFrame(frame)
         top = true,
     }
 
-    self:InitStatisticsTrackerTab(frame.content.statisticsTrackerTab)
+    self:InitResultDetailsTab(frame.content.resultDetailsTab)
 
-    GGUI.BlizzardTabSystem { frame.content.statDetailsTab, frame.content.statisticsTrackerTab }
+    GGUI.BlizzardTabSystem { frame.content.calculationComparisonTab, frame.content.statDetailsTab, frame.content.resultDetailsTab }
 
     GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
@@ -337,15 +360,10 @@ function CraftSim.CRAFT_LOG.UI:InitStatDetailsTab(statDetailsTab)
     content.statisticsText:SetWidth(300)
 end
 
----@param statisticsTrackerTab CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB
-function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
+---@param statisticsTrackerTab CraftSim.CRAFT_LOG.RESULT_DETAILS_TAB
+function CraftSim.CRAFT_LOG.UI:InitResultDetailsTab(statisticsTrackerTab)
     ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT : Frame
     local content = statisticsTrackerTab.content
-
-    content.recipeHeader = GGUI.Text {
-        parent = content, anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -20 } },
-        scale = 2
-    }
 
     content.resultDistributionList = GGUI.FrameList {
         anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -100 } },
@@ -384,12 +402,12 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL)
     }
 
     GGUI.HelpIcon {
         parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP)
     }
 
     content.multicraftStatisticsList = GGUI.FrameList {
@@ -427,7 +445,7 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT)
     }
 
     content.resourcefulnessStatisticsList = GGUI.FrameList {
@@ -465,7 +483,7 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS)
     }
 
     content.yieldStatisticsList = GGUI.FrameList {
@@ -514,7 +532,23 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.yieldStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION)
+    }
+end
+
+---@param calculationComparisonTab CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB
+function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationComparisonTab)
+    ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB
+    calculationComparisonTab = calculationComparisonTab
+    ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT : Frame
+    local content = calculationComparisonTab.content
+
+    content.crafts = GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetX = 20, offsetY = -40, } },
+        prefix = L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX),
+        text = " test",
+        justifyOptions = { align = "LEFT", type = "H" },
     }
 end
 
@@ -569,6 +603,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateItemList()
     end
 end
 
+function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData)
+    local detailsFrame = CraftSim.CRAFT_LOG.detailsFrame
+    local comparisonTabContent = detailsFrame.content.calculationComparisonTab
+        .content --[[@as CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT]]
+
+    comparisonTabContent.crafts:SetText(craftRecipeData.numCrafts)
+end
+
 function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
     print("Update RecipeData: " .. tostring(recipeID))
@@ -600,7 +642,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
         print("Reuse recipedata")
     end
 
-    -- Craft Profits
+    -- UI Updates
+    -- new
+
+    do
+        self:UpdateCalculationComparison(craftRecipeData)
+    end
+
+    -- legacy
     do
         local craftProfitsContent = craftResultFrame.content.statDetailsTab
             .content --[[@as CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT]]
@@ -616,7 +665,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
         end
         local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
         statisticsText = statisticsText ..
-            L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
+            L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX) ..
+            craftRecipeData.numCrafts .. "\n\n"
 
         if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
             statisticsText = statisticsText ..
@@ -693,7 +743,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
                         L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
@@ -702,7 +752,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
                         L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
@@ -710,7 +760,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
             end
         else
             statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11) .. actualProfit .. "\n\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1) .. actualProfit .. "\n\n"
         end
 
 
@@ -719,11 +769,12 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
 
     -- Statistics Tracker
     do
-        local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
+        local statisticsTrackerTabContent = craftResultFrame.content.resultDetailsTab
             .content --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT]]
 
-        statisticsTrackerTabContent.recipeHeader:SetText(CraftSim.INIT.currentRecipeData.recipeName .. " " ..
-            GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 15, 15))
+        CraftSim.CRAFT_LOG.detailsFrame.content.recipeHeader:SetText(
+            GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 20, 20) ..
+            " [" .. CraftSim.INIT.currentRecipeData.recipeName .. "]")
 
         -- Result Distribution
         do

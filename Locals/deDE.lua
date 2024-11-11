@@ -214,7 +214,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "JSON exportieren",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "Rezeptstatistiken",
         [CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING] = "Noch nichts hergestellt!",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1] = "Herstellungen: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX] = "Herstellungen: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2] = "Erwarteter Ø Gewinn: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3] = "Realer Ø Gewinn: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4] = "Realer Gewinn: ",
@@ -222,21 +222,21 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7] = "Mehrfachherstellung: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8] = "- Ø Zusätzliche Gegenstände: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9] = "Einfallsreichtum Procs: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Gesparte Kosten: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Gewinn: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø Gesparte Kosten: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Gewinn: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Gespeicherte Reagenzien",
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l(
             "Herstellungsergebnisse deaktivieren"),
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
             "Wenn aktiviert, wird die Aufzeichnung von Herstellungsergebnissen beim Herstellen gestoppt und kann die " ..
             f.g("Leistung verbessern"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "Statistik Tracker",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Ergebnisverteilung",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Statistik Tracker",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Ergebnisverteilung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
         "Relative Verteilung der hergestellten Gegenstandsergebnisse (Mehrfachherstellungs-Mengen werden ignoriert)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT] = "Mehrfachherstellung",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS] = "Einfallsreichtum",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION] = "Ertragsverteilung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Mehrfachherstellung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Einfallsreichtum",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Ertragsverteilung",
 
         -- Statgewichtungsfenster
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Durchschnittlicher Gewinn",

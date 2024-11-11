@@ -203,7 +203,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "Export JSON",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "Recipe Statistics",
         [CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING] = "Nothing crafted yet!",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1] = "Crafts: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX] = "Crafts: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2] = "Expected Ø Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3] = "Real Ø Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4] = "Real Profit: ",
@@ -211,21 +211,21 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7] = "Multicraft: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8] = "- Ø Extra Items: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9] = "Resourcefulness Procs: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Saved Costs: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Profit: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø Saved Costs: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Saved Reagents",
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.r("Disable") .. " Craft Logs",
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
             "Enabling this stops the recording of any crafts when crafting and may " ..
             f.g("increase performance"),
         [CraftSim.CONST.TEXT.CRAFT_LOG_STAT_DETAILS_TAB] = "Stat Details",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "Statistics Tracker",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Statistics Tracker",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
         "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT] = "Multicraft",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS] = "Resourcefulness",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION] = "Yield Distribution",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Multicraft",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Resourcefulness",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Yield Distribution",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Average Profit",
