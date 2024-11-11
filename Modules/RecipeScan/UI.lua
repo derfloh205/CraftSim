@@ -107,8 +107,7 @@ end
 function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(selectedRow)
     -- update cached recipes value
     local content = selectedRow.content --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.TAB_CONTENT]]
-    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(selectedRow.crafterUID, selectedRow.profession)
-
+    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(selectedRow.crafterUID, selectedRow.profession) or {}
     if C_TradeSkillUI.IsTradeSkillReady() then
         if selectedRow.crafterProfessionUID ~= CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID() then
             content.cachedRecipesInfoHelpIcon:Show()
@@ -139,8 +138,27 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         selectionCallback =
         ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
             function(row, userInput)
-                print("in selection callback!")
-                CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(row, userInput)
+                if not userInput or IsMouseButtonDown("LeftButton") then
+                    CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(row, userInput)
+                elseif IsMouseButtonDown("RightButton") then
+                    MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                        local removeButton = rootDescription:CreateButton(f.r("Remove"), function()
+                            local professionList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
+                                .professionList --[[@as GGUI.FrameList]]
+                            CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(row.crafterUID, row.profession)
+                            professionList:Remove(function(_row)
+                                local removing = _row.crafterUID == row.crafterUID and _row.profession == row.profession
+                                return removing
+                            end)
+
+                            CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
+                        end)
+                        removeButton:SetTooltip(function(tooltip, elementDescription)
+                            GameTooltip_AddInstructionLine(tooltip,
+                                f.r("Remove ") .. "all cached data about this character - profession combination");
+                        end);
+                    end)
+                end
             end
     },
         columnOptions = {
@@ -325,6 +343,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
     local activeRows = content.professionList.activeRows
     local crafterDBDataMap = CraftSim.DB.CRAFTER:GetAll()
+
     for crafterUID, crafterDBData in pairs(crafterDBDataMap) do
         local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs or {}
         for profession, _ in pairs(cachedProfessionRecipeIDs) do
@@ -339,7 +358,6 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
         end
     end
 
-
     CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
 end
 
@@ -347,7 +365,6 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
     print("update prof list display")
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
-    local sortCallCounter = 1
     content.professionList:UpdateDisplay(
     ---@param rowA CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
     ---@param rowB CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW

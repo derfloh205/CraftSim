@@ -462,3 +462,21 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, true,
         CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end
+
+---@param profession Enum.Profession
+function CraftSim.UTIL:IsProfessionLearned(profession)
+    local learnedProfessions = { GetProfessions() };
+
+    local skillLineIDs = GUTIL:Map(learnedProfessions, function(professionIndex)
+        return select(7, GetProfessionInfo(professionIndex))
+    end)
+
+    if GUTIL:Some(skillLineIDs, function(skillLineID)
+            local info = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
+            return info and info.profession == profession
+        end) then
+        return true
+    end
+
+    return false
+end

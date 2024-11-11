@@ -12,6 +12,7 @@ CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
 
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.INIT : Frame
@@ -27,7 +28,6 @@ CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.INIT)
-
 
 function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
 	-- adapt cached values
@@ -107,7 +107,7 @@ function CraftSim.INIT:TriggerModuleUpdate(isInit)
 	end)
 end
 
-function CraftSim.INIT:HookToEvent()
+function CraftSim.INIT:HookToEvents()
 	if hookedEvent then
 		return
 	end
@@ -342,9 +342,10 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.COOLDOWNS.UI:Init()
 		CraftSim.CONCENTRATION_TRACKER.UI:Init()
 
-		CraftSim.INIT:HookToEvent()
+		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()
 		CraftSim.INIT:HookToConcentrationButtons()
+		CraftSim.INIT:HookToProfessionUnlearnedFunction()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
 
@@ -405,6 +406,22 @@ function CraftSim.INIT:HookToProfessionsFrame()
 				CraftSim.OPTIONS.lastOpenRecipeID[profession] = recipeInfo.recipeID
 			end
 		end)
+end
+
+function CraftSim.INIT:HookToProfessionUnlearnedFunction()
+	-- will be base skill line id
+
+	hooksecurefunc("AbandonSkill", function(skilllineID)
+		local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skilllineID)
+		if professionInfo then
+			local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+			CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " ..
+				"Removing Cached Data for ") .. crafterUID .. " - " .. f.bb(professionInfo.professionName))
+			local profession = professionInfo.profession
+
+			CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(crafterUID, profession)
+		end
+	end)
 end
 
 local concentrationButtonHooked = false

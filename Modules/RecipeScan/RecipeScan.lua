@@ -254,7 +254,7 @@ function CraftSim.RECIPE_SCAN:GetScanRecipeInfo(row)
         end)
     end
     -- else take the infos from db
-    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession)
+    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
 
     return GUTIL:Map(cachedRecipeIDs, function(recipeID)
         -- also take from db
