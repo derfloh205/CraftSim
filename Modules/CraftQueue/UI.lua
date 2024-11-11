@@ -416,7 +416,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             if nextRow then
                                 input.textInput.frame:ClearFocus()
                                 local craftAmountColumn = nextRow.columns
-                                    [10] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+                                    [9] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
                                 craftAmountColumn.input.textInput.frame:SetFocus()
                             end
                         end
