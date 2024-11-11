@@ -367,8 +367,6 @@ function CraftSim.CRAFTQ:QueueFavorites()
         CraftSim.DB.CRAFTER:SaveFavoriteRecipes(CraftSim.UTIL:GetPlayerCrafterUID(), profession, favoriteRecipeIDs)
     end
 
-    CraftSim.DEBUG:InspectTable(favoriteRecipeIDs, "favoriteRecipeIDs")
-
     -- optimize and queue
 
     local queueFavoritesButton = CraftSim.CRAFTQ.frame.content.queueTab.content
@@ -703,7 +701,6 @@ end
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
     print("onCraftResult")
-    CraftSim.DEBUG:InspectTable(craftingItemResultData, "craftingItemResultData")
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end
