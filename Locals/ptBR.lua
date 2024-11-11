@@ -213,11 +213,6 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Economia: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Lucro: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Reagentes Economizados",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Desativar Registro de Resultados de Criação"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "Ativar essa opção encerra o registro de resultados de qualquer criação quando estiver criando e pode " ..
-            f.g("melhorar a performance"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB] = "Lucros de Criação",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "Rastreador de Estatísticas",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Distribuição dos Resultados",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =

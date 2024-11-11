@@ -207,11 +207,6 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø 节省成本：",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "利润：",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "节省材料",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("停用记录制造结果"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "启用此选项会停止在制造时记录任何制造结果，并且会" ..
-            f.g("增加性能"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB] = "制造利润",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "统计追踪",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "成品分布",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] = "制造物品成品的相对分布。\n（忽略产能数量）",

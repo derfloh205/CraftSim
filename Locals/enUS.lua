@@ -190,6 +190,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Crafting Results Frame
         [CraftSim.CONST.TEXT.CRAFT_LOG_TITLE] = "CraftSim Craft Log",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_ADV_TITLE] = "CraftSim Advanced Craft Log",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG] = "Craft Log",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1] = "Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2] = "Inspired!",
@@ -197,7 +198,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4] = "Resources Saved!: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_5] = "Chance: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_CRAFTED_ITEMS] = "Crafted Items",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_SESSION_PROFIT] = "Session Profit",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_SESSION_PROFIT] = "Session Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RESET_DATA] = "Reset Data",
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "Export JSON",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "Recipe Statistics",
@@ -213,11 +214,11 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Saved Costs: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Saved Reagents",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Disable Craft Result Recording"),
+        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.r("Disable") .. " Craft Logs",
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
             "Enabling this stops the recording of any crafts when crafting and may " ..
             f.g("increase performance"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB] = "Craft Profits",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_STAT_DETAILS_TAB] = "Stat Details",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "Statistics Tracker",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =

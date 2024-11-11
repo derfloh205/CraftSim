@@ -198,10 +198,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø сэкономленные затраты: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Сохраненные реагенты",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Отключить запись результатов крафта"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "Включение этого параметра останавливает запись любых результатов крафта во время крафта и может " ..
-            f.g("увеличить производительность"),
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Средняя прибыль CraftSim",

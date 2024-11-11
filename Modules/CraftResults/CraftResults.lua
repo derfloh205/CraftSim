@@ -13,8 +13,10 @@ CraftSim.CRAFT_LOG.currentRecipeData = nil
 
 CraftSim.CRAFT_LOG.currentSessionData = nil
 
----@type CraftSim.CRAFT_LOG.FRAME
-CraftSim.CRAFT_LOG.frame = nil
+---@type CraftSim.CRAFT_LOG.LOG_FRAME
+CraftSim.CRAFT_LOG.logFrame = nil
+---@type CraftSim.CRAFT_LOG.DETAILS_FRAME
+CraftSim.CRAFT_LOG.detailsFrame = nil
 
 local dataCollect = true
 
@@ -63,6 +65,12 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
         return
     end
 
+    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
+        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
+        CraftSim.CRAFT_LOG.logFrame:Show()
+        CraftSim.CRAFT_LOG.detailsFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
+    end
+
     -- buffer a small time frame, then use all result items at once
     table.insert(currentCraftingResults, craftResult)
 
@@ -92,31 +100,28 @@ function CraftSim.CRAFT_LOG:ExportJSON()
     return sessionData:GetJSON()
 end
 
-function CraftSim.CRAFT_LOG:ResetData()
+function CraftSim.CRAFT_LOG:ClearData()
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CraftSessionData()
+    CraftSim.CRAFT_LOG.logFrame.content.craftLogScrollingMessageFrame:Clear()
+    CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:Remove()
+    CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:UpdateDisplay()
+    CraftSim.CRAFT_LOG.logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
+    CraftSim.CRAFT_LOG.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
 end
 
 ---Saves the currentCraftResult
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
-    local craftResultFrame = CraftSim.CRAFT_LOG.frame
-    local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
-        .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
+    local detailsFrame = CraftSim.CRAFT_LOG.detailsFrame
+    local logFrame = CraftSim.CRAFT_LOG.logFrame
 
     print("AddCraftResult:", false, true)
     ---@type CraftSim.CraftSessionData
-    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData
-    if not CraftSim.CRAFT_LOG.currentSessionData then
-        print("AddCraftResult: Create new SessionData")
-        CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CraftSessionData()
-    else
-        print("AddCraftResult: Reuse session data")
-    end
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
 
     CraftSim.CRAFT_LOG.currentSessionData:AddCraftResult(craftResult)
 
-    -- update frames
-    craftProfitsTabContent.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(
+    logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(
         CraftSim.CRAFT_LOG.currentSessionData.totalProfit, true))
 
     CraftSim.CRAFT_LOG.UI:UpdateItemList()
@@ -127,9 +132,8 @@ end
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
     CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_LOG_UI_UPDATE")
-    local craftResultFrame = CraftSim.CRAFT_LOG.frame
-    local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
-        .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
+    local craftLogFrame = CraftSim.CRAFT_LOG.logFrame
+    local craftLog = craftLogFrame.content.craftLogScrollingMessageFrame
 
     local resourcesText = ""
 
@@ -177,7 +181,7 @@ function CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
         ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
         ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
-    craftProfitsTabContent.scrollingMessageFrame:AddMessage("\n" .. newText)
+    craftLog:AddMessage("\n" .. newText)
 
     CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
     CraftSim.CRAFT_LOG.UI:UpdateRecipeData(craftResult.recipeID)

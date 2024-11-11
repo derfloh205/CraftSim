@@ -16,209 +16,322 @@ CraftSim.CRAFT_LOG.UI = {}
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
 
 function CraftSim.CRAFT_LOG.UI:Init()
-    ---@class CraftSim.CRAFT_LOG.FRAME : GGUI.Frame
-    local frame = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage,
-        anchorParent = ProfessionsFrame.CraftingPage.CraftingOutputLog,
+    ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame
+    local logFrame = GGUI.Frame({
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
         anchorA = "TOPLEFT",
-        anchorB = "TOPLEFT",
-        offsetY = 10,
-        sizeX = 700,
-        sizeY = 450,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_TITLE),
-        collapseable = true,
+        anchorB = "TOPRIGHT",
+        sizeX = 260,
+        sizeY = 340,
+        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG_LOG_FRAME,
+        title = L("CRAFT_LOG_TITLE"),
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_LOG"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameStrata = "DIALOG",
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
-    CraftSim.CRAFT_LOG.frame = frame
+    ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
+    local detailsFrame = GGUI.Frame({
+        parent = logFrame.frame,
+        anchorParent = logFrame.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPRIGHT",
+        sizeX = 700,
+        sizeY = 340,
+        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
+        title = L("CRAFT_LOG_ADV_TITLE"),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable = CraftSim.INIT.FRAMES,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = "DIALOG",
+        moveable = true,
+        closeable = true,
+        onCloseCallback = function()
+            CraftSim.DB.OPTIONS:Save("CRAFT_LOG_SHOW_ADV_LOG", false)
+        end,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        hide = not CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"),
+    })
 
-    local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
+    CraftSim.CRAFT_LOG.logFrame = logFrame
+    CraftSim.CRAFT_LOG.detailsFrame = detailsFrame
+
+    local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
 
     if hideBlizzardCraftingLog and ProfessionsFrame.CraftingPage.CraftingOutputLog then
         ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
     end
 
-    local function createContent(frame)
-        local tabSizeX = 700
-        local tabSizeY = 450
+    self:InitLogFrame(logFrame)
+    self:InitDetailsFrame(detailsFrame)
+end
 
-        frame.content.craftResultsOptionsButton = GGUI.Button {
-            parent = frame.content,
-            anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-            cleanTemplate = true,
-            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-            sizeX = 20, sizeY = 20,
-            clickCallback = function(_, _)
-                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                    local hideBlizzardCraftingLog = rootDescription:CreateCheckbox(
-                        "Hide " .. f.bb("Default Crafting Log"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
-                        end, function()
-                            local newValue = not CraftSim.DB.OPTIONS:Get(
-                                "CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
-                            CraftSim.DB.OPTIONS:Save("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG",
-                                newValue)
+function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
+    ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame
+    frame = frame
 
-                            if newValue then
-                                ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
-                                if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
-                                    ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
-                                end
-                            else
-                                ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                    "TRADE_SKILL_ITEM_CRAFTED_RESULT")
-                                ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                    "TRADE_SKILL_CURRENCY_REWARD_RESULT")
-                            end
-                        end)
+    local craftLogX = 250
+    local craftLogY = 150
 
-                    hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+    frame.content.craftResultsOptionsButton = GGUI.Button {
+        parent = frame.content,
+        anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        cleanTemplate = true,
+        buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+        sizeX = 20, sizeY = 20,
+        clickCallback = function(_, _)
+            MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                local disableCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_LOG_DISABLE_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_DISABLE")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE",
+                            newValue)
                     end)
 
-                    local disableRecordingCB = rootDescription:CreateCheckbox(
-                        L("CRAFT_LOG_DISABLE_CHECKBOX"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE")
-                        end, function()
-                            local newValue = not CraftSim.DB.OPTIONS:Get(
-                                "CRAFT_LOG_DISABLE")
-                            CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE",
-                                newValue)
-                        end)
+                disableCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
+                end);
 
-                    disableRecordingCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
-                    end);
+                local showAdvancedLogCB = rootDescription:CreateCheckbox(
+                    "Show " .. f.l("Advanced Craft Log"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_SHOW_ADV_LOG")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_SHOW_ADV_LOG",
+                            newValue)
+
+                        if newValue then
+                            CraftSim.CRAFT_LOG.detailsFrame:Show()
+                        else
+                            CraftSim.CRAFT_LOG.detailsFrame:Hide()
+                        end
+                    end)
+
+                local hideBlizzardCraftingLog = rootDescription:CreateCheckbox(
+                    "Hide " .. f.bb("Blizzard Default Crafting Log"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG",
+                            newValue)
+
+                        if newValue then
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+                            if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
+                                ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
+                            end
+                        else
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                        end
+                    end)
+
+                hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
                 end)
-            end
-        }
 
-        ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB : GGUI.BlizzardTab
-        frame.content.craftProfitsTab = GGUI.BlizzardTab {
-            buttonOptions = {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB),
-                offsetY = -3,
+                local autoShowCB = rootDescription:CreateCheckbox(
+                    f.g("Auto Show ") .. "on Craft",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_AUTO_SHOW")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_AUTO_SHOW",
+                            newValue)
+
+                        if newValue then
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+                            if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
+                                ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
+                            end
+                        else
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                        end
+                    end)
+
+                hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+                end)
+
+                local exportOptions = rootDescription:CreateButton("Export Data")
+
+                exportOptions:CreateButton("as " .. f.bb("JSON"), function()
+                    local json = CraftSim.CRAFT_LOG:ExportJSON()
+                    CraftSim.UTIL:ShowTextCopyBox(json)
+                end)
+
+                local clearDataButton = rootDescription:CreateButton(f.r("Clear Data"), function()
+                    CraftSim.CRAFT_LOG:ClearData()
+                end)
+            end)
+        end
+    }
+
+    frame.content.backgroundFrame = GGUI.Frame {
+        parent = frame.content,
+        sizeX = craftLogX, sizeY = craftLogY,
+        anchorParent = frame.content,
+        anchorA = "TOP", anchorB = "TOP", offsetY = -37,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+    }
+
+    frame.content.craftLogScrollingMessageFrame = GGUI.ScrollingMessageFrame {
+        parent = frame.content.backgroundFrame.content,
+        anchorParent = frame.content.backgroundFrame.content,
+        enableScrolling = true,
+        fading = false,
+        maxLines = 3000,
+        sizeX = craftLogX - 20,
+        sizeY = craftLogY - 20,
+        justifyOptions = { type = "H", align = "LEFT" },
+        scale = 0.9,
+    }
+
+    frame.content.craftLogScrollingMessageFrame:EnableHyperLinksForFrameAndChilds()
+
+    frame.content.craftedItemsTitle = GGUI.Text {
+        parent = frame.content,
+        anchorPoints = { { anchorParent = frame.content.craftLogScrollingMessageFrame.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -20 } },
+        text = L("CRAFT_LOG_CRAFTED_ITEMS")
+    }
+
+    frame.content.craftedItemsList = GGUI.FrameList {
+        parent = frame.content,
+        anchorPoints = {
+            { anchorParent = frame.content.craftLogScrollingMessageFrame.frame,
+                anchorA = "TOPLEFT",
+                anchorB = "BOTTOMLEFT",
+                offsetX = -20,
+                offsetY = -38
+            } },
+        columnOptions = {
+            {
+                width = 25,
             },
-            parent = frame.content, anchorParent = frame.content, initialTab = true,
-            sizeX = tabSizeX, sizeY = tabSizeY,
-            top = true,
-        }
+            {
+                width = 192
+            }
+        },
+        rowHeight = 15,
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            noSelectionColor = true,
+        },
+        rowConstructor = function(columns, row)
+            row.itemCountColumn = columns[1]
+            row.itemLinkColumn = columns[2]
+            ---@class CraftSim.CRAFT_RESULTS.CraftItemResultList.Row : GGUI.FrameList.Row
+            row = row
 
-        self:InitCraftProfitsTab(frame.content.craftProfitsTab)
+            ---@type ItemMixin
+            row.item = nil
 
-        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
-        frame.content.statisticsTrackerTab = GGUI.BlizzardTab {
-            buttonOptions = {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB),
-                anchorParent = frame.content.craftProfitsTab.button,
-                anchorA = "LEFT",
-                anchorB = "RIGHT",
-            },
-            parent = frame.content, anchorParent = frame.content,
-            sizeX = tabSizeX, sizeY = tabSizeY,
-            top = true,
-        }
+            row.itemCountColumn.text = GGUI.Text {
+                parent = row.itemCountColumn, anchorPoints = { { anchorParent = row.itemCountColumn } },
+                scale = 0.9,
+                fixedWidth = 25
+            }
 
-        self:InitStatisticsTrackerTab(frame.content.statisticsTrackerTab)
+            row.itemLinkColumn.text = GGUI.Text {
+                parent = row.itemLinkColumn, anchorPoints = { { anchorParent = row.itemLinkColumn } },
+                justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9,
+                fixedWidth = 192
+            }
+        end,
+        showBorder = true,
+    }
 
-        GGUI.BlizzardTabSystem { frame.content.craftProfitsTab, frame.content.statisticsTrackerTab }
-    end
+    frame.content.sessionProfitTitle = GGUI.Text {
+        parent = frame.content,
+        anchorPoints = { { anchorParent = frame.content.craftedItemsList.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -8, offsetX = 2 } },
+        text = L("CRAFT_LOG_SESSION_PROFIT")
+    }
 
-    createContent(frame)
+    frame.content.sessionProfitValue = GGUI.Text {
+        parent = frame.content,
+        anchorPoints = { { anchorParent = frame.content.sessionProfitTitle.frame, anchorA = "LEFT", anchorB = "RIGHT" } },
+        justifyOptions = { type = "H", align = "LEFT" },
+        text = CraftSim.UTIL:FormatMoney(0, true)
+    }
+end
+
+function CraftSim.CRAFT_LOG.UI:InitDetailsFrame(frame)
+    local tabSizeX = 700
+    local tabSizeY = 450
+
+    ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
+    frame = frame
+
+    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB : GGUI.BlizzardTab
+    frame.content.statDetailsTab = GGUI.BlizzardTab {
+        buttonOptions = {
+            label = L("CRAFT_LOG_STAT_DETAILS_TAB"),
+            offsetY = -3,
+        },
+        parent = frame.content, anchorParent = frame.content, initialTab = true,
+        sizeX = tabSizeX, sizeY = tabSizeY,
+        top = true,
+    }
+
+    self:InitStatDetailsTab(frame.content.statDetailsTab)
+
+    ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
+    frame.content.statisticsTrackerTab = GGUI.BlizzardTab {
+        buttonOptions = {
+            label = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB),
+            anchorParent = frame.content.statDetailsTab.button,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+        },
+        parent = frame.content, anchorParent = frame.content,
+        sizeX = tabSizeX, sizeY = tabSizeY,
+        top = true,
+    }
+
+    self:InitStatisticsTrackerTab(frame.content.statisticsTrackerTab)
+
+    GGUI.BlizzardTabSystem { frame.content.statDetailsTab, frame.content.statisticsTrackerTab }
+
     GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
----@param craftProfitsTab CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB
-function CraftSim.CRAFT_LOG.UI:InitCraftProfitsTab(craftProfitsTab)
-    ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB
-    craftProfitsTab = craftProfitsTab
-    ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT : Frame
-    local content = craftProfitsTab.content
-
-    content.totalProfitAllTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_SESSION_PROFIT), content, content,
-        "TOP", "TOP", 140, -60, nil, nil, { type = "H", value = "LEFT" })
-    content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), content,
-        content.totalProfitAllTitle,
-        "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, { type = "H", value = "LEFT" })
-
-
-    content.clearButton = GGUI.Button({
-        parent = content,
-        anchorParent = content.totalProfitAllTitle,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        offsetY = -40,
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_RESET_DATA),
-        clickCallback = function()
-            content.scrollingMessageFrame:Clear()
-            content.craftedItemsFrame.resultFeed:SetText("")
-            content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-            CraftSim.CRAFT_LOG:ResetData()
-            CraftSim.CRAFT_LOG.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
-        end
-    })
-
-    content.exportButton = GGUI.Button({
-        parent = content,
-        anchorParent = content.clearButton.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        sizeX = 25,
-        sizeY = 25,
-        offsetY = -10,
-        adjustWidth = true,
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON),
-        clickCallback = function()
-            local json = CraftSim.CRAFT_LOG:ExportJSON()
-            CraftSim.UTIL:ShowTextCopyBox(json)
-        end
-    })
-
-
-    -- craft logs
-    content.craftsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG), content, content, "TOPLEFT",
-        "TOPLEFT",
-        155, -40)
-
-    content.scrollingMessageFrame = CraftSim.FRAME:CreateScrollingMessageFrame(content,
-        content.craftsTitle,
-        "TOPLEFT", "BOTTOMLEFT", -125, -15, 30, 200, 140)
-    --
-
-    content.scrollFrame2, content.craftedItemsFrame = CraftSim.FRAME:CreateScrollFrame(content,
-        -230, 20, -350, 20)
-
-    content.craftedItemsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_CRAFTED_ITEMS), content,
-        content.scrollFrame2, "BOTTOM", "TOP", 0, 0)
-
-    content.craftedItemsFrame.resultFeed = CraftSim.FRAME:CreateText("", content.craftedItemsFrame,
-        content.craftedItemsFrame,
-        "TOPLEFT", "TOPLEFT", 10, -10, nil, nil, { type = "H", value = "LEFT" })
+---@param statDetailsTab CraftSim.CRAFT_LOG.STAT_DETAILS_TAB
+function CraftSim.CRAFT_LOG.UI:InitStatDetailsTab(statDetailsTab)
+    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB
+    statDetailsTab = statDetailsTab
+    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT : Frame
+    local content = statDetailsTab.content
 
     content.statisticsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS), content,
-        content.craftedItemsTitle, "LEFT", "RIGHT", 270, 0)
+        L(CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS), content,
+        content, "TOP", "TOP", 270, 0)
     content.statisticsText = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING), content,
+        L(CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING), content,
         content.statisticsTitle,
         "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
     content.statisticsText:SetWidth(300)
@@ -271,12 +384,12 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL)
     }
 
     GGUI.HelpIcon {
         parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP)
     }
 
     content.multicraftStatisticsList = GGUI.FrameList {
@@ -314,7 +427,7 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT)
     }
 
     content.resourcefulnessStatisticsList = GGUI.FrameList {
@@ -352,7 +465,7 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS)
     }
 
     content.yieldStatisticsList = GGUI.FrameList {
@@ -401,47 +514,58 @@ function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.yieldStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION)
+        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION)
     }
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateItemList()
-    local craftResultFrame = CraftSim.CRAFT_LOG.frame
+    local logFrame = CraftSim.CRAFT_LOG.logFrame
+    local craftedItemsList = logFrame.content.craftedItemsList --[[@as GGUI.FrameList]]
 
     -- total items
     local craftResultItems = CraftSim.CRAFT_LOG.currentSessionData.totalItems
 
-    -- CraftProfits
     do
-        local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab.content
-        local craftedItemsFrame = craftProfitsTabContent.craftedItemsFrame
+        craftedItemsList:Remove()
 
-        -- sort craftedItems by rareness
-        local sortedCraftResultItems = CraftSim.GUTIL:Sort(craftResultItems, function(a, b)
-            local rarityA = a.item:GetItemQuality()
-            local rarityB = b.item:GetItemQuality()
-            if rarityA and rarityB then
-                return a.item:GetItemQuality() > b.item:GetItemQuality()
-            end
-        end)
-
-        local craftedItemsText = ""
-        for _, craftResultItem in pairs(sortedCraftResultItems) do
-            craftedItemsText = craftedItemsText ..
-                craftResultItem.quantity .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+        for _, craftResultItem in ipairs(craftResultItems) do
+            craftedItemsList:Add(
+            ---@param row CraftSim.CRAFT_RESULTS.CraftItemResultList.Row
+                function(row)
+                    local itemLink = craftResultItem.item:GetItemLink()
+                    row.itemCountColumn.text:SetText(craftResultItem.quantity)
+                    row.itemLinkColumn.text:SetText(itemLink)
+                    row.tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        owner = row.frame,
+                        itemLink = itemLink,
+                    }
+                    row.item = craftResultItem.item
+                end)
         end
 
-        -- add saved reagents
-        local savedReagentsText = ""
-        if #CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents > 0 then
-            savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS) .. "\n"
-            for _, savedReagent in pairs(CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents) do
-                savedReagentsText = savedReagentsText ..
-                    (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
-            end
-        end
+        craftedItemsList:UpdateDisplay(
+        ---@param rowA CraftSim.CRAFT_RESULTS.CraftItemResultList.Row
+        ---@param rowB CraftSim.CRAFT_RESULTS.CraftItemResultList.Row
+            function(rowA, rowB)
+                local rarityA = rowA.item:GetItemQuality()
+                local rarityB = rowB.item:GetItemQuality()
+                if rarityA and rarityB then
+                    return rarityA > rarityB
+                end
 
-        craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
+                return false
+            end)
+
+        -- -- add saved reagents
+        -- local savedReagentsText = ""
+        -- if #CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents > 0 then
+        --     savedReagentsText = "\n" .. L(CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS) .. "\n"
+        --     for _, savedReagent in pairs(CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents) do
+        --         savedReagentsText = savedReagentsText ..
+        --             (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
+        --     end
+        -- end
     end
 end
 
@@ -456,7 +580,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
     end
     print("Do update cause its the shown recipe")
 
-    local craftResultFrame = CraftSim.CRAFT_LOG.frame
+    local craftResultFrame = CraftSim.CRAFT_LOG.detailsFrame
 
     local craftSessionData = CraftSim.CRAFT_LOG.currentSessionData
     if not craftSessionData then
@@ -478,8 +602,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
 
     -- Craft Profits
     do
-        local craftProfitsContent = craftResultFrame.content.craftProfitsTab
-            .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
+        local craftProfitsContent = craftResultFrame.content.statDetailsTab
+            .content --[[@as CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT]]
         local statisticsText = ""
         local expectedAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
         local actualAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
@@ -492,17 +616,17 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
         end
         local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
         statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
+            L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
 
         if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2) .. expectedAverageProfit .. "\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2) .. expectedAverageProfit .. "\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3) .. actualAverageProfit .. "\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3) .. actualAverageProfit .. "\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4) .. actualProfit .. "\n\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4) .. actualProfit .. "\n\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_5) .. "\n\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_5) .. "\n\n"
 
             if CraftSim.INIT.currentRecipeData.supportsMulticraft then
                 local expectedProcs = tonumber(CraftSim.GUTIL:Round(
@@ -511,12 +635,12 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
                     0
                 if craftRecipeData.numMulticraft >= expectedProcs then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. expectedProcs .. "\n"
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. expectedProcs .. "\n"
                 end
@@ -535,16 +659,16 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
                     0, 2)) or 0
                 if averageExtraItems == 0 then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
                 elseif averageExtraItems >= expectedAdditionalItems then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. expectedAdditionalItems .. "\n"
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. expectedAdditionalItems .. "\n"
                 end
@@ -562,23 +686,23 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
 
                 if averageSavedCosts == 0 then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN)
                 elseif averageSavedCosts >= expectedAverageSavedCosts then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
+                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
@@ -586,7 +710,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
             end
         else
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11) .. actualProfit .. "\n\n"
+                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11) .. actualProfit .. "\n\n"
         end
 
 

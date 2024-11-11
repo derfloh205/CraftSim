@@ -172,10 +172,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø Risparmio: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Profitto: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Reagenti risparmiati",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Disabilita Registrazione Oggetti Creati"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "Abilitandolo si ferma la registrazione di tutti i risultati delle creazioni e può " ..
-            f.g("migliorare le performance"),
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Profitto Medio di CraftSim",
