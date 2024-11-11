@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+
 ---@class CraftSim.CRAFT_RESULTS
 CraftSim.CRAFT_RESULTS = CraftSim.CRAFT_RESULTS
 
@@ -38,9 +40,54 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
 
     CraftSim.CRAFT_RESULTS.frame = frame
 
+    local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
+
+    if hideBlizzardCraftingLog and ProfessionsFrame.CraftingPage.CraftingOutputLog then
+        ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+    end
+
     local function createContent(frame)
         local tabSizeX = 700
         local tabSizeY = 450
+
+        frame.content.craftResultsOptionsButton = GGUI.Button {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            cleanTemplate = true,
+            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+            sizeX = 20, sizeY = 20,
+            clickCallback = function(_, _)
+                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    local hideBlizzardCraftingLog = rootDescription:CreateCheckbox(
+                        "Hide " .. f.bb("Default Crafting Log"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
+                        end, function()
+                            local newValue = not CraftSim.DB.OPTIONS:Get(
+                                "CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
+                            CraftSim.DB.OPTIONS:Save("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG",
+                                newValue)
+
+                            if newValue then
+                                ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+                                if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
+                                    ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
+                                end
+                            else
+                                ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                    "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                                ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                    "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                            end
+                        end)
+
+                    hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+                    end);
+                end)
+            end
+        }
 
         ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB : GGUI.BlizzardTab
         frame.content.craftProfitsTab = GGUI.BlizzardTab {

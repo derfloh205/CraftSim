@@ -69,19 +69,6 @@ function CraftSim.RECIPE_SCAN.UI:Init()
 
         CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(frame.content.recipeScanTab)
 
-        -- ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB : GGUI.BlizzardTab
-        -- frame.content.scanOptionsTab = GGUI.BlizzardTab {
-        --     buttonOptions = {
-        --         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS),
-        --         anchorA = "LEFT", anchorB = "RIGHT", anchorParent = frame.content.recipeScanTab.button
-        --     },
-        --     parent = frame.content, anchorParent = frame.content,
-        --     sizeX = tabSizeX, sizeY = tabSizeY,
-        --     top = true,
-        -- }
-
-        --CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(frame.content.scanOptionsTab)
-
         GGUI.BlizzardTabSystem { frame.content.recipeScanTab }
     end
 
