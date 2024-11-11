@@ -26,7 +26,7 @@ function CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
 
     if CraftSim.INIT.currentRecipeData then
         local mainRecipeData = CraftSim.INIT.currentRecipeData
-        -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead
+        -- if the open recipe is a recraft recipe than take this as current craft log recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if mainRecipeData and mainRecipeData.isRecraft then
             print("Setting main recipe")
@@ -46,7 +46,7 @@ end
 function CraftSim.CRAFT_LOG:OnCraftSalvage()
     if CraftSim.INIT.currentRecipeData then
         local recipeData = CraftSim.INIT.currentRecipeData
-        -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead
+        -- if the open recipe is a salvage or recraft recipe than take this as current craft log recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if recipeData.isSalvageRecipe then
             CraftSim.CRAFT_LOG.currentRecipeData = recipeData

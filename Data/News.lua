@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.6.0"),
+        f.P .. "Renamed " .. f.bb("Craft Results") .. " to " .. f.g("Craft Log"),
         newP("19.5.1"),
         f.P .. f.l("Cached Profession Data") .. " is now removed when unlearning",
         f.P .. f.bb("Recipe Scan"),

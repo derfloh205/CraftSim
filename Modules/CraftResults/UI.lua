@@ -5,6 +5,7 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_LOG
 CraftSim.CRAFT_LOG = CraftSim.CRAFT_LOG
@@ -84,6 +85,22 @@ function CraftSim.CRAFT_LOG.UI:Init()
                     hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
                             "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+                    end)
+
+                    local disableRecordingCB = rootDescription:CreateCheckbox(
+                        L("CRAFT_LOG_DISABLE_CHECKBOX"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE")
+                        end, function()
+                            local newValue = not CraftSim.DB.OPTIONS:Get(
+                                "CRAFT_LOG_DISABLE")
+                            CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE",
+                                newValue)
+                        end)
+
+                    disableRecordingCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
                     end);
                 end)
             end
@@ -175,7 +192,7 @@ function CraftSim.CRAFT_LOG.UI:InitCraftProfitsTab(craftProfitsTab)
     })
 
 
-    -- craft results
+    -- craft logs
     content.craftsTitle = CraftSim.FRAME:CreateText(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG), content, content, "TOPLEFT",
         "TOPLEFT",
@@ -205,17 +222,6 @@ function CraftSim.CRAFT_LOG.UI:InitCraftProfitsTab(craftProfitsTab)
         content.statisticsTitle,
         "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
     content.statisticsText:SetWidth(300)
-
-    content.disableCraftResultsCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.exportButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -10,
-        label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX),
-        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE", checked)
-        end
-    }
 end
 
 ---@param statisticsTrackerTab CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB

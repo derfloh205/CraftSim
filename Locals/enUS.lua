@@ -189,7 +189,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "No Data Available",
 
         -- Crafting Results Frame
-        [CraftSim.CONST.TEXT.CRAFT_LOG_TITLE] = "CraftSim Crafting Results",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_TITLE] = "CraftSim Craft Log",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG] = "Craft Log",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1] = "Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2] = "Inspired!",
@@ -215,7 +215,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Saved Reagents",
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Disable Craft Result Recording"),
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "Enabling this stops the recording of any craft results when crafting and may " ..
+            "Enabling this stops the recording of any crafts when crafting and may " ..
             f.g("increase performance"),
         [CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB] = "Craft Profits",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB] = "Statistics Tracker",
@@ -484,7 +484,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Specialization Info",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL] = "Craft Results",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL] = "Craft Log",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP] =
         "Show a crafting log and statistics about your crafts!",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Cost Optimization",

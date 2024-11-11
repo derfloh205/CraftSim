@@ -155,7 +155,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions
                 .craftGarbageCollectCrafts
 
-            -- CRAFT RESULTS
+            -- CRAFT LOG
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LOG_DISABLE] =
                 CraftSimOptions
                 .craftResultsDisable
