@@ -70,7 +70,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .modulePriceOverride
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_RECIPE_SCAN] = CraftSimOptions
                 .moduleRecipeScan
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_RESULTS] = CraftSimOptions
+            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_LOG] = CraftSimOptions
                 .moduleCraftResults
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CUSTOMER_SERVICE] = CraftSimOptions
                 .moduleCustomerService
@@ -156,7 +156,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .craftGarbageCollectCrafts
 
             -- CRAFT RESULTS
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFT_RESULTS_DISABLE] =
+            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LOG_DISABLE] =
                 CraftSimOptions
                 .craftResultsDisable
 

@@ -4,22 +4,22 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
----@class CraftSim.CRAFT_RESULTS : Frame
-CraftSim.CRAFT_RESULTS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
+---@class CraftSim.CRAFT_LOG : Frame
+CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
 ---@type CraftSim.RecipeData
-CraftSim.CRAFT_RESULTS.currentRecipeData = nil
+CraftSim.CRAFT_LOG.currentRecipeData = nil
 
-CraftSim.CRAFT_RESULTS.currentSessionData = nil
+CraftSim.CRAFT_LOG.currentSessionData = nil
 
----@type CraftSim.CRAFT_RESULTS.FRAME
-CraftSim.CRAFT_RESULTS.frame = nil
+---@type CraftSim.CRAFT_LOG.FRAME
+CraftSim.CRAFT_LOG.frame = nil
 
 local dataCollect = true
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
+function CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
     --- triggered by enchants and not salvage crafts
 
     print("OnCraftRecipe: " .. tostring(recipeData))
@@ -30,7 +30,7 @@ function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
         -- because this will not be able to be triggered by the craftqueue!
         if mainRecipeData and mainRecipeData.isRecraft then
             print("Setting main recipe")
-            CraftSim.CRAFT_RESULTS.currentRecipeData = mainRecipeData
+            CraftSim.CRAFT_LOG.currentRecipeData = mainRecipeData
             return
         end
     end
@@ -40,16 +40,16 @@ function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
         print("recipe is: " .. tostring(recipeData.recipeName))
     end
 
-    CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+    CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
-function CraftSim.CRAFT_RESULTS:OnCraftSalvage()
+function CraftSim.CRAFT_LOG:OnCraftSalvage()
     if CraftSim.INIT.currentRecipeData then
         local recipeData = CraftSim.INIT.currentRecipeData
         -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if recipeData.isSalvageRecipe then
-            CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+            CraftSim.CRAFT_LOG.currentRecipeData = recipeData
             return
         end
     end
@@ -58,8 +58,8 @@ end
 local currentCraftingResults = {}
 local collectingResults = true
 ---@param craftResult CraftingItemResultData
-function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
-    if CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE") then
+function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
+    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE") then
         return
     end
 
@@ -69,7 +69,7 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     if collectingResults then
         collectingResults = false
         C_Timer.After(0.1, function()
-            CraftSim.CRAFT_RESULTS:processCraftResults()
+            CraftSim.CRAFT_LOG:processCraftResults()
         end)
     end
 
@@ -79,57 +79,57 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
         print("PLAYERREAGENTBANKSLOTS_CHANGED After Craft")
         -- update item count for each of the used reagents in this craft! (in next frame to batch results)
         RunNextFrame(function()
-            local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData
+            local recipeData = CraftSim.CRAFT_LOG.currentRecipeData
             print("Updating Reagents Count for: " .. tostring(recipeData.recipeName))
             recipeData.reagentData:UpdateItemCountCacheForAllocatedReagents()
         end)
     end, 0.1)
 end
 
-function CraftSim.CRAFT_RESULTS:ExportJSON()
-    local sessionData = CraftSim.CRAFT_RESULTS.currentSessionData
+function CraftSim.CRAFT_LOG:ExportJSON()
+    local sessionData = CraftSim.CRAFT_LOG.currentSessionData
 
     return sessionData:GetJSON()
 end
 
-function CraftSim.CRAFT_RESULTS:ResetData()
-    CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
+function CraftSim.CRAFT_LOG:ResetData()
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CraftSessionData()
 end
 
 ---Saves the currentCraftResult
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
-    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+function CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
+    local craftResultFrame = CraftSim.CRAFT_LOG.frame
     local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
-        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
+        .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
 
     print("AddCraftResult:", false, true)
     ---@type CraftSim.CraftSessionData
-    CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
-    if not CraftSim.CRAFT_RESULTS.currentSessionData then
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData
+    if not CraftSim.CRAFT_LOG.currentSessionData then
         print("AddCraftResult: Create new SessionData")
-        CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
+        CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CraftSessionData()
     else
         print("AddCraftResult: Reuse session data")
     end
 
-    CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
+    CraftSim.CRAFT_LOG.currentSessionData:AddCraftResult(craftResult)
 
     -- update frames
     craftProfitsTabContent.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(
-        CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
+        CraftSim.CRAFT_LOG.currentSessionData.totalProfit, true))
 
-    CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
+    CraftSim.CRAFT_LOG.UI:UpdateItemList()
 end
 
 ---Adds Results to the UI
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
-    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
-    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+function CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
+    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_LOG_UI_UPDATE")
+    local craftResultFrame = CraftSim.CRAFT_LOG.frame
     local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
-        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
+        .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
 
     local resourcesText = ""
 
@@ -147,7 +147,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-        chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5) ..
+        chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_5) ..
             GUTIL:Round(craftResult.craftingChance * 100, 1) .. "%\n"
     end
 
@@ -172,22 +172,22 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
 
     local newText =
         resultsText ..
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1) .. profitText .. "\n" ..
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
         chanceText ..
-        ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-        ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+        ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+        ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
     craftProfitsTabContent.scrollingMessageFrame:AddMessage("\n" .. newText)
 
-    CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
-    CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(craftResult.recipeID)
-    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
+    CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
+    CraftSim.CRAFT_LOG.UI:UpdateRecipeData(craftResult.recipeID)
+    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_LOG_UI_UPDATE")
 end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
 ---@return number
-function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult)
+function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
     local craftingCosts = recipeData.priceData.craftingCosts
 
     local savedCosts = 0
@@ -217,13 +217,13 @@ function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult)
     return craftProfit
 end
 
-function CraftSim.CRAFT_RESULTS:processCraftResults()
+function CraftSim.CRAFT_LOG:processCraftResults()
     collectingResults = true
     print("Craft Detected", false, true)
     -- print(currentCraftingResults, true)
     -- print("Num Craft Results: " .. tostring(#currentCraftingResults))
 
-    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULTS")
+    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_LOG")
 
     local CraftingItemResultData = CopyTable(currentCraftingResults)
     currentCraftingResults = {}
@@ -233,7 +233,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         return
     end
 
-    local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData;
+    local recipeData = CraftSim.CRAFT_LOG.currentRecipeData;
 
     if not recipeData then
         print("no recipeData")
@@ -244,7 +244,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local craftResult = CraftSim.CraftResult(recipeData, CraftingItemResultData)
 
     -- Debug for data collection
-    CraftSim.CRAFT_RESULTS:CollectData(recipeData, craftResult)
+    CraftSim.CRAFT_LOG:CollectData(recipeData, craftResult)
 
     -- print("Craft Result: ")
     -- print(craftResult)
@@ -252,9 +252,9 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
         return savedReagent.item
     end)
-    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULTS")
+    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_LOG")
     GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function()
-        CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
+        CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
     end)
 end
 
@@ -262,7 +262,7 @@ local collectData = {}
 --- used to gather craft data for craftsim tuning, adjust as needed
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_RESULTS:CollectData(recipeData, craftResult)
+function CraftSim.CRAFT_LOG:CollectData(recipeData, craftResult)
     if not dataCollect then return end
 
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_DATA_COLLECT)

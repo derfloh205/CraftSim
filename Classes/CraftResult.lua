@@ -63,7 +63,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
 
     self.craftingChance = mcChance * totalResChance
 
-    local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, self)
+    local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
 
     self.profit = craftProfit
     self.expectedAverageProfit = CraftSim.CALC:GetAverageProfit(recipeData)

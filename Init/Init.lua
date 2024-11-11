@@ -262,12 +262,12 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		print("CraftRecipe Hook: ")
 		print(recipeData.reagentData, true)
 
-		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
+		CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
 		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, onCraftData.amount, onCraftData.itemTarget)
 	end
 	local function OnRecraft()
 		if CraftSim.INIT.currentRecipeData then
-			CraftSim.CRAFT_RESULTS:OnCraftRecipe(CraftSim.INIT.currentRecipeData)
+			CraftSim.CRAFT_LOG:OnCraftRecipe(CraftSim.INIT.currentRecipeData)
 		end
 	end
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe",
@@ -299,7 +299,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		end)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipe", OnRecraft)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder", OnRecraft)
-	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_RESULTS.OnCraftSalvage)
+	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_LOG.OnCraftSalvage)
 end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
@@ -332,7 +332,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.SIMULATION_MODE.UI:Init()
 		CraftSim.PRICE_OVERRIDE.UI:Init()
 		CraftSim.RECIPE_SCAN.UI:Init()
-		CraftSim.CRAFT_RESULTS.UI:Init()
+		CraftSim.CRAFT_LOG.UI:Init()
 		CraftSim.STATISTICS.UI:Init()
 		CraftSim.CUSTOMER_HISTORY.UI:Init()
 		CraftSim.COST_OPTIMIZATION.UI:Init()
@@ -521,7 +521,7 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.CRAFT_BUFFS.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	CraftSim.COOLDOWNS.frame:Hide()
-	CraftSim.CRAFT_RESULTS.frame:Hide()
+	CraftSim.CRAFT_LOG.frame:Hide()
 	CraftSim.CONCENTRATION_TRACKER.frame:Hide()
 	customerHistoryFrame:Hide()
 	priceOverrideFrame:Hide()
@@ -693,7 +693,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	showSpecInfo = showSpecInfo and CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
 	showPriceOverride = showPriceOverride and CraftSim.DB.OPTIONS:Get("MODULE_PRICE_OVERRIDE")
 	showRecipeScan = showRecipeScan and CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN")
-	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_RESULTS")
+	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG")
 	showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
 	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_COST_OPTIMIZATION")
 	showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
@@ -703,7 +703,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 
 	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
 	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
-	CraftSim.CRAFT_RESULTS.frame:SetVisible(showCraftResults)
+	CraftSim.CRAFT_LOG.frame:SetVisible(showCraftResults)
 	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
 	CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
 	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
@@ -744,7 +744,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	if recipeData and showCraftResults then
-		CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeData.recipeID)
+		CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeData.recipeID)
 	end
 
 	-- AverageProfit Module

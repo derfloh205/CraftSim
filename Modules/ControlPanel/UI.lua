@@ -107,9 +107,9 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL),
-                "MODULE_CRAFT_RESULTS",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP))
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL),
+                "MODULE_CRAFT_LOG",
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP))
 
             addModuleCheckbox(
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),

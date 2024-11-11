@@ -6,16 +6,16 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.CRAFT_RESULTS
-CraftSim.CRAFT_RESULTS = CraftSim.CRAFT_RESULTS
+---@class CraftSim.CRAFT_LOG
+CraftSim.CRAFT_LOG = CraftSim.CRAFT_LOG
 
----@class CraftSim.CRAFT_RESULTS.UI
-CraftSim.CRAFT_RESULTS.UI = {}
+---@class CraftSim.CRAFT_LOG.UI
+CraftSim.CRAFT_LOG.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
 
-function CraftSim.CRAFT_RESULTS.UI:Init()
-    ---@class CraftSim.CRAFT_RESULTS.FRAME : GGUI.Frame
+function CraftSim.CRAFT_LOG.UI:Init()
+    ---@class CraftSim.CRAFT_LOG.FRAME : GGUI.Frame
     local frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage,
         anchorParent = ProfessionsFrame.CraftingPage.CraftingOutputLog,
@@ -24,13 +24,13 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
         offsetY = 10,
         sizeX = 700,
         sizeY = 450,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_RESULTS,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE),
+        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_TITLE),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_RESULTS"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_LOG"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -38,7 +38,7 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
-    CraftSim.CRAFT_RESULTS.frame = frame
+    CraftSim.CRAFT_LOG.frame = frame
 
     local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFTRESULTS_HIDE_BLIZZARD_CRAFTING_LOG")
 
@@ -89,10 +89,10 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
             end
         }
 
-        ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB : GGUI.BlizzardTab
+        ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB : GGUI.BlizzardTab
         frame.content.craftProfitsTab = GGUI.BlizzardTab {
             buttonOptions = {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFT_PROFITS_TAB),
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_CRAFT_PROFITS_TAB),
                 offsetY = -3,
             },
             parent = frame.content, anchorParent = frame.content, initialTab = true,
@@ -102,10 +102,10 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
 
         self:InitCraftProfitsTab(frame.content.craftProfitsTab)
 
-        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
+        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
         frame.content.statisticsTrackerTab = GGUI.BlizzardTab {
             buttonOptions = {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB),
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB),
                 anchorParent = frame.content.craftProfitsTab.button,
                 anchorA = "LEFT",
                 anchorB = "RIGHT",
@@ -124,15 +124,15 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
     GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
----@param craftProfitsTab CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
-function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
-    ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
+---@param craftProfitsTab CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB
+function CraftSim.CRAFT_LOG.UI:InitCraftProfitsTab(craftProfitsTab)
+    ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB
     craftProfitsTab = craftProfitsTab
-    ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT : Frame
+    ---@class CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT : Frame
     local content = craftProfitsTab.content
 
     content.totalProfitAllTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT), content, content,
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_SESSION_PROFIT), content, content,
         "TOP", "TOP", 140, -60, nil, nil, { type = "H", value = "LEFT" })
     content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), content,
         content.totalProfitAllTitle,
@@ -148,13 +148,13 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         sizeY = 25,
         adjustWidth = true,
         offsetY = -40,
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA),
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_RESET_DATA),
         clickCallback = function()
             content.scrollingMessageFrame:Clear()
             content.craftedItemsFrame.resultFeed:SetText("")
             content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-            CraftSim.CRAFT_RESULTS:ResetData()
-            CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
+            CraftSim.CRAFT_LOG:ResetData()
+            CraftSim.CRAFT_LOG.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
         end
     })
 
@@ -167,9 +167,9 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         sizeY = 25,
         offsetY = -10,
         adjustWidth = true,
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON),
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON),
         clickCallback = function()
-            local json = CraftSim.CRAFT_RESULTS:ExportJSON()
+            local json = CraftSim.CRAFT_LOG:ExportJSON()
             CraftSim.UTIL:ShowTextCopyBox(json)
         end
     })
@@ -177,7 +177,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
 
     -- craft results
     content.craftsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG), content, content, "TOPLEFT",
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG), content, content, "TOPLEFT",
         "TOPLEFT",
         155, -40)
 
@@ -190,7 +190,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         -230, 20, -350, 20)
 
     content.craftedItemsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFTED_ITEMS), content,
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_CRAFTED_ITEMS), content,
         content.scrollFrame2, "BOTTOM", "TOP", 0, 0)
 
     content.craftedItemsFrame.resultFeed = CraftSim.FRAME:CreateText("", content.craftedItemsFrame,
@@ -198,10 +198,10 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         "TOPLEFT", "TOPLEFT", 10, -10, nil, nil, { type = "H", value = "LEFT" })
 
     content.statisticsTitle = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS), content,
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS), content,
         content.craftedItemsTitle, "LEFT", "RIGHT", 270, 0)
     content.statisticsText = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING), content,
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING), content,
         content.statisticsTitle,
         "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
     content.statisticsText:SetWidth(300)
@@ -209,18 +209,18 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
     content.disableCraftResultsCB = GGUI.Checkbox {
         parent = content, anchorParent = content.exportButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         offsetY = -10,
-        label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
-        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE"),
+        label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX),
+        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE"),
         clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("CRAFT_RESULTS_DISABLE", checked)
+            CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE", checked)
         end
     }
 end
 
----@param statisticsTrackerTab CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB
-function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
-    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT : Frame
+---@param statisticsTrackerTab CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB
+function CraftSim.CRAFT_LOG.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
+    ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT : Frame
     local content = statisticsTrackerTab.content
 
     content.recipeHeader = GGUI.Text {
@@ -242,9 +242,9 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
             }
         },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN : Frame
             local resultColumn = columns[1]
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN : Frame
             local distColumn = columns[2]
 
             resultColumn.text = GGUI.Text {
@@ -265,12 +265,12 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL)
     }
 
     GGUI.HelpIcon {
         parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP)
     }
 
     content.multicraftStatisticsList = GGUI.FrameList {
@@ -287,9 +287,9 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
             }
         },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
             local statisticsColumn = columns[1]
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
             local valueColumn = columns[2]
 
             statisticsColumn.text = GGUI.Text {
@@ -308,7 +308,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_MULTICRAFT)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_MULTICRAFT)
     }
 
     content.resourcefulnessStatisticsList = GGUI.FrameList {
@@ -325,9 +325,9 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
             }
         },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
             local statisticsColumn = columns[1]
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
             local valueColumn = columns[2]
 
             statisticsColumn.text = GGUI.Text {
@@ -346,7 +346,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_RESOURCEFULNESS)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_RESOURCEFULNESS)
     }
 
     content.yieldStatisticsList = GGUI.FrameList {
@@ -367,11 +367,11 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
         },
         selectionOptions = { noSelectionColor = true },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
             local itemColumn = columns[1]
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
             local yieldColumn = columns[2]
-            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
+            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
             local distColumn = columns[3]
 
             itemColumn.text = GGUI.Text {
@@ -395,15 +395,15 @@ function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab
     GGUI.Text {
         parent = content,
         anchorPoints = { { anchorParent = content.yieldStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION)
     }
 end
 
-function CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
-    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+function CraftSim.CRAFT_LOG.UI:UpdateItemList()
+    local craftResultFrame = CraftSim.CRAFT_LOG.frame
 
     -- total items
-    local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
+    local craftResultItems = CraftSim.CRAFT_LOG.currentSessionData.totalItems
 
     -- CraftProfits
     do
@@ -427,9 +427,9 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
 
         -- add saved reagents
         local savedReagentsText = ""
-        if #CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents > 0 then
-            savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS) .. "\n"
-            for _, savedReagent in pairs(CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents) do
+        if #CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents > 0 then
+            savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS) .. "\n"
+            for _, savedReagent in pairs(CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents) do
                 savedReagentsText = savedReagentsText ..
                     (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
             end
@@ -439,8 +439,8 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
     end
 end
 
-function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
-    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
     print("Update RecipeData: " .. tostring(recipeID))
 
     -- only update frontend if its the shown recipeID
@@ -450,13 +450,13 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
     end
     print("Do update cause its the shown recipe")
 
-    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+    local craftResultFrame = CraftSim.CRAFT_LOG.frame
 
-    local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
+    local craftSessionData = CraftSim.CRAFT_LOG.currentSessionData
     if not craftSessionData then
         print("create new craft session data")
-        craftSessionData                          = CraftSim.CraftSessionData()
-        CraftSim.CRAFT_RESULTS.currentSessionData = craftSessionData
+        craftSessionData                      = CraftSim.CraftSessionData()
+        CraftSim.CRAFT_LOG.currentSessionData = craftSessionData
     else
         print("Reuse sessionData")
     end
@@ -473,7 +473,7 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
     -- Craft Profits
     do
         local craftProfitsContent = craftResultFrame.content.craftProfitsTab
-            .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
+            .content --[[@as CraftSim.CRAFT_LOG.CRAFT_PROFITS_TAB.CONTENT]]
         local statisticsText = ""
         local expectedAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
         local actualAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
@@ -486,17 +486,17 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
         end
         local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
         statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
 
         if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2) .. expectedAverageProfit .. "\n"
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2) .. expectedAverageProfit .. "\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3) .. actualAverageProfit .. "\n"
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3) .. actualAverageProfit .. "\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4) .. actualProfit .. "\n\n"
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_5) .. "\n\n"
 
             if CraftSim.INIT.currentRecipeData.supportsMulticraft then
                 local expectedProcs = tonumber(CraftSim.GUTIL:Round(
@@ -505,12 +505,12 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                     0
                 if craftRecipeData.numMulticraft >= expectedProcs then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. expectedProcs .. "\n"
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. expectedProcs .. "\n"
                 end
@@ -529,16 +529,16 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                     0, 2)) or 0
                 if averageExtraItems == 0 then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
                 elseif averageExtraItems >= expectedAdditionalItems then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. expectedAdditionalItems .. "\n"
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
                         CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. expectedAdditionalItems .. "\n"
                 end
@@ -556,23 +556,23 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
 
                 if averageSavedCosts == 0 then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN)
                 elseif averageSavedCosts >= expectedAverageSavedCosts then
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.GREEN) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
                 else
                     statisticsText = statisticsText ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10) ..
                         CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.RED) ..
                         " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
@@ -580,7 +580,7 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
             end
         else
             statisticsText = statisticsText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11) .. actualProfit .. "\n\n"
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11) .. actualProfit .. "\n\n"
         end
 
 
@@ -590,7 +590,7 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
     -- Statistics Tracker
     do
         local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
-            .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
+            .content --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT]]
 
         statisticsTrackerTabContent.recipeHeader:SetText(CraftSim.INIT.currentRecipeData.recipeName .. " " ..
             GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 15, 15))
@@ -611,9 +611,9 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
             for _, craftResultItem in pairs(craftRecipeData.totalItems) do
                 resultDistributionList:Add(function(row, columns)
                     local resultColumn = columns
-                        [1] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
+                        [1] --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
                     local distColumn = columns
-                        [2] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
+                        [2] --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
 
                     resultColumn.text:SetText(craftResultItem.item:GetItemLink())
                     local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
@@ -638,9 +638,9 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
             if craftRecipeData.numCrafts > 0 then
                 local function addStatistic(label, value)
                     multicraftStatisticsList:Add(function(row, columns)
-                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
                         local statisticsColumn = columns[1]
-                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
+                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
                         local valueColumn = columns[2]
 
                         statisticsColumn.text:SetText(label)
@@ -670,9 +670,9 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
             if craftRecipeData.numCrafts > 0 then
                 local function addStatistic(label, value)
                     resourcefulnessStatisticsList:Add(function(row, columns)
-                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
                         local statisticsColumn = columns[1]
-                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
+                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
                         local valueColumn = columns[2]
 
                         statisticsColumn.text:SetText(label)
@@ -723,11 +723,11 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                 for itemLink, distributionData in pairs(yieldDistributionMap) do
                     for yield, count in pairs(distributionData.distributions) do
                         yieldStatisticsList:Add(function(row, columns)
-                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
                             local itemColumn = columns[1]
-                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
+                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
                             local yieldColumn = columns[2]
-                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
+                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
                             local distColumn = columns[3]
 
                             itemColumn.text:SetText(itemLink)
