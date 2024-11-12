@@ -15,6 +15,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@field recipeID RecipeID
 ---@field isRecraft? boolean default: false
 ---@field isWorkOrder? boolean default: false
+---@field orderData? CraftingOrderInfo
 ---@field crafterData? CraftSim.CrafterData default: current player character
 ---@field forceCache? boolean forces the use of all cached data (e.g. when restoring craft queue list)
 
@@ -32,6 +33,7 @@ function CraftSim.RecipeData:new(options)
     local recipeID = options.recipeID
     local isRecraft = options.isRecraft or false
     local isWorkOrder = options.isWorkOrder or false
+    local orderData = options.orderData
     local forceCache = options.forceCache or false
 
     self.recipeID = recipeID --[[@as RecipeID]]
@@ -84,6 +86,10 @@ function CraftSim.RecipeData:new(options)
     self.supportsSpecializations = C_ProfSpecs.SkillLineHasSpecialization(self.professionData.skillLineID)
 
     self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
+
+    if orderData then
+        self.orderData = options.orderData
+    end
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -341,6 +347,13 @@ end
 function CraftSim.RecipeData:SetSalvageItem(itemID)
     if self.isSalvageRecipe then
         self.reagentData.salvageReagentSlot:SetItem(itemID)
+        local itemLocation = GUTIL:GetItemLocationFromItemID(itemID, true)
+        if itemLocation then
+            local item = Item:CreateFromItemLocation(itemLocation)
+            if item then
+                self.allocationItemGUID = Item:CreateFromItemLocation(itemLocation):GetItemGUID()
+            end
+        end
     else
         error("CraftSim Error: Trying to set salvage item on non salvage recipe")
     end

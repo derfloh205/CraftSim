@@ -26,35 +26,27 @@ function CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
 
     print("OnCraftRecipe: " .. tostring(recipeData))
 
-    if CraftSim.INIT.currentRecipeData then
-        local mainRecipeData = CraftSim.INIT.currentRecipeData
-        -- if the open recipe is a recraft recipe than take this as current craft log recipe data instead
-        -- because this will not be able to be triggered by the craftqueue!
-        if mainRecipeData and mainRecipeData.isRecraft then
-            print("Setting main recipe")
-            CraftSim.CRAFT_LOG.currentRecipeData = mainRecipeData
-            return
-        end
-    end
-
-    print("Setting recipeData from param")
-    if recipeData then
-        print("recipe is: " .. tostring(recipeData.recipeName))
-    end
-
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
-end
 
-function CraftSim.CRAFT_LOG:OnCraftSalvage()
-    if CraftSim.INIT.currentRecipeData then
-        local recipeData = CraftSim.INIT.currentRecipeData
-        -- if the open recipe is a salvage or recraft recipe than take this as current craft log recipe data instead
-        -- because this will not be able to be triggered by the craftqueue!
-        if recipeData.isSalvageRecipe then
-            CraftSim.CRAFT_LOG.currentRecipeData = recipeData
-            return
-        end
-    end
+    -- if recipeData then
+    --     print("recipe is: " .. tostring(recipeData.recipeName))
+    -- end
+
+    -- if CraftSim.INIT.currentRecipeData then
+    --     local mainRecipeData = CraftSim.INIT.currentRecipeData
+    --     -- if the open recipe is a recraft recipe than take this as current craft log recipe data instead
+    --     -- because this will not be able to be triggered by the craftqueue!
+    --     if mainRecipeData and mainRecipeData.isRecraft then
+    --         print("Setting main recipe")
+    --         CraftSim.CRAFT_LOG.currentRecipeData = mainRecipeData
+    --         return
+    --     end
+    -- end
+
+    -- print("Setting recipeData from param")
+
+
+    -- CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
 local currentCraftingResults = {}
@@ -64,6 +56,8 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE") then
         return
     end
+
+    --CraftSim.DEBUG:InspectTable(craftResult, "Craft Result")
 
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
         CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
@@ -241,6 +235,10 @@ function CraftSim.CRAFT_LOG:processCraftResults()
 
     if not recipeData then
         print("no recipeData")
+        return
+    end
+
+    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS") and recipeData:IsWorkOrder() then
         return
     end
 

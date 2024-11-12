@@ -150,6 +150,17 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
                 end)
 
+                local ignoreWorkOrdersCB = rootDescription:CreateCheckbox(
+                    f.r("Ignore ") .. "Work Orders",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_IGNORE_WORK_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_IGNORE_WORK_ORDERS",
+                            newValue)
+                    end)
+
                 local autoShowCB = rootDescription:CreateCheckbox(
                     f.g("Auto Show ") .. "on Craft",
                     function()
