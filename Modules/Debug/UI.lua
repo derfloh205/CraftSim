@@ -23,10 +23,8 @@ function CraftSim.DEBUG.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.DEBUG,
         title = "CraftSim Log",
-        collapseable = true,
         closeable = true,
         moveable = true,
-        scrollableContent = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         parent = UIParent,
         anchorParent = UIParent,
@@ -37,70 +35,64 @@ function CraftSim.DEBUG.UI:Init()
         frameLevel = 50,
     })
 
+    debugFrame.content.optionsButton = CraftSim.WIDGETS.OptionsButton {
+        parent = debugFrame.frame,
+        anchorPoints = { {
+            anchorParent = debugFrame.title.frame,
+            anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
+        } },
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            rootDescription:CreateCheckbox(
+                "Enable Autoscroll",
+                function()
+                    return CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get(
+                        "DEBUG_AUTO_SCROLL")
+                    CraftSim.DB.OPTIONS:Save("DEBUG_AUTO_SCROLL",
+                        not value)
+                end)
+
+            rootDescription:CreateButton(f.l("Clear"), function()
+                CraftSim.DEBUG.frame.content.logBox:Clear()
+            end)
+        end
+    }
+
     CraftSim.DEBUG.frame = debugFrame
 
     CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
 end
 
+---@param debugFrame GGUI.Frame
 function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     CraftSim.FRAME:ToggleFrame(debugFrame, CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
 
     debugFrame:HookScript("OnShow", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", true) end)
     debugFrame:HookScript("OnHide", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", false) end)
 
-    debugFrame.content.debugBox = CreateFrame("EditBox", nil, debugFrame.content)
-    debugFrame.content.debugBox:SetPoint("TOP", debugFrame.content, "TOP", 0, -20)
-    debugFrame.content.debugBox:SetText("")
-    debugFrame.content.debugBox:SetWidth(debugFrame.content:GetWidth() - 15)
-    debugFrame.content.debugBox:SetHeight(20)
-    debugFrame.content.debugBox:SetMultiLine(true)
-    debugFrame.content.debugBox:SetAutoFocus(false)
-    debugFrame.content.debugBox:SetFontObject("ChatFontNormal")
-    debugFrame.content.debugBox:SetScript("OnEscapePressed", function() debugFrame.content.debugBox:ClearFocus() end)
-    debugFrame.content.debugBox:SetScript("OnEnterPressed", function() debugFrame.content.debugBox:ClearFocus() end)
-
-    debugFrame.content.autoScrollCB = GGUI.Checkbox {
-        parent = debugFrame.frame, anchorParent = debugFrame.frame, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -15,
-        initialValue = CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL"),
-        label = "Autoscroll",
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("DEBUG_AUTO_SCROLL", checked)
-        end
+    debugFrame.content.logBox = GGUI.ScrollingMessageFrame {
+        parent = debugFrame.content,
+        anchorParent = debugFrame.content,
+        anchorA = "TOP", anchorB = "TOP", offsetY = -35, offsetX = 10,
+        enableScrolling = true,
+        maxLines = 100000,
+        sizeX = 370,
+        sizeY = 360,
+        justifyOptions = { type = "H", align = "LEFT" },
     }
 
-    debugFrame.content.clearButton = GGUI.Button({
-        label = "Clear Log",
-        parent = debugFrame.frame,
-        anchorParent = debugFrame.frame,
-        anchorA = "TOPRIGHT",
-        anchorB = "TOPRIGHT",
-        offsetY = -10,
-        offsetX = -60,
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            CraftSim.DEBUG.frame.content.debugBox:SetText("")
-        end,
-    })
+    debugFrame.content.logBox:EnableHyperLinksForFrameAndChilds()
 
     debugFrame.addDebug = function(debugOutput, debugID, printLabel)
-        if debugFrame:IsVisible() then -- to not make it too bloated over time
-            local currentOutput = debugFrame.content.debugBox:GetText()
+        if debugFrame:IsVisible() then
             if printLabel then
-                debugFrame.content.debugBox:SetText(currentOutput ..
-                    "\n\n- " .. debugID .. ":\n" .. tostring(debugOutput))
+                debugFrame.content.logBox:AddMessage("- " .. debugID .. ":\n" .. tostring(debugOutput))
             else
-                debugFrame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
+                debugFrame.content.logBox:AddMessage(tostring(debugOutput))
             end
         end
     end
-
-    debugFrame.frame.scrollFrame:HookScript("OnScrollRangeChanged", function()
-        if CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL") then
-            debugFrame.frame.scrollFrame:SetVerticalScroll(debugFrame.frame.scrollFrame:GetVerticalScrollRange())
-        end
-    end)
 
     CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
 
@@ -148,7 +140,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
 
     controlPanel.content.logTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Debug IDs", offsetY = -3,
+            label = "Log Options", offsetY = -3,
         },
         initialTab = true,
         top = true,
@@ -189,58 +181,34 @@ end
 function CraftSim.DEBUG.UI:InitLogOptionsTab(logOptionsTab)
     local content = logOptionsTab.content
 
-    content.debugIDList = GGUI.FrameList {
-        columnOptions = {
+    local debugIDTable = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+
+    content.debugIDSelector = GGUI.CheckboxSelector {
+        parent = content,
+        anchorPoints = {
             {
-                label = "",
-                width = 100,
-            },
-            {
-                label = "",
-                width = 220,
+                anchorParent = content,
+                anchorA = "TOP", anchorB = "TOP", offsetY = -40,
             }
         },
-        parent = content, anchorParent = content, sizeY = 340, anchorA = "TOP", anchorB = "TOP", offsetY = -40, showBorder = true, offsetX = -10,
-        rowConstructor = function(columns)
-            local checkBoxRow = columns[1]
-            local labelRow = columns[2]
-
-            checkBoxRow.cb = GGUI.Checkbox {
-                parent = checkBoxRow, anchorParent = checkBoxRow,
+        label = "Debug Log IDs",
+        savedVariablesTable = debugIDTable,
+        sizeX = 100,
+        sizeY = 25,
+        initialItems = GUTIL:Map(CraftSim.CONST.DEBUG_IDS, function(debugID)
+            ---@type GGUI.CheckboxSelector.CheckboxItem
+            local item = {
+                name = debugID,
+                initialValue = debugIDTable[debugID],
+                savedVariableProperty = debugID,
+                selectionID = debugID,
             }
-
-            labelRow.text = GGUI.Text {
-                parent = labelRow, anchorParent = labelRow, anchorA = "LEFT", anchorB = "LEFT", justifyOptions = { type = "H", align = "LEFT" }
-            }
+            return item
+        end),
+        onSelectCallback = function(_, selectedItem, selectedValue)
+            debugIDTable[selectedItem] = selectedValue
         end
     }
-
-    local debugIDs = CraftSim.CONST.DEBUG_IDS
-
-
-    for _, debugID in pairs(debugIDs) do
-        content.debugIDList:Add(function(row)
-            local columns = row.columns
-            local checkBoxRow = columns[1]
-            local labelRow = columns[2]
-
-            row.debugID = debugID
-            labelRow.text:SetText(debugID)
-
-            local cb = checkBoxRow.cb --[[@as GGUI.Checkbox]]
-
-            local debugIDs = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-
-            cb:SetChecked(debugIDs[debugID])
-            cb.clickCallback = function(_, checked)
-                debugIDs[debugID] = checked
-            end
-        end)
-    end
-
-    content.debugIDList:UpdateDisplay(function(rowA, rowB)
-        return rowA.debugID > rowB.debugID
-    end)
 end
 
 ---@deprecated

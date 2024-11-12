@@ -21,32 +21,9 @@ CraftSim.CRAFT_LOG.detailsFrame = nil
 local dataCollect = true
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
-    --- triggered by enchants and not salvage crafts
-
+function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
     print("OnCraftRecipe: " .. tostring(recipeData))
-
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
-
-    -- if recipeData then
-    --     print("recipe is: " .. tostring(recipeData.recipeName))
-    -- end
-
-    -- if CraftSim.INIT.currentRecipeData then
-    --     local mainRecipeData = CraftSim.INIT.currentRecipeData
-    --     -- if the open recipe is a recraft recipe than take this as current craft log recipe data instead
-    --     -- because this will not be able to be triggered by the craftqueue!
-    --     if mainRecipeData and mainRecipeData.isRecraft then
-    --         print("Setting main recipe")
-    --         CraftSim.CRAFT_LOG.currentRecipeData = mainRecipeData
-    --         return
-    --     end
-    -- end
-
-    -- print("Setting recipeData from param")
-
-
-    -- CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
 local currentCraftingResults = {}

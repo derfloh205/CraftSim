@@ -194,24 +194,15 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
-	---@class CraftSim.INIT.OnCraftData
-	---@field recipeID RecipeID
-	---@field amount number
-	---@field recipeLevel number?
-	---@field craftingReagentInfoTbl CraftingReagentInfo[]?
-	---@field itemTargetLocation ItemLocationMixin?
-	---@field isEnchant boolean?
-	---@field isRecraft boolean?
-	---@field orderData CraftingOrderInfo?
-	---@field concentrating boolean?
-
-	---@param onCraftData CraftSim.INIT.OnCraftData
+	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
 		local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
 			return
 		end
+
+		onCraftData:DebugInspect("onCraftData")
 
 		---@type CraftSim.RecipeData
 		local recipeData
@@ -223,107 +214,95 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			recipeData = CraftSim.INIT.currentRecipeData:Copy()
 		else
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
-			recipeData = CraftSim.RecipeData({
-				recipeID = onCraftData.recipeID,
-				orderData = onCraftData.orderData,
-				isRecraft = onCraftData.isRecraft,
-			})
-
-			recipeData:SetNonQualityReagentsMax()
-			recipeData:SetReagentsByCraftingReagentInfoTbl(onCraftData.craftingReagentInfoTbl)
+			recipeData = onCraftData:CreateRecipeData()
 		end
-
-		recipeData:SetEquippedProfessionGearSet()
-
-		recipeData.concentrating = onCraftData.concentrating
-
-		if recipeData.isSalvageRecipe then
-			-- itemTargetLocation HAS to be set
-			local item = Item:CreateFromItemLocation(onCraftData.itemTargetLocation)
-			if item then
-				recipeData:SetSalvageItem(item:GetItemID())
-			end
-		end
-
-		if recipeData.isRecraft then
-			-- itemTargetLocation HAS to be set
-			local recraftItem = Item:CreateFromItemLocation(onCraftData.itemTargetLocation)
-			if recraftItem then
-				recipeData.allocationItemGUID = recraftItem:GetItemGUID()
-			end
-		end
-
-		recipeData:Update()
 
 		-- forward crafted recipeData to relevant modules
-		CraftSim.DEBUG:InspectTable(recipeData, "Crafted Recipe")
+		recipeData:DebugInspect("Crafted Recipe")
 
-		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)
-		CraftSim.CRAFT_LOG:OnCraftRecipe(recipeData)
+		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)
+		CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
 	end
 
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe",
 		function(recipeID, amount, craftingReagentInfoTbl, recipeLevel, orderID, concentrating)
-			---@type CraftSim.INIT.OnCraftData
-			local onCraftData = {
+			OnCraft(CraftSim.OnCraftData {
 				recipeID = recipeID,
 				amount = amount or 1,
 				craftingReagentInfoTbl = craftingReagentInfoTbl or {},
 				recipeLevel = recipeLevel,
 				orderData = orderID and C_CraftingOrders.GetClaimedOrder(),
 				concentrating = concentrating,
-			}
-			OnCraft(onCraftData)
+				callerData = {
+					api = "CraftRecipe",
+					params = { recipeID, amount, craftingReagentInfoTbl, recipeLevel, orderID, concentrating },
+				}
+			})
 		end)
 	hooksecurefunc(C_TradeSkillUI, "CraftEnchant",
 		function(recipeID, amount, craftingReagentInfoTbl, enchantItemLocation, concentrating)
-			---@type CraftSim.INIT.OnCraftData
-			local onCraftData = {
+			OnCraft(CraftSim.OnCraftData {
 				recipeID = recipeID,
 				amount = amount or 1,
 				craftingReagentInfoTbl = craftingReagentInfoTbl or {},
-				itemTarget = enchantItemLocation,
+				itemTargetLocation = enchantItemLocation,
 				isEnchant = true,
 				concentrating = concentrating,
-			}
-			OnCraft(onCraftData)
+				callerData = {
+					api = "CraftEnchant",
+					params = { recipeID, amount, craftingReagentInfoTbl, enchantItemLocation, concentrating },
+				}
+			})
 		end)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipe",
 		function(itemGUID, craftingReagentTbl, removedModifications, applyConcentration)
-			---@type CraftSim.INIT.OnCraftData
-			local onCraftData = {
+			OnCraft(CraftSim.OnCraftData {
 				recipeID = select(1, C_TradeSkillUI.GetOriginalCraftRecipeID(itemGUID)),
 				amount = 1,
 				isRecraft = true,
+				itemGUID = itemGUID,
 				craftingReagentInfoTbl = craftingReagentTbl or {},
 				concentrating = applyConcentration,
-			}
-			OnCraft(onCraftData)
+				callerData = {
+					api = "RecraftRecipe",
+					params = { itemGUID, craftingReagentTbl, removedModifications, applyConcentration },
+				}
+			})
 		end)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder",
 		function(orderID, itemGUID, craftingReagentTbl, removedModifications, applyConcentration)
-			---@type CraftSim.INIT.OnCraftData
-			local onCraftData = {
+			OnCraft(CraftSim.OnCraftData {
 				recipeID = select(1, C_TradeSkillUI.GetOriginalCraftRecipeID(itemGUID)),
 				amount = 1,
 				isRecraft = true,
+				itemGUID = itemGUID,
 				orderData = C_CraftingOrders.GetClaimedOrder(),
 				craftingReagentInfoTbl = craftingReagentTbl or {},
 				concentrating = applyConcentration,
-			}
-			OnCraft(onCraftData)
+				callerData = {
+					api = "RecraftRecipe",
+					params = { orderID, itemGUID, craftingReagentTbl, removedModifications, applyConcentration },
+				}
+			})
 		end)
 	hooksecurefunc(C_TradeSkillUI, "CraftSalvage",
-		function(recipeID, amount, itemTarget, craftingReagentTbl, applyConcentration)
-			---@type CraftSim.INIT.OnCraftData
-			local onCraftData = {
+		---@param recipeID RecipeID
+		---@param amount number?
+		---@param itemTargetLocation ItemLocationMixin
+		---@param craftingReagentTbl CraftingReagentInfo[]?
+		---@param applyConcentration boolean
+		function(recipeID, amount, itemTargetLocation, craftingReagentTbl, applyConcentration)
+			OnCraft(CraftSim.OnCraftData {
 				recipeID = recipeID,
 				amount = amount or 1,
-				itemTarget = itemTarget,
+				itemTargetLocation = itemTargetLocation,
 				craftingReagentInfoTbl = craftingReagentTbl or {},
 				concentrating = applyConcentration,
-			}
-			OnCraft(onCraftData)
+				callerData = {
+					api = "CraftSalvage",
+					params = { recipeID, amount, itemTargetLocation, craftingReagentTbl, applyConcentration },
+				}
+			})
 		end)
 end
 

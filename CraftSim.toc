@@ -40,6 +40,7 @@ DB/priceOverrideDB.lua
 Media/Media.lua
 
 Util/Frames.lua
+Util/Widgets.lua
 Util/Comm.lua
 Util/API.lua
 
@@ -150,6 +151,7 @@ Data/SpecializationData/The_War_Within/Engineering.lua
 Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
+Classes/OnCraftData.lua
 Classes/CooldownData.lua
 Classes/ProfessionData.lua
 Classes/ConcentrationData.lua

@@ -645,10 +645,13 @@ function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData({
         recipeID = self.recipeID,
-        isWorkOrder = self.orderData ~= nil,
+        orderData = self.orderData,
         isRecraft = self.isRecraft,
         crafterData = self.crafterData,
     })
+
+    copy.allocationItemGUID = self.allocationItemGUID
+
     copy.concentrating = self.concentrating
     copy.concentrationCost = self.concentrationCost
     copy.concentrationData = self.concentrationData and self.concentrationData:Copy()
