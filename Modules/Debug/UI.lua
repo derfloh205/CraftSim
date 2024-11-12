@@ -114,9 +114,6 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
 end
 
 function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
-    local tabSizeX = 400
-    local tabSizeY = 400
-
     ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL : GGUI.Frame
     local controlPanel = GGUI.Frame({
         parent = debugFrame.frame,
@@ -125,7 +122,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
         anchorB = "TOPLEFT",
         title = "CraftSim Debug Tools",
         offsetX = 10,
-        sizeX = 400,
+        sizeX = 200,
         sizeY = 400,
         frameID = CraftSim.CONST.FRAMES.DEBUG_CONTROL,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -135,24 +132,6 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
 
     ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL.CONTENT : Frame
     local content = controlPanel.content
-
-    content.reloadButton = GGUI.Button({
-        label = "Reload UI",
-        parent = controlPanel.content,
-        anchorParent = controlPanel.content,
-        anchorA = "TOPRIGHT",
-        anchorB = "TOPRIGHT",
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            C_UI.Reload()
-        end,
-        offsetX = -15,
-        offsetY = -10,
-    })
-
-
 
     content.moduleDebugTools = GGUI.FilterButton {
         label = "Modules",
@@ -213,6 +192,53 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
                         cqi
                 end
                 CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
+            end)
+        end
+    }
+
+    content.dbDebugTools = GGUI.FilterButton {
+        label = "Database",
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.moduleDebugTools.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+        } },
+        sizeX = 160, sizeY = 23,
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            local clearDBs = rootDescription:CreateButton("Clear Database")
+            clearDBs:CreateButton("User Configurations", function()
+                CraftSim.DB.OPTIONS:ClearAll()
+            end)
+
+            clearDBs:CreateButton("Crafter Data", function()
+                CraftSim.DB.CRAFTER:ClearAll()
+            end)
+
+            clearDBs:CreateButton("Customer History", function()
+                CraftSim.DB.CUSTOMER_HISTORY:ClearAll()
+            end)
+
+            clearDBs:CreateButton("Item Count Cache", function()
+                CraftSim.DB.ITEM_COUNT:ClearAll()
+            end)
+
+            clearDBs:CreateButton("Price Overrides", function()
+                CraftSim.DB.PRICE_OVERRIDE:ClearAll()
+            end)
+
+            clearDBs:CreateButton("Recipe Sub Crafter Data", function()
+                CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()
+            end)
+
+            rootDescription:CreateButton(f.r("Factory Reset"), function()
+                GGUI:ShowPopup {
+                    title = "CraftSim " .. f.r("Factory Reset"),
+                    text = "This will delete\n\n" .. f.r("ALL") .. "\n\ndata and configurations\nand reload your interface. Are you sure?",
+                    sizeY = 200,
+                    onAccept = function()
+                        CraftSimDB = nil
+                        C_UI.Reload()
+                    end
+                }
             end)
         end
     }
