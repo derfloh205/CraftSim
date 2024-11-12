@@ -32,8 +32,14 @@ function CraftSim.DEBUG:SystemPrint(text)
     print(text)
 end
 
-function CraftSim.DEBUG:InspectTable(t, label)
+---@param t table
+---@param label string?
+---@param openDevTool boolean?
+function CraftSim.DEBUG:InspectTable(t, label, openDevTool)
     if DevTool then
+        if openDevTool then
+            DevTool.MainWindow:Show()
+        end
         DevTool:AddData(t, label)
     end
 end

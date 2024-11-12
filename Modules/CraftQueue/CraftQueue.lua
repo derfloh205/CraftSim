@@ -343,6 +343,12 @@ function CraftSim.CRAFTQ:AddRecipe(options)
     })
 
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+        CraftSim.CRAFTQ.frame:Show()
+        CraftSim.CRAFTQ.frame:Raise()
+    end
 end
 
 function CraftSim.CRAFTQ:ClearAll()

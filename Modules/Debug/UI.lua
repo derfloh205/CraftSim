@@ -35,6 +35,8 @@ function CraftSim.DEBUG.UI:Init()
         frameLevel = 50,
     })
 
+    local debugIDTable = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+
     debugFrame.content.optionsButton = CraftSim.WIDGETS.OptionsButton {
         parent = debugFrame.frame,
         anchorPoints = { {
@@ -42,6 +44,16 @@ function CraftSim.DEBUG.UI:Init()
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
         } },
         menuUtilCallback = function(ownerRegion, rootDescription)
+            local logIDs = rootDescription:CreateButton("Log IDs")
+
+            for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
+                logIDs:CreateCheckbox(debugID, function()
+                    return debugIDTable[debugID]
+                end, function()
+                    debugIDTable[debugID] = not debugIDTable[debugID]
+                end)
+            end
+
             rootDescription:CreateCheckbox(
                 "Enable Autoscroll",
                 function()
@@ -81,6 +93,7 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         sizeX = 350,
         sizeY = 350,
         justifyOptions = { type = "H", align = "LEFT" },
+        copyable = true,
     }
 
     debugFrame.content.logBox:EnableHyperLinksForFrameAndChilds()
@@ -110,7 +123,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
         anchorParent = debugFrame.frame,
         anchorA = "TOPRIGHT",
         anchorB = "TOPLEFT",
-        title = "Debug Control",
+        title = "CraftSim Debug Tools",
         offsetX = 10,
         sizeX = 400,
         sizeY = 400,
@@ -121,9 +134,9 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
     })
 
     ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL.CONTENT : Frame
-    controlPanel.content = controlPanel.content
+    local content = controlPanel.content
 
-    controlPanel.content.reloadButton = GGUI.Button({
+    content.reloadButton = GGUI.Button({
         label = "Reload UI",
         parent = controlPanel.content,
         anchorParent = controlPanel.content,
@@ -139,356 +152,68 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
         offsetY = -10,
     })
 
-    controlPanel.content.logTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            label = "Log Options", offsetY = -3,
-        },
-        initialTab = true,
-        top = true,
-        parent = controlPanel.content, anchorParent = controlPanel.content,
-        sizeX = tabSizeX,
-        sizeY = tabSizeY
-    }
 
-    controlPanel.content.dbTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            label = "DB", anchorA = "LEFT", anchorB = "RIGHT",
-            anchorParent = controlPanel.content.logTab.button
-        },
-        top = true,
-        parent = controlPanel.content, anchorParent = controlPanel.content,
-        sizeX = tabSizeX,
-        sizeY = tabSizeY
-    }
 
-    controlPanel.content.modulesTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            label = "Modules", anchorA = "LEFT", anchorB = "RIGHT",
-            anchorParent = controlPanel.content.dbTab.button
-        },
-        top = true,
-        parent = controlPanel.content, anchorParent = controlPanel.content,
-        sizeX = tabSizeX,
-        sizeY = tabSizeY
-    }
-
-    GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.dbTab, controlPanel.content.modulesTab }
-
-    CraftSim.DEBUG.UI:InitLogOptionsTab(controlPanel.content.logTab)
-    CraftSim.DEBUG.UI:InitCacheTab(controlPanel.content.dbTab)
-    CraftSim.DEBUG.UI:InitModuleDebugToolsTab(controlPanel.content.modulesTab)
-end
-
-function CraftSim.DEBUG.UI:InitLogOptionsTab(logOptionsTab)
-    local content = logOptionsTab.content
-
-    local debugIDTable = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-
-    content.debugIDSelector = GGUI.CheckboxSelector {
+    content.moduleDebugTools = GGUI.FilterButton {
+        label = "Modules",
         parent = content,
-        anchorPoints = {
-            {
-                anchorParent = content,
-                anchorA = "TOP", anchorB = "TOP", offsetY = -40,
-            }
-        },
-        label = "Debug Log IDs",
-        savedVariablesTable = debugIDTable,
-        sizeX = 100,
-        sizeY = 25,
-        initialItems = GUTIL:Map(CraftSim.CONST.DEBUG_IDS, function(debugID)
-            ---@type GGUI.CheckboxSelector.CheckboxItem
-            local item = {
-                name = debugID,
-                initialValue = debugIDTable[debugID],
-                savedVariableProperty = debugID,
-                selectionID = debugID,
-            }
-            return item
-        end),
-        onSelectCallback = function(_, selectedItem, selectedValue)
-            debugIDTable[selectedItem] = selectedValue
-        end
-    }
-end
+        anchorPoints = { {
+            anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -40
+        } },
+        sizeX = 160, sizeY = 23,
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            local main = rootDescription:CreateButton("Main")
+            main:CreateButton("Inspect CraftSim Addon Table", function()
+                CraftSim.DEBUG:InspectTable(CraftSim, "CraftSim", true)
+            end)
 
----@deprecated
-function CraftSim.DEBUG.UI:InitCacheTab(cacheTab)
-    local content = cacheTab.content
+            local openRecipe = main:CreateButton("Open Recipe")
 
-    content.clearCacheButton = GGUI.Button({
-        label = "Clear All Caches",
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOP",
-        anchorB = "TOP",
-        offsetY = -50,
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            CraftSim.DB:ClearAll()
-        end
-    })
-
-    content.cacheList = GGUI.FrameList {
-        columnOptions = {
-            {
-                label = "",
-                width = 180,
-            },
-            {
-                label = "",
-                width = 70,
-            },
-            {
-                label = "",
-                width = 70,
-            }
-        },
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOP",
-        anchorB = "TOP",
-        offsetY = -80,
-        offsetX = -10,
-        sizeY = 300,
-        rowConstructor = function(columns)
-            local nameColumn = columns[1]
-            local clearColumn = columns[2]
-            local inspectColumn = columns[3]
-
-            nameColumn.text = GGUI.Text {
-                parent = nameColumn, anchorParent = nameColumn,
-                anchorA = "LEFT", anchorB = "LEFT", justifyOptions = { type = "H", align = "LEFT" }, offsetX = 5,
-            }
-
-            clearColumn.clearButton = GGUI.Button {
-                parent = clearColumn, anchorParent = clearColumn,
-                label = "Clear", adjustWidth = true, sizeX = 15, scale = 0.9,
-            }
-
-            inspectColumn.inspectButton = GGUI.Button {
-                parent = inspectColumn, anchorParent = inspectColumn,
-                label = "Inspect", adjustWidth = true, sizeX = 15, scale = 0.9,
-            }
-        end,
-        showBorder = true,
-    }
-
-    local caches = CraftSim.DEBUG:GetCacheGlobalsList()
-
-    for _, cacheName in ipairs(caches) do
-        content.cacheList:Add(function(row)
-            local columns = row.columns
-            local nameColumn = columns[1]
-            local clearColumn = columns[2]
-            local inspectColumn = columns[3]
-
-            nameColumn.text:SetText(cacheName)
-
-            local clearButton = clearColumn.clearButton --[[@as GGUI.Button]]
-
-            clearButton.clickCallback = function()
-                CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Button deprecated and will be implemented anew")
-            end
-
-            local inspectButton = inspectColumn.inspectButton --[[@as GGUI.Button]]
-
-            inspectButton.clickCallback = function()
-                if DevTool then
-                    DevTool.MainWindow:Show()
-                    DevTool:AddData(_G[cacheName] or {}, cacheName)
-                else
-                    DisplayTableInspectorWindow(_G[cacheName])
+            openRecipe:CreateButton("Inspect RecipeData", function()
+                local recipeData = CraftSim.INIT.currentRecipeData
+                if recipeData then
+                    CraftSim.DEBUG:InspectTable(recipeData, string.format("Open Recipe (%s)", recipeData.recipeName),
+                        true)
                 end
-            end
-        end)
-    end
+            end)
 
-    content.cacheList:UpdateDisplay()
-end
+            openRecipe:CreateButton("Inspect SpecializationData", function()
+                local recipeData = CraftSim.INIT.currentRecipeData
+                if recipeData and recipeData
+                    .specializationData then
+                    CraftSim.DEBUG:InspectTable(recipeData.specializationData,
+                        string.format("Specialization Data (%s)", recipeData.recipeName),
+                        true)
+                end
+            end)
 
-function CraftSim.DEBUG.UI:InitModuleDebugToolsTab(moduleToolsTab)
-    local content = moduleToolsTab.content
+            local recipeScan = rootDescription:CreateButton("Recipe Scan")
 
-    local tabX = 380
-    local tabY = 320
-    local tabButtonOffsetY = -60
-    local tabOffsetY = -20
-
-    content.mainTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            parent = content, anchorParent = content,
-            label = "Main",
-            offsetY = tabButtonOffsetY,
-            offsetX = 10,
-        },
-        top = true,
-        initialTab = true,
-        parent = content, anchorParent = content,
-        sizeX = tabX, sizeY = tabY,
-        offsetY = tabOffsetY,
-        backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME,
-    }
-
-    content.recipeScanTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            parent = content, anchorParent = content.mainTab.button,
-            anchorA = "LEFT", anchorB = "RIGHT",
-            label = "Recipe Scan",
-        },
-        top = true,
-        parent = content, anchorParent = content,
-        sizeX = tabX, sizeY = tabY,
-        offsetY = tabOffsetY,
-        backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME,
-    }
-
-    content.craftQueueTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            parent = content, anchorParent = content.recipeScanTab.button,
-            anchorA = "LEFT", anchorB = "RIGHT",
-            label = "Craft Queue",
-        },
-        top = true,
-        parent = content, anchorParent = content,
-        sizeX = tabX, sizeY = tabY,
-        offsetY = tabOffsetY,
-        backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME,
-    }
-
-    content.specInfoTab = GGUI.BlizzardTab {
-        buttonOptions = {
-            parent = content, anchorParent = content.craftQueueTab.button,
-            anchorA = "LEFT", anchorB = "RIGHT",
-            label = "Spec Info",
-        },
-        top = true,
-        parent = content, anchorParent = content,
-        sizeX = tabX, sizeY = tabY,
-        offsetY = tabOffsetY,
-        backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME,
-    }
-
-    CraftSim.DEBUG.UI:InitModuleToolsMainTab(content.mainTab)
-    CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(content.recipeScanTab)
-    CraftSim.DEBUG.UI:InitModuleToolsCraftQueueTab(content.craftQueueTab)
-    CraftSim.DEBUG.UI:InitModuleToolsSpecInfoTab(content.specInfoTab)
-
-    GGUI.BlizzardTabSystem { content.mainTab, content.recipeScanTab, content.craftQueueTab, content.specInfoTab }
-end
-
-function CraftSim.DEBUG.UI:InitModuleToolsMainTab(mainTab)
-    local content = mainTab.content
-
-    content.inspectCraftSimButton = GGUI.Button {
-        label = "Inspect CraftSim",
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -20, offsetX = 20,
-        adjustWidth = true, sizeX = 15, sizeY = 25,
-        clickCallback = function()
-            if DevTool then
-                DevTool.MainWindow:Show()
-                DevTool:AddData(CraftSim, "CraftSim")
-            end
-        end
-    }
-
-    content.inspectOpenRecipeButton = GGUI.Button {
-        label = "Inspect Open Recipe",
-        parent = content,
-        anchorParent = content.inspectCraftSimButton.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        adjustWidth = true, sizeX = 15, sizeY = 25,
-        clickCallback = function()
-            if DevTool then
-                DevTool.MainWindow:Show()
-                DevTool:AddData(CraftSim.INIT.currentRecipeData, "Open RecipeData")
-            end
-        end
-    }
-
-    content.inspectOpenRecipeButton = GGUI.Button {
-        label = "Inspect Specialization Data",
-        parent = content,
-        anchorParent = content.inspectOpenRecipeButton.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        adjustWidth = true, sizeX = 15, sizeY = 25,
-        clickCallback = function()
-            if DevTool then
-                DevTool.MainWindow:Show()
-                DevTool:AddData(CraftSim.INIT.currentRecipeData.specializationData, "Open Recipe - SpecializationData")
-            end
-        end
-    }
-end
-
-function CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(recipeScanTab)
-    local content = recipeScanTab.content
-
-    content.inspectResultsButton = GGUI.Button {
-        parent = content, anchorParent = content,
-        label = "Inspect Displayed Recipe Scan Results", adjustWidth = true, sizeX = 15,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -20,
-        clickCallback = function()
-            if DevTool then
+            recipeScan:CreateButton("Inspect Displayed Results", function()
                 local recipeScanTab = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
                 local professionList = recipeScanTab.content.professionList --[[@as GGUI.FrameList]]
                 local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
 
                 if selectedRow then
-                    DevTool.MainWindow:Show()
                     local nameMap = {}
                     for index, recipeData in ipairs(selectedRow.currentResults) do
                         nameMap["[" .. index .. "] " .. recipeData.recipeName] = recipeData
                     end
-                    DevTool:AddData(nameMap,
-                        "Recipe Scan Results: " .. tostring(selectedRow.crafterProfessionUID))
+                    CraftSim.DEBUG:InspectTable(nameMap,
+                        "Recipe Scan Results: " .. tostring(selectedRow.crafterProfessionUID), true)
                 end
-            end
-        end
-    }
-end
+            end)
 
-function CraftSim.DEBUG.UI:InitModuleToolsCraftQueueTab(craftQueueTab)
-    local content = craftQueueTab.content
+            local craftQueue = rootDescription:CreateButton("CraftQueue")
 
-    content.inspectQueueButton = GGUI.Button {
-        parent = content, anchorParent = content,
-        label = "Inspect CraftQueueItems", adjustWidth = true, sizeX = 15,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -20,
-        clickCallback = function()
-            if DevTool then
-                DevTool.MainWindow:Show()
+            craftQueue:CreateButton("Inspect CraftQueueItems", function()
                 local nameMap = {}
                 for index, cqi in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
                     nameMap["[" .. index .. "] " .. cqi.recipeData:GetCrafterUID() .. "-" .. cqi.recipeData.recipeName] =
                         cqi
                 end
-                DevTool:AddData(nameMap, "CraftQueueItems")
-            end
+                CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
+            end)
         end
     }
-end
-
-function CraftSim.DEBUG.UI:InitModuleToolsSpecInfoTab(specInfoTab)
-    local content = specInfoTab.content
-
-    content.showOutdatedNodes = GGUI.Button({
-        label = "Fetch Outdated Nodes",
-        parent = content,
-        anchorParent = content,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPLEFT",
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            CraftSim.DEBUG:ShowOutdatedSpecNodes()
-        end,
-        offsetX = 10,
-        offsetY = -10
-    })
 end

@@ -19,7 +19,7 @@ CraftSim.WIDGETS = {}
 CraftSim.WIDGETS.OptionsButton = GGUI.Button:extend()
 ---@param options CraftSim.WIDGETS.OptionsButton.ConstructorOptions
 function CraftSim.WIDGETS.OptionsButton:new(options)
-    ---@type GGUI.ButtonConstructorOptions
+    ---@type GGUI.Button.ConstructorOptions
     local buttonOptions = {
         parent = options.parent,
         anchorPoints = options.anchorPoints,
