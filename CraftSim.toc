@@ -67,8 +67,8 @@ Modules/CustomerHistory/UI.lua
 Modules/Statistics/Statistics.lua
 Modules/Statistics/UI.lua
 
-Modules/CraftResults/CraftResults.lua
-Modules/CraftResults/UI.lua
+Modules/CraftLog/CraftLog.lua
+Modules/CraftLog/UI.lua
 
 Modules/PriceOverride/PriceOverride.lua
 Modules/PriceOverride/UI.lua

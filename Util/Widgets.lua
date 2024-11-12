@@ -23,9 +23,6 @@ function CraftSim.WIDGETS.OptionsButton:new(options)
     local buttonOptions = {
         parent = options.parent,
         anchorPoints = options.anchorPoints,
-        anchorA = options.anchorA,
-        anchorB = options.anchorB,
-        anchorParent = options.anchorParent,
         cleanTemplate = true,
         label = "TTTTTEEEESSSSSTTTT",
         buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,

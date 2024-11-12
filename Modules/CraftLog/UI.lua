@@ -221,6 +221,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
         sizeY = craftLogY - 20,
         justifyOptions = { type = "H", align = "LEFT" },
         scale = 0.9,
+        showScrollBar = true,
     }
 
     frame.content.craftLogScrollingMessageFrame:EnableHyperLinksForFrameAndChilds()

@@ -74,11 +74,12 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     debugFrame.content.logBox = GGUI.ScrollingMessageFrame {
         parent = debugFrame.content,
         anchorParent = debugFrame.content,
-        anchorA = "TOP", anchorB = "TOP", offsetY = -35, offsetX = 10,
+        anchorA = "TOP", anchorB = "TOP", offsetY = -35, offsetX = 0,
         enableScrolling = true,
+        showScrollBar = true,
         maxLines = 100000,
-        sizeX = 370,
-        sizeY = 360,
+        sizeX = 350,
+        sizeY = 350,
         justifyOptions = { type = "H", align = "LEFT" },
     }
 
@@ -87,9 +88,9 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     debugFrame.addDebug = function(debugOutput, debugID, printLabel)
         if debugFrame:IsVisible() then
             if printLabel then
-                debugFrame.content.logBox:AddMessage("- " .. debugID .. ":\n" .. tostring(debugOutput))
+                debugFrame.content.logBox:AddMessage("\n- " .. debugID .. ":\n" .. tostring(debugOutput))
             else
-                debugFrame.content.logBox:AddMessage(tostring(debugOutput))
+                debugFrame.content.logBox:AddMessage("\n" .. tostring(debugOutput))
             end
         end
     end
