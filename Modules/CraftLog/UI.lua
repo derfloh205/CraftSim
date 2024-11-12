@@ -71,7 +71,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
     end
 
     self:InitLogFrame(logFrame)
-    self:InitDetailsFrame(detailsFrame)
+    self:InitAdvancedLogFrame(detailsFrame)
 end
 
 function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
@@ -292,7 +292,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
     }
 end
 
-function CraftSim.CRAFT_LOG.UI:InitDetailsFrame(frame)
+function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
     local tabSizeX = 700
     local tabSizeY = 340
 
@@ -304,7 +304,13 @@ function CraftSim.CRAFT_LOG.UI:InitDetailsFrame(frame)
         { anchorParent = frame.content,     anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -11, offsetX = 10 },
         { anchorParent = frame.title.frame, anchorA = "RIGHT",   anchorB = "LEFT" },
     },
-        scale = 1
+    }
+
+    frame.content.crafts = GGUI.Text {
+        parent = frame.content, anchorPoints = {
+        { anchorParent = frame.content,     anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", offsetY = -16, offsetX = -10 },
+        { anchorParent = frame.title.frame, anchorA = "LEFT",     anchorB = "RIGHT" }, },
+        prefix = L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX),
     }
 
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB : GGUI.BlizzardTab
@@ -555,13 +561,57 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT : Frame
     local content = calculationComparisonTab.content
 
-    content.crafts = GGUI.Text {
+    content.comparisonList = GGUI.FrameList {
         parent = content,
-        anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetX = 20, offsetY = -40, } },
-        prefix = L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX),
-        text = " test",
-        justifyOptions = { align = "LEFT", type = "H" },
+        scale = 0.9,
+        anchorPoints = { {
+            anchorParent = content,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -70, offsetX = 20,
+        } },
+        showBorder = true,
+        sizeY = 200,
+        columnOptions = {
+            {
+                label = "Value",
+                width = 80, -- stat name
+            },
+            {
+                label = "Expected",
+                width = 150 -- expected
+            },
+            {
+                label = "Observed",
+                width = 150, -- observed
+            }
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
+            row = row
+            row.statNameColumn = columns[1]
+            row.expectedValueColumn = columns[2]
+            row.realValueColumn = columns[3]
+
+            row.statNameColumn.text = GGUI.Text {
+                parent = row.statNameColumn,
+                anchorPoints = { { anchorParent = row.statNameColumn } },
+                justifyOptions = { type = "H", align = "LEFT" }
+            }
+
+            row.expectedValueColumn.text = GGUI.Text {
+                parent = row.expectedValueColumn,
+                anchorPoints = { { anchorParent = row.expectedValueColumn } },
+            }
+
+            row.realValueColumn.text = GGUI.Text {
+                parent = row.realValueColumn,
+                anchorPoints = { { anchorParent = row.realValueColumn } },
+            }
+        end
     }
+
+    -- TODO: LibGraph Magic
+    -- for profit..
+    -- for procs over time.. and so on
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateItemList()
@@ -620,7 +670,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData)
     local comparisonTabContent = detailsFrame.content.calculationComparisonTab
         .content --[[@as CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT]]
 
-    comparisonTabContent.crafts:SetText(craftRecipeData.numCrafts)
+    detailsFrame.content.crafts:SetText(craftRecipeData.numCrafts)
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
