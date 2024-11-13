@@ -364,14 +364,8 @@ function CraftSim.CRAFTQ:QueueFavorites()
     local favoriteRecipeIDs = CraftSim.DB.CRAFTER:GetFavoriteRecipes(crafterUID, profession)
     local bothMainProfessions = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
 
-    -- check if cached yet, if not fetch initial
-    if #favoriteRecipeIDs == 0 then
-        local favoriteRecipeIDs = GUTIL:Filter(C_TradeSkillUI.GetAllRecipeIDs(), function(recipeID)
-            ---@diagnostic disable-next-line: return-type-mismatch
-            return C_TradeSkillUI.IsRecipeFavorite(recipeID)
-        end)
-        CraftSim.DB.CRAFTER:SaveFavoriteRecipes(CraftSim.UTIL:GetPlayerCrafterUID(), profession, favoriteRecipeIDs)
-    end
+    -- always update favorite recipes
+    CraftSim.DB.CRAFTER:UpdateProfessionFavorites()
 
     -- optimize and queue
 

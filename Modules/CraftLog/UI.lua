@@ -612,6 +612,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     -- TODO: LibGraph Magic
     -- for profit..
     -- for procs over time.. and so on
+    -- based on selected stat
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateItemList()

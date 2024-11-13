@@ -147,10 +147,6 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         printF("Is Quest: Exclude")
         return false
     end
-    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES") and not recipeInfo.favorite then
-        printF("Is not favorite: Exclude")
-        return false
-    end
 
     -- use cache if available for performance
     local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeInfo.recipeID)
@@ -159,6 +155,18 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         printF("professionInfo not Cached: Get from Api")
         professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
     end
+
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        -- update favorites cache
+        CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, professionInfo.profession, recipeInfo.recipeID,
+            C_TradeSkillUI.IsRecipeFavorite(recipeInfo.recipeID) == true)
+    end
+
+    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES") and not CraftSim.DB.CRAFTER:IsFavorite(recipeInfo.recipeID, crafterUID, professionInfo.profession) then
+        printF("Is not favorite: Exclude")
+        return false
+    end
+
 
     -- if recipe does not have any profession info, exclude recipe
     -- it seems some pandaren recipes may not have this info such as C_TradeSkillUI.GetProfessionInfoByRecipeID(381364)

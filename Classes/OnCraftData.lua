@@ -53,12 +53,10 @@ function CraftSim.OnCraftData:CreateRecipeData()
 
     recipeData.concentrating = self.concentrating
 
-    CraftSim.DEBUG:SystemPrint("HELLO??")
     if recipeData.isSalvageRecipe then
-        CraftSim.DEBUG:SystemPrint("HELLO")
         -- itemTargetLocation HAS to be set
         local item = Item:CreateFromItemLocation(self.itemTargetLocation)
-        CraftSim.DEBUG:InspectTable(item or {}, "salvage - itemTargetLocation item")
+        --CraftSim.DEBUG:InspectTable(item or {}, "salvage - itemTargetLocation item")
         if item then
             recipeData:SetSalvageItem(item:GetItemID())
         end
