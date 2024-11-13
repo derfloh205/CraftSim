@@ -62,7 +62,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
     })
 
     CraftSim.CRAFT_LOG.logFrame = logFrame
-    CraftSim.CRAFT_LOG.detailsFrame = detailsFrame
+    CraftSim.CRAFT_LOG.advFrame = detailsFrame
 
     local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
 
@@ -116,9 +116,9 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                             newValue)
 
                         if newValue then
-                            CraftSim.CRAFT_LOG.detailsFrame:Show()
+                            CraftSim.CRAFT_LOG.advFrame:Show()
                         else
-                            CraftSim.CRAFT_LOG.detailsFrame:Hide()
+                            CraftSim.CRAFT_LOG.advFrame:Hide()
                         end
                     end)
 
@@ -367,15 +367,6 @@ function CraftSim.CRAFT_LOG.UI:InitStatDetailsTab(statDetailsTab)
     statDetailsTab = statDetailsTab
     ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT : Frame
     local content = statDetailsTab.content
-
-    content.statisticsTitle = CraftSim.FRAME:CreateText(
-        L(CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS), content,
-        content, "TOP", "TOP", 270, 0)
-    content.statisticsText = CraftSim.FRAME:CreateText(
-        L(CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING), content,
-        content.statisticsTitle,
-        "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
-    content.statisticsText:SetWidth(300)
 end
 
 ---@param statisticsTrackerTab CraftSim.CRAFT_LOG.RESULT_DETAILS_TAB
@@ -428,84 +419,8 @@ function CraftSim.CRAFT_LOG.UI:InitResultDetailsTab(statisticsTrackerTab)
         text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP)
     }
 
-    content.multicraftStatisticsList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
-        parent = content,
-        sizeY = 150,
-        showBorder = true,
-        columnOptions = {
-            {
-                width = 130,
-            },
-            {
-                width = 40,
-            }
-        },
-        rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-            local statisticsColumn = columns[1]
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
-            local valueColumn = columns[2]
-
-            statisticsColumn.text = GGUI.Text {
-                parent = statisticsColumn,
-                anchorPoints = { { anchorParent = statisticsColumn, anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -5 } },
-                justifyOptions = { type = "H", align = "RIGHT" }
-            }
-
-            valueColumn.text = GGUI.Text {
-                parent = valueColumn,
-                anchorPoints = { { anchorParent = valueColumn } },
-            }
-        end,
-    }
-
-    GGUI.Text {
-        parent = content,
-        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT)
-    }
-
-    content.resourcefulnessStatisticsList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
-        parent = content,
-        sizeY = 150,
-        showBorder = true,
-        columnOptions = {
-            {
-                width = 130,
-            },
-            {
-                width = 40,
-            }
-        },
-        rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-            local statisticsColumn = columns[1]
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
-            local valueColumn = columns[2]
-
-            statisticsColumn.text = GGUI.Text {
-                parent = statisticsColumn,
-                anchorPoints = { { anchorParent = statisticsColumn, anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -5 } },
-                justifyOptions = { type = "H", align = "RIGHT" }
-            }
-
-            valueColumn.text = GGUI.Text {
-                parent = valueColumn,
-                anchorPoints = { { anchorParent = valueColumn } },
-            }
-        end,
-    }
-
-    GGUI.Text {
-        parent = content,
-        anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS)
-    }
-
     content.yieldStatisticsList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -20, offsetX = -5 } },
+        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -20, offsetX = -5 } },
         parent = content,
         sizeY = 160,
         showBorder = true,
@@ -561,6 +476,10 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT : Frame
     local content = calculationComparisonTab.content
 
+    local statNameColumnWidth = 120
+    local expectedValueColumnWidth = 150
+    local observedValueColumnWidth = 150
+
     content.comparisonList = GGUI.FrameList {
         parent = content,
         scale = 0.9,
@@ -573,40 +492,57 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
         columnOptions = {
             {
                 label = "Value",
-                width = 80, -- stat name
+                width = statNameColumnWidth,
             },
             {
                 label = "Expected",
-                width = 150 -- expected
+                width = expectedValueColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" }
             },
             {
                 label = "Observed",
-                width = 150, -- observed
+                width = observedValueColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" }
             }
         },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
+            ---@class CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW : GGUI.FrameList.Row
             row = row
             row.statNameColumn = columns[1]
             row.expectedValueColumn = columns[2]
-            row.realValueColumn = columns[3]
+            row.observedValueColumn = columns[3]
 
             row.statNameColumn.text = GGUI.Text {
                 parent = row.statNameColumn,
                 anchorPoints = { { anchorParent = row.statNameColumn } },
-                justifyOptions = { type = "H", align = "LEFT" }
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = statNameColumnWidth - 5,
+                offsetX = 5,
             }
 
             row.expectedValueColumn.text = GGUI.Text {
                 parent = row.expectedValueColumn,
                 anchorPoints = { { anchorParent = row.expectedValueColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = expectedValueColumnWidth,
             }
 
-            row.realValueColumn.text = GGUI.Text {
-                parent = row.realValueColumn,
-                anchorPoints = { { anchorParent = row.realValueColumn } },
+            row.observedValueColumn.text = GGUI.Text {
+                parent = row.observedValueColumn,
+                anchorPoints = { { anchorParent = row.observedValueColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                offsetX = -5,
+                fixedWidth = observedValueColumnWidth - 5,
             }
         end
+    }
+
+    GGUI.HelpIcon {
+        parent = content,
+        anchorParent = content.comparisonList.frame,
+        offsetY = 10,
+        anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT",
+        text = f.bb("Ø") .. " .. Average\n" .. f.bb("#") .. " .. Count",
     }
 
     -- TODO: LibGraph Magic
@@ -732,19 +668,129 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
     self:UpdateResultItemLog()
 end
 
-function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData)
-    local detailsFrame = CraftSim.CRAFT_LOG.detailsFrame
-    local comparisonTabContent = detailsFrame.content.calculationComparisonTab
+---@param craftRecipeData CraftSim.CraftRecipeData
+---@param recipeData CraftSim.RecipeData Open Recipe Data
+function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, recipeData)
+    local adv = CraftSim.CRAFT_LOG.advFrame
+    local comparisonTabContent = adv.content.calculationComparisonTab
         .content --[[@as CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT]]
+    local comparisonList = comparisonTabContent.comparisonList
 
-    detailsFrame.content.crafts:SetText(craftRecipeData.numCrafts)
+    comparisonList:Remove()
+
+    local function addComparison(statName, expectedValue, observedValue)
+        comparisonList:Add(
+        ---@param row CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
+            function(row)
+                row.statNameColumn.text:SetText(statName)
+                row.expectedValueColumn.text:SetText(expectedValue)
+                row.observedValueColumn.text:SetText(observedValue)
+            end)
+    end
+
+    -- TODO: Add colorization if expected values are met
+
+    local function colorizeObservedValue(observedValue, expectedValue, smallerThan)
+        if smallerThan then
+            if observedValue <= expectedValue then
+                return f.g(observedValue)
+            else
+                return f.r(observedValue)
+            end
+        else
+            if observedValue >= expectedValue then
+                return f.g(observedValue)
+            else
+                return f.r(observedValue)
+            end
+        end
+    end
+
+    addComparison(
+        "Sum Profit: ",
+        CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.totalProfit, true),
+        CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.totalProfit, true)
+    )
+
+    addComparison(
+        "Ø Profit: ",
+        CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.averageProfit, true),
+        CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.averageProfit, true)
+    )
+
+    if recipeData.supportsMulticraft then
+        addComparison(
+            "# Multicraft: ",
+            GUTIL:Round(craftRecipeData.expectedStats.numMulticraft, 2),
+            colorizeObservedValue(craftRecipeData.observedStats.numMulticraft,
+                craftRecipeData.expectedStats.numMulticraft)
+        )
+
+        addComparison(
+            "Sum Extra Items: ",
+            GUTIL:Round(craftRecipeData.expectedStats.totalMulticraftExtraItems, 2),
+            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.totalMulticraftExtraItems, 2),
+                GUTIL:Round(craftRecipeData.expectedStats.totalMulticraftExtraItems, 2))
+        )
+
+        addComparison(
+            "Ø Extra Items: ",
+            GUTIL:Round(craftRecipeData.expectedStats.averageMulticraftExtraItems, 2),
+            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.averageMulticraftExtraItems, 2),
+                GUTIL:Round(craftRecipeData.expectedStats.averageMulticraftExtraItems, 2))
+        )
+    end
+
+    if recipeData.supportsResourcefulness then
+        addComparison(
+            "# Resourcefulness: ",
+            GUTIL:Round(craftRecipeData.expectedStats.numResourcefulness, 2),
+            colorizeObservedValue(craftRecipeData.observedStats.numResourcefulness,
+                GUTIL:Round(craftRecipeData.expectedStats.numResourcefulness, 2))
+        )
+
+        addComparison(
+            "Sum Saved Costs: ",
+            CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.totalResourcefulnessSavedCosts, true),
+            CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.totalResourcefulnessSavedCosts, true)
+        )
+
+        addComparison(
+            "Ø Saved Costs: ",
+            CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.averageResourcefulnessSavedCosts, true),
+            CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.averageResourcefulnessSavedCosts, true)
+        )
+    end
+
+    if recipeData.supportsIngenuity then
+        addComparison(
+            "# Ingenuity: ",
+            GUTIL:Round(craftRecipeData.expectedStats.numIngenuity, 2),
+            colorizeObservedValue(craftRecipeData.observedStats.numIngenuity,
+                GUTIL:Round(craftRecipeData.expectedStats.numIngenuity, 2))
+        )
+
+        addComparison(
+            "Sum Concentration: ",
+            GUTIL:Round(craftRecipeData.expectedStats.totalConcentrationCost, 0),
+            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.totalConcentrationCost, 0),
+                GUTIL:Round(craftRecipeData.expectedStats.totalConcentrationCost, 0))
+        )
+
+        addComparison(
+            "Ø Concentration: ",
+            GUTIL:Round(craftRecipeData.expectedStats.averageConcentrationCost, 0),
+            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.averageConcentrationCost, 0),
+                GUTIL:Round(craftRecipeData.expectedStats.averageConcentrationCost, 0))
+        )
+    end
+
+    comparisonList:UpdateDisplay()
 end
 
 ---@param recipeID RecipeID last crafted recipeID
 function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
-    local craftResultFrame = CraftSim.CRAFT_LOG.detailsFrame
-
-    if true then return end -- TODO: Remove
+    local advFrame = CraftSim.CRAFT_LOG.advFrame
 
     -- only update if its the shown recipeID otherwise no need
     if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
@@ -755,136 +801,19 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local sessionData = CraftSim.CRAFT_LOG.currentSessionData
     local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
 
-    if not craftRecipeData then return end -- should not happen
+    -- update numCrafts
+    advFrame.content.crafts:SetText(craftRecipeData.numCrafts)
 
     do
-        self:UpdateCalculationComparison(craftRecipeData)
-    end
-
-    -- legacy
-    do
-        local craftProfitsContent = craftResultFrame.content.statDetailsTab
-            .content --[[@as CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT]]
-        local statisticsText = ""
-        local expectedAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
-        local actualAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
-        if craftRecipeData.numCrafts > 0 then
-            expectedAverageProfit = CraftSim.UTIL:FormatMoney(
-                (craftRecipeData.totalExpectedProfit / craftRecipeData.numCrafts) or 0, true)
-            actualAverageProfit = CraftSim.UTIL:FormatMoney(
-                (craftRecipeData.totalProfit / craftRecipeData.numCrafts) or 0,
-                true)
-        end
-        local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
-        statisticsText = statisticsText ..
-            L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX) ..
-            craftRecipeData.numCrafts .. "\n\n"
-
-        if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
-            statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2) .. expectedAverageProfit .. "\n"
-            statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3) .. actualAverageProfit .. "\n"
-            statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4) .. actualProfit .. "\n\n"
-            statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_5) .. "\n\n"
-
-            if CraftSim.INIT.currentRecipeData.supportsMulticraft then
-                local expectedProcs = tonumber(CraftSim.GUTIL:Round(
-                        CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *
-                        craftRecipeData.numCrafts, 1)) or
-                    0
-                if craftRecipeData.numMulticraft >= expectedProcs then
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
-                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
-                        " / " .. expectedProcs .. "\n"
-                else
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7) ..
-                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
-                        " / " .. expectedProcs .. "\n"
-                end
-                local averageExtraItems = 0
-                local expectedAdditionalItems = 0
-                local multicraftExtraItemsFactor = 1 + CraftSim.INIT.currentRecipeData.professionStats.multicraft
-                    :GetExtraValue()
-                local mcConstant = CraftSim.UTIL:GetMulticraftConstantByBaseYield(CraftSim.INIT.currentRecipeData
-                    .baseItemAmount)
-                local maxExtraItems = (mcConstant * CraftSim.INIT.currentRecipeData.baseItemAmount) *
-                    multicraftExtraItemsFactor
-                expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
-
-                averageExtraItems = tonumber(CraftSim.GUTIL:Round(
-                    (craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or
-                    0, 2)) or 0
-                if averageExtraItems == 0 then
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
-                        averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
-                elseif averageExtraItems >= expectedAdditionalItems then
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
-                        CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.GREEN) ..
-                        " / " .. expectedAdditionalItems .. "\n"
-                else
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8) ..
-                        CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.RED) ..
-                        " / " .. expectedAdditionalItems .. "\n"
-                end
-            end
-            if CraftSim.INIT.currentRecipeData.supportsResourcefulness then
-                local averageSavedCosts = 0
-                local expectedAverageSavedCosts = 0
-                if craftRecipeData.numCrafts > 0 then
-                    averageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts) /
-                            10000) *
-                        10000 --roundToGold
-                    expectedAverageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts) /
-                        10000) * 10000
-                end
-
-                if averageSavedCosts == 0 then
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
-                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN)
-                elseif averageSavedCosts >= expectedAverageSavedCosts then
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
-                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
-                        "\n" ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0) ..
-                        CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
-                            CraftSim.GUTIL.COLORS.GREEN) ..
-                        " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
-                else
-                    statisticsText = statisticsText ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9) ..
-                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
-                        "\n" ..
-                        L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0) ..
-                        CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
-                            CraftSim.GUTIL.COLORS.RED) ..
-                        " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
-                end
-            end
-        else
-            statisticsText = statisticsText ..
-                L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1) .. actualProfit .. "\n\n"
-        end
-
-
-        craftProfitsContent.statisticsText:SetText(statisticsText)
+        self:UpdateCalculationComparison(craftRecipeData, CraftSim.INIT.currentRecipeData)
     end
 
     -- Statistics Tracker
     do
-        local statisticsTrackerTabContent = craftResultFrame.content.resultDetailsTab
+        local statisticsTrackerTabContent = advFrame.content.resultDetailsTab
             .content --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT]]
 
-        CraftSim.CRAFT_LOG.detailsFrame.content.recipeHeader:SetText(
+        CraftSim.CRAFT_LOG.advFrame.content.recipeHeader:SetText(
             GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 20, 20) ..
             " [" .. CraftSim.INIT.currentRecipeData.recipeName .. "]")
 
@@ -920,64 +849,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
             end
 
             resultDistributionList:UpdateDisplay()
-        end
-
-        -- Multicraft Statistics
-        do
-            local multicraftStatisticsList = statisticsTrackerTabContent.multicraftStatisticsList
-
-            multicraftStatisticsList:Remove()
-
-            if craftRecipeData.numCrafts > 0 then
-                local function addStatistic(label, value)
-                    multicraftStatisticsList:Add(function(row, columns)
-                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-                        local statisticsColumn = columns[1]
-                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
-                        local valueColumn = columns[2]
-
-                        statisticsColumn.text:SetText(label)
-                        valueColumn.text:SetText(value)
-                    end)
-                end
-
-                local distribution = GUTIL:Round(
-                    (craftRecipeData.numMulticraft / (craftRecipeData.numCrafts / 100)) / 100, 2)
-                addStatistic("Distribution:", distribution)
-                local additionalYield = 0
-                if craftRecipeData.numMulticraft > 0 then
-                    additionalYield = GUTIL:Round(craftRecipeData.numMulticraftExtraItems / craftRecipeData
-                        .numMulticraft, 2)
-                end
-                addStatistic("Ø Additional Yield:", additionalYield)
-            end
-            multicraftStatisticsList:UpdateDisplay()
-        end
-
-        -- Resourcefulness Statistics
-        do
-            local resourcefulnessStatisticsList = statisticsTrackerTabContent.resourcefulnessStatisticsList
-
-            resourcefulnessStatisticsList:Remove()
-
-            if craftRecipeData.numCrafts > 0 then
-                local function addStatistic(label, value)
-                    resourcefulnessStatisticsList:Add(function(row, columns)
-                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-                        local statisticsColumn = columns[1]
-                        ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
-                        local valueColumn = columns[2]
-
-                        statisticsColumn.text:SetText(label)
-                        valueColumn.text:SetText(value)
-                    end)
-                end
-
-                local distribution = GUTIL:Round(
-                    (craftRecipeData.numResourcefulness / (craftRecipeData.numCrafts / 100)) / 100, 2)
-                addStatistic("Distribution:", distribution)
-            end
-            resourcefulnessStatisticsList:UpdateDisplay()
         end
 
         -- Yield Statistics

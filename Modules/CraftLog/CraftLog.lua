@@ -16,7 +16,7 @@ CraftSim.CRAFT_LOG.currentSessionData = nil
 ---@type CraftSim.CRAFT_LOG.LOG_FRAME
 CraftSim.CRAFT_LOG.logFrame = nil
 ---@type CraftSim.CRAFT_LOG.DETAILS_FRAME
-CraftSim.CRAFT_LOG.detailsFrame = nil
+CraftSim.CRAFT_LOG.advFrame = nil
 
 local dataCollect = true
 
@@ -41,7 +41,7 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
         CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
         CraftSim.CRAFT_LOG.logFrame:Show()
-        CraftSim.CRAFT_LOG.detailsFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
+        CraftSim.CRAFT_LOG.advFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
     end
 
     -- buffer a small time frame, then forward all result tables at once

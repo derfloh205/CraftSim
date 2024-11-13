@@ -13,8 +13,6 @@ local CraftSim = select(2, ...)
 ---@field numIngenuity number
 ---@field totalConcentrationCost number
 ---@field averageConcentrationCost number
----@field averageSavedConcentration number
----@field averageUsedConcentration number
 
 ---@type CraftSim.CraftRecipeData.CraftingStats
 local initCraftingStatsTable = {
@@ -27,8 +25,6 @@ local initCraftingStatsTable = {
     totalResourcefulnessSavedCosts = 0,
     averageResourcefulnessSavedCosts = 0,
     numIngenuity = 0,
-    averageSavedConcentration = 0,
-    averageUsedConcentration = 0,
     averageConcentrationCost = 0,
     totalConcentrationCost = 0,
 }

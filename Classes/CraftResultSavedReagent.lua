@@ -17,12 +17,14 @@ function CraftSim.CraftResultSavedReagent:new(recipeData, itemID, quantity)
     self.qualityID = recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
 end
 
+---@return CraftSim.CraftResultSavedReagent
 function CraftSim.CraftResultSavedReagent:Copy()
     local copy = CraftSim.CraftResultSavedReagent()
     copy.item = self.item
     copy.quantity = self.quantity
     copy.savedCosts = self.savedCosts
     copy.qualityID = self.qualityID
+    return copy
 end
 
 function CraftSim.CraftResultSavedReagent:Debug()
