@@ -16,11 +16,23 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.expectedQuality = recipeData.resultData.expectedQuality
     self.triggeredMulticraft = false
     self.triggeredResourcefulness = false
+    self.triggeredIngenuity = false
+    self.savedConcentration = 0
+    self.usedConcentration = 0
+    self.ingenuityRefund = 0
 
     for _, craftingItemResult in pairs(craftingItemResultData) do
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
             self.triggeredMulticraft = true
         end
+
+        if craftingItemResult.hasIngenuityProc then
+            self.triggeredIngenuity = true
+            self.savedConcentration = craftingItemResult.ingenuityRefund or 0
+        end
+
+        self.ingenuityRefund = craftingItemResult.ingenuityRefund or 0
+        self.usedConcentration = craftingItemResult.concentrationSpent or 0
 
         table.insert(self.craftResultItems,
             CraftSim.CraftResultItem(craftingItemResult.hyperlink, craftingItemResult.quantity,

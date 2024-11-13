@@ -93,7 +93,7 @@ function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
 
     self:UpdateCraftData(craftResult, recipeData)
     self.UI:UpdateCraftLogDisplay(craftResult, recipeData)
-    self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
+    --self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULT")
 end
@@ -141,15 +141,9 @@ function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData)
     local craftSessionData = CraftSim.CRAFT_LOG.currentSessionData
 
     local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
-    if not craftRecipeData then
-        craftRecipeData = CraftSim.CraftRecipeData(recipeID)
-        table.insert(craftSessionData.craftRecipeData, craftRecipeData)
-    end
-
-    print("AddCraftResult:", false, true)
 
     craftSessionData:AddCraftResult(craftResult)
-    craftRecipeData:AddCraftResult(craftResult)
+    craftRecipeData:AddCraftResult(craftResult, recipeData)
 end
 
 --- Collects craft results from last craft and puts them into one CraftResult object for further processing

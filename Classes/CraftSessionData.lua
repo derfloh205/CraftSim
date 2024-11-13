@@ -14,23 +14,17 @@ function CraftSim.CraftSessionData:new()
     self.totalItems = {}
     ---@type CraftSim.CraftResultSavedReagent[]
     self.totalSavedReagents = {}
-    ---@type CraftSim.CraftRecipeData[]
+    ---@type table<RecipeID, CraftSim.CraftRecipeData>
     self.craftRecipeData = {}
     ---@type CraftSim.CraftResult[]
     self.craftResults = {}
 end
 
 ---@param recipeID number
----@return CraftSim.CraftRecipeData? craftRecipeData
+---@return CraftSim.CraftRecipeData craftRecipeData
 function CraftSim.CraftSessionData:GetCraftRecipeData(recipeID)
-    print("GetCraftRecipeData: " .. tostring(recipeID))
-    print("numRecipeData: " .. #self.craftRecipeData)
-    table.foreach(self.craftRecipeData, function(_, data)
-        print("data recipe id: " .. tostring(data.recipeID))
-    end)
-    return CraftSim.GUTIL:Find(self.craftRecipeData, function(craftRecipeData)
-        return craftRecipeData.recipeID == recipeID
-    end)
+    self.craftRecipeData[recipeID] = self.craftRecipeData[recipeID] or CraftSim.CraftRecipeData(recipeID)
+    return self.craftRecipeData[recipeID]
 end
 
 ---@param craftResult CraftSim.CraftResult

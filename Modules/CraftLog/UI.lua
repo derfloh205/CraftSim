@@ -749,6 +749,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
         return
     end
 
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
     local sessionData = CraftSim.CRAFT_LOG.currentSessionData
     local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
 
