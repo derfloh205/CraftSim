@@ -179,7 +179,6 @@ end
 ---@param totalCraftResultItems CraftSim.CraftResultItem[]
 ---@param craftResultItems CraftSim.CraftResultItem[]
 function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craftResultItems)
-    CraftSim.DEBUG:SystemPrint("MergeCraftResultItemData")
     for _, craftResultItemNew in ipairs(craftResultItems) do
         -- for every item in the list of craftResultItems check if it was already added
         local craftResultItemOld = CraftSim.GUTIL:Find(totalCraftResultItems, function(craftResultItemOld)

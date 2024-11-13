@@ -202,8 +202,6 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			return
 		end
 
-		onCraftData:DebugInspect("onCraftData")
-
 		---@type CraftSim.RecipeData
 		local recipeData
 		-- if craftsim did not call the api and we do not have reagents, use the one from the gui
@@ -216,9 +214,6 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
 			recipeData = onCraftData:CreateRecipeData()
 		end
-
-		-- forward crafted recipeData to relevant modules
-		recipeData:DebugInspect("Crafted Recipe")
 
 		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)
 		CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
