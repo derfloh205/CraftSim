@@ -93,7 +93,7 @@ function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
 
     self:UpdateCraftData(craftResult, recipeData)
     self.UI:UpdateCraftLogDisplay(craftResult, recipeData)
-    --self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
+    self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULT")
 end
@@ -174,4 +174,51 @@ function CraftSim.CRAFT_LOG:AccumulateCraftResults()
     GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function()
         CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
     end)
+end
+
+---@param totalCraftResultItems CraftSim.CraftResultItem[]
+---@param craftResultItems CraftSim.CraftResultItem[]
+function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craftResultItems)
+    for _, craftResultItemNew in ipairs(craftResultItems) do
+        -- for every item in the list of craftResultItems check if it was already added
+        local craftResultItemOld = CraftSim.GUTIL:Find(totalCraftResultItems, function(craftResultItemOld)
+            local itemLinkNew = craftResultItemNew.item:GetItemLink() -- for gear its possible to match by itemlink
+            local itemLinkOld = craftResultItemOld.item:GetItemLink()
+            local itemIDNew = craftResultItemNew.item:GetItemID()
+            local itemIDOld = craftResultItemOld.item:GetItemID()
+
+            if itemLinkNew and itemLinkOld then -- if one or both are nil aka not loaded, we dont want to match..
+                return itemLinkNew == itemLinkOld
+            else
+                return itemIDNew == itemIDOld
+            end
+        end)
+
+        -- if yes we need to add the quantities
+        -- need to sum quantity and quantityMulticraft into quantity together TODO: Check for correct behaviour
+        if craftResultItemOld then
+            craftResultItemOld.quantity = craftResultItemOld.quantity +
+                (craftResultItemNew.quantity + craftResultItemNew.quantityMulticraft)
+            craftResultItemOld.quantityMulticraft = craftResultItemOld.quantityMulticraft +
+                craftResultItemNew.quantityMulticraft
+        else
+            table.insert(totalCraftResultItems, craftResultItemNew:Copy())
+        end
+    end
+end
+
+---@param totalSavedReagents CraftSim.CraftResultSavedReagent[]
+---@param savedReagents CraftSim.CraftResultSavedReagent[]
+function CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(totalSavedReagents, savedReagents)
+    for _, savedReagentNew in ipairs(savedReagents) do
+        local savedReagentOld = CraftSim.GUTIL:Find(totalSavedReagents, function(savedReagentOld)
+            return savedReagentNew.item:GetItemID() == savedReagentOld.item:GetItemID()
+        end)
+
+        if savedReagentOld then
+            savedReagentOld.quantity = savedReagentOld.quantity + savedReagentNew.quantity
+        else
+            table.insert(totalSavedReagents, savedReagentNew:Copy())
+        end
+    end
 end

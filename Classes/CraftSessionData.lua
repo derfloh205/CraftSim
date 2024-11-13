@@ -46,42 +46,8 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
 
     self.totalProfit = self.totalProfit + craftResult.profit
 
-    for _, craftResultItemA in pairs(craftResult.craftResultItems) do
-        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
-            local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
-            local itemLinkB = craftResultItemB.item:GetItemLink()
-            local itemIDA = craftResultItemA.item:GetItemID()
-            local itemIDB = craftResultItemB.item:GetItemID()
-
-            if itemLinkA and itemLinkB then -- if one or both are nil aka not loaded, we dont want to match..
-                return itemLinkA == itemLinkB
-            else
-                return itemIDA == itemIDB
-            end
-        end)
-
-        if craftResultItemB then
-            craftResultItemB.quantity = craftResultItemB.quantity +
-                (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
-            craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft +
-                craftResultItemA.quantityMulticraft
-        else
-            table.insert(self.totalItems, craftResultItemA:Copy())
-        end
-    end
-
-    for _, savedReagentA in pairs(craftResult.savedReagents) do
-        local savedReagentB = CraftSim.GUTIL:Find(self.totalSavedReagents, function(savedReagentB)
-            return savedReagentA.item:GetItemID() == savedReagentB.item:GetItemID()
-        end)
-
-        if savedReagentB then
-            -- as this should be the same reference, this is also updated in the CraftRecipeData
-            savedReagentB.quantity = savedReagentB.quantity + savedReagentA.quantity
-        else
-            table.insert(self.totalSavedReagents, savedReagentA)
-        end
-    end
+    CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
+    CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
 end
 
 function CraftSim.CraftSessionData:GetJSON(intend)

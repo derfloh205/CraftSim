@@ -744,6 +744,8 @@ end
 function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local craftResultFrame = CraftSim.CRAFT_LOG.detailsFrame
 
+    if true then return end -- TODO: Remove
+
     -- only update if its the shown recipeID otherwise no need
     if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
         return

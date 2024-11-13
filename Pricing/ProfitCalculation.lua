@@ -24,10 +24,10 @@ function CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, crafti
         (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT") * resExtraFactor)
 end
 
----Returns the average items received considering multicraft procs
+---Returns the average items received considering a multicraft proc
 ---@param recipeData CraftSim.RecipeData
----@return number expectedItems the average yield (base + extra)
----@return number expectedExtraItems the expected amount of extra items
+---@return number expectedItems the average total yield of a multicraft proc (base + extra)
+---@return number expectedExtraItems the average amount of extra items of a multicraft proc
 function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
     if not recipeData.supportsMulticraft then
         return recipeData.baseItemAmount, 0

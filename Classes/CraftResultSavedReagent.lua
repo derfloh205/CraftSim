@@ -9,10 +9,20 @@ CraftSim.CraftResultSavedReagent = CraftSim.CraftSimObject:extend()
 ---@param itemID number
 ---@param quantity number
 function CraftSim.CraftResultSavedReagent:new(recipeData, itemID, quantity)
+    if not recipeData then return end
+
     self.item = Item:CreateFromItemID(itemID)
     self.quantity = quantity
     self.savedCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true) * self.quantity
     self.qualityID = recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
+end
+
+function CraftSim.CraftResultSavedReagent:Copy()
+    local copy = CraftSim.CraftResultSavedReagent()
+    copy.item = self.item
+    copy.quantity = self.quantity
+    copy.savedCosts = self.savedCosts
+    copy.qualityID = self.qualityID
 end
 
 function CraftSim.CraftResultSavedReagent:Debug()
