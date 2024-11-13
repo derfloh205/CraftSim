@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.CraftResult : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, craftingItemResultData: CraftingItemResultData): CraftSim.CraftResult
 CraftSim.CraftResult = CraftSim.CraftSimObject:extend()
@@ -83,34 +85,9 @@ end
 
 ---@return number
 function CraftSim.CraftResult:GetMulticraftExtraItems()
-    local multicraftExtraItems = 0
-    for _, craftResultItemA in ipairs(self.craftResultItems) do
-        self.observedStats.totalMulticraftExtraItems = self.observedStats.totalMulticraftExtraItems +
-            craftResultItemA.quantityMulticraft
-
-        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
-            local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
-            local itemLinkB = craftResultItemB.item:GetItemLink()
-            local itemIDA = craftResultItemA.item:GetItemID()
-            local itemIDB = craftResultItemB.item:GetItemID()
-
-            if itemLinkA and itemLinkB then -- if one or both are nil aka not loaded, we dont want to match..
-                return itemLinkA == itemLinkB
-            else
-                return itemIDA == itemIDB
-            end
-        end)
-        if craftResultItemB then
-            craftResultItemB.quantity = craftResultItemB.quantity +
-                (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
-            craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft +
-                craftResultItemA.quantityMulticraft
-        else
-            table.insert(self.totalItems, craftResultItemA:Copy())
-        end
-    end
-
-    return multicraftExtraItems
+    return GUTIL:Fold(self.craftResultItems, 0, function(multicraftExtraItems, craftResultItem)
+        return multicraftExtraItems + craftResultItem.quantityMulticraft
+    end)
 end
 
 function CraftSim.CraftResult:Debug()

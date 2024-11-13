@@ -111,7 +111,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
     end
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
-    CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(self.totalItems, craftResult.craftResultItems)
+    CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
 
     table.insert(self.craftResults, craftResult)
 end

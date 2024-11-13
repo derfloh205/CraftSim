@@ -179,6 +179,7 @@ end
 ---@param totalCraftResultItems CraftSim.CraftResultItem[]
 ---@param craftResultItems CraftSim.CraftResultItem[]
 function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craftResultItems)
+    CraftSim.DEBUG:SystemPrint("MergeCraftResultItemData")
     for _, craftResultItemNew in ipairs(craftResultItems) do
         -- for every item in the list of craftResultItems check if it was already added
         local craftResultItemOld = CraftSim.GUTIL:Find(totalCraftResultItems, function(craftResultItemOld)
@@ -202,7 +203,10 @@ function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craf
             craftResultItemOld.quantityMulticraft = craftResultItemOld.quantityMulticraft +
                 craftResultItemNew.quantityMulticraft
         else
-            table.insert(totalCraftResultItems, craftResultItemNew:Copy())
+            -- if its the first time the item is inserted, change quantity to total quantity
+            local craftResultItem = craftResultItemNew:Copy()
+            craftResultItem.quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
+            table.insert(totalCraftResultItems, craftResultItem)
         end
     end
 end
