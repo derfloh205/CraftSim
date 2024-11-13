@@ -38,11 +38,12 @@ function CraftSim.CRAFT_LOG.UI:Init()
     })
 
     ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
-    local detailsFrame = GGUI.Frame({
+    local advFrame = GGUI.Frame({
         parent = logFrame.frame,
         anchorParent = logFrame.frame,
         anchorA = "TOPLEFT",
-        anchorB = "TOPRIGHT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = -20,
         sizeX = 700,
         sizeY = 340,
         frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
@@ -62,7 +63,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
     })
 
     CraftSim.CRAFT_LOG.logFrame = logFrame
-    CraftSim.CRAFT_LOG.advFrame = detailsFrame
+    CraftSim.CRAFT_LOG.advFrame = advFrame
 
     local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
 
@@ -71,7 +72,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
     end
 
     self:InitLogFrame(logFrame)
-    self:InitAdvancedLogFrame(detailsFrame)
+    self:InitAdvancedLogFrame(advFrame)
 end
 
 function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
@@ -476,9 +477,9 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT : Frame
     local content = calculationComparisonTab.content
 
-    local statNameColumnWidth = 120
-    local expectedValueColumnWidth = 150
-    local observedValueColumnWidth = 150
+    local statNameColumnWidth = 135
+    local expectedValueColumnWidth = 125
+    local observedValueColumnWidth = 125
 
     content.comparisonList = GGUI.FrameList {
         parent = content,
