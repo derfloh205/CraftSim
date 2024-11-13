@@ -615,7 +615,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     -- based on selected stat
 end
 
-function CraftSim.CRAFT_LOG.UI:UpdateItemList()
+function CraftSim.CRAFT_LOG.UI:UpdateResultItemLog()
     local logFrame = CraftSim.CRAFT_LOG.logFrame
     local craftedItemsList = logFrame.content.craftedItemsList --[[@as GGUI.FrameList]]
 
@@ -666,6 +666,72 @@ function CraftSim.CRAFT_LOG.UI:UpdateItemList()
     end
 end
 
+---@param craftResult CraftSim.CraftResult
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
+    local logFrame = CraftSim.CRAFT_LOG.logFrame
+    -- Session Profit Display
+    do
+        logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(
+            CraftSim.CRAFT_LOG.currentSessionData.totalProfit, true))
+    end
+    -- ScrollingMessageFrame
+    do
+        local craftLog = logFrame.content.craftLogScrollingMessageFrame
+
+        local resourcesText = ""
+
+        if craftResult.triggeredResourcefulness then
+            for _, savedReagent in pairs(craftResult.savedReagents) do
+                local qualityID = savedReagent.qualityID
+                local iconAsText = GUTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
+                local qualityAsText = (qualityID > 0 and GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
+                resourcesText = resourcesText ..
+                    "\n" .. iconAsText .. " " .. savedReagent.quantity .. " " .. qualityAsText
+            end
+        end
+
+        local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
+        local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
+        local chanceText = ""
+
+        if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
+            chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_5) ..
+                GUTIL:Round(craftResult.craftingChance * 100, 1) .. "%\n"
+        end
+
+        local resultsText = ""
+        if #craftResult.craftResultItems > 0 then
+            for _, craftResultItem in pairs(craftResult.craftResultItems) do
+                resultsText = resultsText ..
+                    craftResultItem.quantity ..
+                    " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
+            end
+        else
+            resultsText = resultsText .. recipeData.recipeName .. "\n"
+        end
+
+        local multicraftExtraItemsText = ""
+        for _, craftResultItem in pairs(craftResult.craftResultItems) do
+            if craftResultItem.quantityMulticraft > 0 then
+                multicraftExtraItemsText = multicraftExtraItemsText ..
+                    craftResultItem.quantityMulticraft .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+            end
+        end
+
+        local newText =
+            resultsText ..
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
+            chanceText ..
+            ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+            ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+
+        craftLog:AddMessage("\n" .. newText)
+    end
+    -- FrameList
+    self:UpdateResultItemLog()
+end
+
 function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData)
     local detailsFrame = CraftSim.CRAFT_LOG.detailsFrame
     local comparisonTabContent = detailsFrame.content.calculationComparisonTab
@@ -674,39 +740,19 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData)
     detailsFrame.content.crafts:SetText(craftRecipeData.numCrafts)
 end
 
-function CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeID)
-    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
-    print("Update RecipeData: " .. tostring(recipeID))
-
-    -- only update frontend if its the shown recipeID
-    if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
-        print("no frontend update: is not shown recipe")
-        return
-    end
-    print("Do update cause its the shown recipe")
-
+---@param recipeID RecipeID last crafted recipeID
+function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local craftResultFrame = CraftSim.CRAFT_LOG.detailsFrame
 
-    local craftSessionData = CraftSim.CRAFT_LOG.currentSessionData
-    if not craftSessionData then
-        print("create new craft session data")
-        craftSessionData                      = CraftSim.CraftSessionData()
-        CraftSim.CRAFT_LOG.currentSessionData = craftSessionData
-    else
-        print("Reuse sessionData")
+    -- only update if its the shown recipeID otherwise no need
+    if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
+        return
     end
 
-    local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
-    if not craftRecipeData then
-        print("create new recipedata")
-        craftRecipeData = CraftSim.CraftRecipeData(recipeID)
-        table.insert(craftSessionData.craftRecipeData, craftRecipeData)
-    else
-        print("Reuse recipedata")
-    end
+    local sessionData = CraftSim.CRAFT_LOG.currentSessionData
+    local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
 
-    -- UI Updates
-    -- new
+    if not craftRecipeData then return end -- should not happen
 
     do
         self:UpdateCalculationComparison(craftRecipeData)

@@ -193,6 +193,25 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
                 end
                 CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
             end)
+
+            local craftLog = rootDescription:CreateButton("CraftLog")
+
+            craftLog:CreateButton("Inspect CraftSessionData", function()
+                if CraftSim.CRAFT_LOG.currentSessionData then
+                    CraftSim.DEBUG:InspectTable(CraftSim.CRAFT_LOG.currentSessionData, "CraftSessionData", true)
+                end
+            end)
+
+            craftLog:CreateButton("Inspect Open CraftRecipeData", function()
+                if CraftSim.CRAFT_LOG.currentSessionData and CraftSim.INIT.currentRecipeData then
+                    local craftRecipeData = CraftSim.CRAFT_LOG.currentSessionData:GetCraftRecipeData(CraftSim.INIT
+                        .currentRecipeData.recipeID)
+                    if craftRecipeData then
+                        CraftSim.DEBUG:InspectTable(craftRecipeData,
+                            string.format("CraftRecipeData (%s)", CraftSim.INIT.currentRecipeData.recipeName), true)
+                    end
+                end
+            end)
         end
     }
 

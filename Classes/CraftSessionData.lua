@@ -4,6 +4,7 @@ local CraftSim = select(2, ...)
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
 
 ---@class CraftSim.CraftSessionData : CraftSim.CraftSimObject
+---@overload fun(): CraftSim.CraftSessionData
 CraftSim.CraftSessionData = CraftSim.CraftSimObject:extend()
 
 function CraftSim.CraftSessionData:new()
@@ -41,6 +42,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     local craftGarbageCollectEnabled = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED")
     local craftGarbageCollectCrafts = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_CRAFTS")
 
+    --TODO: Move
     -- if enabled and the correct number of modulo crafts -> collect garbage
     if craftGarbageCollectEnabled and craftGarbageCollectCrafts > 0 then
         if (self.numCrafts % craftGarbageCollectCrafts) == 0 then
@@ -86,22 +88,6 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
             table.insert(self.totalSavedReagents, savedReagentA)
         end
     end
-
-    print("b4 GetCraftRecipeData: " .. tostring(craftResult.recipeID))
-    print(craftResult)
-    local craftRecipeData = self:GetCraftRecipeData(craftResult.recipeID)
-    if not craftRecipeData then
-        print("CraftSessionData: Create new CraftRecipeData")
-        craftRecipeData = CraftSim.CraftRecipeData(craftResult.recipeID)
-        table.insert(self.craftRecipeData, craftRecipeData)
-    else
-        print("CraftSessionData: Reuse craftRecipeData")
-    end
-
-    craftRecipeData:AddCraftResult(craftResult)
-
-    print("craftRecipeData:")
-    print(craftRecipeData)
 end
 
 function CraftSim.CraftSessionData:GetJSON(intend)

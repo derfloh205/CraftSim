@@ -750,7 +750,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	if recipeData and showCraftResults then
-		CraftSim.CRAFT_LOG.UI:UpdateRecipeData(recipeData.recipeID)
+		CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 	end
 
 	-- AverageProfit Module

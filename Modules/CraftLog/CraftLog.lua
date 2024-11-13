@@ -26,15 +26,17 @@ function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
-local currentCraftingResults = {}
-local collectingResults = true
----@param craftResult CraftingItemResultData
-function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
+local accumulatingCraftingItemResultData = {}
+local isAccumulatingCraftingItemResultData = true
+--- Collects CraftingItemResultData tables after a recipe was crafted
+--- Due to lag or other reasons one craft could fire multiple events and thus create multiple result tables
+---@param craftingItemResultData CraftingItemResultData
+function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE") then
         return
     end
 
-    --CraftSim.DEBUG:InspectTable(craftResult, "Craft Result")
+    --CraftSim.DEBUG:InspectTable(craftingItemResultData, "craftingItemResultData")
 
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
         CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
@@ -42,13 +44,16 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
         CraftSim.CRAFT_LOG.detailsFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
     end
 
-    -- buffer a small time frame, then use all result items at once
-    table.insert(currentCraftingResults, craftResult)
+    -- buffer a small time frame, then forward all result tables at once
+    table.insert(accumulatingCraftingItemResultData, craftingItemResultData)
 
-    if collectingResults then
-        collectingResults = false
+    if isAccumulatingCraftingItemResultData then
+        isAccumulatingCraftingItemResultData = false
+        --TODO: check if NextFrame would make more sense or if there is an event to listen to
+        -- Maybe even react on **either** a timer **or** the start of the next craft
+        -- Maybe WaitForEvent could be used with a max timer?
         C_Timer.After(0.1, function()
-            CraftSim.CRAFT_LOG:processCraftResults()
+            CraftSim.CRAFT_LOG:AccumulateCraftResults()
         end)
     end
 
@@ -77,86 +82,20 @@ function CraftSim.CRAFT_LOG:ClearData()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:Remove()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:UpdateDisplay()
     CraftSim.CRAFT_LOG.logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-    CraftSim.CRAFT_LOG.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
-end
-
----Saves the currentCraftResult
----@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
-    local detailsFrame = CraftSim.CRAFT_LOG.detailsFrame
-    local logFrame = CraftSim.CRAFT_LOG.logFrame
-
-    print("AddCraftResult:", false, true)
-    ---@type CraftSim.CraftSessionData
-    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
-
-    CraftSim.CRAFT_LOG.currentSessionData:AddCraftResult(craftResult)
-
-    logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(
-        CraftSim.CRAFT_LOG.currentSessionData.totalProfit, true))
-
-    CraftSim.CRAFT_LOG.UI:UpdateItemList()
+    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
 end
 
 ---Adds Results to the UI
----@param recipeData CraftSim.RecipeData
+---@param recipeData CraftSim.RecipeData last crafted
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
-    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_LOG_UI_UPDATE")
-    local craftLogFrame = CraftSim.CRAFT_LOG.logFrame
-    local craftLog = craftLogFrame.content.craftLogScrollingMessageFrame
+function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
+    CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULT")
 
-    local resourcesText = ""
+    self:UpdateCraftData(craftResult, recipeData)
+    self.UI:UpdateCraftLogDisplay(craftResult, recipeData)
+    self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 
-    if craftResult.triggeredResourcefulness then
-        for _, savedReagent in pairs(craftResult.savedReagents) do
-            local qualityID = savedReagent.qualityID
-            local iconAsText = GUTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
-            local qualityAsText = (qualityID > 0 and GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
-            resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " " .. qualityAsText
-        end
-    end
-
-    local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
-    local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
-    local chanceText = ""
-
-    if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-        chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_5) ..
-            GUTIL:Round(craftResult.craftingChance * 100, 1) .. "%\n"
-    end
-
-    local resultsText = ""
-    if #craftResult.craftResultItems > 0 then
-        for _, craftResultItem in pairs(craftResult.craftResultItems) do
-            resultsText = resultsText ..
-                craftResultItem.quantity ..
-                " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
-        end
-    else
-        resultsText = resultsText .. recipeData.recipeName .. "\n"
-    end
-
-    local multicraftExtraItemsText = ""
-    for _, craftResultItem in pairs(craftResult.craftResultItems) do
-        if craftResultItem.quantityMulticraft > 0 then
-            multicraftExtraItemsText = multicraftExtraItemsText ..
-                craftResultItem.quantityMulticraft .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
-        end
-    end
-
-    local newText =
-        resultsText ..
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
-        chanceText ..
-        ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-        ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
-
-    craftLog:AddMessage("\n" .. newText)
-
-    CraftSim.CRAFT_LOG:AddCraftResult(craftResult)
-    CraftSim.CRAFT_LOG.UI:UpdateRecipeData(craftResult.recipeID)
-    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_LOG_UI_UPDATE")
+    CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULT")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -192,85 +131,53 @@ function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
     return craftProfit
 end
 
-function CraftSim.CRAFT_LOG:processCraftResults()
-    collectingResults = true
-    print("Craft Detected", false, true)
-    -- print(currentCraftingResults, true)
-    -- print("Num Craft Results: " .. tostring(#currentCraftingResults))
+---@param craftResult CraftSim.CraftResult
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
+    local recipeID = recipeData.recipeID
+
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
+    local craftSessionData = CraftSim.CRAFT_LOG.currentSessionData
+
+    local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
+    if not craftRecipeData then
+        craftRecipeData = CraftSim.CraftRecipeData(recipeID)
+        table.insert(craftSessionData.craftRecipeData, craftRecipeData)
+    end
+
+    print("AddCraftResult:", false, true)
+
+    craftSessionData:AddCraftResult(craftResult)
+    craftRecipeData:AddCraftResult(craftResult)
+end
+
+--- Collects craft results from last craft and puts them into one CraftResult object for further processing
+--- Also pairs the CraftResult with the relevant RecipeData object for further analysis
+function CraftSim.CRAFT_LOG:AccumulateCraftResults()
+    isAccumulatingCraftingItemResultData = true
+    print("AccumulateCraftResults", false, true)
 
     CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_LOG")
 
-    local CraftingItemResultData = CopyTable(currentCraftingResults)
-    currentCraftingResults = {}
+    local collectedCraftingItemResultData = accumulatingCraftingItemResultData
+    accumulatingCraftingItemResultData = {}
 
-    if GUTIL:Find(CraftingItemResultData, function(result) return result.isEnchant end) then
-        print("isEnchant -> ignore")
-        return
-    end
+    if GUTIL:Find(collectedCraftingItemResultData, function(result) return result.isEnchant end) then return end
 
     local recipeData = CraftSim.CRAFT_LOG.currentRecipeData;
 
-    if not recipeData then
-        print("no recipeData")
-        return
-    end
+    if not recipeData then return end
 
-    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS") and recipeData:IsWorkOrder() then
-        return
-    end
+    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS") and recipeData:IsWorkOrder() then return end
 
-    print("process craft results for: " .. tostring(recipeData.recipeName))
-    local craftResult = CraftSim.CraftResult(recipeData, CraftingItemResultData)
-
-    -- Debug for data collection
-    CraftSim.CRAFT_LOG:CollectData(recipeData, craftResult)
-
-    -- print("Craft Result: ")
-    -- print(craftResult)
+    local craftResult = CraftSim.CraftResult(recipeData, collectedCraftingItemResultData)
 
     local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
         return savedReagent.item
     end)
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_LOG")
     GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function()
-        CraftSim.CRAFT_LOG:AddResult(recipeData, craftResult)
+        CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
     end)
-end
-
-local collectData = {}
---- used to gather craft data for craftsim tuning, adjust as needed
----@param recipeData CraftSim.RecipeData
----@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_LOG:CollectData(recipeData, craftResult)
-    if not dataCollect then return end
-
-    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_DATA_COLLECT)
-
-    collectData.craftsTotal = collectData.craftsTotal or 0
-    collectData.yieldDistribution = collectData.yieldDistribution or {}
-    collectData.yieldFactors = collectData.yieldFactors or {}
-
-    local tastyHatchlingsTreat = 381380 -- yields 2
-    local blubberyMuffin = 381377       -- yields 3
-    local pepples = 381363              -- yields 2-3
-    local twiceBakedPotato = 381365     -- yields 4
-    local charitableCheddar = 407100    -- yields 5
-
-    -- yield data collection for item amount
-    if recipeData.isCooking and recipeData.recipeID == pepples then
-        collectData.craftsTotal = collectData.craftsTotal + 1
-        local quantity = craftResult.craftResultItems[1].quantity
-        collectData.yieldDistribution[quantity] = collectData.yieldDistribution[quantity] or 0
-        collectData.yieldDistribution[quantity] = collectData.yieldDistribution[quantity] + 1
-
-
-        -- update all cause craftsTotal changed
-        for quantity, _ in pairs(collectData.yieldDistribution) do
-            collectData.yieldFactors[quantity] = GUTIL:Round(
-                collectData.yieldDistribution[quantity] / collectData.craftsTotal, 3)
-        end
-
-        print("-- #" .. collectData.craftsTotal, false, true)
-        print(collectData.yieldFactors, true)
-    end
 end
