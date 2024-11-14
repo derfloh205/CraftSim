@@ -36,8 +36,6 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
         return
     end
 
-    --CraftSim.DEBUG:InspectTable(craftingItemResultData, "craftingItemResultData")
-
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
         CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
         CraftSim.CRAFT_LOG.logFrame:Show()

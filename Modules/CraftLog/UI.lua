@@ -314,6 +314,37 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         prefix = L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX),
     }
 
+    local reagentCombinationIDsSaveTable = CraftSim.DB.OPTIONS:Get(
+        "CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
+
+    frame.content.reagentCombinationButton = GGUI.FilterButton {
+        parent = frame.content,
+        anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -10 } },
+        sizeX = 200, sizeY = 25,
+        label = "Crafting Reagents Filter",
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            -- get currently viewed recipe craft data
+            local recipeData = CraftSim.INIT.currentRecipeData
+            if not recipeData then return end
+
+            local sessionData = CraftSim.CRAFT_LOG.currentSessionData
+            local craftRecipeData = sessionData:GetCraftRecipeData(recipeData.recipeID)
+
+            local reagentCombinationIDs = craftRecipeData:GetReagentCombinationIDs()
+
+            for _, reagentCombinationID in ipairs(reagentCombinationIDs) do
+                local reagentCombinationIDDisplayString = craftRecipeData:GetReagentCombinationDisplayString(
+                    reagentCombinationID)
+                rootDescription:CreateRadio(reagentCombinationIDDisplayString, function()
+                    return reagentCombinationIDsSaveTable[recipeData.recipeID] == reagentCombinationID
+                end, function()
+                    reagentCombinationIDsSaveTable[recipeData.recipeID] = reagentCombinationID
+                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
+                end)
+            end
+        end
+    }
+
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB : GGUI.BlizzardTab
     frame.content.calculationComparisonTab = GGUI.BlizzardTab {
         buttonOptions = {
@@ -374,7 +405,7 @@ function CraftSim.CRAFT_LOG.UI:InitReagentDetailsTab(reagentDetailsTab)
     local costColumnWidth = 100
 
     content.reagentList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -80 } },
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -100 } },
         parent = content,
         sizeY = 220,
         scale = 0.9,
@@ -497,7 +528,7 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
     local distributionColumnWidth = 40
 
     content.resultDistributionList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -80 } },
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -100 } },
         parent = content,
         sizeY = 220,
         scale = 0.9,
@@ -617,7 +648,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
         scale = 0.9,
         anchorPoints = { {
             anchorParent = content,
-            anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -80, offsetX = 20,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -100, offsetX = 20,
         } },
         showBorder = true,
         sizeY = 220,
@@ -667,14 +698,6 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
                 fixedWidth = observedValueColumnWidth - 5,
             }
         end
-    }
-
-    GGUI.HelpIcon {
-        parent = content,
-        anchorParent = content.comparisonList.frame,
-        offsetY = 10,
-        anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT",
-        text = f.bb("Ø") .. " .. Average\n" .. f.bb("#") .. " .. Count",
     }
 
     -- TODO: LibGraph Magic
@@ -761,12 +784,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 
         local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
         local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
-        local chanceText = ""
-
-        if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-            chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_5) ..
-                GUTIL:Round(craftResult.craftingChance * 100, 1) .. "%\n"
-        end
 
         local resultsText = ""
         if #craftResult.craftResultItems > 0 then
@@ -790,7 +807,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
         local newText =
             resultsText ..
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
-            chanceText ..
             ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
             ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
@@ -810,6 +826,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
 
     comparisonList:Remove()
 
+    local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
+        [recipeData.recipeID]
+
+    local craftingStatData = craftRecipeData:GetCraftingStatDataByReagentCombinationID(selectedReagentCombinationID)
+
+    local expectedStats = craftingStatData.expectedStats
+    local observedStats = craftingStatData.observedStats
+
     local function addComparison(statName, expectedValue, observedValue)
         comparisonList:Add(
         ---@param row CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
@@ -819,8 +843,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
                 row.observedValueColumn.text:SetText(observedValue)
             end)
     end
-
-    -- TODO: Add colorization if expected values are met
 
     local function colorizeObservedValue(observedValue, expectedValue, smallerThan)
         if smallerThan then
@@ -840,92 +862,92 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
 
     addComparison(
         "Sum Profit: ",
-        CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.totalProfit, true),
-        CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.totalProfit, true)
+        CraftSim.UTIL:FormatMoney(expectedStats.totalProfit, true),
+        CraftSim.UTIL:FormatMoney(observedStats.totalProfit, true)
     )
 
     addComparison(
         "Ø Profit: ",
-        CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.averageProfit, true),
-        CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.averageProfit, true)
+        CraftSim.UTIL:FormatMoney(expectedStats.averageProfit, true),
+        CraftSim.UTIL:FormatMoney(observedStats.averageProfit, true)
     )
 
     addComparison(
         "Sum Crafting Costs: ",
-        CraftSim.UTIL:FormatMoney(-craftRecipeData.expectedStats.totalCraftingCosts, true),
-        CraftSim.UTIL:FormatMoney(-craftRecipeData.observedStats.totalCraftingCosts, true)
+        CraftSim.UTIL:FormatMoney(-expectedStats.totalCraftingCosts, true),
+        CraftSim.UTIL:FormatMoney(-observedStats.totalCraftingCosts, true)
     )
 
     addComparison(
         "Ø Crafting Costs: ",
-        CraftSim.UTIL:FormatMoney(-craftRecipeData.expectedStats.averageCraftingCosts, true),
-        CraftSim.UTIL:FormatMoney(-craftRecipeData.observedStats.averageCraftingCosts, true)
+        CraftSim.UTIL:FormatMoney(-expectedStats.averageCraftingCosts, true),
+        CraftSim.UTIL:FormatMoney(-observedStats.averageCraftingCosts, true)
     )
 
     if recipeData.supportsMulticraft then
         addComparison(
             "# Multicraft: ",
-            GUTIL:Round(craftRecipeData.expectedStats.numMulticraft, 2),
-            colorizeObservedValue(craftRecipeData.observedStats.numMulticraft,
-                craftRecipeData.expectedStats.numMulticraft)
+            GUTIL:Round(expectedStats.numMulticraft, 2),
+            colorizeObservedValue(observedStats.numMulticraft,
+                expectedStats.numMulticraft)
         )
 
         addComparison(
             "Sum Extra Items: ",
-            GUTIL:Round(craftRecipeData.expectedStats.totalMulticraftExtraItems, 2),
-            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.totalMulticraftExtraItems, 2),
-                GUTIL:Round(craftRecipeData.expectedStats.totalMulticraftExtraItems, 2))
+            GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2),
+            colorizeObservedValue(GUTIL:Round(observedStats.totalMulticraftExtraItems, 2),
+                GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2))
         )
 
         addComparison(
             "Ø Extra Items: ",
-            GUTIL:Round(craftRecipeData.expectedStats.averageMulticraftExtraItems, 2),
-            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.averageMulticraftExtraItems, 2),
-                GUTIL:Round(craftRecipeData.expectedStats.averageMulticraftExtraItems, 2))
+            GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2),
+            colorizeObservedValue(GUTIL:Round(observedStats.averageMulticraftExtraItems, 2),
+                GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2))
         )
     end
 
     if recipeData.supportsResourcefulness then
         addComparison(
             "# Resourcefulness: ",
-            GUTIL:Round(craftRecipeData.expectedStats.numResourcefulness, 2),
-            colorizeObservedValue(craftRecipeData.observedStats.numResourcefulness,
-                GUTIL:Round(craftRecipeData.expectedStats.numResourcefulness, 2))
+            GUTIL:Round(expectedStats.numResourcefulness, 2),
+            colorizeObservedValue(observedStats.numResourcefulness,
+                GUTIL:Round(expectedStats.numResourcefulness, 2))
         )
 
         addComparison(
             "Sum Saved Costs: ",
-            CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.totalResourcefulnessSavedCosts, true),
-            CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.totalResourcefulnessSavedCosts, true)
+            CraftSim.UTIL:FormatMoney(expectedStats.totalResourcefulnessSavedCosts, true),
+            CraftSim.UTIL:FormatMoney(observedStats.totalResourcefulnessSavedCosts, true)
         )
 
         addComparison(
             "Ø Saved Costs: ",
-            CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.averageResourcefulnessSavedCosts, true),
-            CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.averageResourcefulnessSavedCosts, true)
+            CraftSim.UTIL:FormatMoney(expectedStats.averageResourcefulnessSavedCosts, true),
+            CraftSim.UTIL:FormatMoney(observedStats.averageResourcefulnessSavedCosts, true)
         )
     end
 
     if recipeData.supportsIngenuity then
         addComparison(
             "# Ingenuity: ",
-            GUTIL:Round(craftRecipeData.expectedStats.numIngenuity, 2),
-            colorizeObservedValue(craftRecipeData.observedStats.numIngenuity,
-                GUTIL:Round(craftRecipeData.expectedStats.numIngenuity, 2))
+            GUTIL:Round(expectedStats.numIngenuity, 2),
+            colorizeObservedValue(observedStats.numIngenuity,
+                GUTIL:Round(expectedStats.numIngenuity, 2))
         )
 
         addComparison(
             "Sum Concentration: ",
-            GUTIL:Round(craftRecipeData.expectedStats.totalConcentrationCost, 0),
-            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.totalConcentrationCost, 0),
-                GUTIL:Round(craftRecipeData.expectedStats.totalConcentrationCost, 0))
+            GUTIL:Round(expectedStats.totalConcentrationCost, 0),
+            colorizeObservedValue(GUTIL:Round(observedStats.totalConcentrationCost, 0),
+                GUTIL:Round(expectedStats.totalConcentrationCost, 0))
         )
 
         addComparison(
             "Ø Concentration: ",
-            GUTIL:Round(craftRecipeData.expectedStats.averageConcentrationCost, 0),
-            colorizeObservedValue(GUTIL:Round(craftRecipeData.observedStats.averageConcentrationCost, 0),
-                GUTIL:Round(craftRecipeData.expectedStats.averageConcentrationCost, 0))
+            GUTIL:Round(expectedStats.averageConcentrationCost, 0),
+            colorizeObservedValue(GUTIL:Round(observedStats.averageConcentrationCost, 0),
+                GUTIL:Round(expectedStats.averageConcentrationCost, 0))
         )
     end
 
@@ -939,7 +961,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
     local reagentsList = reagentDetailsContent.reagentList
     local savedReagentsList = reagentDetailsContent.savedReagentsList
 
-    local craftResultItems = craftRecipeData.totalItems -- TODO: make switchable by reagentCombinationID
+    local craftResultItems = craftRecipeData:GetCraftResultItemsByReagentCombinationID(selectedReagentCombinationID)
 
     -- Crafting Reagents
     do
@@ -952,6 +974,10 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
                     row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                     row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultSavedReagent.costs, true))
+                    row.tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        itemID = craftResultSavedReagent.item:GetItemID(),
+                    }
                 end)
         end
 
@@ -974,6 +1000,10 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
                     row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                     row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                    row.tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        itemID = craftResultSavedReagent.item:GetItemID(),
+                    }
                 end)
         end
 
@@ -992,7 +1022,13 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
     local resultAnalysisContent = CraftSim.CRAFT_LOG.advFrame.content.resultAnalysisTab
         .content --[[@as CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT]]
 
-    local craftResultItems = craftRecipeData.totalItems -- TODO: make switchable by reagentCombinationID
+    local currentlySelectedReagentCombinationID = CraftSim.DB.OPTIONS:Get(
+        "CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
+        [craftRecipeData.recipeID]
+    local craftResultItems = craftRecipeData:GetCraftResultItemsByReagentCombinationID(
+    currentlySelectedReagentCombinationID)
+    local craftingStatData = craftRecipeData:GetCraftingStatDataByReagentCombinationID(
+    currentlySelectedReagentCombinationID)
 
     -- Result Distribution
     do
@@ -1030,7 +1066,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
         local yieldDistributionList = resultAnalysisContent.yieldDistributionList
         yieldDistributionList:Remove()
 
-        if craftRecipeData.numCrafts > 0 then
+        if craftingStatData.numCrafts > 0 then
             local yieldDistributionMap = {}
             for _, craftResult in pairs(craftRecipeData.craftResults) do
                 local itemResultCountMap = {}
@@ -1104,8 +1140,9 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local sessionData = CraftSim.CRAFT_LOG.currentSessionData
     local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
 
-    advFrame.content.crafts:SetText(craftRecipeData.numCrafts)
+    local craftingStatData = craftRecipeData.craftingStatData
 
+    advFrame.content.crafts:SetText(craftingStatData.numCrafts)
     advFrame.content.recipeHeader:SetText(recipeData:GetFormattedRecipeName(true, true))
 
     self:UpdateCalculationComparison(craftRecipeData, recipeData)

@@ -69,7 +69,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
             local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
             self.craftingCosts = self.craftingCosts + reagentCosts
             tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
-            tinsert(reagentItemIDs, itemID)
+            tinsert(reagentItemIDs, itemID .. "." .. quantity)
         end
 
         if recipeData:HasRequiredSelectableReagent() then
@@ -80,7 +80,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
-                tinsert(reagentItemIDs, itemID)
+                tinsert(reagentItemIDs, itemID .. "." .. quantity)
             end
         end
 
@@ -94,7 +94,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                         CraftSim.CraftResultReagent(recipeData, itemID, quantity))
                     local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                     self.craftingCosts = self.craftingCosts + reagentCosts
-                    tinsert(reagentItemIDs, itemID)
+                    tinsert(reagentItemIDs, itemID .. "." .. quantity)
                 end
             end
         end
@@ -106,7 +106,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
-                tinsert(reagentItemIDs, itemID)
+                tinsert(reagentItemIDs, itemID .. "." .. quantity)
             end
         end
 
