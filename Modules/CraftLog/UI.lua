@@ -3,6 +3,7 @@ local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
+local LibGraph = CraftSim.LibGraph
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
@@ -12,6 +13,9 @@ CraftSim.CRAFT_LOG = CraftSim.CRAFT_LOG
 
 ---@class CraftSim.CRAFT_LOG.UI
 CraftSim.CRAFT_LOG.UI = {}
+
+CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
+CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR = { 0.0, 1.0, 0.0, 0.8 }
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
 
@@ -44,7 +48,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
         anchorA = "TOPLEFT",
         anchorB = "BOTTOMLEFT",
         offsetY = -20,
-        sizeX = 700,
+        sizeX = 720,
         sizeY = 340,
         frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
         title = L("CRAFT_LOG_ADV_TITLE"),
@@ -294,7 +298,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
 end
 
 function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
-    local tabSizeX = 700
+    local tabSizeX = 720
     local tabSizeY = 340
 
     ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
@@ -302,7 +306,7 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
 
     frame.content.recipeHeader = GGUI.Text {
         parent = frame.content, anchorPoints = {
-        { anchorParent = frame.content,     anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -11, offsetX = 10 },
+        { anchorParent = frame.content,     anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -13, offsetX = 10 },
         { anchorParent = frame.title.frame, anchorA = "RIGHT",   anchorB = "LEFT" },
     },
     }
@@ -639,7 +643,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
     ---@class CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT : Frame
     local content = calculationComparisonTab.content
 
-    local statNameColumnWidth = 135
+    local statNameColumnWidth = 120
     local expectedValueColumnWidth = 125
     local observedValueColumnWidth = 125
 
@@ -667,6 +671,15 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
                 width = observedValueColumnWidth,
                 justifyOptions = { type = "H", align = "RIGHT" }
             }
+        },
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            selectedRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.SELECTED_LIGHT_WHITE,
+            selectionCallback = function(row, userInput)
+                if CraftSim.INIT.currentRecipeData and userInput then
+                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
+                end
+            end
         },
         rowConstructor = function(columns, row)
             ---@class CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW : GGUI.FrameList.Row
@@ -700,10 +713,42 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
         end
     }
 
-    -- TODO: LibGraph Magic
-    -- for profit..
-    -- for procs over time.. and so on
-    -- based on selected stat
+    content.statComparisonGraph = LibGraph:CreateGraphLine("StatComparisonGraph", content.comparisonList.frame,
+        "LEFT", "RIGHT", 30,
+        0, 350, 200)
+    content.statComparisonGraph:SetXAxis(0, 1)
+    content.statComparisonGraph:SetYAxis(0, 1)
+    -- content.concentrationCurveGraph:LockYMin(true)
+    content.statComparisonGraph:SetGridSpacing(1, 1)
+    content.statComparisonGraph:SetGridColor({ 0.5, 0.5, 0.5, 0.5 })
+    content.statComparisonGraph:SetAxisDrawing(true, true)
+    content.statComparisonGraph:SetAxisColor({ 1.0, 1.0, 1.0, 1.0 })
+    content.statComparisonGraph:SetAutoScale(true)
+    if content.statComparisonGraph.SetYLabels then
+        content.statComparisonGraph:SetYLabels(true)
+    end
+
+    function content.statComparisonGraph:SetDefault()
+        local defaultData = { { 0, 0 } }
+        local defaultData2 = { { 5, 5 } }
+        content.statComparisonGraph:SetGridSpacing(1, 1)
+        content.statComparisonGraph:AddDataSeries(defaultData,
+            CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
+        content.statComparisonGraph:AddDataSeries(defaultData2,
+            CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
+    end
+
+    content.statComparisonGraphTitle = GGUI.Text {
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.statComparisonGraph,
+            anchorA = "BOTTOM",
+            anchorB = "TOP", offsetY = 5,
+        } },
+        text = "<StatTitle>"
+    }
+
+    content.statComparisonGraph:SetDefault()
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateResultItemLog()
@@ -819,11 +864,12 @@ end
 ---@param craftRecipeData CraftSim.CraftRecipeData
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, recipeData)
-    local adv = CraftSim.CRAFT_LOG.advFrame
-    local comparisonTabContent = adv.content.calculationComparisonTab
+    local advFrame = CraftSim.CRAFT_LOG.advFrame
+    local comparisonTabContent = advFrame.content.calculationComparisonTab
         .content --[[@as CraftSim.CRAFT_LOG.CALCULATION_COMPARISON_TAB.CONTENT]]
     local comparisonList = comparisonTabContent.comparisonList
 
+    local previouslySelectedStatID = (comparisonList.selectedRow and comparisonList.selectedRow.statID)
     comparisonList:Remove()
 
     local craftingStatData = craftRecipeData:GetCraftingStatDataBySelectedReagentCombinationID()
@@ -831,124 +877,216 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
     local expectedStats = craftingStatData.expectedStats
     local observedStats = craftingStatData.observedStats
 
-    local function addComparison(statName, expectedValue, observedValue)
-        comparisonList:Add(
-        ---@param row CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
-            function(row)
-                row.statNameColumn.text:SetText(statName)
-                row.expectedValueColumn.text:SetText(expectedValue)
-                row.observedValueColumn.text:SetText(observedValue)
-            end)
-    end
+    -- Comparison Table
+    do
+        local function addComparison(statName, expectedValue, observedValue, statID, statTitle, isGoldValue)
+            comparisonList:Add(
+            ---@param row CraftSim.CRAFT_LOG_ADV.COMPARISON_LIST.ROW
+                function(row)
+                    row.statID = statID
+                    row.statTitle = statTitle
+                    row.isGoldValue = isGoldValue
+                    row.statNameColumn.text:SetText(statName)
+                    row.expectedValueColumn.text:SetText(expectedValue)
+                    row.observedValueColumn.text:SetText(observedValue)
+                end)
+        end
 
-    local function colorizeObservedValue(observedValue, expectedValue, smallerThan)
-        if smallerThan then
-            if observedValue <= expectedValue then
-                return f.g(observedValue)
+        local function colorizeObservedValue(observedValue, expectedValue, smallerThan)
+            if smallerThan then
+                if observedValue <= expectedValue then
+                    return f.g(observedValue)
+                else
+                    return f.r(observedValue)
+                end
             else
-                return f.r(observedValue)
-            end
-        else
-            if observedValue >= expectedValue then
-                return f.g(observedValue)
-            else
-                return f.r(observedValue)
+                if observedValue >= expectedValue then
+                    return f.g(observedValue)
+                else
+                    return f.r(observedValue)
+                end
             end
         end
+
+        addComparison(
+            "Sum Profit: ",
+            CraftSim.UTIL:FormatMoney(expectedStats.totalProfit, true),
+            CraftSim.UTIL:FormatMoney(observedStats.totalProfit, true),
+            "totalProfit", "Total Profit", true
+        )
+
+        addComparison(
+            "Ø Profit: ",
+            CraftSim.UTIL:FormatMoney(expectedStats.averageProfit, true),
+            CraftSim.UTIL:FormatMoney(observedStats.averageProfit, true),
+            "averageProfit", "Average Profit", true
+        )
+
+        addComparison(
+            "Sum Crafting Costs: ",
+            CraftSim.UTIL:FormatMoney(-expectedStats.totalCraftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-observedStats.totalCraftingCosts, true),
+            "totalCraftingCosts", "Total Crafting Costs", true
+        )
+
+        addComparison(
+            "Ø Crafting Costs: ",
+            CraftSim.UTIL:FormatMoney(-expectedStats.averageCraftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-observedStats.averageCraftingCosts, true),
+            "averageCraftingCosts", "Average Crafting Costs", true
+        )
+
+        if recipeData.supportsMulticraft then
+            addComparison(
+                "# Multicraft: ",
+                GUTIL:Round(expectedStats.numMulticraft, 2),
+                colorizeObservedValue(observedStats.numMulticraft,
+                    expectedStats.numMulticraft),
+                "numMulticraft", "Multicraft Procs"
+            )
+
+            addComparison(
+                "Sum Extra Items: ",
+                GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2),
+                colorizeObservedValue(GUTIL:Round(observedStats.totalMulticraftExtraItems, 2),
+                    GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2)),
+                "totalMulticraftExtraItems", "Total Multicraft Extra Items"
+            )
+
+            addComparison(
+                "Ø Extra Items: ",
+                GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2),
+                colorizeObservedValue(GUTIL:Round(observedStats.averageMulticraftExtraItems, 2),
+                    GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2)),
+                "averageMulticraftExtraItems", "Average Multicraft Extra Items"
+            )
+        end
+
+        if recipeData.supportsResourcefulness then
+            addComparison(
+                "# Resourcefulness: ",
+                GUTIL:Round(expectedStats.numResourcefulness, 2),
+                colorizeObservedValue(observedStats.numResourcefulness,
+                    GUTIL:Round(expectedStats.numResourcefulness, 2)),
+                "numResourcefulness", "Resourcefulness Procs"
+            )
+
+            addComparison(
+                "Sum Saved Costs: ",
+                CraftSim.UTIL:FormatMoney(expectedStats.totalResourcefulnessSavedCosts, true),
+                CraftSim.UTIL:FormatMoney(observedStats.totalResourcefulnessSavedCosts, true),
+                "totalResourcefulnessSavedCosts", "Total Resourcefulness Saved Costs", true
+            )
+
+            addComparison(
+                "Ø Saved Costs: ",
+                CraftSim.UTIL:FormatMoney(expectedStats.averageResourcefulnessSavedCosts, true),
+                CraftSim.UTIL:FormatMoney(observedStats.averageResourcefulnessSavedCosts, true),
+                "averageResourcefulnessSavedCosts", "Average Resourcefulness Saved Costs", true
+            )
+        end
+
+        if recipeData.supportsIngenuity then
+            addComparison(
+                "# Ingenuity: ",
+                GUTIL:Round(expectedStats.numIngenuity, 2),
+                colorizeObservedValue(observedStats.numIngenuity,
+                    GUTIL:Round(expectedStats.numIngenuity, 2)),
+                "numIngenuity", "Ingenuity Procs"
+            )
+
+            addComparison(
+                "Sum Concentration: ",
+                GUTIL:Round(expectedStats.totalConcentrationCost, 0),
+                colorizeObservedValue(GUTIL:Round(observedStats.totalConcentrationCost, 0),
+                    GUTIL:Round(expectedStats.totalConcentrationCost, 0)),
+                "totalConcentrationCost", "Total Concentration Cost"
+            )
+
+            addComparison(
+                "Ø Concentration: ",
+                GUTIL:Round(expectedStats.averageConcentrationCost, 0),
+                colorizeObservedValue(GUTIL:Round(observedStats.averageConcentrationCost, 0),
+                    GUTIL:Round(expectedStats.averageConcentrationCost, 0)),
+                "averageConcentrationCost", "Average Concentration Cost"
+            )
+        end
+
+        comparisonList:UpdateDisplay()
+        -- reselect the row with the selected statID
+        comparisonList:SelectRowWhere(function(row)
+            return row.statID == previouslySelectedStatID
+        end, 2)
     end
 
-    addComparison(
-        "Sum Profit: ",
-        CraftSim.UTIL:FormatMoney(expectedStats.totalProfit, true),
-        CraftSim.UTIL:FormatMoney(observedStats.totalProfit, true)
-    )
-
-    addComparison(
-        "Ø Profit: ",
-        CraftSim.UTIL:FormatMoney(expectedStats.averageProfit, true),
-        CraftSim.UTIL:FormatMoney(observedStats.averageProfit, true)
-    )
-
-    addComparison(
-        "Sum Crafting Costs: ",
-        CraftSim.UTIL:FormatMoney(-expectedStats.totalCraftingCosts, true),
-        CraftSim.UTIL:FormatMoney(-observedStats.totalCraftingCosts, true)
-    )
-
-    addComparison(
-        "Ø Crafting Costs: ",
-        CraftSim.UTIL:FormatMoney(-expectedStats.averageCraftingCosts, true),
-        CraftSim.UTIL:FormatMoney(-observedStats.averageCraftingCosts, true)
-    )
-
-    if recipeData.supportsMulticraft then
-        addComparison(
-            "# Multicraft: ",
-            GUTIL:Round(expectedStats.numMulticraft, 2),
-            colorizeObservedValue(observedStats.numMulticraft,
-                expectedStats.numMulticraft)
-        )
-
-        addComparison(
-            "Sum Extra Items: ",
-            GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2),
-            colorizeObservedValue(GUTIL:Round(observedStats.totalMulticraftExtraItems, 2),
-                GUTIL:Round(expectedStats.totalMulticraftExtraItems, 2))
-        )
-
-        addComparison(
-            "Ø Extra Items: ",
-            GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2),
-            colorizeObservedValue(GUTIL:Round(observedStats.averageMulticraftExtraItems, 2),
-                GUTIL:Round(expectedStats.averageMulticraftExtraItems, 2))
-        )
+    -- Comparison Graph
+    local craftingStatDataSnapshots = craftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
+    local comparisonGraph = comparisonTabContent.statComparisonGraph
+    local graphTitle = comparisonTabContent.statComparisonGraphTitle
+    local selectedStatID = "averageProfit"
+    local selectedStatTitle = "Average Profit"
+    local isGoldValue = true
+    if comparisonList.selectedRow then
+        selectedStatID = comparisonList.selectedRow.statID
+        selectedStatTitle = comparisonList.selectedRow.statTitle
+        isGoldValue = comparisonList.selectedRow.isGoldValue
     end
+    graphTitle:SetText(selectedStatTitle)
+    do
+        if comparisonGraph.SetYLabels then
+            if isGoldValue then
+                comparisonGraph:SetYLabels(true, false, function(labelValue)
+                    -- custom so silver and copper not included and its already gold only
+                    if labelValue > 0 then
+                        return f.g(labelValue) .. f.gold("g")
+                    else
+                        return f.r(labelValue) .. f.gold("g")
+                    end
+                end)
+            else
+                comparisonGraph:SetYLabels(true)
+            end
+        end
 
-    if recipeData.supportsResourcefulness then
-        addComparison(
-            "# Resourcefulness: ",
-            GUTIL:Round(expectedStats.numResourcefulness, 2),
-            colorizeObservedValue(observedStats.numResourcefulness,
-                GUTIL:Round(expectedStats.numResourcefulness, 2))
-        )
+        if craftingStatData.numCrafts == 0 then
+            comparisonGraph:ResetData()
+            comparisonGraph:SetDefault()
+        else
+            comparisonGraph:ResetData()
+            local expectedPoints = { { 0, 0 } }
+            local observedPoints = { { 0, 0 } }
 
-        addComparison(
-            "Sum Saved Costs: ",
-            CraftSim.UTIL:FormatMoney(expectedStats.totalResourcefulnessSavedCosts, true),
-            CraftSim.UTIL:FormatMoney(observedStats.totalResourcefulnessSavedCosts, true)
-        )
+            for craftNr, craftingStatData in ipairs(craftingStatDataSnapshots) do
+                local expectedValue = craftingStatData.expectedStats[selectedStatID]
+                local observedValue = craftingStatData.observedStats[selectedStatID]
 
-        addComparison(
-            "Ø Saved Costs: ",
-            CraftSim.UTIL:FormatMoney(expectedStats.averageResourcefulnessSavedCosts, true),
-            CraftSim.UTIL:FormatMoney(observedStats.averageResourcefulnessSavedCosts, true)
-        )
+                if isGoldValue then
+                    -- Convert from copper to gold
+                    expectedValue = expectedValue / 10000
+                    observedValue = observedValue / 10000
+                end
+
+                tinsert(expectedPoints, { craftNr, expectedValue })
+                tinsert(observedPoints, { craftNr, observedValue })
+            end
+
+            CraftSim.DEBUG:InspectTable(expectedPoints, "expectedPoints")
+            CraftSim.DEBUG:InspectTable(observedPoints, "observedPoints")
+
+            -- set grid spacing based on maxValue
+            local maxValue = GUTIL:Fold(expectedPoints, 0, function(maxValue, expectedPoint, craftNr)
+                local observedPoint = observedPoints[craftNr]
+                return math.max(math.abs(observedPoint[2]), math.abs(expectedPoint[2]), math.abs(maxValue))
+            end)
+
+            comparisonGraph:SetGridSpacing(math.ceil(craftingStatData.numCrafts / 10), GUTIL:Round(maxValue / 5))
+
+            comparisonGraph:AddDataSeries(expectedPoints, CraftSim.CRAFT_LOG.UI
+                .STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR)
+            comparisonGraph:AddDataSeries(observedPoints, CraftSim.CRAFT_LOG.UI
+                .STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
+        end
     end
-
-    if recipeData.supportsIngenuity then
-        addComparison(
-            "# Ingenuity: ",
-            GUTIL:Round(expectedStats.numIngenuity, 2),
-            colorizeObservedValue(observedStats.numIngenuity,
-                GUTIL:Round(expectedStats.numIngenuity, 2))
-        )
-
-        addComparison(
-            "Sum Concentration: ",
-            GUTIL:Round(expectedStats.totalConcentrationCost, 0),
-            colorizeObservedValue(GUTIL:Round(observedStats.totalConcentrationCost, 0),
-                GUTIL:Round(expectedStats.totalConcentrationCost, 0))
-        )
-
-        addComparison(
-            "Ø Concentration: ",
-            GUTIL:Round(expectedStats.averageConcentrationCost, 0),
-            colorizeObservedValue(GUTIL:Round(observedStats.averageConcentrationCost, 0),
-                GUTIL:Round(expectedStats.averageConcentrationCost, 0))
-        )
-    end
-
-    comparisonList:UpdateDisplay()
 end
 
 ---@param craftRecipeData CraftSim.CraftRecipeData
@@ -1135,7 +1273,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local craftingStatData = craftRecipeData.craftingStatData
 
     advFrame.content.crafts:SetText(craftingStatData.numCrafts)
-    advFrame.content.recipeHeader:SetText(recipeData:GetFormattedRecipeName(true, true))
+    -- need to wait for expectedItem to load..
+    if recipeData.resultData.expectedItem then
+        recipeData.resultData.expectedItem:ContinueOnItemLoad(function()
+            advFrame.content.recipeHeader:SetText(recipeData:GetFormattedRecipeName(true, true))
+        end)
+    else
+        advFrame.content.recipeHeader:SetText(recipeData:GetFormattedRecipeName(true, true))
+    end
 
     self:UpdateCalculationComparison(craftRecipeData, recipeData)
     self:UpdateReagentDetails(craftRecipeData)

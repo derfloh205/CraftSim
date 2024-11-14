@@ -1891,8 +1891,8 @@ function CraftSim.RecipeData:GetFormattedRecipeName(showIcon, showBrackets)
     local colorEscapeEnd = (recipeRarity and "|r") or ""
     local startBracket = (showBrackets and "[") or ""
     local endBracket = (showBrackets and "]") or ""
-    return string.format("%s%s%s%s%s", recipeIcon, startBracket, colorEscapeHex, self.recipeName, colorEscapeEnd,
-        endBracket)
+    return string.format("%s%s%s%s%s%s", recipeIcon, colorEscapeHex, startBracket, self.recipeName, endBracket,
+        colorEscapeEnd)
 end
 
 ---@param itemID ItemID

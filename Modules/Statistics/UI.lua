@@ -309,7 +309,8 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
     ---@class CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB.CONTENT : Frame
     local content = tab.content
 
-    content.concentrationCurveGraph = CraftSim.LibGraph:CreateGraphLine("TestLineGraph", content, "TOP", "TOP", 0,
+    content.concentrationCurveGraph = CraftSim.LibGraph:CreateGraphLine("ConcentrationCurveGraph", content, "TOP", "TOP",
+        0,
         -20, 450, 320)
     content.concentrationCurveGraph:SetXAxis(0, 1)
     content.concentrationCurveGraph:SetYAxis(0, 1)

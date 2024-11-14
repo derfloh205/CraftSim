@@ -69,9 +69,11 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.recipeID = recipeID
     ---@type CraftSim.CraftRecipeData.CraftingStatData
     self.craftingStatData = CopyTable(initCraftingStatComparison)
+    ---@type CraftSim.CraftRecipeData.CraftingStatData[]
     self.craftStatDataSnapshots = {}
     ---@type table<string, CraftSim.CraftRecipeData.CraftingStatData>
     self.craftingStatDataByReagentCombination = {}
+    ---@type table<string, CraftSim.CraftRecipeData.CraftingStatData[]>
     self.craftingStatDataByReagentCombinationSnapshots = {}
     ---@type CraftSim.CraftResult[]
     self.craftResults = {}
@@ -105,6 +107,18 @@ function CraftSim.CraftRecipeData:GetCraftingStatDataBySelectedReagentCombinatio
     end
 
     return self.craftingStatData
+end
+
+---@return CraftSim.CraftRecipeData.CraftingStatData[]
+function CraftSim.CraftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
+    local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
+        [self.recipeID]
+
+    if selectedReagentCombinationID ~= "Total" then
+        return self.craftingStatDataByReagentCombinationSnapshots[selectedReagentCombinationID]
+    end
+
+    return self.craftStatDataSnapshots
 end
 
 ---@return CraftSim.CraftRecipeData.CraftResultItems
