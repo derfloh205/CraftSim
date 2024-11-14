@@ -95,27 +95,25 @@ function CraftSim.CraftRecipeData:GetReagentCombinationIDs()
     return reagentCombinationIDs
 end
 
----@param reagentCombinationID string | "Total"
 ---@return CraftSim.CraftRecipeData.CraftingStatData
-function CraftSim.CraftRecipeData:GetCraftingStatDataByReagentCombinationID(reagentCombinationID)
+function CraftSim.CraftRecipeData:GetCraftingStatDataBySelectedReagentCombinationID()
     local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
         [self.recipeID]
 
     if selectedReagentCombinationID ~= "Total" then
-        return self.craftingStatDataByReagentCombination[reagentCombinationID]
+        return self.craftingStatDataByReagentCombination[selectedReagentCombinationID]
     end
 
     return self.craftingStatData
 end
 
----@param reagentCombinationID string | "Total"
 ---@return CraftSim.CraftRecipeData.CraftResultItems
-function CraftSim.CraftRecipeData:GetCraftResultItemsByReagentCombinationID(reagentCombinationID)
+function CraftSim.CraftRecipeData:GetCraftResultItemsBySelectedReagentCombinationID()
     local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
         [self.recipeID]
 
     if selectedReagentCombinationID ~= "Total" then
-        return self.totalItemsByReagentCombination[reagentCombinationID]
+        return self.totalItemsByReagentCombination[selectedReagentCombinationID]
     end
 
     return self.totalItems

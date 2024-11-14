@@ -826,10 +826,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
 
     comparisonList:Remove()
 
-    local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
-        [recipeData.recipeID]
-
-    local craftingStatData = craftRecipeData:GetCraftingStatDataByReagentCombinationID(selectedReagentCombinationID)
+    local craftingStatData = craftRecipeData:GetCraftingStatDataBySelectedReagentCombinationID()
 
     local expectedStats = craftingStatData.expectedStats
     local observedStats = craftingStatData.observedStats
@@ -961,7 +958,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
     local reagentsList = reagentDetailsContent.reagentList
     local savedReagentsList = reagentDetailsContent.savedReagentsList
 
-    local craftResultItems = craftRecipeData:GetCraftResultItemsByReagentCombinationID(selectedReagentCombinationID)
+    local craftResultItems = craftRecipeData:GetCraftResultItemsBySelectedReagentCombinationID()
 
     -- Crafting Reagents
     do
@@ -1022,13 +1019,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
     local resultAnalysisContent = CraftSim.CRAFT_LOG.advFrame.content.resultAnalysisTab
         .content --[[@as CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT]]
 
-    local currentlySelectedReagentCombinationID = CraftSim.DB.OPTIONS:Get(
-        "CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
-        [craftRecipeData.recipeID]
-    local craftResultItems = craftRecipeData:GetCraftResultItemsByReagentCombinationID(
-    currentlySelectedReagentCombinationID)
-    local craftingStatData = craftRecipeData:GetCraftingStatDataByReagentCombinationID(
-    currentlySelectedReagentCombinationID)
+    local craftResultItems = craftRecipeData:GetCraftResultItemsBySelectedReagentCombinationID()
+    local craftingStatData = craftRecipeData:GetCraftingStatDataBySelectedReagentCombinationID()
 
     -- Result Distribution
     do
