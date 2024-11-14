@@ -230,13 +230,12 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
             "Wenn aktiviert, wird die Aufzeichnung von Herstellungsergebnissen beim Herstellen gestoppt und kann die " ..
             f.g("Leistung verbessern"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Statistik Tracker",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Ergebnisverteilung",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL] = "Ergebnisverteilung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP] =
         "Relative Verteilung der hergestellten Gegenstandsergebnisse (Mehrfachherstellungs-Mengen werden ignoriert)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Mehrfachherstellung",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Einfallsreichtum",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Ertragsverteilung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT] = "Mehrfachherstellung",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS] = "Einfallsreichtum",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION] = "Ertragsverteilung",
 
         -- Statgewichtungsfenster
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Durchschnittlicher Gewinn",

@@ -213,13 +213,12 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø Economia: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Lucro: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Reagentes Economizados",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Rastreador de Estatísticas",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Distribuição dos Resultados",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL] = "Distribuição dos Resultados",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP] =
         "Distribuição relativa dos resultados de itens criados.\n(Ignorando Quantidades de Multicriação)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Multicriação",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Devolução de Recursos",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Distribuição do Rendimento",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT] = "Multicriação",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS] = "Devolução de Recursos",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION] = "Distribuição do Rendimento",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Lucro Médio do CraftSim",

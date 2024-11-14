@@ -2,39 +2,39 @@
 local CraftSim = select(2, ...)
 
 
----@class CraftSim.CraftResultSavedReagent : CraftSim.CraftSimObject
-CraftSim.CraftResultSavedReagent = CraftSim.CraftSimObject:extend()
+---@class CraftSim.CraftResultReagent : CraftSim.CraftSimObject
+CraftSim.CraftResultReagent = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param itemID number
 ---@param quantity number
-function CraftSim.CraftResultSavedReagent:new(recipeData, itemID, quantity)
+function CraftSim.CraftResultReagent:new(recipeData, itemID, quantity)
     if not recipeData then return end
 
     self.item = Item:CreateFromItemID(itemID)
     self.quantity = quantity
-    self.savedCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true) * self.quantity
+    self.costs = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true) * self.quantity
     self.qualityID = recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
 end
 
----@return CraftSim.CraftResultSavedReagent
-function CraftSim.CraftResultSavedReagent:Copy()
-    local copy = CraftSim.CraftResultSavedReagent()
+---@return CraftSim.CraftResultReagent
+function CraftSim.CraftResultReagent:Copy()
+    local copy = CraftSim.CraftResultReagent()
     copy.item = self.item
     copy.quantity = self.quantity
-    copy.savedCosts = self.savedCosts
+    copy.costs = self.costs
     copy.qualityID = self.qualityID
     return copy
 end
 
-function CraftSim.CraftResultSavedReagent:Debug()
+function CraftSim.CraftResultReagent:Debug()
     return {
         "Q" .. self.qualityID .. " " .. (self.item:GetItemLink() or self.item:GetItemID()) .. " x " .. self.quantity,
-        "Saved Costs: " .. CraftSim.UTIL:FormatMoney(self.savedCosts),
+        "Costs: " .. CraftSim.UTIL:FormatMoney(self.costs),
     }
 end
 
-function CraftSim.CraftResultSavedReagent:GetJSON(indent)
+function CraftSim.CraftResultReagent:GetJSON(indent)
     indent = indent or 0
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
@@ -42,7 +42,7 @@ function CraftSim.CraftResultSavedReagent:GetJSON(indent)
     jb:Add("itemString", CraftSim.GUTIL:GetItemStringFromLink(self.item:GetItemLink() or ""))
     jb:Add("qualityID", self.qualityID)
     jb:Add("quantity", self.quantity)
-    jb:Add("savedCosts", self.savedCosts, true)
+    jb:Add("costs", self.costs, true)
     jb:End()
     return jb.json
 end

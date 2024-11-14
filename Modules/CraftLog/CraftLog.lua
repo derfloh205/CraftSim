@@ -210,18 +210,19 @@ function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craf
     end
 end
 
----@param totalSavedReagents CraftSim.CraftResultSavedReagent[]
----@param savedReagents CraftSim.CraftResultSavedReagent[]
-function CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(totalSavedReagents, savedReagents)
-    for _, savedReagentNew in ipairs(savedReagents) do
-        local savedReagentOld = CraftSim.GUTIL:Find(totalSavedReagents, function(savedReagentOld)
+---@param totalReagents CraftSim.CraftResultReagent[]
+---@param newReagents CraftSim.CraftResultReagent[]
+function CraftSim.CRAFT_LOG:MergeReagentsItemData(totalReagents, newReagents)
+    for _, savedReagentNew in ipairs(newReagents) do
+        local savedReagentOld = CraftSim.GUTIL:Find(totalReagents, function(savedReagentOld)
             return savedReagentNew.item:GetItemID() == savedReagentOld.item:GetItemID()
         end)
 
         if savedReagentOld then
             savedReagentOld.quantity = savedReagentOld.quantity + savedReagentNew.quantity
+            savedReagentOld.costs = savedReagentOld.costs + savedReagentNew.costs
         else
-            table.insert(totalSavedReagents, savedReagentNew:Copy())
+            table.insert(totalReagents, savedReagentNew:Copy())
         end
     end
 end

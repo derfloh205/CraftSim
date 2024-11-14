@@ -327,10 +327,10 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
 
     self:InitCalculationComparisonTab(frame.content.calculationComparisonTab)
 
-    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB : GGUI.BlizzardTab
-    frame.content.statDetailsTab = GGUI.BlizzardTab {
+    ---@class CraftSim.CRAFT_LOG.REAGENT_DETAILS_TAB : GGUI.BlizzardTab
+    frame.content.reagentDetailsTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = L("CRAFT_LOG_STAT_DETAILS_TAB"),
+            label = L("CRAFT_LOG_REAGENT_DETAILS_TAB"),
             anchorParent = frame.content.calculationComparisonTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
@@ -340,13 +340,13 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         top = true,
     }
 
-    self:InitStatDetailsTab(frame.content.statDetailsTab)
+    self:InitReagentDetailsTab(frame.content.reagentDetailsTab)
 
-    ---@class CraftSim.CRAFT_LOG.RESULT_DETAILS_TAB : GGUI.BlizzardTab
-    frame.content.resultDetailsTab = GGUI.BlizzardTab {
+    ---@class CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB : GGUI.BlizzardTab
+    frame.content.resultAnalysisTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = L("CRAFT_LOG_RESULT_DETAILS_TAB"),
-            anchorParent = frame.content.statDetailsTab.button,
+            label = L("CRAFT_LOG_RESULT_ANALYSIS_TAB"),
+            anchorParent = frame.content.reagentDetailsTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
         },
@@ -355,118 +355,249 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         top = true,
     }
 
-    self:InitResultDetailsTab(frame.content.resultDetailsTab)
+    self:InitResultAnalysisTab(frame.content.resultAnalysisTab)
 
-    GGUI.BlizzardTabSystem { frame.content.calculationComparisonTab, frame.content.statDetailsTab, frame.content.resultDetailsTab }
+    GGUI.BlizzardTabSystem { frame.content.calculationComparisonTab, frame.content.reagentDetailsTab, frame.content.resultAnalysisTab }
 
     GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
----@param statDetailsTab CraftSim.CRAFT_LOG.STAT_DETAILS_TAB
-function CraftSim.CRAFT_LOG.UI:InitStatDetailsTab(statDetailsTab)
-    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB
-    statDetailsTab = statDetailsTab
-    ---@class CraftSim.CRAFT_LOG.STAT_DETAILS_TAB.CONTENT : Frame
-    local content = statDetailsTab.content
+---@param reagentDetailsTab CraftSim.CRAFT_LOG.REAGENT_DETAILS_TAB
+function CraftSim.CRAFT_LOG.UI:InitReagentDetailsTab(reagentDetailsTab)
+    ---@class CraftSim.CRAFT_LOG.REAGENT_DETAILS_TAB
+    reagentDetailsTab = reagentDetailsTab
+    ---@class CraftSim.CRAFT_LOG.REAGENT_DETAILS_TAB.CONTENT : Frame
+    local content = reagentDetailsTab.content
+
+    local reagentColumnWidth = 170
+    local countColumnWidth = 40
+    local costColumnWidth = 100
+
+    content.reagentList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -80 } },
+        parent = content,
+        sizeY = 220,
+        scale = 0.9,
+        showBorder = true,
+        columnOptions = {
+            {
+                label = "Used Reagent",
+                width = reagentColumnWidth,
+            },
+            {
+                label = "Count",
+                width = countColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            },
+            {
+                label = "Costs",
+                width = costColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            }
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_LOG.REAGENT_LIST.ROW : GGUI.FrameList.Row
+            row = row
+            row.itemColumn = columns[1]
+            row.countColumn = columns[2]
+            row.savedColumn = columns[3]
+            ---@type CraftSim.CraftResultReagent
+            row.craftResultSavedReagent = nil
+
+            row.itemColumn.text = GGUI.Text {
+                parent = row.itemColumn,
+                anchorPoints = { { anchorParent = row.itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = reagentColumnWidth,
+            }
+
+            row.countColumn.text = GGUI.Text {
+                parent = row.countColumn,
+                anchorPoints = { { anchorParent = row.countColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = countColumnWidth,
+            }
+
+            row.savedColumn.text = GGUI.Text {
+                parent = row.savedColumn,
+                anchorPoints = { { anchorParent = row.savedColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = costColumnWidth,
+            }
+        end,
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            noSelectionColor = true },
+    }
+
+    content.savedReagentsList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.reagentList.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetY = 0, offsetX = 40 } },
+        parent = content,
+        sizeY = 220,
+        scale = 0.9,
+        showBorder = true,
+        columnOptions = {
+            {
+                label = "Saved Reagent",
+                width = reagentColumnWidth,
+            },
+            {
+                label = "Count",
+                width = countColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            },
+            {
+                label = "Saved Costs",
+                width = costColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            }
+        },
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            noSelectionColor = true },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW : GGUI.FrameList.Row
+            row = row
+            row.itemColumn = columns[1]
+            row.countColumn = columns[2]
+            row.costColumn = columns[3]
+            ---@type CraftSim.CraftResultReagent
+            row.craftResultSavedReagent = nil
+
+            row.itemColumn.text = GGUI.Text {
+                parent = row.itemColumn,
+                anchorPoints = { { anchorParent = row.itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = reagentColumnWidth,
+            }
+
+            row.countColumn.text = GGUI.Text {
+                parent = row.countColumn,
+                anchorPoints = { { anchorParent = row.countColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = countColumnWidth,
+            }
+
+            row.costColumn.text = GGUI.Text {
+                parent = row.costColumn,
+                anchorPoints = { { anchorParent = row.costColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = costColumnWidth,
+            }
+        end,
+    }
 end
 
----@param statisticsTrackerTab CraftSim.CRAFT_LOG.RESULT_DETAILS_TAB
-function CraftSim.CRAFT_LOG.UI:InitResultDetailsTab(statisticsTrackerTab)
-    ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT : Frame
-    local content = statisticsTrackerTab.content
+---@param resultAnalysisTab CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB
+function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
+    ---@class CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT : Frame
+    local content = resultAnalysisTab.content
+
+    local itemColumnWidth = 170
+    local distributionColumnWidth = 40
 
     content.resultDistributionList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -100 } },
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -80 } },
         parent = content,
-        sizeY = 150,
+        sizeY = 220,
+        scale = 0.9,
         showBorder = true,
         columnOptions = {
             {
-                width = 170,
+                label = "Item",
+                width = itemColumnWidth,
             },
             {
-                width = 50,
+                label = "Dist",
+                width = distributionColumnWidth,
+                tooltipOptions = {
+                    anchor = "ANCHOR_TOP",
+                    text = "Item Distribution",
+                },
+                justifyOptions = { type = "H", align = "RIGHT" }
             }
         },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN : Frame
-            local resultColumn = columns[1]
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN : Frame
-            local distColumn = columns[2]
+            ---@class CraftSim.CRAFT_LOG.RESULT_DISTRIBUTION_LIST.ROW : GGUI.FrameList.Row
+            row = row
+            row.resultColumn = columns[1]
+            row.distColumn = columns[2]
 
-            resultColumn.text = GGUI.Text {
-                parent = resultColumn,
-                anchorPoints = { { anchorParent = resultColumn, anchorA = "LEFT", anchorB = "LEFT" } },
+            row.resultColumn.text = GGUI.Text {
+                parent = row.resultColumn,
+                anchorPoints = { { anchorParent = row.resultColumn, anchorA = "LEFT", anchorB = "LEFT" } },
                 justifyOptions = { type = "H", align = "LEFT" },
-                fixedWidth = 150,
+                fixedWidth = itemColumnWidth,
             }
 
-            distColumn.text = GGUI.Text {
-                parent = distColumn,
-                anchorPoints = { { anchorParent = distColumn } },
+            row.distColumn.text = GGUI.Text {
+                parent = row.distColumn,
+                anchorPoints = { { anchorParent = row.distColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = distributionColumnWidth,
             }
         end,
         selectionOptions = { noSelectionColor = true },
     }
 
-    GGUI.Text {
+    local yieldColumnWidth = 40
+    content.yieldDistributionList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetY = 0, offsetX = 40 } },
         parent = content,
-        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL)
-    }
-
-    GGUI.HelpIcon {
-        parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP)
-    }
-
-    content.yieldStatisticsList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -20, offsetX = -5 } },
-        parent = content,
-        sizeY = 160,
+        sizeY = 220,
+        scale = 0.9,
         showBorder = true,
         columnOptions = {
             {
-                width = 170,
+                label = "Item",
+                width = itemColumnWidth,
             },
             {
-                width = 40,
+                label = "Yield",
+                width = yieldColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" }
             },
             {
-                width = 40,
+                label = "Dist",
+                width = distributionColumnWidth,
+                tooltipOptions = {
+                    anchor = "ANCHOR_TOP",
+                    text = "Item Distribution",
+                },
+                justifyOptions = { type = "H", align = "RIGHT" }
             }
         },
-        selectionOptions = { noSelectionColor = true },
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            noSelectionColor = true },
         rowConstructor = function(columns, row)
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-            local itemColumn = columns[1]
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
-            local yieldColumn = columns[2]
-            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
-            local distColumn = columns[3]
+            ---@class CraftSim.CRAFT_LOG.YIELD_DISTRIBUTION_LIST.ROW : GGUI.FrameList.Row
+            row = row
+            row.itemColumn = columns[1]
+            row.yieldColumn = columns[2]
+            row.distColumn = columns[3]
 
-            itemColumn.text = GGUI.Text {
-                parent = itemColumn,
-                anchorPoints = { { anchorParent = itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
-                justifyOptions = { type = "H", align = "LEFT" }
+            row.itemColumn.text = GGUI.Text {
+                parent = row.itemColumn,
+                anchorPoints = { { anchorParent = row.itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = itemColumnWidth
             }
 
-            yieldColumn.text = GGUI.Text {
-                parent = yieldColumn,
-                anchorPoints = { { anchorParent = yieldColumn } },
+            row.yieldColumn.text = GGUI.Text {
+                parent = row.yieldColumn,
+                anchorPoints = { { anchorParent = row.yieldColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = yieldColumnWidth
             }
 
-            distColumn.text = GGUI.Text {
-                parent = distColumn,
-                anchorPoints = { { anchorParent = distColumn } },
+            row.distColumn.text = GGUI.Text {
+                parent = row.distColumn,
+                anchorPoints = { { anchorParent = row.distColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = distributionColumnWidth
             }
         end,
-    }
-
-    GGUI.Text {
-        parent = content,
-        anchorPoints = { { anchorParent = content.yieldStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
-        text = L(CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION)
     }
 end
 
@@ -486,10 +617,10 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
         scale = 0.9,
         anchorPoints = { {
             anchorParent = content,
-            anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -70, offsetX = 20,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -80, offsetX = 20,
         } },
         showBorder = true,
-        sizeY = 200,
+        sizeY = 220,
         columnOptions = {
             {
                 label = "Value",
@@ -670,7 +801,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 end
 
 ---@param craftRecipeData CraftSim.CraftRecipeData
----@param recipeData CraftSim.RecipeData Open Recipe Data
+---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, recipeData)
     local adv = CraftSim.CRAFT_LOG.advFrame
     local comparisonTabContent = adv.content.calculationComparisonTab
@@ -717,6 +848,18 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
         "Ø Profit: ",
         CraftSim.UTIL:FormatMoney(craftRecipeData.expectedStats.averageProfit, true),
         CraftSim.UTIL:FormatMoney(craftRecipeData.observedStats.averageProfit, true)
+    )
+
+    addComparison(
+        "Sum Crafting Costs: ",
+        CraftSim.UTIL:FormatMoney(-craftRecipeData.expectedStats.totalCraftingCosts, true),
+        CraftSim.UTIL:FormatMoney(-craftRecipeData.observedStats.totalCraftingCosts, true)
+    )
+
+    addComparison(
+        "Ø Crafting Costs: ",
+        CraftSim.UTIL:FormatMoney(-craftRecipeData.expectedStats.averageCraftingCosts, true),
+        CraftSim.UTIL:FormatMoney(-craftRecipeData.observedStats.averageCraftingCosts, true)
     )
 
     if recipeData.supportsMulticraft then
@@ -789,117 +932,139 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
     comparisonList:UpdateDisplay()
 end
 
----@param recipeID RecipeID last crafted recipeID
-function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
-    local advFrame = CraftSim.CRAFT_LOG.advFrame
+---@param craftRecipeData CraftSim.CraftRecipeData
+function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
+    local reagentDetailsContent = CraftSim.CRAFT_LOG.advFrame.content.reagentDetailsTab
+        .content --[[@as CraftSim.CRAFT_LOG.REAGENT_DETAILS_TAB.CONTENT]]
+    local reagentsList = reagentDetailsContent.reagentList
+    local savedReagentsList = reagentDetailsContent.savedReagentsList
 
-    -- only update if its the shown recipeID otherwise no need
-    if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
-        return
-    end
-
-    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
-    local sessionData = CraftSim.CRAFT_LOG.currentSessionData
-    local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
-
-    -- update numCrafts
-    advFrame.content.crafts:SetText(craftRecipeData.numCrafts)
+    -- Crafting Reagents
 
     do
-        self:UpdateCalculationComparison(craftRecipeData, CraftSim.INIT.currentRecipeData)
-    end
+        reagentsList:Remove()
+        for _, craftResultSavedReagent in ipairs(craftRecipeData.totalSavedReagents) do
+            reagentsList:Add(
+            ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+                function(row)
+                    row.craftResultSavedReagent = craftResultSavedReagent
+                    row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
+                    row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
+                    row.costsColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                end)
+        end
 
-    -- Statistics Tracker
-    do
-        local statisticsTrackerTabContent = advFrame.content.resultDetailsTab
-            .content --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.CONTENT]]
-
-        CraftSim.CRAFT_LOG.advFrame.content.recipeHeader:SetText(
-            GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 20, 20) ..
-            " [" .. CraftSim.INIT.currentRecipeData.recipeName .. "]")
-
-        -- Result Distribution
-        do
-            local resultDistributionList = statisticsTrackerTabContent.resultDistributionList
-
-            resultDistributionList:Remove()
-
-            -- Ignore multicraft quantity on purpose
-
-            local totalItemCount = GUTIL:Fold(craftRecipeData.totalItems, 0, function(foldValue, nextElement)
-                return foldValue + nextElement.quantity
+        reagentsList:UpdateDisplay(
+        ---@param rowA CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+        ---@param rowB CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+            function(rowA, rowB)
+                return rowA.craftResultSavedReagent.costs > rowB.craftResultSavedReagent.costs
             end)
-            local oncePercent = totalItemCount / 100
+    end
 
-            for _, craftResultItem in pairs(craftRecipeData.totalItems) do
-                resultDistributionList:Add(function(row, columns)
-                    local resultColumn = columns
-                        [1] --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
-                    local distColumn = columns
-                        [2] --[[@as CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
+    -- Saved Reagents
+    do
+        savedReagentsList:Remove()
+        for _, craftResultSavedReagent in ipairs(craftRecipeData.totalSavedReagents) do
+            savedReagentsList:Add(
+            ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+                function(row)
+                    row.craftResultSavedReagent = craftResultSavedReagent
+                    row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
+                    row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
+                    row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                end)
+        end
 
-                    resultColumn.text:SetText(craftResultItem.item:GetItemLink())
+        savedReagentsList:UpdateDisplay(
+        ---@param rowA CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+        ---@param rowB CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
+            function(rowA, rowB)
+                return rowA.craftResultSavedReagent.costs > rowB.craftResultSavedReagent.costs
+            end)
+    end
+end
+
+---@param craftRecipeData CraftSim.CraftRecipeData
+function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
+    -- Result Analysis
+    local resultAnalysisContent = CraftSim.CRAFT_LOG.advFrame.content.resultAnalysisTab
+        .content --[[@as CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT]]
+
+    -- Result Distribution
+    do
+        local resultDistributionList = resultAnalysisContent.resultDistributionList
+
+        resultDistributionList:Remove()
+
+        -- Ignore multicraft quantity on purpose
+
+        local totalItemCount = GUTIL:Fold(craftRecipeData.totalItems, 0, function(foldValue, nextElement)
+            return foldValue + nextElement.quantity
+        end)
+        local oncePercent = totalItemCount / 100
+
+        for _, craftResultItem in pairs(craftRecipeData.totalItems) do
+            resultDistributionList:Add(
+            ---@param row CraftSim.CRAFT_LOG.RESULT_DISTRIBUTION_LIST.ROW
+                function(row)
+                    row.resultColumn.text:SetText(craftResultItem.item:GetItemLink())
                     local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
-                    distColumn.text:SetText(itemDist)
+                    row.distColumn.text:SetText(itemDist)
                     row.tooltipOptions = {
                         itemID = craftResultItem.item:GetItemID(),
                         anchor = "ANCHOR_RIGHT",
                         owner = row.frameList.frame
                     }
                 end)
-            end
-
-            resultDistributionList:UpdateDisplay()
         end
 
-        -- Yield Statistics
-        do
-            local yieldStatisticsList = statisticsTrackerTabContent.yieldStatisticsList
-            yieldStatisticsList:Remove()
+        resultDistributionList:UpdateDisplay()
+    end
 
-            if craftRecipeData.numCrafts > 0 then
-                local yieldDistributionMap = {}
-                for _, craftResult in pairs(craftRecipeData.craftResults) do
-                    local itemResultCountMap = {}
-                    for _, craftResultItem in pairs(craftResult.craftResultItems) do
-                        local itemLink = craftResultItem.item:GetItemLink()
-                        itemResultCountMap[itemLink] = itemResultCountMap[itemLink] or 0
-                        itemResultCountMap[itemLink] = itemResultCountMap[itemLink] + craftResultItem.quantity +
-                            craftResultItem.quantityMulticraft
-                    end
+    -- Yield Distribution
+    do
+        local yieldDistributionList = resultAnalysisContent.yieldDistributionList
+        yieldDistributionList:Remove()
 
-                    for itemLink, count in pairs(itemResultCountMap) do
-                        yieldDistributionMap[itemLink] = yieldDistributionMap[itemLink] or {}
-                        yieldDistributionMap[itemLink].distributions = yieldDistributionMap[itemLink].distributions or {}
-                        yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
-                            .totalDistributionCount or 0
-
-                        if not yieldDistributionMap[itemLink].distributions[count] then
-                            yieldDistributionMap[itemLink].distributions[count] = 0
-                        end
-
-                        yieldDistributionMap[itemLink].distributions[count] = yieldDistributionMap[itemLink]
-                            .distributions[count] + 1
-                        yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
-                            .totalDistributionCount + 1
-                    end
+        if craftRecipeData.numCrafts > 0 then
+            local yieldDistributionMap = {}
+            for _, craftResult in pairs(craftRecipeData.craftResults) do
+                local itemResultCountMap = {}
+                for _, craftResultItem in pairs(craftResult.craftResultItems) do
+                    local itemLink = craftResultItem.item:GetItemLink()
+                    itemResultCountMap[itemLink] = itemResultCountMap[itemLink] or 0
+                    itemResultCountMap[itemLink] = itemResultCountMap[itemLink] + craftResultItem.quantity +
+                        craftResultItem.quantityMulticraft
                 end
 
-                for itemLink, distributionData in pairs(yieldDistributionMap) do
-                    for yield, count in pairs(distributionData.distributions) do
-                        yieldStatisticsList:Add(function(row, columns)
-                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-                            local itemColumn = columns[1]
-                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
-                            local yieldColumn = columns[2]
-                            ---@class CraftSim.CRAFT_LOG.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
-                            local distColumn = columns[3]
+                for itemLink, count in pairs(itemResultCountMap) do
+                    yieldDistributionMap[itemLink] = yieldDistributionMap[itemLink] or {}
+                    yieldDistributionMap[itemLink].distributions = yieldDistributionMap[itemLink].distributions or {}
+                    yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                        .totalDistributionCount or 0
 
-                            itemColumn.text:SetText(itemLink)
+                    if not yieldDistributionMap[itemLink].distributions[count] then
+                        yieldDistributionMap[itemLink].distributions[count] = 0
+                    end
+
+                    yieldDistributionMap[itemLink].distributions[count] = yieldDistributionMap[itemLink]
+                        .distributions[count] + 1
+                    yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                        .totalDistributionCount + 1
+                end
+            end
+
+            for itemLink, distributionData in pairs(yieldDistributionMap) do
+                for yield, count in pairs(distributionData.distributions) do
+                    yieldDistributionList:Add(
+                    ---@param row CraftSim.CRAFT_LOG.YIELD_DISTRIBUTION_LIST.ROW
+                        function(row)
+                            row.itemColumn.text:SetText(itemLink)
                             local dist = GUTIL:Round(
                                 (count / (distributionData.totalDistributionCount / 100)) / 100, 2)
-                            distColumn.text:SetText(dist)
-                            yieldColumn.text:SetText("x " .. yield)
+                            row.distColumn.text:SetText(dist)
+                            row.yieldColumn.text:SetText("x " .. yield)
                             row.yield = yield
                             row.itemLink = itemLink
                             row.tooltipOptions = {
@@ -908,19 +1073,39 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
                                 owner = row.frameList.frame
                             }
                         end)
-                    end
                 end
             end
-
-            yieldStatisticsList:UpdateDisplay(function(rowA, rowB)
-                if rowA.itemLink > rowB.itemLink then
-                    return true
-                elseif rowA.itemLink < rowB.itemLink then
-                    return false
-                end
-
-                return rowA.yield > rowB.yield
-            end)
         end
+
+        yieldDistributionList:UpdateDisplay(function(rowA, rowB)
+            if rowA.itemLink > rowB.itemLink then
+                return true
+            elseif rowA.itemLink < rowB.itemLink then
+                return false
+            end
+
+            return rowA.yield > rowB.yield
+        end)
     end
+end
+
+---@param recipeID RecipeID last crafted recipeID
+function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
+    local advFrame = CraftSim.CRAFT_LOG.advFrame
+    local recipeData = CraftSim.INIT.currentRecipeData
+
+    -- only update if its the shown recipeID otherwise no need
+    if not recipeData or recipeData.recipeID ~= recipeID then return end
+
+    CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
+    local sessionData = CraftSim.CRAFT_LOG.currentSessionData
+    local craftRecipeData = sessionData:GetCraftRecipeData(recipeID)
+
+    advFrame.content.crafts:SetText(craftRecipeData.numCrafts)
+
+    advFrame.content.recipeHeader:SetText(recipeData:GetFormattedRecipeName(true, true))
+
+    self:UpdateCalculationComparison(craftRecipeData, recipeData)
+    self:UpdateReagentDetails(craftRecipeData)
+    self:UpdateResultAnalysis(craftRecipeData)
 end

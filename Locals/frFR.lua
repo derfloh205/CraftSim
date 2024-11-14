@@ -215,13 +215,12 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø coûts économisés: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Mat. économisés",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Statistics Tracker",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Distribution des Résultats",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL] = "Distribution des Résultats",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP] =
         "Distribution relative des résultats des objets fabriqués.\n(Ignorant les quantités de Multicraft)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Multicraft",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Ingéniosité",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Distribution du Rendement",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT] = "Multicraft",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS] = "Ingéniosité",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION] = "Distribution du Rendement",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Profit Moyen CraftSim",

@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.CraftRecipeData.CraftingStats
 ---@field totalProfit number
 ---@field averageProfit number
+---@field totalCraftingCosts number
+---@field averageCraftingCosts number
 ---@field numMulticraft number
 ---@field totalMulticraftExtraItems number
 ---@field averageMulticraftExtraItems number
@@ -18,6 +20,8 @@ local CraftSim = select(2, ...)
 local initCraftingStatsTable = {
     totalProfit = 0,
     averageProfit = 0,
+    totalCraftingCosts = 0,
+    averageCraftingCosts = 0,
     numMulticraft = 0,
     totalMulticraftExtraItems = 0,
     averageMulticraftExtraItems = 0,
@@ -44,7 +48,9 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.craftResults = {}
     ---@type CraftSim.CraftResultItem[]
     self.totalItems = {}
-    ---@type CraftSim.CraftResultSavedReagent[]
+    ---@type CraftSim.CraftResultReagent[]
+    self.totalReagents = {}
+    ---@type CraftSim.CraftResultReagent[]
     self.totalSavedReagents = {}
 end
 
@@ -56,26 +62,38 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
     do
         self.observedStats.totalProfit = self.observedStats.totalProfit + craftResult.profit
         self.observedStats.averageProfit = self.observedStats.totalProfit / self.numCrafts
+
+        self.observedStats.totalCraftingCosts = self.observedStats.totalCraftingCosts + craftResult.craftingCosts
+        self.observedStats.averageCraftingCosts = self.observedStats.totalCraftingCosts / self.numCrafts
+
         self.observedStats.numMulticraft = self.observedStats.numMulticraft +
             ((craftResult.triggeredMulticraft and 1) or 0)
         self.observedStats.totalMulticraftExtraItems = self.observedStats.totalMulticraftExtraItems +
             craftResult:GetMulticraftExtraItems()
         self.observedStats.averageMulticraftExtraItems = self.observedStats.totalMulticraftExtraItems / self.numCrafts
+
         self.observedStats.numResourcefulness = self.observedStats.numResourcefulness +
             ((craftResult.triggeredResourcefulness and 1) or 0)
         self.observedStats.totalResourcefulnessSavedCosts = self.observedStats.totalResourcefulnessSavedCosts +
             craftResult.savedCosts
         self.observedStats.averageResourcefulnessSavedCosts = self.observedStats.totalResourcefulnessSavedCosts /
             self.numCrafts
+
         self.observedStats.numIngenuity = self.observedStats.numIngenuity + ((craftResult.triggeredIngenuity and 1) or 0)
         self.observedStats.totalConcentrationCost = self.observedStats.totalConcentrationCost + craftResult
             .usedConcentration
         self.observedStats.averageConcentrationCost = self.observedStats.totalConcentrationCost / self.numCrafts
     end
+
     -- expectedStats
     do
         self.expectedStats.totalProfit = self.expectedStats.totalProfit + craftResult.expectedAverageProfit
         self.expectedStats.averageProfit = self.expectedStats.totalProfit / self.numCrafts
+
+        self.expectedStats.totalCraftingCosts = self.expectedStats.totalCraftingCosts +
+            recipeData.priceData.averageCraftingCosts
+        self.expectedStats.averageCraftingCosts = self.expectedStats.totalCraftingCosts / self.numCrafts
+
         self.expectedStats.numMulticraft = self.expectedStats.numMulticraft +
             recipeData.professionStats.multicraft:GetPercent(true)
         local multicraftChance = recipeData.professionStats.multicraft:GetPercent(true)
@@ -90,10 +108,8 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
         local resourcefulnessChance = recipeData.professionStats.resourcefulness:GetPercent(true)
         local resourcefulnessSavedCosts = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
         local averageResourcefulnessSavedCosts = resourcefulnessChance * resourcefulnessSavedCosts
-
         self.expectedStats.totalResourcefulnessSavedCosts = self.expectedStats.totalResourcefulnessSavedCosts +
             averageResourcefulnessSavedCosts
-
         self.expectedStats.averageResourcefulnessSavedCosts = self.expectedStats.totalResourcefulnessSavedCosts /
             self.numCrafts
 
@@ -107,7 +123,8 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
     end
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
-    CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalReagents, craftResult.reagents)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
 
     table.insert(self.craftResults, craftResult)
 end

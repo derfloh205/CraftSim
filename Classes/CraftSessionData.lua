@@ -12,7 +12,7 @@ function CraftSim.CraftSessionData:new()
     self.numCrafts = 0
     ---@type CraftSim.CraftResultItem[]
     self.totalItems = {}
-    ---@type CraftSim.CraftResultSavedReagent[]
+    ---@type CraftSim.CraftResultReagent[]
     self.totalSavedReagents = {}
     ---@type table<RecipeID, CraftSim.CraftRecipeData>
     self.craftRecipeData = {}
@@ -47,7 +47,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     self.totalProfit = self.totalProfit + craftResult.profit
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
-    CraftSim.CRAFT_LOG:MergeSavedReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
 end
 
 function CraftSim.CraftSessionData:GetJSON(intend)

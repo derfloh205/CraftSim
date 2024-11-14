@@ -177,7 +177,7 @@ Classes/ReagentOptimizationResult.lua
 Classes/TopGearResult.lua
 Classes/CraftResult.lua
 Classes/CraftResultItem.lua
-Classes/CraftResultSavedReagent.lua
+Classes/CraftResultReagent.lua
 Classes/CraftSessionData.lua
 Classes/CraftRecipeData.lua
 Classes/JSONBuilder.lua

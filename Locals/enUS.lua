@@ -218,14 +218,14 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
             "Enabling this stops the recording of any crafts when crafting and may " ..
             f.g("increase performance"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STAT_DETAILS_TAB] = "Stat Details",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB] = "Statistics Tracker",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_DISTRIBUTION_HELP] =
+        [CraftSim.CONST.TEXT.CRAFT_LOG_REAGENT_DETAILS_TAB] = "Reagent Details",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB] = "Result Analysis",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP] =
         "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_MULTICRAFT] = "Multicraft",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_RESOURCEFULNESS] = "Resourcefulness",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_DETAILS_TAB_YIELD_DDISTRIBUTION] = "Yield Distribution",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT] = "Multicraft",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS] = "Resourcefulness",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION] = "Yield Distribution",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Average Profit",

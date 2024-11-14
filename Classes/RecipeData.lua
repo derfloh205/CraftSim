@@ -1882,6 +1882,19 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     return finalText
 end
 
+---@param showIcon boolean
+---@param showBrackets boolean adds "[]"
+function CraftSim.RecipeData:GetFormattedRecipeName(showIcon, showBrackets)
+    local recipeRarity = self.resultData.expectedItem and self.resultData.expectedItem:GetItemQualityColor()
+    local recipeIcon = (showIcon and GUTIL:IconToText(self.recipeIcon, 15, 15)) or ""
+    local colorEscapeHex = (recipeRarity and recipeRarity.hex) or ""
+    local colorEscapeEnd = (recipeRarity and "|r") or ""
+    local startBracket = (showBrackets and "[") or ""
+    local endBracket = (showBrackets and "]") or ""
+    return string.format("%s%s%s%s%s", recipeIcon, startBracket, colorEscapeHex, self.recipeName, colorEscapeEnd,
+        endBracket)
+end
+
 ---@param itemID ItemID
 function CraftSim.RecipeData:IsSelfCraftedReagent(itemID)
     return self.priceData:IsSelfCraftedReagent(itemID)
