@@ -1198,35 +1198,37 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
         resultDistributionList:UpdateDisplay()
     end
 
-    -- Yield Distribution
+    -- Yield Distribution TODO: adapt to reagentCombinationID switching
     do
         local yieldDistributionList = resultAnalysisContent.yieldDistributionList
         yieldDistributionList:Remove()
 
         if craftingStatData.numCrafts > 0 then
             local yieldDistributionMap = {}
-            local itemResultCountMap = {}
-            for _, craftResultItem in pairs(craftResultItems.resultItems) do
-                local itemLink = craftResultItem.item:GetItemLink()
-                itemResultCountMap[itemLink] = itemResultCountMap[itemLink] or 0
-                itemResultCountMap[itemLink] = itemResultCountMap[itemLink] + craftResultItem.quantity +
-                    craftResultItem.quantityMulticraft
-            end
-
-            for itemLink, count in pairs(itemResultCountMap) do
-                yieldDistributionMap[itemLink] = yieldDistributionMap[itemLink] or {}
-                yieldDistributionMap[itemLink].distributions = yieldDistributionMap[itemLink].distributions or {}
-                yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
-                    .totalDistributionCount or 0
-
-                if not yieldDistributionMap[itemLink].distributions[count] then
-                    yieldDistributionMap[itemLink].distributions[count] = 0
+            for _, craftResult in pairs(craftRecipeData.craftResults) do
+                local itemResultCountMap = {}
+                for _, craftResultItem in pairs(craftResult.craftResultItems) do
+                    local itemLink = craftResultItem.item:GetItemLink()
+                    itemResultCountMap[itemLink] = itemResultCountMap[itemLink] or 0
+                    itemResultCountMap[itemLink] = itemResultCountMap[itemLink] + craftResultItem.quantity +
+                        craftResultItem.quantityMulticraft
                 end
 
-                yieldDistributionMap[itemLink].distributions[count] = yieldDistributionMap[itemLink]
-                    .distributions[count] + 1
-                yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
-                    .totalDistributionCount + 1
+                for itemLink, count in pairs(itemResultCountMap) do
+                    yieldDistributionMap[itemLink] = yieldDistributionMap[itemLink] or {}
+                    yieldDistributionMap[itemLink].distributions = yieldDistributionMap[itemLink].distributions or {}
+                    yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                        .totalDistributionCount or 0
+
+                    if not yieldDistributionMap[itemLink].distributions[count] then
+                        yieldDistributionMap[itemLink].distributions[count] = 0
+                    end
+
+                    yieldDistributionMap[itemLink].distributions[count] = yieldDistributionMap[itemLink]
+                        .distributions[count] + 1
+                    yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                        .totalDistributionCount + 1
+                end
             end
 
             for itemLink, distributionData in pairs(yieldDistributionMap) do

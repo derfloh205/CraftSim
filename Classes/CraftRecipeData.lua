@@ -77,6 +77,8 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.craftingStatDataByReagentCombinationSnapshots = {}
     ---@type CraftSim.CraftResult[]
     self.craftResults = {}
+    ---@type table<string, CraftSim.CraftResult[]> -- FOR YIELD DISTRIBUTION
+    self.craftResultsByReagentCombinationID = 
     ---@type CraftSim.CraftRecipeData.CraftResultItems
     self.totalItems = CopyTable(initCraftResultItemsTable)
     ---@type table<string, CraftSim.CraftRecipeData.CraftResultItems>
