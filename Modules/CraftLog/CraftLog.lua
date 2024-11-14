@@ -104,9 +104,8 @@ end
 function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
     local craftingCosts = recipeData.priceData.craftingCosts
 
-    local savedCosts = 0
-    table.foreach(craftResult.savedReagents, function(_, craftResultSavedReagent)
-        savedCosts = savedCosts + craftResultSavedReagent.savedCosts
+    local savedCosts = GUTIL:Fold(craftResult.savedReagents, 0, function(savedCosts, craftResultSavedReagent)
+        return savedCosts + craftResultSavedReagent.costs
     end)
 
     local resultValue = 0

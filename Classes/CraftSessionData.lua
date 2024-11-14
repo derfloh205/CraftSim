@@ -13,6 +13,8 @@ function CraftSim.CraftSessionData:new()
     ---@type CraftSim.CraftResultItem[]
     self.totalItems = {}
     ---@type CraftSim.CraftResultReagent[]
+    self.totalReagents = {}
+    ---@type CraftSim.CraftResultReagent[]
     self.totalSavedReagents = {}
     ---@type table<RecipeID, CraftSim.CraftRecipeData>
     self.craftRecipeData = {}
@@ -31,12 +33,11 @@ end
 function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     print("SessionData: AddCraftResult")
     self.numCrafts = self.numCrafts + 1
-    table.insert(self.craftResults, craftResult) -- TODO: check for RAM bloat when crafting alot!!
+    table.insert(self.craftResults, craftResult)
 
     local craftGarbageCollectEnabled = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED")
     local craftGarbageCollectCrafts = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_CRAFTS")
 
-    --TODO: Move
     -- if enabled and the correct number of modulo crafts -> collect garbage
     if craftGarbageCollectEnabled and craftGarbageCollectCrafts > 0 then
         if (self.numCrafts % craftGarbageCollectCrafts) == 0 then
@@ -47,6 +48,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     self.totalProfit = self.totalProfit + craftResult.profit
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalReagents, craftResult.reagents)
     CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
 end
 

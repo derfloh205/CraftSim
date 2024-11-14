@@ -26,6 +26,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.ingenuityRefund = 0
     self.savedCosts = 0
     self.craftingCosts = 0
+    self.reagentCombinationID = ""
 
     for _, craftingItemResult in pairs(craftingItemResultData) do
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
@@ -53,27 +54,14 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         for _, craftingResourceReturnInfo in pairs(craftingItemResultData[1].resourcesReturned) do
             local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData,
                 craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
-            self.savedCosts = self.savedCosts + craftResultSavedReagent.savedCosts
+            self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
             table.insert(self.savedReagents, craftResultSavedReagent)
         end
     end
 
     -- Reagents + Crafting Costs
     do
-        -- required
-        for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
-            for _, reagentItem in ipairs(requiredReagent.items) do
-                local quantity = reagentItem.quantity
-                if quantity > 0 then
-                    local itemID = reagentItem.item:GetItemID()
-                    tinsert(self.reagents,
-                        CraftSim.CraftResultReagent(recipeData, itemID, quantity))
-                    local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                    self.craftingCosts = self.craftingCosts + reagentCosts
-                end
-            end
-        end
-
+        local reagentItemIDs = {}
         if recipeData.isSalvageRecipe then
             local slot = recipeData.reagentData.salvageReagentSlot
             local itemID = slot.activeItem:GetItemID()
@@ -81,6 +69,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
             local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
             self.craftingCosts = self.craftingCosts + reagentCosts
             tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+            tinsert(reagentItemIDs, itemID)
         end
 
         if recipeData:HasRequiredSelectableReagent() then
@@ -91,6 +80,22 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                tinsert(reagentItemIDs, itemID)
+            end
+        end
+
+        -- required
+        for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
+            for _, reagentItem in ipairs(requiredReagent.items) do
+                local quantity = reagentItem.quantity
+                if quantity > 0 then
+                    local itemID = reagentItem.item:GetItemID()
+                    tinsert(self.reagents,
+                        CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                    local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                    tinsert(reagentItemIDs, itemID)
+                end
             end
         end
 
@@ -101,7 +106,18 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                tinsert(reagentItemIDs, itemID)
             end
+        end
+
+        for i, itemID in ipairs(reagentItemIDs) do
+            local itemIDString
+            if i > 1 then
+                itemIDString = ":" .. itemID
+            else
+                itemIDString = itemID
+            end
+            self.reagentCombinationID = self.reagentCombinationID .. itemIDString
         end
     end
 

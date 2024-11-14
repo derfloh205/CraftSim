@@ -33,6 +33,17 @@ local initCraftingStatsTable = {
     totalConcentrationCost = 0,
 }
 
+---@class CraftSim.CraftResultItems
+---@field resultItems CraftSim.CraftResultItem[]
+---@field reagents CraftSim.CraftResultReagent[]
+---@field savedReagents CraftSim.CraftResultReagent[]
+
+local initCraftResultItemsTable = {
+    resultItems = {},
+    reagents = {},
+    savedReagents = {},
+}
+
 ---@class CraftSim.CraftRecipeData : CraftSim.CraftSimObject
 CraftSim.CraftRecipeData = CraftSim.CraftSimObject:extend()
 
@@ -46,12 +57,10 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.observedStats = CopyTable(initCraftingStatsTable)
     ---@type CraftSim.CraftResult[]
     self.craftResults = {}
-    ---@type CraftSim.CraftResultItem[]
-    self.totalItems = {}
-    ---@type CraftSim.CraftResultReagent[]
-    self.totalReagents = {}
-    ---@type CraftSim.CraftResultReagent[]
-    self.totalSavedReagents = {}
+    ---@type CraftSim.CraftResultItems
+    self.totalItems = CopyTable(initCraftResultItemsTable)
+    ---@type table<string, CraftSim.CraftResultItems>
+    self.totalItemsByReagentCombination = {}
 end
 
 ---@param craftResult CraftSim.CraftResult
@@ -122,9 +131,17 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
         self.expectedStats.averageConcentrationCost = self.expectedStats.totalConcentrationCost / self.numCrafts
     end
 
-    CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
-    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalReagents, craftResult.reagents)
-    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
+    CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems.resultItems, craftResult.craftResultItems)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalItems.reagents, craftResult.reagents)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalItems.savedReagents, craftResult.savedReagents)
+
+    self.totalItemsByReagentCombination[craftResult.reagentCombinationID] = self.totalItemsByReagentCombination
+        [craftResult.reagentCombinationID] or CopyTable(initCraftResultItemsTable)
+    local reagentCombinationItems = self.totalItemsByReagentCombination[craftResult.reagentCombinationID]
+
+    CraftSim.CRAFT_LOG:MergeCraftResultItemData(reagentCombinationItems.resultItems, craftResult.craftResultItems)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(reagentCombinationItems.reagents, craftResult.reagents)
+    CraftSim.CRAFT_LOG:MergeReagentsItemData(reagentCombinationItems.savedReagents, craftResult.savedReagents)
 
     table.insert(self.craftResults, craftResult)
 end
@@ -146,8 +163,7 @@ function CraftSim.CraftRecipeData:GetJSON(indent)
     jb:AddList("expectedStats", self.expectedStats)
     jb:AddList("observedStats", self.observedStats)
     jb:AddList("totalItems", self.totalItems)
-    jb:AddList("totalSavedReagents", self.totalSavedReagents)
-    jb:AddList("craftResults", self.craftResults, true)
+    jb:AddList("totalItemsByReagentCombination", self.totalItemsByReagentCombination, true)
     jb:End()
     return jb.json
 end

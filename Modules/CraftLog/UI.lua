@@ -400,7 +400,7 @@ function CraftSim.CRAFT_LOG.UI:InitReagentDetailsTab(reagentDetailsTab)
             row = row
             row.itemColumn = columns[1]
             row.countColumn = columns[2]
-            row.savedColumn = columns[3]
+            row.costColumn = columns[3]
             ---@type CraftSim.CraftResultReagent
             row.craftResultSavedReagent = nil
 
@@ -418,9 +418,9 @@ function CraftSim.CRAFT_LOG.UI:InitReagentDetailsTab(reagentDetailsTab)
                 fixedWidth = countColumnWidth,
             }
 
-            row.savedColumn.text = GGUI.Text {
-                parent = row.savedColumn,
-                anchorPoints = { { anchorParent = row.savedColumn } },
+            row.costColumn.text = GGUI.Text {
+                parent = row.costColumn,
+                anchorPoints = { { anchorParent = row.costColumn } },
                 justifyOptions = { type = "H", align = "RIGHT" },
                 fixedWidth = costColumnWidth,
             }
@@ -939,18 +939,19 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
     local reagentsList = reagentDetailsContent.reagentList
     local savedReagentsList = reagentDetailsContent.savedReagentsList
 
-    -- Crafting Reagents
+    local craftResultItems = craftRecipeData.totalItems -- TODO: make switchable by reagentCombinationID
 
+    -- Crafting Reagents
     do
         reagentsList:Remove()
-        for _, craftResultSavedReagent in ipairs(craftRecipeData.totalSavedReagents) do
+        for _, craftResultSavedReagent in ipairs(craftResultItems.reagents) do
             reagentsList:Add(
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
                     row.craftResultSavedReagent = craftResultSavedReagent
                     row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
                     row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
-                    row.costsColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                    row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultSavedReagent.costs, true))
                 end)
         end
 
@@ -965,7 +966,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
     -- Saved Reagents
     do
         savedReagentsList:Remove()
-        for _, craftResultSavedReagent in ipairs(craftRecipeData.totalSavedReagents) do
+        for _, craftResultSavedReagent in ipairs(craftResultItems.savedReagents) do
             savedReagentsList:Add(
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
@@ -991,6 +992,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
     local resultAnalysisContent = CraftSim.CRAFT_LOG.advFrame.content.resultAnalysisTab
         .content --[[@as CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT]]
 
+    local craftResultItems = craftRecipeData.totalItems -- TODO: make switchable by reagentCombinationID
+
     -- Result Distribution
     do
         local resultDistributionList = resultAnalysisContent.resultDistributionList
@@ -999,12 +1002,12 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
 
         -- Ignore multicraft quantity on purpose
 
-        local totalItemCount = GUTIL:Fold(craftRecipeData.totalItems, 0, function(foldValue, nextElement)
+        local totalItemCount = GUTIL:Fold(craftResultItems.resultItems, 0, function(foldValue, nextElement)
             return foldValue + nextElement.quantity
         end)
         local oncePercent = totalItemCount / 100
 
-        for _, craftResultItem in pairs(craftRecipeData.totalItems) do
+        for _, craftResultItem in pairs(craftResultItems.resultItems) do
             resultDistributionList:Add(
             ---@param row CraftSim.CRAFT_LOG.RESULT_DISTRIBUTION_LIST.ROW
                 function(row)

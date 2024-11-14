@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.SalvageReagentSlot : CraftSim.CraftSimObject
+---@overload fun(recipeData: CraftSim.RecipeData): CraftSim.SalvageReagentSlot
 CraftSim.SalvageReagentSlot = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
@@ -68,5 +69,6 @@ end
 function CraftSim.SalvageReagentSlot:Copy()
     local copy = CraftSim.SalvageReagentSlot(self.recipeData)
     copy.activeItem = self.recipeData.reagentData.salvageReagentSlot.activeItem
+    copy.requiredQuantity = self.requiredQuantity
     return copy
 end
