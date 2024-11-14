@@ -748,6 +748,16 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
         text = "<StatTitle>"
     }
 
+    content.numCraftsInfo = GGUI.Text {
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.statComparisonGraph,
+            anchorA = "TOP",
+            anchorB = "BOTTOM", offsetY = -15,
+        } },
+        text = "# Crafts"
+    }
+
     content.statComparisonGraph:SetDefault()
 end
 
