@@ -203,21 +203,37 @@ function CraftSim.CRAFTQ.UI:Init()
                     ---@type CraftSim.CraftQueueItem
                     local craftQueueItem = row.craftQueueItem
                     if craftQueueItem then
-                        if craftQueueItem.recipeData then
+                        local recipeData = craftQueueItem.recipeData
+                        if recipeData then
                             if IsMouseButtonDown("LeftButton") then
-                                C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                                if recipeData:IsWorkOrder() and C_CraftingOrders.ShouldShowCraftingOrderTab() and ProfessionsFrame.isCraftingOrdersTabEnabled then
+                                    if not ProfessionsFrame.OrdersPage:IsVisible() then
+                                        ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab
+                                    end
+                                    ProfessionsFrame.OrdersPage:ViewOrder(recipeData.orderData)
+                                    CraftSim.INIT:TriggerModulesByRecipeType()
+                                else
+                                    if not ProfessionsFrame.CraftingPage:IsVisible() then
+                                        ProfessionsFrame:GetTabButton(1):Click()
+                                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                    else
+                                        RunNextFrame(function()
+                                            C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                        end)
+                                    end
+                                end
                             elseif IsMouseButtonDown("RightButton") then
                                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                                    rootDescription:CreateTitle(craftQueueItem.recipeData.recipeName)
+                                    rootDescription:CreateTitle(recipeData.recipeName)
                                     rootDescription:CreateDivider()
 
-                                    if craftQueueItem.recipeData:IsCrafter() then
-                                        if not craftQueueItem.recipeData.professionGearSet:IsEquipped() then
+                                    if recipeData:IsCrafter() then
+                                        if not recipeData.professionGearSet:IsEquipped() then
                                             rootDescription:CreateButton(f.g("Equip Tools"), function()
-                                                craftQueueItem.recipeData.professionGearSet:Equip()
+                                                recipeData.professionGearSet:Equip()
                                             end)
                                             rootDescription:CreateButton(f.l("Force Equipped Tools"), function()
-                                                craftQueueItem.recipeData:SetEquippedProfessionGearSet()
+                                                recipeData:SetEquippedProfessionGearSet()
                                                 CraftSim.CRAFTQ.UI:UpdateDisplay()
                                             end)
                                         end

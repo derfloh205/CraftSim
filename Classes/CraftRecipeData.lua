@@ -161,6 +161,7 @@ function CraftSim.CraftRecipeData:GetReagentCombinationDisplayString(reagentComb
     end
 
     local concentrating = craftResults[1] and craftResults[1].concentrating
+    local isWorkOrder = craftResults[1] and craftResults[1].isWorkOrder
 
     if not reagents then return "<?>" end
     local iconSize = 17
@@ -181,7 +182,12 @@ function CraftSim.CraftRecipeData:GetReagentCombinationDisplayString(reagentComb
 
     if concentrating then
         local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
-        displayString = string.format("%s (%s)", displayString, concentrationIcon)
+        displayString = string.format("%s - %s", displayString, concentrationIcon)
+    end
+
+    if isWorkOrder then
+        local workOrderIcon = CreateAtlasMarkup("Professions-Crafting-Orders-Icon", iconSize, iconSize)
+        displayString = string.format("%s - %s", displayString, workOrderIcon)
     end
 
     return displayString

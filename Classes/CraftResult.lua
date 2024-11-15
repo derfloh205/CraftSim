@@ -28,6 +28,8 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.savedCosts = 0
     self.craftingCosts = 0
     self.reagentCombinationID = ""
+    self.isWorkOrder = recipeData:IsWorkOrder()
+    self.orderData = recipeData.orderData
 
     for _, craftingItemResult in pairs(craftingItemResultData) do
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
@@ -122,7 +124,8 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         end
     end
 
-    self.reagentCombinationID = self.reagentCombinationID .. ":" .. tostring(self.concentrating)
+    self.reagentCombinationID = self.reagentCombinationID ..
+    ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
 
     local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
 

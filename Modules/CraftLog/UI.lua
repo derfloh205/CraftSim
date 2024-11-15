@@ -1264,7 +1264,10 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
         .content --[[@as CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT]]
 
     local craftResultItems = craftRecipeData:GetCraftResultItemsBySelectedReagentCombinationID()
+    local craftResults = craftRecipeData:GetCraftResultsBySelectedReagentCombinationID()
     local craftingStatData = craftRecipeData:GetCraftingStatDataBySelectedReagentCombinationID()
+
+    local isWorkOrder = craftResults[1] and craftResults[1].isWorkOrder
 
     -- Result Distribution
     do
@@ -1374,6 +1377,9 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
             local itemLink = craftResultItem.item:GetItemLink()
             local count = craftResultItem.quantity
             local value = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) * CraftSim.CONST.AUCTION_HOUSE_CUT
+            if isWorkOrder then
+                value = 0
+            end
             -- TODO: maybe quantityMulticraft?
             totalResultsList:Add(
             ---@param row CraftSim.CRAFT_LOG.TOTAL_RESULTS_LIST.ROW

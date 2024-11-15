@@ -28,6 +28,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added favorite icon if recipe is favorite on that character",
         f.P .. f.bb("Craft Queue"),
         f.a .. "- Added 'Auto Show on Recipe Queued' Option (default: true)",
+        f.a .. "- Removed Claimed Orders are now also cancelled",
+        f.a .. "- UI will now switch to the crafting order on click if possible",
         f.s .. "Refactored the " .. f.bb("Debug Module"),
         newP("19.5.1"),
         f.P .. f.l("Cached Profession Data") .. " is now removed when unlearning",

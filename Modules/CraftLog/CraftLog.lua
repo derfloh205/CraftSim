@@ -106,16 +106,26 @@ function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
         return savedCosts + craftResultSavedReagent.costs
     end)
 
+    local orderCommission = (craftResult.isWorkOrder and
+        (craftResult.orderData.tipAmount - craftResult.orderData.consortiumCut)) or 0
+
     local resultValue = 0
-    for _, craftResultItem in pairs(craftResult.craftResultItems) do
-        local itemLink = craftResultItem.item:GetItemLink()
-        local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-        local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
-        resultValue = resultValue + resultItemPrice * quantity
+    if not craftResult.isWorkOrder then
+        for _, craftResultItem in pairs(craftResult.craftResultItems) do
+            local itemLink = craftResultItem.item:GetItemLink()
+            local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
+            local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+            resultValue = resultValue + resultItemPrice * quantity
+        end
     end
 
 
-    local craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
+    local craftProfit = 0
+    if craftResult.isWorkOrder then
+        craftResult = orderCommission - (craftingCosts - savedCosts)
+    else
+        craftResult = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
+    end
 
     return craftProfit
 end
