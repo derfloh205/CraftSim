@@ -24,6 +24,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.savedConcentration = 0
     self.usedConcentration = 0
     self.ingenuityRefund = 0
+    self.concentrating = recipeData.concentrating
     self.savedCosts = 0
     self.craftingCosts = 0
     self.reagentCombinationID = ""
@@ -120,6 +121,8 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
             self.reagentCombinationID = self.reagentCombinationID .. itemIDString
         end
     end
+
+    self.reagentCombinationID = self.reagentCombinationID .. ":" .. tostring(self.concentrating)
 
     local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
 

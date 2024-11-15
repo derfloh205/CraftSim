@@ -1884,14 +1884,16 @@ end
 
 ---@param showIcon boolean
 ---@param showBrackets boolean adds "[]"
-function CraftSim.RecipeData:GetFormattedRecipeName(showIcon, showBrackets)
+---@param iconSize number? default: 17
+function CraftSim.RecipeData:GetFormattedRecipeName(showIcon, showBrackets, iconSize)
+    iconSize = iconSize or 17
     local recipeRarity = self.resultData.expectedItem and self.resultData.expectedItem:GetItemQualityColor()
-    local recipeIcon = (showIcon and GUTIL:IconToText(self.recipeIcon, 15, 15)) or ""
+    local recipeIcon = (showIcon and GUTIL:IconToText(self.recipeIcon, iconSize, iconSize, 0, -1)) or ""
     local colorEscapeHex = (recipeRarity and recipeRarity.hex) or ""
     local colorEscapeEnd = (recipeRarity and "|r") or ""
     local startBracket = (showBrackets and "[") or ""
     local endBracket = (showBrackets and "]") or ""
-    return string.format("%s%s%s%s%s%s", recipeIcon, colorEscapeHex, startBracket, self.recipeName, endBracket,
+    return string.format("%s %s%s%s%s%s", recipeIcon, colorEscapeHex, startBracket, self.recipeName, endBracket,
         colorEscapeEnd)
 end
 

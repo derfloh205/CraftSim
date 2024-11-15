@@ -77,8 +77,8 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.craftingStatDataByReagentCombinationSnapshots = {}
     ---@type CraftSim.CraftResult[]
     self.craftResults = {}
-    ---@type table<string, CraftSim.CraftResult[]> -- FOR YIELD DISTRIBUTION
-    self.craftResultsByReagentCombinationID = 
+    ---@type table<string, CraftSim.CraftResult[]>
+    self.craftResultsByReagentCombinationID = {}
     ---@type CraftSim.CraftRecipeData.CraftResultItems
     self.totalItems = CopyTable(initCraftResultItemsTable)
     ---@type table<string, CraftSim.CraftRecipeData.CraftResultItems>
@@ -135,32 +135,53 @@ function CraftSim.CraftRecipeData:GetCraftResultItemsBySelectedReagentCombinatio
     return self.totalItems
 end
 
+---@return CraftSim.CraftResult[]
+function CraftSim.CraftRecipeData:GetCraftResultsBySelectedReagentCombinationID()
+    local selectedReagentCombinationID = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SELECTED_RECIPE_REAGENT_COMBINATION_ID")
+        [self.recipeID]
+
+    if selectedReagentCombinationID ~= "Total" then
+        return self.craftResultsByReagentCombinationID[selectedReagentCombinationID]
+    end
+
+    return self.craftResults
+end
+
 ---@param reagentCombinationID "Total" | string format itemID:itemID
 ---@return string displayString
 function CraftSim.CraftRecipeData:GetReagentCombinationDisplayString(reagentCombinationID)
     ---@type CraftSim.CraftResultReagent[]
     local reagents
+    local craftResults
     if reagentCombinationID == "Total" then
         return reagentCombinationID
     else
         reagents = self.totalItemsByReagentCombination[reagentCombinationID].reagents
+        craftResults = self.craftResultsByReagentCombinationID[reagentCombinationID]
     end
 
-    if not reagents then return "<?>" end
+    local concentrating = craftResults[1] and craftResults[1].concentrating
 
+    if not reagents then return "<?>" end
+    local iconSize = 17
     local displayString = ""
     for index, craftResultReagent in ipairs(reagents) do
-        local itemIcon = GUTIL:IconToText(craftResultReagent.item:GetItemIcon(), 17, 17)
+        local itemIcon = GUTIL:IconToText(craftResultReagent.item:GetItemIcon(), iconSize, iconSize)
         local qualityIcon = ""
         local quantityText = "x " .. craftResultReagent.quantity
         if craftResultReagent.qualityID and craftResultReagent.qualityID > 0 then
             qualityIcon = GUTIL:GetQualityIconString(craftResultReagent.qualityID, 20, 20, 0, -1)
         end
         if index > 1 then
-            displayString = displayString .. "  " .. itemIcon .. qualityIcon .. quantityText
+            displayString = string.format("%s %s%s%s", displayString, itemIcon, qualityIcon, quantityText)
         else
-            displayString = displayString .. itemIcon .. qualityIcon .. quantityText
+            displayString = string.format("%s%s%s%s", displayString, itemIcon, qualityIcon, quantityText)
         end
+    end
+
+    if concentrating then
+        local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
+        displayString = string.format("%s (%s)", displayString, concentrationIcon)
     end
 
     return displayString
@@ -169,6 +190,8 @@ end
 ---@param craftResult CraftSim.CraftResult
 ---@param recipeData CraftSim.RecipeData last crafted recipeData
 function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
+    local reagentCombinationID = craftResult.reagentCombinationID
+
     ---@param craftingStatData CraftSim.CraftRecipeData.CraftingStatData
     local function addStats(craftingStatData)
         craftingStatData.numCrafts = craftingStatData.numCrafts + 1
@@ -205,6 +228,8 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
 
         -- expectedStats
         do
+            local concentrating = recipeData.concentrating
+
             expectedStats.totalProfit = expectedStats.totalProfit + craftResult.expectedAverageProfit
             expectedStats.averageProfit = expectedStats.totalProfit / numCrafts
 
@@ -231,31 +256,36 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
             expectedStats.averageResourcefulnessSavedCosts = expectedStats.totalResourcefulnessSavedCosts /
                 numCrafts
 
-            expectedStats.numIngenuity = expectedStats.numIngenuity +
-                recipeData.professionStats.ingenuity:GetPercent(true)
-            local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
-            local averageSavedConcentrationCost = (craftResult.ingenuityRefund * ingenuityChance)
-            local averageConcentrationCost = recipeData.concentrationCost - averageSavedConcentrationCost
-            expectedStats.totalConcentrationCost = expectedStats.totalConcentrationCost + averageConcentrationCost
+            -- only average concentration costs (important for total) will be calculated new based on numcrafts
+            -- but no concentration influencing stats are increased cause concentration was not used
+            -- so 0 % for ingenuity and avg cost is 0
+            if concentrating then
+                expectedStats.numIngenuity = expectedStats.numIngenuity +
+                    recipeData.professionStats.ingenuity:GetPercent(true)
+                local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
+                local averageSavedConcentrationCost = (craftResult.ingenuityRefund * ingenuityChance)
+                local averageConcentrationCost = recipeData.concentrationCost - averageSavedConcentrationCost
+                expectedStats.totalConcentrationCost = expectedStats.totalConcentrationCost + averageConcentrationCost
+            end
             expectedStats.averageConcentrationCost = expectedStats.totalConcentrationCost / numCrafts
         end
     end
 
     addStats(self.craftingStatData)
 
-    self.craftingStatDataByReagentCombination[craftResult.reagentCombinationID] = self
-        .craftingStatDataByReagentCombination[craftResult.reagentCombinationID] or
+    self.craftingStatDataByReagentCombination[reagentCombinationID] = self
+        .craftingStatDataByReagentCombination[reagentCombinationID] or
         CopyTable(initCraftingStatComparison)
 
-    addStats(self.craftingStatDataByReagentCombination[craftResult.reagentCombinationID])
+    addStats(self.craftingStatDataByReagentCombination[reagentCombinationID])
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems.resultItems, craftResult.craftResultItems)
     CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalItems.reagents, craftResult.reagents)
     CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalItems.savedReagents, craftResult.savedReagents)
 
-    self.totalItemsByReagentCombination[craftResult.reagentCombinationID] = self.totalItemsByReagentCombination
-        [craftResult.reagentCombinationID] or CopyTable(initCraftResultItemsTable)
-    local reagentCombinationItems = self.totalItemsByReagentCombination[craftResult.reagentCombinationID]
+    self.totalItemsByReagentCombination[reagentCombinationID] = self.totalItemsByReagentCombination
+        [reagentCombinationID] or CopyTable(initCraftResultItemsTable)
+    local reagentCombinationItems = self.totalItemsByReagentCombination[reagentCombinationID]
 
     CraftSim.CRAFT_LOG:MergeCraftResultItemData(reagentCombinationItems.resultItems, craftResult.craftResultItems)
     CraftSim.CRAFT_LOG:MergeReagentsItemData(reagentCombinationItems.reagents, craftResult.reagents)
@@ -263,14 +293,18 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
 
     table.insert(self.craftResults, craftResult)
 
+    self.craftResultsByReagentCombinationID[reagentCombinationID] = self.craftResultsByReagentCombinationID
+        [reagentCombinationID] or {}
+    table.insert(self.craftResultsByReagentCombinationID[reagentCombinationID], craftResult)
+
     -- insert craftData snapshots
     table.insert(self.craftStatDataSnapshots, CopyTable(self.craftingStatData))
 
-    self.craftingStatDataByReagentCombinationSnapshots[craftResult.reagentCombinationID] = self
-        .craftingStatDataByReagentCombinationSnapshots[craftResult.reagentCombinationID] or {}
+    self.craftingStatDataByReagentCombinationSnapshots[reagentCombinationID] = self
+        .craftingStatDataByReagentCombinationSnapshots[reagentCombinationID] or {}
 
-    table.insert(self.craftingStatDataByReagentCombinationSnapshots[craftResult.reagentCombinationID],
-        CopyTable(self.craftingStatDataByReagentCombination[craftResult.reagentCombinationID]))
+    table.insert(self.craftingStatDataByReagentCombinationSnapshots[reagentCombinationID],
+        CopyTable(self.craftingStatDataByReagentCombination[reagentCombinationID]))
 end
 
 function CraftSim.CraftRecipeData:Debug()

@@ -109,17 +109,9 @@ function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
     local resultValue = 0
     for _, craftResultItem in pairs(craftResult.craftResultItems) do
         local itemLink = craftResultItem.item:GetItemLink()
-        local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
         local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-        local priceOverrideData = CraftSim.DB.PRICE_OVERRIDE:GetResultOverride(recipeData.recipeID, qualityID)
-        local resultItemPrice = (priceOverrideData and priceOverrideData.price) or
-            CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+        local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
         resultValue = resultValue + resultItemPrice * quantity
-        print("resultitem: " .. (itemLink or 0))
-        print("result value: " .. CraftSim.UTIL:FormatMoney(resultValue, true))
-        if priceOverrideData then
-            print("(result price overridden)")
-        end
     end
 
 

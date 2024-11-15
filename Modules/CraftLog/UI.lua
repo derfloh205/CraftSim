@@ -122,6 +122,11 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
 
                         if newValue then
                             CraftSim.CRAFT_LOG.advFrame:Show()
+                            -- also update
+                            local recipeData = CraftSim.INIT.currentRecipeData
+                            if recipeData then
+                                self:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
+                            end
                         else
                             CraftSim.CRAFT_LOG.advFrame:Hide()
                         end
@@ -409,7 +414,7 @@ function CraftSim.CRAFT_LOG.UI:InitReagentDetailsTab(reagentDetailsTab)
     local costColumnWidth = 100
 
     content.reagentList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -100 } },
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 50, offsetY = -100 } },
         parent = content,
         sizeY = 220,
         scale = 0.9,
@@ -528,14 +533,82 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
     ---@class CraftSim.CRAFT_LOG.RESULT_ANALYSIS_TAB.CONTENT : Frame
     local content = resultAnalysisTab.content
 
-    local itemColumnWidth = 170
-    local distributionColumnWidth = 40
+    local iconSize = 28
+    local itemColumnWidth = 35
+    local distributionColumnWidth = 100
+    local valueColumnWidth = 120
+    local countColumnWidth = 60
+    local yieldColumnWidth = 40
+    local listSpacingX = 60
 
-    content.resultDistributionList = GGUI.FrameList {
+    content.totalResultsList = GGUI.FrameList {
         anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -100 } },
         parent = content,
         sizeY = 220,
         scale = 0.9,
+        rowHeight = 30,
+        showBorder = true,
+        columnOptions = {
+            {
+                label = "Item",
+                width = itemColumnWidth,
+            },
+            {
+                label = "Count",
+                width = countColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" }
+            },
+            {
+                label = "AH Sell Value",
+                width = valueColumnWidth,
+                justifyOptions = { type = "H", align = "RIGHT" }
+            }
+        },
+        selectionOptions = {
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            noSelectionColor = true },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_LOG.TOTAL_RESULTS_LIST.ROW : GGUI.FrameList.Row
+            row = row
+            row.itemColumn = columns[1]
+            row.countColumn = columns[2]
+            row.valueColumn = columns[3]
+
+            row.count = 0
+            ---@type string
+            row.itemLink = nil
+            row.value = 0
+
+            row.itemColumn.icon = GGUI.Icon {
+                parent = row.itemColumn,
+                anchorParent = row.itemColumn,
+                qualityIconScale = 1.5,
+                sizeX = iconSize,
+                sizeY = iconSize,
+            }
+
+            row.countColumn.text = GGUI.Text {
+                parent = row.countColumn,
+                anchorPoints = { { anchorParent = row.countColumn } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = countColumnWidth
+            }
+
+            row.valueColumn.text = GGUI.Text {
+                parent = row.valueColumn,
+                anchorPoints = { { anchorParent = row.valueColumn, offsetX = -5 } },
+                justifyOptions = { type = "H", align = "RIGHT" },
+                fixedWidth = valueColumnWidth
+            }
+        end,
+    }
+
+    content.resultDistributionList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.totalResultsList.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetY = 0, offsetX = listSpacingX } },
+        parent = content,
+        sizeY = 220,
+        scale = 0.9,
+        rowHeight = 30,
         showBorder = true,
         columnOptions = {
             {
@@ -544,7 +617,7 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
             },
             {
                 label = "Dist",
-                width = distributionColumnWidth,
+                width = (distributionColumnWidth * 2) - yieldColumnWidth,
                 tooltipOptions = {
                     anchor = "ANCHOR_TOP",
                     text = "Item Distribution",
@@ -558,29 +631,31 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
             row.resultColumn = columns[1]
             row.distColumn = columns[2]
 
-            row.resultColumn.text = GGUI.Text {
+
+            row.resultColumn.icon = GGUI.Icon {
                 parent = row.resultColumn,
-                anchorPoints = { { anchorParent = row.resultColumn, anchorA = "LEFT", anchorB = "LEFT" } },
-                justifyOptions = { type = "H", align = "LEFT" },
-                fixedWidth = itemColumnWidth,
+                anchorParent = row.resultColumn,
+                qualityIconScale = 1.5,
+                sizeX = iconSize,
+                sizeY = iconSize,
             }
 
             row.distColumn.text = GGUI.Text {
                 parent = row.distColumn,
-                anchorPoints = { { anchorParent = row.distColumn } },
+                anchorPoints = { { anchorParent = row.distColumn, offsetX = -5 } },
                 justifyOptions = { type = "H", align = "RIGHT" },
-                fixedWidth = distributionColumnWidth,
+                fixedWidth = (distributionColumnWidth * 2) - yieldColumnWidth,
             }
         end,
         selectionOptions = { noSelectionColor = true },
     }
 
-    local yieldColumnWidth = 40
     content.yieldDistributionList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetY = 0, offsetX = 40 } },
+        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetY = 0, offsetX = listSpacingX } },
         parent = content,
         sizeY = 220,
         scale = 0.9,
+        rowHeight = 30,
         showBorder = true,
         columnOptions = {
             {
@@ -612,11 +687,12 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
             row.yieldColumn = columns[2]
             row.distColumn = columns[3]
 
-            row.itemColumn.text = GGUI.Text {
+            row.itemColumn.icon = GGUI.Icon {
                 parent = row.itemColumn,
-                anchorPoints = { { anchorParent = row.itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
-                justifyOptions = { type = "H", align = "LEFT" },
-                fixedWidth = itemColumnWidth
+                anchorParent = row.itemColumn,
+                qualityIconScale = 1.5,
+                sizeX = iconSize,
+                sizeY = iconSize,
             }
 
             row.yieldColumn.text = GGUI.Text {
@@ -628,7 +704,7 @@ function CraftSim.CRAFT_LOG.UI:InitResultAnalysisTab(resultAnalysisTab)
 
             row.distColumn.text = GGUI.Text {
                 parent = row.distColumn,
-                anchorPoints = { { anchorParent = row.distColumn } },
+                anchorPoints = { { anchorParent = row.distColumn, offsetX = -5 } },
                 justifyOptions = { type = "H", align = "RIGHT" },
                 fixedWidth = distributionColumnWidth
             }
@@ -715,13 +791,13 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
 
     content.statComparisonGraph = LibGraph:CreateGraphLine("StatComparisonGraph", content.comparisonList.frame,
         "LEFT", "RIGHT", 30,
-        0, 350, 200)
+        0, 350, 220)
     content.statComparisonGraph:SetXAxis(0, 1)
     content.statComparisonGraph:SetYAxis(0, 1)
     -- content.concentrationCurveGraph:LockYMin(true)
     content.statComparisonGraph:SetGridSpacing(1, 1)
     content.statComparisonGraph:SetGridColor({ 0.5, 0.5, 0.5, 0.5 })
-    content.statComparisonGraph:SetAxisDrawing(true, true)
+    content.statComparisonGraph:SetAxisDrawing(false, true)
     content.statComparisonGraph:SetAxisColor({ 1.0, 1.0, 1.0, 1.0 })
     content.statComparisonGraph:SetAutoScale(true)
     if content.statComparisonGraph.SetYLabels then
@@ -740,6 +816,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
 
     content.statComparisonGraphTitle = GGUI.Text {
         parent = content,
+        scale = 0.9,
         anchorPoints = { {
             anchorParent = content.statComparisonGraph,
             anchorA = "BOTTOM",
@@ -750,12 +827,20 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
 
     content.numCraftsInfo = GGUI.Text {
         parent = content,
+        wrap = true,
+        scale = 0.9,
         anchorPoints = { {
             anchorParent = content.statComparisonGraph,
             anchorA = "TOP",
             anchorB = "BOTTOM", offsetY = -15,
         } },
         text = "# Crafts"
+    }
+
+    content.valueLegend = GGUI.Text {
+        parent = content, scale = 0.9,
+        anchorPoints = { { anchorParent = content.numCraftsInfo.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5, } },
+        text = f.gold("Observed Value") .. " - " .. f.g("Expected Value"),
     }
 
     content.statComparisonGraph:SetDefault()
@@ -799,16 +884,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultItemLog()
 
                 return false
             end)
-
-        -- -- add saved reagents
-        -- local savedReagentsText = ""
-        -- if #CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents > 0 then
-        --     savedReagentsText = "\n" .. L(CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS) .. "\n"
-        --     for _, savedReagent in pairs(CraftSim.CRAFT_LOG.currentSessionData.totalSavedReagents) do
-        --         savedReagentsText = savedReagentsText ..
-        --             (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
-        --     end
-        -- end
     end
 end
 
@@ -826,15 +901,15 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
         local craftLog = logFrame.content.craftLogScrollingMessageFrame
 
         local resourcesText = ""
+        local savedCostsText = ""
 
         if craftResult.triggeredResourcefulness then
             for _, savedReagent in pairs(craftResult.savedReagents) do
-                local qualityID = savedReagent.qualityID
-                local iconAsText = GUTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
-                local qualityAsText = (qualityID > 0 and GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
-                resourcesText = resourcesText ..
-                    "\n" .. iconAsText .. " " .. savedReagent.quantity .. " " .. qualityAsText
+                local itemLink = savedReagent.item:GetItemLink()
+                resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, itemLink)
             end
+
+            savedCostsText = CraftSim.UTIL:FormatMoney(craftResult.savedCosts, true)
         end
 
         local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
@@ -859,13 +934,18 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
             end
         end
 
-        local newText =
-            resultsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
-            ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-            ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+        local savedConcentrationText = ""
+        if craftResult.triggeredIngenuity then
+            savedConcentrationText = f.gold(" + " .. tostring(craftResult.savedConcentration))
+        end
 
-        craftLog:AddMessage("\n" .. newText)
+        local messageText =
+            resultsText ..
+            L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
+            ((craftResult.triggeredIngenuity and (f.gold(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2)) .. savedConcentrationText .. "\n")) or "") ..
+            ((craftResult.triggeredMulticraft and (f.e(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3)) .. multicraftExtraItemsText)) or "") ..
+            ((craftResult.triggeredResourcefulness and (f.g(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. savedCostsText .. "\n") .. resourcesText)) or "")
+        craftLog:AddMessage("\n" .. messageText)
     end
     -- FrameList
     self:UpdateResultItemLog()
@@ -1029,33 +1109,42 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
         end, 2)
     end
 
+    CraftSim.DEBUG:StartProfiling("CRAFT_LOG_COMPARISON_GRAPH_UPDATE")
+
     -- Comparison Graph
-    local craftingStatDataSnapshots = craftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
-    local comparisonGraph = comparisonTabContent.statComparisonGraph
-    local graphTitle = comparisonTabContent.statComparisonGraphTitle
-    local selectedStatID = "averageProfit"
-    local selectedStatTitle = "Average Profit"
-    local isGoldValue = true
-    if comparisonList.selectedRow then
-        selectedStatID = comparisonList.selectedRow.statID
-        selectedStatTitle = comparisonList.selectedRow.statTitle
-        isGoldValue = comparisonList.selectedRow.isGoldValue
-    end
-    graphTitle:SetText(selectedStatTitle)
     do
+        local craftingStatDataSnapshots = craftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
+        local comparisonGraph = comparisonTabContent.statComparisonGraph
+        local graphTitle = comparisonTabContent.statComparisonGraphTitle
+        local selectedStatID = "averageProfit"
+        local selectedStatTitle = "Average Profit"
+        local isGoldValue = true
+        if comparisonList.selectedRow then
+            selectedStatID = comparisonList.selectedRow.statID
+            selectedStatTitle = comparisonList.selectedRow.statTitle
+            isGoldValue = comparisonList.selectedRow.isGoldValue
+        end
+        graphTitle:SetText(selectedStatTitle)
         if comparisonGraph.SetYLabels then
-            if isGoldValue then
-                comparisonGraph:SetYLabels(true, false, function(labelValue)
-                    -- custom so silver and copper not included and its already gold only
+            comparisonGraph:SetYLabels(true, false, function(labelValue)
+                -- custom so silver and copper not included and its already gold only
+                if labelValue > 5 then
+                    labelValue = GUTIL:Round(labelValue)
+                elseif labelValue > 1 then
+                    labelValue = GUTIL:Round(labelValue, 1)
+                else
+                    labelValue = GUTIL:Round(labelValue, 2)
+                end
+                if isGoldValue then
                     if labelValue > 0 then
                         return f.g(labelValue) .. f.gold("g")
                     else
                         return f.r(labelValue) .. f.gold("g")
                     end
-                end)
-            else
-                comparisonGraph:SetYLabels(true)
-            end
+                else
+                    return labelValue
+                end
+            end)
         end
 
         if craftingStatData.numCrafts == 0 then
@@ -1086,14 +1175,24 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
                 return math.max(math.abs(observedPoint[2]), math.abs(expectedPoint[2]), math.abs(maxValue))
             end)
 
-            comparisonGraph:SetGridSpacing(math.ceil(craftingStatData.numCrafts / 10), GUTIL:Round(maxValue / 5))
+            local gridSpacingX = math.ceil(craftingStatData.numCrafts / 10)
+            local gridSpacingY = maxValue / 5
 
-            comparisonGraph:AddDataSeries(expectedPoints, CraftSim.CRAFT_LOG.UI
-                .STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR)
-            comparisonGraph:AddDataSeries(observedPoints, CraftSim.CRAFT_LOG.UI
-                .STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
+            -- should in best case not happen.. but prevent game freeze if it does
+            if maxValue == 0 and gridSpacingY > 0 then
+                comparisonGraph:SetGridSpacing(gridSpacingX, gridSpacingY)
+                comparisonGraph:AddDataSeries(expectedPoints, CraftSim.CRAFT_LOG.UI
+                    .STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR)
+                comparisonGraph:AddDataSeries(observedPoints, CraftSim.CRAFT_LOG.UI
+                    .STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
+            else
+                comparisonGraph:SetDefault()
+                --CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.r("Did no refresh graph cause gridSpacingY is 0"))
+            end
         end
     end
+
+    CraftSim.DEBUG:StopProfiling("CRAFT_LOG_COMPARISON_GRAPH_UPDATE")
 end
 
 ---@param craftRecipeData CraftSim.CraftRecipeData
@@ -1184,7 +1283,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
             resultDistributionList:Add(
             ---@param row CraftSim.CRAFT_LOG.RESULT_DISTRIBUTION_LIST.ROW
                 function(row)
-                    row.resultColumn.text:SetText(craftResultItem.item:GetItemLink())
+                    row.resultColumn.icon:SetItem(craftResultItem.item:GetItemLink())
                     local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
                     row.distColumn.text:SetText(itemDist)
                     row.tooltipOptions = {
@@ -1198,14 +1297,15 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
         resultDistributionList:UpdateDisplay()
     end
 
-    -- Yield Distribution TODO: adapt to reagentCombinationID switching
+    -- Yield Distribution
     do
+        local craftResults = craftRecipeData:GetCraftResultsBySelectedReagentCombinationID()
         local yieldDistributionList = resultAnalysisContent.yieldDistributionList
         yieldDistributionList:Remove()
 
         if craftingStatData.numCrafts > 0 then
             local yieldDistributionMap = {}
-            for _, craftResult in pairs(craftRecipeData.craftResults) do
+            for _, craftResult in pairs(craftResults) do
                 local itemResultCountMap = {}
                 for _, craftResultItem in pairs(craftResult.craftResultItems) do
                     local itemLink = craftResultItem.item:GetItemLink()
@@ -1236,7 +1336,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
                     yieldDistributionList:Add(
                     ---@param row CraftSim.CRAFT_LOG.YIELD_DISTRIBUTION_LIST.ROW
                         function(row)
-                            row.itemColumn.text:SetText(itemLink)
+                            row.itemColumn.icon:SetItem(itemLink)
                             local dist = GUTIL:Round(
                                 (count / (distributionData.totalDistributionCount / 100)) / 100, 2)
                             row.distColumn.text:SetText(dist)
@@ -1263,6 +1363,43 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
             return rowA.yield > rowB.yield
         end)
     end
+
+    -- Total Result List
+    do
+        local craftResultItems = craftRecipeData:GetCraftResultItemsBySelectedReagentCombinationID()
+        local totalResultsList = resultAnalysisContent.totalResultsList
+        totalResultsList:Remove()
+
+        for _, craftResultItem in ipairs(craftResultItems.resultItems) do
+            local itemLink = craftResultItem.item:GetItemLink()
+            local count = craftResultItem.quantity
+            local value = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) * CraftSim.CONST.AUCTION_HOUSE_CUT
+            -- TODO: maybe quantityMulticraft?
+            totalResultsList:Add(
+            ---@param row CraftSim.CRAFT_LOG.TOTAL_RESULTS_LIST.ROW
+                function(row)
+                    row.itemColumn.icon:SetItem(itemLink)
+                    row.countColumn.text:SetText("x " .. count)
+                    row.valueColumn.text:SetText(CraftSim.UTIL:FormatMoney(value, true))
+                    row.count = count
+                    row.itemLink = itemLink
+                    row.value = value
+                    row.tooltipOptions = {
+                        itemLink = itemLink,
+                        anchor = "ANCHOR_RIGHT",
+                        owner = row.frameList.frame
+                    }
+                end)
+        end
+
+
+        totalResultsList:UpdateDisplay(
+        ---@param rowA CraftSim.CRAFT_LOG.TOTAL_RESULTS_LIST.ROW
+        ---@param rowB CraftSim.CRAFT_LOG.TOTAL_RESULTS_LIST.ROW
+            function(rowA, rowB)
+                return rowA.value > rowB.value
+            end)
+    end
 end
 
 ---@param recipeID RecipeID last crafted recipeID
@@ -1272,6 +1409,9 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
 
     -- only update if its the shown recipeID otherwise no need
     if not recipeData or recipeData.recipeID ~= recipeID then return end
+
+    -- also only update if the log is shown to save cpu time when its hidden
+    if not advFrame:IsVisible() then return end
 
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
     local sessionData = CraftSim.CRAFT_LOG.currentSessionData
