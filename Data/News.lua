@@ -38,6 +38,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Removed Claimed Orders are now also cancelled",
         f.a .. "- UI will now switch to the crafting order on click if possible",
         f.s .. "Refactored the " .. f.bb("Debug Module"),
+        f.p .. "Fix for PvP Heraldys in Work Orders",
+        f.a .. "-  " .. f.bb("https://github.com/Prejudice182"),
         newP("19.5.1"),
         f.P .. f.l("Cached Profession Data") .. " is now removed when unlearning",
         f.P .. f.bb("Recipe Scan"),
