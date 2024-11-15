@@ -82,6 +82,7 @@ function CraftSim.INIT:TriggerModuleUpdate(isInit)
 	if freshLoginRecall and isInit then
 		-- hide all frames to reduce flicker on fresh login recall
 		freshLoginRecall = false
+
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
 		C_Timer.After(0.1, function()
 			CraftSim.INIT:TriggerModuleUpdate(true)
