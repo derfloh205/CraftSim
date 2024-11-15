@@ -720,6 +720,13 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
                     elseif IsMouseButtonDown("RightButton") then
                         MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                            rootDescription:CreateButton("Add to Craft Queue", function()
+                                -- queue into CraftQueue
+                                if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+                                    recipeData.concentrating = true
+                                end
+                                CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                            end)
                             if recipeData:IsCrafter() then
                                 local isFavorite = C_TradeSkillUI.IsRecipeFavorite(recipeData.recipeID)
                                 if isFavorite then

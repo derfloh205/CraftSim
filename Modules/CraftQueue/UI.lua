@@ -696,23 +696,25 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
-                    orderTypeSubMenu:CreateRadio("Patron Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Npc
+                    orderTypeSubMenu:CreateCheckbox("Patron Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Npc)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS", not value)
                     end)
-                    orderTypeSubMenu:CreateRadio("Guild Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Guild
+
+                    orderTypeSubMenu:CreateCheckbox("Guild Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Guild)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS", not value)
                     end)
-                    orderTypeSubMenu:CreateRadio("Personal Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Personal
+
+                    orderTypeSubMenu:CreateCheckbox("Personal Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Personal)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS", not value)
                     end)
 
                     local guildOrderOptions = rootDescription:CreateButton("Guild Orders")
@@ -1942,18 +1944,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             upgradeArrow --.. "(" .. craftQueueItem.recipeData.subRecipeDepth .. ")"
     end
     if recipeData.orderData then
-        --upCraftText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 15, 15)
-        upCraftText = " " .. CreateAtlasMarkup("Professions-Crafting-Orders-Icon", 15, 15)
-
-        if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
-            upCraftText = upCraftText .. " " .. f.bb("NPC")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Guild then
-            upCraftText = upCraftText .. " " .. f.g("Guild")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Personal then
-            upCraftText = upCraftText .. " " .. f.bb("Pers.")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Public then
-            upCraftText = upCraftText .. " " .. f.b("Public")
-        end
+        upCraftText = upCraftText .. " " .. CraftSim.UTIL:GetOrderTypeText(recipeData.orderData.orderType)
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 

@@ -267,6 +267,10 @@ function CraftSim.DB.OPTIONS:Migrate()
             CraftSimDB.optionsDB.data["RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"] = 0
         end
     end)
+    migrate(13, 14, function()
+        --- option removal
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
+    end)
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()
