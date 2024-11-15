@@ -236,7 +236,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
         do
             local concentrating = recipeData.concentrating
 
-            expectedStats.totalProfit = expectedStats.totalProfit + craftResult.expectedAverageProfit
+            expectedStats.totalProfit = expectedStats.totalProfit + recipeData.averageProfitCached
             expectedStats.averageProfit = expectedStats.totalProfit / numCrafts
 
             expectedStats.totalCraftingCosts = expectedStats.totalCraftingCosts +

@@ -97,38 +97,10 @@ function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULT")
 end
 
----@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
 ---@return number
-function CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, craftResult)
-    local craftingCosts = recipeData.priceData.craftingCosts
+function CraftSim.CRAFT_LOG:GetProfitForCraft(craftResult)
 
-    local savedCosts = GUTIL:Fold(craftResult.savedReagents, 0, function(savedCosts, craftResultSavedReagent)
-        return savedCosts + craftResultSavedReagent.costs
-    end)
-
-    local orderCommission = (craftResult.isWorkOrder and
-        (craftResult.orderData.tipAmount - craftResult.orderData.consortiumCut)) or 0
-
-    local resultValue = 0
-    if not craftResult.isWorkOrder then
-        for _, craftResultItem in pairs(craftResult.craftResultItems) do
-            local itemLink = craftResultItem.item:GetItemLink()
-            local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-            local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
-            resultValue = resultValue + resultItemPrice * quantity
-        end
-    end
-
-
-    local craftProfit = 0
-    if craftResult.isWorkOrder then
-        craftResult = orderCommission - (craftingCosts - savedCosts)
-    else
-        craftResult = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
-    end
-
-    return craftProfit
 end
 
 ---@param craftResult CraftSim.CraftResult

@@ -62,7 +62,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         end
     end
 
-    -- Reagents + Crafting Costs
+    -- Reagents
     do
         local reagentItemIDs = {}
         if recipeData.isSalvageRecipe then
@@ -136,13 +136,40 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         end
     end
 
+    self.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents - self.savedCosts
+
     self.reagentCombinationID = self.reagentCombinationID ..
         ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
 
-    local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
+    self.profit = self:CalculateCraftProfit()
+end
 
-    self.profit = craftProfit
-    self.expectedAverageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
+function CraftSim.CraftResult:CalculateCraftProfit()
+    local craftingCosts = self.craftingCosts -- considering saved costs by resourcefulness and orderReagents
+
+    local orderCommission = 0
+    if self.isWorkOrder then
+        orderCommission = self.orderData.tipAmount - self.orderData.consortiumCut
+    end
+
+    local resultValue = 0
+    if not self.isWorkOrder then
+        for _, craftResultItem in pairs(self.craftResultItems) do
+            local itemLink = craftResultItem.item:GetItemLink()
+            local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
+            local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+            resultValue = resultValue + resultItemPrice * quantity
+        end
+    end
+
+    local craftProfit = 0
+    if self.isWorkOrder then
+        craftProfit = orderCommission - craftingCosts
+    else
+        craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - craftingCosts
+    end
+
+    return craftProfit
 end
 
 ---@return number
