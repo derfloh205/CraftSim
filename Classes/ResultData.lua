@@ -36,7 +36,6 @@ end
 function CraftSim.ResultData:UpdatePossibleResultItems()
     local recipeData = self.recipeData
 
-    -- TODO: only need to update possible list for gear as everything else is static
     self.itemsByQuality = {}
     local craftingReagentInfoTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
 
@@ -139,7 +138,7 @@ function CraftSim.ResultData:Update()
     local professionStats = self.recipeData.professionStats
 
     self.expectedYieldPerCraft = self.recipeData.baseItemAmount +
-    (select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)) * professionStats.multicraft:GetPercent(true))
+        (select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)) * professionStats.multicraft:GetPercent(true))
 
     -- special case for no quality results. Needed for expectedCrafts and such
     if not recipeData.supportsQualities then

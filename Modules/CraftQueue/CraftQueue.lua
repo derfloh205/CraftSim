@@ -268,7 +268,6 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         "CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                                     local forceConcentration = CraftSim.DB.OPTIONS:Get(
                                         "CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
-                                    -- TODO: allow queuing with concentration and concentration optimization in queue options
                                     -- check if the min quality is reached, if not do not queue
                                     if recipeData.resultData.expectedQuality >= order.minQuality then
                                         CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
@@ -706,7 +705,6 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
     end
 end
 
---- TODO: need exception for enchant vellum to not be fetched from the bank!
 --- only for craft queue display update's flash cache
 ---@param crafterUID CrafterUID
 ---@param itemID number

@@ -262,7 +262,6 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
                 local partlyEmpty = emptyA or emptyB
                 if bothEmpty or (partlyEmpty or not professionGearA:Equals(professionGearB)) then
                     -- do not match item with itself..
-                    -- todo: somehow neglect order cause it is not important (maybe with temp list to remove items from..)
                     table.insert(gearSlotCombos, { professionGearA, professionGearB })
                 end
             end

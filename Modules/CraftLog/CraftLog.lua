@@ -184,7 +184,7 @@ function CraftSim.CRAFT_LOG:MergeCraftResultItemData(totalCraftResultItems, craf
         end)
 
         -- if yes we need to add the quantities
-        -- need to sum quantity and quantityMulticraft into quantity together TODO: Check for correct behaviour
+        -- need to sum quantity and quantityMulticraft into quantity together
         if craftResultItemOld then
             craftResultItemOld.quantity = craftResultItemOld.quantity +
                 (craftResultItemNew.quantity + craftResultItemNew.quantityMulticraft)

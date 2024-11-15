@@ -14,9 +14,6 @@ CraftSim.RECIPE_SCAN.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
---- TODO: Move to debug window as toggle
-local debugScannedRecipeIDs = false
-
 function CraftSim.RECIPE_SCAN.UI:Init()
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
@@ -989,7 +986,6 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
             owner = row.frame
         }
 
-        -- todo: add profession icon prefix
         crafterColumn.text:SetText(professionIcon .. " " .. coloredCrafterName)
         ---@type Enum.Profession
         ---@type CraftSim.CrafterData
@@ -1047,9 +1043,6 @@ end
 function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
     local resultList = row.content.resultList
     local showProfit = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
-    if debugScannedRecipeIDs then
-        recipeData:DebugInspect("RecipeScan: " .. recipeData.recipeName)
-    end
 
     resultList:Add(
         function(row)

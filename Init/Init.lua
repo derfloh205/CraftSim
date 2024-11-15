@@ -866,7 +866,6 @@ function CraftSim.INIT:InitializeMinimapButton()
 	end)
 end
 
----TODO: Temporary unused, test if problems occur then either reinstate or remove
 --- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
 function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)

@@ -175,6 +175,14 @@ function CraftSim.CraftQueue:Remove(craftQueueItem, removeParentSubcraftInformat
             end
         end
     end
+
+    if craftQueueItem.recipeData:IsWorkOrder() then
+        -- check if claimed if yes release
+        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+        if claimedOrder and claimedOrder.orderID == craftQueueItem.recipeData.orderData.orderID then
+            C_CraftingOrders.CancelOrder(claimedOrder.orderID)
+        end
+    end
 end
 
 ---@param prI CraftSim.RecipeData.ParentRecipeInfo
