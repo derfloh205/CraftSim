@@ -12,6 +12,7 @@ function CraftSim.LOCAL_KO:GetData()
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "제작 속도",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "착용 효과:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "마법부여:",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "독창성",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "제작 난이도: ",
