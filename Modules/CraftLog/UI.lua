@@ -110,6 +110,33 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
                 end);
 
+                local disableADVData = rootDescription:CreateCheckbox(
+                    f.r("Disable ") .. " Advanced Data Processing",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE_ADV_DATA")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_DISABLE_ADV_DATA")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE_ADV_DATA",
+                            newValue)
+                    end)
+
+                disableADVData:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "Disables the recording of advanced log data to save RAM and CPU during crafting")
+                end);
+
+                local ignoreWorkOrdersCB = rootDescription:CreateCheckbox(
+                    f.r("Ignore ") .. "Work Orders",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS")
+                    end, function()
+                        local newValue = not CraftSim.DB.OPTIONS:Get(
+                            "CRAFT_LOG_IGNORE_WORK_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_IGNORE_WORK_ORDERS",
+                            newValue)
+                    end)
+
                 local showAdvancedLogCB = rootDescription:CreateCheckbox(
                     "Show " .. f.l("Advanced Craft Log"),
                     function()
@@ -160,17 +187,6 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
                 end)
 
-                local ignoreWorkOrdersCB = rootDescription:CreateCheckbox(
-                    f.r("Ignore ") .. "Work Orders",
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_IGNORE_WORK_ORDERS")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_IGNORE_WORK_ORDERS",
-                            newValue)
-                    end)
-
                 local autoShowCB = rootDescription:CreateCheckbox(
                     f.g("Auto Show ") .. "on Craft",
                     function()
@@ -199,12 +215,19 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
                 end)
 
-                local exportOptions = rootDescription:CreateButton("Export Data")
 
-                exportOptions:CreateButton("as " .. f.bb("JSON"), function()
-                    local json = CraftSim.CRAFT_LOG:ExportJSON()
-                    CraftSim.UTIL:ShowTextCopyBox(json)
+                -- TODO: Fix/Refactor and Reimplement
+                local exportOptions = rootDescription:CreateButton(f.l("Export Data Feature - WIP"))
+                exportOptions:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        f.l("Feature will be reworked and reimplemented in a future update"));
                 end)
+                -- local exportOptions = rootDescription:CreateButton("Export Data")
+
+                -- exportOptions:CreateButton("as " .. f.bb("JSON"), function()
+                --     local json = CraftSim.CRAFT_LOG:ExportJSON()
+                --     CraftSim.UTIL:ShowTextCopyBox(json)
+                -- end)
 
                 local clearDataButton = rootDescription:CreateButton(f.r("Clear Data"), function()
                     CraftSim.CRAFT_LOG:ClearData()
@@ -939,10 +962,17 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
             savedConcentrationText = f.gold(" + " .. tostring(craftResult.savedConcentration))
         end
 
+        local commissionText = ""
+        if craftResult.isWorkOrder then
+            local commission = craftResult.orderData.tipAmount - craftResult.orderData.consortiumCut
+            commissionText = CraftSim.UTIL:FormatMoney(commission, true)
+        end
+
         local messageText =
             resultsText ..
             L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
             ((craftResult.triggeredIngenuity and (f.gold(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2)) .. savedConcentrationText .. "\n")) or "") ..
+            ((craftResult.isWorkOrder and (f.gold("Commission: ") .. commissionText .. "\n")) or "") ..
             ((craftResult.triggeredMulticraft and (f.e(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3)) .. multicraftExtraItemsText)) or "") ..
             ((craftResult.triggeredResourcefulness and (f.g(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. savedCostsText .. "\n") .. resourcesText)) or "")
         craftLog:AddMessage("\n" .. messageText)

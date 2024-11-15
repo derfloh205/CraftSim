@@ -30,7 +30,8 @@ function CraftSim.CraftSessionData:GetCraftRecipeData(recipeID)
 end
 
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CraftSessionData:AddCraftResult(craftResult)
+---@param enableAdvData boolean
+function CraftSim.CraftSessionData:AddCraftResult(craftResult, enableAdvData)
     print("SessionData: AddCraftResult")
     self.numCrafts = self.numCrafts + 1
     table.insert(self.craftResults, craftResult)
@@ -47,9 +48,11 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
 
     self.totalProfit = self.totalProfit + craftResult.profit
 
-    CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
-    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalReagents, craftResult.reagents)
-    CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
+    if enableAdvData then
+        CraftSim.CRAFT_LOG:MergeCraftResultItemData(self.totalItems, craftResult.craftResultItems)
+        CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalReagents, craftResult.reagents)
+        CraftSim.CRAFT_LOG:MergeReagentsItemData(self.totalSavedReagents, craftResult.savedReagents)
+    end
 end
 
 function CraftSim.CraftSessionData:GetJSON(intend)

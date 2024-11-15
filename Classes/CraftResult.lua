@@ -81,8 +81,12 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local itemID = slot.activeReagent.item:GetItemID()
                 local quantity = slot.maxQuantity
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                self.craftingCosts = self.craftingCosts + reagentCosts
-                tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                local isOrderReagent = slot.activeReagent:IsOrderReagentIn(recipeData)
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
                 tinsert(reagentItemIDs, itemID .. "." .. quantity)
             end
         end
@@ -93,10 +97,14 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local quantity = reagentItem.quantity
                 if quantity > 0 then
                     local itemID = reagentItem.item:GetItemID()
+                    local isOrderReagent = reagentItem:IsOrderReagentIn(recipeData)
+
                     tinsert(self.reagents,
-                        CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                        CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
                     local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                    self.craftingCosts = self.craftingCosts + reagentCosts
+                    if not isOrderReagent then
+                        self.craftingCosts = self.craftingCosts + reagentCosts
+                    end
                     tinsert(reagentItemIDs, itemID .. "." .. quantity)
                 end
             end
@@ -107,8 +115,12 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 local itemID = optionalReagentSlot.activeReagent.item:GetItemID()
                 local quantity = optionalReagentSlot.maxQuantity
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                self.craftingCosts = self.craftingCosts + reagentCosts
-                tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+                local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(recipeData)
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
                 tinsert(reagentItemIDs, itemID .. "." .. quantity)
             end
         end
@@ -125,7 +137,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     end
 
     self.reagentCombinationID = self.reagentCombinationID ..
-    ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
+        ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
 
     local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
 

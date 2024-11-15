@@ -89,7 +89,8 @@ end
 function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
     CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULT")
 
-    self:UpdateCraftData(craftResult, recipeData)
+    local enableAdvData = not CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE_ADV_DATA")
+    self:UpdateCraftData(craftResult, recipeData, enableAdvData)
     self.UI:UpdateCraftLogDisplay(craftResult, recipeData)
     self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 
@@ -132,7 +133,8 @@ end
 
 ---@param craftResult CraftSim.CraftResult
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData)
+---@param enableAdvData boolean
+function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData, enableAdvData)
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
     local recipeID = recipeData.recipeID
 
@@ -141,8 +143,10 @@ function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData)
 
     local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
 
-    craftSessionData:AddCraftResult(craftResult)
-    craftRecipeData:AddCraftResult(craftResult, recipeData)
+    craftSessionData:AddCraftResult(craftResult, enableAdvData)
+    if enableAdvData then
+        craftRecipeData:AddCraftResult(craftResult, recipeData)
+    end
 end
 
 --- Collects craft results from last craft and puts them into one CraftResult object for further processing
