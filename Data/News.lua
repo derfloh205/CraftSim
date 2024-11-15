@@ -40,6 +40,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.s .. "Refactored the " .. f.bb("Debug Module"),
         f.p .. "Fix for PvP Heraldys in Work Orders",
         f.a .. "-  " .. f.bb("https://github.com/Prejudice182"),
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("koKR") .. " by: " .. f.bb("https://github.com/grapgrap"),
         newP("19.5.1"),
         f.P .. f.l("Cached Profession Data") .. " is now removed when unlearning",
         f.P .. f.bb("Recipe Scan"),
