@@ -155,6 +155,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
             end,
             continue = function(frameDistributor, _, workOrderType, _, progress)
                 local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
+                if not orderType then
+                    frameDistributor:Continue()
+                end
                 local request = {
                     orderType = orderType,
                     searchFavorites = false,

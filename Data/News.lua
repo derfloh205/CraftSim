@@ -32,6 +32,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added context menu button to toggle recipe as " .. f.l("favorite"),
         f.a .. "- Added context menu button to add recipe to Craft Queue",
         f.P .. f.bb("Craft Queue"),
+        f.a .. "- " .. f.g("Queue Work Orders") .. " changed from 1 type to multiple",
+        f.a .. "  Now possible to queue multiple work order types in succession",
         f.a .. "- Added 'Auto Show on Recipe Queued' Option (default: true)",
         f.a .. "- Removed Claimed Orders are now also cancelled",
         f.a .. "- UI will now switch to the crafting order on click if possible",
