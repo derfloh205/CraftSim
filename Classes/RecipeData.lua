@@ -487,12 +487,13 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
 
     if self.reagentData:HasRequiredSelectableReagent() then
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
-            local firstPossibleRequiredSelectableReagent = self.reagentData.requiredSelectableReagentSlot
-                .possibleReagents[1]
-            if firstPossibleRequiredSelectableReagent then
-                self.reagentData.requiredSelectableReagentSlot:SetReagent(firstPossibleRequiredSelectableReagent.item
-                    :GetItemID())
-            end
+			for _, possibleRequiredSelectableReagent in pairs(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}) do
+				if possibleRequiredSelectableReagent:IsOrderReagentIn(self) then
+					self.reagentData.requiredSelectableReagentSlot:SetReagent(possibleRequiredSelectableReagent.item
+					:GetItemID())
+					break
+				end
+			end
         end
     end
 end
