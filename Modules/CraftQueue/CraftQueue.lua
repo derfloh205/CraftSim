@@ -131,7 +131,11 @@ end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
-    local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
+    local normalizedRealmName = GetNormalizedRealmName()
+    local realmName = GetRealmName()
+    local cleanedCrafterUIDs = GUTIL:Map(CraftSim.DB.CRAFTER:GetCrafterUIDs(), function(crafterUID)
+        return select(1, gsub(crafterUID, "-" .. normalizedRealmName, ""))
+    end)
     --TODO: Public Orders
     local workOrderTypes = {
         CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
@@ -157,6 +161,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
                 if not orderType then
                     frameDistributor:Continue()
+                    return
                 end
                 local request = {
                     orderType = orderType,
@@ -201,7 +206,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                     if isGuildOrder then
                                         if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
-                                            if not tContains(crafterUIDs, order.customerName) then
+                                            -- check for alts.. consider that alts on same realm do not have the realm name in customerName
+                                            local cleanedCustomerName = gsub(order.customerName,
+                                                "-" .. realmName, "")
+                                            if not tContains(cleanedCrafterUIDs, cleanedCustomerName) then
                                                 distributor:Continue()
                                                 return
                                             end
