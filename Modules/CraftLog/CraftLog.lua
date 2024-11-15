@@ -18,8 +18,6 @@ CraftSim.CRAFT_LOG.logFrame = nil
 ---@type CraftSim.CRAFT_LOG.DETAILS_FRAME
 CraftSim.CRAFT_LOG.advFrame = nil
 
-local dataCollect = true
-
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
     print("OnCraftRecipe: " .. tostring(recipeData))
@@ -95,12 +93,6 @@ function CraftSim.CRAFT_LOG:ProcessCraftResult(recipeData, craftResult)
     self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULT")
-end
-
----@param craftResult CraftSim.CraftResult
----@return number
-function CraftSim.CRAFT_LOG:GetProfitForCraft(craftResult)
-
 end
 
 ---@param craftResult CraftSim.CraftResult

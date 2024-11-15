@@ -73,6 +73,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
 
     if hideBlizzardCraftingLog and ProfessionsFrame.CraftingPage.CraftingOutputLog then
         ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+        ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:UnregisterAllEvents()
     end
 
     self:InitLogFrame(logFrame)
@@ -171,13 +172,20 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
 
                         if newValue then
                             ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:UnregisterAllEvents()
                             if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
                                 ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
+                            elseif ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:IsVisible() then
+                                ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:Hide()
                             end
                         else
                             ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
                                 "TRADE_SKILL_ITEM_CRAFTED_RESULT")
                             ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
+                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
                                 "TRADE_SKILL_CURRENCY_REWARD_RESULT")
                         end
                     end)
@@ -196,18 +204,6 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                             "CRAFT_LOG_AUTO_SHOW")
                         CraftSim.DB.OPTIONS:Save("CRAFT_LOG_AUTO_SHOW",
                             newValue)
-
-                        if newValue then
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
-                            if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
-                                ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
-                            end
-                        else
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
-                        end
                     end)
 
                 hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)

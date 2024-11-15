@@ -82,6 +82,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         -- also if npc work order add item value of rewards to the comissionprofit
         for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
             local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(Item:CreateFromItemLink(reward.itemLink):GetItemID())
+            price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
             comissionProfit = comissionProfit + price * reward.count
         end
     end

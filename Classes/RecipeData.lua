@@ -309,6 +309,7 @@ function CraftSim.RecipeData:SetReagents(reagentList)
     -- go through required reagents and set quantity accordingly
 
     self.reagentData:ClearRequiredReagents()
+    self:SetNonQualityReagentsMax()
 
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local totalQuantity = 0

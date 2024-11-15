@@ -95,16 +95,17 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
             for _, reagentItem in ipairs(requiredReagent.items) do
                 local quantity = reagentItem.quantity
-                if quantity > 0 then
-                    local itemID = reagentItem.item:GetItemID()
-                    local isOrderReagent = reagentItem:IsOrderReagentIn(recipeData)
+                local itemID = reagentItem.item:GetItemID()
+                local isOrderReagent = reagentItem:IsOrderReagentIn(recipeData)
 
-                    tinsert(self.reagents,
-                        CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
-                    local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                    if not isOrderReagent then
-                        self.craftingCosts = self.craftingCosts + reagentCosts
-                    end
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+
+                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                if quantity > 0 then
                     tinsert(reagentItemIDs, itemID .. "." .. quantity)
                 end
             end
@@ -150,6 +151,15 @@ function CraftSim.CraftResult:CalculateCraftProfit()
     local orderCommission = 0
     if self.isWorkOrder then
         orderCommission = self.orderData.tipAmount - self.orderData.consortiumCut
+
+        -- check for npcOrderRewards
+        if self.orderData.npcOrderRewards then
+            for _, orderRewardInfo in ipairs(self.orderData.npcOrderRewards) do
+                local itemID = GUTIL:GetItemIDByLink(orderRewardInfo.itemLink)
+                local sellPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID) * CraftSim.CONST.AUCTION_HOUSE_CUT
+                orderCommission = orderCommission + sellPrice
+            end
+        end
     end
 
     local resultValue = 0
