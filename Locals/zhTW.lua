@@ -134,7 +134,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "匯出 JSON",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "配方統計資料",
         [CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING] = "尚未製造任何東西!",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1] = "製造: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX] = "製造: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2] = "預期 Φ 利潤: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3] = "實際 Φ 利潤: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4] = "實際利潤: ",
@@ -143,12 +143,9 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7] = "複數製造: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8] = "- Φ 額外物品: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9] = "精明過程: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Φ 節省成本: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "利潤: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Φ 節省成本: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "利潤: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "節省材料",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("停用記錄製造結果"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] = "啟用此選項會停止在製造時記錄任何製造結果，並且會" .. f.g("增加效能"),
-
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim 平均利潤",
         [CraftSim.CONST.TEXT.EXPLANATIONS_TITLE] = "CraftSim 平均利潤說明",

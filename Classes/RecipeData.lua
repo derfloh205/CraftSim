@@ -15,6 +15,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@field recipeID RecipeID
 ---@field isRecraft? boolean default: false
 ---@field isWorkOrder? boolean default: false
+---@field orderData? CraftingOrderInfo
 ---@field crafterData? CraftSim.CrafterData default: current player character
 ---@field forceCache? boolean forces the use of all cached data (e.g. when restoring craft queue list)
 
@@ -32,6 +33,7 @@ function CraftSim.RecipeData:new(options)
     local recipeID = options.recipeID
     local isRecraft = options.isRecraft or false
     local isWorkOrder = options.isWorkOrder or false
+    local orderData = options.orderData
     local forceCache = options.forceCache or false
 
     self.recipeID = recipeID --[[@as RecipeID]]
@@ -84,6 +86,10 @@ function CraftSim.RecipeData:new(options)
     self.supportsSpecializations = C_ProfSpecs.SkillLineHasSpecialization(self.professionData.skillLineID)
 
     self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
+
+    if orderData then
+        self.orderData = options.orderData
+    end
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -303,6 +309,7 @@ function CraftSim.RecipeData:SetReagents(reagentList)
     -- go through required reagents and set quantity accordingly
 
     self.reagentData:ClearRequiredReagents()
+    self:SetNonQualityReagentsMax()
 
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local totalQuantity = 0
@@ -341,6 +348,13 @@ end
 function CraftSim.RecipeData:SetSalvageItem(itemID)
     if self.isSalvageRecipe then
         self.reagentData.salvageReagentSlot:SetItem(itemID)
+        local itemLocation = GUTIL:GetItemLocationFromItemID(itemID, true)
+        if itemLocation then
+            local item = Item:CreateFromItemLocation(itemLocation)
+            if item then
+                self.allocationItemGUID = Item:CreateFromItemLocation(itemLocation):GetItemGUID()
+            end
+        end
     else
         error("CraftSim Error: Trying to set salvage item on non salvage recipe")
     end
@@ -632,10 +646,13 @@ function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData({
         recipeID = self.recipeID,
-        isWorkOrder = self.orderData ~= nil,
+        orderData = self.orderData,
         isRecraft = self.isRecraft,
         crafterData = self.crafterData,
     })
+
+    copy.allocationItemGUID = self.allocationItemGUID
+
     copy.concentrating = self.concentrating
     copy.concentrationCost = self.concentrationCost
     copy.concentrationData = self.concentrationData and self.concentrationData:Copy()
@@ -1364,7 +1381,8 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     jb:Add("reagents", reagents) -- itemID mapped to required quantity
     if self.supportsQualities then
         print("json, adding skill: ")
-        jb:Add("skill", self.professionStats.skill.value)                               -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
+        jb:Add("skill", self.professionStats.skill.value)
+        -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
         if self.supportsMulticraft or self.supportsResourcefulness then
             jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value)       -- base difficulty (without optional reagents)
         else
@@ -1864,6 +1882,21 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     end
 
     return finalText
+end
+
+---@param showIcon boolean
+---@param showBrackets boolean adds "[]"
+---@param iconSize number? default: 17
+function CraftSim.RecipeData:GetFormattedRecipeName(showIcon, showBrackets, iconSize)
+    iconSize = iconSize or 17
+    local recipeRarity = self.resultData.expectedItem and self.resultData.expectedItem:GetItemQualityColor()
+    local recipeIcon = (showIcon and GUTIL:IconToText(self.recipeIcon, iconSize, iconSize, 0, -1)) or ""
+    local colorEscapeHex = (recipeRarity and recipeRarity.hex) or ""
+    local colorEscapeEnd = (recipeRarity and "|r") or ""
+    local startBracket = (showBrackets and "[") or ""
+    local endBracket = (showBrackets and "]") or ""
+    return string.format("%s %s%s%s%s%s", recipeIcon, colorEscapeHex, startBracket, self.recipeName, endBracket,
+        colorEscapeEnd)
 end
 
 ---@param itemID ItemID

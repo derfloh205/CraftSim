@@ -24,11 +24,11 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     self.requiredSelectableReagentSlot = nil
     ---@type CraftSim.SalvageReagentSlot
     self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
-    
+
     if not schematicInfo then
         return
     end
-    
+
     if self.recipeData.isSalvageRecipe then
         -- https://www.townlong-yak.com/framexml/live/Blizzard_ProfessionsTemplates/Blizzard_ProfessionsRecipeSchematicForm.lua#1136
         self.salvageReagentSlot.requiredQuantity = schematicInfo.quantityMax
@@ -726,6 +726,7 @@ function CraftSim.ReagentData:Copy(recipeData)
     copy.finishingReagentSlots = GUTIL:Map(self.finishingReagentSlots, function(r) return r:Copy(recipeData) end)
     copy.requiredSelectableReagentSlot = self.requiredSelectableReagentSlot and
         self.requiredSelectableReagentSlot:Copy(recipeData)
+    copy.salvageReagentSlot = self.salvageReagentSlot:Copy()
 
     return copy
 end

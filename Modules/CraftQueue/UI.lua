@@ -47,41 +47,47 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@class CraftSim.CraftQueue.Frame.Content : Frame
         frame.content = frame.content
 
-        frame.content.craftQueueOptionsButton = GGUI.Button {
+        frame.content.craftQueueOptionsButton = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-            cleanTemplate = true,
-            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-            sizeX = 20, sizeY = 20,
-            clickCallback = function(_, _)
-                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                    local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
-                        f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_IGNORE_INGENUITY_PROCS",
-                                not value)
-                        end)
+            menuUtilCallback = function(ownerRegion, rootDescription)
+                local autoShow = rootDescription:CreateCheckbox(
+                    f.g("Automatically Open ") .. "when a recipe is queued",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_AUTO_SHOW")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_AUTO_SHOW",
+                            not value)
+                    end)
 
-                    local dequeueConcentrationCB = rootDescription:CreateCheckbox(
-                        f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
-                                not value)
-                        end)
+                local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
+                    f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_IGNORE_INGENUITY_PROCS",
+                            not value)
+                    end)
 
-                    dequeueConcentrationCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "Autoremove a crafted recipe when remaining concentration does not allow further crafts.");
-                    end);
-                end)
+                local dequeueConcentrationCB = rootDescription:CreateCheckbox(
+                    f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
+                            not value)
+                    end)
+
+                dequeueConcentrationCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "Autoremove a crafted recipe when remaining concentration does not allow further crafts.");
+                end);
             end
         }
 
@@ -197,21 +203,37 @@ function CraftSim.CRAFTQ.UI:Init()
                     ---@type CraftSim.CraftQueueItem
                     local craftQueueItem = row.craftQueueItem
                     if craftQueueItem then
-                        if craftQueueItem.recipeData then
+                        local recipeData = craftQueueItem.recipeData
+                        if recipeData then
                             if IsMouseButtonDown("LeftButton") then
-                                C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                                if recipeData:IsWorkOrder() and C_CraftingOrders.ShouldShowCraftingOrderTab() and ProfessionsFrame.isCraftingOrdersTabEnabled then
+                                    if not ProfessionsFrame.OrdersPage:IsVisible() then
+                                        ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab
+                                    end
+                                    ProfessionsFrame.OrdersPage:ViewOrder(recipeData.orderData)
+                                    CraftSim.INIT:TriggerModulesByRecipeType()
+                                else
+                                    if not ProfessionsFrame.CraftingPage:IsVisible() then
+                                        ProfessionsFrame:GetTabButton(1):Click()
+                                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                    else
+                                        RunNextFrame(function()
+                                            C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                        end)
+                                    end
+                                end
                             elseif IsMouseButtonDown("RightButton") then
                                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                                    rootDescription:CreateTitle(craftQueueItem.recipeData.recipeName)
+                                    rootDescription:CreateTitle(recipeData.recipeName)
                                     rootDescription:CreateDivider()
 
-                                    if craftQueueItem.recipeData:IsCrafter() then
-                                        if not craftQueueItem.recipeData.professionGearSet:IsEquipped() then
+                                    if recipeData:IsCrafter() then
+                                        if not recipeData.professionGearSet:IsEquipped() then
                                             rootDescription:CreateButton(f.g("Equip Tools"), function()
-                                                craftQueueItem.recipeData.professionGearSet:Equip()
+                                                recipeData.professionGearSet:Equip()
                                             end)
                                             rootDescription:CreateButton(f.l("Force Equipped Tools"), function()
-                                                craftQueueItem.recipeData:SetEquippedProfessionGearSet()
+                                                recipeData:SetEquippedProfessionGearSet()
                                                 CraftSim.CRAFTQ.UI:UpdateDisplay()
                                             end)
                                         end
@@ -674,23 +696,25 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
-                    orderTypeSubMenu:CreateRadio("Patron Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Npc
+                    orderTypeSubMenu:CreateCheckbox("Patron Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Npc)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS", not value)
                     end)
-                    orderTypeSubMenu:CreateRadio("Guild Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Guild
+
+                    orderTypeSubMenu:CreateCheckbox("Guild Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Guild)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS", not value)
                     end)
-                    orderTypeSubMenu:CreateRadio("Personal Orders", function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE") ==
-                            Enum.CraftingOrderType.Personal
+
+                    orderTypeSubMenu:CreateCheckbox("Personal Orders", function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
                     end, function()
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE", Enum.CraftingOrderType.Personal)
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS", not value)
                     end)
 
                     local guildOrderOptions = rootDescription:CreateButton("Guild Orders")
@@ -1920,18 +1944,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             upgradeArrow --.. "(" .. craftQueueItem.recipeData.subRecipeDepth .. ")"
     end
     if recipeData.orderData then
-        --upCraftText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 15, 15)
-        upCraftText = " " .. CreateAtlasMarkup("Professions-Crafting-Orders-Icon", 15, 15)
-
-        if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
-            upCraftText = upCraftText .. " " .. f.bb("NPC")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Guild then
-            upCraftText = upCraftText .. " " .. f.g("Guild")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Personal then
-            upCraftText = upCraftText .. " " .. f.bb("Pers.")
-        elseif recipeData.orderData.orderType == Enum.CraftingOrderType.Public then
-            upCraftText = upCraftText .. " " .. f.b("Public")
-        end
+        upCraftText = upCraftText .. " " .. CraftSim.UTIL:GetOrderTypeText(recipeData.orderData.orderType)
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 

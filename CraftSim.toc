@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for the war within gold making
 ## Author: genju
-## Version: 19.5.1
+## Version: 19.6.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -40,6 +40,7 @@ DB/priceOverrideDB.lua
 Media/Media.lua
 
 Util/Frames.lua
+Util/Widgets.lua
 Util/Comm.lua
 Util/API.lua
 
@@ -66,8 +67,8 @@ Modules/CustomerHistory/UI.lua
 Modules/Statistics/Statistics.lua
 Modules/Statistics/UI.lua
 
-Modules/CraftResults/CraftResults.lua
-Modules/CraftResults/UI.lua
+Modules/CraftLog/CraftLog.lua
+Modules/CraftLog/UI.lua
 
 Modules/PriceOverride/PriceOverride.lua
 Modules/PriceOverride/UI.lua
@@ -150,6 +151,7 @@ Data/SpecializationData/The_War_Within/Engineering.lua
 Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
+Classes/OnCraftData.lua
 Classes/CooldownData.lua
 Classes/ProfessionData.lua
 Classes/ConcentrationData.lua
@@ -175,7 +177,7 @@ Classes/ReagentOptimizationResult.lua
 Classes/TopGearResult.lua
 Classes/CraftResult.lua
 Classes/CraftResultItem.lua
-Classes/CraftResultSavedReagent.lua
+Classes/CraftResultReagent.lua
 Classes/CraftSessionData.lua
 Classes/CraftRecipeData.lua
 Classes/JSONBuilder.lua

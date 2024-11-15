@@ -93,7 +93,7 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPr
     return priceInfo.ahPrice, priceInfo
 end
 
----Wrapper for Price Source addons price fetch by itemLink (used mostly by gear and craft results)
+---Wrapper for Price Source addons price fetch by itemLink (used mostly by gear and craft log)
 ---@param itemLink string
 ---@param isReagent? boolean Use TSM Expression for reagents
 ---@param considerSubCrafts? boolean

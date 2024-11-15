@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.CraftResult : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, craftingItemResultData: CraftingItemResultData): CraftSim.CraftResult
 CraftSim.CraftResult = CraftSim.CraftSimObject:extend()
@@ -11,16 +13,36 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.recipeID = recipeData.recipeID
     ---@type CraftSim.CraftResultItem[]
     self.craftResultItems = {}
-    ---@type CraftSim.CraftResultSavedReagent[]
+    ---@type CraftSim.CraftResultReagent[]
     self.savedReagents = {}
+    ---@type CraftSim.CraftResultReagent[]
+    self.reagents = {}
     self.expectedQuality = recipeData.resultData.expectedQuality
     self.triggeredMulticraft = false
     self.triggeredResourcefulness = false
+    self.triggeredIngenuity = false
+    self.savedConcentration = 0
+    self.usedConcentration = 0
+    self.ingenuityRefund = 0
+    self.concentrating = recipeData.concentrating
+    self.savedCosts = 0
+    self.craftingCosts = 0
+    self.reagentCombinationID = ""
+    self.isWorkOrder = recipeData:IsWorkOrder()
+    self.orderData = recipeData.orderData
 
     for _, craftingItemResult in pairs(craftingItemResultData) do
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
             self.triggeredMulticraft = true
         end
+
+        if craftingItemResult.hasIngenuityProc then
+            self.triggeredIngenuity = true
+            self.savedConcentration = craftingItemResult.ingenuityRefund or 0
+        end
+
+        self.ingenuityRefund = craftingItemResult.ingenuityRefund or 0
+        self.usedConcentration = craftingItemResult.concentrationSpent or 0
 
         table.insert(self.craftResultItems,
             CraftSim.CraftResultItem(craftingItemResult.hyperlink, craftingItemResult.quantity,
@@ -29,44 +51,142 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
 
     -- just take resourcefulness from the first craftResult
     -- this is because of a blizzard bug where the same proc is listed in every craft result
-    self.savedCosts = 0
+
     if craftingItemResultData[1].resourcesReturned then
         self.triggeredResourcefulness = true
         for _, craftingResourceReturnInfo in pairs(craftingItemResultData[1].resourcesReturned) do
-            local craftResultSavedReagent = CraftSim.CraftResultSavedReagent(recipeData,
+            local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData,
                 craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
-            self.savedCosts = self.savedCosts + craftResultSavedReagent.savedCosts
+            self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
             table.insert(self.savedReagents, craftResultSavedReagent)
         end
     end
 
+    -- Reagents
+    do
+        local reagentItemIDs = {}
+        if recipeData.isSalvageRecipe then
+            local slot = recipeData.reagentData.salvageReagentSlot
+            local itemID = slot.activeItem:GetItemID()
+            local quantity = slot.requiredQuantity
+            local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+            self.craftingCosts = self.craftingCosts + reagentCosts
+            tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
+            tinsert(reagentItemIDs, itemID .. "." .. quantity)
+        end
 
-    local mcChance = ((recipeData.supportsCraftingStats and recipeData.supportsMulticraft) and recipeData.professionStats.multicraft:GetPercent(true)) or
-        1
-    local resChance = ((recipeData.supportsCraftingStats and recipeData.supportsResourcefulness) and recipeData.professionStats.resourcefulness:GetPercent(true)) or
-        1
+        if recipeData:HasRequiredSelectableReagent() then
+            local slot = recipeData.reagentData.requiredSelectableReagentSlot
+            if slot then
+                local itemID = slot.activeReagent.item:GetItemID()
+                local quantity = slot.maxQuantity
+                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                local isOrderReagent = slot.activeReagent:IsOrderReagentIn(recipeData)
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+                tinsert(reagentItemIDs, itemID .. "." .. quantity)
+            end
+        end
 
-    self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData) * resChance) or
-        0
+        -- required
+        for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
+            for _, reagentItem in ipairs(requiredReagent.items) do
+                local quantity = reagentItem.quantity
+                local itemID = reagentItem.item:GetItemID()
+                local isOrderReagent = reagentItem:IsOrderReagentIn(recipeData)
 
-    if mcChance < 1 then
-        mcChance = (self.triggeredMulticraft and mcChance) or (1 - mcChance)
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+
+                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                if quantity > 0 then
+                    tinsert(reagentItemIDs, itemID .. "." .. quantity)
+                end
+            end
+        end
+
+        for _, optionalReagentSlot in ipairs(GUTIL:Concat { recipeData.reagentData.optionalReagentSlots, recipeData.reagentData.finishingReagentSlots }) do
+            if optionalReagentSlot:IsAllocated() then
+                local itemID = optionalReagentSlot.activeReagent.item:GetItemID()
+                local quantity = optionalReagentSlot.maxQuantity
+                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(recipeData)
+                if not isOrderReagent then
+                    self.craftingCosts = self.craftingCosts + reagentCosts
+                end
+                tinsert(self.reagents,
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+                tinsert(reagentItemIDs, itemID .. "." .. quantity)
+            end
+        end
+
+        for i, itemID in ipairs(reagentItemIDs) do
+            local itemIDString
+            if i > 1 then
+                itemIDString = ":" .. itemID
+            else
+                itemIDString = itemID
+            end
+            self.reagentCombinationID = self.reagentCombinationID .. itemIDString
+        end
     end
 
-    local totalResChance = 1
-    local numProcced = #self.savedReagents
-    if resChance < 1 and self.triggeredResourcefulness then
-        totalResChance = resChance ^ numProcced
-    elseif resChance < 1 then
-        totalResChance = (1 - resChance) ^ numProcced
+    self.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents - self.savedCosts
+
+    self.reagentCombinationID = self.reagentCombinationID ..
+        ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
+
+    self.profit = self:CalculateCraftProfit()
+end
+
+function CraftSim.CraftResult:CalculateCraftProfit()
+    local craftingCosts = self.craftingCosts -- considering saved costs by resourcefulness and orderReagents
+
+    local orderCommission = 0
+    if self.isWorkOrder then
+        orderCommission = self.orderData.tipAmount - self.orderData.consortiumCut
+
+        -- check for npcOrderRewards
+        if self.orderData.npcOrderRewards then
+            for _, orderRewardInfo in ipairs(self.orderData.npcOrderRewards) do
+                local itemID = GUTIL:GetItemIDByLink(orderRewardInfo.itemLink)
+                local sellPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID) * CraftSim.CONST.AUCTION_HOUSE_CUT
+                orderCommission = orderCommission + sellPrice
+            end
+        end
     end
 
-    self.craftingChance = mcChance * totalResChance
+    local resultValue = 0
+    if not self.isWorkOrder then
+        for _, craftResultItem in pairs(self.craftResultItems) do
+            local itemLink = craftResultItem.item:GetItemLink()
+            local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
+            local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+            resultValue = resultValue + resultItemPrice * quantity
+        end
+    end
 
-    local craftProfit = CraftSim.CRAFT_LOG:GetProfitForCraft(recipeData, self)
+    local craftProfit = 0
+    if self.isWorkOrder then
+        craftProfit = orderCommission - craftingCosts
+    else
+        craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - craftingCosts
+    end
 
-    self.profit = craftProfit
-    self.expectedAverageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
+    return craftProfit
+end
+
+---@return number
+function CraftSim.CraftResult:GetMulticraftExtraItems()
+    return GUTIL:Fold(self.craftResultItems, 0, function(multicraftExtraItems, craftResultItem)
+        return multicraftExtraItems + craftResultItem.quantityMulticraft
+    end)
 end
 
 function CraftSim.CraftResult:Debug()

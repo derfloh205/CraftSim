@@ -475,6 +475,34 @@ function CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, profession, recipe
     end
 end
 
+function CraftSim.DB.CRAFTER:UpdateProfessionFavorites()
+    if C_TradeSkillUI.IsTradeSkillReady() then
+        local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+        local favoriteRecipeIDs = GUTIL:Filter(C_TradeSkillUI.GetAllRecipeIDs(), function(recipeID)
+            ---@diagnostic disable-next-line: return-type-mismatch
+            return C_TradeSkillUI.IsRecipeFavorite(recipeID)
+        end)
+        CraftSim.DB.CRAFTER:SaveFavoriteRecipes(CraftSim.UTIL:GetPlayerCrafterUID(), profession, favoriteRecipeIDs)
+    end
+end
+
+---@param recipeID RecipeID
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+function CraftSim.DB.CRAFTER:IsFavorite(recipeID, crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+
+    if not CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes then
+        return false
+    end
+
+    if not CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession] then
+        return false
+    end
+
+    return tContains(CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes[profession], recipeID)
+end
+
 --- E.g. Forget Character
 ---@param crafterUID CrafterUID
 ---@param profession Enum.Profession

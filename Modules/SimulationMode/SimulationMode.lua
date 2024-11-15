@@ -299,10 +299,7 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
         end
     end
 
-
-
-    --- TODO Rework with more beauty when sim mode is reworked
-    for i, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
+    for _, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
         for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
             ---@type GGUI.ItemSelector
             local optionalReagentItemSelector = optionalReagentItemSelector

@@ -32,8 +32,14 @@ function CraftSim.DEBUG:SystemPrint(text)
     print(text)
 end
 
-function CraftSim.DEBUG:InspectTable(t, label)
+---@param t table
+---@param label string?
+---@param openDevTool boolean?
+function CraftSim.DEBUG:InspectTable(t, label, openDevTool)
     if DevTool then
+        if openDevTool then
+            DevTool.MainWindow:Show()
+        end
         DevTool:AddData(t, label)
     end
 end
@@ -83,21 +89,25 @@ function CraftSim.DEBUG:ProfilingUpdate(label)
     CraftSim.DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
+---@param label string
 function CraftSim.DEBUG:StartProfiling(label)
     local time = debugprofilestop();
     CraftSim.DEBUG.profilings[label] = time
 end
 
+---@param label string
+---@return number milliseconds since StartProfiling was called
 function CraftSim.DEBUG:StopProfiling(label)
     local startTime = CraftSim.DEBUG.profilings[label]
     if not startTime then
         print("Util Profiling Label not found on Stop: " .. tostring(label))
-        return
+        return 0
     end
     local time = debugprofilestop()
-    local diff = time - startTime
+    local diff = CraftSim.GUTIL:Round(time - startTime)
     CraftSim.DEBUG.profilings[label] = nil
-    CraftSim.DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    CraftSim.DEBUG:print(label .. ": " .. diff .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    return diff
 end
 
 ---@deprecated

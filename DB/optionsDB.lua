@@ -155,7 +155,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions
                 .craftGarbageCollectCrafts
 
-            -- CRAFT RESULTS
+            -- CRAFT LOG
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LOG_DISABLE] =
                 CraftSimOptions
                 .craftResultsDisable
@@ -266,6 +266,10 @@ function CraftSim.DB.OPTIONS:Migrate()
         if CraftSimDB.optionsDB.data["RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"] == 1 then
             CraftSimDB.optionsDB.data["RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"] = 0
         end
+    end)
+    migrate(13, 14, function()
+        --- option removal
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
     end)
 end
 

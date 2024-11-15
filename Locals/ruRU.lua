@@ -187,7 +187,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_EXPORT_JSON] = "Экспортировать JSON",
         [CraftSim.CONST.TEXT.CRAFT_LOG_RECIPE_STATISTICS] = "Статистика рецептов",
         [CraftSim.CONST.TEXT.CRAFT_LOG_NOTHING] = "Пока ничего не создано!",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_1] = "Крафты: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX] = "Крафты: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_2] = "Ожидаемая Ø прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_3] = "Реальная Ø прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_4] = "Реальная прибыль: ",
@@ -195,13 +195,9 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_7] = "Перепроизводство: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_8] = "- Ø дополнительные предметы: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_9] = "Проки находчивости: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_10] = "- Ø сэкономленные затраты: ",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_STATISTICS_11] = "Прибыль: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX0] = "- Ø сэкономленные затраты: ",
+        [CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1] = "Прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_LOG_SAVED_REAGENTS] = "Сохраненные реагенты",
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX] = f.l("Отключить запись результатов крафта"),
-        [CraftSim.CONST.TEXT.CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP] =
-            "Включение этого параметра останавливает запись любых результатов крафта во время крафта и может " ..
-            f.g("увеличить производительность"),
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Средняя прибыль CraftSim",

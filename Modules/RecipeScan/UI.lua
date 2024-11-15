@@ -14,9 +14,6 @@ CraftSim.RECIPE_SCAN.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
---- TODO: Move to debug window as toggle
-local debugScannedRecipeIDs = false
-
 function CraftSim.RECIPE_SCAN.UI:Init()
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
@@ -711,21 +708,49 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             noSelectionColor = true,
             selectionCallback = function(row)
                 local recipeData = row.recipeData --[[@as CraftSim.RecipeData]]
+
                 if recipeData then
-                    if IsShiftKeyDown() then
+                    if IsShiftKeyDown() and IsMouseButtonDown("LeftButton") then
                         -- queue into CraftQueue
                         if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
                             recipeData.concentrating = true
                         end
                         CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
-                    else
+                    elseif IsMouseButtonDown("LeftButton") then
                         C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                    elseif IsMouseButtonDown("RightButton") then
+                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                            rootDescription:CreateButton("Add to Craft Queue", function()
+                                -- queue into CraftQueue
+                                if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+                                    recipeData.concentrating = true
+                                end
+                                CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                            end)
+                            if recipeData:IsCrafter() then
+                                local isFavorite = C_TradeSkillUI.IsRecipeFavorite(recipeData.recipeID)
+                                if isFavorite then
+                                    rootDescription:CreateButton(f.r("Remove") .. " Favorite", function()
+                                        C_TradeSkillUI.SetRecipeFavorite(recipeData.recipeID, false)
+                                        row.learnedColumn:SetLearned(true, false)
+                                    end)
+                                else
+                                    rootDescription:CreateButton(f.g("Add") .. " Favorite", function()
+                                        C_TradeSkillUI.SetRecipeFavorite(recipeData.recipeID, true)
+                                        row.learnedColumn:SetLearned(true, true)
+                                    end)
+                                end
+                            else
+                                rootDescription:CreateButton(f.r("Favorites can only be changed on the crafter"))
+                            end
+                        end)
                     end
                 end
             end
         },
-        rowConstructor = function(columns)
+        rowConstructor = function(columns, row)
             local learnedColumn = columns[1]
+            row.learnedColumn = learnedColumn
             local recipeColumn = columns[2]
             local expectedResultColumn = columns[3]
             local concentrationValueColumn = columns[4]
@@ -748,6 +773,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             local learnedIconSize = 0.08
             local learnedIcon = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, learnedIconSize)
             local notLearnedIcon = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, learnedIconSize)
+            local favoriteIcon = CreateAtlasMarkup("PetJournal-FavoritesIcon", 15, 15)
 
             learnedColumn.text = GGUI.Text({
                 parent = learnedColumn,
@@ -761,7 +787,12 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 },
             })
 
-            function learnedColumn:SetLearned(learned)
+            function learnedColumn:SetLearned(learned, isFavorite)
+                -- if its favorite it has to be learned
+                if isFavorite then
+                    learnedColumn.text:SetText(favoriteIcon)
+                    return
+                end
                 if learned then
                     learnedColumn.text:SetText(learnedIcon)
                 else
@@ -962,7 +993,6 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
             owner = row.frame
         }
 
-        -- todo: add profession icon prefix
         crafterColumn.text:SetText(professionIcon .. " " .. coloredCrafterName)
         ---@type Enum.Profession
         ---@type CraftSim.CrafterData
@@ -1020,9 +1050,7 @@ end
 function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
     local resultList = row.content.resultList
     local showProfit = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
-    if debugScannedRecipeIDs then
-        recipeData:DebugInspect("RecipeScan: " .. recipeData.recipeName)
-    end
+
     resultList:Add(
         function(row)
             local columns = row.columns
@@ -1052,9 +1080,13 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                     "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
             end
 
-            recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
+            local isFavorite = CraftSim.DB.CRAFTER:IsFavorite(recipeData.recipeID, recipeData:GetCrafterUID(),
+                recipeData.professionData.professionInfo.profession)
 
-            learnedColumn:SetLearned(recipeData.learned)
+            recipeColumn.text:SetText(recipeRarity.hex ..
+                recipeData.recipeName .. "|r" .. cooldownInfoText)
+
+            learnedColumn:SetLearned(recipeData.learned, isFavorite)
 
             if enableConcentration then
                 expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemConcentration)
