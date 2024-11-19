@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.CRAFT_QUEUE : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_QUEUE = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.craftQueueDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.craftQueueDB")
 
 function CraftSim.DB.CRAFT_QUEUE:Init()
     if not CraftSimDB.craftQueueDB then

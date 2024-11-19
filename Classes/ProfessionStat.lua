@@ -5,7 +5,7 @@ local CraftSim = select(2, ...)
 ---@overload fun(name: string?, value: number?, percentMod: number?): CraftSim.ProfessionStat
 CraftSim.ProfessionStat = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Classes.ProfessionsStats.ProfessionStat")
+local print = CraftSim.DEBUG:RegisterDebugID("Classes.ProfessionsStats.ProfessionStat")
 
 ---@param name string
 ---@param value number?

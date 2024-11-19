@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.RECIPE_SUB_CRAFTER : CraftSim.DB.Repository
 CraftSim.DB.RECIPE_SUB_CRAFTER = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.recipeSubCrafterDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.recipeSubCrafterDB")
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:Init()
     if not CraftSimDB.recipeSubCrafterDB then

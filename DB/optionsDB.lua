@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.optionsDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.optionsDB")
 
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB

@@ -10,7 +10,7 @@ CraftSim.PRICE_SOURCE.noPriceDataLinks = {}
 CraftSim.PRICE_SOURCE.overrideResultProfits = {} -- mapped by qualityID
 CraftSim.PRICE_SOURCE.overrideCraftingCosts = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint("Data.PriceSource")
+local print = CraftSim.DEBUG:RegisterDebugID("Data.PriceSource")
 
 ---@class CraftSim.PriceData.PriceInfo
 ---@field ahPrice number

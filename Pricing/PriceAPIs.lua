@@ -19,7 +19,7 @@ CraftSimNO_PRICE_API = { name = "None" }
 CraftSim.PRICE_APIS.available = true
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint("Data.PriceAPI")
+local print = CraftSim.DEBUG:RegisterDebugID("Data.PriceAPI")
 
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()

@@ -27,7 +27,7 @@ CraftSim.INIT.currentRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
-local print = CraftSim.DEBUG:SetDebugPrint("Init")
+local print = CraftSim.DEBUG:RegisterDebugID("Init")
 
 function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
 	-- adapt cached values
@@ -195,7 +195,7 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
-	local print = CraftSim.DEBUG:SetDebugPrint("Init.InitCraftRecipeHooks")
+	local print = CraftSim.DEBUG:RegisterDebugID("Init.InitCraftRecipeHooks")
 
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)

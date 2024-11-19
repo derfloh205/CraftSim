@@ -7,7 +7,7 @@ CraftSim.PRICE_DETAILS.UI = {}
 CraftSim.PRICE_DETAILS.frame = nil
 CraftSim.PRICE_DETAILS.frameWO = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.PriceDetails.UI")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.PriceDetails.UI")
 
 function CraftSim.PRICE_DETAILS.UI:Init()
     local sizeX = 410

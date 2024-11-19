@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftLog")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftLog")
 ---@class CraftSim.CRAFT_LOG : Frame
 CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
@@ -55,7 +55,7 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
 
     -- always update reagents of that craft
     GUTIL:WaitForEvent("PLAYERREAGENTBANKSLOTS_CHANGED", function()
-        local print = CraftSim.DEBUG:SetDebugPrint("CACHE_ITEM_COUNT")
+        local print = CraftSim.DEBUG:RegisterDebugID("CACHE_ITEM_COUNT")
         print("PLAYERREAGENTBANKSLOTS_CHANGED After Craft")
         -- update item count for each of the used reagents in this craft! (in next frame to batch results)
         RunNextFrame(function()
@@ -99,7 +99,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param enableAdvData boolean
 function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData, enableAdvData)
-    local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftLog.UpdateCraftData")
+    local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftLog.UpdateCraftData")
     local recipeID = recipeData.recipeID
 
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()

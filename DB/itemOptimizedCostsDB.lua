@@ -18,7 +18,7 @@ CraftSim.DB.ITEM_OPTIMIZED_COSTS = CraftSim.DB:RegisterRepository()
 ---@field concentration boolean
 ---@field concentrationCost number
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.itemOptimizedCostsDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.itemOptimizedCostsDB")
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Init()
     if not CraftSimDB.itemOptimizedCostsDB then

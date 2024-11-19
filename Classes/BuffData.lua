@@ -11,7 +11,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 
 local debug = false
 
-local print = CraftSim.DEBUG:SetDebugPrint("Classes.RecipeData.BuffData")
+local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.BuffData")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.BuffData:new(recipeData)

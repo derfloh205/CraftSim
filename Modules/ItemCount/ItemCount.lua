@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:SetDebugPrint("Data.ItemCount")
+local print = CraftSim.DEBUG:RegisterDebugID("Data.ItemCount")
 
 ---@class CraftSim.ITEM_COUNT : Frame
 CraftSim.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })

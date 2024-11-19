@@ -6,7 +6,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
 CraftSim.ProfessionGear = CraftSim.CraftSimObject:extend()
-local print = CraftSim.DEBUG:SetDebugPrint("Classes.RecipeData.ProfessionGear")
+local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ProfessionGear")
 
 function CraftSim.ProfessionGear:new()
 	---@type CraftSim.ProfessionStats

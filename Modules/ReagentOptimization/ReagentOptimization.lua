@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.REAGENT_OPTIMIZATION
 CraftSim.REAGENT_OPTIMIZATION = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.ReagentOptimization")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.ReagentOptimization")
 
 local function translateLuaIndex(index)
     return index + 1

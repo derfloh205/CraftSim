@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.PriceData : CraftSim.CraftSimObject
 CraftSim.PriceData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Classes.RecipeData.PriceData")
+local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.PriceData")
 local f = GUTIL:GetFormatter()
 
 ---@param recipeData CraftSim.RecipeData

@@ -12,7 +12,7 @@ CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 ---@class CraftSim.RECIPE_SCAN.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.RecipeScan.UI")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.UI")
 
 function CraftSim.RECIPE_SCAN.UI:Init()
     local frameLevel = CraftSim.UTIL:NextFrameLevel()

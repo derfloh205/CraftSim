@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.CUSTOMER_HISTORY : CraftSim.DB.Repository
 CraftSim.DB.CUSTOMER_HISTORY = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.customerHistoryDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.customerHistoryDB")
 
 ---@alias CustomerID string
 

@@ -35,9 +35,9 @@ CraftSim.RECIPE_SCAN.SORT_MODES = {
     CRAFTING_COST = "CRAFTING_COST",
 }
 
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.RecipeScan")
-local printF = CraftSim.DEBUG:SetDebugPrint("Modules.RecipeScan.Filter")
-local printS = CraftSim.DEBUG:SetDebugPrint("Modules.RecipeScan.Scanning")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan")
+local printF = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.Filter")
+local printS = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.Scanning")
 
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 function CraftSim.RECIPE_SCAN:ToggleScanButton(row, value)

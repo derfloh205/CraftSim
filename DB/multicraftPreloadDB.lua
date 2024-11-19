@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.MULTICRAFT_PRELOAD : CraftSim.DB.Repository
 CraftSim.DB.MULTICRAFT_PRELOAD = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.multicraftPreloadDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.multicraftPreloadDB")
 
 function CraftSim.DB.MULTICRAFT_PRELOAD:Init()
     if not CraftSimDB.multicraftPreloadDB then

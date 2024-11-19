@@ -13,7 +13,7 @@ CraftSim.CRAFTQ.UI = {}
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftQueue.UI")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
 function CraftSim.CRAFTQ.UI:Init()
     local sizeX = 880

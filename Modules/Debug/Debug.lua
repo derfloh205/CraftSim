@@ -18,10 +18,15 @@ local systemPrint = print
 
 ---@param debugID string Format: Category.(...).ID
 ---@return fun(text: string, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
-function CraftSim.DEBUG:SetDebugPrint(debugID)
-    if not tContains(self.registeredDebugIDs, debugID) then
-        tinsert(self.registeredDebugIDs, debugID)
-        -- CraftSim.DEBUG.registeredDebugIDs[debugID] = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")[debugID] or false
+function CraftSim.DEBUG:RegisterDebugID(debugID)
+    -- check for each subID
+    local splitIDs = strsplittable(".", debugID)
+    local fullID = ""
+    for _, splitID in ipairs(splitIDs) do
+        fullID = string.format("%s.%s", fullID, splitID)
+        if not tContains(self.registeredDebugIDs, fullID) then
+            tinsert(self.registeredfullIDs, debugID)
+        end
     end
     local function print(text, recursive, l, level)
         if CraftSim.DEBUG and CraftSim.DEBUG.frame then
@@ -95,7 +100,7 @@ function CraftSim.DEBUG:PrintTable(t, debugID, recursive, level)
 end
 
 function CraftSim.DEBUG:ProfilingUpdate(label)
-    local print = CraftSim.DEBUG:SetDebugPrint("Profiling")
+    local print = CraftSim.DEBUG:RegisterDebugID("Profiling")
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
     print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)")

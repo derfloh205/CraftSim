@@ -8,7 +8,7 @@ CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
 
-local print = CraftSim.DEBUG:SetDebugPrint("Util")
+local print = CraftSim.DEBUG:RegisterDebugID("Util")
 
 function CraftSim.UTIL:NextFrameLevel()
     local frameLevel = CraftSim.UTIL.frameLevel

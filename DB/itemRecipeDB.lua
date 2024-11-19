@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.ITEM_RECIPE : CraftSim.DB.Repository
 CraftSim.DB.ITEM_RECIPE = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint("Database.itemRecipeDB")
+local print = CraftSim.DEBUG:RegisterDebugID("Database.itemRecipeDB")
 
 ---@class CraftSim.ItemRecipeData
 ---@field recipeID RecipeID
