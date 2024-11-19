@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.6.1"),
+        f.p .. "Fixed " .. f.bb("Craft Log") .. " not account for salvage crafting cost",
         newP("19.6.0"),
         f.P .. f.e("New Scrollbar Design") .. " for all lists!",
         f.P .. "Refactored " .. f.bb("Craft Results") .. " into " .. f.g("Craft Log"),

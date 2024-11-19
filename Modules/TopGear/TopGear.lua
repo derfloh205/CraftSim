@@ -211,11 +211,9 @@ end
 ---@return CraftSim.ProfessionGearSet[] topGearSets
 function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local equippedGear = CraftSim.ProfessionGearSet(recipeData)
-    if recipeData:IsCrafter() then
-        equippedGear:LoadCurrentEquippedSet()
-    else
-        equippedGear:LoadCurrentEquippedSet(recipeData.crafterData)
-    end
+
+    equippedGear:LoadCurrentEquippedSet()
+
     local inventoryGear = CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
 
     local equippedGearList = GUTIL:Filter(equippedGear:GetProfessionGearList(),
@@ -355,7 +353,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         local relativeConcentrationValue = concentrationValue - concentrationValuePreviousGear
         local relativeStats = professionGearSet.professionStats:Copy()
         local expectedQuality = recipeData.resultData.expectedQuality
-        local expectedQualityUpgrade = recipeData.resultData.expectedQualityUpgrade
+        local expectedQualityUpgrade = recipeData.resultData.expectedQualityUpgrade -- TODO: Remove or change
         relativeStats:subtract(previousGear.professionStats)
         local result = CraftSim.TopGearResult(professionGearSet, averageProfit, relativeProfit, concentrationValue,
             relativeConcentrationValue, relativeStats,

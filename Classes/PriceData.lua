@@ -93,6 +93,7 @@ function CraftSim.PriceData:Update()
         self.craftingCosts = self.craftingCosts +
             reagentPriceInfo.itemPrice * reagentData.salvageReagentSlot.requiredQuantity
         self.craftingCostsRequired = self.craftingCosts
+        self.craftingCostsNoOrderReagents = self.craftingCosts
 
         if reagentPriceInfo.priceInfo.isExpectedCost then
             tinsert(self.selfCraftedReagents, itemID)
