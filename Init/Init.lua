@@ -195,10 +195,10 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
+	local print = CraftSim.DEBUG:SetDebugPrint("Init.InitCraftRecipeHooks")
+
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
-		local print = CraftSim.DEBUG:SetDebugPrint("Init.InitCraftRecipeHooks")
-
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
 			return
 		end

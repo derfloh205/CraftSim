@@ -10,7 +10,7 @@ local GUTIL = CraftSim.GUTIL
 
 CraftSim.FRAME.frames = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("Frames")
+local print = CraftSim.DEBUG:SetDebugPrint("Util.Frames")
 
 function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if statDiff == nil then

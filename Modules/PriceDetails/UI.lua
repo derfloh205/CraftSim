@@ -7,7 +7,7 @@ CraftSim.PRICE_DETAILS.UI = {}
 CraftSim.PRICE_DETAILS.frame = nil
 CraftSim.PRICE_DETAILS.frameWO = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint("PRICE_DETAILS")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.PriceDetails.UI")
 
 function CraftSim.PRICE_DETAILS.UI:Init()
     local sizeX = 410
@@ -51,7 +51,9 @@ function CraftSim.PRICE_DETAILS.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
+            " " ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+                CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,

@@ -28,7 +28,7 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 CraftSim.CRAFTQ.itemCountCache = nil
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint("CraftQueue")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftQueue")
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem

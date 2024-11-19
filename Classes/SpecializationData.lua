@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local print = CraftSim.DEBUG:SetDebugPrint("SpecializationData")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.RecipeData.SpecializationData")
 
 local GUTIL = CraftSim.GUTIL
 

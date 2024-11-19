@@ -17,7 +17,7 @@ CraftSim.CRAFT_LOG.UI = {}
 CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
 CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR = { 0.0, 1.0, 0.0, 0.8 }
 
-local print = CraftSim.DEBUG:SetDebugPrint("CraftLog.UI")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftLog.UI")
 
 function CraftSim.CRAFT_LOG.UI:Init()
     ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame

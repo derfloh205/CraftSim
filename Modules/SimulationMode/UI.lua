@@ -15,7 +15,7 @@ CraftSim.SIMULATION_MODE.UI.WORKORDER = {}
 ---@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER
 CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("SIMULATION_MODE")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.SimulationMode.UI")
 
 function CraftSim.SIMULATION_MODE.UI:Init()
     local function createSimulationModeFrames(schematicForm, workOrder)

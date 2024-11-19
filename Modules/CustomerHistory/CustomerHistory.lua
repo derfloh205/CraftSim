@@ -9,7 +9,7 @@ CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
 
-local print = CraftSim.DEBUG:SetDebugPrint("CustomerHistory")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.CustomerHistory")
 
 function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY:AutoPurge()

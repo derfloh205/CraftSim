@@ -43,7 +43,7 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
-local print = CraftSim.DEBUG:SetDebugPrint("CONCENTRATION_TRACKER")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.ConcentrationTracker.UI")
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Init()
     local sizeX = 220

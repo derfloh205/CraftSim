@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:SetDebugPrint("BUFFDATA")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftBuffs")
 
 local L = CraftSim.UTIL:GetLocalizer()
 

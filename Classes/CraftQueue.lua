@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
 CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("CRAFTQ_CRAFTING")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.CraftQueue")
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]

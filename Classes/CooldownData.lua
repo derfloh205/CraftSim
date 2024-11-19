@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeID: RecipeID): CraftSim.CooldownData
 CraftSim.CooldownData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("COOLDOWNS")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.CooldownData")
 
 ---@param recipeID RecipeID
 function CraftSim.CooldownData:new(recipeID)

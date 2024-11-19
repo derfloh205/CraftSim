@@ -9,7 +9,7 @@ CraftSim.TOPGEAR = CraftSim.TOPGEAR
 ---@class CraftSim.TOPGEAR.UI
 CraftSim.TOPGEAR.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("TOP_GEAR")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.TopGear.UI")
 
 function CraftSim.TOPGEAR.UI:Init()
     local sizeX = 270
@@ -26,7 +26,9 @@ function CraftSim.TOPGEAR.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
+            " " ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+                CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,

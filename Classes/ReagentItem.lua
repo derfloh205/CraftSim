@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.ReagentItem : CraftSim.CraftSimObject
 CraftSim.ReagentItem = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("ReagentItem")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.RecipeData.ReagentData.Reagent.ReagentItem")
 
 ---@param originalItemID ItemID
 ---@param qualityID QualityID?

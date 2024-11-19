@@ -54,20 +54,25 @@ function CraftSim.DEBUG.UI:Init()
                 local splitIDs = strsplittable(".", debugID)
                 local fullID = ""
                 for i, splitID in ipairs(splitIDs) do
-                    if i > 1 then
-                        fullID = string.format("%s.%s", fullID, splitID)
-                    else
+                    local previousButton
+                    if i == 1 then
                         fullID = splitID
+                        previousButton = logIDs
+                    else
+                        local previousID = fullID
+                        previousButton = buttonCache[previousID]
+                        fullID = string.format("%s.%s", previousID, splitID)
                     end
-                    local previousButton = buttonCache[string.gsub(fullID, "." .. splitID, "")] or logIDs
 
-                    if not buttonCache[fullID] then
-                        previousButton:CreateCheckbox(debugID, function()
-                            return debugIDTable[fullID]
-                        end, function()
-                            debugIDTable[fullID] = not debugIDTable[fullID]
-                        end)
-                    end
+                    buttonCache[fullID] = buttonCache[fullID] or previousButton:CreateCheckbox(splitID, function()
+                        return debugIDTable[fullID]
+                    end, function()
+                        CraftSim.DEBUG:SystemPrint("debugID: " .. debugID)
+                        CraftSim.DEBUG:SystemPrint("index: " .. i)
+                        CraftSim.DEBUG:SystemPrint("fullID: " .. fullID)
+                        CraftSim.DEBUG:SystemPrint("splitID: " .. splitID)
+                        debugIDTable[fullID] = not debugIDTable[fullID]
+                    end)
                 end
             end
 

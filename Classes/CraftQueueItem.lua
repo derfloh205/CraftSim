@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("CRAFTQ")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.CraftQueue.CraftQueueItem")
 
 ---@class CraftSim.CraftQueueItem.Options
 ---@field recipeData CraftSim.RecipeData
@@ -41,7 +41,7 @@ end
 
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
 function CraftSim.CraftQueueItem:CalculateCanCraft()
-    CraftSim.DEBUG:StartProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
+    CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
     local _, craftAbleAmount = self.recipeData:CanCraft(1)
     self.craftAbleAmount = craftAbleAmount
     self.canCraftOnce = craftAbleAmount > 0
@@ -56,7 +56,7 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
 
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
         self.isCrafter and self.learned
-    CraftSim.DEBUG:StopProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
+    CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 
 ---@class CraftSim.CraftQueueItem.Serialized

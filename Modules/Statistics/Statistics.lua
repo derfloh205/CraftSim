@@ -9,7 +9,7 @@ CraftSim.STATISTICS.frameNO_WO = nil
 ---@type GGUI.Frame
 CraftSim.STATISTICS.frameWO = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint("Statistics")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.Statistics")
 
 -- https://math.stackexchange.com/questions/888165/abramowitz-and-stegun-approximation-for-cumulative-normal-distribution
 function CraftSim.STATISTICS:CDF(q, mu, sd)

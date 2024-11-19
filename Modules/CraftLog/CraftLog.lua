@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint("CraftLog")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftLog")
 ---@class CraftSim.CRAFT_LOG : Frame
 CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
@@ -99,7 +99,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param enableAdvData boolean
 function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData, enableAdvData)
-    local print = CraftSim.DEBUG:SetDebugPrint("CraftLog.UpdateCraftData")
+    local print = CraftSim.DEBUG:SetDebugPrint("Modules.CraftLog.UpdateCraftData")
     local recipeID = recipeData.recipeID
 
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()

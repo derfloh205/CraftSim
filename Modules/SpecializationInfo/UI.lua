@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.SPECIALIZATION_INFO.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("SPECDATA")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.SpecializationInfo.UI")
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290

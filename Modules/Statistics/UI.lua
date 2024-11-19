@@ -15,7 +15,7 @@ CraftSim.STATISTICS.UI = {}
 
 CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
 
-local print = CraftSim.DEBUG:SetDebugPrint("STATISTICS")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.Statistics.UI")
 
 function CraftSim.STATISTICS.UI:Init()
     local sizeX = 500

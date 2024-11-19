@@ -5,7 +5,7 @@ local CraftSim = select(2, ...)
 ---@overload fun(serialized: boolean?):CraftSim.ProfessionStats
 CraftSim.ProfessionStats = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("ProfessionStats")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.ProfessionStats")
 
 ---@param serialized boolean?
 function CraftSim.ProfessionStats:new(serialized)

@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(currencyID : number): CraftSim.ConcentrationData
 CraftSim.ConcentrationData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint("CONCENTRATION")
+local print = CraftSim.DEBUG:SetDebugPrint("Classes.ConcentrationData")
 
 ---@param currencyID number
 function CraftSim.ConcentrationData:new(currencyID)

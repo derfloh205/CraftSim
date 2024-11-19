@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.PRICE_DETAILS = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint("PriceDetails")
+local print = CraftSim.DEBUG:SetDebugPrint("Modules.PriceDetails")
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
