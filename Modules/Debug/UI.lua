@@ -67,10 +67,6 @@ function CraftSim.DEBUG.UI:Init()
                     buttonCache[fullID] = buttonCache[fullID] or previousButton:CreateCheckbox(splitID, function()
                         return debugIDTable[fullID]
                     end, function()
-                        CraftSim.DEBUG:SystemPrint("debugID: " .. debugID)
-                        CraftSim.DEBUG:SystemPrint("index: " .. i)
-                        CraftSim.DEBUG:SystemPrint("fullID: " .. fullID)
-                        CraftSim.DEBUG:SystemPrint("splitID: " .. splitID)
                         debugIDTable[fullID] = not debugIDTable[fullID]
                     end)
                 end

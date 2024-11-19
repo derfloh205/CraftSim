@@ -22,10 +22,14 @@ function CraftSim.DEBUG:RegisterDebugID(debugID)
     -- check for each subID
     local splitIDs = strsplittable(".", debugID)
     local fullID = ""
-    for _, splitID in ipairs(splitIDs) do
-        fullID = string.format("%s.%s", fullID, splitID)
+    for i, splitID in ipairs(splitIDs) do
+        if i == 1 then
+            fullID = splitID
+        else
+            fullID = string.format("%s.%s", fullID, splitID)
+        end
         if not tContains(self.registeredDebugIDs, fullID) then
-            tinsert(self.registeredfullIDs, debugID)
+            tinsert(self.registeredDebugIDs, fullID)
         end
     end
     local function print(text, recursive, l, level)
