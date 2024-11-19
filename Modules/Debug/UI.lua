@@ -36,6 +36,7 @@ function CraftSim.DEBUG.UI:Init()
     })
 
     local debugIDTable = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+    local registeredDebugIDs = CraftSim.DEBUG:GetRegisteredDebugIDs()
 
     debugFrame.content.optionsButton = CraftSim.WIDGETS.OptionsButton {
         parent = debugFrame.frame,
@@ -46,12 +47,28 @@ function CraftSim.DEBUG.UI:Init()
         menuUtilCallback = function(ownerRegion, rootDescription)
             local logIDs = rootDescription:CreateButton("Log IDs")
 
-            for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
-                logIDs:CreateCheckbox(debugID, function()
-                    return debugIDTable[debugID]
-                end, function()
-                    debugIDTable[debugID] = not debugIDTable[debugID]
-                end)
+            -- dynamically create logid checkboxes use . as delimiter for categories
+            local buttonCache = {}
+
+            for _, debugID in pairs(registeredDebugIDs) do
+                local splitIDs = strsplittable(".", debugID)
+                local fullID = ""
+                for i, splitID in ipairs(splitIDs) do
+                    if i > 1 then
+                        fullID = string.format("%s.%s", fullID, splitID)
+                    else
+                        fullID = splitID
+                    end
+                    local previousButton = buttonCache[string.gsub(fullID, "." .. splitID, "")] or logIDs
+
+                    if not buttonCache[fullID] then
+                        previousButton:CreateCheckbox(debugID, function()
+                            return debugIDTable[fullID]
+                        end, function()
+                            debugIDTable[fullID] = not debugIDTable[fullID]
+                        end)
+                    end
+                end
             end
 
             rootDescription:CreateCheckbox(

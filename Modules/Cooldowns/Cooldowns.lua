@@ -7,7 +7,7 @@ CraftSim.COOLDOWNS = {}
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
+local print = CraftSim.DEBUG:SetDebugPrint("Cooldowns")
 
 CraftSim.COOLDOWNS.isUpdatingTimers = false
 

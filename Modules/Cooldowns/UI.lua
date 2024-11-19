@@ -16,7 +16,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local LID = CraftSim.CONST.TEXT
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
+local print = CraftSim.DEBUG:SetDebugPrint("Cooldowns.UI")
 
 function CraftSim.COOLDOWNS.UI:Init()
     local sizeX = 670

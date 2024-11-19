@@ -21,7 +21,7 @@ end
 ---@class CraftSim.PRICE_OVERRIDE.UI
 CraftSim.PRICE_OVERRIDE.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
+local print = CraftSim.DEBUG:SetDebugPrint("PriceOverride.UI")
 
 function CraftSim.PRICE_OVERRIDE.UI:Init()
     local sizeX = 450

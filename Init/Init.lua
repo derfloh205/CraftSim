@@ -27,7 +27,7 @@ CraftSim.INIT.currentRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.INIT)
+local print = CraftSim.DEBUG:SetDebugPrint("Init")
 
 function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
 	-- adapt cached values
@@ -197,7 +197,7 @@ end
 function CraftSim.INIT:InitCraftRecipeHooks()
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
-		local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+		local print = CraftSim.DEBUG:SetDebugPrint("Init.InitCraftRecipeHooks")
 
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
 			return

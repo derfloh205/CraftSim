@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_COUNT)
+local print = CraftSim.DEBUG:SetDebugPrint("Database.ItemCountDB")
 
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB

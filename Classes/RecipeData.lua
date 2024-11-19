@@ -8,7 +8,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.RecipeData = CraftSim.CraftSimObject:extend()
 
 local systemPrint = print
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint("RecipeData")
 
 
 ---@class CraftSim.RecipeData.ConstructorOptions
@@ -487,13 +487,13 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
 
     if self.reagentData:HasRequiredSelectableReagent() then
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
-			for _, possibleRequiredSelectableReagent in pairs(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}) do
-				if possibleRequiredSelectableReagent:IsOrderReagentIn(self) then
-					self.reagentData.requiredSelectableReagentSlot:SetReagent(possibleRequiredSelectableReagent.item
-					:GetItemID())
-					break
-				end
-			end
+            for _, possibleRequiredSelectableReagent in pairs(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}) do
+                if possibleRequiredSelectableReagent:IsOrderReagentIn(self) then
+                    self.reagentData.requiredSelectableReagentSlot:SetReagent(possibleRequiredSelectableReagent.item
+                        :GetItemID())
+                    break
+                end
+            end
         end
     end
 end
@@ -806,7 +806,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
     local skillContributionMap = self:GetSkillContributionMap()
 
-    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONCENTRATION_OPTIMIZATION)
+    local print = CraftSim.DEBUG:SetDebugPrint("RecipeData.OptimizeConcentration")
     -- for each reagent, find its lowest "quality upgrade" costs per skill point
 
     if not self.supportsQualities then return end

@@ -7,7 +7,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.PRICE_OVERRIDE : CraftSim.DB.Repository
 CraftSim.DB.PRICE_OVERRIDE = CraftSim.DB:RegisterRepository()
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
+local print = CraftSim.DEBUG:SetDebugPrint("Database.priceOverrideDB")
 
 ---@class CraftSim.DB.PriceOverride.Data
 ---@field recipeID number

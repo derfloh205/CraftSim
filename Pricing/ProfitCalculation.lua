@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.CALC = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
+local print = CraftSim.DEBUG:SetDebugPrint("ProfitCalculation")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)

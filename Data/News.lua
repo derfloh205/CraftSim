@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 
 CraftSim.NEWS = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.NEWS)
+local print = CraftSim.DEBUG:SetDebugPrint("News")
 
 ---@param itemMap table<string, ItemMixin>
 function CraftSim.NEWS:GET_NEWS(itemMap)

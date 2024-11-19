@@ -7,6 +7,7 @@ CraftSim.DEBUG = {}
 ---@type table<string, number>
 CraftSim.DEBUG.profilings = {}
 CraftSim.DEBUG.isMute = false
+CraftSim.DEBUG.registeredDebugIDs = {}
 
 ---@class CraftSim.DEBUG.FRAME
 CraftSim.DEBUG.frame = nil
@@ -15,8 +16,13 @@ local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
 
----@param debugID CraftSim.DEBUG_IDS
+---@param debugID string Format: Category.(...).ID
+---@return fun(text: string, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
 function CraftSim.DEBUG:SetDebugPrint(debugID)
+    if not tContains(self.registeredDebugIDs, debugID) then
+        tinsert(self.registeredDebugIDs, debugID)
+        -- CraftSim.DEBUG.registeredDebugIDs[debugID] = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")[debugID] or false
+    end
     local function print(text, recursive, l, level)
         if CraftSim.DEBUG and CraftSim.DEBUG.frame then
             CraftSim.DEBUG:print(text, debugID, recursive, l, level)
@@ -26,6 +32,11 @@ function CraftSim.DEBUG:SetDebugPrint(debugID)
     end
 
     return print
+end
+
+---@return string[]
+function CraftSim.DEBUG:GetRegisteredDebugIDs()
+    return self.registeredDebugIDs
 end
 
 function CraftSim.DEBUG:SystemPrint(text)
@@ -84,9 +95,10 @@ function CraftSim.DEBUG:PrintTable(t, debugID, recursive, level)
 end
 
 function CraftSim.DEBUG:ProfilingUpdate(label)
+    local print = CraftSim.DEBUG:SetDebugPrint("Profiling")
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
-    CraftSim.DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)")
 end
 
 ---@param label string
@@ -106,7 +118,7 @@ function CraftSim.DEBUG:StopProfiling(label)
     local time = debugprofilestop()
     local diff = CraftSim.GUTIL:Round(time - startTime)
     CraftSim.DEBUG.profilings[label] = nil
-    CraftSim.DEBUG:print(label .. ": " .. diff .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    CraftSim.DEBUG:print(label .. ": " .. diff .. " ms", "Profiling")
     return diff
 end
 

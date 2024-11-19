@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
+local print = CraftSim.DEBUG:SetDebugPrint("CraftLog")
 
 ---@class CraftSim.CraftSessionData : CraftSim.CraftSimObject
 ---@overload fun(): CraftSim.CraftSessionData

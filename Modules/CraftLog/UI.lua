@@ -17,7 +17,7 @@ CraftSim.CRAFT_LOG.UI = {}
 CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
 CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR = { 0.0, 1.0, 0.0, 0.8 }
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_LOG)
+local print = CraftSim.DEBUG:SetDebugPrint("CraftLog.UI")
 
 function CraftSim.CRAFT_LOG.UI:Init()
     ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame
@@ -1139,6 +1139,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
 
     -- Comparison Graph
     do
+        --CraftSim.DEBUG:SystemPrint("Updating Graph")
         local craftingStatDataSnapshots = craftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
         local comparisonGraph = comparisonTabContent.statComparisonGraph
         local graphTitle = comparisonTabContent.statComparisonGraphTitle
@@ -1176,6 +1177,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
         if craftingStatData.numCrafts == 0 then
             comparisonGraph:ResetData()
             comparisonGraph:SetDefault()
+            --CraftSim.DEBUG:SystemPrint("- Setting Default Data, numCrafts: 0")
         else
             comparisonGraph:ResetData()
             local expectedPoints = { { 0, 0 } }
@@ -1205,7 +1207,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
             local gridSpacingY = maxValue / 5
 
             -- should in best case not happen.. but prevent game freeze if it does
-            if maxValue == 0 and gridSpacingY > 0 then
+            if maxValue > 0 and gridSpacingY > 0 then
                 comparisonGraph:SetGridSpacing(gridSpacingX, gridSpacingY)
                 comparisonGraph:AddDataSeries(expectedPoints, CraftSim.CRAFT_LOG.UI
                     .STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR)

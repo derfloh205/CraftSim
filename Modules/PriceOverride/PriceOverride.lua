@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.PRICE_OVERRIDE = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
+local print = CraftSim.DEBUG:SetDebugPrint("PriceOverride")
 
 ---@param overrideDropdownData CraftSim.PRICE_OVERRIDE.overrideDropdownData
 function CraftSim.PRICE_OVERRIDE:DeleteOverrideDataByDropdown(recipeID, overrideDropdownData)

@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint("RecipeData.ProfessionData")
 
 ---@class CraftSim.ProfessionData.ConstructorOptions
 ---@field recipeData CraftSim.RecipeData

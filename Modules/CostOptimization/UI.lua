@@ -13,7 +13,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.COST_OPTIMIZATION.frame = nil
 CraftSim.COST_OPTIMIZATION.frameWO = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
+local print = CraftSim.DEBUG:SetDebugPrint("CostOptimization.UI")
 local f = CraftSim.GUTIL:GetFormatter()
 
 function CraftSim.COST_OPTIMIZATION.UI:Init()
