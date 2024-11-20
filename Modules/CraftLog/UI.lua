@@ -23,9 +23,9 @@ function CraftSim.CRAFT_LOG.UI:Init()
     ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame
     local logFrame = GGUI.Frame({
         parent = ProfessionsFrame,
-        anchorParent = ProfessionsFrame,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPRIGHT",
+        anchorParent = UIParent,
+        anchorA = "RIGHT",
+        anchorB = "RIGHT",
         sizeX = 260,
         sizeY = 340,
         frameID = CraftSim.CONST.FRAMES.CRAFT_LOG_LOG_FRAME,
@@ -44,10 +44,9 @@ function CraftSim.CRAFT_LOG.UI:Init()
     ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
     local advFrame = GGUI.Frame({
         parent = logFrame.frame,
-        anchorParent = logFrame.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = -20,
+        anchorParent = UIParent,
+        anchorA = "BOTTOMRIGHT",
+        anchorB = "BOTTOMRIGHT",
         sizeX = 720,
         sizeY = 340,
         frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
@@ -969,8 +968,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
             L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
             ((craftResult.triggeredIngenuity and (f.gold(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2)) .. savedConcentrationText .. "\n")) or "") ..
             ((craftResult.isWorkOrder and (f.gold("Commission: ") .. commissionText .. "\n")) or "") ..
-            ((craftResult.triggeredMulticraft and (f.e(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3)) .. multicraftExtraItemsText)) or "") ..
-            ((craftResult.triggeredResourcefulness and (f.g(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. savedCostsText .. "\n") .. resourcesText)) or "")
+            ((craftResult.triggeredMulticraft and (f.e(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3)) .. "\n" .. multicraftExtraItemsText)) or "") ..
+            ((craftResult.triggeredResourcefulness and (f.g(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. savedCostsText) .. resourcesText)) or "")
         craftLog:AddMessage("\n" .. messageText)
     end
     -- FrameList
