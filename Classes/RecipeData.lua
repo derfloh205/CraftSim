@@ -507,16 +507,21 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                     self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}, function(optionalReagent)
                         return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
                     end)
-                for _, optionalReagent in ipairs(possibleReagents) do
-                    local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
-                        true, false, true)
-                    if not cheapestReagent then
-                        cheapestReagent = optionalReagent
-                        cheapestPrice = reagentPrice
-                    else
-                        if reagentPrice < cheapestPrice then
-                            cheapestPrice = reagentPrice
+                -- if every possible reagent is soulbound, enforce first one
+                if #possibleReagents == 0 then
+                    cheapestReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
+                else -- else search for cheapest
+                    for _, optionalReagent in ipairs(possibleReagents) do
+                        local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
+                            true, false, true)
+                        if not cheapestReagent then
                             cheapestReagent = optionalReagent
+                            cheapestPrice = reagentPrice
+                        else
+                            if reagentPrice < cheapestPrice then
+                                cheapestPrice = reagentPrice
+                                cheapestReagent = optionalReagent
+                            end
                         end
                     end
                 end
