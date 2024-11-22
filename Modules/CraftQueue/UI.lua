@@ -1603,7 +1603,8 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         local firstRow = queueTab.content.craftList.activeRows[1]
         local craftButton = firstRow.columns[11].craftButton --[[@as GGUI.Button]]
         local button = craftButton.frame --[[@as Button]]
-        queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
+        local isCrafting = C_TradeSkillUI.IsRecipeRepeating()
+        queueTab.content.craftNextButton:SetEnabled(not isCrafting and button:IsEnabled())
         queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
         queueTab.content.craftNextButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT) .. button:GetText(), 10,
             true)
