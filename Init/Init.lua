@@ -483,6 +483,8 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		elseif command == "resetdb" then
 			CraftSimDB = nil
 			C_UI.Reload()
+		elseif command == "quickbuy" then
+			CraftSim.CRAFTQ:AuctionatorQuickBuy()
 		else
 			-- open options if any other command or no command is given
 			Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)

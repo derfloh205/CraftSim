@@ -212,6 +212,10 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
                 CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
             end)
 
+            craftQueue:CreateButton("Inspect CraftQueue.QuickBuyCache", function()
+                CraftSim.DEBUG:InspectTable(CraftSim.CRAFTQ.quickBuyCache, "QuickBuyCache", true)
+            end)
+
             local craftLog = rootDescription:CreateButton("CraftLog")
 
             craftLog:CreateButton("Inspect CraftSessionData", function()
