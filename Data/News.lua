@@ -17,6 +17,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.7.0"),
+        f.P .. "New Feature: " .. f.g("Quick Buy"),
+        f.p .. "- Works only with " .. f.bb("Auctionator Shopping List"),
+        f.p .. "- Command: " .. f.l("/craftsim quickbuy"),
+        f.p .. "- To be used in 1-Click Macro to buy all items",
+        f.p .. "  in the CraftSim CraftQueue Shopping List",
         newP("19.6.3"),
         f.s .. "Fixed " .. f.bb("CraftLog") .. " PvP Item Bug",
         f.s .. "Fixed " .. f.bb("CraftQueue") .. " PvP Item Queueing",

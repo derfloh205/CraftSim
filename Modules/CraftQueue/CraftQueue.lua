@@ -26,6 +26,7 @@ local QB_STATUS = {
 
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
+    "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED" })
 
@@ -53,7 +54,10 @@ CraftSim.CRAFTQ.quickBuyCache = {
     ---@type string Auctionator SearchString
     currentSearchString = nil,
     purchasePending = false, -- listen for commoditybought event / item bought event
-    purchaseConfirmed = false,
+    ---@type ItemID?
+    pendingItemID = nil,
+    ---@type number?
+    pendingItemCount = nil,
 }
 
 local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
@@ -76,20 +80,21 @@ function CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
         item = Item:CreateFromItemID(itemID),
         quantity = boughtQuantity
     }
-
-
-    -- -- continue with
-    -- local qbCache = self.quickBuyCache
-    -- if qbCache.status
-    -- qbCache.status = QB_STATUS.CONFIRM_READY
-    self.quickBuyCache.purchaseConfirmed = true
-    --self:AuctionatorQuickBuy() -- wil trigger confirm await
 end
 
 function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     -- reset purchase pending in qbCache
     printQB("- " .. f.l("COMMODITY_PURCHASE_SUCCEEDED"))
-    CraftSim.CRAFTQ.quickBuyCache.purchasePending = false
+    if self.quickBuyCache.purchasePending then
+        self.purchasedItem.item:ContinueOnItemLoad(function()
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
+                f.g("Quick Buy: ") ..
+                "Purchased " .. self.quickBuyCache.pendingItemCount .. "x " .. self.purchasedItem.item:GetItemLink())
+        end)
+    end
+    self.quickBuyCache.purchasePending = false
+    self.quickBuyCache.pendingItemCount = nil
+    self.quickBuyCache.pendingItemID = nil
 
     if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
         return -- do not need if Auctionator not loaded
@@ -1048,10 +1053,6 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
 
     local listsContainer = AuctionatorShoppingFrame.ListsContainer
     local resultsList = AuctionatorShoppingFrame.ResultsListing
-    local buyButton = AuctionatorBuyCommodityFrame.DetailsContainer.BuyButton
-
-    local commodityFrame = AuctionatorBuyCommodityFrame
-    local confirmationDialog = commodityFrame.FinalConfirmationDialog
 
     ---@param value CraftSim.CRAFTQ.QB_STATUS
     ---@return boolean
@@ -1117,21 +1118,13 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     end
 
     -- get item that was not bought yet
-    local firstShoppingListSearchString = GUTIL:Find(list.data.items, function(searchString)
+    local buyShoppingListSearchString = GUTIL:Find(list.data.items, function(searchString)
         return not qbCache.boughtSearchStrings[searchString]
     end)
 
     print("- STATUS: " .. tostring(qbCache.status))
-    --print("- firstShoppingListSearchString: " .. tostring(firstShoppingListSearchString))
 
-
-    -- if qbCache.purchasePending then
-    --     print(f.r("- Purchase Pending"))
-    --     return
-    -- end
-
-
-    if not firstShoppingListSearchString then
+    if not buyShoppingListSearchString then
         print("- All bought")
         self:ResetQuickBuyCache()
         return
@@ -1162,53 +1155,45 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
         end
     end
 
-    if firstShoppingListSearchString and status(QB_STATUS.RESULT_LIST_READY) then
-        local resultRow = qbCache.resultRows[firstShoppingListSearchString]
+    if buyShoppingListSearchString and status(QB_STATUS.RESULT_LIST_READY) then
+        local resultRow = qbCache.resultRows[buyShoppingListSearchString]
 
         if not resultRow then
-            print("Result Row not found in result list: " .. tostring(firstShoppingListSearchString))
+            print("Result Row not found in result list: " .. tostring(buyShoppingListSearchString))
             return
         end
 
-        resultRow:OnClick()
-        qbCache.currentSearchString = firstShoppingListSearchString
-        set(QB_STATUS.BUY_READY)
-        return
-    end
+        qbCache.pendingItemID = resultRow.rowData.itemKey.itemID
+        qbCache.pendingItemCount = resultRow.rowData.purchaseQuantity
 
-    if status(QB_STATUS.BUY_READY) then
-        if buyButton:IsVisible() and buyButton:IsEnabled() then
-            buyButton:Click()
-            set(QB_STATUS.CONFIRM_START)
-            return
-        else
-            return
-        end
-    end
-
-    if status(QB_STATUS.CONFIRM_START) and confirmationDialog:IsVisible() and not confirmationDialog.purchasePending then
-        print("- " .. f.g("Confirm Purchase"))
+        qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true
-        qbCache.purchaseConfirmed = false
-
-        confirmationDialog:ConfirmPurchase() -- will trigger event
-        set(QB_STATUS.CONFIRM_AWAIT)
-    end
-
-    if status(QB_STATUS.CONFIRM_AWAIT) and qbCache.purchaseConfirmed then
-        qbCache.boughtSearchStrings[qbCache.currentSearchString] = true
         set(QB_STATUS.PURCHASE_AWAIT)
+
+        -- Triggers AUCTION_HOUSE_THROTTLED_SYSTEM_READY and needs confirmation there
+        C_AuctionHouse.StartCommoditiesPurchase(qbCache.pendingItemID, qbCache.pendingItemCount)
         return
     end
 
     if status(QB_STATUS.PURCHASE_AWAIT) and not qbCache.purchasePending then
+        qbCache.boughtSearchStrings[qbCache.currentSearchString] = true
         set(QB_STATUS.RESULT_LIST_READY)
-        self:AuctionatorQuickBuy() -- to instantly click next item
+        self:AuctionatorQuickBuy()
     end
 end
 
 function CraftSim.CRAFTQ:AUCTION_HOUSE_THROTTLED_SYSTEM_READY()
+    local qbCache = self.quickBuyCache
+    if qbCache.pendingItemCount and qbCache.pendingItemID then
+        C_AuctionHouse.ConfirmCommoditiesPurchase(qbCache.pendingItemID, qbCache.pendingItemCount)
+        -- triggers COMMODITY_PURCHASE_SUCCEEDED
+        -- TODO: Consider COMMODITY_PURCHASE_FAILED
+    end
+end
 
+function CraftSim.CRAFTQ:COMMODITY_PURCHASE_FAILED()
+    -- reset quick buy
+    self:ResetQuickBuyCache()
 end
 
 function CraftSim.CRAFTQ:ResetQuickBuyCache()
@@ -1216,7 +1201,6 @@ function CraftSim.CRAFTQ:ResetQuickBuyCache()
     qbCache.status = QB_STATUS.INIT
     qbCache.currentSearchString = nil
     qbCache.purchasePending = false
-    qbCache.purchaseConfirmed = false
     wipe(qbCache.boughtSearchStrings)
     wipe(qbCache.resultRows)
 end
