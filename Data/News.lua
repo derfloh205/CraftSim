@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.6.3"),
+        f.s .. "Fixed " .. f.bb("CraftLog") .. " PvP Item Bug",
+        f.s .. "Fixed " .. f.bb("CraftQueue") .. " PvP Item Queueing",
         newP("19.6.2"),
         f.s .. f.bb("Craft Log"),
         f.a .. "- Fixed not updating the graph",
