@@ -479,6 +479,8 @@ end
 
 --- also sets a requiredSelectionReagent if not yet set
 function CraftSim.RecipeData:SetNonQualityReagentsMax()
+    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.SetNonQualityReagentsMax")
+    print("SetNonQualityReagentsMax", false, true)
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         if not reagent.hasQuality then
             reagent.items[1].quantity = reagent.requiredQuantity
@@ -486,12 +488,41 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
     end
 
     if self.reagentData:HasRequiredSelectableReagent() then
+        print("- HasRequiredSelectableReagent", false, false)
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
-            for _, possibleRequiredSelectableReagent in pairs(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}) do
-                if possibleRequiredSelectableReagent:IsOrderReagentIn(self) then
-                    self.reagentData.requiredSelectableReagentSlot:SetReagent(possibleRequiredSelectableReagent.item
-                        :GetItemID())
-                    break
+            print("- No active reagent", false, false)
+            local orderReagent = GUTIL:Find(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {},
+                function(possibleOrderReagent)
+                    if possibleOrderReagent:IsOrderReagentIn(self) then
+                        return true
+                    end
+                    return false
+                end)
+            if orderReagent then
+                self.reagentData.requiredSelectableReagentSlot:SetReagent(orderReagent.item:GetItemID())
+            else
+                local cheapestReagent
+                local cheapestPrice
+                local possibleReagents = GUTIL:Filter(
+                    self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}, function(optionalReagent)
+                        return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
+                    end)
+                for _, optionalReagent in ipairs(possibleReagents) do
+                    local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
+                        true, false, true)
+                    if not cheapestReagent then
+                        cheapestReagent = optionalReagent
+                        cheapestPrice = reagentPrice
+                    else
+                        if reagentPrice < cheapestPrice then
+                            cheapestPrice = reagentPrice
+                            cheapestReagent = optionalReagent
+                        end
+                    end
+                end
+
+                if cheapestReagent then
+                    self.reagentData.requiredSelectableReagentSlot:SetReagent(cheapestReagent.item:GetItemID())
                 end
             end
         end
