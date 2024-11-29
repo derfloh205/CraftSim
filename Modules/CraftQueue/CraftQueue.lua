@@ -175,12 +175,17 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
 end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
+    local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.QueueWorkOrders")
+    print("QueueWorkOrders", false, true)
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     local normalizedRealmName = GetNormalizedRealmName()
     local realmName = GetRealmName()
     local cleanedCrafterUIDs = GUTIL:Map(CraftSim.DB.CRAFTER:GetCrafterUIDs(), function(crafterUID)
         return select(1, gsub(crafterUID, "-" .. normalizedRealmName, ""))
     end)
+
+    local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+
     --TODO: Public Orders
     local workOrderTypes = {
         CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
@@ -325,16 +330,22 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                                         recipeData:Update()
 
-                                        if isPatronOrder and knowledgePointsRewarded > 0 and recipeData.averageProfitCached < 0 then
-                                            local maxKPCost = CraftSim.DB.OPTIONS:Get(
-                                                "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
-                                            local kpCost = math.abs(recipeData.averageProfitCached /
-                                                knowledgePointsRewarded)
+                                        print("- Knowledge Points Rewarded: " .. tostring(knowledgePointsRewarded))
 
-                                            if kpCost >= maxKPCost then
-                                                distributor:Continue()
-                                                return
+
+                                        local function withinKPCost(averageProfit)
+                                            if isPatronOrder and knowledgePointsRewarded > 0 and averageProfit < 0 then
+                                                
+                                                local kpCost = math.abs(averageProfit / knowledgePointsRewarded)
+    
+                                                    print("- kpCost: " .. GUTIL:FormatMoney(kpCost, true, nil, true))
+    
+                                                if kpCost >= maxKPCost then
+                                                    return false
+                                                end
+                                                return true
                                             end
+                                            return true
                                         end
 
                                         local function queueRecipe()
@@ -343,8 +354,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             local forceConcentration = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                                             -- check if the min quality is reached, if not do not queue
+                                            local queueAble = false
                                             if recipeData.resultData.expectedQuality >= order.minQuality then
-                                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                queueAble = true
                                             end
 
                                             if (forceConcentration or allowConcentration) and
@@ -352,7 +364,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 -- use concentration to reach and then queue
                                                 recipeData.concentrating = true
                                                 recipeData:Update()
-                                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                queueAble = true
+                                            end
+
+                                            if queueAble then
+                                                if withinKPCost(recipeData.averageProfitCached) then
+                                                    CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                end
                                             end
 
                                             distributor:Continue()
