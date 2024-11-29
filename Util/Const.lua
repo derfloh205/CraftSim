@@ -1475,7 +1475,7 @@ CraftSim.CONST.FONT_FILES = {
 
 CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
     CATCHUP = {
-        228725, -- alchemy
+        228724, -- alchemy
         228726, --blacksmithing
         228728, --enchanting
         228730, --engineering
@@ -1485,7 +1485,7 @@ CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
         228738, --tailoring
     },
     WEEKLY = {
-        228724, -- alchemy
+        228725, --alchemy
         228727, --blacksmithing
         228729, --enchanting
         228731, --engineering
