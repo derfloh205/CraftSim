@@ -1234,18 +1234,20 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
     -- Crafting Reagents
     do
         reagentsList:Remove()
-        for _, craftResultSavedReagent in ipairs(craftResultItems.reagents) do
+        for _, craftResultReagent in ipairs(craftResultItems.reagents) do
             reagentsList:Add(
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
-                    row.craftResultSavedReagent = craftResultSavedReagent
-                    row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
-                    row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
-                    row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultSavedReagent.costs, true))
-                    row.tooltipOptions = {
-                        anchor = "ANCHOR_CURSOR_RIGHT",
-                        itemID = craftResultSavedReagent.item:GetItemID(),
-                    }
+                    row.craftResultSavedReagent = craftResultReagent
+                    craftResultReagent.item:ContinueOnItemLoad(function ()
+                        row.itemColumn.text:SetText(craftResultReagent.item:GetItemLink())
+                        row.countColumn.text:SetText(craftResultReagent.quantity or 0)
+                        row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultReagent.costs, true))
+                        row.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            itemID = craftResultReagent.item:GetItemID(),
+                        }
+                    end)
                 end)
         end
 
@@ -1265,13 +1267,17 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
                     row.craftResultSavedReagent = craftResultSavedReagent
-                    row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
-                    row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
-                    row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
-                    row.tooltipOptions = {
-                        anchor = "ANCHOR_CURSOR_RIGHT",
-                        itemID = craftResultSavedReagent.item:GetItemID(),
-                    }
+                    craftResultSavedReagent.item:ContinueOnItemLoad(
+                        function ()
+                            row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
+                            row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
+                            row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                            row.tooltipOptions = {
+                                anchor = "ANCHOR_CURSOR_RIGHT",
+                                itemID = craftResultSavedReagent.item:GetItemID(),
+                            }
+                        end
+                    )
                 end)
         end
 
