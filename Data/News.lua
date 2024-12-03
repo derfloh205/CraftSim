@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.7.2"),
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("esES") .. " by: " .. f.bb("https://github.com/GarikGangrel"),
         newP("19.7.1"),
         f.p .. f.bb("CraftQueue - Queue Work Orders"),
         f.p .. "- Fixed " .. f.bb("KP Cost") .. " being checked before optimization",
