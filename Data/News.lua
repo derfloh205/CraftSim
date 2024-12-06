@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.7.2"),
+        f.p .. "Fixed " .. f.bb("QuickBuy") .. " reset on list refresh",
+        f.a .. "- Now always starts a new search",
         f.p .. "Locals Update",
         f.a .. "- " .. f.bb("esES") .. " by: " .. f.bb("https://github.com/GarikGangrel"),
         newP("19.7.1"),

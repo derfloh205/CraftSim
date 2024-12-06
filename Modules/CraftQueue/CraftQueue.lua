@@ -1156,12 +1156,10 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     end
 
     if status(QB_STATUS.SEARCH_READY) then
-        mapSearchResultRows(allItemSearchStrings)
-        if not matchSearchResultRows(allItemSearchStrings) then
-            print("- No Match with Results: DoSearch")
-            AuctionatorShoppingFrame:DoSearch(allItemSearchStrings)
-        end
+        wipe(qbCache.resultRows)
+        AuctionatorShoppingFrame:DoSearch(allItemSearchStrings)
         set(QB_STATUS.SEARCH_STARTED)
+        return
     end
 
     if status(QB_STATUS.SEARCH_STARTED) then
