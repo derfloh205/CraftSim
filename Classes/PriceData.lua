@@ -197,7 +197,7 @@ function CraftSim.PriceData:Update()
         local itemPrice = 0
         if self.recipeData.isGear then
             itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
-                CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(item:GetItemLink())
+                CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(item:GetItemLink())
         else
             itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
                 CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(item:GetItemID())
