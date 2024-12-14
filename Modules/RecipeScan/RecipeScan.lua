@@ -557,16 +557,22 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                 end
             end
 
-            local restockAmount = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT") or 1
+            local restockAmount = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT") or 0
 
             if TSM_API and CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION") then
                 local tsmItemString = TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink())
                 restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"),
-                    tsmItemString) or 1
+                    tsmItemString) or 0
             end
 
-            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
+            if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < restockAmount then
+                restockAmount = recipeData.cooldownData.currentCharges
+            end
 
+            if restockAmount >=1 then
+                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
+            end
+            
             frameDistributor:Continue()
         end
     }:Continue()
