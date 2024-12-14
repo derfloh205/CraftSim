@@ -564,7 +564,11 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                 restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"),
                     tsmItemString) or 0
             end
-            
+
+            if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < restockAmount then
+                restockAmount = recipeData.cooldownData.currentCharges
+            end
+
             if restockAmount >=1 then
                 CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
             end
