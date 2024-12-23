@@ -1184,8 +1184,8 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
             return
         end
 
-        qbCache.pendingItemID = resultRow.rowData.itemKey.itemID
-        qbCache.pendingItemCount = resultRow.rowData.purchaseQuantity
+        qbCache.pendingItemID = resultRow.itemKey.itemID
+        qbCache.pendingItemCount = resultRow.purchaseQuantity
 
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true
