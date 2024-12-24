@@ -1100,19 +1100,22 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     local function mapSearchResultRows(itemSearchStrings)
         wipe(qbCache.resultRows)
         -- map rows to shopping list items
-        for _, searchString in ipairs(itemSearchStrings) do
-            local row = nil
+        local function mapSearchResultRows(itemSearchStrings)
+            wipe(qbCache.resultRows)
+            -- map rows to shopping list items
+            local rows = {}
             for i = 1, resultsList.dataProvider:GetCount() do
-                row = resultsList.dataProvider:GetEntryAt(i)
-                local itemID = row.itemKey.itemID
-                if GUTIL:StringStartsWith(searchString, getResultSearchString(itemID)) then
-                    break
-                end
-                row = nil
+                table.insert(rows, resultsList.dataProvider:GetEntryAt(i))
             end
-
-            if row then
-                qbCache.resultRows[searchString] = row
+            for _, searchString in ipairs(itemSearchStrings) do
+                local row = GUTIL:Find(rows, function(row)
+                    local itemID = row.itemKey.itemID
+                    return GUTIL:StringStartsWith(searchString, getResultSearchString(itemID))
+                end)
+    
+                if row then
+                    qbCache.resultRows[searchString] = row
+                end
             end
         end
     end
