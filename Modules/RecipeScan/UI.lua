@@ -239,7 +239,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                         anchorA = "RIGHT", anchorB = "RIGHT",
                         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
                         borderAdjustWidth = 1.32,
-                        minValue = 1,
+                        minValue = 0,
                         onNumberValidCallback = function(input)
                             CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
                                 tonumber(input.currentValue))
