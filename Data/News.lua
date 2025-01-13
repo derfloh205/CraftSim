@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Fixed " .. f.bb("Reagent Optimization") .. " for non quality recipes",
         f.p .. "Fixed " .. f.bb("RestockAmount") .. " for TSM Expression allowing 0",
         f.a .. "Thanks to " .. f.bb("https://github.com/chris-merritt"),
+        f.p .. "Fixed " .. f.bb("QuickBuy") .. " for lists longer than 20 items",
+        f.a .. "Thanks to " .. f.bb("https://github.com/syspro86"),
         newP("19.7.4"),
         f.p .. "11.0.7.58533 Data Update",
         newP("19.7.3"),
