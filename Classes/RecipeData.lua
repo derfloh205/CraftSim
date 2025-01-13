@@ -545,9 +545,7 @@ function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
         local isOrderReagent = reagent:IsOrderReagentIn(self)
         if reagent.hasQuality then
             if not isOrderReagent then
-                if reagent:GetTotalQuantity() < reagent.requiredQuantity then
                     reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
-                end
             elseif isOrderReagent then
                 for _, reagentItem in ipairs(reagent.items) do
                     if reagentItem:IsOrderReagentIn(self) then
@@ -726,20 +724,19 @@ end
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param options CraftSim.RecipeData.OptimizeReagentOptions?
 function CraftSim.RecipeData:OptimizeReagents(options)
+    options = options or {}
+    options.maxQuality = options.maxQuality or self.maxQuality
+    options.highestProfit = options.highestProfit or false
+
     -- do not optimize quest recipes
     if self.isQuestRecipe then
         return
     end
 
-
     if not self.supportsQualities then
         self:SetCheapestQualityReagentsMax()
         return
     end
-
-    options = options or {}
-    options.maxQuality = options.maxQuality or self.maxQuality
-    options.highestProfit = options.highestProfit or false
 
     local optimizationResult
 
