@@ -540,12 +540,15 @@ function CraftSim.RecipeData:HasRequiredSelectableReagent()
 end
 
 --- Consideres Order Reagents
-function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
+---@param nonAllocatedOnly boolean?
+function CraftSim.RecipeData:SetCheapestQualityReagentsMax(nonAllocatedOnly)
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local isOrderReagent = reagent:IsOrderReagentIn(self)
         if reagent.hasQuality then
             if not isOrderReagent then
+                if not nonAllocatedOnly and reagent:GetTotalQuantity() < reagent.requiredQuantity then
                     reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
+                end
             elseif isOrderReagent then
                 for _, reagentItem in ipairs(reagent.items) do
                     if reagentItem:IsOrderReagentIn(self) then
