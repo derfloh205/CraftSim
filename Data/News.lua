@@ -19,6 +19,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("19.7.5"),
         f.p .. "Fixed " .. f.bb("Reagent Optimization") .. " for non quality recipes",
+        f.p .. "Fixed " .. f.bb("RestockAmount") .. " for TSM Expression allowing 0",
+        f.a .. "Thanks to " .. f.bb("https://github.com/chris-merritt"),
         newP("19.7.4"),
         f.p .. "11.0.7.58533 Data Update",
         newP("19.7.3"),
