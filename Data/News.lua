@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("19.7.6"),
+        f.p .. "Fixed " .. f.bb("CraftLog") .. " lua error for pvp items",
         newP("19.7.5"),
         f.p .. "Fixed " .. f.bb("Reagent Optimization") .. " for non quality recipes",
         f.p .. "Fixed " .. f.bb("RestockAmount") .. " for TSM Expression allowing 0",
