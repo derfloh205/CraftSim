@@ -376,9 +376,6 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local reagentSlots = schematicForm.reagentSlots
     local currentTransaction = schematicForm:GetTransaction()
 
-    CraftSim.DEBUG:InspectTable(schematicInfo, "schematicInfo")
-    CraftSim.DEBUG:InspectTable(reagentSlots, "reagentSlots")
-
     if self.isRecraft then
         self.allocationItemGUID = currentTransaction:GetRecraftAllocation()
     end
