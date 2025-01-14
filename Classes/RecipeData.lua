@@ -376,6 +376,9 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local reagentSlots = schematicForm.reagentSlots
     local currentTransaction = schematicForm:GetTransaction()
 
+    CraftSim.DEBUG:InspectTable(schematicInfo, "schematicInfo")
+    CraftSim.DEBUG:InspectTable(reagentSlots, "reagentSlots")
+
     if self.isRecraft then
         self.allocationItemGUID = currentTransaction:GetRecraftAllocation()
     end
@@ -423,7 +426,14 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 craftSimReagentItem.quantity = allocations
             end
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-            if reagentSlots[reagentType] ~= nil then
+            if currentSlot.required then
+                local requiredSelectableReagentSlot = reagentSlots[1][1]
+                local button = requiredSelectableReagentSlot.Button
+                local allocatedItemID = button:GetItemID()
+                if allocatedItemID then
+                    self.reagentData.requiredSelectableReagentSlot:SetReagent(allocatedItemID)
+                end
+            elseif reagentSlots[reagentType] ~= nil then
                 local optionalSlots = reagentSlots[reagentType][currentOptionalReagent]
                 if not optionalSlots then
                     return

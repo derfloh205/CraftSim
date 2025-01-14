@@ -31,7 +31,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
 
     -- make sure all required reagents are maxed out
     recipeData:SetNonQualityReagentsMax()
-    recipeData:SetCheapestQualityReagentsMax(true)
+    recipeData:SetCheapestQualityReagentsMax()
 
     local craftQueueItem = self:FindRecipe(recipeData)
 
