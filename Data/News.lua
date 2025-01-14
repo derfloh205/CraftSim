@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.7.6"),
+        f.P .. f.bb("CraftQueue") .. " - " .. f.g("Queue Work Orders"),
+        f.a .. "- Added support for a custom " .. f.bb("Reagent Bag Value"),
         f.p .. "Fixed " .. f.bb("CraftLog") .. " lua error for pvp items",
         newP("19.7.5"),
         f.p .. "Fixed " .. f.bb("Reagent Optimization") .. " for non quality recipes",

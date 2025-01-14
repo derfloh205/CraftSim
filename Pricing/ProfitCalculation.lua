@@ -42,6 +42,34 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
     return expectedItems, expectedExtraItems
 end
 
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CALC:CalculateCommissionProfit(recipeData)
+    local comissionProfit = 0
+    if recipeData.orderData then
+        comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) -
+            (tonumber(recipeData.orderData.consortiumCut) or 0)
+
+        -- we also need to consider any saved crafting costs from provided reagents from the customer and the comission
+        for _, reagentdata in ipairs(recipeData.orderData.reagents) do
+            local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(reagentdata.reagent.itemID, true, false)
+            comissionProfit = comissionProfit + (reagentdata.reagent.quantity * price)
+        end
+
+        -- also if npc work order add item value of rewards to the comissionprofit
+        for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
+            local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
+            if itemID == CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEM then
+                comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
+            else
+                local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
+                price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
+                comissionProfit = comissionProfit + price * reward.count
+            end
+        end
+    end
+    return comissionProfit
+end
+
 ---@class CraftSim.ProbabilityInfo
 ---@field multicraft? boolean
 ---@field resourcefulness? boolean
@@ -68,26 +96,10 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         return profit, probabilityTable
     end
 
-    local comissionProfit = 0
-    if recipeData.orderData then
-        comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) -
-            (tonumber(recipeData.orderData.consortiumCut) or 0)
+    local comissionProfit = self:CalculateCommissionProfit(recipeData)
 
-        -- we also need to consider any saved crafting costs from provided reagents from the customer and the comission
-        for _, reagentdata in ipairs(recipeData.orderData.reagents) do
-            local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(reagentdata.reagent.itemID, true, false)
-            comissionProfit = comissionProfit + (reagentdata.reagent.quantity * price)
-        end
-
-        -- also if npc work order add item value of rewards to the comissionprofit
-        for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
-            local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(Item:CreateFromItemLink(reward.itemLink):GetItemID())
-            price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
-            comissionProfit = comissionProfit + price * reward.count
-        end
-    end
-
-    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit
+    -- for work orders we do not consider item amount or auction house cut, just the comissionProfit
+    ---@param value number
     local function adaptResultValue(value)
         if recipeData.orderData and comissionProfit > 0 then
             return comissionProfit
