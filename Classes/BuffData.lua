@@ -53,6 +53,7 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfAmbidexterityBuffs(self.recipeData))
         tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfConcentratedIngenuityBuffs(self.recipeData))
         tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(self.recipeData))
+        tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateWeaversProdigyBuff(self.recipeData))
 
         if profession == Enum.Profession.Jewelcrafting then
             -- Crushing
