@@ -167,7 +167,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         }
 
         frame.content.customerList = GGUI.FrameList({
-            sizeY = 390,
+            sizeY = 370,
             columnOptions = columnOptionsCustomerList,
             parent = frame.content,
             anchorParent = frame.content,
@@ -220,6 +220,30 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     end
                 end
             }
+        })
+
+
+        frame.content.totalAmountLabel = GGUI.Text({
+            parent = frame.content,
+            anchorParent = frame.content.customerList.frame,
+            anchorA = "BOTTOMLEFT",
+            anchorB = "BOTTOMLEFT",
+            offsetY = -20,
+            offsetX = 10,
+            text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_AMOUNT),
+            scale = 1,
+        })
+
+        frame.content.totalAmountText = GGUI.Text({
+            parent = frame.content,
+            anchorParent = frame.content.customerList.frame,
+            anchorA = "BOTTOMRIGHT",
+            anchorB = "BOTTOMRIGHT",
+            offsetY = -20,
+            offsetX = -15,
+            text = "-",
+            scale = 1,
+            justifyOptions = { type = "H", align = "RIGHT" }
         })
 
         frame.content.customerName = GGUI.Text({
@@ -403,6 +427,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
     local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList --[[@as GGUI.FrameList]]
     customerList:Remove()
     local customerHistoryData = CraftSim.DB.CUSTOMER_HISTORY:GetAll()
+    local totalAmount = 0
 
     for _, customerHistory in pairs(customerHistoryData) do
         customerList:Add(
@@ -414,7 +439,11 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
                 customerColumn.text:SetText(customerHistory.customer)
                 tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(customerHistory.totalTip or 0))
             end)
+
+        totalAmount = totalAmount + (customerHistory.totalTip or 0)
     end
+
+    CraftSim.CUSTOMER_HISTORY.frame.content.totalAmountText:SetText(CraftSim.UTIL:FormatMoney(totalAmount))
 
     customerList:UpdateDisplay(
         function(rowA, rowB)
