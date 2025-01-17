@@ -108,6 +108,12 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
             buffStats:add(nodeData.professionStats)
 
             if nodeID == 99267 then
+                if nodeData.rank > 0 then
+                    buffStats.ingenuity:addValue(15)
+                    buffStats.resourcefulness:addValue(15)
+                    buffStats.multicraft:addValue(15)
+                end
+                
                 for i = 1, nodeData.rank, 1 do
                     buffStats:add(everburningPerPointStats)
                 end
