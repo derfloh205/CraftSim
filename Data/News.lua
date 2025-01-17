@@ -19,7 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("19.8.2"),
         f.p .. f.bb("CraftBuffs"),
-        f.a .. "Fixedd Ignition Buff Base Stats",
+        f.a .. "Fixed Ignition Buff Base Stats",
         f.a .. "- Thanks to " .. f.bb("https://github.com/avilene"),
         newP("19.8.1"),
         f.p .. f.bb("CraftBuffs"),
