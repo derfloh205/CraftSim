@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
 
 CraftSim.NEWS = {}
 
@@ -10,13 +11,12 @@ CraftSim.NEWS.GITHUB_COLLABS = {
 }
 
 local print = CraftSim.DEBUG:RegisterDebugID("Data.News")
+local function newP(v) return f.l("\n                                   --- Version " .. v .. " ---\n") end
+local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 
 ---@param itemMap table<string, ItemMixin>
 function CraftSim.NEWS:GET_NEWS(itemMap)
-    -- minimize names to make manual formatting easier :p
-    local f = GUTIL:GetFormatter()
-    local function newP(v) return f.l("\n                                   --- Version " .. v .. " ---\n") end
-    local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
+    
     local supporterListUpdate = f.p .. f.patreon("Supporter List Update ") ..
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
