@@ -827,6 +827,32 @@ function CraftSim.CRAFTQ.UI:Init()
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("Patron Order") .. " Max Cost: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.CurrencyInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 60, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST"),
+                            borderAdjustWidth = 1,
+                            minValue = 0.94,
+                            tooltipOptions = {
+                                anchor = "ANCHOR_TOP",
+                                owner = frame,
+                                text = f.white("Maximum allowed gold cost of a patron order\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                            },
+                            onValueValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST",
+                                    tonumber(input.total))
+                            end,
+                        }
+                    end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST_INPUT")
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
                             text = f.bb("Reagent Bag") .. " Value: ",
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
