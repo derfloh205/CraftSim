@@ -349,9 +349,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function withinMaxPatronOrderCost(averageProfit)
-                                            if isPatronOrder and averageProfit < 0 and maxPatronOrderCost > 0 then
-                                                if math.abs(averageProfit) >= maxPatronOrderCost then
+                                        local function withinMaxPatronOrderCost(craftingCost)
+                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
+                                                if craftingCost >= maxPatronOrderCost then
                                                     return false
                                                 end
                                                 return true
@@ -379,7 +380,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
-                                                if withinKPCost(recipeData.averageProfitCached) and withinMaxPatronOrderCost(recipeData.averageProfitCached) then
+                                                if withinKPCost(recipeData.averageProfitCached) and withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
