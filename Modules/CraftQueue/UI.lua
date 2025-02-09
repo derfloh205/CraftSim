@@ -822,6 +822,32 @@ function CraftSim.CRAFTQ.UI:Init()
                             end,
                         }
                     end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST_INPUT")
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("Reagent Bag") .. " Value: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.CurrencyInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 60, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE"),
+                            borderAdjustWidth = 1,
+                            minValue = 0.94,
+                            tooltipOptions = {
+                                anchor = "ANCHOR_TOP",
+                                owner = frame,
+                                text = f.white("Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                            },
+                            onValueValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE",
+                                    tonumber(input.total))
+                            end,
+                        }
+                    end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
                 end)
             end
         }

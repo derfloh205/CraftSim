@@ -423,7 +423,14 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 craftSimReagentItem.quantity = allocations
             end
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-            if reagentSlots[reagentType] ~= nil then
+            if currentSlot.required then
+                local requiredSelectableReagentSlot = reagentSlots[1][1]
+                local button = requiredSelectableReagentSlot.Button
+                local allocatedItemID = button:GetItemID()
+                if allocatedItemID then
+                    self.reagentData.requiredSelectableReagentSlot:SetReagent(allocatedItemID)
+                end
+            elseif reagentSlots[reagentType] ~= nil then
                 local optionalSlots = reagentSlots[reagentType][currentOptionalReagent]
                 if not optionalSlots then
                     return
@@ -540,12 +547,13 @@ function CraftSim.RecipeData:HasRequiredSelectableReagent()
 end
 
 --- Consideres Order Reagents
-function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
+---@param nonAllocatedOnly boolean?
+function CraftSim.RecipeData:SetCheapestQualityReagentsMax(nonAllocatedOnly)
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local isOrderReagent = reagent:IsOrderReagentIn(self)
         if reagent.hasQuality then
             if not isOrderReagent then
-                if reagent:GetTotalQuantity() < reagent.requiredQuantity then
+                if not nonAllocatedOnly and reagent:GetTotalQuantity() < reagent.requiredQuantity then
                     reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
                 end
             elseif isOrderReagent then
@@ -726,20 +734,19 @@ end
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param options CraftSim.RecipeData.OptimizeReagentOptions?
 function CraftSim.RecipeData:OptimizeReagents(options)
+    options = options or {}
+    options.maxQuality = options.maxQuality or self.maxQuality
+    options.highestProfit = options.highestProfit or false
+
     -- do not optimize quest recipes
     if self.isQuestRecipe then
         return
     end
 
-
     if not self.supportsQualities then
         self:SetCheapestQualityReagentsMax()
         return
     end
-
-    options = options or {}
-    options.maxQuality = options.maxQuality or self.maxQuality
-    options.highestProfit = options.highestProfit or false
 
     local optimizationResult
 

@@ -1100,9 +1100,13 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     local function mapSearchResultRows(itemSearchStrings)
         wipe(qbCache.resultRows)
         -- map rows to shopping list items
+        local rows = {}
+        for i = 1, resultsList.dataProvider:GetCount() do
+            table.insert(rows, resultsList.dataProvider:GetEntryAt(i))
+        end
         for _, searchString in ipairs(itemSearchStrings) do
-            local row = GUTIL:Find(resultsList.tableBuilder.rows, function(row)
-                local itemID = row.rowData.itemKey.itemID
+            local row = GUTIL:Find(rows, function(row)
+                local itemID = row.itemKey.itemID
                 return GUTIL:StringStartsWith(searchString, getResultSearchString(itemID))
             end)
 
@@ -1179,8 +1183,8 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
             return
         end
 
-        qbCache.pendingItemID = resultRow.rowData.itemKey.itemID
-        qbCache.pendingItemCount = resultRow.rowData.purchaseQuantity
+        qbCache.pendingItemID = resultRow.itemKey.itemID
+        qbCache.pendingItemCount = resultRow.purchaseQuantity
 
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true

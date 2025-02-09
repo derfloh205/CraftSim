@@ -108,6 +108,12 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
             buffStats:add(nodeData.professionStats)
 
             if nodeID == 99267 then
+                if nodeData.rank > 0 then
+                    buffStats.ingenuity:addValue(15)
+                    buffStats.resourcefulness:addValue(15)
+                    buffStats.multicraft:addValue(15)
+                end
+                
                 for i = 1, nodeData.rank, 1 do
                     buffStats:add(everburningPerPointStats)
                 end
@@ -129,9 +135,19 @@ end
 function CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()
 
-    buffStats.craftingspeed:SetValueByPercent(0.2)
+    buffStats.craftingspeed:SetValueByPercent(0.15)
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.WEAVERS_TUTELAGE, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateWeaversProdigyBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+
+    buffStats.craftingspeed:SetValueByPercent(0.30)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.WEAVERS_PRODIGY, buffStats)
 end
 
 ---@param recipeData CraftSim.RecipeData
