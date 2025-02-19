@@ -184,6 +184,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         return select(1, gsub(crafterUID, "-" .. normalizedRealmName, ""))
     end)
 
+    local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
     local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
 
     --TODO: Public Orders
@@ -348,6 +349,17 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
+                                        local function withinMaxPatronOrderCost(craftingCost)
+                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
+                                                if craftingCost >= maxPatronOrderCost then
+                                                    return false
+                                                end
+                                                return true
+                                            end
+                                            return true
+                                        end
+
                                         local function queueRecipe()
                                             local allowConcentration = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
@@ -368,7 +380,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
-                                                if withinKPCost(recipeData.averageProfitCached) then
+                                                if withinKPCost(recipeData.averageProfitCached) and withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
