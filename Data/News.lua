@@ -22,8 +22,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("19.8.3*"),
-        f.p .. f.bb("Customer History"), 
+        newP("19.8.3"),
+        f.p .. f.bb("Customer History"),
+        f.a .. "Now shows total amount of tips received",
+        f.p .. "11.0.7.59207 Data Update",
         collab(self.GITHUB_COLLABS.AVILENE),
         newP("19.8.2"),
         f.p .. f.bb("CraftBuffs"),
