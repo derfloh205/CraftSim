@@ -1732,7 +1732,9 @@ function CraftSim.RecipeData:CrafterDataEquals(crafterData)
 end
 
 function CraftSim.RecipeData:IsOldWorldRecipe()
-    return self.professionData.expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+    local recipeExpansionID = self.professionData.expansionID
+    if recipeExpansionID == "BASE" then return true end
+    return recipeExpansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
 end
 
 ---@param expansionID CraftSim.EXPANSION_IDS
