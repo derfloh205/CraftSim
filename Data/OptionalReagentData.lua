@@ -1921,6 +1921,30 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 40,
 		},
 	},
+	[230935] = {
+		qualityID = 0,
+		name = "Enchanted Gilded Undermine Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 20,
+		},
+	},
+	[230936] = {
+		qualityID = 0,
+		name = "Enchanted Runed Undermine Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 10,
+		},
+	},
+	[230937] = {
+		qualityID = 0,
+		name = "Enchanted Weathered Undermine Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 100,
+		},
+	},
 	[191511] = {
 		qualityID = 1,
 		name = "Stable Fluidic Draconium",
@@ -2733,6 +2757,22 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	[210233] = {
 		qualityID = 0,
 		name = "Forged Gladiator's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 150,
+		},
+	},
+	[229389] = {
+		qualityID = 0,
+		name = "Prized Aspirant's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 50,
+		},
+	},
+	[229390] = {
+		qualityID = 0,
+		name = "Prized Gladiator's Heraldry",
 		expansionID = 10,
 		stats = {
 			increasedifficulty = 150,
