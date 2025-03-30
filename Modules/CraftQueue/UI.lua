@@ -1971,16 +1971,16 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftAmountColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
     local statusColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.StatusColumn]]
     local craftButtonColumn = columns[11] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
+
     local isCrafting = craftButtonColumn.isCrafting or false
 
-    -- listen to to update the isCrafting status
+    -- listen to events to update the isCrafting status
     craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_START")
     craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
     craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_FAILED")
     craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     craftButtonColumn:RegisterEvent("CRAFTINGORDERS_CLAIMED_ORDER_UPDATED")
 
-    -- Set up event handler to track crafting status
     craftButtonColumn:SetScript("OnEvent", function(self, event, ...)
         local recipeSpellID = recipeData.recipeID
 
@@ -2017,6 +2017,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         CraftSim.CRAFTQ.UI:UpdateDisplay()
     end)
 
+    -- cleanup listeners when window is closed
     craftButtonColumn:SetScript("OnHide", function(self)
         self:UnregisterEvent("UNIT_SPELLCAST_START")
         self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
@@ -2200,7 +2201,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     statusColumn.statusIcon:SetStatus(craftQueueItem.allowedToCraft, statusColumnTooltip)
 
     craftButtonColumn.craftButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT))
+
     if isCrafting then
+        -- Always disable the button if crafting is in progress
         craftButtonColumn.craftButton:SetEnabled(false)
     elseif recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
         local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
