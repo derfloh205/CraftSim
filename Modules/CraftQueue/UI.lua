@@ -1971,6 +1971,60 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftAmountColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
     local statusColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.StatusColumn]]
     local craftButtonColumn = columns[11] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
+    local isCrafting = craftButtonColumn.isCrafting or false
+
+    -- listen to to update the isCrafting status
+    craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_START")
+    craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+    craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_FAILED")
+    craftButtonColumn:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    craftButtonColumn:RegisterEvent("CRAFTINGORDERS_CLAIMED_ORDER_UPDATED")
+
+    -- Set up event handler to track crafting status
+    craftButtonColumn:SetScript("OnEvent", function(self, event, ...)
+        local recipeSpellID = recipeData.recipeID
+
+        if event == "UNIT_SPELLCAST_START" then
+            local unit, _, spellID = ...
+            if unit ~= "player" then return end
+
+            if spellID == recipeSpellID then
+                self.isCrafting = true
+                craftButtonColumn.craftButton:SetEnabled(false)
+            end
+        elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
+            local unit, _, spellID = ...
+            if unit ~= "player" then return end
+
+            if spellID == recipeSpellID then
+                self.isCrafting = false
+            end
+        elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not recipeData.orderData then
+            local unit, _, spellID = ...
+            if unit ~= "player" then return end
+
+            if spellID == recipeSpellID then
+                self.isCrafting = false
+            end
+        elseif event == "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED" then
+            if recipeData.orderData then
+                local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                    self.isCrafting = false
+                end
+            end
+        end
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end)
+
+    craftButtonColumn:SetScript("OnHide", function(self)
+        self:UnregisterEvent("UNIT_SPELLCAST_START")
+        self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+        self:UnregisterEvent("UNIT_SPELLCAST_FAILED")
+        self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:UnregisterEvent("CRAFTINGORDERS_CLAIMED_ORDER_UPDATED")
+    end)
+
 
     row.craftQueueItem = craftQueueItem
 
@@ -2146,8 +2200,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     statusColumn.statusIcon:SetStatus(craftQueueItem.allowedToCraft, statusColumnTooltip)
 
     craftButtonColumn.craftButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT))
-
-    if recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
+    if isCrafting then
+        craftButtonColumn.craftButton:SetEnabled(false)
+    elseif recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
         local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
             .profession)
 
