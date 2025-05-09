@@ -156,6 +156,11 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
     end
 
+    if not professionInfo.profession then
+        printF("ProfessionInfo - profession missing: Exclude")
+        return false
+    end
+
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
         -- update favorites cache
         CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, professionInfo.profession, recipeInfo.recipeID,
