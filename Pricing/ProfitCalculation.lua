@@ -59,7 +59,7 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
         for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
             local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
             if itemID == CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEM then
-                comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
+                comissionProfit = comissionProfit + TSM_API.GetCustomPriceValue("artisanspayout", "i:" .. itemID)
             else
                 local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
                 price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
