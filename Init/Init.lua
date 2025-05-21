@@ -267,16 +267,17 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		end)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder",
 		function(orderID, itemGUID, craftingReagentTbl, removedModifications, applyConcentration)
+			local orderData = C_CraftingOrders.GetClaimedOrder()
 			OnCraft(CraftSim.OnCraftData {
-				recipeID = select(1, C_TradeSkillUI.GetOriginalCraftRecipeID(itemGUID)),
+				recipeID = orderData.spellID,
 				amount = 1,
 				isRecraft = true,
 				itemGUID = itemGUID,
-				orderData = C_CraftingOrders.GetClaimedOrder(),
+				orderData = orderData,
 				craftingReagentInfoTbl = craftingReagentTbl or {},
 				concentrating = applyConcentration,
 				callerData = {
-					api = "RecraftRecipe",
+					api = "RecraftRecipeForOrder",
 					params = { orderID, itemGUID, craftingReagentTbl, removedModifications, applyConcentration },
 				}
 			})
