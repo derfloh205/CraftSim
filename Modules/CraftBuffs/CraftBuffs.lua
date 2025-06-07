@@ -398,7 +398,7 @@ function CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(recipeData)
     q1Stats.resourcefulness:addValue(84)
 
     table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q1Stats, 1, {
-        index = 1,
+        index = 2,
         value = 84
     }, nil, nil, 212314))
 
@@ -407,7 +407,7 @@ function CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(recipeData)
     q2Stats.resourcefulness:addValue(106)
 
     table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q2Stats, 2, {
-        index = 1,
+        index = 2,
         value = 106,
     }, nil, nil, 212315))
 
@@ -416,7 +416,7 @@ function CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(recipeData)
     q3Stats.resourcefulness:addValue(135)
 
     table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q3Stats, 3, {
-        index = 1,
+        index = 2,
         value = 135,
     }, nil, nil, 212316))
 
