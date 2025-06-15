@@ -380,9 +380,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
-                                                if withinKPCost(recipeData.averageProfitCached) and withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
-                                                    CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
-                                                end
+												if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
+													recipeData.averageProfitCached <= 0	then
+													-- skip: not profitable
+												elseif withinKPCost(recipeData.averageProfitCached) and
+													withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+													CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+												end
                                             end
 
                                             distributor:Continue()

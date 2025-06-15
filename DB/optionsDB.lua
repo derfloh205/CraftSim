@@ -271,6 +271,10 @@ function CraftSim.DB.OPTIONS:Migrate()
         --- option removal
         CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
     end)
+	
+	if CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE"] == nil then
+		CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE"] = false
+    end
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()
