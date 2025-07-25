@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## DefaultState: enabled
 
 ## Title: CraftSim
@@ -6,7 +6,7 @@
 ## Category-deDE: Berufe
 ## Notes: Calculates the average profit based on your profession stats and other tools for the war within gold making
 ## Author: genju
-## Version: 19.8.6
+## Version: 19.8.7
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
