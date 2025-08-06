@@ -1240,4 +1240,3 @@ function CraftSim.CRAFTQ:ResetQuickBuyCache()
     wipe(qbCache.boughtSearchStrings)
     wipe(qbCache.resultRows)
 end
-
