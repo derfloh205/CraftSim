@@ -693,20 +693,19 @@ function CraftSim.CRAFTQ.UI:Init()
                         GameTooltip_AddInstructionLine(tooltip,
                             L("CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
                     end);
-					
-					local onlyProfitableCB = rootDescription:CreateCheckbox(
-						L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX"),
-						function()
-							return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE")
-						end, function()
-							local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE")
-							CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE", not value)
-						end)
+                        
+                    local onlyProfitableCB = rootDescription:CreateCheckbox(L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE", not value)
+                        end)
 
-					onlyProfitableCB:SetTooltip(function(tooltip, elementDescription)
-						GameTooltip_AddInstructionLine(tooltip,
-						L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP"))
-						end)
+                    onlyProfitableCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP"))
+                    end);
  
                     local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
 
@@ -2223,3 +2222,4 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     CraftSim.DEBUG:StopProfiling(profilingID)
 end
+
