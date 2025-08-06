@@ -730,4 +730,3 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.SOURCE_COLUMN_WO] = "WO",
     }
 end
-
