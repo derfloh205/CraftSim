@@ -54,9 +54,9 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
     end
 
     -- always update reagents of that craft
-    GUTIL:WaitForEvent("PLAYERREAGENTBANKSLOTS_CHANGED", function()
+    GUTIL:WaitForEvent("PLAYERBANKSLOTS_CHANGED", function()
         local print = CraftSim.DEBUG:RegisterDebugID("CACHE_ITEM_COUNT")
-        print("PLAYERREAGENTBANKSLOTS_CHANGED After Craft")
+        print("PLAYERBANKSLOTS_CHANGED After Craft")
         -- update item count for each of the used reagents in this craft! (in next frame to batch results)
         RunNextFrame(function()
             local recipeData = CraftSim.CRAFT_LOG.currentRecipeData
@@ -193,3 +193,4 @@ function CraftSim.CRAFT_LOG:MergeReagentsItemData(totalReagents, newReagents)
         end
     end
 end
+
