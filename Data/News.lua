@@ -30,6 +30,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         collab("https://github.com/Prejudice182"),
         f.p .. "Craft Buffs detection fix for phials",
         collab("https://github.com/SanjoSolutions"),
+        f.p .. "Old World Recipes fixes",
+        collab("https://github.com/rowaasr13"),
         newP("19.8.7"),
         f.p .. "11.1.7.61967 Data Update",
         newP("19.8.6"),
