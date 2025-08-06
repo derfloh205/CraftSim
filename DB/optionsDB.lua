@@ -303,4 +303,3 @@ end
 function CraftSim.DB.OPTIONS:Save(option, value)
     CraftSimDB.optionsDB.data[option] = value
 end
-
