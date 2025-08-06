@@ -2222,4 +2222,3 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     CraftSim.DEBUG:StopProfiling(profilingID)
 end
-
