@@ -8,8 +8,8 @@ function CraftSim.LOCAL_ES:GetData()
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multifabricación",
-        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Ingenio",
-        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Inventiva",
+        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Inventiva",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Ingenio",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocidad de fabricación",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equipar:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Encantado:",
@@ -29,6 +29,6 @@ function CraftSim.LOCAL_ES:GetData()
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Dificultad de la receta: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multifabricación: ",
-        [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Ingenio: ",
+        [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Inventiva: ",
     }
 end
