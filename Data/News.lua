@@ -28,6 +28,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         collab(self.GITHUB_COLLABS.AVILENE),
         f.p .. "Spanish Localization Fixes",
         collab("https://github.com/Prejudice182"),
+        f.p .. "Craft Buffs detection fix for phials",
+        collab("https://github.com/SanjoSolutions"),
         newP("19.8.7"),
         f.p .. "11.1.7.61967 Data Update",
         newP("19.8.6"),
