@@ -1945,6 +1945,30 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 100,
 		},
 	},
+	[231767] = {
+		qualityID = 0,
+		name = "Enchanted Weathered Ethereal Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 100,
+		},
+	},
+	[231768] = {
+		qualityID = 0,
+		name = "Enchanted Gilded Ethereal Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 20,
+		},
+	},
+	[231769] = {
+		qualityID = 0,
+		name = "Enchanted Runed Ethereal Crest",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 10,
+		},
+	},
 	[191511] = {
 		qualityID = 1,
 		name = "Stable Fluidic Draconium",
@@ -2773,6 +2797,22 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	[229390] = {
 		qualityID = 0,
 		name = "Prized Gladiator's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 150,
+		},
+	},
+	[230286] = {
+		qualityID = 0,
+		name = "Astral Aspirant's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 50,
+		},
+	},
+	[230287] = {
+		qualityID = 0,
+		name = "Astral Gladiator's Heraldry",
 		expansionID = 10,
 		stats = {
 			increasedifficulty = 150,
