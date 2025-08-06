@@ -90,7 +90,7 @@ function CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
         end
     end
     -- +6 to account for accountBank / warband bank
-    for bagID = REAGENTBANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS + 6 do
+    for bagID = Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 + 6 do
         countBagItems(bagID)
     end
 end
