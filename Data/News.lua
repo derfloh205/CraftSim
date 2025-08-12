@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("19.8.9"),
+        f.P .. "New option to only queue profitable work orders",
+        collab("https://github.com/JH0Ni-github"),
         f.p .. "Bank Event Fix",
         collab("https://github.com/Prejudice182"),
         newP("19.8.8"),
