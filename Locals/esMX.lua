@@ -8,6 +8,7 @@ function CraftSim.LOCAL_MX:GetData()
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Fabricación múltiple",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Inventiva",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Ingenio",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocidad de fabricación",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equipar:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Encantado:",
