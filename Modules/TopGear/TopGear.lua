@@ -171,7 +171,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}
 
-        for bag = Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 + 6 do
+        for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 + Constants.InventoryConstants.NumAccountBankSlots do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
                 if itemLoc:IsValid() then
