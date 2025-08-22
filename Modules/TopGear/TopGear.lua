@@ -296,9 +296,6 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
         gearSlotCombos = gearSlotItems
     end
 
-    CraftSim.DEBUG:InspectTable(gearSlotCombos, "CraftSim.TOPGEAR:GetProfessionGearCombinations: gearSlotCombos")
-
-
     -- then permutate those combinations with the tool items to get all available gear combos
     -- if cooking just combine 1 gear with tool
     local totalCombos = {}
@@ -319,8 +316,6 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
 
 
     local uniqueCombos = CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, recipeData.isCooking)
-
-    CraftSim.DEBUG:InspectTable(uniqueCombos, "CraftSim.TOPGEAR:GetProfessionGearCombinations: uniqueCombos")
 
     local function convertToProfessionGearSet(combos)
         return GUTIL:Map(combos, function(combo)
