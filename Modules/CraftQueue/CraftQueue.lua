@@ -565,6 +565,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 highestProfit = true,
             },
             optimizeConcentration = true,
+            optimizeGear = true,
             optimizeConcentrationProgressCallback = function(conProgress)
                 queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
                     progress,
