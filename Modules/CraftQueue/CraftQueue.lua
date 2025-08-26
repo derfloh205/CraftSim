@@ -271,6 +271,14 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                     if recipeInfo and recipeInfo.learned then
                                         local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
+                                        local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                                        if isAlreadyQueued then
+                                            print("Work order is already queued, skipping")
+                                            distributor:Continue()
+                                            return
+                                        end
+
+
                                         if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
                                             if recipeData:HasRequiredSelectableReagent() then
                                                 local slot = recipeData.reagentData.requiredSelectableReagentSlot
@@ -360,7 +368,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function queueRecipe()
+                                        local function queueRecipe() 
                                             local allowConcentration = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                                             local forceConcentration = CraftSim.DB.OPTIONS:Get(
