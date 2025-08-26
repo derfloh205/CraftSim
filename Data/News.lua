@@ -22,6 +22,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("20.0.0"),
+        f.P .. f.g("Improved Optimization Performance"),
+        f.a .. "- for reagent optimization and",
+        f.a .. "- and concentration optimization",
+        collab("https://github.com/thebigjc"),
+        f.p .. "Fixed nil error when using gear optimizations",
+        f.a .. "when scanning multiple characters",
         newP("19.9.0"),
         f.P .. f.g("Updated Gear Optimization Logic"),
         f.a .. "Consider empty slots only if not enough gear",
