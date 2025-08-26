@@ -3,9 +3,79 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+-- Memoization cache for expensive WoW API calls
+local concentrationCostCache = {}
+local concentrationCacheStats = { hits = 0, misses = 0 }
+
+-- Helper function to generate cache key for UpdateConcentrationCost
+local function generateConcentrationCacheKey(recipeData)
+    local parts = {tostring(recipeData.recipeID)}
+    
+    -- Add reagent configuration to key
+    local requiredTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
+    for reagentID, quantity in pairs(requiredTbl) do
+        -- Handle case where quantity might be a table
+        local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or tostring(quantity)
+        table.insert(parts, reagentID .. ":" .. quantityStr)
+    end
+    
+    -- Add allocation GUID if present
+    if recipeData.allocationItemGUID then
+        table.insert(parts, tostring(recipeData.allocationItemGUID))
+    end
+    
+    -- Add order ID if present
+    if recipeData.orderData then
+        table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
+    end
+    
+    return table.concat(parts, "_")
+end
+
 ---@class CraftSim.RecipeData : CraftSim.CraftSimObject
 ---@overload fun(options: CraftSim.RecipeData.ConstructorOptions): CraftSim.RecipeData
 CraftSim.RecipeData = CraftSim.CraftSimObject:extend()
+
+-- Function to clear the concentration cost cache
+function CraftSim.RecipeData.ClearConcentrationCostCache()
+    concentrationCostCache = {}
+    concentrationCacheStats = { hits = 0, misses = 0 }
+end
+
+-- Function to get cache statistics
+function CraftSim.RecipeData.GetConcentrationCacheStats()
+    return concentrationCacheStats
+end
+
+-- Function to report cache diagnostics
+local function reportCacheDiagnostics()
+    local skillStats = CraftSim.ReagentData.GetSkillCacheStats()
+    local concentrationStats = CraftSim.RecipeData.GetConcentrationCacheStats()
+    
+    local skillTotal = skillStats.hits + skillStats.misses
+    local concentrationTotal = concentrationStats.hits + concentrationStats.misses
+    
+    if skillTotal > 0 or concentrationTotal > 0 then
+        if skillTotal > 0 then
+            local skillHitRate = (skillStats.hits / skillTotal) * 100
+            print(string.format("GetSkillFromRequiredReagents cache: %d/%d hits (%.1f%%)", 
+                skillStats.hits, skillTotal, skillHitRate))
+        end
+        
+        if concentrationTotal > 0 then
+            local concentrationHitRate = (concentrationStats.hits / concentrationTotal) * 100
+            print(string.format("UpdateConcentrationCost cache: %d/%d hits (%.1f%%)", 
+                concentrationStats.hits, concentrationTotal, concentrationHitRate))
+        end
+        
+        local totalHits = skillStats.hits + concentrationStats.hits
+        local totalCalls = skillTotal + concentrationTotal
+        if totalCalls > 0 then
+            local overallHitRate = (totalHits / totalCalls) * 100
+            print(string.format("Overall cache performance: %d/%d hits (%.1f%%)", totalHits, totalCalls, overallHitRate))
+        end
+    end
+end
 
 local systemPrint = print
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
@@ -609,14 +679,29 @@ end
 
 ---@return number concentrationCost
 function CraftSim.RecipeData:UpdateConcentrationCost()
+    -- Check cache first
+    local cacheKey = generateConcentrationCacheKey(self)
+    local cachedResult = concentrationCostCache[cacheKey]
+    if cachedResult then
+        concentrationCacheStats.hits = concentrationCacheStats.hits + 1
+        return cachedResult
+    end
+    
+    concentrationCacheStats.misses = concentrationCacheStats.misses + 1
+    
     if not self.baseOperationInfo then return 0 end
+    
     local craftingDataID = self.baseOperationInfo.craftingDataID
-
     self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
 
     -- try to only enable it for simulation mode or if its not the current character
     if self.concentrationCurveData and (CraftSim.SIMULATION_MODE.isActive or not self:IsCrafter()) then
-        return self:GetConcentrationCostForSkill(self.professionStats.skill.value)
+        local result = self:GetConcentrationCostForSkill(self.professionStats.skill.value)
+        
+        -- Cache the result
+        concentrationCostCache[cacheKey] = result
+        
+        return result
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
         -- or if we are not in the current beta (08.08.2024)
@@ -624,6 +709,7 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
 
         -- includes required and optionals
         local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
+        
         -- on purpose do not use concentration so we will always get the costs
         local operationInfo
         if self.orderData then
@@ -636,7 +722,10 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
                 false)
         end
 
-        return (operationInfo and operationInfo.concentrationCost) or 0
+        local result = (operationInfo and operationInfo.concentrationCost) or 0
+        -- Cache the result
+        concentrationCostCache[cacheKey] = result
+        return result
     end
 end
 
@@ -644,6 +733,7 @@ end
 function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
+    
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
@@ -734,17 +824,27 @@ end
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param options CraftSim.RecipeData.OptimizeReagentOptions?
 function CraftSim.RecipeData:OptimizeReagents(options)
+    -- Clear API call caches at the start of optimization
+    CraftSim.RecipeData.ClearConcentrationCostCache()
+    CraftSim.ReagentData.ClearSkillFromReagentsCache()
+
     options = options or {}
     options.maxQuality = options.maxQuality or self.maxQuality
     options.highestProfit = options.highestProfit or false
 
     -- do not optimize quest recipes
     if self.isQuestRecipe then
+        -- Clear caches before early return
+        CraftSim.RecipeData.ClearConcentrationCostCache()
+        CraftSim.ReagentData.ClearSkillFromReagentsCache()
         return
     end
 
     if not self.supportsQualities then
         self:SetCheapestQualityReagentsMax()
+        -- Clear caches before early return
+        CraftSim.RecipeData.ClearConcentrationCostCache()
+        CraftSim.ReagentData.ClearSkillFromReagentsCache()
         return
     end
 
@@ -782,6 +882,13 @@ function CraftSim.RecipeData:OptimizeReagents(options)
 
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update()
+
+    -- Report cache performance before clearing
+    reportCacheDiagnostics()
+
+    -- Clear API call caches at the end of optimization
+    CraftSim.RecipeData.ClearConcentrationCostCache()
+    CraftSim.ReagentData.ClearSkillFromReagentsCache()
 
     -- CraftSim.DEBUG:InspectTable({
     --     optimizationResult = optimizationResult,
@@ -1188,8 +1295,10 @@ end
 ---@return table probabilityTable
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
+    
     self.averageProfitCached = averageProfit
     self.relativeProfitCached = GUTIL:GetPercentRelativeTo(averageProfit, self.priceData.craftingCosts)
+    
     return averageProfit, probabilityTable
 end
 

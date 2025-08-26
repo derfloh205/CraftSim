@@ -3,12 +3,50 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+-- Memoization cache for expensive WoW API calls
+local skillFromReagentsCache = {}
+local skillCacheStats = { hits = 0, misses = 0 }
+
+-- Helper function to generate cache key for GetSkillFromRequiredReagents
+local function generateSkillCacheKey(recipeData, requiredTbl)
+    local parts = {tostring(recipeData.recipeID)}
+    
+    -- Add reagent configuration to key
+    for reagentID, quantity in pairs(requiredTbl) do
+        -- Handle case where quantity might be a table
+        local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or tostring(quantity)
+        table.insert(parts, reagentID .. ":" .. quantityStr)
+    end
+    
+    -- Add allocation GUID if present
+    if recipeData.allocationItemGUID then
+        table.insert(parts, tostring(recipeData.allocationItemGUID))
+    end
+    
+    -- Add order ID if present
+    if recipeData.orderData then
+        table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
+    end
+    
+    return table.concat(parts, "_")
+end
 
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ReagentData")
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.ReagentData : CraftSim.CraftSimObject
 CraftSim.ReagentData = CraftSim.CraftSimObject:extend()
+
+-- Function to clear the skill cache
+function CraftSim.ReagentData.ClearSkillFromReagentsCache()
+    skillFromReagentsCache = {}
+    skillCacheStats = { hits = 0, misses = 0 }
+end
+
+-- Function to get cache statistics
+function CraftSim.ReagentData.GetSkillCacheStats()
+    return skillCacheStats
+end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param schematicInfo CraftingRecipeSchematic
@@ -275,21 +313,36 @@ end
 ---@return number skillWithReagents
 function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local requiredTbl = self:GetRequiredCraftingReagentInfoTbl()
+    
+    -- Check cache first
+    local cacheKey = generateSkillCacheKey(self.recipeData, requiredTbl)
+    local cachedResult = skillFromReagentsCache[cacheKey]
+    if cachedResult then
+        skillCacheStats.hits = skillCacheStats.hits + 1
+        return cachedResult
+    end
+    
+    skillCacheStats.misses = skillCacheStats.misses + 1
 
     local recipeID = self.recipeData.recipeID
 
-    -- explicitly do not u use concentration here
+    -- explicitly do not use concentration here
 
     local baseOperationInfo = nil
     local operationInfoWithReagents = nil
+    
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID, false)
-        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
             self.recipeData.orderData.orderID, false)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
             false)
+    end
+    
+    if self.recipeData.orderData then
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
+            self.recipeData.orderData.orderID, false)
+    else
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
             self.recipeData.allocationItemGUID, false)
     end
@@ -297,8 +350,13 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     if baseOperationInfo and operationInfoWithReagents then
         local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
         local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
-
-        return skillWithReagents - baseSkill
+        
+        local result = skillWithReagents - baseSkill
+        
+        -- Cache the result
+        skillFromReagentsCache[cacheKey] = result
+        
+        return result
     end
     print("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0
