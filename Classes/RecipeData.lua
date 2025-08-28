@@ -7,6 +7,9 @@ local GUTIL = CraftSim.GUTIL
 local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
+local systemPrint = print
+local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
+
 -- Helper function to generate cache key for UpdateConcentrationCost
 local function generateConcentrationCacheKey(recipeData)
     local parts = {tostring(recipeData.recipeID)}
@@ -76,10 +79,6 @@ local function reportCacheDiagnostics()
         end
     end
 end
-
-local systemPrint = print
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
-
 
 ---@class CraftSim.RecipeData.ConstructorOptions
 ---@field recipeID RecipeID
