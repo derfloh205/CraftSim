@@ -11,7 +11,7 @@ CraftSim.NEWS.GITHUB_COLLABS = {
 }
 
 local print = CraftSim.DEBUG:RegisterDebugID("Data.News")
-local function newP(v) return f.l("\n                                   --- Version " .. v .. " ---\n") end
+local function newP(v) return f.l("\nPatch Notes " .. v .. "\n") end
 local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 
 ---@param itemMap table<string, ItemMixin>
@@ -20,8 +20,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local supporterListUpdate = f.p .. f.patreon("Supporter List Update ") ..
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
-        f.bb("                   Hello and thank you for using CraftSim!\n"),
-        f.bb("                                 ( You are awesome! )"),
+        f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.1.0"),
+        f.P .. f.g("Improved Optimization Performance"),
+        f.a .. "- by introducing client api response caching",
+        collab("https://github.com/thebigjc"),
         newP("20.0.0"),
         f.P .. f.g("Improved Optimization Performance"),
         f.a .. "- for reagent optimization and",
