@@ -21,6 +21,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.2.0"),
+        f.s .. "Added Option to automatically create an",
+        f.a .. "Auctionator Shopping List after finishing",
+        f.a .. "a " .. f.bb("Queue Favorites") .. " Scan",
+        f.p .. "Added chat window notification upon",
+        f.a .. "Shopping List creation",
         newP("20.1.1"),
         f.P .. f.g("Improved Optimization Performance"),
         f.a .. "- by introducing client api response caching",
