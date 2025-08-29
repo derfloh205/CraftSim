@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.2.1"),
+        f.p .. "Fixed work orders incrementing on new queue scan",
+        collab(self.GITHUB_COLLABS.AVILENE),
         newP("20.2.0"),
         f.s .. "Added Option to automatically create an",
         f.a .. "Auctionator Shopping List after finishing",
