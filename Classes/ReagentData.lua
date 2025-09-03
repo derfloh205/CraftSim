@@ -27,6 +27,17 @@ local function generateSkillCacheKey(recipeData, requiredTbl)
     if recipeData.orderData then
         table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
     end
+
+    -- Add profession tools
+    if recipeData.professionGearSet then
+        for nr, gear in ipairs(recipeData.professionGearSet:GetProfessionGearList()) do
+            if gear.item then
+                table.insert(parts, "tool" .. tostring(nr) .. ":" .. gear.item:GetItemLink())
+            else
+                table.insert(parts, "tool" .. tostring(nr) .. ":nil")
+            end
+        end
+    end
     
     return table.concat(parts, "_")
 end

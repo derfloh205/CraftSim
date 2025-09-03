@@ -11,6 +11,7 @@ local systemPrint = print
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
+---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
     local parts = {tostring(recipeData.recipeID)}
     
@@ -31,7 +32,18 @@ local function generateConcentrationCacheKey(recipeData)
     if recipeData.orderData then
         table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
     end
-    
+
+    -- Add profession tools
+    if recipeData.professionGearSet then
+        for nr, gear in ipairs(recipeData.professionGearSet:GetProfessionGearList()) do
+            if gear.item then
+                table.insert(parts, "tool" .. tostring(nr) .. ":" .. gear.item:GetItemLink())
+            else
+                table.insert(parts, "tool" .. tostring(nr) .. ":nil")
+            end
+        end
+    end
+
     return table.concat(parts, "_")
 end
 
@@ -678,6 +690,12 @@ end
 
 ---@return number concentrationCost
 function CraftSim.RecipeData:UpdateConcentrationCost()
+
+    if not self.baseOperationInfo then return 0 end
+    
+    local craftingDataID = self.baseOperationInfo.craftingDataID
+    self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
+
     -- Check cache first
     local cacheKey = generateConcentrationCacheKey(self)
     local cachedResult = concentrationCostCache[cacheKey]
@@ -688,11 +706,6 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
     
     concentrationCacheStats.misses = concentrationCacheStats.misses + 1
     
-    if not self.baseOperationInfo then return 0 end
-    
-    local craftingDataID = self.baseOperationInfo.craftingDataID
-    self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
-
     -- try to only enable it for simulation mode or if its not the current character
     if self.concentrationCurveData and (CraftSim.SIMULATION_MODE.isActive or not self:IsCrafter()) then
         local result = self:GetConcentrationCostForSkill(self.professionStats.skill.value)
