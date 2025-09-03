@@ -24,6 +24,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("20.2.2"),
         f.p .. "Fixed caching not considering profession gear",
         f.p .. "Fixed caching returning before concentration data is set",
+        f.p .. "Fixed gear cache not clearing before adding new gear",
         newP("20.2.1"),
         f.p .. "Fixed work orders incrementing on new queue scan",
         collab(self.GITHUB_COLLABS.AVILENE),
