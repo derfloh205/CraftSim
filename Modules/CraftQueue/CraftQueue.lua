@@ -968,6 +968,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     end
 
     if optimizeConcentration and recipeData.supportsQualities then
+        CraftSim.DEBUG:InspectTable(recipeData, "RECIPEDATABEFOREOPTIMIZATION")
         queueButton:SetEnabled(false)
         recipeData:OptimizeConcentration {
             finally = function()
