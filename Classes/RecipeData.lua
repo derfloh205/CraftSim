@@ -11,6 +11,7 @@ local systemPrint = print
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
+---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
     local parts = {tostring(recipeData.recipeID)}
     
@@ -31,7 +32,14 @@ local function generateConcentrationCacheKey(recipeData)
     if recipeData.orderData then
         table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
     end
-    
+
+    -- Add profession tools
+    if recipeData.professionGearSet then
+        for nr, gear in ipairs(recipeData.professionGearSet:GetProfessionGearList()) do
+            table.insert(parts, "tool" .. tostring(nr) .. ":" .. gear.item:GetItemLink())
+        end
+    end
+
     return table.concat(parts, "_")
 end
 

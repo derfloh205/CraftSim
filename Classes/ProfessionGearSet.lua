@@ -78,6 +78,7 @@ function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     end
 end
 
+---@return CraftSim.ProfessionGear[]
 function CraftSim.ProfessionGearSet:GetProfessionGearList()
     if self.isCooking then
         return { self.tool, self.gear2 }
