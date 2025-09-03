@@ -166,6 +166,9 @@ end
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
     local crafterUID = recipeData:GetCrafterUID()
     if recipeData:IsCrafter() and not forceCache then
+        -- Clear Cache
+        CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID,
+            recipeData.professionData.professionInfo.profession)
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}
