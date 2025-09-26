@@ -108,12 +108,14 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
                 local concentration = qualityID == recipeData.resultData.expectedQualityConcentration and
                     concentrationAvailable
 
+                -- Ensure expectedCostsPerItem is not nil to prevent GUTIL:Round errors
+                local expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem or 0
 
                 ---@type CraftSim.ExpectedCraftingCostsData
                 CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
                     crafter = recipeData:GetCrafterUID(),
                     qualityID = qualityID,
-                    expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
+                    expectedCostsPerItem = expectedCostsPerItem,
                     expectedYieldPerCraft = recipeData.resultData.expectedYieldPerCraft,
                     concentration = concentration,
                     concentrationCost = recipeData.concentrationCost,
