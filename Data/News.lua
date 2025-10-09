@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.2.4"),
+        f.p .. "Updated Specialization Data for 11.2.5",
         newP("20.2.3"),
         f.p .. "Fixed 'nil' errors for sub recipe optimizations",
         collab(self.GITHUB_COLLABS.AVILENE),
