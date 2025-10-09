@@ -2698,6 +2698,15 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			multicraft = 1100.0,
 		},
 	},
+	[223969] = {
+		qualityID = 0,
+		name = "Secret Sauce",
+		expansionID = 10,
+		stats = {
+			multicraft = 1100.0,
+			additionalitemscraftedwithmulticraft = 6.0
+		},
+	},
 	[225987] = {
 		qualityID = 1,
 		name = "Bottled Brilliance",
