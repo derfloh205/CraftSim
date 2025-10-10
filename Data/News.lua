@@ -24,6 +24,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("20.3.0"),
         f.s .. "Fixed craft log sometimes not counting crafts",
         f.a .. "when crafting with low frame rate",
+        f.p .. "Added missing recipe data update after stat weight", 
+        f.a .. "calculation",
         collab("https://github.com/shadowmutant"),
         newP("20.2.4"),
         f.p .. "Updated Specialization Data for 11.2.5",
