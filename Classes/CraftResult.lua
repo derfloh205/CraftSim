@@ -63,6 +63,17 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
                 craftingItemResult.multicraft, craftingItemResult.craftingQuality))
     end
 
+
+    -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
+    local nonSalvageQtySaved = 0;
+    local salvageQuantitySaved = 0;
+    local salvageItemSaved = false;
+    local salvageItemId = nil;
+    if recipeData.isSalvageRecipe then
+        local slot = recipeData.reagentData.salvageReagentSlot
+        salvageItemId = slot.activeItem:GetItemID()
+    end
+
     -- multiple sets of results in one frame - make sure to capture all resourcefulness savings
     for _, craftResult in ipairs( craftingItemResultData ) do
         if craftResult.resourcesReturned and handledOperationIds[craftResult.operationID] ~= true then
@@ -71,9 +82,35 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
                 local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
                 self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
                 table.insert(self.savedReagents, craftResultSavedReagent)
+                -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
+                if salvageItemId == craftingResourceReturnInfo.itemID then
+                    salvageItemSaved = true
+                else
+                    nonSalvageQtySaved = nonSalvageQtySaved + craftingResourceReturnInfo.quantity
+                    local slot = recipeData.reagentData.salvageReagentSlot;
+                    local quantity = math.min( slot.requiredQuantity, craftingResourceReturnInfo.quantity ); -- if we saved 5 bismuth, the max gems we can save is still 3
+                    salvageQuantitySaved = salvageQuantitySaved + quantity;
+                end
             end
             handledOperationIds[craftResult.operationID] = true;
         end
+    end
+
+    -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
+    -- Fixes the case described below:
+    -- if the crafting result saves only bismuth, it saves the same # of gems, up to 3 (#gems required for recipe) 
+	-- ex: if only bismuth saved, and 1 saved - also saved 1 gem
+	-- ex: if only bismuth saved, and 2 saved - also saved 2 gem
+	-- ex: if only bismuth saved, and 3 saved - also saved 3 gem
+	-- ex: if only bismuth saved, and 4 saved - also saved 3 gem
+    if salvageItemId ~= nil and nonSalvageQtySaved ~= 0 and salvageItemSaved == false then
+        -- if the salvage item is not in the craftingItemResultData[1].resourcesReturned, add it manually
+        local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID( salvageItemId, true, false, true ) * salvageQuantitySaved;
+        self.savedCosts = self.savedCosts + reagentCosts;
+        table.insert( self.savedReagents, CraftSim.CraftResultReagent( recipeData, salvageItemId, salvageQuantitySaved ) )
+
+        -- Not sure this won't have side effects, log it for now
+        -- print( "logged additional saved items for salvage recipe: " .. salvageItemId .. " quantity: " .. quantity );
     end
 
     -- Reagents
