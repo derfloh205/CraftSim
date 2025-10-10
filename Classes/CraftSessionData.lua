@@ -31,9 +31,10 @@ end
 
 ---@param craftResult CraftSim.CraftResult
 ---@param enableAdvData boolean
-function CraftSim.CraftSessionData:AddCraftResult(craftResult, enableAdvData)
+---@param aNumCrafts number
+function CraftSim.CraftSessionData:AddCraftResult(craftResult, enableAdvData, aNumCrafts)
     print("SessionData: AddCraftResult")
-    self.numCrafts = self.numCrafts + 1
+    self.numCrafts = self.numCrafts + aNumCrafts
     table.insert(self.craftResults, craftResult)
 
     local craftGarbageCollectEnabled = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED")

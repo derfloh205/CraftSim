@@ -195,12 +195,13 @@ end
 
 ---@param craftResult CraftSim.CraftResult
 ---@param recipeData CraftSim.RecipeData last crafted recipeData
-function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData)
+---@param aNumCrafts number
+function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData, aNumCrafts )
     local reagentCombinationID = craftResult.reagentCombinationID
 
     ---@param craftingStatData CraftSim.CraftRecipeData.CraftingStatData
     local function addStats(craftingStatData)
-        craftingStatData.numCrafts = craftingStatData.numCrafts + 1
+        craftingStatData.numCrafts = craftingStatData.numCrafts + aNumCrafts
 
         local observedStats = craftingStatData.observedStats
         local expectedStats = craftingStatData.expectedStats

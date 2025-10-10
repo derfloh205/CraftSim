@@ -3,13 +3,20 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+-- Collection of operationIds that have already been handled, to avoid double counting resourcefulness savings
+local handledOperationIds = {};
+
+-- Timestamp of the last construction of a CraftResult object, used to periodically clear handledOperationIds
+local lastConstructTime = 0;
+
 ---@class CraftSim.CraftResult : CraftSim.CraftSimObject
----@overload fun(recipeData: CraftSim.RecipeData, craftingItemResultData: CraftingItemResultData): CraftSim.CraftResult
+---@overload fun(recipeData: CraftSim.RecipeData, craftingItemResultData: CraftingItemResultData, aNumCrafts: number): CraftSim.CraftResult
 CraftSim.CraftResult = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param craftingItemResultData CraftingItemResultData[]
-function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
+---@param aNumCrafts number
+function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts )
     self.recipeID = recipeData.recipeID
     ---@type CraftSim.CraftResultItem[]
     self.craftResultItems = {}
@@ -31,6 +38,13 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.isWorkOrder = recipeData:IsWorkOrder()
     self.orderData = recipeData.orderData
 
+    -- Periodically clear handledOperationIds so the table doesn't grow indefinitely
+    -- Try to make it so a break in crafting triggers this - 5 seconds since the last craft
+    if time() - lastConstructTime > 5 then
+        handledOperationIds = {};
+    end
+    lastConstructTime = time();
+
     for _, craftingItemResult in pairs(craftingItemResultData) do
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
             self.triggeredMulticraft = true
@@ -49,16 +63,16 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
                 craftingItemResult.multicraft, craftingItemResult.craftingQuality))
     end
 
-    -- just take resourcefulness from the first craftResult
-    -- this is because of a blizzard bug where the same proc is listed in every craft result
-
-    if craftingItemResultData[1].resourcesReturned then
-        self.triggeredResourcefulness = true
-        for _, craftingResourceReturnInfo in pairs(craftingItemResultData[1].resourcesReturned) do
-            local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData,
-                craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
-            self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
-            table.insert(self.savedReagents, craftResultSavedReagent)
+    -- multiple sets of results in one frame - make sure to capture all resourcefulness savings
+    for _, craftResult in ipairs( craftingItemResultData ) do
+        if craftResult.resourcesReturned and handledOperationIds[craftResult.operationID] ~= true then
+            self.triggeredResourcefulness = true
+            for _, craftingResourceReturnInfo in pairs(craftResult.resourcesReturned) do
+                local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
+                self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
+                table.insert(self.savedReagents, craftResultSavedReagent)
+            end
+            handledOperationIds[craftResult.operationID] = true;
         end
     end
 
@@ -68,45 +82,45 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         if recipeData.isSalvageRecipe then
             local slot = recipeData.reagentData.salvageReagentSlot
             local itemID = slot.activeItem:GetItemID()
-            local quantity = slot.requiredQuantity
+            local quantity = slot.requiredQuantity * aNumCrafts
             local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
             self.craftingCosts = self.craftingCosts + reagentCosts
-            tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity))
-            tinsert(reagentItemIDs, itemID .. "." .. quantity)
+            tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity)) -- how much we actually used
+            tinsert(reagentItemIDs, itemID .. "." .. slot.requiredQuantity )                  -- how much the recipe called for, used for reagentCombinationID
         end
 
         if recipeData:HasRequiredSelectableReagent() then
             local slot = recipeData.reagentData.requiredSelectableReagentSlot
-            if slot then
+            if slot and slot.activeReagent then
                 local itemID = slot.activeReagent.item:GetItemID()
-                local quantity = slot.maxQuantity
+                local quantity = slot.maxQuantity * aNumCrafts
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 local isOrderReagent = slot.activeReagent:IsOrderReagentIn(recipeData)
                 if not isOrderReagent then
                     self.craftingCosts = self.craftingCosts + reagentCosts
                 end
                 tinsert(self.reagents,
-                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
-                tinsert(reagentItemIDs, itemID .. "." .. quantity)
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent)) -- how much we actually used
+                tinsert(reagentItemIDs, itemID .. "." .. slot.maxQuantity)                     -- how much the recipe called for, used for reagentCombinationID
             end
         end
 
         -- required
         for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
             for _, reagentItem in ipairs(requiredReagent.items) do
-                local quantity = reagentItem.quantity
+                local quantity = reagentItem.quantity * aNumCrafts
                 local itemID = reagentItem.item:GetItemID()
                 local isOrderReagent = reagentItem:IsOrderReagentIn(recipeData)
 
                 tinsert(self.reagents,
-                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent)) -- how much we actually used
 
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 if not isOrderReagent then
                     self.craftingCosts = self.craftingCosts + reagentCosts
                 end
-                if quantity > 0 then
-                    tinsert(reagentItemIDs, itemID .. "." .. quantity)
+                if reagentItem.quantity > 0 then
+                    tinsert(reagentItemIDs, itemID .. "." .. reagentItem.quantity)             -- how much the recipe called for, used for reagentCombinationID
                 end
             end
         end
@@ -114,18 +128,19 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         for _, optionalReagentSlot in ipairs(GUTIL:Concat { recipeData.reagentData.optionalReagentSlots, recipeData.reagentData.finishingReagentSlots }) do
             if optionalReagentSlot:IsAllocated() then
                 local itemID = optionalReagentSlot.activeReagent.item:GetItemID()
-                local quantity = optionalReagentSlot.maxQuantity
+                local quantity = optionalReagentSlot.maxQuantity * aNumCrafts
                 local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
                 local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(recipeData)
                 if not isOrderReagent then
                     self.craftingCosts = self.craftingCosts + reagentCosts
                 end
                 tinsert(self.reagents,
-                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
-                tinsert(reagentItemIDs, itemID .. "." .. quantity)
+                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))  -- how much we actually used
+                tinsert(reagentItemIDs, itemID .. "." .. optionalReagentSlot.maxQuantity)       -- how much the recipe called for, used for reagentCombinationID
             end
         end
 
+        -- The reagentCombinationID should represent the reagents required for 1 craft, disregarding aNumCrafts
         for i, itemID in ipairs(reagentItemIDs) do
             local itemIDString
             if i > 1 then
@@ -137,7 +152,8 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         end
     end
 
-    self.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents - self.savedCosts
+    --self.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents - self.savedCosts -- commenting this out - it stops multiple crafts in one frame from counting everything correctly
+    self.craftingCosts = self.craftingCosts - self.savedCosts;
 
     self.reagentCombinationID = self.reagentCombinationID ..
         ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
