@@ -26,6 +26,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "when crafting with low frame rate",
         f.p .. "Added missing recipe data update after stat weight", 
         f.a .. "calculation",
+        f.p .. "Fixed resourcefulness consideration for salvage recipes",
         collab("https://github.com/shadowmutant"),
         newP("20.2.4"),
         f.p .. "Updated Specialization Data for 11.2.5",
