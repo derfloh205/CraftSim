@@ -21,7 +21,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("20.3.0"),
+        newP("20.3.1"),
         f.s .. "Fixed craft log sometimes not counting crafts",
         f.a .. "when crafting with low frame rate",
         collab("https://github.com/shadowmutant"),
