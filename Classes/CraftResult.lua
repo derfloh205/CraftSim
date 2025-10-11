@@ -63,6 +63,16 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
                 craftingItemResult.multicraft, craftingItemResult.craftingQuality))
     end
 
+    -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
+    local nonSalvageQtySaved = 0;
+    local salvageQuantitySaved = 0;
+    local salvageItemSaved = false;
+    local salvageItemId = nil;
+    if recipeData.isSalvageRecipe then
+        local slot = recipeData.reagentData.salvageReagentSlot
+        salvageItemId = slot.activeItem:GetItemID()
+    end
+
     -- multiple sets of results in one frame - make sure to capture all resourcefulness savings
     for _, craftResult in ipairs( craftingItemResultData ) do
         if craftResult.resourcesReturned and handledOperationIds[craftResult.operationID] ~= true then
@@ -71,6 +81,15 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
                 local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
                 self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
                 table.insert(self.savedReagents, craftResultSavedReagent)
+                 -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
+                if salvageItemId == craftingResourceReturnInfo.itemID then
+                    salvageItemSaved = true
+                else
+                    nonSalvageQtySaved = nonSalvageQtySaved + craftingResourceReturnInfo.quantity
+                    local slot = recipeData.reagentData.salvageReagentSlot;
+                    local quantity = math.min( slot.requiredQuantity, craftingResourceReturnInfo.quantity ); -- if we saved 5 bismuth, the max gems we can save is still 3
+                    salvageQuantitySaved = salvageQuantitySaved + quantity;
+                end
             end
             handledOperationIds[craftResult.operationID] = true;
         end
