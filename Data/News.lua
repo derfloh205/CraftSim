@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.3.4"),
+        f.p .. "Updated Optional Reagent Data for 11.2.7.64704",
+        f.p .. "Repaired Data Mining Scripts for Wago Tables",
         newP("20.3.3"),
         f.p .. "Updated Specialization Data for 11.2.5.64502",
         newP("20.3.2"),

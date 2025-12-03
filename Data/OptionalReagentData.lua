@@ -322,7 +322,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[197921] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Primal Infusion",
 		expansionID = 9,
 		stats = {
@@ -330,7 +330,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[198046] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Concentrated Primal Infusion",
 		expansionID = 9,
 		stats = {
@@ -338,7 +338,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[198048] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Titan Training Matrix I",
 		expansionID = 9,
 		stats = {
@@ -346,7 +346,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[198056] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Titan Training Matrix II",
 		expansionID = 9,
 		stats = {
@@ -354,7 +354,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[198058] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Titan Training Matrix III",
 		expansionID = 9,
 		stats = {
@@ -362,7 +362,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[198059] = {
-		qualityID = 0,
+		qualityID = 3,
 		name = "Titan Training Matrix IV",
 		expansionID = 9,
 		stats = {
@@ -818,7 +818,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[200652] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Alchemical Flavor Pocket",
 		expansionID = 9,
 		stats = {
@@ -826,7 +826,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[204673] = {
-		qualityID = 0,
+		qualityID = 4,
 		name = "Titan Training Matrix V",
 		expansionID = 9,
 		stats = {
@@ -834,7 +834,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[204681] = {
-		qualityID = 0,
+		qualityID = 5,
 		name = "Enchanted Whelpling's Shadowflame Crest",
 		expansionID = 9,
 		stats = {
@@ -842,7 +842,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[204682] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Wyrm's Shadowflame Crest",
 		expansionID = 9,
 		stats = {
@@ -850,7 +850,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[204697] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Aspect's Shadowflame Crest",
 		expansionID = 9,
 		stats = {
@@ -890,7 +890,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[205012] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Reserve Parachute",
 		expansionID = 9,
 		stats = {
@@ -938,7 +938,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[205411] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Medical Wrap Kit",
 		expansionID = 9,
 		stats = {
@@ -946,7 +946,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[206960] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Wyrm's Dreaming Crest",
 		expansionID = 9,
 		stats = {
@@ -954,7 +954,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[206961] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Aspect's Dreaming Crest",
 		expansionID = 9,
 		stats = {
@@ -962,7 +962,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[206977] = {
-		qualityID = 0,
+		qualityID = 6,
 		name = "Enchanted Whelpling's Dreaming Crest",
 		expansionID = 9,
 		stats = {
@@ -1042,7 +1042,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[211518] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Wyrm's Awakened Crest",
 		expansionID = 9,
 		stats = {
@@ -1050,7 +1050,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[211519] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Aspect's Awakened Crest",
 		expansionID = 9,
 		stats = {
@@ -1058,7 +1058,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[211520] = {
-		qualityID = 0,
+		qualityID = 7,
 		name = "Enchanted Whelpling's Awakened Crest",
 		expansionID = 9,
 		stats = {
@@ -1786,7 +1786,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[224069] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Weathered Harbinger Crest",
 		expansionID = 10,
 		stats = {
@@ -1794,7 +1794,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[224072] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Runed Harbinger Crest",
 		expansionID = 10,
 		stats = {
@@ -1802,7 +1802,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[224073] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Gilded Harbinger Crest",
 		expansionID = 10,
 		stats = {
@@ -1906,7 +1906,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[228338] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Soul Sigil I",
 		expansionID = 10,
 		stats = {
@@ -1914,7 +1914,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[228339] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Soul Sigil II",
 		expansionID = 10,
 		stats = {
@@ -1922,7 +1922,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[230935] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Gilded Undermine Crest",
 		expansionID = 10,
 		stats = {
@@ -1930,7 +1930,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[230936] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Runed Undermine Crest",
 		expansionID = 10,
 		stats = {
@@ -1938,7 +1938,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[230937] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Weathered Undermine Crest",
 		expansionID = 10,
 		stats = {
@@ -1946,7 +1946,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[231767] = {
-		qualityID = 0,
+		qualityID = 3,
 		name = "Enchanted Weathered Ethereal Crest",
 		expansionID = 10,
 		stats = {
@@ -1954,7 +1954,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[231768] = {
-		qualityID = 0,
+		qualityID = 2,
 		name = "Enchanted Gilded Ethereal Crest",
 		expansionID = 10,
 		stats = {
@@ -1962,7 +1962,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[231769] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Enchanted Runed Ethereal Crest",
 		expansionID = 10,
 		stats = {
@@ -2102,7 +2102,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[191526] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Lesser Illustrious Insight",
 		expansionID = 9,
 		stats = {
@@ -2110,7 +2110,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[191529] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Illustrious Insight",
 		expansionID = 9,
 		stats = {
@@ -2304,7 +2304,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[194902] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Ooey-Gooey Chocolate",
 		expansionID = 9,
 		stats = {
@@ -2313,7 +2313,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[197764] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Salad on the Side",
 		expansionID = 9,
 		stats = {
@@ -2321,7 +2321,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[197765] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Impossibly Sharp Cutting Knife",
 		expansionID = 9,
 		stats = {
@@ -2434,7 +2434,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[214043] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Glittering Gemdust",
 		expansionID = 10,
 		stats = {
@@ -2659,7 +2659,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[225670] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Apprentice's Crafting License",
 		expansionID = 10,
 		stats = {
@@ -2667,7 +2667,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[225671] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Stack of Pentagold Reviews",
 		expansionID = 10,
 		stats = {
@@ -2675,7 +2675,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[225672] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Unraveled Instructions",
 		expansionID = 10,
 		stats = {
@@ -2683,7 +2683,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[225673] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Artisan's Consortium Seal of Approval",
 		expansionID = 10,
 		stats = {
@@ -2691,7 +2691,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[225912] = {
-		qualityID = 0,
+		qualityID = 1,
 		name = "Hot Honeycomb",
 		expansionID = 10,
 		stats = {

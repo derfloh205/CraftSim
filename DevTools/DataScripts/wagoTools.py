@@ -23,9 +23,12 @@ def downloadWagoTablesCSV(wagoTables, buildVersion=None):
     total = len(wagoTables)
     for table in wagoTables:
         count = count + 1
-        updateProgressBar(count, total, table)
         filename = f"{dataDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{table}.csv"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
+        if os.path.isfile(filename):
+            print("File already exists, skipping download: " + filename)
+            continue
+        updateProgressBar(count, total, table)
         buildParameter = f"?build={buildVersion}"
         if buildVersion == None:
             buildParameter = ""
