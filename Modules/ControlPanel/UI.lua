@@ -157,7 +157,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             end)
 
             rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS), function()
-                Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)
+                Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
             end)
 
             rootDescription:CreateButton(f.bb(L(CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS)), function()

@@ -53,7 +53,10 @@ function CraftSim.Reagent:GetCraftingReagentInfoByQuality(qualityID, maxQuantity
     end
 
     return {
-        itemID = qualityReagentItem.item:GetItemID(),
+        reagent = {
+            itemID = qualityReagentItem.item:GetItemID(),
+            currencyID = qualityReagentItem.currencyID,
+        },
         quantity = quantity,
         dataSlotIndex = self.dataSlotIndex
     }

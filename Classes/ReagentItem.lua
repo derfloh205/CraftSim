@@ -30,7 +30,7 @@ end
 function CraftSim.ReagentItem:GetAsReagentListItem()
     return {
         itemID = self.item:GetItemID(),
-        currencyID = self.currencyID(),
+        currencyID = self.currencyID,
         quantity = self.quantity,
     }
 end
