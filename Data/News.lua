@@ -21,6 +21,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.3.5"),
+        f.P .. "Fixes regarding Midnight Prepatch",
+        f.P .. f.r("WARNING: ") .. "The " .. f.bb("Craft Buffs"),
+        f.a .. "Module not working due to combat log restrictions",
         newP("20.3.4"),
         f.p .. "Updated Optional Reagent Data for 11.2.7.64704",
         f.p .. "Repaired Data Mining Scripts for Wago Tables",
