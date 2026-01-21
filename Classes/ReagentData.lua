@@ -106,7 +106,7 @@ function CraftSim.ReagentData:IsOrderReagent(itemID)
     if not self.recipeData.orderData then return false end
 
     for _, reagentInfo in ipairs(self.recipeData.orderData.reagents or {}) do
-        if reagentInfo.reagent.itemID == itemID then
+        if reagentInfo.reagent.reagent.itemID == itemID then
             if reagentInfo.source == Enum.CraftingOrderReagentSource.Customer then
                 return true
             end
@@ -131,9 +131,9 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
             end
         end)
 
-    table.foreach(optionalStats, function(_, stat)
+    for _, stat in ipairs(optionalStats) do
         totalStats:add(stat)
-    end)
+    end
 
     if self:HasRequiredSelectableReagent() then
         if self.requiredSelectableReagentSlot.activeReagent then
@@ -731,8 +731,9 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
     local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
 
     for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
-        local itemCount = C_Item.GetItemCount(craftingReagentInfo.itemID, true, false, true)
-        CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.itemID, itemCount)
+        --- itemID now nested, remove comment when wow doc extension is caught up
+        local itemCount = C_Item.GetItemCount(craftingReagentInfo.reagent.itemID, true, false, true)
+        CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.reagent.itemID, itemCount)
     end
 end
 

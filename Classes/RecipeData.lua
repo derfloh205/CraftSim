@@ -415,14 +415,18 @@ function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagent
     local optionalReagents, requiredReagents = GUTIL:Split(craftingReagentInfoTbl,
         ---@param craftingReagentInfo CraftingReagentInfo
         function(craftingReagentInfo)
-            return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.itemID] ~= nil
+            return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.reagent.itemID] ~= nil
         end)
 
     local optionalReagentIDs = GUTIL:Map(optionalReagents,
-        function(optionalReagentInfo) return optionalReagentInfo.itemID end)
+        function(optionalReagentInfo) return optionalReagentInfo.reagent.itemID end)
 
     self:SetOptionalReagents(optionalReagentIDs)
-    self:SetReagents(requiredReagents) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
+    local reagentListItems = GUTIL:Map(requiredReagents, function (craftingReagentInfo)
+        return CraftSim.ReagentListItem {craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID}
+    end)
+    
+    self:SetReagents(reagentListItems) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
 end
 
 ---@param itemID number
@@ -1630,11 +1634,11 @@ function CraftSim.RecipeData:Craft(amount)
     else
         if self.orderData then
             local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
-                return reagentInfo.reagent.itemID
+                return reagentInfo.reagent.reagent.itemID
             end)
 
             craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
-                return not tContains(suppliedIDs, craftingReagentInfo.itemID)
+                return not tContains(suppliedIDs, craftingReagentInfo.reagent.itemID)
             end)
         end
 
@@ -2141,7 +2145,7 @@ function CraftSim.RecipeData:GetReagentUID()
 
     local uid = ""
     for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
-        uid = uid .. craftingReagentInfo.itemID .. craftingReagentInfo.quantity
+        uid = uid .. craftingReagentInfo.reagent.itemID .. craftingReagentInfo.quantity
     end
     
     return uid

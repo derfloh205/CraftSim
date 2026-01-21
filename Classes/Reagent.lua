@@ -68,7 +68,10 @@ function CraftSim.Reagent:GetCraftingReagentInfos()
     end
     for _, reagentItem in pairs(self.items) do
         table.insert(craftingReagentInfos, {
-            itemID = reagentItem.item:GetItemID(),
+            reagent = {
+                itemID = reagentItem.item:GetItemID(),
+                currencyID = reagentItem.currencyID,
+            },
             quantity = reagentItem.quantity,
             dataSlotIndex = self.dataSlotIndex
         })
