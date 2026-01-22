@@ -77,7 +77,6 @@ function CraftSim.TOPGEAR:GetValidCombosFromUniqueCombos(uniqueCombos)
         else
             local id2 = combo[2].item:GetItemID()
             local id3 = combo[3].item:GetItemID()
-
             local _, limitName2, limitCount2 = C_Item.GetItemUniquenessByID(id2)
             local _, limitName3, limitCount3 = C_Item.GetItemUniquenessByID(id3)
 
@@ -167,11 +166,14 @@ end
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
     local crafterUID = recipeData:GetCrafterUID()
     if recipeData:IsCrafter() and not forceCache then
+        -- Clear Cache
+        CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID,
+            recipeData.professionData.professionInfo.profession)
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}
 
-        for bag = Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 + 6 do
+        for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
                 if itemLoc:IsValid() then
@@ -226,6 +228,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local allGear = GUTIL:Concat({ inventoryGear, equippedGearList })
 
     -- remove duplicated items (with same stats, this means the link should be the same..)
+    ---@type CraftSim.ProfessionGear[]
     local uniqueGear = {}
     for _, professionGear in pairs(allGear) do
         if not GUTIL:Find(uniqueGear, function(gear)
@@ -236,17 +239,45 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
         end
     end
 
-    allGear = uniqueGear
     -- an empty slot needs to be included to factor in the possibility of an empty slot needed if all combos are not valid
     -- e.g. the cases of the player not having enough items to fully equip
-    local gearSlotItems = GUTIL:Filter(allGear,
+    local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
-    local toolSlotItems = GUTIL:Filter(allGear,
+
+ -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
+    ---@type table<number, CraftSim.ProfessionGear>
+    local highestItemLevels = {}
+    for _, professionGear in pairs(accessoryItems) do
+        print("Checking UniquenessIlvls: " .. professionGear.item:GetItemLink())
+        local uniqueCategoryID = select(4, C_Item.GetItemUniquenessByID(professionGear.item:GetItemID()))
+        local itemLevel = professionGear:GetItemLevel()
+
+        if uniqueCategoryID and (not highestItemLevels[uniqueCategoryID] or highestItemLevels[uniqueCategoryID]:GetItemLevel() < itemLevel) then
+            highestItemLevels[uniqueCategoryID] = professionGear
+        end
+    end
+
+    ---@type CraftSim.ProfessionGear[]
+    local gearSlotItems = {}
+    for _, professionGear in pairs(highestItemLevels) do
+        table.insert(gearSlotItems, professionGear)
+    end
+
+    local toolSlotItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType end)
-    table.insert(gearSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
-    table.insert(toolSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
+
+    -- if it is not possible to fill all slots, add an empty slot for permutation calculation
+    if #gearSlotItems < 2 then
+        table.insert(gearSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
+    end
+
+    -- if no tool is available, add an empty slot for permutation calculation
+    if #toolSlotItems < 1 then
+        table.insert(toolSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
+    end
 
     -- permutate the gearslot items to get all combinations of two
+    -- since there is either the accessory with the highest ilvl or an empty slot it will be at max 2^2 combinations
 
     -- if cooking we do not need to make any combinations cause we only have one gear slot
     local gearSlotCombos = {}
@@ -258,7 +289,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
                 local emptyB = professionGearB == CraftSim.TOPGEAR.EMPTY_SLOT
                 local bothEmpty = emptyA and emptyB
                 local partlyEmpty = emptyA or emptyB
-                if bothEmpty or (partlyEmpty or not professionGearA:Equals(professionGearB)) then
+                if bothEmpty or partlyEmpty or not professionGearA:Equals(professionGearB) then
                     -- do not match item with itself..
                     table.insert(gearSlotCombos, { professionGearA, professionGearB })
                 end
@@ -267,7 +298,6 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     else
         gearSlotCombos = gearSlotItems
     end
-
 
     -- then permutate those combinations with the tool items to get all available gear combos
     -- if cooking just combine 1 gear with tool

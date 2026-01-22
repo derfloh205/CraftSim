@@ -70,7 +70,10 @@ end
 function CraftSim.OptionalReagentSlot:GetCraftingReagentInfo()
     if self.activeReagent then
         return {
-            itemID = self.activeReagent.item:GetItemID(),
+            reagent = {
+                itemID = self.activeReagent.item:GetItemID(),
+                currencyID = nil
+            },
             dataSlotIndex = self.dataSlotIndex,
             quantity = self.maxQuantity,
         }

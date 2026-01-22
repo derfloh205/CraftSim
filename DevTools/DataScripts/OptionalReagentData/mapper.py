@@ -27,9 +27,10 @@ def map(download, buildVersion):
 
     optionalReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "18"}})
     finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
-    sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11", "CraftingQualityID": "0"}})
+    sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11"}})
+    #sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11", "CraftingQualityID": "0"}})
     # Filter to recieve spark reagents only
-    sparkReagents = [sparkReagent for sparkReagent in sparkReagents if int(sparkReagent["ModifiedCraftingReagentItemID"]) > 0]
+    #sparkReagents = [sparkReagent for sparkReagent in sparkReagents if int(sparkReagent["ModifiedCraftingReagentItemID"]) > 0]
 
     Reagents = optionalReagents + finishingReagents + sparkReagents
     print("Mapping Optional Items")
@@ -45,35 +46,48 @@ def map(download, buildVersion):
         isFinishing = reagentData["SubclassID"] == "19"
         isSpark = reagentData["SubclassID"] == "11"
 
+        craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+        qualityID = 0
+        modifiedCraftingCategoryID = None
+        if craftingReagentQuality:
+            qualityID = int(craftingReagentQuality["OrderIndex"])+1
+            modifiedCraftingCategoryID = craftingReagentQuality["ModifiedCraftingCategoryID"]
+
+        #if isSpark and qualityID > 0:
+           # printD(f"Skipping spark reagent with quality > 0: {itemID}", debug)
+           # continue
+
         debug = False
+        debugItemID = 210232
+
+        if debug and itemID != debugItemID:
+            continue
 
         wagoTools.updateProgressBar(counter, reagentCount, itemID)
 
         itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})
 
         if not itemSparseData:
+            printD(f"ItemSparse data not found for itemID {itemID}", debug)
             continue # item does not exist
 
         itemName = itemSparseData["Display_lang"]
 
         if "delete me" in itemName.lower():
+            printD(f"Skipping item with 'delete me' in name: {itemName} (ID: {itemID})", debug)
             continue
 
-        expansionID = int(itemSparseData["ExpansionID"])
-        qualityID = int(reagentData["CraftingQualityID"])
-        
-        modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
-        
-        
-        printD(f"modifiedCraftingReagentItemID: {modifiedCraftingReagentItemID}", debug)
 
-        craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+        expansionID = int(itemSparseData["ExpansionID"])
+        
+        #modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
+        #printD(f"modifiedCraftingReagentItemID: {modifiedCraftingReagentItemID}", debug)
 
         if craftingReagentQuality and (isOptional or isSpark):
             difficultyIncrease = int(craftingReagentQuality["MaxDifficultyAdjustment"])
             if difficultyIncrease > 0:
                 optionalReagentsDataTable[itemID] = {
-                    "qualityID": qualityID,
+                    "qualityID": 0 if isSpark else qualityID,
                     "name": itemName,
                     "expansionID": expansionID,
                     "stats": {
@@ -88,15 +102,18 @@ def map(download, buildVersion):
             reagentEffectPct = float(craftingReagentQuality["ReagentEffectPct"]) / 100
 
 
-        modifiedCraftingReagent = wagoTools.searchTable(ModifiedCraftingReagentItem, {"singleResult": True, "conditions": {"ID": modifiedCraftingReagentItemID}})
-        if not modifiedCraftingReagent:
+        #modifiedCraftingReagent = wagoTools.searchTable(ModifiedCraftingReagentItem, {"singleResult": True, "conditions": {"ID": modifiedCraftingReagentItemID}})
+        if not modifiedCraftingCategoryID:
             continue
 
-        printD(f"categoryID: {modifiedCraftingReagent["ModifiedCraftingCategoryID"]}", debug)
+        printD(f"categoryID: {modifiedCraftingCategoryID}", debug)
 
-        craftingReagentEffects = wagoTools.searchTable(CraftingReagentEffect, {"conditions": {"ModifiedCraftingCategoryID": modifiedCraftingReagent["ModifiedCraftingCategoryID"]}})
+        craftingReagentEffects = wagoTools.searchTable(CraftingReagentEffect, {"conditions": {"ModifiedCraftingCategoryID": modifiedCraftingCategoryID}})
+
+        printD(f"Found {len(craftingReagentEffects)} CraftingReagentEffects for item {itemID}", debug)
 
         if len(craftingReagentEffects) == 0:
+            printD(f"No CraftingReagentEffects found for item {itemID}", debug)
             continue
 
         statMap = {}
@@ -114,9 +131,10 @@ def map(download, buildVersion):
                 statMap[statName] = amount
                 printD(f"- ProfessionEffect {professionEffect["ID"]} / {professionEffectEnum["ID"]} : {statName} -> {amount}", debug)
 
+        printD(f"Final StatMap for item {itemID}: {statMap}", debug)
         if len(statMap) > 0:
             optionalReagentsDataTable[itemID] = {
-                "qualityID": qualityID,
+                "qualityID": 0 if isSpark else qualityID,
                 "name": itemName,
                 "expansionID": expansionID,
                 "stats": statMap,

@@ -48,6 +48,7 @@ function CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, baseAverageProfi
     local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.multicraft:subtractValue(statIncreaseFactor)
+    recipeData:Update() -- needed to update professionStats after reverting - or else CraftSim.INIT.currentRecipeData is invalid
     return statWeight
 end
 
@@ -63,6 +64,7 @@ function CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, baseAverage
     local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.resourcefulness:subtractValue(statIncreaseFactor)
+    recipeData:Update() -- needed to update professionStats after reverting - or else CraftSim.INIT.currentRecipeData is invalid
     return statWeight
 end
 

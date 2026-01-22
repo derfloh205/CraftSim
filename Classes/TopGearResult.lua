@@ -29,7 +29,7 @@ function CraftSim.TopGearResult:Debug()
         "Relative Profit: " .. CraftSim.UTIL:FormatMoney(self.relativeProfit, true),
         "Relative Profit Exact: " .. self.relativeProfit,
         "ExpectedQuality: " .. self.expectedQuality,
-        "ExpectedQualityUpgrade: " .. self.expectedQualityUpgrade,
+        "ExpectedQualityUpgrade: " .. (self.expectedQualityUpgrade or "none"),
         "Profession Gear Set:"
     }
 

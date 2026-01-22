@@ -327,6 +327,11 @@ function CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
     return professionGearData.cached
 end
 
+function CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID, profession)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+    wipe(professionGearData.availableProfessionGear)
+end
+
 ---@param crafterUID CrafterUID
 ---@return ClassFile?
 function CraftSim.DB.CRAFTER:GetClass(crafterUID)

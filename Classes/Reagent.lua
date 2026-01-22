@@ -53,7 +53,10 @@ function CraftSim.Reagent:GetCraftingReagentInfoByQuality(qualityID, maxQuantity
     end
 
     return {
-        itemID = qualityReagentItem.item:GetItemID(),
+        reagent = {
+            itemID = qualityReagentItem.item:GetItemID(),
+            currencyID = qualityReagentItem.currencyID,
+        },
         quantity = quantity,
         dataSlotIndex = self.dataSlotIndex
     }
@@ -68,7 +71,10 @@ function CraftSim.Reagent:GetCraftingReagentInfos()
     end
     for _, reagentItem in pairs(self.items) do
         table.insert(craftingReagentInfos, {
-            itemID = reagentItem.item:GetItemID(),
+            reagent = {
+                itemID = reagentItem.item:GetItemID(),
+                currencyID = reagentItem.currencyID,
+            },
             quantity = reagentItem.quantity,
             dataSlotIndex = self.dataSlotIndex
         })
@@ -253,7 +259,7 @@ function CraftSim.Reagent:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 
     local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
-        return reagentInfo.reagent.itemID
+        return reagentInfo.reagentInfo.reagent.itemID
     end)
 
     local isOrderReagent = GUTIL:Some(self.items, function(reagentItem)

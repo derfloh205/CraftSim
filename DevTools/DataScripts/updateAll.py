@@ -10,6 +10,7 @@ if __name__ == '__main__':
     buildVersion = len(args) > 0 and args[0]
 
     for folderName in dataScripts:
+        print("Updating data script: " + folderName)
         os.chdir(folderName)
         exec(open('mapper.py').read())
         os.chdir("..")

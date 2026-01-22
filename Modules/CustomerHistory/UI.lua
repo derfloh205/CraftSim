@@ -430,17 +430,19 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
     local totalAmount = 0
 
     for _, customerHistory in pairs(customerHistoryData) do
-        customerList:Add(
-            function(row)
-                local columns = row.columns
-                local customerColumn = columns[1]
-                local tipColumn = columns[2]
-                row.customerHistory = customerHistory
-                customerColumn.text:SetText(customerHistory.customer)
-                tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(customerHistory.totalTip or 0))
-            end)
+        if customerHistory.totalTip and customerHistory.totalTip > 0 then
+            customerList:Add(
+                function(row)
+                    local columns = row.columns
+                    local customerColumn = columns[1]
+                    local tipColumn = columns[2]
+                    row.customerHistory = customerHistory
+                    customerColumn.text:SetText(customerHistory.customer)
+                    tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(customerHistory.totalTip or 0))
+                end)
 
-        totalAmount = totalAmount + (customerHistory.totalTip or 0)
+            totalAmount = totalAmount + (customerHistory.totalTip or 0)
+        end
     end
 
     CraftSim.CUSTOMER_HISTORY.frame.content.totalAmountText:SetText(CraftSim.UTIL:FormatMoney(totalAmount))

@@ -225,17 +225,10 @@ end
 ---@param useSubRecipeCosts boolean
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
     local inf = math.huge
+    local requiredQuantity = ksItem.n
 
-    local j, k, q3Count, q2Count, q1Count, requiredQuantity, allocatedQuantity
-    local goldCost
-
-    requiredQuantity = ksItem.n
-
-    -- APPROACH: do not translate indices here to lua indices cause they are not used for accessing later.. w is used for that
-    --print("crumbs init to " .. (2*n))
-    for j = 0, 2 * requiredQuantity, 1 do
-        ksItem.crumb[j] = {}
-        ksItem.crumb[j].value = inf
+    for j = 0, 2 * requiredQuantity do
+        ksItem.crumb[j] = { value = inf }
     end
 
     local q3ItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true, false,
@@ -246,12 +239,11 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
         useSubRecipeCosts)
 
     if ksItem.isOrderReagent then
-        -- only one available crumb - current allocation
-        q3Count = ksItem.reagent.items[3].quantity
-        q2Count = ksItem.reagent.items[2].quantity
-        q1Count = ksItem.reagent.items[1].quantity
-        allocatedQuantity = 2 * q3Count + q2Count
-        goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
+        local q3Count = ksItem.reagent.items[3].quantity
+        local q2Count = ksItem.reagent.items[2].quantity
+        local q1Count = ksItem.reagent.items[1].quantity
+        local allocatedQuantity = 2 * q3Count + q2Count
+        local goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
         ksItem.crumb = {
             [0] = {
                 weight = allocatedQuantity * ksItem.mWeight,
@@ -260,22 +252,26 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
             }
         }
     else
-        for k = 0, requiredQuantity, 1 do
-            --print("creating crumb #" .. k)
-            for j = k, requiredQuantity, 1 do
-                q3Count = k
-                q2Count = j - k
-                q1Count = requiredQuantity - j
-                allocatedQuantity = 2 * q3Count + q2Count
-
-                goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
-                if goldCost < ksItem.crumb[allocatedQuantity].value then
-                    -- q3, q2, q1
-
-                    ksItem.crumb[allocatedQuantity].weight = allocatedQuantity * ksItem.mWeight
-                    ksItem.crumb[allocatedQuantity].mix = { q1Count, q2Count, q3Count } -- q3, q2, q1
-                    ksItem.crumb[allocatedQuantity].value = goldCost
+        local deltaMid = (q3ItemPrice - 2 * q2ItemPrice + q1ItemPrice)
+        for w = 0, 2 * requiredQuantity do
+            local q3Low = math.max(0, w - requiredQuantity)
+            local q3High = math.floor(w / 2)
+            if q3Low <= q3High then
+                local q3Count
+                if deltaMid > 0 then
+                    q3Count = q3Low
+                elseif deltaMid < 0 then
+                    q3Count = q3High
+                else
+                    q3Count = q3Low
                 end
+                local q2Count = w - 2 * q3Count
+                local q1Count = requiredQuantity - q2Count - q3Count
+                local goldCost = q1Count * q1ItemPrice + q2Count * q2ItemPrice + q3Count * q3ItemPrice
+
+                ksItem.crumb[w].weight = w * ksItem.mWeight
+                ksItem.crumb[w].mix = { q1Count, q2Count, q3Count }
+                ksItem.crumb[w].value = goldCost
             end
         end
     end

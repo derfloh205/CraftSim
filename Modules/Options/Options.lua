@@ -276,7 +276,7 @@ function CraftSim.OPTIONS:Init()
     }
 
     CraftSim.OPTIONS.category = Settings.RegisterCanvasLayoutCategory(self.optionsPanel, self.optionsPanel.name)
-    CraftSim.OPTIONS.category.ID = self.optionsPanel.name
+    --CraftSim.OPTIONS.category.ID = self.optionsPanel.name
     Settings.RegisterAddOnCategory(CraftSim.OPTIONS.category)
 end
 

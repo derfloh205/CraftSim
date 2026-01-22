@@ -27,6 +27,21 @@ function CraftSim.ProfessionGear:Equals(professionGear)
 	return itemLinkA == itemLinkB
 end
 
+--- Either returns the itemlevel of the gear item or nil if the info is not yet loaded
+---@return number? itemLevel
+function CraftSim.ProfessionGear:GetItemLevel()
+	if not self.item then
+		return nil
+	end
+
+	local itemLevel = C_Item.GetDetailedItemLevelInfo(self.item:GetItemLink())
+	if not itemLevel then
+		return nil
+	end
+
+	return itemLevel
+end
+
 ---@param itemLink string?
 function CraftSim.ProfessionGear:SetItem(itemLink)
 	self.professionStats:Clear()

@@ -10,12 +10,14 @@ local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ReagentData.Rea
 
 ---@param originalItemID ItemID
 ---@param qualityID QualityID?
-function CraftSim.ReagentItem:new(originalItemID, qualityID)
+---@param currencyID CurrencyID
+function CraftSim.ReagentItem:new(originalItemID, qualityID, currencyID)
     -- consider possible exception mappings
     local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[originalItemID]
     local itemID = alternativeItemID or originalItemID
 
     self.qualityID = qualityID
+    self.currencyID = currencyID
     --- how much of that reagentItem has been allocated for this recipe
     self.quantity = 0
     self.item = Item:CreateFromItemID(itemID)
@@ -28,6 +30,7 @@ end
 function CraftSim.ReagentItem:GetAsReagentListItem()
     return {
         itemID = self.item:GetItemID(),
+        currencyID = self.currencyID,
         quantity = self.quantity,
     }
 end
@@ -35,11 +38,12 @@ end
 function CraftSim.ReagentItem:Copy()
     local copy = nil
     if self.originalItem then
-        copy = CraftSim.ReagentItem(self.originalItem:GetItemID(), self.qualityID)
+        copy = CraftSim.ReagentItem(self.originalItem:GetItemID(), self.qualityID, self.currencyID)
     else
-        copy = CraftSim.ReagentItem(self.item:GetItemID(), self.qualityID)
+        copy = CraftSim.ReagentItem(self.item:GetItemID(), self.qualityID, self.currencyID)
     end
     copy.quantity = self.quantity
+    copy.currencyID = self.currencyID
 
     return copy
 end
@@ -74,6 +78,7 @@ end
 ---@field qualityID number
 ---@field quantity number
 ---@field itemID number
+---@field currencyID number
 ---@field originalItemID number
 
 function CraftSim.ReagentItem:Serialize()
@@ -81,6 +86,7 @@ function CraftSim.ReagentItem:Serialize()
     serizalized.qualityID = self.qualityID
     serizalized.quantity = self.quantity
     serizalized.itemID = self.item:GetItemID()
+    serizalized.currencyID = self.currencyID
     serizalized.originalItemID = self.originalItem and self.originalItem:GetItemID()
     return serizalized
 end
@@ -89,7 +95,7 @@ end
 ---@param serializedReagentItem CraftSim.ReagentItem.Serialized
 function CraftSim.ReagentItem:Deserialize(serializedReagentItem)
     local deserialized = CraftSim.ReagentItem(tonumber(serializedReagentItem.itemID),
-        tonumber(serializedReagentItem.qualityID))
+        tonumber(serializedReagentItem.qualityID), tonumber(serializedReagentItem.currencyID))
     deserialized.quantity = tonumber(serializedReagentItem.quantity)
     return deserialized
 end
@@ -101,6 +107,7 @@ function CraftSim.ReagentItem:GetJSON(indent)
     jb:Add("qualityID", self.qualityID)
     jb:Add("quantity", self.quantity)
     jb:Add("itemID", self.item:GetItemID(), true)
+    jb:Add("currencyID", self.currencyID, true)
     jb:End()
     return jb.json
 end
@@ -111,7 +118,7 @@ function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 
     local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
-        return reagentInfo.reagent.itemID
+        return reagentInfo.reagentInfo.reagent.itemID
     end)
 
     return tContains(orderItemIDs, self.item:GetItemID())

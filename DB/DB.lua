@@ -10,6 +10,7 @@ CraftSim.DB = {}
 ---@alias RecipeID number
 ---@alias CooldownDataSerializationID RecipeID | CraftSim.SHARED_PROFESSION_COOLDOWNS
 ---@alias ItemID number
+---@alias CurrencyID number
 ---@alias QualityID number between 1 and 5
 
 local print = CraftSim.DEBUG:RegisterDebugID("Database")

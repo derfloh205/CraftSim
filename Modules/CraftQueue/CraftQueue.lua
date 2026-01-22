@@ -360,7 +360,14 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function queueRecipe()
+                                        local function queueRecipe() 
+                                            local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                                            if isAlreadyQueued then
+                                                print("Work order is already queued, skipping")
+                                                distributor:Continue()
+                                                return
+                                            end
+
                                             local allowConcentration = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                                             local forceConcentration = CraftSim.DB.OPTIONS:Get(
@@ -565,6 +572,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 highestProfit = true,
             },
             optimizeConcentration = true,
+            optimizeGear = true,
             optimizeConcentrationProgressCallback = function(conProgress)
                 queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
                     progress,
@@ -596,6 +604,12 @@ function CraftSim.CRAFTQ:QueueFavorites()
 
     queueFavoritesButton:SetEnabled(false)
 
+    local function createShoppingList()
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST") then
+            CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+        end
+    end
+
     -- keep table reference but change contents
     if bothMainProfessions then
         local professionFavorites = CraftSim.DB.CRAFTER:GetFavoriteRecipeProfessions(crafterUID)
@@ -604,6 +618,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             iterationsPerFrame = 1,
             finally = function()
                 queueFavoritesButton:SetStatus("Ready")
+                createShoppingList()
             end,
             continue = function(frameDistributor, profession, recipeIDs, _, _)
                 wipe(optimizedRecipes)
@@ -637,6 +652,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             finally = function()
                 finalizeProfessionProcess()
                 queueFavoritesButton:SetStatus("Ready")
+                createShoppingList()
             end,
             continue = function(frameDistributor, _, recipeID, _, progress)
                 processFavoriteRecipe(frameDistributor, recipeID, profession, progress)
@@ -806,6 +822,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         return searchString
     end)
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
+
+    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List"))
 
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end
