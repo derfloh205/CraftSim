@@ -106,7 +106,8 @@ function CraftSim.ReagentData:IsOrderReagent(itemID)
     if not self.recipeData.orderData then return false end
 
     for _, reagentInfo in ipairs(self.recipeData.orderData.reagents or {}) do
-        if reagentInfo.reagent.reagent.itemID == itemID then
+        local reagentItemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self.recipeData)
+        if reagentItemID == itemID then
             if reagentInfo.source == Enum.CraftingOrderReagentSource.Customer then
                 return true
             end
