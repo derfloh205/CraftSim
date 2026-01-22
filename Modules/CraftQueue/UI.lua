@@ -1062,6 +1062,11 @@ function CraftSim.CRAFTQ.UI:Init()
             CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
         end
     }
+
+    -- Update display when frame is shown to refresh button states
+    CraftSim.CRAFTQ.frame:HookScript("OnShow", function()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end)
 end
 
 ---@param parent frame
