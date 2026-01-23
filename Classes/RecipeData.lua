@@ -415,14 +415,18 @@ function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagent
     local optionalReagents, requiredReagents = GUTIL:Split(craftingReagentInfoTbl,
         ---@param craftingReagentInfo CraftingReagentInfo
         function(craftingReagentInfo)
-            return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.itemID] ~= nil
+            return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.reagent.itemID] ~= nil
         end)
 
     local optionalReagentIDs = GUTIL:Map(optionalReagents,
-        function(optionalReagentInfo) return optionalReagentInfo.itemID end)
+        function(optionalReagentInfo) return optionalReagentInfo.reagent.itemID end)
 
     self:SetOptionalReagents(optionalReagentIDs)
-    self:SetReagents(requiredReagents) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
+    local reagentListItems = GUTIL:Map(requiredReagents, function (craftingReagentInfo)
+        return CraftSim.ReagentListItem {craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID}
+    end)
+    
+    self:SetReagents(reagentListItems) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
 end
 
 ---@param itemID number
@@ -1603,6 +1607,42 @@ function CraftSim.RecipeData:GetEasycraftExport(indent)
     return jb.json
 end
 
+--- Helper function to safely extract itemID from reagentInfo (handles both basic and quality reagents)
+---@param reagentInfo table The reagent info from orderData.reagents
+---@param recipeData CraftSim.RecipeData The recipe data containing reagentData
+---@return number? itemID The itemID if found, nil otherwise
+function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+    if not reagentInfo then
+        return nil
+    end
+    
+    -- Try various possible paths for quality reagents (handles different API structures)
+    if reagentInfo.reagent then
+        if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.itemID then
+            return reagentInfo.reagent.reagent.itemID
+        elseif reagentInfo.reagent.itemID then
+            return reagentInfo.reagent.itemID
+        end
+    end
+    
+    if reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.itemID then
+        return reagentInfo.reagentInfo.reagent.itemID
+    end
+    
+    -- Basic reagents (or any reagent without reagent field) use slotIndex to find the reagent in requiredReagents
+    if reagentInfo.slotIndex and recipeData and recipeData.reagentData then
+        local matchingReagent = CraftSim.GUTIL:Find(recipeData.reagentData.requiredReagents, function(reagent)
+            return reagent.dataSlotIndex == reagentInfo.slotIndex
+        end)
+        
+        if matchingReagent and matchingReagent.items and #matchingReagent.items > 0 then
+            return matchingReagent.items[1].item:GetItemID()
+        end
+    end
+    
+    return nil
+end
+
 --- Requires a hardware event
 ---@param amount number? default: 1, how many crafts should be queued
 function CraftSim.RecipeData:Craft(amount)
@@ -1630,11 +1670,11 @@ function CraftSim.RecipeData:Craft(amount)
     else
         if self.orderData then
             local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
-                return reagentInfo.reagent.itemID
+                return CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self)
             end)
 
             craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
-                return not tContains(suppliedIDs, craftingReagentInfo.itemID)
+                return not tContains(suppliedIDs, craftingReagentInfo.reagent.itemID)
             end)
         end
 
@@ -2141,7 +2181,7 @@ function CraftSim.RecipeData:GetReagentUID()
 
     local uid = ""
     for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
-        uid = uid .. craftingReagentInfo.itemID .. craftingReagentInfo.quantity
+        uid = uid .. craftingReagentInfo.reagent.itemID .. craftingReagentInfo.quantity
     end
     
     return uid

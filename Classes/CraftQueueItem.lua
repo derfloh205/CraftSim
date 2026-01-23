@@ -149,7 +149,7 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
 
             if serializedCraftQueueItem.requiredSelectableReagent then
                 recipeData.reagentData:SetRequiredSelectableReagent(serializedCraftQueueItem.requiredSelectableReagent
-                    .itemID)
+                    .reagent.itemID)
             end
 
             recipeData:SetNonQualityReagentsMax()
@@ -192,8 +192,6 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
     if self.recipeData.subRecipeDepth == 0 then return end
 
     local parentCraftQueueItems = GUTIL:Map(self.recipeData.parentRecipeInfo, function(prI)
-        print("searching for ")
-        print(prI, true, "PRI", 1)
         return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI)
     end)
 
