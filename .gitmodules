@@ -4,6 +4,6 @@
 [submodule "Libs/GUTIL"]
 	path = Libs/GUTIL
 	url = https://github.com/derfloh205/GUTIL.git
-[submodule "DevTools/DataScripts/SpecializationData/wow-profession-tree"]
-	path = DevTools/DataScripts/SpecializationData/wow-profession-tree
+[submodule "DevTools/DataMining/SpecializationData/wow-profession-tree"]
+	path = DevTools/DataMining/SpecializationData/wow-profession-tree
 	url = https://github.com/mr120/wow-profession-tree

@@ -2,8 +2,8 @@
 .release/
 Libs/
 !Libs/classic.lua
-DevTools/DataScripts/__pycache__
-DevTools/DataScripts/**/Result/
-DevTools/DataScripts/**/Data/
-DevTools/DataScripts/**.db
+DevTools/DataMining/__pycache__
+DevTools/DataMining/**/Result/
+DevTools/DataMining/**/Data/
+DevTools/DataMining/**.db
 !**/*.py

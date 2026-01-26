@@ -1969,6 +1969,390 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 10,
 		},
 	},
+	[244603] = {
+		qualityID = 1,
+		name = "Blessed Pango Charm",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 25,
+		},
+	},
+	[244607] = {
+		qualityID = 1,
+		name = "Primal Spore Binding",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 25,
+		},
+	},
+	[244674] = {
+		qualityID = 1,
+		name = "Devouring Banding",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 25,
+		},
+	},
+	[245781] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Aurora",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245782] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Aurora",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245783] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Feverflare",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245784] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Feverflare",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245785] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Fireflash",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245786] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Fireflash",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245787] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Harmonious",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245788] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Harmonious",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245789] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Peerless",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245790] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Peerless",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245791] = {
+		qualityID = 1,
+		name = "Thalassian Missive of the Quickblade",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245792] = {
+		qualityID = 2,
+		name = "Thalassian Missive of the Quickblade",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245814] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Ingenuity",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245815] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Ingenuity",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245816] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Resourcefulness",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245817] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Resourcefulness",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245818] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Multicraft",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245819] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Multicraft",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245820] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Crafting Speed",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245821] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Crafting Speed",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245822] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Finesse",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245823] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Finesse",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245824] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Perception",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245825] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Perception",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245826] = {
+		qualityID = 1,
+		name = "Thalassian Missive of Deftness",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245827] = {
+		qualityID = 2,
+		name = "Thalassian Missive of Deftness",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245872] = {
+		qualityID = 1,
+		name = "Darkmoon Sigil: Blood",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245873] = {
+		qualityID = 1,
+		name = "Darkmoon Sigil: Void",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245874] = {
+		qualityID = 2,
+		name = "Darkmoon Sigil: Void",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245875] = {
+		qualityID = 1,
+		name = "Darkmoon Sigil: Hunt",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245876] = {
+		qualityID = 2,
+		name = "Darkmoon Sigil: Hunt",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[245877] = {
+		qualityID = 1,
+		name = "Darkmoon Sigil: Rot",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[245878] = {
+		qualityID = 2,
+		name = "Darkmoon Sigil: Rot",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[248132] = {
+		qualityID = 1,
+		name = "Kinetic Ankle Primers",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[248133] = {
+		qualityID = 2,
+		name = "Kinetic Ankle Primers",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[248135] = {
+		qualityID = 1,
+		name = "B1P, Scorcher of Souls",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[248592] = {
+		qualityID = 2,
+		name = "B1P, Scorcher of Souls",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[251487] = {
+		qualityID = 1,
+		name = "Prismatic Focusing Iris",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[251488] = {
+		qualityID = 2,
+		name = "Prismatic Focusing Iris",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[251489] = {
+		qualityID = 1,
+		name = "Stabilizing Gemstone Bandolier",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[251490] = {
+		qualityID = 2,
+		name = "Stabilizing Gemstone Bandolier",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[255843] = {
+		qualityID = 1,
+		name = "HU5H, Nonchalant Pup",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[255844] = {
+		qualityID = 2,
+		name = "HU5H, Nonchalant Pup",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[257735] = {
+		qualityID = 1,
+		name = "B0P, Curator of Booms",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[257741] = {
+		qualityID = 2,
+		name = "B0P, Curator of Booms",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
 	[191511] = {
 		qualityID = 1,
 		name = "Stable Fluidic Draconium",
@@ -2770,6 +3154,86 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			additionalitemscraftedwithmulticraft = 25.0,
 		},
 	},
+	[246447] = {
+		qualityID = 1,
+		name = "Apprentice's Scribbles",
+		expansionID = 11,
+		stats = {
+			skill = 5.0,
+		},
+	},
+	[246448] = {
+		qualityID = 1,
+		name = "Artisan's Ledger",
+		expansionID = 11,
+		stats = {
+			skill = 10.0,
+		},
+	},
+	[246449] = {
+		qualityID = 1,
+		name = "Mentor's Helpful Handiwork",
+		expansionID = 11,
+		stats = {
+			skill = 20.0,
+		},
+	},
+	[246450] = {
+		qualityID = 1,
+		name = "Artisan's Consortium Gold Star",
+		expansionID = 11,
+		stats = {
+			skill = 50.0,
+		},
+	},
+	[247719] = {
+		qualityID = 1,
+		name = "Multicraft Matrix",
+		expansionID = 11,
+		stats = {
+			multicraft = 90.0,
+		},
+	},
+	[247724] = {
+		qualityID = 2,
+		name = "Multicraft Manifold",
+		expansionID = 11,
+		stats = {
+			multicraft = 90.0,
+		},
+	},
+	[247725] = {
+		qualityID = 1,
+		name = "Resourceful Rebar",
+		expansionID = 11,
+		stats = {
+			resourcefulness = 3.0,
+		},
+	},
+	[247726] = {
+		qualityID = 1,
+		name = "Resourceful Routing",
+		expansionID = 11,
+		stats = {
+			resourcefulness = 15.0,
+		},
+	},
+	[247788] = {
+		qualityID = 2,
+		name = "Ingenious Identity",
+		expansionID = 11,
+		stats = {
+			ingenuity = 25.0,
+		},
+	},
+	[260630] = {
+		qualityID = 1,
+		name = "Ingenious Identifier",
+		expansionID = 11,
+		stats = {
+			ingenuity = 5.0,
+		},
+	},
 	[210232] = {
 		qualityID = 0,
 		name = "Forged Aspirant's Heraldry",
@@ -2814,6 +3278,22 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		qualityID = 0,
 		name = "Astral Gladiator's Heraldry",
 		expansionID = 10,
+		stats = {
+			increasedifficulty = 150,
+		},
+	},
+	[256607] = {
+		qualityID = 0,
+		name = "Galactic Aspirant's Heraldry",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 50,
+		},
+	},
+	[256608] = {
+		qualityID = 0,
+		name = "Galactic Gladiator's Heraldry",
+		expansionID = 11,
 		stats = {
 			increasedifficulty = 150,
 		},

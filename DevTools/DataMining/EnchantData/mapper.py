@@ -25,6 +25,9 @@ def map(download, buildVersion):
             for enchantData in enchantDataTable:
                 if enchantData["CraftingDataID"] == str(craftingDataID):
                     qualityID = int(enchantData["Rank"])
+                    # if qualityID is greater than 3, set it to 0 due to enchant item not having quality variants
+                    if qualityID > 3:
+                        qualityID = 0
                     itemID = int(enchantData["ItemID"])
                     if craftingDataID not in enchantDataMappedTable:
                         enchantDataMappedTable[craftingDataID] = {}
