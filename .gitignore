@@ -6,4 +6,5 @@ DevTools/DataMining/__pycache__
 DevTools/DataMining/**/Result/
 DevTools/DataMining/**/Data/
 DevTools/DataMining/**.db
+DevTools/DataMining/_Data/
 !**/*.py
