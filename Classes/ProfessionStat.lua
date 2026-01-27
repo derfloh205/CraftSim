@@ -1,19 +1,20 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
+local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.ProfessionStat : CraftSim.CraftSimObject
----@overload fun(name: string?, value: number?, percentMod: number?): CraftSim.ProfessionStat
+---@overload fun(name: string?, value: number?, percentDivisionFactor: number?): CraftSim.ProfessionStat
 CraftSim.ProfessionStat = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.ProfessionsStats.ProfessionStat")
 
 ---@param name string
 ---@param value number?
----@param percentMod number?
-function CraftSim.ProfessionStat:new(name, value, percentMod)
+---@param percentDivisionFactor number?
+function CraftSim.ProfessionStat:new(name, value, percentDivisionFactor)
     self.name = name
     self.value = value or 0
-    self.percentMod = percentMod or 0
+    self.percentDivisionFactor = percentDivisionFactor or 1
     ---@type number[]
     self.extraValues = {} -- for special values like extra items from multicraft or concentration saved and so on
 end
@@ -31,20 +32,20 @@ function CraftSim.ProfessionStat:SetExtraValue(value, index)
 end
 
 function CraftSim.ProfessionStat:GetPercent(decimal)
-    if self.percentMod then
+    if self.percentDivisionFactor then
         if not decimal then
-            return self.value * self.percentMod * 100
+            return (self.value / self.percentDivisionFactor) * 100
         else
-            return self.value * self.percentMod
+            return self.value / self.percentDivisionFactor
         end
     else
-        error("CraftSim ProfessionStat: No Percent Mod set: " .. tostring(self.name))
+        error("CraftSim ProfessionStat: No Percent Division Factor set: " .. tostring(self.name))
     end
 end
 
 ---@param percent number as decimal e.g. 0.20
 function CraftSim.ProfessionStat:SetValueByPercent(percent)
-    self.value = percent / self.percentMod
+    self.value = GUTIL:Round(percent * (self.percentDivisionFactor / 10))
 end
 
 function CraftSim.ProfessionStat:Clear()
@@ -96,7 +97,7 @@ function CraftSim.ProfessionStat:GetJSON(indent)
     jb:Begin()
     jb:Add("name", self.name)
     jb:Add("value", self.value)
-    jb:Add("percentMod", self.percentMod)
+    jb:Add("percentDivisionFactor", self.percentDivisionFactor)
     jb:AddList("extraValues", self.extraValues, true)
     jb:End()
     return jb.json
@@ -105,7 +106,7 @@ end
 ---@class CraftSim.ProfessionStat.Serialized
 ---@field name string
 ---@field value number
----@field percentMod number
+---@field percentDivisionFactor number
 ---@field extraValues number[]
 
 ---@return CraftSim.ProfessionStat.Serialized
@@ -115,7 +116,7 @@ function CraftSim.ProfessionStat:Serialize()
         name = self.name,
         value = self.value,
         extraValues = self.extraValues,
-        percentMod = self.percentMod,
+        percentDivisionFactor = self.percentDivisionFactor,
     }
     return serializedData
 end
@@ -125,7 +126,7 @@ function CraftSim.ProfessionStat:Deserialize(serializedData)
     local professionStat = CraftSim.ProfessionStat()
     professionStat.name = serializedData.name
     professionStat.value = serializedData.value
-    professionStat.percentMod = serializedData.percentMod
+    professionStat.percentDivisionFactor = serializedData.percentDivisionFactor
     professionStat.extraValues = serializedData.extraValues or {}
 
     return professionStat

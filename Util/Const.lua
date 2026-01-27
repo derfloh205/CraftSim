@@ -15,18 +15,24 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 }
 
 ---@type table<CraftSim.EXPANSION_IDS, table<string, number>>
-CraftSim.CONST.PERCENT_MODS = {
+CraftSim.CONST.PERCENT_DIVISION_FACTORS = {
     [9] = { -- Dragonflight
-        MULTICRAFT = 0.0009,
-        RESOURCEFULNESS = 0.00111,
-        INGENUITY = 0.000333,
-        CRAFTINGSPEED = 0.002,
+        MULTICRAFT = 1100,
+        RESOURCEFULNESS = 900,
+        INGENUITY = 1000,
+        CRAFTINGSPEED = 2650,
     },
     [10] = { -- The War Within
-        MULTICRAFT = 0.000302,
-        RESOURCEFULNESS = 0.00037,
-        INGENUITY = 0.000333,
-        CRAFTINGSPEED = 0.001114,
+        MULTICRAFT = 1100,
+        RESOURCEFULNESS = 900,
+        INGENUITY = 1000,
+        CRAFTINGSPEED = 2650,
+    },
+    [11] = { -- Midnight
+        MULTICRAFT = 1100,
+        RESOURCEFULNESS = 900,
+        INGENUITY = 1000,
+        CRAFTINGSPEED = 2650,
     },
 }
 
