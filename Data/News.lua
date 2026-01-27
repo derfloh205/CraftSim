@@ -23,6 +23,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("20.3.8"),
         f.P .. "Updated Percent Division Factors for Midnight",
+        f.s .. "Fixed CraftQueue not recognizing crafts correctly",
         newP("20.3.7"),
         f.p .. "Updated Data for 12.0.0.65560",
         newP("20.3.6"),

@@ -482,7 +482,9 @@ function CraftSim.INIT:PLAYER_LOGIN()
 				CraftSim.UTIL:ShowTextCopyBox(json)
 			end
 		elseif command == "resetdb" then
-			CraftSimDB = nil
+			if CraftSimDB then
+				wipe(CraftSimDB)
+			end
 			C_UI.Reload()
 		elseif command == "quickbuy" then
 			CraftSim.CRAFTQ:AuctionatorQuickBuy()

@@ -78,11 +78,11 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
         if craftResult.resourcesReturned and handledOperationIds[craftResult.operationID] ~= true then
             self.triggeredResourcefulness = true
             for _, craftingResourceReturnInfo in pairs(craftResult.resourcesReturned) do
-                local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
+                local craftResultSavedReagent = CraftSim.CraftResultReagent(recipeData, craftingResourceReturnInfo.reagent.itemID, craftingResourceReturnInfo.quantity)
                 self.savedCosts = self.savedCosts + craftResultSavedReagent.costs
                 table.insert(self.savedReagents, craftResultSavedReagent)
                  -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
-                if salvageItemId == craftingResourceReturnInfo.itemID then
+                if salvageItemId == craftingResourceReturnInfo.reagent.itemID then
                     salvageItemSaved = true
                 else
                     nonSalvageQtySaved = nonSalvageQtySaved + craftingResourceReturnInfo.quantity

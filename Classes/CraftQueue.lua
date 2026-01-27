@@ -93,7 +93,7 @@ function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
     relative = relative or false
     local craftQueueItem = self:FindRecipe(recipeData)
     if craftQueueItem then
-        print("found craftQueueItem do decrement")
+        print("Found craftQueueItem do decrement")
         if relative then
             craftQueueItem.amount = craftQueueItem.amount + amount
         else
@@ -114,7 +114,6 @@ end
 ---@return CraftSim.CraftQueueItem | nil craftQueueItem
 function CraftSim.CraftQueue:FindRecipe(recipeData)
     local craftQueueItem = self.recipeCrafterMap[recipeData:GetRecipeCraftQueueUID()]
-
     return craftQueueItem
 end
 
@@ -432,9 +431,6 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
     if craftQueueItem.recipeData.concentrating ~= recipeData.concentrating then return end
 
     if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
-
-    local ignoreIngenuityProc = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS") and
-        craftingItemResultData.hasIngenuityProc
 
     if recipeData.concentrating and recipeData.concentrationData then
         recipeData.concentrationData:Update()
