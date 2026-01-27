@@ -13,19 +13,19 @@ function CraftSim.ProfessionStats:new(serialized)
 		return
 	end
 	-- TODO: Make configurable to distinquish between expansion's scaling
-	local statPercentModTable = CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
+	local percentDivisionFactors = CraftSim.CONST.PERCENT_DIVISION_FACTORS[CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
 	---@type CraftSim.ProfessionStat
 	self.recipeDifficulty = CraftSim.ProfessionStat("recipedifficulty")
 	---@type CraftSim.ProfessionStat
 	self.skill = CraftSim.ProfessionStat("skill")
 	---@type CraftSim.ProfessionStat
-	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, statPercentModTable.MULTICRAFT)
+	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, percentDivisionFactors.MULTICRAFT)
 	---@type CraftSim.ProfessionStat
-	self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, statPercentModTable.RESOURCEFULNESS)
+	self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, percentDivisionFactors.RESOURCEFULNESS)
 	---@type CraftSim.ProfessionStat
-	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, statPercentModTable.INGENUITY)
+	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, percentDivisionFactors.INGENUITY)
 	---@type CraftSim.ProfessionStat
-	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, statPercentModTable.CRAFTINGSPEED)
+	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, percentDivisionFactors.CRAFTINGSPEED)
 end
 
 ---@param recipeData CraftSim.RecipeData

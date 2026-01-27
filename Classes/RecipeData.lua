@@ -775,7 +775,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     self.professionStats:add(self.professionStatModifiers)
 
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
-    self.professionStats.multicraft.value = math.min(1 / self.professionStats.multicraft.percentMod,
+    self.professionStats.multicraft.value = math.min(self.professionStats.multicraft.percentDivisionFactor,
         self.professionStats.multicraft.value)
 
     if self.supportsQualities then
