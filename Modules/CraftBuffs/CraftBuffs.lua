@@ -8,7 +8,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftBuffs")
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_BUFFS : Frame
-CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ })---"COMBAT_LOG_EVENT_UNFILTERED" })
+CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "UNIT_AURA" })---"COMBAT_LOG_EVENT_UNFILTERED" })
 
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
@@ -609,6 +609,37 @@ function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
                         end
                     end
                 end
+            end
+        end
+    end
+end
+
+CraftSim.CRAFT_BUFFS.activeInstanceIds = {}
+
+function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
+    if not ProfessionsFrame:IsVisible() then return end
+    if unitTarget ~= "player" then return end
+
+    local startingCount = #CraftSim.CRAFT_BUFFS.activeInstanceIds
+	if info.addedAuras then
+		for _, v in pairs(info.addedAuras) do
+            if tContains(CraftSim.CONST.BUFF_IDS, v.spellId) then
+                tinsert(CraftSim.CRAFT_BUFFS.activeInstanceIds, v.auraInstanceID)
+            end
+		end
+    elseif info.removedAuraInstanceIDs then
+		for _, v in pairs(info.removedAuraInstanceIDs) do
+            tremove(CraftSim.CRAFT_BUFFS.activeInstanceIds, tIndexOf(CraftSim.CRAFT_BUFFS.activeInstanceIds, v))
+		end
+	end
+    
+    if #CraftSim.CRAFT_BUFFS.activeInstanceIds ~= startingCount then
+        if CraftSim.INIT.currentRecipeID then
+            local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
+            if isWorkOrder then
+                CraftSim.INIT:TriggerModuleUpdate(false)
+            else
+                CraftSim.INIT:TriggerModuleUpdate(false)
             end
         end
     end
