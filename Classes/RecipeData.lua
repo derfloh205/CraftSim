@@ -423,7 +423,7 @@ function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagent
 
     self:SetOptionalReagents(optionalReagentIDs)
     local reagentListItems = GUTIL:Map(requiredReagents, function (craftingReagentInfo)
-        return CraftSim.ReagentListItem {craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID}
+        return CraftSim.ReagentListItem (craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID)
     end)
     
     self:SetReagents(reagentListItems) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity

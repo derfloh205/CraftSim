@@ -673,7 +673,6 @@ function CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, amount, enchantItemTar
             return
         end
     end
-    print("OnCraftRecipe", false, true)
     CraftSim.CRAFTQ.currentlyCraftedRecipeData = recipeData
 end
 
