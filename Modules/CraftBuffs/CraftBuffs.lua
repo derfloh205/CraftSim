@@ -617,6 +617,7 @@ end
 CraftSim.CRAFT_BUFFS.activeInstanceIds = {}
 
 function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
+    if InCombatLockdown and InCombatLockdown() then return end
     if not ProfessionsFrame:IsVisible() then return end
     if unitTarget ~= "player" then return end
 
