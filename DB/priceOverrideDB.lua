@@ -5,7 +5,7 @@ local CraftSim = select(2, ...)
 CraftSim.DB = CraftSim.DB
 
 ---@class CraftSim.DB.PRICE_OVERRIDE : CraftSim.DB.Repository
-CraftSim.DB.PRICE_OVERRIDE = CraftSim.DB:RegisterRepository()
+CraftSim.DB.PRICE_OVERRIDE = CraftSim.DB:RegisterRepository("PriceOverrideDB")
 
 local print = CraftSim.DEBUG:RegisterDebugID("Database.priceOverrideDB")
 
@@ -32,29 +32,11 @@ function CraftSim.DB.PRICE_OVERRIDE:Init()
         }
     end
 
+    self.db = CraftSimDB.priceOverrideDB
+
     CraftSimDB.priceOverrideDB.data = CraftSimDB.priceOverrideDB.data or {}
     CraftSimDB.priceOverrideDB.data.globalOverrides = CraftSimDB.priceOverrideDB.data.globalOverrides or {}
     CraftSimDB.priceOverrideDB.data.recipeResultOverrides = CraftSimDB.priceOverrideDB.data.recipeResultOverrides or {}
-end
-
-function CraftSim.DB.PRICE_OVERRIDE:Migrate()
-    -- 0 -> 1
-    if CraftSimDB.priceOverrideDB.version == 0 then
-        local CraftSimPriceOverridesV2 = _G["CraftSimPriceOverridesV2"]
-        if CraftSimPriceOverridesV2 then
-            for itemID, priceOverrideData in pairs(CraftSimPriceOverridesV2.globalOverrides or {}) do
-                CraftSimDB.priceOverrideDB.data.globalOverrides[itemID] = priceOverrideData
-            end
-            for recipeID, recipeResultOverride in pairs(CraftSimPriceOverridesV2.recipeResultOverrides or {}) do
-                for qualityID, priceOverrideData in pairs(recipeResultOverride) do
-                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID] = CraftSimDB.priceOverrideDB.data
-                        .recipeResultOverrides[recipeID] or {}
-                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID][qualityID] = priceOverrideData
-                end
-            end
-        end
-        CraftSimDB.priceOverrideDB.version = 1
-    end
 end
 
 function CraftSim.DB.PRICE_OVERRIDE:ClearAll()
@@ -138,4 +120,23 @@ end
 function CraftSim.DB.PRICE_OVERRIDE:DeleteGlobalOverride(itemID)
     CraftSimDB.priceOverrideDB.data.globalOverrides = CraftSimDB.priceOverrideDB.data.globalOverrides or {}
     CraftSimDB.priceOverrideDB.data.globalOverrides[itemID] = nil
+end
+
+
+--- Migrations
+
+function CraftSim.DB.PRICE_OVERRIDE.MIGRATION:M_0_1_PriceOverride_Import_from_V2()
+    local CraftSimPriceOverridesV2 = _G["CraftSimPriceOverridesV2"]
+        if CraftSimPriceOverridesV2 then
+            for itemID, priceOverrideData in pairs(CraftSimPriceOverridesV2.globalOverrides or {}) do
+                CraftSimDB.priceOverrideDB.data.globalOverrides[itemID] = priceOverrideData
+            end
+            for recipeID, recipeResultOverride in pairs(CraftSimPriceOverridesV2.recipeResultOverrides or {}) do
+                for qualityID, priceOverrideData in pairs(recipeResultOverride) do
+                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID] = CraftSimDB.priceOverrideDB.data
+                        .recipeResultOverrides[recipeID] or {}
+                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID][qualityID] = priceOverrideData
+                end
+            end
+        end
 end
