@@ -124,7 +124,7 @@ function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_0_1_Import_from_CraftSimRecipe
         end
 end
 
-function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_1_2_Remove_colored_crafter_names()
+function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_1_2_CraftingOrderReagentInfo_Structure_Update()
     for _, customerHistory in pairs(CraftSimDB.customerHistoryDB.data) do
             for _, craft in ipairs(customerHistory.craftHistory) do
                 if craft.reagents then

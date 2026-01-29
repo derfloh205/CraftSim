@@ -101,7 +101,7 @@ function CraftSim.DB:Migrate(repository)
     for _, migration in ipairs(migrations) do
         if repository.db.version == migration.from then
             if migration.msg then
-                systemPrint(f.l("CraftSimDB Updating ") .. f.bb(migration.msg))
+                systemPrint(f.l("CraftSimDB Updating ") .. f.bb(repository.name) .. " " .. f.g(migration.msg))
             end
             if not pcall(migration.migrate) then
                 return false
