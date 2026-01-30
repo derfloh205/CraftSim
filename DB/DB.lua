@@ -97,6 +97,7 @@ end
 ---@return boolean success
 function CraftSim.DB:Migrate(repository)
     local migrations = self:GetMigrationFunctionsFromRepository(repository)
+    table.sort(migrations, function(a, b) return a.from < b.from end)
 
     for _, migration in ipairs(migrations) do
         if repository.db.version == migration.from then
