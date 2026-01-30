@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("20.3.9"),
+        f.p .. "Migrated CustomerHistory Data Structure",
         newP("20.3.8"),
         f.P .. "Updated Percent Division Factors for Midnight",
         f.s .. "Fixed CraftQueue not recognizing crafts correctly",
