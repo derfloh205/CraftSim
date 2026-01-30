@@ -14,7 +14,7 @@ CraftSim.DB = CraftSim.DB
 ---@field inventory table<ItemID, number>
 
 ---@class CraftSim.DB.ITEM_COUNT : CraftSim.DB.Repository
-CraftSim.DB.ITEM_COUNT = CraftSim.DB:RegisterRepository()
+CraftSim.DB.ITEM_COUNT = CraftSim.DB:RegisterRepository("ItemCountDB")
 
 function CraftSim.DB.ITEM_COUNT:Init()
     if not CraftSimDB.itemCountDB then
@@ -29,38 +29,9 @@ function CraftSim.DB.ITEM_COUNT:Init()
             version = 0,
         }
     end
+    self.db = CraftSimDB.itemCountDB
 
     CraftSimDB.itemCountDB.data = CraftSimDB.itemCountDB.data or {}
-end
-
-function CraftSim.DB.ITEM_COUNT:Migrate()
-    -- 0 -> 1
-    if CraftSimDB.itemCountDB.version == 0 then
-        CraftSimDB.itemCountDB.data = CraftSimItemCountCache or {}
-        CraftSimDB.itemCountDB.version = 1
-    end
-
-    -- 1 -> 2 (16.1.2 -> 16.1.3)
-    if CraftSimDB.itemCountDB.version == 1 then
-        -- remove any crafter entries with colored names...
-        for crafterUID, _ in pairs(CraftSimDB.itemCountDB.data or {}) do
-            if string.find(crafterUID, '\124c') then
-                CraftSimDB.itemCountDB.data[crafterUID] = nil
-            end
-        end
-
-        CraftSimDB.itemCountDB.version = 2
-    end
-
-    -- 2 -> 3 rebuild
-    if CraftSimDB.itemCountDB.version == 2 then
-        self:ClearAll()
-        CraftSimDB.itemCountDB.data = {
-            accountBank = {},
-            characters = {}
-        }
-        CraftSimDB.itemCountDB.version = 3
-    end
 end
 
 function CraftSim.DB.ITEM_COUNT:CleanUp()
@@ -145,4 +116,27 @@ end
 function CraftSim.DB.ITEM_COUNT:GetAccountBankCount(itemID)
     CraftSimDB.itemCountDB.data.accountBank = CraftSimDB.itemCountDB.data.accountBank or {}
     return CraftSimDB.itemCountDB.data.accountBank[itemID] or 0
+end
+
+--- Migrations
+function CraftSim.DB.ITEM_COUNT.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
+    CraftSimDB.itemCountDB.data = CraftSimItemCountCache or {}
+end
+
+function CraftSim.DB.ITEM_COUNT.MIGRATION:M_1_2_Remove_colored_crafter_names()
+    -- remove any crafter entries with colored names...
+        for crafterUID, _ in pairs(CraftSimDB.itemCountDB.data or {}) do
+            if string.find(crafterUID, '\124c') then
+                CraftSimDB.itemCountDB.data[crafterUID] = nil
+            end
+        end
+end
+
+function CraftSim.DB.ITEM_COUNT.MIGRATION:M_2_3_Remove_fishing_from_concentrationData()
+    -- rebuild database
+    CraftSim.DB.ITEM_COUNT:ClearAll()
+    CraftSimDB.itemCountDB.data = {
+        accountBank = {},
+        characters = {}
+    }
 end

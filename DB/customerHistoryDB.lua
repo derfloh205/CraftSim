@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.DB = CraftSim.DB
 
 ---@class CraftSim.DB.CUSTOMER_HISTORY : CraftSim.DB.Repository
-CraftSim.DB.CUSTOMER_HISTORY = CraftSim.DB:RegisterRepository()
+CraftSim.DB.CUSTOMER_HISTORY = CraftSim.DB:RegisterRepository("CustomerHistoryDB")
 
 local print = CraftSim.DEBUG:RegisterDebugID("Database.customerHistoryDB")
 
@@ -40,29 +40,16 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.customerHistoryDB")
 
 function CraftSim.DB.CUSTOMER_HISTORY:Init()
     if not CraftSimDB.customerHistoryDB then
-        ---@type CraftSimDB.Database
+        ---@class CraftSimDB.CustomerHistoryDB : CraftSimDB.Database
         CraftSimDB.customerHistoryDB = {
             version = 0,
             ---@type table<CustomerID, CraftSim.DB.CustomerHistory>
             data = {},
         }
     end
+    self.db = CraftSimDB.customerHistoryDB
 
     CraftSimDB.customerHistoryDB.data = CraftSimDB.customerHistoryDB.data or {}
-end
-
-function CraftSim.DB.CUSTOMER_HISTORY:Migrate()
-    -- 0 -> 1
-    if CraftSimDB.customerHistoryDB.version == 0 then
-        local CraftSimCustomerHistoryV2 = _G["CraftSimCustomerHistoryV2"]
-        if CraftSimCustomerHistoryV2 then
-            for _, data in pairs(CraftSimCustomerHistoryV2) do
-                data["v"] = nil
-            end
-            CraftSimDB.customerHistoryDB.data = CraftSimCustomerHistoryV2
-        end
-        CraftSimDB.customerHistoryDB.version = 1
-    end
 end
 
 function CraftSim.DB.CUSTOMER_HISTORY:ClearAll()
@@ -124,4 +111,40 @@ function CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(minimumTip)
             CraftSimDB.customerHistoryDB.data[customerID] = nil
         end
     end
+end
+
+--- Migrations
+function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
+    local CraftSimCustomerHistoryV2 = _G["CraftSimCustomerHistoryV2"]
+        if CraftSimCustomerHistoryV2 then
+            for _, data in pairs(CraftSimCustomerHistoryV2) do
+                data["v"] = nil
+            end
+            CraftSimDB.customerHistoryDB.data = CraftSimCustomerHistoryV2
+        end
+end
+
+function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_1_2_CraftingOrderReagentInfo_Structure_Update()
+    for _, customerHistory in pairs(CraftSimDB.customerHistoryDB.data) do
+            for _, craft in ipairs(customerHistory.craftHistory) do
+                if craft.reagents then
+                    for _, craftingOrderReagentInfo in ipairs(craft.reagents) do
+                        -- Only migrate if old structure is detected
+                        ---@diagnostic disable-next-line: undefined-field
+                        if not craftingOrderReagentInfo.reagentInfo and craftingOrderReagentInfo.reagent then
+                            craftingOrderReagentInfo.reagentInfo = {
+                                reagent = {
+                                    ---@diagnostic disable-next-line: undefined-field
+                                    itemID = craftingOrderReagentInfo.reagent.itemID,
+                                },
+                                ---@diagnostic disable-next-line: undefined-field
+                                quantity = craftingOrderReagentInfo.reagent.quantity,
+                                ---@diagnostic disable-next-line: undefined-field
+                                dataSlotIndex = craftingOrderReagentInfo.reagent.dataSlotIndex,
+                            }
+                        end
+                    end
+                end
+            end
+        end
 end

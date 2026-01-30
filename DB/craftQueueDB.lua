@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.DB = CraftSim.DB
 
 ---@class CraftSim.DB.CRAFT_QUEUE : CraftSim.DB.Repository
-CraftSim.DB.CRAFT_QUEUE = CraftSim.DB:RegisterRepository()
+CraftSim.DB.CRAFT_QUEUE = CraftSim.DB:RegisterRepository("CraftQueueDB")
 
 local print = CraftSim.DEBUG:RegisterDebugID("Database.craftQueueDB")
 
@@ -20,36 +20,9 @@ function CraftSim.DB.CRAFT_QUEUE:Init()
             data = {},
         }
     end
+    self.db = CraftSimDB.craftQueueDB
 
     CraftSimDB.craftQueueDB.data = CraftSimDB.craftQueueDB.data or {}
-end
-
-function CraftSim.DB.CRAFT_QUEUE:Migrate()
-    local migrate = CraftSim.DB:GetMigrateFunction(CraftSimDB.craftQueueDB)
-
-    migrate(0, 1, function()
-        if _G["CraftSimCraftQueueCache"] then
-            CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"]
-        end
-    end)
-    migrate(1, 2, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
-    migrate(2, 3, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
-    migrate(3, 4, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
-    migrate(4, 5, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
-    migrate(5, 6, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
-    migrate(6, 7, function()
-        CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    end)
 end
 
 function CraftSim.DB.CRAFT_QUEUE:ClearAll()
@@ -70,3 +43,37 @@ end
 function CraftSim.DB.CRAFT_QUEUE:Add(craftQueueItemSerialized)
     tinsert(CraftSimDB.craftQueueDB.data, craftQueueItemSerialized)
 end
+
+
+--- Migrations
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
+    if _G["CraftSimCraftQueueCache"] then
+            CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"]
+        end
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_1_2()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_2_3()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_3_4()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_4_5()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_5_6()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_6_7()
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
+
