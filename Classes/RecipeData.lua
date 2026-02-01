@@ -7,7 +7,6 @@ local GUTIL = CraftSim.GUTIL
 local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
-local systemPrint = print
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
@@ -435,6 +434,7 @@ function CraftSim.RecipeData:SetSalvageItem(itemID)
         self.reagentData.salvageReagentSlot:SetItem(itemID)
         local itemLocation = GUTIL:GetItemLocationFromItemID(itemID, true)
         if itemLocation then
+            ---@cast itemLocation ItemLocation
             local item = Item:CreateFromItemLocation(itemLocation)
             if item then
                 self.allocationItemGUID = Item:CreateFromItemLocation(itemLocation):GetItemGUID()
@@ -563,9 +563,9 @@ end
 
 ---@param itemIDList number[]
 function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
-    table.foreach(itemIDList, function(_, itemID)
+    for _, itemID in pairs(itemIDList) do
         self:SetOptionalReagent(itemID)
-    end)
+    end
     self:Update()
 end
 
@@ -1322,7 +1322,7 @@ end
 ---@field optimizeGear? boolean
 ---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
 
----@deprecated
+---@deprecated use CraftSim.RecipeData:Optimize
 ---Optimizes the recipeData's reagents and gear for highest profit and caches result for crafter
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
 function CraftSim.RecipeData:OptimizeProfit(options)
@@ -1425,6 +1425,10 @@ function CraftSim.RecipeData:GetResultQuality(idLinkOrMixin)
         item = Item:CreateFromItemLink(idLinkOrMixin)
     elseif type(idLinkOrMixin) == 'table' and idLinkOrMixin.ContinueOnItemLoad then
         item = idLinkOrMixin
+    end
+
+    if not item then
+        return nil
     end
 
     for qualityID, _item in pairs(self.resultData.itemsByQuality) do
@@ -1656,6 +1660,7 @@ function CraftSim.RecipeData:Craft(amount)
             local salvageLocation = GUTIL:GetItemLocationFromItemID(self.reagentData.salvageReagentSlot.activeItem
                 :GetItemID(), true)
             if salvageLocation then
+                ---@cast salvageLocation ItemLocation
                 C_TradeSkillUI.CraftSalvage(self.recipeID, amount, salvageLocation, craftingReagentInfoTbl,
                     self.concentrating)
             end
@@ -1664,6 +1669,7 @@ function CraftSim.RecipeData:Craft(amount)
     if self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
+            ---@cast vellumLocation ItemLocation
             C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation, self
                 .concentrating)
         end
@@ -2001,10 +2007,11 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             recipeData:SetSubRecipeCostsUsage(true)
 
                             -- caches the expect costs info automatically
+                            -- TODO replace call to deprecated method
                             recipeData:OptimizeProfit(optimizeOptions)
                             local profit = recipeData.averageProfitCached or recipeData:GetAverageProfit()
                             print("- Profit: " ..
-                                CraftSim.UTIL:FormatMoney(profit, true, nil, true))
+                                CraftSim.UTIL:FormatMoney(profit, true, nil))
 
                             -- if the necessary item quality is reachable, map it to the recipe
                             local reagentQualityReachable, concentrationOnly = recipeData.resultData

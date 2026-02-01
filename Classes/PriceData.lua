@@ -215,7 +215,7 @@ function CraftSim.PriceData:Update()
 
     local expectedYieldPerCraft = self.recipeData.resultData.expectedYieldPerCraft
     self.averageCraftingCosts = self.craftingCosts - self.resourcefulnessSavedCostsAverage
-    self.expectedCostsPerItem = self.averageCraftingCosts / expectedYieldPerCraft
+    self.expectedCostsPerItem = self.averageCraftingCosts / (expectedYieldPerCraft > 0 and expectedYieldPerCraft or 1)
 
     print("calculated crafting costs: " .. tostring(self.craftingCosts))
 end
@@ -260,13 +260,15 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
     end
 
     for _, optionalReagent in ipairs(possibleOptionals) do
-        local itemID = optionalReagent.item:GetItemID()
-        local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
-            useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
-        self.reagentPriceInfos[itemID] = {
-            itemPrice = itemPrice,
-            priceInfo = priceInfo,
-        }
+        if not optionalReagent:IsCurrency() then
+            local itemID = optionalReagent.item:GetItemID()
+            local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
+                useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
+            self.reagentPriceInfos[itemID] = {
+                itemPrice = itemPrice,
+                priceInfo = priceInfo,
+            }
+        end
     end
 end
 

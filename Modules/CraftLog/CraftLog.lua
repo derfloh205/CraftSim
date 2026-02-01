@@ -47,7 +47,7 @@ function CraftSim.CRAFT_LOG:UNIT_SPELLCAST_SUCCEEDED( aUnit, aCastGUID, aSpellId
     end
 end
 
-
+---@type CraftingItemResultData[]
 local accumulatingCraftingItemResultData = {}
 local isAccumulatingCraftingItemResultData = true
 --- Collects CraftingItemResultData tables after a recipe was crafted

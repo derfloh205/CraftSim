@@ -6,6 +6,7 @@ local CraftSimAddonName = select(1, ...)
 CraftSim.SPECIALIZATION_DATA = {}
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
+CraftSim.SPECIALIZATION_DATA.MIDNIGHT = {}
 
 CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
 CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
@@ -364,8 +365,8 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 end
 
 function CraftSim.INIT:HandleAuctionatorHooks()
-	---@diagnostic disable-next-line: undefined-global
-	if Auctionator then
+	if Auctionator then ---@diagnostic disable-line: undefined-global
+		---@diagnostic disable-next-line: undefined-global
 		Auctionator.API.v1.RegisterForDBUpdate(CraftSimAddonName, function()
 			print("Auctionator DB Update")
 			CraftSim.INIT:TriggerModuleUpdate(false)
@@ -496,7 +497,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 
 	-- show one time note
 	if CraftSim.DB.OPTIONS:Get("SHOW_NEWS") then
-		CraftSim.NEWS:ShowNews()
+		CraftSim.NEWS:ShowNews(false)
 	end
 end
 

@@ -524,18 +524,18 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
             noteColumn.icon:SetEnabled(#craft.customerNotes > 0)
 
             local reagentItems = CraftSim.GUTIL:Map(craft.reagents,
-                function(r) return Item:CreateFromItemID(r.reagent.itemID) end)
+                function(r) return Item:CreateFromItemID(r.reagentInfo.reagent.itemID) end)
             CraftSim.GUTIL:ContinueOnAllItemsLoaded(reagentItems, function()
                 local reagentText = ""
                 for _, reagent in pairs(craft.reagents) do
-                    local item = Item:CreateFromItemID(reagent.reagent.itemID)
+                    local item = Item:CreateFromItemID(reagent.reagentInfo.reagent.itemID)
                     local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(item:GetItemLink())
                     local qualityIcon = ""
                     local itemIcon = CraftSim.GUTIL:IconToText(item:GetItemIcon(), 20, 20)
                     if qualityID then
                         qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20, 0, 0)
                     end
-                    reagentText = reagentText .. itemIcon .. qualityIcon .. " x " .. reagent.reagent.quantity .. "\n"
+                    reagentText = reagentText .. itemIcon .. qualityIcon .. " x " .. reagent.reagentInfo.quantity .. "\n"
                 end
                 reagentColumn.icon:SetText(reagentText)
             end)

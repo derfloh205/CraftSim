@@ -9,10 +9,17 @@ CraftSim.OptionalReagent = CraftSim.CraftSimObject:extend()
 
 ---@param craftingReagent CraftingReagent
 function CraftSim.OptionalReagent:new(craftingReagent)
-    self.item = Item:CreateFromItemID(craftingReagent.itemID)
+    local reagentData = craftingReagent.currencyID ~= nil
+        and CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[craftingReagent.currencyID]
+        or CraftSim.OPTIONAL_REAGENT_DATA[craftingReagent.itemID]
+
+    if craftingReagent.currencyID ~= nil then
+        self.currencyID = craftingReagent.currencyID
+    else
+        self.item = Item:CreateFromItemID(craftingReagent.itemID)
+    end
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
-    local reagentData = CraftSim.OPTIONAL_REAGENT_DATA[craftingReagent.itemID]
 
     if reagentData then
         self.qualityID = reagentData.qualityID
@@ -53,35 +60,38 @@ function CraftSim.OptionalReagent:new(craftingReagent)
     end
 end
 
+function CraftSim.OptionalReagent:IsCurrency()
+    return self.currencyID ~= nil
+end
+
 function CraftSim.OptionalReagent:Debug()
+    -- TODO update assumption of item (vs currency)
     return {
         self.item:GetItemLink() or self.item:GetItemID()
     }
 end
 
 function CraftSim.OptionalReagent:Copy()
-    local copy = CraftSim.OptionalReagent({ itemID = self.item:GetItemID() })
-    return copy
+    return self:IsCurrency()
+        and CraftSim.OptionalReagent({ currencyID = self.currencyID })
+        or CraftSim.OptionalReagent({ itemID = self.item:GetItemID() })
 end
 
 ---@class CraftSim.OptionalReagent.Serialized
----@field qualityID number
----@field itemID number
-
+---@field currencyID? number
+---@field itemID? number
 function CraftSim.OptionalReagent:Serialize()
-    local serialized = {}
-    serialized.qualityID = self.qualityID
-    serialized.itemID = self.item:GetItemID()
-    return serialized
+    return {
+        itemID = self.item and self.item:GetItemID() or nil,
+        currencyID = self.currencyID
+    }
 end
 
 ---STATIC: Deserializes an optionalReagent
 ---@param serializedOptionalReagent CraftSim.OptionalReagent.Serialized
 ---@return CraftSim.OptionalReagent
 function CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
-    serializedOptionalReagent.itemID = tonumber(serializedOptionalReagent.itemID) or 0
-    serializedOptionalReagent.qualityID = tonumber(serializedOptionalReagent.qualityID) or 0
-    return CraftSim.OptionalReagent(serializedOptionalReagent) -- as it builds from itemID only its fine
+    return CraftSim.OptionalReagent(serializedOptionalReagent)
 end
 
 function CraftSim.OptionalReagent:GetJSON(indent)
@@ -90,11 +100,17 @@ function CraftSim.OptionalReagent:GetJSON(indent)
     jb:Begin()
     jb:Add("professionStats", self.professionStats)
     jb:Add("qualityID", self.qualityID)
-    jb:Add("itemID", self.item:GetItemID())
+    if self.currencyID then
+        jb:Add("currencyID", self.currencyID)
+    end
+    if self.item then
+        jb:Add("itemID", self.item:GetItemID())
+    end
     jb:End()
     return jb.json
 end
 
+-- TODO make this currency aware
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end

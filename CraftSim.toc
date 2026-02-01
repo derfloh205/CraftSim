@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120000, 120001
 ## DefaultState: enabled
 
 ## Title: CraftSim
@@ -130,6 +130,7 @@ Data/EnchantData.lua
 Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
+Data/OptionalCurrencyReagentData.lua
 Data/News.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua
@@ -149,6 +150,16 @@ Data/SpecializationData/The_War_Within/Jewelcrafting.lua
 Data/SpecializationData/The_War_Within/Leatherworking.lua
 Data/SpecializationData/The_War_Within/Tailoring.lua
 Data/SpecializationData/The_War_Within/Engineering.lua
+
+## Data/SpecializationData/Midnight/Alchemy.lua
+## Data/SpecializationData/Midnight/Blacksmithing.lua
+## Data/SpecializationData/Midnight/Enchanting.lua
+## Data/SpecializationData/Midnight/Inscription.lua
+## Data/SpecializationData/Midnight/Jewelcrafting.lua
+## Data/SpecializationData/Midnight/Leatherworking.lua
+## Data/SpecializationData/Midnight/Tailoring.lua
+## Data/SpecializationData/Midnight/Engineering.lua
+
 # needs to be last
 Data/SpecializationData/SpecializationData.lua
 
