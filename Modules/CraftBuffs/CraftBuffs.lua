@@ -636,12 +636,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     
     if #CraftSim.CRAFT_BUFFS.activeInstanceIds ~= startingCount then
         if CraftSim.INIT.currentRecipeID then
-            local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
-            if isWorkOrder then
-                CraftSim.INIT:TriggerModuleUpdate(false)
-            else
-                CraftSim.INIT:TriggerModuleUpdate(false)
-            end
+            CraftSim.INIT:TriggerModuleUpdate()
         end
     end
 end
