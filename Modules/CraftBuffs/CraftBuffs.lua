@@ -618,25 +618,36 @@ CraftSim.CRAFT_BUFFS.activeInstanceIds = {}
 
 function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     if InCombatLockdown() then return end
-    if not ProfessionsFrame:IsVisible() then return end
     if unitTarget ~= "player" then return end
 
     local startingCount = #CraftSim.CRAFT_BUFFS.activeInstanceIds
 	if info.addedAuras then
 		for _, v in pairs(info.addedAuras) do
-            if tContains(CraftSim.CONST.BUFF_IDS, v.spellId) then
+            local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, v.spellId)
+            local isAlreadyActive = tContains(CraftSim.CRAFT_BUFFS.activeInstanceIds, v.auraInstanceID)
+            if isTrackedBuff and not isAlreadyActive then
                 tinsert(CraftSim.CRAFT_BUFFS.activeInstanceIds, v.auraInstanceID)
             end
 		end
-    elseif info.removedAuraInstanceIDs then
-		for _, v in pairs(info.removedAuraInstanceIDs) do
-            tremove(CraftSim.CRAFT_BUFFS.activeInstanceIds, tIndexOf(CraftSim.CRAFT_BUFFS.activeInstanceIds, v))
+    end
+    if info.updatedAuraInstanceIDs then
+		for _, v in pairs(info.updatedAuraInstanceIDs) do
+			local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
+            if aura then
+                local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, aura.spellId)
+                local isAlreadyActive = tContains(CraftSim.CRAFT_BUFFS.activeInstanceIds, aura.auraInstanceID)
+                if isTrackedBuff and not isAlreadyActive then
+                    tinsert(CraftSim.CRAFT_BUFFS.activeInstanceIds, aura.auraInstanceID)
+                end
+            end
 		end
 	end
-    
-    if #CraftSim.CRAFT_BUFFS.activeInstanceIds ~= startingCount then
-        if CraftSim.INIT.currentRecipeID then
-            CraftSim.INIT:TriggerModuleUpdate()
+    if info.removedAuraInstanceIDs then
+		for _, v in pairs(info.removedAuraInstanceIDs) do
+            tremove(CraftSim.CRAFT_BUFFS.activeInstanceIds, tIndexOf(CraftSim.CRAFT_BUFFS.activeInstanceIds, v))
         end
+    end
+    if #CraftSim.CRAFT_BUFFS.activeInstanceIds ~= startingCount and CraftSim.INIT.currentRecipeID then
+        CraftSim.INIT:TriggerModuleUpdate()
     end
 end
