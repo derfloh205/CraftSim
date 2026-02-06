@@ -1881,6 +1881,12 @@ function CraftSim.RecipeData:IsOldWorldRecipe()
     return recipeExpansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
 end
 
+function CraftSim.RecipeData:IsSimplifiedQualityRecipe()
+    local recipeExpansionID = self.professionData.expansionID
+    if recipeExpansionID == "BASE" then return true end
+    return recipeExpansionID >= CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
+end
+
 ---@param expansionID CraftSim.EXPANSION_IDS
 function CraftSim.RecipeData:IsExpansionRecipe(expansionID)
     if self.professionData and self.professionData.skillLineID then

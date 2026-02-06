@@ -200,6 +200,20 @@ professionsTWW = {
      "2878": "Inscription"
 }
 
+professionsMid = {
+     "2907": "Blacksmithing",
+     "2915": "Leatherworking",
+     "2906": "Alchemy",
+     "2912": "Herbalism",
+     "2916": "Mining",
+     "2918": "Tailoring",
+     "2910": "Engineering",
+     "2909": "Enchanting",
+     "2917": "Skinning",
+     "2914": "Jewelcrafting",
+     "2913": "Inscription"
+}
+
 def map():
     # os.makedirs("Data/Latest", exist_ok=True)
     # os.chdir("wow-profession-tree")
@@ -212,11 +226,13 @@ def map():
 
     professionDataTable = {
         "Dragonflight": {},
-        "The_War_Within": {}
+        "The_War_Within": {},
+        "Midnight": {}
     }
     print("Mapping Profession Talents\n")
     count = 0
     total = len(rawDataTable)
+    print(f"Processing {total} rows")
     for row in rawDataTable:
         count = count + 1
         skillLineID = row["ProfessionExpansionID"]
@@ -234,12 +250,15 @@ def map():
 
         professionDF = None
         professionTWW = None
+        professionMid = None
         if skillLineID in professionsDF:
             professionDF = professionsDF[skillLineID]
         if skillLineID in professionsTWW:
             professionTWW = professionsTWW[skillLineID]
+        if skillLineID in professionsMid:
+            professionMid = professionsMid[skillLineID]
 
-        if professionDF == None and professionTWW == None:
+        if professionDF == None and professionTWW == None and professionMid == None:
             continue
 
         expansion = None
@@ -247,10 +266,14 @@ def map():
         if professionDF is not None:
             expansion = "Dragonflight"
             profession = professionDF
-            
+
         if professionTWW is not None:
             expansion = "The_War_Within"
             profession = professionTWW
+
+        if professionMid is not None:
+            expansion = "Midnight"
+            profession = professionMid
 
         if not profession in professionDataTable[expansion]:
             professionDataTable[expansion][profession] = {

@@ -17,7 +17,7 @@ function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficult
     local offset = breakPointOffset and 1 or 0
     if maxQuality == 1 then
         return {}
-    elseif maxQuality == 3 then
+    elseif maxQuality == 2 or maxQuality == 3 then
         return { recipeDifficulty * 0.5 + offset, recipeDifficulty + offset }
     elseif maxQuality == 5 then
         return { recipeDifficulty * 0.2 + offset, recipeDifficulty * 0.5 + offset, recipeDifficulty * 0.8 + offset,

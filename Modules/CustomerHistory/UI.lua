@@ -4,7 +4,6 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CUSTOMER_HISTORY.UI
 CraftSim.CUSTOMER_HISTORY.UI = {}
 
 ---@type CraftSim.CUSTOMER_HISTORY.FRAME
@@ -528,14 +527,16 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
             CraftSim.GUTIL:ContinueOnAllItemsLoaded(reagentItems, function()
                 local reagentText = ""
                 for _, reagent in pairs(craft.reagents) do
-                    local item = Item:CreateFromItemID(reagent.reagentInfo.reagent.itemID)
-                    local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(item:GetItemLink())
-                    local qualityIcon = ""
-                    local itemIcon = CraftSim.GUTIL:IconToText(item:GetItemIcon(), 20, 20)
-                    if qualityID then
-                        qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20, 0, 0)
+                    if reagent.reagentInfo.reagent.itemID then
+                        local item = Item:CreateFromItemID(reagent.reagentInfo.reagent.itemID)
+                        local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(item:GetItemLink())
+                        local qualityIcon = ""
+                        local itemIcon = CraftSim.GUTIL:IconToText(item:GetItemIcon(), 20, 20)
+                        if qualityID then
+                            qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20, 0, 0)
+                        end
+                        reagentText = reagentText .. itemIcon .. qualityIcon .. " x " .. reagent.reagentInfo.quantity .. "\n"
                     end
-                    reagentText = reagentText .. itemIcon .. qualityIcon .. " x " .. reagent.reagentInfo.quantity .. "\n"
                 end
                 reagentColumn.icon:SetText(reagentText)
             end)

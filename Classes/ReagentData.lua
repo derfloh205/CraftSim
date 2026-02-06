@@ -293,7 +293,7 @@ end
 
 function CraftSim.ReagentData:GetMaxSkillFactor()
     local maxQualityReagentsCraftingTbl = GUTIL:Map(self.requiredReagents, function(rr)
-        return rr:GetCraftingReagentInfoByQuality(3, true)
+        return rr:GetCraftingReagentInfoByQuality(self.recipeData:IsSimplifiedQualityRecipe() and 2 or 3, true)
     end)
 
     -- explicitly do not use concentration flag here
