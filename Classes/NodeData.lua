@@ -219,20 +219,19 @@ end
 ---@return CraftSim.NodeData.Serialized
 function CraftSim.NodeData:Serialize()
     ---@type CraftSim.NodeData.Serialized
-    local serializedData = {}
-    serializedData.nodeID = self.nodeID
-    serializedData.name = self.name
-    serializedData.icon = self.icon
-    serializedData.professionStats = self.professionStats:Serialize()
-    serializedData.maxProfessionStats = self.maxProfessionStats:Serialize()
-    serializedData.rank = self.rank
-    serializedData.maxRank = self.maxRank
-    serializedData.active = self.active
-    serializedData.perkData = GUTIL:Map(self.perkData, function(perkData)
-        return perkData:Serialize()
-    end)
-
-    return serializedData
+    return {
+        nodeID = self.nodeID,
+        name = self.name,
+        icon = self.icon,
+        professionStats = self.professionStats:Serialize(),
+        maxProfessionStats = self.maxProfessionStats:Serialize(),
+        rank = self.rank,
+        maxRank = self.maxRank,
+        active = self.active,
+        perkData = GUTIL:Map(self.perkData, function(perkData)
+            return perkData:Serialize()
+        end)
+    }
 end
 
 ---@param serializedData CraftSim.NodeData.Serialized

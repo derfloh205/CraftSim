@@ -38,6 +38,11 @@ function CraftSim.OptionalReagentSlot:IsAllocated()
     return self.activeReagent ~= nil
 end
 
+---@return boolean isCurrency
+function CraftSim.OptionalReagentSlot:IsCurrency()
+    return self.possibleReagents and self.possibleReagents[1] and self.possibleReagents[1].currencyID ~= nil
+end
+
 ---@param itemID ItemID
 ---@return boolean isPossibleReagent
 function CraftSim.OptionalReagentSlot:IsPossibleReagent(itemID)

@@ -25,12 +25,13 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
                 local copy = reagent:Copy()
                 copy:Clear()
 
-                table.foreach(copy.items, function(_, reagentItem)
+                for _, reagentItem in pairs(copy.items) do
                     table.insert(reagentItems, reagentItem)
-                end)
+                end
 
                 return copy
             end
+            return nil
         end)
 
         -- map knapsackResult to reagents
@@ -46,7 +47,6 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
         end
     else
         self.qualityID = recipeData.maxQuality
-        --self.craftingCosts = 0
         self.reagents = {}
     end
 end
@@ -79,12 +79,12 @@ end
 function CraftSim.ReagentOptimizationResult:Debug()
     local debugLines = {
         "qualityID: " .. tostring(self.qualityID),
-        "craftingCosts: " .. CraftSim.UTIL:FormatMoney(self.craftingCosts),
+        "totalReagentCost: " .. CraftSim.UTIL:FormatMoney(self:GetTotalReagentCost()),
     }
 
-    table.foreach(self.reagents, function(_, reagent)
+    for _, reagent in pairs(self.reagents) do
         debugLines = CraftSim.GUTIL:Concat({ debugLines, reagent:Debug() })
-    end)
+    end
 
     return debugLines
 end

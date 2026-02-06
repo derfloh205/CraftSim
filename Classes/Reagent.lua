@@ -114,9 +114,9 @@ function CraftSim.Reagent:Debug()
     }
 
     if self.hasQuality then
-        table.foreach(self.items, function(_, reagentItem)
+        for _, reagentItem in ipairs(self.items) do
             debugLines = CraftSim.GUTIL:Concat({ debugLines, reagentItem:Debug() })
-        end)
+        end
     else
         debugLines = CraftSim.GUTIL:Concat({ debugLines, self.items[1]:Debug() })
     end
@@ -125,9 +125,9 @@ function CraftSim.Reagent:Debug()
 end
 
 function CraftSim.Reagent:Clear()
-    table.foreach(self.items, function(_, reagentItem)
+    for _, reagentItem in pairs(self.items) do
         reagentItem:Clear()
-    end)
+    end
 end
 
 --- returns the total quantity of all qualities

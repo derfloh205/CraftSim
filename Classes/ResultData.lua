@@ -178,9 +178,6 @@ function CraftSim.ResultData:Debug()
     for q, item in pairs(self.itemsByQuality) do
         table.insert(debugLines, "Possible Result Q" .. q .. " " .. (item:GetItemLink() or item:GetItemID()))
     end
-    for q, chance in pairs(self.chanceByQuality) do
-        table.insert(debugLines, "Q" .. q .. " Chance: " .. chance * 100 .. " %")
-    end
     return CraftSim.GUTIL:Concat({ debugLines,
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
@@ -246,9 +243,9 @@ function CraftSim.ResultData:GetJSON(indent)
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
     local itemList = {}
-    table.foreach(self.itemsByQuality, function(_, item)
+    for _, item in pairs(self.itemsByQuality) do
         table.insert(itemList, tostring(CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())))
-    end)
+    end
 
     jb:AddList("itemsByQuality", itemList)
     jb:Add("expectedQuality", self.expectedQuality)

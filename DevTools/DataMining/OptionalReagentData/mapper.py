@@ -3,10 +3,11 @@ sys.path.append('../')
 import wagoTools
 import shutil
 
-wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse"]
+wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse", "CurrencyTypes", "CurrencyCategory"]
 
 def copy(buildVersion):
     shutil.copy(f"Result/{buildVersion}/OptionalReagentData.lua", "../../../Data/OptionalReagentData.lua")
+    shutil.copy(f"Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../../Data/OptionalCurrencyReagentData.lua")
 
 def printD(text, enabled):
     if enabled:
@@ -21,32 +22,46 @@ def map(download, buildVersion):
     ProfessionEffectType = dataTables[4]
     CraftingReagentQualityTable = dataTables[5]
     ItemSparse = dataTables[6]
+    CurrencyTypes = dataTables[7]
+    CurrencyCategory = dataTables[8]
 
     # itemID -> qualityID, {stat: statvalue}
     optionalReagentsDataTable = {}
 
+    # currencyID -> qualityID, {stat: statvalue}
+    optionalCurrencyReagentsDataTable = {}
+
     optionalReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "18"}})
     finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
     sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11"}})
+    currencyReagents = wagoTools.searchTable(CurrencyTypes, {"conditions": {"CategoryID": "268", "Flags_0": "2359490"}}) # 268 is Midnight Season 1 and Flags_0 differentiates from non-crafting currencies (i.e. Coffer Keys & Shards and Spark residue)
     #sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11", "CraftingQualityID": "0"}})
     # Filter to recieve spark reagents only
     #sparkReagents = [sparkReagent for sparkReagent in sparkReagents if int(sparkReagent["ModifiedCraftingReagentItemID"]) > 0]
 
-    Reagents = optionalReagents + finishingReagents + sparkReagents
+    Reagents = optionalReagents + finishingReagents + sparkReagents + currencyReagents
     print("Mapping Optional Items")
     print("#optionalReagents: " + str(len(optionalReagents)))
     print("#finishingReagents: " + str(len(finishingReagents)))
     print("#sparkReagents: " + str(len(sparkReagents)))
+    print("#currencyReagents: " + str(len(currencyReagents)))
     counter = 0
     reagentCount = len(Reagents)
     for reagentData in Reagents:
-        counter = counter + 1
-        itemID = int(reagentData["ID"])
-        isOptional = reagentData["SubclassID"] == "18"
-        isFinishing = reagentData["SubclassID"] == "19"
-        isSpark = reagentData["SubclassID"] == "11"
+        counter += 1
+        itemID = int(reagentData["ID"]) if "ClassID" in reagentData else None
+        currencyID = int(reagentData["ID"]) if "CategoryID" in reagentData else None
+        isOptional = reagentData["SubclassID"] == "18" if itemID is not None else True
+        isFinishing = reagentData["SubclassID"] == "19" if itemID is not None else False
+        isSpark = reagentData["SubclassID"] == "11" if itemID is not None else False
 
-        craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+        if itemID is not None:
+            craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+        if currencyID is not None:
+            results = wagoTools.searchTable(CraftingReagentQualityTable, {"conditions": {"CurrencyTypesID": str(currencyID)}})
+            # data is dirty, there's a test entry for each type of Dawncrest (except Champion as it is not used as a reagent)
+            craftingReagentQuality = results[0] if len(results) == 1 else results[0] if results[0]["MaxDifficultyAdjustment"] != "0" else results[1]
+
         qualityID = 0
         modifiedCraftingCategoryID = None
         if craftingReagentQuality:
@@ -63,38 +78,56 @@ def map(download, buildVersion):
         if debug and itemID != debugItemID:
             continue
 
-        wagoTools.updateProgressBar(counter, reagentCount, itemID)
+        wagoTools.updateProgressBar(counter, reagentCount, itemID or currencyID)
 
-        itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})
+        if itemID is not None:
+            itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})
 
-        if not itemSparseData:
-            printD(f"ItemSparse data not found for itemID {itemID}", debug)
-            continue # item does not exist
+            if not itemSparseData:
+                printD(f"ItemSparse data not found for itemID {itemID}", debug)
+                continue # item does not exist
 
-        itemName = itemSparseData["Display_lang"]
+            itemName = itemSparseData["Display_lang"]
 
-        if "delete me" in itemName.lower():
-            printD(f"Skipping item with 'delete me' in name: {itemName} (ID: {itemID})", debug)
-            continue
+            if "delete me" in itemName.lower():
+                printD(f"Skipping item with 'delete me' in name: {itemName} (ID: {itemID})", debug)
+                continue
 
 
-        expansionID = int(itemSparseData["ExpansionID"])
-        
+            expansionID = int(itemSparseData["ExpansionID"])
+
+        if currencyID is not None:
+            currencyData = wagoTools.searchTable(CurrencyTypes, {"singleResult": True, "conditions": {"ID": str(currencyID)}})
+            itemName = currencyData["Name_lang"]
+            currencyCategoryData = wagoTools.searchTable(CurrencyCategory, {"singleResult": True, "conditions": {"ID": str(reagentData["CategoryID"])}})
+            expansionID = int(currencyCategoryData["ExpansionID"])        
+
         #modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
         #printD(f"modifiedCraftingReagentItemID: {modifiedCraftingReagentItemID}", debug)
 
         if craftingReagentQuality and (isOptional or isSpark):
             difficultyIncrease = int(craftingReagentQuality["MaxDifficultyAdjustment"])
             if difficultyIncrease > 0:
-                optionalReagentsDataTable[itemID] = {
-                    "qualityID": 0 if isSpark else qualityID,
-                    "name": itemName,
-                    "expansionID": expansionID,
-                    "stats": {
-                            "increasedifficulty": difficultyIncrease
-                        }
-                    
-                }
+                if itemID is not None:
+                    optionalReagentsDataTable[itemID] = {
+                        "qualityID": 0 if isSpark else qualityID,
+                        "name": itemName,
+                        "expansionID": expansionID,
+                        "stats": {
+                                "increasedifficulty": difficultyIncrease
+                            }
+                        
+                    }
+                if currencyID is not None:
+                    optionalCurrencyReagentsDataTable[currencyID] = {
+                        "qualityID": qualityID,
+                        "name": itemName,
+                        "expansionID": expansionID,
+                        "stats": {
+                                "increasedifficulty": difficultyIncrease
+                            }
+                        
+                    }
                 continue
 
         reagentEffectPct = 1
@@ -129,7 +162,7 @@ def map(download, buildVersion):
 
                 amount = int(professionEffect["Amount"]) * reagentEffectPct
                 statMap[statName] = amount
-                printD(f"- ProfessionEffect {professionEffect["ID"]} / {professionEffectEnum["ID"]} : {statName} -> {amount}", debug)
+                printD(f"- ProfessionEffect {professionEffect['ID']} / {professionEffectEnum['ID']} : {statName} -> {amount}", debug)
 
         printD(f"Final StatMap for item {itemID}: {statMap}", debug)
         if len(statMap) > 0:
@@ -141,6 +174,7 @@ def map(download, buildVersion):
             }
 
     wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
+    wagoTools.writeLuaTable(optionalCurrencyReagentsDataTable, "OptionalCurrencyReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_CURRENCY_REAGENT_DATA = ", buildVersion)
 
 def update(buildVersion):
     map(True, buildVersion)

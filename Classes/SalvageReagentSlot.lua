@@ -48,12 +48,12 @@ function CraftSim.SalvageReagentSlot:GetJSON(indent)
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
     local itemList = {}
-    table.foreach(self.possibleItems, function(_, item)
+    for _, item in pairs(self.possibleItems) do
         table.insert(itemList, {
             itemID = item:GetItemID(),
             itemLink = item:GetItemLink()
         })
-    end)
+    end
     jb:AddList("possibleReagents", itemList)
     if self.activeItem then
         jb:Add("activeItemID", self.activeItem:GetItemID())

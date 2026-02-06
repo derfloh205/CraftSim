@@ -4,6 +4,7 @@ local CraftSim = select(2, ...)
 
 ---@class CraftSim.CraftResultReagent : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, itemID: ItemID, quantity: number, isOrderReagent: boolean?) : CraftSim.CraftResultReagent
+---@overload fun(): CraftSim.CraftResultReagent
 CraftSim.CraftResultReagent = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData

@@ -17,7 +17,7 @@ local GUTIL = CraftSim.GUTIL
 local systemPrint = print
 
 ---@param debugID string Format: Category.(...).ID
----@return fun(text: string, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
+---@return fun(text: string | table, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
 function CraftSim.DEBUG:RegisterDebugID(debugID)
     -- check for each subID
     local splitIDs = strsplittable(".", debugID)
