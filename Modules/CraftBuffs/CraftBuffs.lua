@@ -7,8 +7,11 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftBuffs")
 
 local L = CraftSim.UTIL:GetLocalizer()
 
+---@type number[]
+local activeBuffInstanceIds = {}
+
 ---@class CraftSim.CRAFT_BUFFS : Frame
-CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ })---"COMBAT_LOG_EVENT_UNFILTERED" })
+CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "UNIT_AURA" })
 
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
@@ -611,5 +614,50 @@ function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
                 end
             end
         end
+    end
+end
+
+function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
+    if InCombatLockdown() then return end
+    if unitTarget ~= "player" then return end
+
+    local haveActiveBuffsChanged = false
+	if info.addedAuras then
+		for _, v in pairs(info.addedAuras) do
+            local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, v.spellId)
+            local isAlreadyActive = tContains(activeBuffInstanceIds, v.auraInstanceID)
+            if isTrackedBuff and not isAlreadyActive then
+                tinsert(activeBuffInstanceIds, v.auraInstanceID)
+                haveActiveBuffsChanged = true
+            end
+		end
+    end
+
+    -- Add buffs that are already active but did not exist in the table before (on login etc.)
+    if info.updatedAuraInstanceIDs then
+		for _, v in pairs(info.updatedAuraInstanceIDs) do
+			local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
+            if aura then
+                local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, aura.spellId)
+                local isAlreadyActive = tContains(activeBuffInstanceIds, aura.auraInstanceID)
+                if isTrackedBuff and not isAlreadyActive then
+                    tinsert(activeBuffInstanceIds, aura.auraInstanceID)
+                    haveActiveBuffsChanged = true
+                end
+            end
+		end
+	end
+
+    -- Remove buffs that are no longer active
+    if info.removedAuraInstanceIDs then
+		for _, v in pairs(info.removedAuraInstanceIDs) do
+            tremove(activeBuffInstanceIds, tIndexOf(activeBuffInstanceIds, v))
+            haveActiveBuffsChanged = true
+        end
+    end
+
+    -- Trigger module update if the number of active buffs has changed and a recipe is selected
+    if haveActiveBuffsChanged and CraftSim.INIT.currentRecipeID then
+        CraftSim.INIT:TriggerModuleUpdate()
     end
 end
