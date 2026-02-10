@@ -600,6 +600,37 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     if unitTarget ~= "player" then return end
 
     local haveActiveBuffsChanged = false
+
+    if info.isFullUpdate then
+        -- Full update on login/reload: scan all tracked buffs directly
+        local newActiveIds = {}
+        for _, spellId in pairs(CraftSim.CONST.BUFF_IDS) do
+            local auraData = C_UnitAuras.GetPlayerAuraBySpellID(spellId)
+            if auraData then
+                tinsert(newActiveIds, auraData.auraInstanceID)
+            end
+        end
+
+        -- Check if the active set actually changed
+        if #newActiveIds ~= #self.activeBuffInstanceIds then
+            haveActiveBuffsChanged = true
+        else
+            for _, id in ipairs(newActiveIds) do
+                if not tContains(self.activeBuffInstanceIds, id) then
+                    haveActiveBuffsChanged = true
+                    break
+                end
+            end
+        end
+
+        self.activeBuffInstanceIds = newActiveIds
+
+        if haveActiveBuffsChanged and CraftSim.INIT.currentRecipeID then
+            CraftSim.INIT:TriggerModuleUpdate()
+        end
+        return
+    end
+
 	if info.addedAuras then
 		for _, v in pairs(info.addedAuras) do
             local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, v.spellId)
