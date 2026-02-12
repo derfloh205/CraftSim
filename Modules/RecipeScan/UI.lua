@@ -1069,7 +1069,10 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and
                 recipeData.supportsQualities
 
-            local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
+            local recipeRarity = ITEM_QUALITY_COLORS[0] -- default white
+            if recipeData.resultData.expectedItem then
+                recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
+            end
 
             local cooldownInfoText = ""
             local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()

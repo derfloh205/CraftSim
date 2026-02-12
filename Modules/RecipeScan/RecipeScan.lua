@@ -320,6 +320,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 string.format(" %.0f%%", progress))
             content.resultAmount:SetText(recipeInfoIndex .. "/" .. #recipeInfos)
 
+            printS("Scanning Recipe: " .. tostring(recipeInfo.recipeID))
+
             local recipeData = CraftSim.RecipeData({ recipeID = recipeInfo.recipeID, crafterData = crafterData });
 
             if not recipeData then
