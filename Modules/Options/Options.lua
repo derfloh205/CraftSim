@@ -426,9 +426,115 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     tsmExpressionTitleRestockItems:SetPoint("BOTTOMLEFT", tsmRestockExpression, "TOPLEFT", 0, -10)
     tsmExpressionTitleRestockItems:SetText("TSM Crafted Items Restock Qty Expression")
 
-    local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoRestockItems', 'OVERLAY',
+    local validationInfoRestockItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoRestockItems',
+        'OVERLAY',
         'GameFontNormal')
-    validationInfoItems:SetPoint("LEFT", tsmRestockExpression, "RIGHT", 5, 0)
-    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
+    validationInfoRestockItems:SetPoint("LEFT", tsmRestockExpression, "RIGHT", 5, 0)
+    validationInfoRestockItems:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+
+    -- =========================================================================
+    -- TSM Enhanced: Deposit Cost Settings
+    -- =========================================================================
+
+    local sectionHeaderDeposit = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
+    sectionHeaderDeposit:SetPoint("TOPLEFT", tsmRestockExpression, "BOTTOMLEFT", 0, -30)
+    sectionHeaderDeposit:SetText(CraftSim.GUTIL:ColorizeText("TSM Enhanced", CraftSim.GUTIL.COLORS.LEGENDARY))
+
+    local depositEnabledCheckbox = GGUI.Checkbox {
+        parent = TSMTab.content, anchorParent = sectionHeaderDeposit,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -10,
+        initialValue = CraftSim.DB.OPTIONS:Get("TSM_DEPOSIT_ENABLED"),
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_TSM_DEPOSIT_ENABLED_LABEL),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_TSM_DEPOSIT_ENABLED_TOOLTIP),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TSM_DEPOSIT_ENABLED", checked)
+        end
+    }
+
+    local depositExpressionTitle = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    depositExpressionTitle:SetPoint("TOPLEFT", depositEnabledCheckbox.frame, "BOTTOMLEFT", 0, -5)
+    depositExpressionTitle:SetText(L(CraftSim.CONST.TEXT.OPTIONS_TSM_DEPOSIT_EXPRESSION_LABEL))
+
+    local tsmDepositExpression = CreateFrame("EditBox", "CraftSimTSMDepositExpression", TSMTab.content,
+        "InputBoxTemplate")
+    tsmDepositExpression:SetPoint("TOPLEFT", depositExpressionTitle, "BOTTOMLEFT", 0, -5)
+    tsmDepositExpression:SetSize(expressionSizeX, expressionSizeY)
+    tsmDepositExpression:SetAutoFocus(false)
+    tsmDepositExpression:SetFontObject("ChatFontNormal")
+    tsmDepositExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_DEPOSIT_EXPRESSION))
+    tsmDepositExpression:SetScript("OnEscapePressed", function() tsmDepositExpression:ClearFocus() end)
+    tsmDepositExpression:SetScript("OnEnterPressed", function() tsmDepositExpression:ClearFocus() end)
+    tsmDepositExpression:SetScript("OnTextChanged", function()
+        local expression = tsmDepositExpression:GetText()
+        local isValid = TSM_API.IsCustomPriceValid(expression)
+        if not isValid then
+            CraftSimTSMStringValidationInfoDeposit:SetText(CraftSim.GUTIL:ColorizeText(
+                L(CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION), CraftSim.GUTIL.COLORS.RED))
+        else
+            CraftSimTSMStringValidationInfoDeposit:SetText(CraftSim.GUTIL:ColorizeText(
+                L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_DEPOSIT_EXPRESSION,
+                tsmDepositExpression:GetText())
+            CraftSim.TSM_ENHANCED:ClearDepositCache()
+        end
+    end)
+
+    GGUI.Button({
+        parent = TSMTab.content,
+        anchorParent = tsmDepositExpression,
+        anchorA = "RIGHT",
+        anchorB = "LEFT",
+        offsetX = -10,
+        offsetY = 1,
+        sizeX = 15,
+        sizeY = 20,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
+        clickCallback = function()
+            tsmDepositExpression:SetText("vendorsell")
+            CraftSim.TSM_ENHANCED:ClearDepositCache()
+        end
+    })
+
+    local validationInfoDeposit = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoDeposit', 'OVERLAY',
+        'GameFontNormal')
+    validationInfoDeposit:SetPoint("LEFT", tsmDepositExpression, "RIGHT", 5, 0)
+    validationInfoDeposit:SetText(CraftSim.GUTIL:ColorizeText(
+        L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+
+    -- =========================================================================
+    -- TSM Enhanced: Smart Restock Settings
+    -- =========================================================================
+
+    local smartRestockCheckbox = GGUI.Checkbox {
+        parent = TSMTab.content, anchorParent = tsmDepositExpression,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -15,
+        initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_ENABLED"),
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TSM_SMART_RESTOCK_ENABLED", checked)
+        end
+    }
+
+    local includeAltsCheckbox = GGUI.Checkbox {
+        parent = TSMTab.content, anchorParent = smartRestockCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 20, offsetY = -5,
+        initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS"),
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_INCLUDE_ALTS_LABEL),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TSM_SMART_RESTOCK_INCLUDE_ALTS", checked)
+        end
+    }
+
+    GGUI.Checkbox {
+        parent = TSMTab.content, anchorParent = includeAltsCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -5,
+        initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK"),
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_INCLUDE_WARBANK_LABEL),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TSM_SMART_RESTOCK_INCLUDE_WARBANK", checked)
+        end
+    }
 end
