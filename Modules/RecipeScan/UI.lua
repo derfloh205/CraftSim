@@ -184,7 +184,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         parent = content,
         sizeX = 170,
         anchorPoints = { { anchorParent = content.professionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = 32, offsetY = -45, } },
-        label = "Send to Craft Queue",
+        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SEND_TO_CRAFT_QUEUE),
         initialStatusID = "Ready",
         clickCallback = function()
             CraftSim.RECIPE_SCAN:SendToCraftQueue()
@@ -194,7 +194,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     content.sendToCraftQueueButton:SetStatusList {
         {
             statusID = "Ready",
-            label = "Send to Craft Queue",
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SEND_TO_CRAFT_QUEUE),
             enabled = true,
         }
     }
@@ -209,7 +209,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     frame.label = GGUI.Text {
                         parent = frame,
                         anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = "Profit Margin Threshold (%): ",
+                        text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD),
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
@@ -230,7 +230,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     frame.label = GGUI.Text {
                         parent = frame,
                         anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = "Default Queue Amount: ",
+                        text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT),
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
@@ -720,7 +720,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
                     elseif IsMouseButtonDown("RightButton") then
                         MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                            rootDescription:CreateButton("Add to Craft Queue", function()
+                            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_ADD_TO_CRAFT_QUEUE), function()
                                 -- queue into CraftQueue
                                 if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
                                     recipeData.concentrating = true
@@ -730,18 +730,18 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                             if recipeData:IsCrafter() then
                                 local isFavorite = C_TradeSkillUI.IsRecipeFavorite(recipeData.recipeID)
                                 if isFavorite then
-                                    rootDescription:CreateButton(f.r("Remove") .. " Favorite", function()
+                                    rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_FAVORITE), function()
                                         C_TradeSkillUI.SetRecipeFavorite(recipeData.recipeID, false)
                                         row.learnedColumn:SetLearned(true, false)
                                     end)
                                 else
-                                    rootDescription:CreateButton(f.g("Add") .. " Favorite", function()
+                                    rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_ADD_FAVORITE), function()
                                         C_TradeSkillUI.SetRecipeFavorite(recipeData.recipeID, true)
                                         row.learnedColumn:SetLearned(true, true)
                                     end)
                                 end
                             else
-                                rootDescription:CreateButton(f.r("Favorites can only be changed on the crafter"))
+                                rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_FAVORITES_CRAFTER_ONLY))
                             end
                         end)
                     end
@@ -885,20 +885,19 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
     GGUI.HelpIcon {
         parent = content, anchorParent = content.resultList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT", offsetY = -4, offsetX = 65,
-        text = "Press " ..
-            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + shift to queue selected recipe into the " .. f.bb("Craft Queue"),
+        text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_QUEUE_HINT),
         scale = 1.1,
     }
 
     content.sortButton = CreateFrame("DropdownButton", nil, content, "WowStyle1FilterDropdownTemplate")
-    content.sortButton:SetText("Sort By")
+    content.sortButton:SetText(L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY))
 
     content.sortButton:SetSize(80, 23)
     content.sortButton:SetPoint("BOTTOMRIGHT", content.resultList.frame, "TOPRIGHT", 15, 25)
 
     content.sortButton:HookScript("OnClick", function()
         MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-            rootDescription:CreateCheckbox("Ascending", function()
+            rootDescription:CreateCheckbox(L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_ASCENDING), function()
                 return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE_ASCENDING")
             end, function()
                 local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE_ASCENDING")
