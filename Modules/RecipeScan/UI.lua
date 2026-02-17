@@ -461,7 +461,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         clickCallback = function(_, _)
             MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                 local concentrationCB = rootDescription:CreateCheckbox(
-                    f.bb("Enable ") .. f.gold("Concentration"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
                     end, function()
@@ -472,7 +472,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local favoritesCB = rootDescription:CreateCheckbox(
-                    f.r("Only ") .. f.bb("Favorites"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
                     end, function()
@@ -485,7 +485,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 rootDescription:CreateDivider()
 
                 local soulboundCB = rootDescription:CreateCheckbox(
-                    "Include " .. f.e("Soulbound") .. " Items",
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
                     end, function()
@@ -496,7 +496,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local unlearnedCB = rootDescription:CreateCheckbox(
-                    "Include " .. f.r("Unlearned") .. " recipes",
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
                     end, function()
@@ -507,7 +507,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local gearCB = rootDescription:CreateCheckbox(
-                    "Include " .. "Gear",
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_LABEL),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
                     end, function()
@@ -519,9 +519,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
                 rootDescription:CreateDivider()
 
-                local reagentAllocation = rootDescription:CreateButton("Reagent Allocation")
+                local reagentAllocation = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION))
 
-                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(1, 20, 20),
+                reagentAllocation:CreateRadio(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1) .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
                             CraftSim.RECIPE_SCAN.SCAN_MODES.Q1
@@ -529,13 +529,13 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q1)
                     end)
 
-                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(2, 20, 20), function()
+                reagentAllocation:CreateRadio(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q2) .. " " .. GUTIL:GetQualityIconString(2, 20, 20), function()
                     return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2
                 end, function()
                     CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q2)
                 end)
 
-                reagentAllocation:CreateRadio("All " .. GUTIL:GetQualityIconString(3, 20, 20), function()
+                reagentAllocation:CreateRadio(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q3) .. " " .. GUTIL:GetQualityIconString(3, 20, 20), function()
                     return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3
                 end, function()
                     CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_MODE", CraftSim.RECIPE_SCAN.SCAN_MODES.Q3)
@@ -548,7 +548,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 end)
 
                 local optimizeTopProfit = rootDescription:CreateCheckbox(
-                    "Autoselect " .. f.g("Top Profit Quality"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
                     end, function()
@@ -559,7 +559,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local optimizeGear = rootDescription:CreateCheckbox(
-                    "Optimize " .. f.bb("Profession Gear"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
                     end, function()
@@ -570,7 +570,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local optimizeConcentration = rootDescription:CreateCheckbox(
-                    "Optimize " .. f.gold("Concentration"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
                     end, function()
@@ -581,7 +581,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local optimizeFinishingReagents = rootDescription:CreateCheckbox(
-                    "Optimize " .. f.bb("Finishing Reagents"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS")
                     end, function()

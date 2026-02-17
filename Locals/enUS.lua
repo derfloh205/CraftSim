@@ -392,6 +392,19 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("expected costs") .. " to calculate the crafting costs for the final product.\n\n" ..
             f.r("Warning: This might reduce scanning performance"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "Cached Recipes: ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION] = "Enable Concentration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES] = "Only Favorites",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS] = "Include Soulbound Items",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES] = "Include Unlearned recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_LABEL] = "Include Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION] = "Reagent Allocation",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1] = "All Q1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q2] = "All Q2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q3] = "All Q3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT] = "Autoselect Top Profit Quality",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize Profession Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize Concentration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize Finishing Reagents",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

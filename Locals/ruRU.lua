@@ -328,6 +328,19 @@ function CraftSim.LOCAL_RU:GetData()
             " запоминает его.\n\nТолько рецепты ваших альтов, которые " ..
             f.l("CraftSim") .. " помнит, будут просканированы с помощью " .. f.bb("Сканирования рецептов\n\n") ..
             "Фактическое количество сканируемых рецептов зависит от ваших " .. f.e("Параметров сканирования рецептов"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION] = "Enable Concentration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES] = "Only Favorites",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS] = "Include Soulbound Items",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES] = "Include Unlearned recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_LABEL] = "Include Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION] = "Reagent Allocation",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1] = "All Q1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q2] = "All Q2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q3] = "All Q3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT] = "Autoselect Top Profit Quality",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize Profession Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize Concentration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize Finishing Reagents",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "Снаряжение CraftSim",
