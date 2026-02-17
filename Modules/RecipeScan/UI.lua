@@ -126,7 +126,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(row, userInput)
                 elseif IsMouseButtonDown("RightButton") then
                     MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                        local removeButton = rootDescription:CreateButton(f.r("Remove"), function()
+                        local removeButton = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_CACHED_DATA), function()
                             local professionList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
                                 .professionList --[[@as GGUI.FrameList]]
                             CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(row.crafterUID, row.profession)
@@ -139,7 +139,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                         end)
                         removeButton:SetTooltip(function(tooltip, elementDescription)
                             GameTooltip_AddInstructionLine(tooltip,
-                                f.r("Remove ") .. "all cached data about this character - profession combination");
+                                L(CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP));
                         end);
                     end)
                 end
@@ -251,7 +251,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                     local tsmOptions = rootDescription:CreateButton(f.bb("TSM"))
 
                     local tsmExpressionCB = tsmOptions:CreateCheckbox(
-                        "Use " .. f.bb("TSM") .. " Restock Amount Expression",
+                        L(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK),
                         function()
                             return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
                         end, function()
