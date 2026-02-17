@@ -592,7 +592,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end)
 
                 local optimizeSubRecipes = rootDescription:CreateCheckbox(
-                    "Optimize " .. f.bb("Sub Recipes ") .. f.r("(Experimental - WIP)"),
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),
                     function()
                         return CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
                     end, function()
@@ -604,7 +604,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
                 rootDescription:CreateDivider()
 
-                local includeExpansions = rootDescription:CreateButton("Include Expansion")
+                local includeExpansions = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON))
                 local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
 
                 for _, expansionItem in ipairs(expansionItems) do
