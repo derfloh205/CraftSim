@@ -246,7 +246,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION] = "Enable Concentration",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES] = "Only Favorites",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS] = "Include Soulbound Items",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES] = "Include Unlearned recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES] = "Include Unlearned Recipes",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_LABEL] = "Include Gear",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION] = "Reagent Allocation",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1] = "All Q1",
