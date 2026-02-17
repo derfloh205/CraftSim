@@ -357,6 +357,30 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 recipeData:Update()
             end
 
+            -- Apply profit margin filter
+            local profitMarginThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD")
+            if profitMarginThreshold > 0 then
+                local relativeProfit = recipeData.relativeProfitCached or 0
+                if relativeProfit < profitMarginThreshold then
+                    printS("Recipe filtered by profit margin: " .. tostring(recipeInfo.recipeID))
+                    frameDistributor:Continue()
+                    return
+                end
+            end
+
+            -- Apply TSM sale rate filter
+            if TSM_API then
+                local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
+                if tsmSaleRateThreshold > 0 then
+                    local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
+                    if resultSaleRate < tsmSaleRateThreshold then
+                        printS("Recipe filtered by TSM sale rate: " .. tostring(recipeInfo.recipeID))
+                        frameDistributor:Continue()
+                        return
+                    end
+                end
+            end
+
             recipeData:Optimize {
                 finally = function()
                     finalizeRecipeAndContinue()
