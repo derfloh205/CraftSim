@@ -40,6 +40,16 @@ CraftSim.SPECIALIZATION_DATA.NODE_DATA = {
         [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA,
         [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA
     },
+    [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = {
+        [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA,
+        [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA,
+        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA,
+        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA,
+        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA,
+        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA,
+        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA,
+        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA
+    },
 }
 
 ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, string[]>>
@@ -63,6 +73,16 @@ CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
         [Enum.Profession.Leatherworking] = { "LEARNED_LEATHERWORKER_1", "LUXURIOUS_LEATHERS_1", "CONCRETE_CHITIN_1", "FLAWLESS_FORTRES_1" },
         [Enum.Profession.Tailoring] = { "THREADS_OF_DEVOTION_1", "FROM_DAWN_UNTIL_DUSK_1", "QUALITY_FABRIC_1", "TEXTILE_TREASURES_1" },
         [Enum.Profession.Jewelcrafting] = { "GEMCUTTING_1", "JEWELRY_CRAFTING_1", "SHAPING_1" },
+    },
+    [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = {
+        [Enum.Profession.Blacksmithing] = { "CRAFTSMITHING_1", "THE_OLD_WAYS_1", "ARMORSMITHING_1", "WEAPONSMITHING_1" },
+        [Enum.Profession.Alchemy] = { "POTION_PROWESS_1", "FLUENT_IN_FLASKS_1", "ALCHEMICAL_MASTERY_1", "TRANSMUTATION_AUTHORITY_1" },
+        [Enum.Profession.Enchanting] = { "ELEVATING_EQUIPMENT_1", "TRANSITORIES_TONICS_AND_TOOLS_1", "DISENCHANTING_DELEGATE_1", "SPELLBOUND_SHATTERER_1" },
+        [Enum.Profession.Engineering] = { "MARKET_MOBILITY_1", "COMBAT_ANALYTICS", "RECYCLING_1", "BITS_AND_BOTS_1" },
+        [Enum.Profession.Inscription] = { "BLUEPRINTS_1", "CALM_HANDS_1", "PERFECTED_PRODUCTS_1", "DARKMOON_CURIOSITY_1" },
+        [Enum.Profession.Leatherworking] = { "LEARNED_LEATHERWORKER_1", "LASTING_LEATHER_1", "SAFEGUARDING_SCALES_1", "FLAWLESS_FORTES_1" },
+        [Enum.Profession.Tailoring] = { "SINDOREI_FINERY_1", "NIMBLE_NEEDLEWORK_1", "FABRIC_SPECIALIST_1", "FIBER_ARTS_1" },
+        [Enum.Profession.Jewelcrafting] = { "THOUGHTFUL_THROUGHPUT_1", "GLAMOROUS_GEMS_1", "ALLURING_ACCESSORIES_1", "PROFICIENT_PROCESSOR_1" },
     },
 }
 
