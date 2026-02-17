@@ -604,6 +604,102 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
                 rootDescription:CreateDivider()
 
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = "Profit Margin Threshold (%): ",
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD"),
+                        borderAdjustWidth = 1.32,
+                        allowDecimals = true,
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD",
+                                tonumber(input.currentValue))
+                        end,
+                    }
+                end, 200, 25, "RECIPE_SCAN_SCAN_PROFIT_MARGIN_INPUT")
+
+                if TSM_API then
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD"),
+                            borderAdjustWidth = 1.32,
+                            allowDecimals = true,
+                            maxValue = 1,
+                            minValue = 0,
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD",
+                                    tonumber(input.currentValue))
+                            end,
+                        }
+                    end, 150, 25, "RECIPE_SCAN_SCAN_TSM_SALERATE_INPUT")
+                end
+
+                rootDescription:CreateDivider()
+
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = "Profit Margin Threshold (%): ",
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD"),
+                        borderAdjustWidth = 1.32,
+                        allowDecimals = true,
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD",
+                                tonumber(input.currentValue))
+                        end,
+                    }
+                end, 200, 25, "RECIPE_SCAN_SCAN_PROFIT_MARGIN_INPUT")
+
+                if TSM_API then
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD"),
+                            borderAdjustWidth = 1.32,
+                            allowDecimals = true,
+                            maxValue = 1,
+                            minValue = 0,
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD",
+                                    tonumber(input.currentValue))
+                            end,
+                        }
+                    end, 150, 25, "RECIPE_SCAN_SCAN_TSM_SALERATE_INPUT")
+                end
+
+                rootDescription:CreateDivider()
+
                 local includeExpansions = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON))
                 local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
 
