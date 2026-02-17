@@ -334,6 +334,31 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 -- since the result links are needed for calculations and probably not loaded within a scan
                 GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, function()
                     CraftSim.DEBUG:StopProfiling("Single Recipe Scan")
+                    
+                    -- Apply profit margin filter (after optimization)
+                    local profitMarginThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD")
+                    if profitMarginThreshold > 0 then
+                        local relativeProfit = recipeData.relativeProfitCached or 0
+                        if relativeProfit < profitMarginThreshold then
+                            printS("Recipe filtered by profit margin: " .. tostring(recipeInfo.recipeID))
+                            frameDistributor:Continue()
+                            return
+                        end
+                    end
+
+                    -- Apply TSM sale rate filter (after optimization)
+                    if TSM_API then
+                        local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
+                        if tsmSaleRateThreshold > 0 then
+                            local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
+                            if resultSaleRate < tsmSaleRateThreshold then
+                                printS("Recipe filtered by TSM sale rate: " .. tostring(recipeInfo.recipeID))
+                                frameDistributor:Continue()
+                                return
+                            end
+                        end
+                    end
+                    
                     CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
                     table.insert(row.currentResults, recipeData)
@@ -355,30 +380,6 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             if recipeData.supportsQualities and concentrationEnabled then
                 recipeData.concentrating = true
                 recipeData:Update()
-            end
-
-            -- Apply profit margin filter
-            local profitMarginThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_PROFIT_MARGIN_THRESHOLD")
-            if profitMarginThreshold > 0 then
-                local relativeProfit = recipeData.relativeProfitCached or 0
-                if relativeProfit < profitMarginThreshold then
-                    printS("Recipe filtered by profit margin: " .. tostring(recipeInfo.recipeID))
-                    frameDistributor:Continue()
-                    return
-                end
-            end
-
-            -- Apply TSM sale rate filter
-            if TSM_API then
-                local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
-                if tsmSaleRateThreshold > 0 then
-                    local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
-                    if resultSaleRate < tsmSaleRateThreshold then
-                        printS("Recipe filtered by TSM sale rate: " .. tostring(recipeInfo.recipeID))
-                        frameDistributor:Continue()
-                        return
-                    end
-                end
             end
 
             recipeData:Optimize {
