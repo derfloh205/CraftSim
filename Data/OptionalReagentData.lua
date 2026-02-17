@@ -1969,12 +1969,52 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 10,
 		},
 	},
+	[240164] = {
+		qualityID = 1,
+		name = "Sunfire Silk Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[240165] = {
+		qualityID = 2,
+		name = "Sunfire Silk Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[240166] = {
+		qualityID = 1,
+		name = "Arcanoweave Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[240167] = {
+		qualityID = 2,
+		name = "Arcanoweave Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
 	[244603] = {
 		qualityID = 1,
 		name = "Blessed Pango Charm",
 		expansionID = 11,
 		stats = {
-			increasedifficulty = 25,
+			increasedifficulty = 15,
+		},
+	},
+	[244604] = {
+		qualityID = 2,
+		name = "Blessed Pango Charm",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
 		},
 	},
 	[244607] = {
@@ -1982,7 +2022,15 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Primal Spore Binding",
 		expansionID = 11,
 		stats = {
-			increasedifficulty = 25,
+			increasedifficulty = 15,
+		},
+	},
+	[244608] = {
+		qualityID = 2,
+		name = "Primal Spore Binding",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
 		},
 	},
 	[244674] = {
@@ -1990,7 +2038,15 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Devouring Banding",
 		expansionID = 11,
 		stats = {
-			increasedifficulty = 25,
+			increasedifficulty = 15,
+		},
+	},
+	[244675] = {
+		qualityID = 2,
+		name = "Devouring Banding",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
 		},
 	},
 	[245781] = {
@@ -2201,12 +2257,20 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 5,
 		},
 	},
-	[245872] = {
+	[245871] = {
 		qualityID = 1,
 		name = "Darkmoon Sigil: Blood",
 		expansionID = 11,
 		stats = {
 			increasedifficulty = 15,
+		},
+	},
+	[245872] = {
+		qualityID = 2,
+		name = "Darkmoon Sigil: Blood",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
 		},
 	},
 	[245873] = {
@@ -3207,7 +3271,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Resourceful Rebar",
 		expansionID = 11,
 		stats = {
-			resourcefulness = 3.0,
+			resourcefulness = 4.0,
 		},
 	},
 	[247726] = {
@@ -3232,6 +3296,31 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		expansionID = 11,
 		stats = {
 			ingenuity = 5.0,
+		},
+	},
+	[265800] = {
+		qualityID = 1,
+		name = "Earthy Garnish",
+		expansionID = 11,
+		stats = {
+			resourcefulness = 110.0,
+		},
+	},
+	[265801] = {
+		qualityID = 1,
+		name = "Savory Anomaly",
+		expansionID = 11,
+		stats = {
+			resourcefulness = 110.0,
+		},
+	},
+	[265803] = {
+		qualityID = 1,
+		name = "Bazaar Bites",
+		expansionID = 11,
+		stats = {
+			multicraft = 1100.0,
+			additionalitemscraftedwithmulticraft = 25.0,
 		},
 	},
 	[210232] = {

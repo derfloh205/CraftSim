@@ -533,10 +533,10 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         return frames
     end
 
-    CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = createSimulationModeFrames(ProfessionsFrame.CraftingPage
-        .SchematicForm)
-    CraftSim.SIMULATION_MODE.UI.WORKORDER = createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView
-        .OrderDetails.SchematicForm)
+    CraftSim.SIMULATION_MODE.UI.NO_WORKORDER =
+        createSimulationModeFrames(ProfessionsFrame.CraftingPage.SchematicForm)
+    CraftSim.SIMULATION_MODE.UI.WORKORDER =
+        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
 end
 
 function CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX,
@@ -825,9 +825,11 @@ function CraftSim.SIMULATION_MODE.UI:InitReagentOverwriteFrames(recipeData)
             inputFrame.inputq2.itemID = qualityReagent.items[2].item:GetItemID()
             inputFrame.inputq2.requiredQuantityValue = qualityReagent.requiredQuantity
             inputFrame.inputq2:SetText(qualityReagent.items[2].quantity)
-            inputFrame.inputq3.itemID = qualityReagent.items[3].item:GetItemID()
-            inputFrame.inputq3.requiredQuantityValue = qualityReagent.requiredQuantity
-            inputFrame.inputq3:SetText(qualityReagent.items[3].quantity)
+            if qualityReagent.items[3] then
+                inputFrame.inputq3.itemID = qualityReagent.items[3].item:GetItemID()
+                inputFrame.inputq3.requiredQuantityValue = qualityReagent.requiredQuantity
+                inputFrame.inputq3:SetText(qualityReagent.items[3].quantity)
+            end
 
             inputFrame.isActive = true
             inputFrame.icon:SetItem(qualityReagent.items[1].item)
