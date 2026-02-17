@@ -291,8 +291,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
 
 
                         if cooldownData.sharedCD then
-                            recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS
-                                [cooldownData.sharedCD]))
+                            recipeColumn.text:SetText(L(cooldownData.sharedCD))
                             local recipeListText = ""
                             for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
                                 local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
