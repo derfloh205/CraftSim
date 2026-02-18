@@ -392,6 +392,36 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("expected costs") .. " to calculate the crafting costs for the final product.\n\n" ..
             f.r("Warning: This might reduce scanning performance"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "Cached Recipes: ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION] = f.bb("Enable ") .. f.gold("Concentration"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES] = f.r("Only ") .. f.bb("Favorites"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS] = "Include " .. f.e("Soulbound") .. " Items",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES] = "Include " .. f.r("Unlearned") .. " Recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_LABEL] = "Include Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION] = "Reagent Allocation",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1] = "All Q1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q2] = "All Q2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q3] = "All Q3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT] = "Autoselect " .. f.g("Top Profit Quality"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize " .. f.bb("Profession Gear"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize " .. f.gold("Concentration"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize " .. f.bb("Finishing Reagents"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SEND_TO_CRAFT_QUEUE] = "Send to Craft Queue",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD] = "Profit Margin Threshold (%): ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT] = "Default Queue Amount: ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ADD_TO_CRAFT_QUEUE] = "Add to Craft Queue",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY] = "Sort By",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_ASCENDING] = "Ascending",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_FAVORITE] = f.r("Remove") .. " Favorite",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ADD_FAVORITE] = f.g("Add") .. " Favorite",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_FAVORITES_CRAFTER_ONLY] = f.r("Favorites can only be changed on the crafter"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_QUEUE_HINT] = "Press " ..
+            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + shift to queue selected recipe into the " ..
+            f.bb("Craft Queue"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_CACHED_DATA] = f.r("Remove"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP] = f.r("Remove ") ..
+            "all cached data about this character - profession combination",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK] = "Use " .. f.bb("TSM") .. " Restock Amount Expression",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD] = f.bb("TSM") .. " Sale Rate Threshold: ",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",
