@@ -179,6 +179,7 @@ CraftSim.CONST.EXPANSION_IDS = {
     SHADOWLANDS = 8,
     DRAGONFLIGHT = 9,
     THE_WAR_WITHIN = 10,
+    MIDNIGHT = 11,
 }
 
 ---@type table<CraftSim.EXPANSION_IDS, CraftSim.LOCALIZATION_IDS>
@@ -194,25 +195,26 @@ CraftSim.CONST.EXPANSION_LOCALIZATION_IDS = {
     [8] = "EXPANSION_SHADOWLANDS",
     [9] = "EXPANSION_DRAGONFLIGHT",
     [10] = "EXPANSION_THE_WAR_WITHIN",
+    [11] = "EXPANSION_MIDNIGHT",
 }
 
 
 --- https://warcraft.wiki.gg/wiki/TradeSkillLineID
 ---@type table<Enum.Profession, table<CraftSim.EXPANSION_IDS, number>>
 CraftSim.CONST.TRADESKILLLINEIDS = {
-    [Enum.Profession.Blacksmithing] = { BASE = 164, [0] = 2477, [1] = 2476, [2] = 2475, [3] = 2474, [4] = 2473, [5] = 2472, [6] = 2454, [7] = 2437, [8] = 2751, [9] = 2822, [10] = 2872, },
-    [Enum.Profession.Leatherworking] = { BASE = 165, [0] = 2532, [1] = 2531, [2] = 2530, [3] = 2529, [4] = 2528, [5] = 2527, [6] = 2526, [7] = 2525, [8] = 2758, [9] = 2830, [10] = 2880, },
-    [Enum.Profession.Alchemy] = { BASE = 171, [0] = 2485, [1] = 2484, [2] = 2483, [3] = 2482, [4] = 2481, [5] = 2480, [6] = 2479, [7] = 2478, [8] = 2750, [9] = 2823, [10] = 2871, },
-    [Enum.Profession.Herbalism] = { BASE = 182, [0] = 2556, [1] = 2555, [2] = 2554, [3] = 2553, [4] = 2552, [5] = 2551, [6] = 2550, [7] = 2549, [8] = 2760, [9] = 2832, [10] = 2877, },
-    [Enum.Profession.Cooking] = { BASE = 185, [0] = 2548, [1] = 2547, [2] = 2546, [3] = 2545, [4] = 2544, [5] = 2543, [6] = 2542, [7] = 2541, [8] = 2752, [9] = 2824, [10] = 2873, },
-    [Enum.Profession.Mining] = { BASE = 186, [0] = 2572, [1] = 2571, [2] = 2570, [3] = 2569, [4] = 2568, [5] = 2567, [6] = 2566, [7] = 2565, [8] = 2761, [9] = 2833, [10] = 2881, },
-    [Enum.Profession.Tailoring] = { BASE = 197, [0] = 2540, [1] = 2539, [2] = 2538, [3] = 2537, [4] = 2536, [5] = 2535, [6] = 2534, [7] = 2533, [8] = 2759, [9] = 2831, [10] = 2883, },
-    [Enum.Profession.Engineering] = { BASE = 202, [0] = 2506, [1] = 2505, [2] = 2504, [3] = 2503, [4] = 2502, [5] = 2501, [6] = 2500, [7] = 2499, [8] = 2755, [9] = 2827, [10] = 2875, },
-    [Enum.Profession.Enchanting] = { BASE = 333, [0] = 2494, [1] = 2493, [2] = 2492, [3] = 2491, [4] = 2489, [5] = 2488, [6] = 2487, [7] = 2486, [8] = 2753, [9] = 2825, [10] = 2874, },
-    [Enum.Profession.Fishing] = { BASE = 356, [0] = 2592, [1] = 2591, [2] = 2590, [3] = 2589, [4] = 2588, [5] = 2587, [6] = 2586, [7] = 2585, [8] = 2754, [9] = 2826, [10] = 2876, },
-    [Enum.Profession.Skinning] = { BASE = 393, [0] = 2564, [1] = 2563, [2] = 2562, [3] = 2561, [4] = 2560, [5] = 2559, [6] = 2558, [7] = 2557, [8] = 2762, [9] = 2834, [10] = 2882, },
-    [Enum.Profession.Jewelcrafting] = { BASE = 755, [0] = 2524, [1] = 2523, [2] = 2522, [3] = 2521, [4] = 2520, [5] = 2519, [6] = 2518, [7] = 2517, [8] = 2757, [9] = 2829, [10] = 2879, },
-    [Enum.Profession.Inscription] = { BASE = 773, [0] = 2514, [1] = 2513, [2] = 2512, [3] = 2511, [4] = 2510, [5] = 2509, [6] = 2508, [7] = 2507, [8] = 2756, [9] = 2828, [10] = 2878, }
+    [Enum.Profession.Blacksmithing] = { BASE = 164, [0] = 2477, [1] = 2476, [2] = 2475, [3] = 2474, [4] = 2473, [5] = 2472, [6] = 2454, [7] = 2437, [8] = 2751, [9] = 2822, [10] = 2872, [11] = 2907, },
+    [Enum.Profession.Leatherworking] = { BASE = 165, [0] = 2532, [1] = 2531, [2] = 2530, [3] = 2529, [4] = 2528, [5] = 2527, [6] = 2526, [7] = 2525, [8] = 2758, [9] = 2830, [10] = 2880, [11] = 2915, },
+    [Enum.Profession.Alchemy] = { BASE = 171, [0] = 2485, [1] = 2484, [2] = 2483, [3] = 2482, [4] = 2481, [5] = 2480, [6] = 2479, [7] = 2478, [8] = 2750, [9] = 2823, [10] = 2871, [11] = 2906, },
+    [Enum.Profession.Herbalism] = { BASE = 182, [0] = 2556, [1] = 2555, [2] = 2554, [3] = 2553, [4] = 2552, [5] = 2551, [6] = 2550, [7] = 2549, [8] = 2760, [9] = 2832, [10] = 2877, [11] = 2912, },
+    [Enum.Profession.Cooking] = { BASE = 185, [0] = 2548, [1] = 2547, [2] = 2546, [3] = 2545, [4] = 2544, [5] = 2543, [6] = 2542, [7] = 2541, [8] = 2752, [9] = 2824, [10] = 2873, [11] = 2908, },
+    [Enum.Profession.Mining] = { BASE = 186, [0] = 2572, [1] = 2571, [2] = 2570, [3] = 2569, [4] = 2568, [5] = 2567, [6] = 2566, [7] = 2565, [8] = 2761, [9] = 2833, [10] = 2881, [11] = 2916, },
+    [Enum.Profession.Tailoring] = { BASE = 197, [0] = 2540, [1] = 2539, [2] = 2538, [3] = 2537, [4] = 2536, [5] = 2535, [6] = 2534, [7] = 2533, [8] = 2759, [9] = 2831, [10] = 2883, [11] = 2918, },
+    [Enum.Profession.Engineering] = { BASE = 202, [0] = 2506, [1] = 2505, [2] = 2504, [3] = 2503, [4] = 2502, [5] = 2501, [6] = 2500, [7] = 2499, [8] = 2755, [9] = 2827, [10] = 2875, [11] = 2910, },
+    [Enum.Profession.Enchanting] = { BASE = 333, [0] = 2494, [1] = 2493, [2] = 2492, [3] = 2491, [4] = 2489, [5] = 2488, [6] = 2487, [7] = 2486, [8] = 2753, [9] = 2825, [10] = 2874, [11] = 2909, },
+    [Enum.Profession.Fishing] = { BASE = 356, [0] = 2592, [1] = 2591, [2] = 2590, [3] = 2589, [4] = 2588, [5] = 2587, [6] = 2586, [7] = 2585, [8] = 2754, [9] = 2826, [10] = 2876, [11] = 2911, },
+    [Enum.Profession.Skinning] = { BASE = 393, [0] = 2564, [1] = 2563, [2] = 2562, [3] = 2561, [4] = 2560, [5] = 2559, [6] = 2558, [7] = 2557, [8] = 2762, [9] = 2834, [10] = 2882, [11] = 2917, },
+    [Enum.Profession.Jewelcrafting] = { BASE = 755, [0] = 2524, [1] = 2523, [2] = 2522, [3] = 2521, [4] = 2520, [5] = 2519, [6] = 2518, [7] = 2517, [8] = 2757, [9] = 2829, [10] = 2879, [11] = 2914, },
+    [Enum.Profession.Inscription] = { BASE = 773, [0] = 2514, [1] = 2513, [2] = 2512, [3] = 2511, [4] = 2510, [5] = 2509, [6] = 2508, [7] = 2507, [8] = 2756, [9] = 2828, [10] = 2878, [11] = 2913, }
 }
 
 ---@type table<Enum.Profession, CraftSim.LOCALIZATION_IDS>
@@ -476,6 +478,7 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     [CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_SORT_MODE_ASCENDING] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_FILTERED_EXPANSIONS] = {
         [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = true,
+        [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = true,
     },
     [CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_SUBRECIPES] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_USE_INSIGHT] = false,
@@ -493,6 +496,7 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     -- COOLDOWNS
     [CraftSim.CONST.GENERAL_OPTIONS.COOLDOWNS_FILTERED_EXPANSIONS] = {
         [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = true,
+        [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = true,
     },
 
     -- PROFIT CALCULATION
@@ -1305,6 +1309,16 @@ CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
         Enum.Profession.Tailoring,
     },
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
+        Enum.Profession.Alchemy,
+        Enum.Profession.Blacksmithing,
+        Enum.Profession.Enchanting,
+        Enum.Profession.Engineering,
+        Enum.Profession.Inscription,
+        Enum.Profession.Jewelcrafting,
+        Enum.Profession.Leatherworking,
+        Enum.Profession.Tailoring,
+    },
+    [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = {
         Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
         Enum.Profession.Enchanting,
