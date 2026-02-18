@@ -421,6 +421,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP] = f.r("Remove ") ..
             "all cached data about this character - profession combination",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK] = "Use " .. f.bb("TSM") .. " Restock Amount Expression",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD] = f.bb("TSM") .. " Sale Rate Threshold: ",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

@@ -270,7 +270,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.NumericInput {
@@ -608,7 +608,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     frame.label = GGUI.Text {
                         parent = frame,
                         anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = "Profit Margin Threshold (%): ",
+                        text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD),
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
@@ -630,7 +630,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.NumericInput {
@@ -656,7 +656,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     frame.label = GGUI.Text {
                         parent = frame,
                         anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = "Profit Margin Threshold (%): ",
+                        text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD),
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
@@ -678,7 +678,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("TSM") .. " Sale Rate Threshold: ",
+                            text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.NumericInput {
