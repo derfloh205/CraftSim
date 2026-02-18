@@ -21,6 +21,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("_NEXT_RELEASE_"),
+        f.p .. "Various Code Cleanups",
+        f.p .. f.bb("Localization"),
+        f.a .. "- Added missing Recipe Scan Options Localization IDs",
         newP("20.4.0"),
         f.p .. f.bb("Recipe Scan"),
         f.a .. "- Added TSM Sale Rate and Profit Margin filters",
