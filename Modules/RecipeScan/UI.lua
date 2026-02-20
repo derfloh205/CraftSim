@@ -1207,6 +1207,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             local totalCountInv = 0
             local totalCountAH = nil
+            local tsmNumInv = 0
             for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
                 -- links are already loaded here
                 totalCountInv = totalCountInv + C_Item.GetItemCount(resultItem:GetItemLink(), true, false, true)
@@ -1215,12 +1216,25 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 if countAH then
                     totalCountAH = (totalCountAH or 0) + countAH
                 end
+
+                -- include tsm num inventory if tsm enabled
+                if TSM_API then
+                    local tsmItemString = TSM_API.ToItemString(resultItem:GetItemLink())
+                    tsmNumInv = TSM_API.GetCustomPriceValue("NumInventory", tsmItemString)
+                    if not tsmNumInv then
+                        tsmNumInv = 0
+                    end
+                end
             end
 
             local countText = tostring(totalCountInv)
 
             if totalCountAH then
                 countText = countText .. " / " .. totalCountAH
+            end
+
+            if TSM_API then
+                countText = countText .. " / " .. tsmNumInv
             end
 
             countColumn.text:SetText(countText)
