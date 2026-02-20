@@ -1205,7 +1205,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             -- for inventory count, count all result items together? For now.. Maybe a user will have a better idea!
 
-             local totalCountInv = 0
+            local totalCountInv = 0
             local totalCountAH = nil
             local tsmNumInv = 0
             for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
