@@ -558,22 +558,38 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         local qualityIconSize = 25
 
         for i = 1, recipeData.maxQuality do
+            local qualityIconLabel
+            if recipeData:HasSimplifiedQualityResult() then
+                qualityIconLabel = GUTIL:GetQualityIconStringSimplified(i, qualityIconSize, qualityIconSize, 0, -2)
+            else
+                qualityIconLabel = GUTIL:GetQualityIconString(i, qualityIconSize, qualityIconSize, 0, -2)
+            end
             ---@type GGUI.DropdownData
             local dropdownDataElement = {
-                label = GUTIL:GetQualityIconString(i, qualityIconSize, qualityIconSize, 0, -2),
+                label = qualityIconLabel,
                 value = i,
             }
             tinsert(dropdownData, dropdownDataElement)
         end
 
         local initialValue = recipeMaxQualities[recipeData.recipeID] or recipeData.maxQuality
+        local initialQualityIconLabel
+        if recipeData:HasSimplifiedQualityResult() then
+            initialQualityIconLabel = GUTIL:GetQualityIconStringSimplified(initialValue, qualityIconSize, qualityIconSize, 0, -2)
+        else
+            initialQualityIconLabel = GUTIL:GetQualityIconString(initialValue, qualityIconSize, qualityIconSize, 0, -2)
+        end
         maxQualityDropdown:SetData {
             data = dropdownData,
             initialValue = initialValue,
-            initialLabel = GUTIL:GetQualityIconString(initialValue, qualityIconSize, qualityIconSize, 0, -2),
+            initialLabel = initialQualityIconLabel,
         }
 
-        reagentOptimizationFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
+        if recipeData:HasSimplifiedQualityResult() then
+            reagentOptimizationFrame.content.qualityIcon:SetQualitySimplified(recipeData.resultData.expectedQuality)
+        else
+            reagentOptimizationFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
+        end
     end
 
     local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
