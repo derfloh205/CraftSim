@@ -1786,13 +1786,15 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
                 reagentFrame.q1Input.textInput:SetText(reagent.items[1].quantity)
                 reagentFrame.q2Input.textInput:SetText(reagent.items[2].quantity)
-                reagentFrame.q3Input.textInput:SetText(reagent.items[3].quantity)
                 reagentFrame.q1Input.currentValue = reagent.items[1].quantity
                 reagentFrame.q2Input.currentValue = reagent.items[2].quantity
-                reagentFrame.q3Input.currentValue = reagent.items[3].quantity
                 reagentFrame.q1Input.reagentItem = reagent.items[1]
                 reagentFrame.q2Input.reagentItem = reagent.items[2]
-                reagentFrame.q3Input.reagentItem = reagent.items[3]
+                if not recipeData:IsSimplifiedQualityRecipe() then
+                    reagentFrame.q3Input.textInput:SetText(reagent.items[3].quantity)
+                    reagentFrame.q3Input.currentValue = reagent.items[3].quantity
+                    reagentFrame.q3Input.reagentItem = reagent.items[3]
+                end
             else
                 reagentFrame.isActive = false
                 reagentFrame:Hide()
