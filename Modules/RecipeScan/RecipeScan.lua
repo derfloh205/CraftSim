@@ -347,7 +347,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                     end
 
                     -- Apply TSM sale rate filter (after optimization)
-                    if TSM_API then
+                    if TSM_API and recipeData.resultData.expectedItem then
                         local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                         if tsmSaleRateThreshold > 0 then
                             local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
@@ -579,7 +579,7 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                 recipeData:Update()
             end
 
-            if TSM_API then
+            if TSM_API and recipeData.resultData.expectedItem then
                 local saleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD")
                 local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
 
@@ -591,7 +591,7 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
 
             local restockAmount = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT") or 0
 
-            if TSM_API and CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION") then
+            if TSM_API and recipeData.resultData.expectedItem and CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION") then
                 local tsmItemString = TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink())
                 restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"),
                     tsmItemString) or 0
