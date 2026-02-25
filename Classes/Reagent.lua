@@ -187,24 +187,24 @@ end
 ---@param considerSubCrafts boolean?
 function CraftSim.Reagent:SetCheapestQualityMax(considerSubCrafts)
     if self.hasQuality then
-        local itemPriceQ1 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true, false,
-            considerSubCrafts)
-        local itemPriceQ2 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true, false,
-            considerSubCrafts)
-        local itemPriceQ3 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true, false,
-            considerSubCrafts)
+        local itemPrices = {}
+        local cheapestQuality = 1
+        local cheapest = math.huge
+        for i = 1, 3 do
+            if self.items[i] then
+                itemPrices[i] = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[i].item:GetItemID(), true, false,
+                    considerSubCrafts)
+                if itemPrices[i] < cheapest then
+                    cheapest = itemPrices[i]
+                    cheapestQuality = i
+                end
+            end
+        end
 
-        local cheapest = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
 
         self:Clear()
 
-        if itemPriceQ3 == cheapest then
-            self.items[3].quantity = self.requiredQuantity
-        elseif itemPriceQ2 == cheapest then
-            self.items[2].quantity = self.requiredQuantity
-        elseif itemPriceQ1 == cheapest then
-            self.items[1].quantity = self.requiredQuantity
-        end
+        self.items[cheapestQuality].quantity = self.requiredQuantity
     else
         self.items[1].quantity = self.requiredQuantity
     end
