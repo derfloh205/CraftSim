@@ -79,8 +79,28 @@ function CraftSim.TSM_ENHANCED:GetExpectedDeposit(recipeData)
 
     -- Query TSM
     local expression = CraftSim.DB.OPTIONS:Get("TSM_DEPOSIT_EXPRESSION")
-    local deposit = TSM_API.GetCustomPriceValue(expression, tsmStr)
 
+    local deposit
+    if expression and expression ~= "" then
+        local ok, result = pcall(TSM_API.GetCustomPriceValue, expression, tsmStr)
+        if not ok then
+            -- Log the failure but avoid throwing; fall back to 0 deposit.
+            print("GetExpectedDeposit: TSM_API.GetCustomPriceValue error for expression '",
+                tostring(expression), "' and item '", tostring(tsmStr), "': ", tostring(result))
+            deposit = nil
+        else
+            deposit = result
+            if deposit == nil then
+                -- Expression evaluated but returned no value; log for troubleshooting.
+                print("GetExpectedDeposit: TSM expression returned nil for '",
+                    tostring(expression), "' and item '", tostring(tsmStr), "'")
+            end
+        end
+    else
+        -- Missing/empty expression; log once per cache miss for debugging.
+        print("GetExpectedDeposit: No TSM deposit expression configured; using 0 for item '", tostring(tsmStr), "'")
+        deposit = nil
+    end
     depositCache[tsmStr] = { value = deposit, t = now }
 
     return deposit or 0

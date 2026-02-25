@@ -347,7 +347,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                     end
 
                     -- Apply TSM sale rate filter (after optimization)
-                    if TSM_API and recipeData.resultData.expectedItem then
+                    if TSM_API and recipeData.resultData and recipeData.resultData.expectedItem then
                         local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                         if tsmSaleRateThreshold > 0 then
                             local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem:GetItemLink())
