@@ -282,7 +282,7 @@ end
 
 function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     local expressionSizeX = 300
-    local expressionSizeY = 50
+    local expressionSizeY = 25
 
     local tsmReagentsPriceExpression = CreateFrame("EditBox", nil, TSMTab.content,
         "InputBoxTemplate")
@@ -324,7 +324,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     })
 
     local tsmExpressionTitleReagents = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleReagents:SetPoint("BOTTOMLEFT", tsmReagentsPriceExpression, "TOPLEFT", 0, -10)
+    tsmExpressionTitleReagents:SetPoint("BOTTOMLEFT", tsmReagentsPriceExpression, "TOPLEFT", 0, 2)
     tsmExpressionTitleReagents:SetText("TSM Crafting Reagents Price Expression")
 
     local validationInfoReagents = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoReagents', 'OVERLAY',
@@ -335,7 +335,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
 
     local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content,
         "InputBoxTemplate")
-    tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -80)
+    tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -55)
     tsmItemsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmItemsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmItemsPriceExpression:SetFontObject("ChatFontNormal")
@@ -373,7 +373,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     })
 
     local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT", 0, -10)
+    tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT", 0, 2)
     tsmExpressionTitleItems:SetText("TSM Crafted Items Price Expression")
 
     local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY',
@@ -385,7 +385,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     -- Custom source for restock quantity
     local tsmRestockExpression = CreateFrame("EditBox", "CraftSimTSMRestockExpressionItems", TSMTab.content,
         "InputBoxTemplate")
-    tsmRestockExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -160)
+    tsmRestockExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -110)
     tsmRestockExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmRestockExpression:SetAutoFocus(false) -- dont automatically focus
     tsmRestockExpression:SetFontObject("ChatFontNormal")
@@ -423,7 +423,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     })
 
     local tsmExpressionTitleRestockItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleRestockItems:SetPoint("BOTTOMLEFT", tsmRestockExpression, "TOPLEFT", 0, -10)
+    tsmExpressionTitleRestockItems:SetPoint("BOTTOMLEFT", tsmRestockExpression, "TOPLEFT", 0, 2)
     tsmExpressionTitleRestockItems:SetText("TSM Crafted Items Restock Qty Expression")
 
     local validationInfoRestockItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoRestockItems',
@@ -438,7 +438,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     -- =========================================================================
 
     local sectionHeaderDeposit = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
-    sectionHeaderDeposit:SetPoint("TOPLEFT", tsmRestockExpression, "BOTTOMLEFT", 0, -30)
+    sectionHeaderDeposit:SetPoint("TOPLEFT", tsmRestockExpression, "BOTTOMLEFT", 0, -15)
     sectionHeaderDeposit:SetText(CraftSim.GUTIL:ColorizeText("TSM Enhanced", CraftSim.GUTIL.COLORS.LEGENDARY))
 
     local depositEnabledCheckbox = GGUI.Checkbox {
@@ -509,7 +509,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
 
     local smartRestockCheckbox = GGUI.Checkbox {
         parent = TSMTab.content, anchorParent = tsmDepositExpression,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -15,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -8,
         initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_ENABLED"),
         label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL),
         tooltip = L(CraftSim.CONST.TEXT.OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP),
