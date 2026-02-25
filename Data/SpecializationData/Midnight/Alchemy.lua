@@ -2260,7 +2260,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			nodeID = 107254,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 25,
+				additionalitemscraftedwithmulticraft = 10,
 			},
 		},
 		[107235] = {
@@ -2288,7 +2288,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			nodeID = 107254,
 			maxRank = 1,
 			stats = {
-				additionalitemscraftedwithmulticraft = 25,
+				additionalitemscraftedwithmulticraft = 10,
 			},
 		},
 		[107255] = {

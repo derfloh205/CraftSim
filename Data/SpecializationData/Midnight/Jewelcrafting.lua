@@ -4484,7 +4484,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			maxRank = 1,
 			stats = {
 				craftingspeed = 5,
-				ingenuityrefundincrease = 5,
+				reduceconcentrationcost = 5,
 			},
 		},
 		[106975] = {
@@ -4765,7 +4765,6 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			maxRank = 1,
 			stats = {
 				ingenuity = 10,
-				unlockreagentslot = 0,
 			},
 		},
 		[107026] = {
