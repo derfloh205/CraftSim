@@ -1562,4 +1562,7 @@ CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
     },
 }
 
-CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEM = 227713 -- https://www.wowhead.com/item=227713/artisans-consortium-payout
+CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS = {
+    [227713] = true, -- https://www.wowhead.com/item=227713/artisans-consortium-payout
+    [246585] = true, -- https://www.wowhead.com/item=246585/ midnight equivalent
+}
