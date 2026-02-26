@@ -297,10 +297,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                         if not acuityAllowed and moxieContained then
                                                             return false
                                                         end
-                                                    end
 
-                                                    -- early out if no item link to prevent errors
-                                                    if not reward.itemLink then
                                                         return true
                                                     end
                                                     local itemID = GUTIL:GetItemIDByLink(reward.itemLink)
