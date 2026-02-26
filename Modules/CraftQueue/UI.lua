@@ -2098,11 +2098,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         end)
         GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
             for _, reward in ipairs(rewardItems) do
-                -- itemLinks might contain no name but can be used to fetch id
-                craftOrderInfoText = craftOrderInfoText ..
-                    "\n- " ..
-                    GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
-                    " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                if reward.item then
+                    -- itemLinks might contain no name but can be used to fetch id
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " ..
+                        GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
+                            " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                end
             end
 
             row.tooltipOptions = {
