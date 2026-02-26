@@ -426,6 +426,9 @@ function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
     if not qualityID or qualityID < 1 or qualityID > 3 then
         error("CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID) -> qualityID has to be between 1 and 3")
     end
+    if self.recipeData:IsSimplifiedQualityRecipe() and qualityID == 3 then
+        error("Recipes added in Midnight do not have reagents with 3 quality tiers")
+    end
     for _, reagent in pairs(self.requiredReagents) do
         if reagent.hasQuality then
             reagent:Clear()
@@ -478,10 +481,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     -- update item cache for all possible optional reagents if I am the crafter
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
         for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
-            ---@type CraftSim.OptionalReagentSlot
-            slot = slot
-            for _, possibleReagent in pairs(slot.possibleReagents) do
-                if not possibleReagent:IsCurrency() then
+            if not slot:IsCurrency() then
+                ---@type CraftSim.OptionalReagentSlot
+                slot = slot
+                for _, possibleReagent in pairs(slot.possibleReagents) do
                     local itemID = possibleReagent.item:GetItemID()
                     CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
                 end
