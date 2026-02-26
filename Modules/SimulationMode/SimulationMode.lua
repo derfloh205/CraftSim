@@ -184,24 +184,24 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
 
-    reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents,
-        function(r) return r.hasQuality end)))
+    -- reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents,
+    --     function(r) return r.hasQuality end)))
 
-    --required
-    local reagentList = {}
-    -- update item allocations based on inputfields
-    for _, overwriteInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-        if overwriteInput.isActive then
-            table.insert(reagentList,
-                CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
-            table.insert(reagentList,
-                CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
-            table.insert(reagentList,
-                CraftSim.ReagentListItem(overwriteInput.inputq3.itemID, overwriteInput.inputq3:GetNumber()))
-        end
-    end
+    -- --required
+    -- local reagentList = {}
+    -- -- update item allocations based on inputfields
+    -- for _, overwriteInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
+    --     if overwriteInput.isActive then
+    --         table.insert(reagentList,
+    --             CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
+    --         table.insert(reagentList,
+    --             CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
+    --         table.insert(reagentList,
+    --             CraftSim.ReagentListItem(overwriteInput.inputq3.itemID, overwriteInput.inputq3:GetNumber()))
+    --     end
+    -- end
 
-    recipeData:SetReagents(reagentList)
+    --recipeData:SetReagents(reagentList)
 
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
@@ -263,19 +263,24 @@ function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
 end
 
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
-    CraftSim.SIMULATION_MODE.recipeData = recipeData
+    ---@type CraftSim.SIMULATION_MODE.UI
+    local UI = self.UI
+    self.recipeData = recipeData
 
     if recipeData.specializationData then
-        CraftSim.SIMULATION_MODE.specializationData = recipeData.specializationData:Copy()
+        self.specializationData = recipeData.specializationData:Copy()
     end
 
     -- update frame visiblity and initialize the input fields
-    CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
-    CraftSim.SIMULATION_MODE.UI:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)
-    CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(CraftSim.SIMULATION_MODE.recipeData)
+    UI:UpdateVisibility()
+    UI:InitReagentOverwriteFrames(self.recipeData)
+    UI:InitOptionalReagentItemSelectors(self.recipeData)
+
+    --- overhaul
+    self:InitializeReagentList()
 
     -- -- update simulation recipe data and frontend
-    CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+    self:UpdateSimulationMode()
 
     -- recalculate modules
     CraftSim.INIT:TriggerModuleUpdate()
@@ -318,4 +323,97 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     end
 
     CraftSim.INIT:TriggerModuleUpdate()
+end
+
+
+--- Overhaul
+
+function CraftSim.SIMULATION_MODE:InitializeReagentList()
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    local content
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        content = CraftSim.SIMULATION_MODE.frameWO.content
+    else
+        content = CraftSim.SIMULATION_MODE.frame.content
+    end
+    if not recipeData then return end
+
+    local simplified = recipeData:IsSimplifiedQualityRecipe()
+
+    local reagentFrameList
+    if simplified then
+        reagentFrameList = content.reagentListSimplified --[[@as GGUI.FrameList]]
+    else
+        reagentFrameList = content.reagentList --[[@as GGUI.FrameList]]
+    end
+
+    reagentFrameList:Remove()
+
+    for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
+        if reagent.hasQuality then
+            reagentFrameList:Add(function(row, columns)
+                local icon = columns[1].icon --[[@as GGUI.Icon]] 
+                local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
+                local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
+
+                columns[2].itemID = reagent.items[1].item:GetItemID()
+                columns[3].itemID = reagent.items[2].item:GetItemID()
+                
+                icon:SetItem(columns[2].itemID) 
+    
+                q1Input:SetValue(reagent.items[1].quantity)
+                q1Input.maxValue = reagent.requiredQuantity
+                q2Input:SetValue(reagent.items[2].quantity)
+                q2Input.maxValue = reagent.requiredQuantity
+                if not simplified then
+                    local q3Input = columns[4].input --[[@as GGUI.NumericInput]]
+                    columns[4].itemID = reagent.items[3].item:GetItemID()
+                    q3Input:SetValue(reagent.items[3].quantity)
+                    q3Input.maxValue = reagent.requiredQuantity
+                    columns[5].text:SetText("/" .. reagent.requiredQuantity)
+                else
+                    columns[4].text:SetText("/" .. reagent.requiredQuantity)
+                end
+            end)
+        end
+    end
+
+    reagentFrameList:UpdateDisplay()
+end
+
+---@param itemID ItemID
+---@param quantity number
+---@param row GGUI.FrameList.Row
+function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
+    local recipeData = self.recipeData
+    if not recipeData then return end
+
+    local columns = row.columns
+    if not recipeData:IsSimplifiedQualityRecipe() then
+        local requiredQuantity = recipeData.reagentData:GetRequiredQuantityByItemID(itemID)
+        local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
+        local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
+        local q3Input = columns[4].input --[[@as GGUI.NumericInput]]
+
+        local newMax = math.max(requiredQuantity - (q1Input.currentValue + q2Input.currentValue + q3Input.currentValue), 0)
+        q1Input.maxValue = q1Input.currentValue + newMax
+        q2Input.maxValue = q2Input.currentValue + newMax
+        q3Input.maxValue = q3Input.currentValue + newMax
+
+    else
+        local requiredQuantity = recipeData.reagentData:GetRequiredQuantityByItemID(itemID)
+        local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
+        local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
+
+        local newMax = math.max((q1Input.currentValue + q2Input.currentValue) - requiredQuantity, 0)
+        q1Input.maxValue = q1Input.currentValue + newMax
+        q2Input.maxValue = q2Input.currentValue + newMax
+    end
+
+    local quantityFulfilled = recipeData.reagentData:SetRequiredReagent(itemID, quantity)
+
+    if quantityFulfilled then
+        CraftSim.INIT:TriggerModuleUpdate()
+    end
 end

@@ -5,19 +5,158 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.SIMULATION_MODE.UI
 CraftSim.SIMULATION_MODE.UI = {}
 
----@class CraftSim.SIMULATION_MODE.UI.WORKORDER
-CraftSim.SIMULATION_MODE.UI.WORKORDER = {}
+---@class CraftSim.SIMULATION_MODE.UI.WORKORDER : GGUI.Frame
+CraftSim.SIMULATION_MODE.UI.WORKORDER = nil
 
----@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER
-CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = {}
+---@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER : GGUI.Frame
+CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UI")
 
 function CraftSim.SIMULATION_MODE.UI:Init()
+
+    local x, y = ProfessionsFrame.CraftingPage.SchematicForm:GetSize()
+    local woX, woY = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetSize()
+    local sizeOffsetX = 135
+    local sizeOffsetY = 55
+    local offsetY = -30
+
+    CraftSim.SIMULATION_MODE.frame = GGUI.Frame({
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMLEFT",
+        sizeX = x - sizeOffsetX, sizeY = y - sizeOffsetY,
+        offsetY = offsetY,
+        frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE,
+        title = L("SIMULATION_MODE_LABEL"),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable = CraftSim.INIT.FRAMES,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = ProfessionsFrame.CraftingPage.SchematicForm:GetFrameLevel() + 10,
+        hide = true,
+    })
+    CraftSim.SIMULATION_MODE.frameWO = GGUI.Frame({
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMLEFT",
+        sizeX = woX - sizeOffsetX, sizeY = woY - sizeOffsetY,
+        offsetY = offsetY,
+        frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE_WO,
+        title = L("SIMULATION_MODE_LABEL"),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable = CraftSim.INIT.FRAMES,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = ProfessionsFrame.CraftingPage.SchematicForm:GetFrameLevel() + 10,
+        hide = true,
+    })
+
+    local function createContent(frame)
+        local reagentListQualityIconOffsetY = -15
+        local reagentListQualityIconOffsetX = -2
+        local reagentListQualityIconHeaderSize = 25
+        local reagentListQualityColumnWidth = 50
+        frame.content.reagentList = GGUI.FrameList {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.content, offsetX = 10, offsetY = -20, anchorA = "TOPLEFT", anchorB = "TOPLEFT" } },
+            sizeY = 150, hideScrollbar = true,
+            rowHeight = 35,
+            autoAdjustHeight = true,
+            columnOptions = {
+                {
+                    width = 35, -- reagentIcon
+                },
+                {
+                    label = GUTIL:GetQualityIconString(1, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
+                    width = reagentListQualityColumnWidth, -- q1
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    label = GUTIL:GetQualityIconString(2, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
+                    width = reagentListQualityColumnWidth, -- q2
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    label = GUTIL:GetQualityIconString(3, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
+                    width = reagentListQualityColumnWidth, -- q3
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    width = 20, justifyOptions = { type = "H", align = "CENTER" } -- required quantity
+                },
+            },
+            rowConstructor = function(columns, row)
+                local iconColumn = columns[1]
+                local q1Column = columns[2]
+                local q2Column = columns[3]
+                local q3Column = columns[4]
+                local q4Column = columns[5]
+
+                iconColumn.icon = GGUI.Icon {
+                    parent = iconColumn, anchorParent = iconColumn,
+                    anchorA = "LEFT", anchorB = "LEFT", sizeX = 30, sizeY = 30,
+                    hideQualityIcon = true,
+                }
+                q1Column.itemID = nil
+                q1Column.input = GGUI.NumericInput {
+                    mouseWheelStep = 1,
+                    parent = q1Column, anchorParent = q1Column,
+                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
+                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
+                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q1Column.itemID, q1Column.input.currentValue, row)
+                    end
+                }
+                q2Column.itemID = nil
+                q2Column.input = GGUI.NumericInput {
+                    mouseWheelStep = 1,
+                    parent = q2Column, anchorParent = q2Column,
+                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
+                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
+                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q2Column.itemID, q2Column.input.currentValue, row)
+                    end
+                }
+                q3Column.itemID = nil
+                q3Column.input = GGUI.NumericInput {
+                    mouseWheelStep = 1,
+                    parent = q3Column, anchorParent = q3Column,
+                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
+                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
+                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q3Column.itemID, q3Column.input.currentValue, row)
+                    end
+                }
+
+                q4Column.text = GGUI.Text {
+                    parent = q4Column, anchorParent = q4Column, anchorA = "CENTER", anchorB = "CENTER",
+                    justifyOptions = { type = "H", align = "CENTER" }
+                }
+
+                for _, qColumn in ipairs({ q1Column, q2Column, q3Column }) do
+                    qColumn:EnableMouse(true)
+                    ---@type ItemMixin?
+                    qColumn.item = nil
+                    GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
+
+                    qColumn:SetScript("OnMouseDown", function()
+                        if IsShiftKeyDown() and qColumn.item then
+                            qColumn.item:ContinueOnItemLoad(function()
+                                ChatEdit_InsertLink(qColumn.item:GetItemLink())
+                            end)
+                        end
+                    end)
+                end
+            end
+        }
+    end
+
+    createContent(CraftSim.SIMULATION_MODE.frame)
+    createContent(CraftSim.SIMULATION_MODE.frameWO)
+
     local function createSimulationModeFrames(schematicForm, workOrder)
         local frames = {}
         -- CHECK BUTTON
@@ -40,6 +179,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
 
         frames.toggleButton:Hide()
+
+
 
         local baseSizeY = 50
         local spacingY = 50
@@ -203,11 +344,12 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         local function CreateOptionalReagentItemSelector(offsetX)
             local optionalReagentDropdown = GGUI.ItemSelector({
-                parent = reagentOverwriteFrame.content,
-                anchorParent = reagentOverwriteFrame.frame,
-                anchorA = "TOPLEFT",
+                parent = workOrder and CraftSim.SIMULATION_MODE.frameWO.frame or CraftSim.SIMULATION_MODE.frame.frame,
+                anchorParent = workOrder and CraftSim.SIMULATION_MODE.frameWO.frame or CraftSim.SIMULATION_MODE.frame.frame,
+                anchorA = "BOTTOMLEFT",
                 anchorB = "BOTTOMLEFT",
                 offsetX = 10 + offsetX,
+                offsetY = 30,
                 sizeX = 30,
                 sizeY = 30,
                 emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
@@ -242,7 +384,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         -- DETAILS FRAME
         local simModeDetailsFrame = GGUI.Frame({
-            parent = schematicForm,
+            parent = workOrder and CraftSim.SIMULATION_MODE.frameWO.frame or CraftSim.SIMULATION_MODE.frame.frame,
             anchorParent = ProfessionsFrame,
             anchorA = "TOPRIGHT",
             anchorB = "TOPRIGHT",
@@ -252,10 +394,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             sizeY = 355,
             frameID = (workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES
                 .CRAFTING_DETAILS,
-            backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-            collapseable = true,
-            moveable = true,
-            title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE),
             frameTable = CraftSim.INIT.FRAMES,
             frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
             frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -741,9 +879,12 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     print("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
 
     -- frame visiblities
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+
+    CraftSim.SIMULATION_MODE.frame:SetVisible(CraftSim.SIMULATION_MODE.isActive and (exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER))
+    CraftSim.SIMULATION_MODE.frameWO:SetVisible(CraftSim.SIMULATION_MODE.isActive and (exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER))
 
     local hasOptionalReagents = recipeData.reagentData:HasOptionalReagents()
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
