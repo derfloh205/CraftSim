@@ -289,11 +289,20 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         if recipeData.orderData and isPatronOrder then
                                             local rewardAllowed = GUTIL:Every(recipeData.orderData.npcOrderRewards,
                                                 function(reward)
+                                                    local acuityAllowed = CraftSim.DB.OPTIONS:Get(
+                                                        "CRAFTQUEUE_PATRON_ORDERS_ACUITY")
+
+                                                    if reward.currencyType then
+                                                        local moxieContained = tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, reward.currencyType)
+                                                        if not acuityAllowed and moxieContained then
+                                                            return false
+                                                        end
+
+                                                        return true
+                                                    end
                                                     local itemID = GUTIL:GetItemIDByLink(reward.itemLink)
                                                     local knowledgeAllowed = CraftSim.DB.OPTIONS:Get(
                                                         "CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
-                                                    local acuityAllowed = CraftSim.DB.OPTIONS:Get(
-                                                        "CRAFTQUEUE_PATRON_ORDERS_ACUITY")
                                                     local runeAllowed = CraftSim.DB.OPTIONS:Get(
                                                         "CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
 
