@@ -481,8 +481,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             ---@type CraftSim.OptionalReagentSlot
             slot = slot
             for _, possibleReagent in pairs(slot.possibleReagents) do
-                local itemID = possibleReagent.item:GetItemID()
-                CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+                if not possibleReagent:IsCurrency() then
+                    local itemID = possibleReagent.item:GetItemID()
+                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+                end
             end
         end
         if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent then
