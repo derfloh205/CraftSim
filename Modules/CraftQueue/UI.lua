@@ -2093,11 +2093,20 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
             return {
                 count = reward.count,
-                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil
+                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+                currency = reward.currencyType,
             }
         end)
         GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
             for _, reward in ipairs(rewardItems) do
+                if reward.currency then
+                    local currencyLink = C_CurrencyInfo.GetCurrencyLink(reward.currency, reward.count)
+                    local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " ..
+                        GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
+                        " " .. (currencyLink or "<?>") .. " x" .. reward.count
+                end
                 if reward.item then
                     -- itemLinks might contain no name but can be used to fetch id
                     craftOrderInfoText = craftOrderInfoText ..
