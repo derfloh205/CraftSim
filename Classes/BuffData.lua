@@ -200,6 +200,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         if self.recipeData.professionData.professionInfo.profession == Enum.Profession.Enchanting then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(self.recipeData))
         end
+
+        if self.recipeData.supportsQualities then
+            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateHaranirPhialOfIngenuityBuffs(self.recipeData))
+        end
     end
 
     if self.recipeData.isCooking then

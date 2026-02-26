@@ -97,6 +97,11 @@ end
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(recipeData)
     local buffStats = CraftSim.ProfessionStats()
+
+    -- base stats
+    buffStats.ingenuity:addValue(5)
+    buffStats.multicraft:addValue(5)
+    buffStats.resourcefulness:addValue(5)
     --- Shattering Essence Traits "Buff Perks"
     --- not coded into db2 so need to do it manually
     local buffPerkData = {
@@ -172,8 +177,35 @@ function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(recipeData)
         end
     end
 
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, buffStats)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT, buffStats)
 end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreateHaranirPhialOfIngenuityBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.ingenuity:addValue(38)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q1Stats, 1, {
+        index = 1,
+        value = 38
+    }, nil, nil, 241313))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.ingenuity:addValue(45)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q2Stats, 2, {
+        index = 1,
+        value = 45,
+    }, nil, nil, 241312))
+
+    return buffs
+end
+
+
 
 
 -- TWW
