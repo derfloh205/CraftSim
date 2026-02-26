@@ -1549,6 +1549,15 @@ CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
         228734, --jewelcrafting
         228736, --leatherworking
         228738, --tailoring
+        -- MIDNIGHT
+        246320, -- alchemy
+        246322, -- blacksmithing
+        246324, -- enchanting
+        246326, -- engineering
+        246328, -- inscription
+        246330, -- jewelcrafting
+        246332, -- leatherworking
+        246334, -- tailoring
     },
     WEEKLY = {
         228725, --alchemy
@@ -1559,7 +1568,19 @@ CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {
         228735, --jewelcrafting
         228737, --leatherworking
         228739, --tailoring
+        -- MIDNIGHT
+        246321, -- alchemy
+        246323, -- blacksmithing
+        246325, -- enchanting
+        246327, -- engineering
+        246329, -- inscription
+        246331, -- jewelcrafting
+        246333, -- leatherworking
+        246335, -- tailoring
     },
 }
 
-CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEM = 227713 -- https://www.wowhead.com/item=227713/artisans-consortium-payout
+CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS = {
+    [227713] = true, -- https://www.wowhead.com/item=227713/artisans-consortium-payout
+    [246585] = true, -- https://www.wowhead.com/item=246585/
+}
