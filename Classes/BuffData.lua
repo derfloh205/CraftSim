@@ -42,8 +42,6 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- TWW Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
-        -- general
-
         local currentSeason = CraftSim.UTIL:GetCurrentSeason()
         -- only gives resourcefulness / is relevant in winter and spring
         if currentSeason == 0 or currentSeason == 1 then
@@ -81,7 +79,7 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if profession == Enum.Profession.Enchanting then
-            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(self.recipeData))
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffTWW(self.recipeData))
         end
 
         if profession == Enum.Profession.Alchemy then
@@ -153,14 +151,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- DF Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then
-        if self.recipeData.supportsCraftingspeed then
-            --- General
-            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
-        end
 
-        if self.recipeData.isCooking then
-            -- cooking hat toy
-            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(self.recipeData))
+        if self.recipeData.supportsCraftingspeed then
+        --- General
+        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
         end
 
         if self.recipeData.supportsQualities then
@@ -200,6 +194,21 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
                 end
             end
         end
+    end
+
+    if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
+        if self.recipeData.professionData.professionInfo.profession == Enum.Profession.Enchanting then
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(self.recipeData))
+        end
+
+        if self.recipeData.supportsQualities then
+            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateHaranirPhialOfIngenuityBuffs(self.recipeData))
+        end
+    end
+
+    if self.recipeData.isCooking then
+        -- cooking hat toy
+        tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(self.recipeData))
     end
 end
 

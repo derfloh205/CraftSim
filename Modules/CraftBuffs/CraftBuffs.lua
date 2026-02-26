@@ -92,6 +92,122 @@ function CraftSim.CRAFT_BUFFS:CreateJewelersPurseBuff(recipeData)
         CraftSim.ProfessionStats())
 end
 
+-- Midnight
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff shatteringEssence
+function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+
+    -- base stats
+    buffStats.ingenuity:addValue(5)
+    buffStats.multicraft:addValue(5)
+    buffStats.resourcefulness:addValue(5)
+    --- Shattering Essence Traits "Buff Perks"
+    --- not coded into db2 so need to do it manually
+    local buffPerkData = {
+        {
+            nodeID = 107616, -- Responsible Resources
+            thresholds = {
+                [5] = {
+                    resourcefulness = 5,
+                },
+                [15] = {
+                    resourcefulness = 10,
+                },
+                [25] = {
+                    resourcefulness = 20,
+                }
+            },
+        },
+        {
+            nodeID = 107615, -- Infinite Ingenuity
+            thresholds = {
+                [5] = {
+                    ingenuity = 5,
+                },
+                [15] = {
+                    ingenuity = 10,
+                },
+                [25] = {
+                    ingenuity = 20,
+                }
+            },
+        },
+        {
+            nodeID = 107614, -- Multicrafting Meticulously
+            thresholds = {
+                [5] = {
+                    multicraft = 5,
+                },
+                [15] = {
+                    multicraft = 10,
+                },
+                [25] = {
+                    multicraft = 20,
+                }
+            },
+        },
+        {
+            nodeID = 100037, -- Magnificient Multicrafting
+            thresholds = {
+                [5] = {
+                    multicraft = 30,
+                },
+                [15] = {
+                    multicraft = 30,
+                },
+                [25] = {
+                    multicraft = 30,
+                },
+            },
+        },
+    }
+
+    for _, buffData in ipairs(buffPerkData) do
+        local nodeInfo = C_Traits.GetNodeInfo(recipeData.professionData.configID, buffData.nodeID)
+        if nodeInfo then
+            local rank = nodeInfo.activeRank - 1
+            for threshold, stats in pairs(buffData.thresholds) do
+                if rank >= threshold then
+                    for stat, amount in pairs(stats) do
+                        buffStats[stat]:addValue(amount)
+                    end
+                end
+            end
+        end
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreateHaranirPhialOfIngenuityBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.ingenuity:addValue(38)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q1Stats, 1, {
+        index = 1,
+        value = 38
+    }, nil, nil, 241313))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.ingenuity:addValue(45)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q2Stats, 2, {
+        index = 1,
+        value = 45,
+    }, nil, nil, 241312))
+
+    return buffs
+end
+
+
+
+
 -- TWW
 
 ---@param recipeData CraftSim.RecipeData
@@ -296,7 +412,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
-function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
+function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffTWW(recipeData)
     local buffStats = CraftSim.ProfessionStats()
     --- Shattering Essence Traits "Buff Perks"
     --- not coded into db2 so need to do it manually
