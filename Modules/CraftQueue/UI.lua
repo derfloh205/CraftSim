@@ -2093,7 +2093,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
             return {
                 count = reward.count,
-                item = Item:CreateFromItemLink(reward.itemLink)
+                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil
             }
         end)
         GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
