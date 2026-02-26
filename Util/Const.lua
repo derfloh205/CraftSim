@@ -1584,3 +1584,14 @@ CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS = {
     [227713] = true, -- https://www.wowhead.com/item=227713/artisans-consortium-payout
     [246585] = true, -- https://www.wowhead.com/item=246585/
 }
+
+CraftSim.CONST.MOXIE_CURRENCY_IDS = {
+    3256, --alchemy
+    3257, --blacksmithing
+    3258, --enchanting
+    3259, --engineering
+    3260, --inscription
+    3261, --jewelcrafting
+    3262, --leatherworking
+    3263, --tailoring
+}
