@@ -1392,7 +1392,9 @@ CraftSim.CONST.SPECIAL_TOOL_STATS = {
 
 CraftSim.CONST.ITEM_IDS = {
     REQUIRED_SELECTABLE_ITEMS = {
+        SPARK_OF_INGENUITY = 190453,
         SPARK_OF_OMENS = 211296,
+        SPARK_OF_RADIANCE = 232875,
     },
     OPTIONAL_REAGENTS = {
         ILLUSTRIOUS_INSIGHT = 191529,
@@ -1409,7 +1411,9 @@ CraftSim.CONST.ITEM_IDS = {
         THE_SEVERED_SATCHEL = 224852,          -- Tailoring Unraveling
     },
     CURRENCY = {
+        ARTISANS_METTLE = 190456,
         ARTISANS_ACUITY = 210814,
+        FUSED_VITALITY = 245345,
     },
 }
 

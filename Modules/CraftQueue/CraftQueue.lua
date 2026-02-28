@@ -1047,13 +1047,19 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
             local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
             local isSkillLine = recipeData.professionData.skillLineID == currentSkillLineID
             local ignoreAcuity = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES")
-            local usesAcuity = recipeData.reagentData:HasOneOfReagents({ CraftSim.CONST.ITEM_IDS.CURRENCY
-                .ARTISANS_ACUITY })
+            local usesAcuity = recipeData.reagentData:HasOneOfReagents({
+                CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_METTLE,
+                CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY,
+                CraftSim.CONST.ITEM_IDS.CURRENCY.FUSED_VITALITY, -- TODO catches epic BoP equipment but not rare
+            })
             local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
             if queueRecipe then
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES") then
                     if recipeData:HasRequiredSelectableReagent() then
-                        if recipeData.reagentData.requiredSelectableReagentSlot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS.REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS) then
+                        local ingenuityRecipe = recipeData.reagentData.requiredSelectableReagentSlot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS.REQUIRED_SELECTABLE_ITEMS.SPARK_OF_INGENUITY)
+                        local omenRecipe = recipeData.reagentData.requiredSelectableReagentSlot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS.REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS)
+                        local radianceRecipe = recipeData.reagentData.requiredSelectableReagentSlot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS.REQUIRED_SELECTABLE_ITEMS.SPARK_OF_RADIANCE)
+                        if ingenuityRecipe or omenRecipe or radianceRecipe then
                             frameDistributor:Continue()
                             return
                         end
