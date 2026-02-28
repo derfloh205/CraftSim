@@ -47,10 +47,15 @@ function CraftSim.ProfessionData:new(options)
 	end
 	self.skillLineID = self.professionInfo.professionID
 	self.configID = C_ProfSpecs.GetConfigIDForSkillLine(self.skillLineID)
-	for expansionID, skillLineID in pairs(CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]) do
-		if skillLineID == self.skillLineID then
-			self.expansionID = expansionID
-			break
+	-- handle Midnight's "Alchemy Research" mini-profession
+	if not self.professionInfo.profession and self.professionInfo.professionID == 2950 then
+		self.expansionID = CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
+	else
+		for expansionID, skillLineID in pairs(CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]) do
+			if skillLineID == self.skillLineID then
+				self.expansionID = expansionID
+				break
+			end
 		end
 	end
 end
