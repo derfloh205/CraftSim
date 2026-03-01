@@ -70,7 +70,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
     local salvageItemId = nil;
     if recipeData.isSalvageRecipe then
         local slot = recipeData.reagentData.salvageReagentSlot
-        salvageItemId = slot.activeItem:GetItemID()
+        salvageItemId = slot and slot.activeItem and slot.activeItem:GetItemID()
     end
 
     -- multiple sets of results in one frame - make sure to capture all resourcefulness savings
@@ -117,12 +117,14 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
         local reagentItemIDs = {}
         if recipeData.isSalvageRecipe then
             local slot = recipeData.reagentData.salvageReagentSlot
-            local itemID = slot.activeItem:GetItemID()
-            local quantity = slot.requiredQuantity * aNumCrafts
-            local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-            self.craftingCosts = self.craftingCosts + reagentCosts
-            tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity)) -- how much we actually used
-            tinsert(reagentItemIDs, itemID .. "." .. slot.requiredQuantity )                  -- how much the recipe called for, used for reagentCombinationID
+            if slot and slot.activeItem then
+                local itemID = slot.activeItem:GetItemID()
+                local quantity = slot.requiredQuantity * aNumCrafts
+                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                self.craftingCosts = self.craftingCosts + reagentCosts
+                tinsert(self.reagents, CraftSim.CraftResultReagent(recipeData, itemID, quantity)) -- how much we actually used
+                tinsert(reagentItemIDs, itemID .. "." .. slot.requiredQuantity )                  -- how much the recipe called for, used for reagentCombinationID
+            end
         end
 
         if recipeData:HasRequiredSelectableReagent() then

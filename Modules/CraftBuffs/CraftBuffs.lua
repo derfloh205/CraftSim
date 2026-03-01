@@ -749,7 +749,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 
 	if info.addedAuras then
 		for _, v in pairs(info.addedAuras) do
-            local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, v.spellId)
+            local isTrackedBuff = (not issecretvalue or not issecretvalue(v.spellId)) and buffIdSet[tonumber(v.spellId)]
             local isAlreadyActive = tContains(self.activeBuffInstanceIds, v.auraInstanceID)
             if isTrackedBuff and not isAlreadyActive then
                 tinsert(self.activeBuffInstanceIds, v.auraInstanceID)
@@ -763,7 +763,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 		for _, v in pairs(info.updatedAuraInstanceIDs) do
 			local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
             if aura then
-                local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, aura.spellId)
+                local isTrackedBuff = (not issecretvalue or not issecretvalue(aura.spellId)) and buffIdSet[tonumber(aura.spellId)]
                 local isAlreadyActive = tContains(self.activeBuffInstanceIds, aura.auraInstanceID)
                 if isTrackedBuff and not isAlreadyActive then
                     tinsert(self.activeBuffInstanceIds, aura.auraInstanceID)
