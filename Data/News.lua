@@ -21,7 +21,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("21.0.2"),
+        newP("21.2.0"),
+        f.PG .. f.g("Simulation Mode"),
+        f.a .. "- Overhauled Simulation Mode UI to be an overlay",
+        f.a .. "- Hiding the default UI should remove some confusion",
+        f.a .. " regarding Simulation Mode Reagent Inputs not updating",
+        f.a .. " the Blizzard default Quality Meter",
+        f.a .. "- " .. f.bb("More Enhancements are planned soon"),
         f.pg .. "Combat Aura Lua Error Fix",
         f.pg .. "Salvage Hearty Food Bug Fix",
         f.pg .. "Alchemy Research Bug Fix",

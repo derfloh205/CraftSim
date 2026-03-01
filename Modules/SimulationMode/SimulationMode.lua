@@ -102,23 +102,9 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+    self.recipeData.reagentData:SetReagentsMaxByQuality(qualityID)
 
-    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-        if currentInput.isActive then
-            for i = 1, 3, 1 do
-                local allocationForQuality = 0
-                if i == qualityID then
-                    allocationForQuality = currentInput["inputq" .. i].requiredQuantityValue
-                elseif qualityID == 0 then
-                    allocationForQuality = 0
-                end
-
-                currentInput["inputq" .. i]:SetText(allocationForQuality)
-            end
-        end
-    end
+    self:InitializeReagentList()
 
     CraftSim.INIT:TriggerModuleUpdate()
 end
@@ -179,29 +165,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     end
     print("Update Reagent Input Frames:")
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-
-    ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
-
-    -- reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents,
-    --     function(r) return r.hasQuality end)))
-
-    -- --required
-    -- local reagentList = {}
-    -- -- update item allocations based on inputfields
-    -- for _, overwriteInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-    --     if overwriteInput.isActive then
-    --         table.insert(reagentList,
-    --             CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
-    --         table.insert(reagentList,
-    --             CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
-    --         table.insert(reagentList,
-    --             CraftSim.ReagentListItem(overwriteInput.inputq3.itemID, overwriteInput.inputq3:GetNumber()))
-    --     end
-    -- end
-
-    --recipeData:SetReagents(reagentList)
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
 
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
@@ -215,8 +180,10 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
             end)
     end
 
+    local optionalReagentItemSelectors = frame.optionalReagentItemSelectors --[[@as GGUI.ItemSelector[] ]]
+
     local itemIDs = {}
-    for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+    for _, optionalReagentItemSelector in pairs(optionalReagentItemSelectors) do
         local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
         if itemID then
             -- try to set required selectable if available else put to optional/finishing
@@ -273,13 +240,10 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
 
     -- update frame visiblity and initialize the input fields
     UI:UpdateVisibility()
-    UI:InitReagentOverwriteFrames(self.recipeData)
+    self:InitializeReagentList()
     UI:InitOptionalReagentItemSelectors(self.recipeData)
 
-    --- overhaul
-    self:InitializeReagentList()
-
-    -- -- update simulation recipe data and frontend
+    -- -- update simulation recipe data and UI
     self:UpdateSimulationMode()
 
     -- recalculate modules
@@ -340,19 +304,22 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
     if not recipeData then return end
 
     local simplified = recipeData:IsSimplifiedQualityRecipe()
-
-    local reagentFrameList
     if simplified then
-        reagentFrameList = content.reagentListSimplified --[[@as GGUI.FrameList]]
+        content.reagentList = content.reagentListSimplified --[[@as GGUI.FrameList]]
+        content.reagentListQ3:Hide()
+        content.reagentListQ3:Remove()
     else
-        reagentFrameList = content.reagentList --[[@as GGUI.FrameList]]
+        content.reagentList = content.reagentListQ3 --[[@as GGUI.FrameList]]
+        content.reagentListSimplified:Hide()
+        content.reagentListSimplified:Remove()
     end
 
-    reagentFrameList:Remove()
+    content.reagentList:Remove()
+    content.reagentList:Show()
 
     for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
         if reagent.hasQuality then
-            reagentFrameList:Add(function(row, columns)
+            content.reagentList:Add(function(row, columns)
                 local icon = columns[1].icon --[[@as GGUI.Icon]] 
                 local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
                 local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
@@ -379,7 +346,7 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
         end
     end
 
-    reagentFrameList:UpdateDisplay()
+    content.reagentList:UpdateDisplay()
 end
 
 ---@param itemID ItemID
