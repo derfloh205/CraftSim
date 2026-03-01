@@ -212,6 +212,21 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
     return craftingReagentInfoTbl
 end
 
+---@param itemID ItemID
+---@return number requiredQuantity
+function CraftSim.ReagentData:GetRequiredQuantityByItemID(itemID)
+    for _, reagent in pairs(self.requiredReagents) do
+        local reagentItem = GUTIL:Find(reagent.items, function(reagentItem)
+            return reagentItem.item:GetItemID() == itemID
+        end)
+        if reagentItem then
+            return reagent.requiredQuantity
+        end
+    end
+
+    return 0
+end
+
 ---@return CraftSim.OptionalReagent[] activeReagents
 function CraftSim.ReagentData:GetActiveOptionalReagents()
     local activeReagents = {}
@@ -449,6 +464,30 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
 
     -- always set nonquality reagents to max
     self.recipeData:SetNonQualityReagentsMax()
+end
+
+
+---@return boolean requiredQuantityFulfilled
+function CraftSim.ReagentData:SetRequiredReagent(itemID, quantity)
+    ---@type CraftSim.Reagent
+    local requiredReagent
+    for _, reagent in pairs(self.requiredReagents) do
+        local reagentItem = GUTIL:Find(reagent.items, function(reagentItem)
+            return reagentItem.item:GetItemID() == itemID
+        end)
+        if reagentItem then
+            reagentItem.quantity = quantity
+            requiredReagent = reagent --[[@as CraftSim.Reagent]]
+            break
+        end
+    end
+
+    local totalQualityCount = 0
+    for _, reagentItem in pairs(requiredReagent.items) do
+        totalQualityCount = totalQualityCount + reagentItem.quantity
+    end
+
+    return totalQualityCount == requiredReagent.requiredQuantity
 end
 
 ---comment
