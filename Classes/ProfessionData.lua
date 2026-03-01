@@ -51,10 +51,13 @@ function CraftSim.ProfessionData:new(options)
 	if not self.professionInfo.profession and self.professionInfo.professionID == 2950 then
 		self.expansionID = CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
 	else
-		for expansionID, skillLineID in pairs(CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]) do
-			if skillLineID == self.skillLineID then
-				self.expansionID = expansionID
-				break
+		local tradeSkillLines = CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]
+		if tradeSkillLines then
+			for expansionID, skillLineID in pairs(tradeSkillLines) do
+				if skillLineID == self.skillLineID then
+					self.expansionID = expansionID
+					break
+				end
 			end
 		end
 	end

@@ -21,6 +21,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.0.2"),
+        f.pg .. "Combat Aura Lua Error Fix",
+        f.pg .. "Salvage Hearty Food Bug Fix",
+        f.pg .. "Alchemy Research Bug Fix",
+        collab("https://github.com/clarklwilliamson"),
+        newP("21.0.1"),
+        f.p .. "MaxQ2 Recipes: Hotfixed incorrect quality threshold calculation",
         newP("21.0.0 - " .. f.e("Midnight")),
         f.PG .. f.l("Midnight Early Access Updates"),
         f.pg .. f.g("HUGE Thank you to all contributors and supporters"),
