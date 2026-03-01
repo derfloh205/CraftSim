@@ -119,7 +119,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
                     minValue = 0, allowDecimals = false, onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q1Column.itemID, q1Column.input.currentValue, row)
-                    end
+                    end,
+                    borderAdjustWidth = 1.2,
                 }
                 q2Column.itemID = nil
                 q2Column.input = GGUI.NumericInput {
@@ -128,7 +129,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
                     minValue = 0, allowDecimals = false, onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q2Column.itemID, q2Column.input.currentValue, row)
-                    end
+                    end,
+                    borderAdjustWidth = 1.2,
                 }
                 q3Column.itemID = nil
                 q3Column.input = GGUI.NumericInput {
@@ -137,7 +139,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
                     minValue = 0, allowDecimals = false, onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q3Column.itemID, q3Column.input.currentValue, row)
-                    end
+                    end,
+                    borderAdjustWidth = 1.2,
                 }
 
                 q4Column.text = GGUI.Text {
@@ -210,7 +213,9 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
                     minValue = 0, allowDecimals = false, onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q1Column.itemID, q1Column.input.currentValue, row)
-                    end
+                    end,
+                    borderAdjustWidth = 1.2,
+
                 }
                 q2Column.itemID = nil
                 q2Column.input = GGUI.NumericInput {
@@ -219,7 +224,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
                     minValue = 0, allowDecimals = false, onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q2Column.itemID, q2Column.input.currentValue, row)
-                    end
+                    end,
+                    borderAdjustWidth = 1.2,
                 }
 
                 q3Column.text = GGUI.Text {

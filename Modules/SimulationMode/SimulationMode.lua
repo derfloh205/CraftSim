@@ -294,6 +294,7 @@ end
 
 function CraftSim.SIMULATION_MODE:InitializeReagentList()
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    if not recipeData then return end
     local content
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -301,6 +302,7 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
     else
         content = CraftSim.SIMULATION_MODE.frame.content
     end
+
     if not recipeData then return end
 
     local simplified = recipeData:IsSimplifiedQualityRecipe()
@@ -373,7 +375,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
         local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
         local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
 
-        local newMax = math.max((q1Input.currentValue + q2Input.currentValue) - requiredQuantity, 0)
+        local newMax = math.max(requiredQuantity - (q1Input.currentValue + q2Input.currentValue), 0)
         q1Input.maxValue = q1Input.currentValue + newMax
         q2Input.maxValue = q2Input.currentValue + newMax
     end
