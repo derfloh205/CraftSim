@@ -539,13 +539,13 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     -- return cheapest quality result to avoid nil arithmetic in calculateArrayBP
     if numBP <= 0 or craftingDifficultyBP[0] == nil then
         local result = CraftSim.ReagentOptimizationResult(recipeData)
-        table.foreach(recipeData.reagentData.requiredReagents, function(_, reagent)
+        for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
             if reagent.hasQuality then
                 local resultReagent = reagent:Copy()
                 resultReagent:SetCheapestQualityMax(recipeData.subRecipeCostsEnabled)
                 table.insert(result.reagents, resultReagent)
             end
-        end)
+        end
         return result
     end
 
