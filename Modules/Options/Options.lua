@@ -476,7 +476,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
             CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_DEPOSIT_EXPRESSION,
                 tsmDepositExpression:GetText())
-            CraftSim.TSM_ENHANCED:ClearDepositCache()
+            CraftSimTSM:ClearDepositCache()
         end
     end)
 
@@ -493,7 +493,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         label = L(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
         clickCallback = function()
             tsmDepositExpression:SetText("vendorsell")
-            CraftSim.TSM_ENHANCED:ClearDepositCache()
+            CraftSimTSM:ClearDepositCache()
         end
     })
 

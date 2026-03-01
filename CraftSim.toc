@@ -48,7 +48,6 @@ Util/API.lua
 
 Init/Init.lua
 
-Pricing/TSMEnhanced.lua
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceSource.lua

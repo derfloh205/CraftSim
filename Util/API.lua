@@ -25,7 +25,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return number depositCost copper (0 if unavailable)
 function CraftSimAPI:GetExpectedDeposit(recipeData)
-    return CraftSim.TSM_ENHANCED:GetExpectedDeposit(recipeData)
+    return CraftSimTSM:GetExpectedDeposit(recipeData)
 end
 
 ---Get the smart restock amount for a recipe, subtracting existing inventory.
@@ -34,5 +34,5 @@ end
 ---@return number target TSM restock target
 ---@return number owned total owned across tracked sources
 function CraftSimAPI:GetSmartRestockAmount(recipeData)
-    return CraftSim.TSM_ENHANCED:GetSmartRestockAmount(recipeData)
+    return CraftSimTSM:GetSmartRestockAmount(recipeData)
 end

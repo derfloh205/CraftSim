@@ -92,7 +92,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
     -- TSM Enhanced: expected deposit cost (0 when disabled or TSM not loaded)
-    local expectedDeposit = CraftSim.TSM_ENHANCED:GetExpectedDeposit(recipeData)
+    local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
 
     if not recipeData.supportsCraftingStats then
         local resultValue = ((priceData.qualityPriceList[1] or 0) * recipeData.baseItemAmount) *
