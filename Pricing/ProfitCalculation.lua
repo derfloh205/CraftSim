@@ -61,13 +61,15 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
 
         -- also if npc work order add item value of rewards to the comissionprofit
         for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
-            local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
-            if itemID == CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEM then
-                comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
-            else
-                local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
-                price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
-                comissionProfit = comissionProfit + price * reward.count
+            if not reward.currencyType then -- skip if Artisan's Moxie currency
+                local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
+                if CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS[itemID] then
+                    comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
+                else
+                    local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
+                    price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    comissionProfit = comissionProfit + price * reward.count
+                end
             end
         end
     end

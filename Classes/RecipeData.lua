@@ -921,20 +921,23 @@ function CraftSim.RecipeData:GetSkillContributionMap()
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, craftingReagentInfoTblQ1,
         self.allocationItemGUID, false)
 
+    --- Consider Midnight Recipe Reagent Quality Change
+    local reagentsMaxQuality = self:IsSimplifiedQualityRecipe() and 2 or 3
     if not baseOperationInfo then return {} end
 
     for reagentIndexA, reagent in ipairs(self.reagentData.requiredReagents) do
         if reagent.hasQuality then
             skillContributionMap[reagent.items[1].item:GetItemID()] = 0
 
-            for i = 2, 3, 1 do
+            for i = 2, reagentsMaxQuality, 1 do
                 local craftingReagentInfoTbl = {}
                 for reagentIndexB, r in ipairs(self.reagentData.requiredReagents) do
                     if r.hasQuality then
                         local craftingReagentInfos = r:GetCraftingReagentInfos()
                         craftingReagentInfos[1].quantity = r.requiredQuantity
-                        craftingReagentInfos[2].quantity = 0
-                        craftingReagentInfos[3].quantity = 0
+                        for j = 2, reagentsMaxQuality, 1 do
+                            craftingReagentInfos[j].quantity = 0
+                        end
 
                         if reagentIndexA == reagentIndexB then
                             craftingReagentInfos[1].quantity = 0
@@ -981,10 +984,20 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
         return reagent.hasQuality and not reagent:IsOrderReagentIn(self)
     end)
 
+    local isSimplifiedQualityRecipe = self:IsSimplifiedQualityRecipe()
+
     -- Pre-calc total convertible units for progress: sum of q1 + q2 (since q3 is terminal)
     local totalConvertible = 0
-    for _, r in ipairs(qualityReagents) do
-        totalConvertible = totalConvertible + r.items[1].quantity + r.items[2].quantity
+
+    if isSimplifiedQualityRecipe then
+        -- For simplified quality recipes, only q1->q2 upgrades are possible, so we only count q1 quantities
+        for _, r in ipairs(qualityReagents) do
+            totalConvertible = totalConvertible + r.items[1].quantity
+        end
+    else
+        for _, r in ipairs(qualityReagents) do
+            totalConvertible = totalConvertible + r.items[1].quantity + r.items[2].quantity
+        end
     end
     local convertedUnits = 0
 
@@ -1028,6 +1041,29 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
         return best
     end
 
+    local function findBestUpgradeSimplified()
+        local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
+        local best
+        for _, reagent in ipairs(qualityReagents) do
+            -- Q1->Q2
+            local q1 = reagent.items[1].quantity
+            if q1 > 0 then
+                local itemID1 = reagent.items[1].item:GetItemID()
+                local itemID2 = reagent.items[2].item:GetItemID()
+                local price1 = self.priceData.reagentPriceInfos[itemID1].itemPrice
+                local price2 = self.priceData.reagentPriceInfos[itemID2].itemPrice
+                local skill1 = skillContributionMap[itemID1]
+                local skill2 = skillContributionMap[itemID2]
+                local costPerSkill = (price2 - price1) / (skill2 - skill1)
+                local costPerConcPoint = costPerSkill * skillPerConcentrationPoint
+                if not best or costPerConcPoint < best.costPerConcPoint then
+                    best = { reagent = reagent, fromQ = 1, toQ = 2, costPerConcPoint = costPerConcPoint, available = q1 }
+                end
+            end
+        end
+        return best
+    end
+
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
 
     local MAX_UNITS_PER_FRAME = 40
@@ -1051,7 +1087,12 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local performed = 0
 
             while unitsBudget > 0 do
-                local best = findBestUpgrade()
+                local best
+                if isSimplifiedQualityRecipe then
+                    best = findBestUpgradeSimplified()
+                else
+                    best = findBestUpgrade()
+                end
                 if not best then break end
                 if best.costPerConcPoint >= concentrationValue then break end
 
@@ -1102,7 +1143,12 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             end
 
             -- Continue if further profitable upgrades exist
-            local probe = findBestUpgrade()
+            local probe
+            if isSimplifiedQualityRecipe then
+                probe = findBestUpgradeSimplified()
+            else
+                probe = findBestUpgrade()
+            end
             if not probe then
                 frameDistributor:Break()
                 return
@@ -1879,6 +1925,18 @@ function CraftSim.RecipeData:IsOldWorldRecipe()
     local recipeExpansionID = self.professionData.expansionID
     if recipeExpansionID == "BASE" then return true end
     return recipeExpansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+end
+
+---@return boolean simplified
+function CraftSim.RecipeData:IsSimplifiedQualityRecipe()
+    local recipeExpansionID = self.professionData.expansionID
+    if recipeExpansionID == "BASE" then return true end
+    return recipeExpansionID >= CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
+end
+
+---@return boolean simplified
+function CraftSim.RecipeData:HasSimplifiedQualityResult()
+    return self.supportsQualities and self.maxQuality == 2
 end
 
 ---@param expansionID CraftSim.EXPANSION_IDS

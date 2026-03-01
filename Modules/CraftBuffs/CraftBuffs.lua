@@ -7,8 +7,12 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftBuffs")
 
 local L = CraftSim.UTIL:GetLocalizer()
 
+
 ---@class CraftSim.CRAFT_BUFFS : Frame
-CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ })---"COMBAT_LOG_EVENT_UNFILTERED" })
+CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "UNIT_AURA" })
+
+---@type number[]
+CraftSim.CRAFT_BUFFS.activeBuffInstanceIds = {}
 
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
@@ -87,6 +91,122 @@ function CraftSim.CRAFT_BUFFS:CreateJewelersPurseBuff(recipeData)
     return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.JEWELERS_PURSE,
         CraftSim.ProfessionStats())
 end
+
+-- Midnight
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff shatteringEssence
+function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffMidnight(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+
+    -- base stats
+    buffStats.ingenuity:addValue(5)
+    buffStats.multicraft:addValue(5)
+    buffStats.resourcefulness:addValue(5)
+    --- Shattering Essence Traits "Buff Perks"
+    --- not coded into db2 so need to do it manually
+    local buffPerkData = {
+        {
+            nodeID = 107616, -- Responsible Resources
+            thresholds = {
+                [5] = {
+                    resourcefulness = 5,
+                },
+                [15] = {
+                    resourcefulness = 10,
+                },
+                [25] = {
+                    resourcefulness = 20,
+                }
+            },
+        },
+        {
+            nodeID = 107615, -- Infinite Ingenuity
+            thresholds = {
+                [5] = {
+                    ingenuity = 5,
+                },
+                [15] = {
+                    ingenuity = 10,
+                },
+                [25] = {
+                    ingenuity = 20,
+                }
+            },
+        },
+        {
+            nodeID = 107614, -- Multicrafting Meticulously
+            thresholds = {
+                [5] = {
+                    multicraft = 5,
+                },
+                [15] = {
+                    multicraft = 10,
+                },
+                [25] = {
+                    multicraft = 20,
+                }
+            },
+        },
+        {
+            nodeID = 100037, -- Magnificient Multicrafting
+            thresholds = {
+                [5] = {
+                    multicraft = 30,
+                },
+                [15] = {
+                    multicraft = 30,
+                },
+                [25] = {
+                    multicraft = 30,
+                },
+            },
+        },
+    }
+
+    for _, buffData in ipairs(buffPerkData) do
+        local nodeInfo = C_Traits.GetNodeInfo(recipeData.professionData.configID, buffData.nodeID)
+        if nodeInfo then
+            local rank = nodeInfo.activeRank - 1
+            for threshold, stats in pairs(buffData.thresholds) do
+                if rank >= threshold then
+                    for stat, amount in pairs(stats) do
+                        buffStats[stat]:addValue(amount)
+                    end
+                end
+            end
+        end
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreateHaranirPhialOfIngenuityBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.ingenuity:addValue(38)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q1Stats, 1, {
+        index = 1,
+        value = 38
+    }, nil, nil, 241313))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.ingenuity:addValue(45)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.HARANIR_PHIAL_OF_INGENUITY, q2Stats, 2, {
+        index = 1,
+        value = 45,
+    }, nil, nil, 241312))
+
+    return buffs
+end
+
+
+
 
 -- TWW
 
@@ -292,7 +412,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
-function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
+function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuffTWW(recipeData)
     local buffStats = CraftSim.ProfessionStats()
     --- Shattering Essence Traits "Buff Perks"
     --- not coded into db2 so need to do it manually
@@ -591,25 +711,78 @@ function CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(recipeData)
         "Whenever you achieve a major breakthrough in experimentation\ngain +20 Ingenuity for 4 hours for all Alchemy crafts.")
 end
 
-function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
-    local _, subEvent, _, _, sourceName = CombatLogGetCurrentEventInfo()
-    if subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" then
-        if ProfessionsFrame:IsVisible() then
-            local playerName = UnitName("player")
-            if sourceName == playerName then
-                local auraID = select(12, CombatLogGetCurrentEventInfo())
-                print("Buff changed: " .. tostring(auraID))
-                if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
-                    if CraftSim.INIT.currentRecipeID then
-                        local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
-                        if isWorkOrder then
-                            CraftSim.INIT:TriggerModuleUpdate(false)
-                        else
-                            CraftSim.INIT:TriggerModuleUpdate(false)
-                        end
-                    end
+function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
+    if InCombatLockdown() then return end
+    if unitTarget ~= "player" then return end
+
+    local haveActiveBuffsChanged = false
+
+    if info.isFullUpdate then
+        -- Full update on login/reload: scan all tracked buffs directly
+        local newActiveIds = {}
+        for _, spellId in pairs(CraftSim.CONST.BUFF_IDS) do
+            local auraData = C_UnitAuras.GetPlayerAuraBySpellID(spellId)
+            if auraData then
+                tinsert(newActiveIds, auraData.auraInstanceID)
+            end
+        end
+
+        -- Check if the active set actually changed
+        if #newActiveIds ~= #self.activeBuffInstanceIds then
+            haveActiveBuffsChanged = true
+        else
+            for _, id in ipairs(newActiveIds) do
+                if not tContains(self.activeBuffInstanceIds, id) then
+                    haveActiveBuffsChanged = true
+                    break
                 end
             end
         end
+
+        self.activeBuffInstanceIds = newActiveIds
+
+        if haveActiveBuffsChanged and CraftSim.INIT.currentRecipeID then
+            CraftSim.INIT:TriggerModuleUpdate()
+        end
+        return
+    end
+
+	if info.addedAuras then
+		for _, v in pairs(info.addedAuras) do
+            local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, v.spellId)
+            local isAlreadyActive = tContains(self.activeBuffInstanceIds, v.auraInstanceID)
+            if isTrackedBuff and not isAlreadyActive then
+                tinsert(self.activeBuffInstanceIds, v.auraInstanceID)
+                haveActiveBuffsChanged = true
+            end
+		end
+    end
+
+    -- Add buffs that are already active but did not exist in the table before (on login etc.)
+    if info.updatedAuraInstanceIDs then
+		for _, v in pairs(info.updatedAuraInstanceIDs) do
+			local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
+            if aura then
+                local isTrackedBuff = tContains(CraftSim.CONST.BUFF_IDS, aura.spellId)
+                local isAlreadyActive = tContains(self.activeBuffInstanceIds, aura.auraInstanceID)
+                if isTrackedBuff and not isAlreadyActive then
+                    tinsert(self.activeBuffInstanceIds, aura.auraInstanceID)
+                    haveActiveBuffsChanged = true
+                end
+            end
+		end
+	end
+
+    -- Remove buffs that are no longer active
+    if info.removedAuraInstanceIDs then
+		for _, v in pairs(info.removedAuraInstanceIDs) do
+            tremove(self.activeBuffInstanceIds, tIndexOf(self.activeBuffInstanceIds, v))
+            haveActiveBuffsChanged = true
+        end
+    end
+
+    -- Trigger module update if the number of active buffs has changed and a recipe is selected
+    if haveActiveBuffsChanged and CraftSim.INIT.currentRecipeID then
+        CraftSim.INIT:TriggerModuleUpdate()
     end
 end

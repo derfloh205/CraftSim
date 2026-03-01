@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CUSTOMER_HISTORY : Frame
----@field UI table
+---@field UI CraftSim.CUSTOMER_HISTORY.UI
 ---@field frame CraftSim.CUSTOMER_HISTORY.FRAME
 CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }

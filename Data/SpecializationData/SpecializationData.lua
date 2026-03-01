@@ -40,6 +40,16 @@ CraftSim.SPECIALIZATION_DATA.NODE_DATA = {
         [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA,
         [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA
     },
+    [CraftSim.CONST.EXPANSION_IDS.MIDNIGHT] = {
+        [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA,
+        [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA,
+        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA,
+        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA,
+        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA,
+        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA,
+        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA,
+        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA
+    },
 }
 
 -- used for e.g. craft buffs to determine trait dependend stats

@@ -419,9 +419,60 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         }
 
+        frame.content.reagentListSimplified = GGUI.FrameList {
+            parent = frame.content,
+            anchorPoints = { { anchorParent = frame.content, offsetY = -190, anchorA = "TOP", anchorB = "TOP", offsetX = -20 } },
+            sizeY = 150, hideScrollbar = true,
+            columnOptions = {
+                {
+                    width = 50, -- reagentIcon
+                },
+                {
+                    label = GUTIL:GetQualityIconStringSimplified(1, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, 0, reagentListQualityIconOffsetY),
+                    width = reagentListQualityColumnWidth, -- q1
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    label = GUTIL:GetQualityIconStringSimplified(2, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, 0, reagentListQualityIconOffsetY),
+                    width = reagentListQualityColumnWidth, -- q2
+                    justifyOptions = { type = "H", align = "CENTER" },
+                }
+            },
+            rowConstructor = function(columns)
+                local iconColumn = columns[1]
+                local q1Column = columns[2]
+                local q2Column = columns[3]
+
+                iconColumn.text = GGUI.Text {
+                    parent = iconColumn, anchorParent = iconColumn,
+                }
+                q1Column.text = GGUI.Text {
+                    parent = q1Column, anchorParent = q1Column,
+                }
+                q2Column.text = GGUI.Text {
+                    parent = q2Column, anchorParent = q2Column,
+                }
+
+                for _, qColumn in ipairs({ q1Column, q2Column }) do
+                    qColumn:EnableMouse(true)
+                    ---@type ItemMixin?
+                    qColumn.item = nil
+                    GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
+
+                    qColumn:SetScript("OnMouseDown", function()
+                        if IsShiftKeyDown() and qColumn.item then
+                            qColumn.item:ContinueOnItemLoad(function()
+                                ChatEdit_InsertLink(qColumn.item:GetItemLink())
+                            end)
+                        end
+                    end)
+                end
+            end
+        }
+
         frame.content.infoIcon = GGUI.HelpIcon {
             parent = frame.content,
-            anchorParent = frame.content.reagentList.frame,
+            anchorParent = frame.content,
             anchorA = "BOTTOMRIGHT", anchorB = "TOPLEFT", offsetX = 45, offsetY = -5,
             text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO)
         }
@@ -431,20 +482,20 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             text = f.g(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED)), hide = true,
         }
 
-        local finishingReagentIconsOffsetX = 13
-        local finishingReagentIconsOffsetY = 0
+        local finishingReagentIconsOffsetX = 20
+        local finishingReagentIconsOffsetY = 10
         local finishingReagentIconsSize = 30
 
         frame.content.finishingReagentSlots = {
             GGUI.Icon {
-                parent = frame.content, anchorParent = frame.content.reagentList.frame,
-                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX, offsetY = finishingReagentIconsOffsetY,
+                parent = frame.content, anchorParent = frame.content,
+                anchorA = "BOTTOMLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX, offsetY = finishingReagentIconsOffsetY,
                 sizeX = finishingReagentIconsSize, sizeY = finishingReagentIconsSize, qualityIconScale = 1.2,
                 texturePath = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
             },
             GGUI.Icon {
-                parent = frame.content, anchorParent = frame.content.reagentList.frame, offsetY = finishingReagentIconsOffsetY,
-                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX + finishingReagentIconsSize + 5,
+                parent = frame.content, anchorParent = frame.content, offsetY = finishingReagentIconsOffsetY,
+                anchorA = "BOTTOMLEFT", anchorB = "BOTTOMLEFT", offsetX = finishingReagentIconsOffsetX + finishingReagentIconsSize + 5,
                 sizeX = finishingReagentIconsSize, sizeY = finishingReagentIconsSize, qualityIconScale = 1.2,
                 texturePath = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
             }
@@ -507,22 +558,38 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         local qualityIconSize = 25
 
         for i = 1, recipeData.maxQuality do
+            local qualityIconLabel
+            if recipeData:HasSimplifiedQualityResult() then
+                qualityIconLabel = GUTIL:GetQualityIconStringSimplified(i, qualityIconSize, qualityIconSize, 0, -2)
+            else
+                qualityIconLabel = GUTIL:GetQualityIconString(i, qualityIconSize, qualityIconSize, 0, -2)
+            end
             ---@type GGUI.DropdownData
             local dropdownDataElement = {
-                label = GUTIL:GetQualityIconString(i, qualityIconSize, qualityIconSize, 0, -2),
+                label = qualityIconLabel,
                 value = i,
             }
             tinsert(dropdownData, dropdownDataElement)
         end
 
         local initialValue = recipeMaxQualities[recipeData.recipeID] or recipeData.maxQuality
+        local initialQualityIconLabel
+        if recipeData:HasSimplifiedQualityResult() then
+            initialQualityIconLabel = GUTIL:GetQualityIconStringSimplified(initialValue, qualityIconSize, qualityIconSize, 0, -2)
+        else
+            initialQualityIconLabel = GUTIL:GetQualityIconString(initialValue, qualityIconSize, qualityIconSize, 0, -2)
+        end
         maxQualityDropdown:SetData {
             data = dropdownData,
             initialValue = initialValue,
-            initialLabel = GUTIL:GetQualityIconString(initialValue, qualityIconSize, qualityIconSize, 0, -2),
+            initialLabel = initialQualityIconLabel,
         }
 
-        reagentOptimizationFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
+        if recipeData:HasSimplifiedQualityResult() then
+            reagentOptimizationFrame.content.qualityIcon:SetQualitySimplified(recipeData.resultData.expectedQuality)
+        else
+            reagentOptimizationFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
+        end
     end
 
     local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
@@ -547,9 +614,20 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
 
     reagentOptimizationFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive and not isSameAllocation)
 
-    local reagentList = reagentOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentListQ3 = reagentOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentListSimplified = reagentOptimizationFrame.content.reagentListSimplified --[[@as GGUI.FrameList]]
+    reagentListQ3:Remove()
+    reagentListSimplified:Remove()
+    reagentListQ3:SetVisible(false)
+    reagentListSimplified:SetVisible(false)
+    local reagentList
+    local isSimplified = recipeData:IsSimplifiedQualityRecipe()
+    if isSimplified then
+        reagentList = reagentListSimplified
+    else
+        reagentList = reagentListQ3
+    end
 
-    reagentList:Remove()
 
     reagentOptimizationFrame.content.sameAllocationText:SetVisible(isSameAllocation)
     reagentOptimizationFrame.content.infoIcon:SetVisible(not isSameAllocation)
@@ -565,13 +643,12 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         end
     end
 
-
     if not isSameAllocation then
         for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
             if reagent.hasQuality then
                 reagentList:Add(function(_, columns)
                     local iconColumn = columns[1]
-                    local qualityColumns = { columns[2], columns[3], columns[4] }
+                    local qualityColumns = isSimplified and { columns[2], columns[3] } or { columns[2], columns[3], columns[4] }
 
                     iconColumn.text:SetText(GUTIL:IconToText(reagent.items[1].item:GetItemIcon(), 25, 25))
 

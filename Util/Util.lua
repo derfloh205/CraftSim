@@ -346,6 +346,7 @@ end
 ---@param skillCurveValueEnd number
 ---@param lessConcentrationUsageFactors number[]
 ---@param noRounding boolean?
+---@return number concentrationCost
 function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
                                                   skillCurveValueEnd, lessConcentrationUsageFactors, noRounding)
     local skillDifference = math.abs(skillEnd - skillStart)

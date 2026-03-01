@@ -1786,13 +1786,15 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
                 reagentFrame.q1Input.textInput:SetText(reagent.items[1].quantity)
                 reagentFrame.q2Input.textInput:SetText(reagent.items[2].quantity)
-                reagentFrame.q3Input.textInput:SetText(reagent.items[3].quantity)
                 reagentFrame.q1Input.currentValue = reagent.items[1].quantity
                 reagentFrame.q2Input.currentValue = reagent.items[2].quantity
-                reagentFrame.q3Input.currentValue = reagent.items[3].quantity
                 reagentFrame.q1Input.reagentItem = reagent.items[1]
                 reagentFrame.q2Input.reagentItem = reagent.items[2]
-                reagentFrame.q3Input.reagentItem = reagent.items[3]
+                if not recipeData:IsSimplifiedQualityRecipe() then
+                    reagentFrame.q3Input.textInput:SetText(reagent.items[3].quantity)
+                    reagentFrame.q3Input.currentValue = reagent.items[3].quantity
+                    reagentFrame.q3Input.reagentItem = reagent.items[3]
+                end
             else
                 reagentFrame.isActive = false
                 reagentFrame:Hide()
@@ -2091,16 +2093,27 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
             return {
                 count = reward.count,
-                item = Item:CreateFromItemLink(reward.itemLink)
+                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+                currency = reward.currencyType,
             }
         end)
         GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
             for _, reward in ipairs(rewardItems) do
-                -- itemLinks might contain no name but can be used to fetch id
-                craftOrderInfoText = craftOrderInfoText ..
-                    "\n- " ..
-                    GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
-                    " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                if reward.currency then
+                    local currencyLink = C_CurrencyInfo.GetCurrencyLink(reward.currency, reward.count)
+                    local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " ..
+                        GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
+                        " " .. (currencyLink or "<?>") .. " x" .. reward.count
+                end
+                if reward.item then
+                    -- itemLinks might contain no name but can be used to fetch id
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " ..
+                        GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
+                            " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                end
             end
 
             row.tooltipOptions = {
