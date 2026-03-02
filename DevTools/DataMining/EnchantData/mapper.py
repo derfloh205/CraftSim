@@ -25,9 +25,11 @@ def map(download, buildVersion):
             for enchantData in enchantDataTable:
                 if enchantData["CraftingDataID"] == str(craftingDataID):
                     qualityID = int(enchantData["Rank"])
-                    # if qualityID is greater than 3, set it to 0 due to enchant item not having quality variants
-                    if qualityID > 3:
-                        qualityID = 0
+                    # if qualityID is 13 then its 1, 14 is 2 for simplified recipes
+                    if qualityID == 13:
+                        qualityID = 1
+                    elif qualityID == 14:
+                        qualityID = 2
                     itemID = int(enchantData["ItemID"])
                     if craftingDataID not in enchantDataMappedTable:
                         enchantDataMappedTable[craftingDataID] = {}
