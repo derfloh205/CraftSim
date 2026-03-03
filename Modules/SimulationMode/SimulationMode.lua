@@ -256,36 +256,13 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     if not CraftSim.SIMULATION_MODE.isActive then return end
     if not CraftSim.SIMULATION_MODE.recipeData then return end
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
-
-    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-        if currentInput.isActive then
-            for i = 1, 3, 1 do
-                local input = currentInput["inputq" .. i]
-                input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
-            end
-        end
+    if not CraftSim.SIMULATION_MODE.recipeData.recipeID == recipeData.recipeID then
+        return
     end
 
-    for _, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
-        for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
-            ---@type GGUI.ItemSelector
-            local optionalReagentItemSelector = optionalReagentItemSelector
-
-            if #optionalReagentItemSelector.selectionFrame.itemSlots > 0 then
-                -- if same slot
-                local sameSlot = optionalReagentItemSelector.selectionFrame.itemSlots[1].item:GetItemID() ==
-                    finishingSlot.possibleReagents[1].item:GetItemID()
-
-                if sameSlot then
-                    optionalReagentItemSelector:SetSelectedItem(finishingSlot.activeReagent and
-                        finishingSlot.activeReagent.item)
-                end
-            end
-        end
-    end
-
+    -- set simulation reagents to recipeData reagents
+    CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData:GetCraftingReagentInfoTbl())
+    CraftSim.SIMULATION_MODE:InitializeReagentList()
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
@@ -294,6 +271,7 @@ end
 
 function CraftSim.SIMULATION_MODE:InitializeReagentList()
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    if not recipeData then return end
     local content
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -301,6 +279,7 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
     else
         content = CraftSim.SIMULATION_MODE.frame.content
     end
+
     if not recipeData then return end
 
     local simplified = recipeData:IsSimplifiedQualityRecipe()
@@ -373,7 +352,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
         local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
         local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
 
-        local newMax = math.max((q1Input.currentValue + q2Input.currentValue) - requiredQuantity, 0)
+        local newMax = math.max(requiredQuantity - (q1Input.currentValue + q2Input.currentValue), 0)
         q1Input.maxValue = q1Input.currentValue + newMax
         q2Input.maxValue = q2Input.currentValue + newMax
     end
