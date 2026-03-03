@@ -269,6 +269,8 @@ end
 ---@param optimizationResult CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
     if CraftSim.SIMULATION_MODE.isActive then
+        CraftSim.SIMULATION_MODE.recipeData.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+        CraftSim.SIMULATION_MODE:InitializeReagentList()
         CraftSim.INIT:TriggerModuleUpdate()
     end
 end

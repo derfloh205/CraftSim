@@ -807,6 +807,13 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     local craftingDetailsFrame = simModeFrames.detailsFrame
     print("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
 
+    if not CraftSim.SIMULATION_MODE.isActive then
+        -- only hide, they will be shown automatically if available
+        for _, selector in pairs(frame.optionalReagentItemSelectors) do
+            selector:Hide()
+        end
+    end
+
     CraftSim.FRAME:ToggleFrame(craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
 end
 
