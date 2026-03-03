@@ -310,6 +310,25 @@ function CraftSim.UTIL:IsTWWRecipe(recipeID)
     return false
 end
 
+---@param recipeID number
+function CraftSim.UTIL:IsMidnightRecipe(recipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if recipeInfo then
+        local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+        if not professionInfo.profession then
+            print("No Profession loaded yet?", false, true)
+            print(professionInfo, true)
+        end
+
+        -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
+        local IsMidnightRecipe = professionInfo.professionID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
+        return IsMidnightRecipe
+    end
+
+    return false
+end
+
 ---@param baseYield number
 function CraftSim.UTIL:GetMulticraftConstantByBaseYield(baseYield)
     local mcConstants = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANTS")
