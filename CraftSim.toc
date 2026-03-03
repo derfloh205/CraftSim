@@ -43,6 +43,8 @@ Media/Media.lua
 
 Util/Frames.lua
 Util/Widgets.lua
+Util/Widgets/ReagentList.lua
+
 Util/Comm.lua
 Util/API.lua
 
