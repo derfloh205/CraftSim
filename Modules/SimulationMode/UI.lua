@@ -801,44 +801,13 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
     frame:Show()
 
-    local hasOptionalReagents = recipeData.reagentData:HasOptionalReagents()
     local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local bestQBox = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckbox
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents,
-            not CraftSim.SIMULATION_MODE.isActive and recipeData.hasReagents)
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents,
-            not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
-    else
-        bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckbox
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents,
-            not CraftSim.SIMULATION_MODE.isActive and
-            (recipeData.hasReagents or recipeData.isSalvageRecipe))
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents,
-            not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
-    end
     CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
     local craftingDetailsFrame = simModeFrames.detailsFrame
     print("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
 
-    if not CraftSim.SIMULATION_MODE.isActive then
-        -- only hide, they will be shown automatically if available
-        for _, selector in pairs(frame.optionalReagentItemSelectors) do
-            selector:Hide()
-        end
-    end
-
-
     CraftSim.FRAME:ToggleFrame(craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
-    CraftSim.FRAME:ToggleFrame(bestQBox, not CraftSim.SIMULATION_MODE.isActive)
-
-    -- also toggle the blizzard create all buttons and so on so that a user does not get the idea to press create when in sim mode..
-    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateAllButton, not CraftSim.SIMULATION_MODE.isActive)
-    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateMultipleInputBox,
-        not CraftSim.SIMULATION_MODE.isActive)
-    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateButton, not CraftSim.SIMULATION_MODE.isActive)
 end
 
 function CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
