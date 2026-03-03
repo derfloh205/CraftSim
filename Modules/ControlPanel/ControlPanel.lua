@@ -173,10 +173,10 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
                 return false
             end
 
-            -- finally check if its a The War Within recipe
+            -- finally check if its a Midnight recipe
 
-            local isTWWRecipe = CraftSim.UTIL:IsTWWRecipe(recipeInfo.recipeID)
-            if not isTWWRecipe then
+            local isMidnightRecipe = CraftSim.UTIL:IsMidnightRecipe(recipeInfo.recipeID)
+            if not isMidnightRecipe then
                 return false
             end
 
