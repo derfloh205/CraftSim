@@ -293,39 +293,9 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
         content.reagentListSimplified:Remove()
     end
 
-    content.reagentList:Remove()
     content.reagentList:Show()
 
-    for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
-        if reagent.hasQuality then
-            content.reagentList:Add(function(row, columns)
-                local icon = columns[1].icon --[[@as GGUI.Icon]] 
-                local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
-                local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
-
-                columns[2].itemID = reagent.items[1].item:GetItemID()
-                columns[3].itemID = reagent.items[2].item:GetItemID()
-                
-                icon:SetItem(columns[2].itemID) 
-    
-                q1Input:SetValue(reagent.items[1].quantity)
-                q1Input.maxValue = reagent.requiredQuantity
-                q2Input:SetValue(reagent.items[2].quantity)
-                q2Input.maxValue = reagent.requiredQuantity
-                if not simplified then
-                    local q3Input = columns[4].input --[[@as GGUI.NumericInput]]
-                    columns[4].itemID = reagent.items[3].item:GetItemID()
-                    q3Input:SetValue(reagent.items[3].quantity)
-                    q3Input.maxValue = reagent.requiredQuantity
-                    columns[5].text:SetText("/" .. reagent.requiredQuantity)
-                else
-                    columns[4].text:SetText("/" .. reagent.requiredQuantity)
-                end
-            end)
-        end
-    end
-
-    content.reagentList:UpdateDisplay()
+    CraftSim.WIDGETS.PopulateReagentListFromRecipe(content.reagentList, recipeData, simplified)
 end
 
 ---@param itemID ItemID
