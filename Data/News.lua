@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.2.3"),
+        f.pg .. "Fixed Simulation Mode Hiding default Reagent UI",
+        f.pg .. "Fixed Simulation Mode Reagent Optimization Allocate Button",
         newP("21.2.2"),
         f.PG .. "Fixed Enchant Data Mining Scripts",
         f.a .. "- .. and updated Enchant Data",
