@@ -256,20 +256,11 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     if not CraftSim.SIMULATION_MODE.isActive then return end
     if not CraftSim.SIMULATION_MODE.recipeData then return end
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
-
-    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-        if currentInput.isActive then
-            for i = 1, 3, 1 do
-                local input = currentInput["inputq" .. i]
-                input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
-            end
-        end
-    end
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
 
     for _, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
-        for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+        for _, optionalReagentItemSelector in pairs(frame.optionalReagentItemSelectors) do
             ---@type GGUI.ItemSelector
             local optionalReagentItemSelector = optionalReagentItemSelector
 
