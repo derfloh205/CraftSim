@@ -1604,14 +1604,9 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     craftQueue:UpdateSubRecipes()
-
-    --- precalculate craftable status and subrecipetargetcounts before sorting to increase performance
-    table.foreach(craftQueue.craftQueueItems,
-        ---@param _ any
-        ---@param craftQueueItem CraftSim.CraftQueueItem
-        function(_, craftQueueItem)
-            craftQueueItem:CalculateCanCraft()
-        end)
+    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
+        craftQueueItem:CalculateCanCraft()
+    end
 
     CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
     craftQueue:FilterSortByPriority()
