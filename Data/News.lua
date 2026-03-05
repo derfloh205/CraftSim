@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.2.5"),
+        f.p .. "Localization Update for zhCN",
+        collab("https://github.com/LvWind"),
         newP("21.2.4"),
         f.PG .. "Fixed Queue First Crafts",
         newP("21.2.3"),
