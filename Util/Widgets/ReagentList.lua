@@ -6,24 +6,30 @@ local GUTIL = CraftSim.GUTIL
 
 CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 
----@class CraftSim.WIDGETS.ReagentListCallbacks
+---@class CraftSim.WIDGETS.ReagentList.ConstructorOptions
+---@field parent Frame
+---@field anchorPoints GGUI.AnchorPoint[]?
 ---@field onHeaderClick fun(qualityID: integer)?
 ---@field onQuantityChanged fun(row: GGUI.FrameList.Row, columns: table, qualityIndex: integer)?
 
----Create shared quality-reagent framelists (Q3 and simplified variants).
----@param parent Frame
----@param anchorPoints GGUI.AnchorPoint[]|nil
----@param callbacks CraftSim.WIDGETS.ReagentListCallbacks
----@return GGUI.FrameList reagentListQ3, GGUI.FrameList reagentListSimplified
-function CraftSim.WIDGETS.CreateReagentLists(parent, anchorPoints, callbacks)
-    callbacks = callbacks or {}
+---@class CraftSim.WIDGETS.ReagentList : CraftSim.Object
+---@overload fun(options: CraftSim.WIDGETS.ReagentList.ConstructorOptions): CraftSim.WIDGETS.ReagentList
+---@field frame Frame usable as an anchor target (both lists share the same position)
+---@field activeList GGUI.FrameList?
+---@field private listQ3 GGUI.FrameList
+---@field private listSimplified GGUI.FrameList
+CraftSim.WIDGETS.ReagentList = CraftSim.Object:extend()
 
-    local reagentListQualityIconHeaderSize = 15
-    local reagentListQualityColumnWidth = 50
+local QUALITY_ICON_SIZE = 15
+local QUALITY_COLUMN_WIDTH = 50
 
-    anchorPoints = anchorPoints or {
+---@param options CraftSim.WIDGETS.ReagentList.ConstructorOptions
+function CraftSim.WIDGETS.ReagentList:new(options)
+    options = options or {}
+
+    local anchorPoints = options.anchorPoints or {
         {
-            anchorParent = parent,
+            anchorParent = options.parent,
             offsetX = 10,
             offsetY = -20,
             anchorA = "TOPLEFT",
@@ -31,245 +37,181 @@ function CraftSim.WIDGETS.CreateReagentLists(parent, anchorPoints, callbacks)
         },
     }
 
-    local function handleHeaderClick(qualityID)
-        if callbacks.onHeaderClick then
-            callbacks.onHeaderClick(qualityID)
-        end
-    end
+    self.listQ3 = self:CreateQ3List(options.parent, anchorPoints)
+    self.listSimplified = self:CreateSimplifiedList(options.parent, anchorPoints)
+    self.frame = self.listQ3.frame
+    self.onHeaderClick = options.onHeaderClick
+    self.onQuantityChanged = options.onQuantityChanged
 
-    local function handleQuantityChanged(row, columns, qualityIndex)
-        if callbacks.onQuantityChanged then
-            callbacks.onQuantityChanged(row, columns, qualityIndex)
-        end
-    end
-
-    -- 3-quality layout
-    local reagentListQ3 = GGUI.FrameList {
-        parent = parent,
-        anchorPoints = anchorPoints,
-        sizeY = 120,
-        hideScrollbar = true,
-        rowHeight = 35,
-        autoAdjustHeight = true,
-        columnOptions = {
-            {
-                width = 35, -- reagentIcon
-            },
-            {
-                width = reagentListQualityColumnWidth, -- q1
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
-                width = reagentListQualityColumnWidth, -- q2
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
-                width = reagentListQualityColumnWidth, -- q3
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
-                width = 20,
-                justifyOptions = { type = "H", align = "CENTER" }, -- required quantity
-            },
-        },
-        rowConstructor = function(columns, row)
-            local iconColumn = columns[1]
-            local q1Column = columns[2]
-            local q2Column = columns[3]
-            local q3Column = columns[4]
-            local requiredColumn = columns[5]
-
-            iconColumn.icon = GGUI.Icon {
-                parent = iconColumn,
-                anchorParent = iconColumn,
-                anchorA = "LEFT",
-                anchorB = "LEFT",
-                sizeX = 30,
-                sizeY = 30,
-                hideQualityIcon = true,
-            }
-
-            local function setupQualityColumn(qColumn, qualityIndex)
-                qColumn.itemID = nil
-                qColumn.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = qColumn,
-                    anchorParent = qColumn,
-                    sizeX = reagentListQualityColumnWidth * 0.8,
-                    anchorA = "CENTER",
-                    anchorB = "CENTER",
-                    minValue = 0,
-                    allowDecimals = false,
-                    onNumberValidCallback = function()
-                        handleQuantityChanged(row, columns, qualityIndex)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-
-                qColumn:EnableMouse(true)
-                ---@type ItemMixin?
-                qColumn.item = nil
-                GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
-
-                qColumn:SetScript("OnMouseDown", function()
-                    if IsShiftKeyDown() and qColumn.item then
-                        qColumn.item:ContinueOnItemLoad(function()
-                            ChatEdit_InsertLink(qColumn.item:GetItemLink())
-                        end)
-                    end
-                end)
-            end
-
-            setupQualityColumn(q1Column, 1)
-            setupQualityColumn(q2Column, 2)
-            setupQualityColumn(q3Column, 3)
-
-            requiredColumn.text = GGUI.Text {
-                parent = requiredColumn,
-                anchorParent = requiredColumn,
-                anchorA = "CENTER",
-                anchorB = "CENTER",
-                justifyOptions = { type = "H", align = "CENTER" },
-            }
-        end,
-    }
-
-    -- simplified 2-quality layout
-    local reagentListSimplified = GGUI.FrameList {
-        parent = parent,
-        anchorPoints = anchorPoints,
-        sizeY = 120,
-        hideScrollbar = true,
-        rowHeight = 35,
-        autoAdjustHeight = true,
-        columnOptions = {
-            {
-                width = 35, -- reagentIcon
-            },
-            {
-                width = reagentListQualityColumnWidth, -- q1
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
-                width = reagentListQualityColumnWidth, -- q2
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
-                width = 20,
-                justifyOptions = { type = "H", align = "CENTER" }, -- required quantity
-            },
-        },
-        rowConstructor = function(columns, row)
-            local iconColumn = columns[1]
-            local q1Column = columns[2]
-            local q2Column = columns[3]
-            local requiredColumn = columns[4]
-
-            iconColumn.icon = GGUI.Icon {
-                parent = iconColumn,
-                anchorParent = iconColumn,
-                anchorA = "LEFT",
-                anchorB = "LEFT",
-                sizeX = 30,
-                sizeY = 30,
-                hideQualityIcon = true,
-            }
-
-            local function setupQualityColumn(qColumn, qualityIndex)
-                qColumn.itemID = nil
-                qColumn.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = qColumn,
-                    anchorParent = qColumn,
-                    sizeX = reagentListQualityColumnWidth * 0.8,
-                    anchorA = "CENTER",
-                    anchorB = "CENTER",
-                    minValue = 0,
-                    allowDecimals = false,
-                    onNumberValidCallback = function()
-                        handleQuantityChanged(row, columns, qualityIndex)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-
-                qColumn:EnableMouse(true)
-                ---@type ItemMixin?
-                qColumn.item = nil
-                GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
-
-                qColumn:SetScript("OnMouseDown", function()
-                    if IsShiftKeyDown() and qColumn.item then
-                        qColumn.item:ContinueOnItemLoad(function()
-                            ChatEdit_InsertLink(qColumn.item:GetItemLink())
-                        end)
-                    end
-                end)
-            end
-
-            setupQualityColumn(q1Column, 1)
-            setupQualityColumn(q2Column, 2)
-
-            requiredColumn.text = GGUI.Text {
-                parent = requiredColumn,
-                anchorParent = requiredColumn,
-                anchorA = "CENTER",
-                anchorB = "CENTER",
-                justifyOptions = { type = "H", align = "CENTER" },
-            }
-        end,
-    }
-
-    -- convert header quality columns into visible buttons with a centered atlas texture
-    local function createHeaderButton(frameList, headerIndex, qualityID, simplified)
-        if not frameList.headerColumns then
-            return
-        end
-        local headerColumn = frameList.headerColumns[headerIndex]
-        if not headerColumn then
-            return
-        end
-
-        local button = GGUI.Button {
-            parent = headerColumn,
-            anchorParent = headerColumn,
-            anchorA = "CENTER",
-            anchorB = "CENTER",
-            sizeX = reagentListQualityColumnWidth,
-            sizeY = 20,
-            label = "",
-            clickCallback = function()
-                handleHeaderClick(qualityID)
-            end,
-        }
-
-        local atlasName = simplified
-            and ("Professions-Icon-Quality-12-Tier" .. qualityID)
-            or ("Professions-Icon-Quality-Tier" .. qualityID)
-        local iconTexture = button.frame:CreateTexture(nil, "OVERLAY")
-        iconTexture:SetSize(reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize)
-        iconTexture:SetAtlas(atlasName)
-        iconTexture:SetPoint("CENTER", button.frame, "CENTER", 0, 0)
-    end
-
-    createHeaderButton(reagentListQ3, 2, 1)
-    createHeaderButton(reagentListQ3, 3, 2)
-    createHeaderButton(reagentListQ3, 4, 3)
-
-    createHeaderButton(reagentListSimplified, 2, 1, true)
-    createHeaderButton(reagentListSimplified, 3, 2, true)
-
-    return reagentListQ3, reagentListSimplified
+    self:CreateHeaderButtons(self.listQ3, false)
+    self:CreateHeaderButtons(self.listSimplified, true)
 end
 
----@param frameList GGUI.FrameList
+---@private
+function CraftSim.WIDGETS.ReagentList:CreateRowConstructor(qualityCount)
+    local reagentList = self
+    return function(columns, row)
+        local iconColumn = columns[1]
+        iconColumn.icon = GGUI.Icon {
+            parent = iconColumn,
+            anchorParent = iconColumn,
+            anchorA = "LEFT",
+            anchorB = "LEFT",
+            sizeX = 30,
+            sizeY = 30,
+            hideQualityIcon = true,
+        }
+
+        for qualityIndex = 1, qualityCount do
+            local qColumn = columns[qualityIndex + 1]
+            qColumn.itemID = nil
+            qColumn.input = GGUI.NumericInput {
+                mouseWheelStep = 1,
+                parent = qColumn,
+                anchorParent = qColumn,
+                sizeX = QUALITY_COLUMN_WIDTH * 0.8,
+                anchorA = "CENTER",
+                anchorB = "CENTER",
+                minValue = 0,
+                allowDecimals = false,
+                onNumberValidCallback = function()
+                    if reagentList.onQuantityChanged then
+                        reagentList.onQuantityChanged(row, columns, qualityIndex)
+                    end
+                end,
+                borderAdjustWidth = 1.2,
+            }
+
+            qColumn:EnableMouse(true)
+            ---@type ItemMixin?
+            qColumn.item = nil
+            GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
+
+            qColumn:SetScript("OnMouseDown", function()
+                if IsShiftKeyDown() and qColumn.item then
+                    qColumn.item:ContinueOnItemLoad(function()
+                        ChatEdit_InsertLink(qColumn.item:GetItemLink())
+                    end)
+                end
+            end)
+        end
+
+        local requiredColumn = columns[qualityCount + 2]
+        requiredColumn.text = GGUI.Text {
+            parent = requiredColumn,
+            anchorParent = requiredColumn,
+            anchorA = "CENTER",
+            anchorB = "CENTER",
+            justifyOptions = { type = "H", align = "CENTER" },
+        }
+    end
+end
+
+---@private
+function CraftSim.WIDGETS.ReagentList:BuildColumnOptions(qualityCount)
+    local cols = {
+        { width = 35 }, -- reagent icon
+    }
+    for _ = 1, qualityCount do
+        table.insert(cols, {
+            width = QUALITY_COLUMN_WIDTH,
+            justifyOptions = { type = "H", align = "CENTER" },
+        })
+    end
+    table.insert(cols, {
+        width = 20,
+        justifyOptions = { type = "H", align = "CENTER" },
+    })
+    return cols
+end
+
+---@private
+---@return GGUI.FrameList
+function CraftSim.WIDGETS.ReagentList:CreateQ3List(parent, anchorPoints)
+    return GGUI.FrameList {
+        parent = parent,
+        anchorPoints = anchorPoints,
+        sizeY = 120,
+        hideScrollbar = true,
+        rowHeight = 35,
+        autoAdjustHeight = true,
+        columnOptions = self:BuildColumnOptions(3),
+        rowConstructor = self:CreateRowConstructor(3),
+    }
+end
+
+---@private
+---@return GGUI.FrameList
+function CraftSim.WIDGETS.ReagentList:CreateSimplifiedList(parent, anchorPoints)
+    return GGUI.FrameList {
+        parent = parent,
+        anchorPoints = anchorPoints,
+        sizeY = 120,
+        hideScrollbar = true,
+        rowHeight = 35,
+        autoAdjustHeight = true,
+        columnOptions = self:BuildColumnOptions(2),
+        rowConstructor = self:CreateRowConstructor(2),
+    }
+end
+
+---@private
+function CraftSim.WIDGETS.ReagentList:CreateHeaderButtons(frameList, simplified)
+    if not frameList.headerColumns then
+        return
+    end
+
+    local qualityCount = simplified and 2 or 3
+    for qualityID = 1, qualityCount do
+        local headerColumn = frameList.headerColumns[qualityID + 1]
+        if headerColumn then
+            self:CreateHeaderButton(headerColumn, qualityID, simplified)
+        end
+    end
+end
+
+---@private
+function CraftSim.WIDGETS.ReagentList:CreateHeaderButton(headerColumn, qualityID, simplified)
+    local reagentList = self
+    local button = GGUI.Button {
+        parent = headerColumn,
+        anchorParent = headerColumn,
+        anchorA = "CENTER",
+        anchorB = "CENTER",
+        sizeX = QUALITY_COLUMN_WIDTH,
+        sizeY = 20,
+        label = "",
+        clickCallback = function()
+            if reagentList.onHeaderClick then
+                reagentList.onHeaderClick(qualityID)
+            end
+        end,
+    }
+
+    local atlasName = simplified
+        and ("Professions-Icon-Quality-12-Tier" .. qualityID)
+        or ("Professions-Icon-Quality-Tier" .. qualityID)
+    local iconTexture = button.frame:CreateTexture(nil, "OVERLAY")
+    iconTexture:SetSize(QUALITY_ICON_SIZE, QUALITY_ICON_SIZE)
+    iconTexture:SetAtlas(atlasName)
+    iconTexture:SetPoint("CENTER", button.frame, "CENTER", 0, 0)
+end
+
 ---@param recipeData CraftSim.RecipeData
----@param simplified boolean
-function CraftSim.WIDGETS.PopulateReagentListFromRecipe(frameList, recipeData, simplified)
-    frameList:Remove()
+function CraftSim.WIDGETS.ReagentList:Populate(recipeData)
+    local simplified = recipeData:IsSimplifiedQualityRecipe()
+    self.activeList = simplified and self.listSimplified or self.listQ3
+    self.frame = self.activeList.frame
+    local inactiveList = simplified and self.listQ3 or self.listSimplified
+
+    inactiveList:Hide()
+    inactiveList:Remove()
+    self.activeList:Show()
+    self.activeList:Remove()
 
     for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
         if reagent.hasQuality then
-            frameList:Add(function(row, columns)
+            self.activeList:Add(function(row, columns)
                 ---@type GGUI.Icon
                 local icon = columns[1].icon
                 local q1Column = columns[2]
@@ -321,6 +263,10 @@ function CraftSim.WIDGETS.PopulateReagentListFromRecipe(frameList, recipeData, s
         end
     end
 
-    frameList:UpdateDisplay()
+    self.activeList:UpdateDisplay()
 end
 
+function CraftSim.WIDGETS.ReagentList:Hide()
+    self.listQ3:Hide()
+    self.listSimplified:Hide()
+end

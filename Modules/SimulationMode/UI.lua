@@ -84,20 +84,12 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
         end
 
-        local reagentListQ3, reagentListSimplified = CraftSim.WIDGETS.CreateReagentLists(
-            frame.content,
-            anchorPoints,
-            {
-                onHeaderClick = onHeaderClick,
-                onQuantityChanged = onQuantityChanged,
-            }
-        )
-
-        frame.content.reagentListQ3 = reagentListQ3
-        frame.content.reagentListSimplified = reagentListSimplified
-
-        ---@type GGUI.FrameList
-        frame.reagentList = nil
+        frame.content.reagentList = CraftSim.WIDGETS.ReagentList {
+            parent = frame.content,
+            anchorPoints = anchorPoints,
+            onHeaderClick = onHeaderClick,
+            onQuantityChanged = onQuantityChanged,
+        }
 
         local function CreateOptionalReagentItemSelector(offsetX)
             local optionalReagentDropdown = GGUI.ItemSelector({

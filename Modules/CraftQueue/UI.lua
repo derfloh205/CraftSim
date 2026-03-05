@@ -1194,30 +1194,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         end
     end
 
-    local reagentListQ3, reagentListSimplified = CraftSim.WIDGETS.CreateReagentLists(
-        editRecipeFrame.content,
-        reagentAnchorPoints,
-        {
-            onHeaderClick = setAllReagentsByQuality,
-            onQuantityChanged = onReagentQuantityChanged,
-        }
-    )
-
-    editRecipeFrame.content.reagentListQ3 = reagentListQ3
-    editRecipeFrame.content.reagentListSimplified = reagentListSimplified
-
-    local simplified = editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData and editRecipeFrame.craftQueueItem.recipeData:IsSimplifiedQualityRecipe()
-    local frameToAlignTo = editRecipeFrame.content.reagentListQ3.frame --[[@as GGUI.Frame]]
-    if simplified then
-        frameToAlignTo = editRecipeFrame.content.reagentListSimplified.frame --[[@as GGUI.Frame]]
-    end
+    editRecipeFrame.content.reagentList = CraftSim.WIDGETS.ReagentList {
+        parent = editRecipeFrame.content,
+        anchorPoints = reagentAnchorPoints,
+        onHeaderClick = setAllReagentsByQuality,
+        onQuantityChanged = onReagentQuantityChanged,
+    }
 
     local oRFrameX = 100
     local oRFrameY = 65
     local optionalReagentsFrame = CreateFrame("frame", nil, editRecipeFrame.content)
     optionalReagentsFrame:SetSize(oRFrameX, oRFrameY)
-    -- align optional reagents to the right of the quality reagent list header
-    optionalReagentsFrame:SetPoint("TOPLEFT", frameToAlignTo, "TOPRIGHT", 0, 20)
+    optionalReagentsFrame:SetPoint("TOPLEFT", editRecipeFrame.content.reagentList.frame, "TOPRIGHT", 0, 20)
 
     optionalReagentsFrame.collapse = function()
         optionalReagentsFrame:SetSize(oRFrameX, 0.1)
@@ -1716,29 +1704,9 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     -- required quality reagents
     if recipeData.hasQualityReagents then
-        local isSimplified = recipeData:IsSimplifiedQualityRecipe()
-
-        local reagentList
-        if isSimplified then
-            reagentList = editRecipeFrame.content.reagentListSimplified --[[@as GGUI.FrameList]]
-            editRecipeFrame.content.reagentListQ3:Hide()
-        else
-            reagentList = editRecipeFrame.content.reagentListQ3 --[[@as GGUI.FrameList]]
-            editRecipeFrame.content.reagentListSimplified:Hide()
-        end
-
-        editRecipeFrame.content.reagentList = reagentList
-        reagentList:Show()
-
-        CraftSim.WIDGETS.PopulateReagentListFromRecipe(reagentList, recipeData, isSimplified)
+        editRecipeFrame.content.reagentList:Populate(recipeData)
     else
-        -- hide all boxes and quality buttons
-        if editRecipeFrame.content.reagentListQ3 then
-            editRecipeFrame.content.reagentListQ3:Hide()
-        end
-        if editRecipeFrame.content.reagentListSimplified then
-            editRecipeFrame.content.reagentListSimplified:Hide()
-        end
+        editRecipeFrame.content.reagentList:Hide()
     end
 
     -- optionals

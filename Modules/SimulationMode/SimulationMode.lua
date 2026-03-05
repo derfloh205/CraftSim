@@ -282,20 +282,7 @@ function CraftSim.SIMULATION_MODE:InitializeReagentList()
 
     if not recipeData then return end
 
-    local simplified = recipeData:IsSimplifiedQualityRecipe()
-    if simplified then
-        content.reagentList = content.reagentListSimplified --[[@as GGUI.FrameList]]
-        content.reagentListQ3:Hide()
-        content.reagentListQ3:Remove()
-    else
-        content.reagentList = content.reagentListQ3 --[[@as GGUI.FrameList]]
-        content.reagentListSimplified:Hide()
-        content.reagentListSimplified:Remove()
-    end
-
-    content.reagentList:Show()
-
-    CraftSim.WIDGETS.PopulateReagentListFromRecipe(content.reagentList, recipeData, simplified)
+    content.reagentList:Populate(recipeData)
 end
 
 ---@param itemID ItemID
