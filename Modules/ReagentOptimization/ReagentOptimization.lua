@@ -266,27 +266,6 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     return results
 end
 
----@param optimizationResult CraftSim.ReagentOptimizationResult
-function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
-    if CraftSim.SIMULATION_MODE.isActive then
-        for reagentIndex, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-            local reagent = optimizationResult.reagents[reagentIndex]
-
-            if reagent then
-                if currentInput.isActive and reagent.hasQuality then
-                    for i, reagentItem in pairs(reagent.items) do
-                        currentInput["inputq" .. i]:SetText(reagentItem.quantity)
-                    end
-                end
-            end
-        end
-
-        CraftSim.INIT:TriggerModuleUpdate()
-    end
-end
-
 ---@param recipeData CraftSim.RecipeData
 ---@param bestResult CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResult)

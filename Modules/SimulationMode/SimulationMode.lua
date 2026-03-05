@@ -256,36 +256,13 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     if not CraftSim.SIMULATION_MODE.isActive then return end
     if not CraftSim.SIMULATION_MODE.recipeData then return end
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
-
-    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-        if currentInput.isActive then
-            for i = 1, 3, 1 do
-                local input = currentInput["inputq" .. i]
-                input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
-            end
-        end
+    if not CraftSim.SIMULATION_MODE.recipeData.recipeID == recipeData.recipeID then
+        return
     end
 
-    for _, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
-        for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
-            ---@type GGUI.ItemSelector
-            local optionalReagentItemSelector = optionalReagentItemSelector
-
-            if #optionalReagentItemSelector.selectionFrame.itemSlots > 0 then
-                -- if same slot
-                local sameSlot = optionalReagentItemSelector.selectionFrame.itemSlots[1].item:GetItemID() ==
-                    finishingSlot.possibleReagents[1].item:GetItemID()
-
-                if sameSlot then
-                    optionalReagentItemSelector:SetSelectedItem(finishingSlot.activeReagent and
-                        finishingSlot.activeReagent.item)
-                end
-            end
-        end
-    end
-
+    -- set simulation reagents to recipeData reagents
+    CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData:GetCraftingReagentInfoTbl())
+    CraftSim.SIMULATION_MODE:InitializeReagentList()
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
