@@ -18,9 +18,6 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 function CraftSim.WIDGETS.CreateReagentLists(parent, anchorPoints, callbacks)
     callbacks = callbacks or {}
 
-    -- match old CraftQueue quality buttons (small icon centered on red rectangle)
-    local reagentListQualityIconOffsetY = 0
-    local reagentListQualityIconOffsetX = -2
     local reagentListQualityIconHeaderSize = 15
     local reagentListQualityColumnWidth = 50
 
@@ -222,8 +219,8 @@ function CraftSim.WIDGETS.CreateReagentLists(parent, anchorPoints, callbacks)
         end,
     }
 
-    -- convert header quality columns into visible buttons
-    local function createHeaderButton(frameList, headerIndex, label, qualityID)
+    -- convert header quality columns into visible buttons with a centered atlas texture
+    local function createHeaderButton(frameList, headerIndex, qualityID, simplified)
         if not frameList.headerColumns then
             return
         end
@@ -237,81 +234,29 @@ function CraftSim.WIDGETS.CreateReagentLists(parent, anchorPoints, callbacks)
             anchorParent = headerColumn,
             anchorA = "CENTER",
             anchorB = "CENTER",
-            -- let the button fill the full column width, centered vertically
             sizeX = reagentListQualityColumnWidth,
             sizeY = 20,
-            -- use default UIPanelButtonTemplate to get the red rectangle look
-            label = label,
+            label = "",
             clickCallback = function()
                 handleHeaderClick(qualityID)
             end,
         }
 
-        -- ensure the icon string text is applied even if template/font changed
-        button:SetText(label)
+        local atlasName = simplified
+            and ("Professions-Icon-Quality-12-Tier" .. qualityID)
+            or ("Professions-Icon-Quality-Tier" .. qualityID)
+        local iconTexture = button.frame:CreateTexture(nil, "OVERLAY")
+        iconTexture:SetSize(reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize)
+        iconTexture:SetAtlas(atlasName)
+        iconTexture:SetPoint("CENTER", button.frame, "CENTER", 0, 0)
     end
 
-    createHeaderButton(
-        reagentListQ3,
-        2,
-        GUTIL:GetQualityIconString(
-            1,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconOffsetX,
-            reagentListQualityIconOffsetY
-        ),
-        1
-    )
-    createHeaderButton(
-        reagentListQ3,
-        3,
-        GUTIL:GetQualityIconString(
-            2,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconOffsetX,
-            reagentListQualityIconOffsetY
-        ),
-        2
-    )
-    createHeaderButton(
-        reagentListQ3,
-        4,
-        GUTIL:GetQualityIconString(
-            3,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconOffsetX,
-            reagentListQualityIconOffsetY
-        ),
-        3
-    )
+    createHeaderButton(reagentListQ3, 2, 1)
+    createHeaderButton(reagentListQ3, 3, 2)
+    createHeaderButton(reagentListQ3, 4, 3)
 
-    createHeaderButton(
-        reagentListSimplified,
-        2,
-        GUTIL:GetQualityIconStringSimplified(
-            1,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconOffsetX,
-            reagentListQualityIconOffsetY
-        ),
-        1
-    )
-    createHeaderButton(
-        reagentListSimplified,
-        3,
-        GUTIL:GetQualityIconStringSimplified(
-            2,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconHeaderSize,
-            reagentListQualityIconOffsetX,
-            reagentListQualityIconOffsetY
-        ),
-        2
-    )
+    createHeaderButton(reagentListSimplified, 2, 1, true)
+    createHeaderButton(reagentListSimplified, 3, 2, true)
 
     return reagentListQ3, reagentListSimplified
 end
