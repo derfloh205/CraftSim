@@ -62,6 +62,8 @@ CraftSim.CRAFTQ.quickBuyCache = {
 
 local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
+local printFC = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.FirstCrafts")
+
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem
@@ -1031,6 +1033,9 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
     local openRecipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
     local currentSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
+    printFC("Queueing First Crafts: " .. tostring(#openRecipeIDs) .. " recipes to check")
+    printFC("SkillLineID: " .. tostring(currentSkillLineID))
+
     local firstCraftRecipeIDs = GUTIL:Map(openRecipeIDs or {}, function(recipeID)
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
         if recipeInfo and recipeInfo.learned and recipeInfo.firstCraft then
@@ -1039,6 +1044,8 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
 
         return nil
     end)
+
+    printFC("First Craft Recipes: " .. tostring(#firstCraftRecipeIDs))
 
     GUTIL.FrameDistributor {
         iterationsPerFrame = 2,
@@ -1053,6 +1060,8 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                 CraftSim.CONST.ITEM_IDS.CURRENCY.FUSED_VITALITY, -- TODO catches epic BoP equipment but not rare
             })
             local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
+
+            printFC("Checking recipe: " .. tostring(recipeData.recipeName) .. " - " .. tostring(queueRecipe))
             if queueRecipe then
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES") then
                     if recipeData:HasRequiredSelectableReagent() then
@@ -1069,7 +1078,9 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                 recipeData:SetCheapestQualityReagentsMax()
                 self:AddRecipe({ recipeData = recipeData })
                 frameDistributor:Continue()
+                return
             end
+            frameDistributor:Continue()
         end
     }:Continue()
 end
