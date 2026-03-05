@@ -1217,7 +1217,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     local optionalReagentsFrame = CreateFrame("frame", nil, editRecipeFrame.content)
     optionalReagentsFrame:SetSize(oRFrameX, oRFrameY)
     -- align optional reagents to the right of the quality reagent list header
-    optionalReagentsFrame:SetPoint("TOPLEFT", frameToAlignTo, "TOPRIGHT", 0, 0)
+    optionalReagentsFrame:SetPoint("TOPLEFT", frameToAlignTo, "TOPRIGHT", 0, 20)
 
     optionalReagentsFrame.collapse = function()
         optionalReagentsFrame:SetSize(oRFrameX, 0.1)
