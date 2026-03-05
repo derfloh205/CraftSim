@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("21.2.5"),
         f.p .. "Localization Update for zhCN",
+        f.p .. f.bb("CraftLog"),
+        f.a .. "- Fixed Expected Resourcefulness Proc Count being too low",
         collab("https://github.com/LvWind"),
         newP("21.2.4"),
         f.PG .. "Fixed Queue First Crafts",
