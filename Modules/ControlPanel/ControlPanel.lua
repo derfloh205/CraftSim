@@ -173,10 +173,10 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
                 return false
             end
 
-            -- finally check if its a Midnight recipe
+            -- finally check if its a current expansion recipe
 
-            local isMidnightRecipe = CraftSim.UTIL:IsMidnightRecipe(recipeInfo.recipeID)
-            if not isMidnightRecipe then
+            local isCurrentExpansionRecipe = CraftSim.UTIL:IsCurrentExpansionRecipe(recipeInfo.recipeID)
+            if not isCurrentExpansionRecipe then
                 return false
             end
 
