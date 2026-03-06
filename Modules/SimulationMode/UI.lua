@@ -58,200 +58,38 @@ function CraftSim.SIMULATION_MODE.UI:Init()
     })
 
     local function createContent(frame)
-        local reagentListQualityIconOffsetY = -15
-        local reagentListQualityIconOffsetX = -2
-        local reagentListQualityIconHeaderSize = 25
-        local reagentListQualityColumnWidth = 50
-        frame.content.reagentListQ3 = GGUI.FrameList {
-            parent = frame.content,
-            anchorPoints = { { anchorParent = frame.content, offsetX = 10, offsetY = -20, anchorA = "TOPLEFT", anchorB = "TOPLEFT" } },
-            sizeY = 150, hideScrollbar = true,
-            rowHeight = 35,
-            autoAdjustHeight = true,
-            columnOptions = {
-                {
-                    width = 35, -- reagentIcon
-                },
-                {
-                    label = GUTIL:GetQualityIconString(1, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
-                    width = reagentListQualityColumnWidth, -- q1
-                    justifyOptions = { type = "H", align = "CENTER" },
-                    onClickCallback = function(column, index)
-                        CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
-                    end
-                },
-                {
-                    label = GUTIL:GetQualityIconString(2, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
-                    width = reagentListQualityColumnWidth, -- q2
-                    justifyOptions = { type = "H", align = "CENTER" },
-                    onClickCallback = function(column, index)
-                        CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
-                    end
-                },
-                {
-                    label = GUTIL:GetQualityIconString(3, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
-                    width = reagentListQualityColumnWidth, -- q3
-                    justifyOptions = { type = "H", align = "CENTER" },
-                    onClickCallback = function(column, index)
-                        CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
-                    end
-                },
-                {
-                    width = 20, justifyOptions = { type = "H", align = "CENTER" } -- required quantity
-                },
+        local anchorPoints = {
+            {
+                anchorParent = frame.content,
+                offsetX = 10,
+                offsetY = -40,
+                anchorA = "TOPLEFT",
+                anchorB = "TOPLEFT",
             },
-            rowConstructor = function(columns, row)
-                local iconColumn = columns[1]
-                local q1Column = columns[2]
-                local q2Column = columns[3]
-                local q3Column = columns[4]
-                local q4Column = columns[5]
-
-                iconColumn.icon = GGUI.Icon {
-                    parent = iconColumn, anchorParent = iconColumn,
-                    anchorA = "LEFT", anchorB = "LEFT", sizeX = 30, sizeY = 30,
-                    hideQualityIcon = true,
-                }
-                q1Column.itemID = nil
-                q1Column.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = q1Column, anchorParent = q1Column,
-                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
-                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q1Column.itemID, q1Column.input.currentValue, row)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-                q2Column.itemID = nil
-                q2Column.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = q2Column, anchorParent = q2Column,
-                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
-                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q2Column.itemID, q2Column.input.currentValue, row)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-                q3Column.itemID = nil
-                q3Column.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = q3Column, anchorParent = q3Column,
-                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
-                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q3Column.itemID, q3Column.input.currentValue, row)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-
-                q4Column.text = GGUI.Text {
-                    parent = q4Column, anchorParent = q4Column, anchorA = "CENTER", anchorB = "CENTER",
-                    justifyOptions = { type = "H", align = "CENTER" }
-                }
-
-                for _, qColumn in ipairs({ q1Column, q2Column, q3Column }) do
-                    qColumn:EnableMouse(true)
-                    ---@type ItemMixin?
-                    qColumn.item = nil
-                    GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
-
-                    qColumn:SetScript("OnMouseDown", function()
-                        if IsShiftKeyDown() and qColumn.item then
-                            qColumn.item:ContinueOnItemLoad(function()
-                                ChatEdit_InsertLink(qColumn.item:GetItemLink())
-                            end)
-                        end
-                    end)
-                end
-            end
         }
 
-        frame.content.reagentListSimplified = GGUI.FrameList {
-            parent = frame.content,
-            anchorPoints = { { anchorParent = frame.content, offsetX = 10, offsetY = -20, anchorA = "TOPLEFT", anchorB = "TOPLEFT" } },
-            sizeY = 150, hideScrollbar = true,
-            rowHeight = 35,
-            autoAdjustHeight = true,
-            columnOptions = {
-                {
-                    width = 35, -- reagentIcon
-                },
-                {
-                    label = GUTIL:GetQualityIconStringSimplified(1, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
-                    width = reagentListQualityColumnWidth, -- q1
-                    justifyOptions = { type = "H", align = "CENTER" },
-                    onClickCallback = function(column, index)
-                        CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
-                    end
-                },
-                {
-                    label = GUTIL:GetQualityIconStringSimplified(2, reagentListQualityIconHeaderSize, reagentListQualityIconHeaderSize, reagentListQualityIconOffsetX, reagentListQualityIconOffsetY),
-                    width = reagentListQualityColumnWidth, -- q2
-                    justifyOptions = { type = "H", align = "CENTER" },
-                    onClickCallback = function(column, index)
-                        CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
-                    end
-                },
-                {
-                    width = 20, justifyOptions = { type = "H", align = "CENTER" } -- required quantity
-                },
-            },
-            rowConstructor = function(columns, row)
-                local iconColumn = columns[1]
-                local q1Column = columns[2]
-                local q2Column = columns[3]
-                local q3Column = columns[4]
+        local function onHeaderClick(qualityID)
+            CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
+        end
 
-                iconColumn.icon = GGUI.Icon {
-                    parent = iconColumn, anchorParent = iconColumn,
-                    anchorA = "LEFT", anchorB = "LEFT", sizeX = 30, sizeY = 30,
-                    hideQualityIcon = true,
-                }
-                q1Column.itemID = nil
-                q1Column.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = q1Column, anchorParent = q1Column,
-                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
-                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q1Column.itemID, q1Column.input.currentValue, row)
-                    end,
-                    borderAdjustWidth = 1.2,
-
-                }
-                q2Column.itemID = nil
-                q2Column.input = GGUI.NumericInput {
-                    mouseWheelStep = 1,
-                    parent = q2Column, anchorParent = q2Column,
-                    sizeX = reagentListQualityColumnWidth * 0.8, anchorA = "CENTER", anchorB = "CENTER",
-                    minValue = 0, allowDecimals = false, onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:UpdateRequiredReagent(q2Column.itemID, q2Column.input.currentValue, row)
-                    end,
-                    borderAdjustWidth = 1.2,
-                }
-
-                q3Column.text = GGUI.Text {
-                    parent = q3Column, anchorParent = q3Column, anchorA = "CENTER", anchorB = "CENTER",
-                    justifyOptions = { type = "H", align = "CENTER" }
-                }
-
-                for _, qColumn in ipairs({ q1Column, q2Column }) do
-                    qColumn:EnableMouse(true)
-                    ---@type ItemMixin?
-                    qColumn.item = nil
-                    GGUI:SetTooltipsByTooltipOptions(qColumn, qColumn)
-
-                    qColumn:SetScript("OnMouseDown", function()
-                        if IsShiftKeyDown() and qColumn.item then
-                            qColumn.item:ContinueOnItemLoad(function()
-                                ChatEdit_InsertLink(qColumn.item:GetItemLink())
-                            end)
-                        end
-                    end)
-                end
+        local function onQuantityChanged(row, columns, qualityIndex)
+            local column = columns[qualityIndex + 1]
+            if not column or not column.itemID or not column.input then
+                return
             end
-        }
 
-        ---@type GGUI.FrameList
-        frame.reagentList = nil
+            local itemID = column.itemID
+            local quantity = column.input.currentValue
+
+            CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
+        end
+
+        frame.content.reagentList = CraftSim.WIDGETS.ReagentList {
+            parent = frame.content,
+            anchorPoints = anchorPoints,
+            onHeaderClick = onHeaderClick,
+            onQuantityChanged = onQuantityChanged,
+        }
 
         local function CreateOptionalReagentItemSelector(offsetX)
             local optionalReagentDropdown = GGUI.ItemSelector({
