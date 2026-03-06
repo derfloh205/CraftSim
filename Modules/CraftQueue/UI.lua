@@ -2061,13 +2061,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftOrderInfoText = ""
 
     if recipeData.orderData then
-        craftOrderInfoText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER) .. f.bb(recipeData.orderData.customerName)
+        craftOrderInfoText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER) .. f.bb(recipeData.orderData.customerName or "<?>")
 
         if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
             craftOrderInfoText = craftOrderInfoText .. f.grey(" (NPC)")
         end
 
-        if recipeData.orderData.customerNotes ~= "" then
+        if recipeData.orderData.customerNotes and recipeData.orderData.customerNotes ~= "" then
             craftOrderInfoText = craftOrderInfoText .. f.grey("\n" .. recipeData.orderData.customerNotes)
         end
 
