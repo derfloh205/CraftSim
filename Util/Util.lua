@@ -311,8 +311,10 @@ function CraftSim.UTIL:IsTWWRecipe(recipeID)
 end
 
 ---@param recipeID number
-function CraftSim.UTIL:IsMidnightRecipe(recipeID)
+function CraftSim.UTIL:IsCurrentExpansionRecipe(recipeID)
+    local currentExpansionID = CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         if not professionInfo.profession then
@@ -321,9 +323,9 @@ function CraftSim.UTIL:IsMidnightRecipe(recipeID)
         end
 
         -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
-        local IsMidnightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
-        return IsMidnightRecipe
+        local isCurrentExpansionRecipe = professionInfo.professionID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][currentExpansionID]
+        return isCurrentExpansionRecipe
     end
 
     return false
