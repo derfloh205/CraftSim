@@ -119,7 +119,7 @@ function CraftSim.WIDGETS.ReagentList:BuildColumnOptions(qualityCount)
         })
     end
     table.insert(cols, {
-        width = 20,
+        width = 30,
         justifyOptions = { type = "H", align = "CENTER" },
     })
     return cols
