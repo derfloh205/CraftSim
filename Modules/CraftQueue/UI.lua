@@ -1097,169 +1097,115 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
 
     -- required reagent frames (only for quality reagents as the non quality ones are fixed anyway)
     local qIconSize = 15
-    local qButtonSize = 20
+    local qButtonSize = 20 -- kept for layout reference
     local qButtonSpacingX = 25
     local qButtonBaseOffsetX = 50
     local qButtonBaseOffsetY = -70
 
-    editRecipeFrame.content.q1Button = GGUI.Button {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = qButtonBaseOffsetX, offsetY = qButtonBaseOffsetY,
-        label = GUTIL:GetQualityIconString(1, qIconSize, qIconSize), sizeX = qButtonSize, sizeY = qButtonSize,
-        clickCallback = function()
-            if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
-                editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(1)
-                editRecipeFrame.craftQueueItem.recipeData:Update()
-                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-            end
-        end
-    }
-    editRecipeFrame.content.q2Button = GGUI.Button {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.q1Button.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = qButtonSpacingX,
-        label = GUTIL:GetQualityIconString(2, qIconSize, qIconSize), sizeX = qButtonSize, sizeY = qButtonSize,
-        clickCallback = function()
-            if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
-                editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(2)
-                editRecipeFrame.craftQueueItem.recipeData:Update()
-                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-            end
-        end
-    }
-    editRecipeFrame.content.q3Button = GGUI.Button {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.q2Button.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = qButtonSpacingX,
-        label = GUTIL:GetQualityIconString(3, qIconSize, qIconSize, 1), sizeX = qButtonSize, sizeY = qButtonSize,
-        clickCallback = function()
-            if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
-                editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(3)
-                editRecipeFrame.craftQueueItem.recipeData:Update()
-                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-            end
-        end
+    -- required quality reagents list (FrameList-based, shared with SimulationMode)
+    local reagentAnchorPoints = {
+        {
+            anchorParent = editRecipeFrame.content,
+            offsetX = qButtonBaseOffsetX,
+            offsetY = qButtonBaseOffsetY - 30,
+            anchorA = "TOPLEFT",
+            anchorB = "TOPLEFT",
+        },
     }
 
-    editRecipeFrame.ValidateReagentQuantities = function()
-        for _, reagentFrame in pairs(editRecipeFrame.content.reagentFrames) do
-            if reagentFrame.isActive then
-                if reagentFrame:GetTotalQuantity() ~= reagentFrame.reagent.requiredQuantity then
-                    return false
-                end
-            end
+    local function setAllReagentsByQuality(qualityID)
+        if not editRecipeFrame.craftQueueItem or not editRecipeFrame.craftQueueItem.recipeData then
+            return
         end
-        return true
+
+        local recipeData = editRecipeFrame.craftQueueItem.recipeData
+        if recipeData:IsSimplifiedQualityRecipe() and qualityID == 3 then
+            return
+        end
+
+        recipeData.reagentData:SetReagentsMaxByQuality(qualityID)
+        recipeData:Update()
+        CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+        CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
     end
 
-    editRecipeFrame.UpdateReagentQuantities = function()
-        for _, reagentFrame in pairs(editRecipeFrame.content.reagentFrames) do
-            if reagentFrame.isActive then
-                reagentFrame.reagent.items[1].quantity = reagentFrame.q1Input.currentValue
-                reagentFrame.reagent.items[2].quantity = reagentFrame.q2Input.currentValue
-                reagentFrame.reagent.items[3].quantity = reagentFrame.q3Input.currentValue
-            end
+    local function onReagentQuantityChanged(row, columns, qualityIndex)
+        if not editRecipeFrame.craftQueueItem or not editRecipeFrame.craftQueueItem.recipeData then
+            return
         end
-        return true
+
+        local recipeData = editRecipeFrame.craftQueueItem.recipeData
+        local reagent = row.reagent --[[@as CraftSim.Reagent?]]
+        if not reagent then
+            return
+        end
+
+        local simplified = recipeData:IsSimplifiedQualityRecipe()
+        local requiredQuantity = reagent.requiredQuantity
+
+        local qInputs = {}
+        qInputs[1] = columns[2].input --[[@as GGUI.NumericInput]]
+        qInputs[2] = columns[3].input --[[@as GGUI.NumericInput]]
+        local maxIndex = 2
+        if not simplified then
+            qInputs[3] = columns[4].input --[[@as GGUI.NumericInput]]
+            maxIndex = 3
+        end
+
+        local function getTotal()
+            local total = 0
+            for i = 1, maxIndex do
+                local input = qInputs[i]
+                total = total + (tonumber(input.currentValue) or 0)
+            end
+            return total
+        end
+
+        local total = getTotal()
+        if total > requiredQuantity then
+            local diff = total - requiredQuantity
+            local changedInput = qInputs[qualityIndex]
+            local newQuantity = math.max((tonumber(changedInput.currentValue) or 0) - diff, 0)
+            changedInput.textInput:SetText(newQuantity)
+            changedInput.currentValue = newQuantity
+        end
+
+        total = getTotal()
+
+        local requiredText = (simplified and columns[4].text) or columns[5].text --[[@as GGUI.Text]]
+
+        if total == requiredQuantity then
+            requiredText:SetColor(GUTIL.COLORS.WHITE)
+
+            -- propagate into reagent items
+            reagent.items[1].quantity = qInputs[1].currentValue
+            reagent.items[2].quantity = qInputs[2].currentValue
+            if not simplified and qInputs[3] then
+                reagent.items[3].quantity = qInputs[3].currentValue
+            elseif reagent.items[3] then
+                reagent.items[3].quantity = 0
+            end
+
+            recipeData:Update()
+            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+        else
+            requiredText:SetColor(GUTIL.COLORS.RED)
+        end
     end
 
-
-    local numReagentFrames = 6
-    local reagentFramesBaseOffsetX = 51
-    local reagentFramesBaseOffsetY = -5
-    local reagentFramesSpacingY = -25
-    local reagentFramesInputSpacingX = 20
-    local function createReagentFrame(i)
-        ---@class CraftSim.CRAFTQ.UI.ReagentFrame : Frame
-        ---@field reagent CraftSim.Reagent?
-        ---@field isActive? boolean
-        local reagentFrame = CreateFrame("frame", nil, editRecipeFrame.content)
-        reagentFrame:SetSize(200, 25)
-        reagentFrame:SetScale(0.9)
-        reagentFrame:SetPoint("TOP", editRecipeFrame.content.q1Button.frame, "BOTTOM", reagentFramesBaseOffsetX,
-            reagentFramesBaseOffsetY + reagentFramesSpacingY * i)
-
-        reagentFrame.icon = GGUI.Icon { parent = reagentFrame, anchorParent = reagentFrame, anchorA = "LEFT", anchorB = "LEFT",
-            qualityIconScale = 2, texturePath = CraftSim.CONST.EMPTY_SLOT_TEXTURE, sizeX = 25, sizeY = 25, hideQualityIcon = true }
-
-        reagentFrame.GetTotalQuantity = function()
-            local q1 = tonumber(reagentFrame.q1Input.currentValue)
-            local q2 = tonumber(reagentFrame.q2Input.currentValue)
-            local q3 = tonumber(reagentFrame.q3Input.currentValue)
-
-            return q1 + q2 + q3
-        end
-
-        reagentFrame.IsRequiredQuantity = function()
-            local total = reagentFrame:GetTotalQuantity()
-            if reagentFrame.reagent then
-                return total == reagentFrame.reagent.requiredQuantity
-            else
-                return false
-            end
-        end
-
-        ---@param reagentInput CraftSim.CRAFTQ.UI.ReagentInput
-        local function onReagentInput(reagentInput)
-            if reagentFrame:IsRequiredQuantity() then
-                -- reagentFrame.maxQuantityLabel:SetText("test")
-                reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.WHITE)
-
-                -- if all reagentFrames are valid, update recipe
-                if editRecipeFrame:ValidateReagentQuantities() then
-                    editRecipeFrame:UpdateReagentQuantities()
-                    editRecipeFrame.craftQueueItem.recipeData:Update()
-                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-                end
-            else
-                -- adapt input if its too much
-                local total = reagentFrame:GetTotalQuantity()
-                local max = reagentFrame.reagent.requiredQuantity
-                if total > max then
-                    local newQuantity = reagentInput.currentValue - (total - max)
-                    reagentInput.textInput:SetText(newQuantity)
-                    reagentInput.currentValue = newQuantity
-                    reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.WHITE)
-                else
-                    reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.RED)
-                end
-            end
-        end
-
-        ---@class CraftSim.CRAFTQ.UI.ReagentInput : GGUI.NumericInput
-        ---@field reagentItem CraftSim.ReagentItem?
-        reagentFrame.q1Input = GGUI.NumericInput {
-            parent = reagentFrame, anchorParent = reagentFrame.icon.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
-            offsetX = 10, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
-        }
-
-        ---@class CraftSim.CRAFTQ.UI.ReagentInput
-        reagentFrame.q2Input = GGUI.NumericInput {
-            parent = reagentFrame, anchorParent = reagentFrame.q1Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
-            offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
-        }
-
-        ---@class CraftSim.CRAFTQ.UI.ReagentInput
-        reagentFrame.q3Input = GGUI.NumericInput {
-            parent = reagentFrame, anchorParent = reagentFrame.q2Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
-            offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
-        }
-        reagentFrame.maxQuantity = 0
-        reagentFrame.maxQuantityLabel = GGUI.Text {
-            parent = reagentFrame, anchorParent = reagentFrame.q3Input.textInput.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 20,
-            text = "/ " .. reagentFrame.maxQuantity, justifyOptions = { type = "H", align = "LEFT" }
-        }
-        return reagentFrame
-    end
-    ---@type CraftSim.CRAFTQ.UI.ReagentFrame[]
-    editRecipeFrame.content.reagentFrames = {}
-
-    for i = 0, numReagentFrames - 1 do table.insert(editRecipeFrame.content.reagentFrames, createReagentFrame(i)) end
+    editRecipeFrame.content.reagentList = CraftSim.WIDGETS.ReagentList {
+        parent = editRecipeFrame.content,
+        anchorPoints = reagentAnchorPoints,
+        onHeaderClick = setAllReagentsByQuality,
+        onQuantityChanged = onReagentQuantityChanged,
+    }
 
     local oRFrameX = 100
     local oRFrameY = 65
     local optionalReagentsFrame = CreateFrame("frame", nil, editRecipeFrame.content)
     optionalReagentsFrame:SetSize(oRFrameX, oRFrameY)
-    optionalReagentsFrame:SetPoint("TOPLEFT", editRecipeFrame.content.q3Button.frame, "TOPRIGHT", 60, -2)
+    optionalReagentsFrame:SetPoint("TOPLEFT", editRecipeFrame.content.reagentList.frame, "TOPRIGHT", 0, 20)
 
     optionalReagentsFrame.collapse = function()
         optionalReagentsFrame:SetSize(oRFrameX, 0.1)
@@ -1756,54 +1702,11 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     local concentrationValue = recipeData:GetConcentrationValue()
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
 
-    local reagentFrames = editRecipeFrame.content.reagentFrames
-
     -- required quality reagents
     if recipeData.hasQualityReagents then
-        editRecipeFrame.content.q1Button:Show()
-        editRecipeFrame.content.q2Button:Show()
-        editRecipeFrame.content.q3Button:Show()
-
-        -- show quality buttons and boxes
-        ---@type CraftSim.Reagent[]
-        local qualityReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function(r) return r.hasQuality end)
-
-        for index, reagentFrame in pairs(reagentFrames) do
-            local reagent = qualityReagents[index]
-            if reagent then
-                reagentFrame.isActive = true
-                reagentFrame.reagent = reagent
-                reagentFrame:Show()
-                reagentFrame.icon:SetItem(reagent.items[1].item)
-
-                reagentFrame.maxQuantity = reagent.requiredQuantity
-                reagentFrame.maxQuantityLabel:SetText("/ " .. reagentFrame.maxQuantity)
-
-                reagentFrame.q1Input.textInput:SetText(reagent.items[1].quantity)
-                reagentFrame.q2Input.textInput:SetText(reagent.items[2].quantity)
-                reagentFrame.q1Input.currentValue = reagent.items[1].quantity
-                reagentFrame.q2Input.currentValue = reagent.items[2].quantity
-                reagentFrame.q1Input.reagentItem = reagent.items[1]
-                reagentFrame.q2Input.reagentItem = reagent.items[2]
-                if not recipeData:IsSimplifiedQualityRecipe() then
-                    reagentFrame.q3Input.textInput:SetText(reagent.items[3].quantity)
-                    reagentFrame.q3Input.currentValue = reagent.items[3].quantity
-                    reagentFrame.q3Input.reagentItem = reagent.items[3]
-                end
-            else
-                reagentFrame.isActive = false
-                reagentFrame:Hide()
-            end
-        end
+        editRecipeFrame.content.reagentList:Populate(recipeData)
     else
-        -- hide all boxes and quality buttons
-        editRecipeFrame.content.q1Button:Hide()
-        editRecipeFrame.content.q2Button:Hide()
-        editRecipeFrame.content.q3Button:Hide()
-
-        table.foreach(reagentFrames, function(_, reagentFrame)
-            reagentFrame:Hide()
-        end)
+        editRecipeFrame.content.reagentList:Hide()
     end
 
     -- optionals
@@ -2061,13 +1964,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftOrderInfoText = ""
 
     if recipeData.orderData then
-        craftOrderInfoText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER) .. f.bb(recipeData.orderData.customerName)
+        craftOrderInfoText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER) .. f.bb(recipeData.orderData.customerName or "<?>")
 
         if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
             craftOrderInfoText = craftOrderInfoText .. f.grey(" (NPC)")
         end
 
-        if recipeData.orderData.customerNotes ~= "" then
+        if recipeData.orderData.customerNotes and recipeData.orderData.customerNotes ~= "" then
             craftOrderInfoText = craftOrderInfoText .. f.grey("\n" .. recipeData.orderData.customerNotes)
         end
 

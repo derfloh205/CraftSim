@@ -8,6 +8,8 @@ CraftSim.NEWS = {}
 
 CraftSim.NEWS.GITHUB_COLLABS = {
  AVILENE = "https://github.com/avilene",
+ CODEPOET = "https://github.com/ergh99",
+ NETOUSS = "https://github.com/netouss",
 }
 
 local print = CraftSim.DEBUG:RegisterDebugID("Data.News")
@@ -21,6 +23,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.2.6*"),
+        f.pg .. f.bb("CraftQueue"),
+        f.a .. "- Fixed a lua error when queueing partron orders",
+        f.PG .. "Internal Widget Generalizations",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("21.2.5"),
         f.p .. "Localization Update for zhCN",
         f.p .. f.bb("CraftLog"),
