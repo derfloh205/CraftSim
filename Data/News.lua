@@ -29,6 +29,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.PG .. f.bb("Craft Queue"),
         f.a .. "- Turned around behaviour of the '+CraftQueue' button",
         f.a .. " now only optimizes on shift click",
+        f.p .. "Updates EasyCraft and ForgeFinder Exports",
         newP("21.2.6"),
         f.pg .. f.bb("CraftQueue"),
         f.a .. "- Fixed a lua error when queueing partron orders",
