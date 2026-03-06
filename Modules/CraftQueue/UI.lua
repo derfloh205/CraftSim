@@ -1013,7 +1013,7 @@ function CraftSim.CRAFTQ.UI:Init()
         label = "+ CraftQueue",
         tooltipOptions = {
             anchor = "ANCHOR_CURSOR_RIGHT",
-            text = "Hold " .. f.bb("Shift") .. " to queue without optimizations",
+            text = CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift to " .. f.g("optimize") .. " recipe before adding it to the queue",
         },
         clickCallback = function(_, _)
             CraftSim.CRAFTQ:QueueOpenRecipe()
