@@ -1063,9 +1063,12 @@ function CraftSim.CRAFTQ.UI:Init()
         end
     }
 
-    -- Update display when frame is shown to refresh button states
     CraftSim.CRAFTQ.frame:HookScript("OnShow", function()
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
+        RunNextFrame(function()
+            if CraftSim.CRAFTQ.frame:IsVisible() then
+                CraftSim.CRAFTQ.UI:UpdateDisplay()
+            end
+        end)
     end)
 end
 
