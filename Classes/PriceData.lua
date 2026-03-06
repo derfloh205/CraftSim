@@ -199,11 +199,9 @@ function CraftSim.PriceData:Update()
         local itemID = item:GetItemID()
         local itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i)
         if not itemPrice then
-            if CraftSim.PRICE_SOURCE:IsGreyItem(itemID) then
-                -- Grey/junk items cannot be sold on the AH; use vendor sell price instead.
-                -- Divide by AUCTION_HOUSE_CUT so the profit calculation (which multiplies by it) yields the vendor price.
-                local vendorSellPrice = CraftSim.PRICE_SOURCE:GetVendorSellPriceByItemID(itemID)
-                itemPrice = vendorSellPrice / CraftSim.CONST.AUCTION_HOUSE_CUT
+            if CraftSim.UTIL:IsGreyItem(itemID) then
+                -- Grey/junk items cannot be sold on the AH; use vendor sell price directly.
+                itemPrice = CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
             elseif self.recipeData.isGear then
                 itemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(item:GetItemLink())
             else

@@ -219,19 +219,16 @@ function CraftSim.CraftResult:CalculateCraftProfit()
     local resultValue = 0
     if not self.isWorkOrder then
         for _, craftResultItem in pairs(self.craftResultItems) do
-            local itemLink = craftResultItem.item:GetItemLink()
             local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
             local itemID = craftResultItem.item:GetItemID()
-            local resultItemPrice
-            if CraftSim.PRICE_SOURCE:IsGreyItem(itemID) then
-                -- Grey/junk items cannot be sold on the AH; use vendor sell price.
-                -- Divide by AUCTION_HOUSE_CUT so the multiplication below yields the vendor price.
-                local vendorSellPrice = CraftSim.PRICE_SOURCE:GetVendorSellPriceByItemID(itemID)
-                resultItemPrice = vendorSellPrice / CraftSim.CONST.AUCTION_HOUSE_CUT
+            if CraftSim.UTIL:IsGreyItem(itemID) then
+                -- Grey/junk items are sold to vendor; no AH cut applied
+                resultValue = resultValue + CraftSim.UTIL:GetVendorSellPriceByItemID(itemID) * quantity
             else
-                resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+                local itemLink = craftResultItem.item:GetItemLink()
+                local ahPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+                resultValue = resultValue + ahPrice * quantity * CraftSim.CONST.AUCTION_HOUSE_CUT
             end
-            resultValue = resultValue + resultItemPrice * quantity
         end
     end
 
@@ -239,7 +236,7 @@ function CraftSim.CraftResult:CalculateCraftProfit()
     if self.isWorkOrder then
         craftProfit = orderCommission - craftingCosts
     else
-        craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - craftingCosts
+        craftProfit = resultValue - craftingCosts
     end
 
     return craftProfit

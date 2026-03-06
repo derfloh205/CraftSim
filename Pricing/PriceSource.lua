@@ -172,25 +172,6 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, force
     return priceInfo.ahPrice, priceInfo
 end
 
---- Returns true if the item is grey/poor quality (cannot be sold on AH, vendor-only)
----@param itemID ItemID
----@return boolean
-function CraftSim.PRICE_SOURCE:IsGreyItem(itemID)
-    local rarity = select(3, C_Item.GetItemInfo(itemID))
-    if rarity == nil then
-        return false -- item data not yet cached; treat as non-grey (safe fallback)
-    end
-    return rarity == 0 -- Enum.ItemQuality.Poor = 0
-end
-
---- Returns the vendor sell price of an item (what you receive when selling to a vendor)
----@param itemID ItemID
----@return number vendorSellPrice
-function CraftSim.PRICE_SOURCE:GetVendorSellPriceByItemID(itemID)
-    local vendorSellPrice = select(11, C_Item.GetItemInfo(itemID))
-    return vendorSellPrice or 0
-end
-
 --- returns the amount of the item the player has in the AH or nil if no price source addon is loaded that can fetch this for us
 ---@param idOrLink? number | string
 ---@return number? auctionAmount

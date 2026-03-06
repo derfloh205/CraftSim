@@ -1411,9 +1411,9 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
             local count = craftResultItem.quantity
             local itemID = GUTIL:GetItemIDByLink(itemLink)
             local value
-            if CraftSim.PRICE_SOURCE:IsGreyItem(itemID) then
+            if CraftSim.UTIL:IsGreyItem(itemID) then
                 -- Grey/junk items cannot be sold on the AH; use vendor sell price directly (no AH cut)
-                value = CraftSim.PRICE_SOURCE:GetVendorSellPriceByItemID(itemID)
+                value = CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
             else
                 value = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) * CraftSim.CONST.AUCTION_HOUSE_CUT
             end
