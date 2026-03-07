@@ -253,8 +253,9 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult, recipeData, aNumCr
                 averageMulticraftExtraItems
             expectedStats.averageMulticraftExtraItems = expectedStats.totalMulticraftExtraItems / numCrafts
 
+            local numResourcefulnessReagents = recipeData.isSalvageRecipe and 1 or #recipeData.reagentData.requiredReagents
             expectedStats.numResourcefulness = expectedStats.numResourcefulness +
-                recipeData.professionStats.resourcefulness:GetPercent(true)
+                recipeData.professionStats.resourcefulness:GetPercent(true) * numResourcefulnessReagents
             local resourcefulnessChance = recipeData.professionStats.resourcefulness:GetPercent(true)
             local resourcefulnessSavedCosts = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
             local averageResourcefulnessSavedCosts = resourcefulnessChance * resourcefulnessSavedCosts

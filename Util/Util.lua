@@ -271,10 +271,11 @@ function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craf
     return qualityIDs
 end
 
---- without using recipeData
 ---@param recipeID number
-function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
+function CraftSim.UTIL:IsCurrentExpansionRecipe(recipeID)
+    local currentExpansionID = GetExpansionLevel()
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         if not professionInfo.profession then
@@ -283,28 +284,9 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
         end
 
         -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
-        local IsDragonflightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
-        return IsDragonflightRecipe
-    end
-
-    return false
-end
-
----@param recipeID number
-function CraftSim.UTIL:IsTWWRecipe(recipeID)
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-    if recipeInfo then
-        local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
-        if not professionInfo.profession then
-            print("No Profession loaded yet?", false, true)
-            print(professionInfo, true)
-        end
-
-        -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
-        local IsTWWRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
-        return IsTWWRecipe
+        local isCurrentExpansionRecipe = professionInfo.professionID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][currentExpansionID]
+        return isCurrentExpansionRecipe
     end
 
     return false
