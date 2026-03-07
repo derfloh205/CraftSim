@@ -513,7 +513,20 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     end
 
     numBP = #craftingDifficultyBP + 1 -- the 0 index will not be counted..
-    --print("numBP: " .. numBP)
+
+    -- Guard: if breakpoints table ended up empty (e.g. unsupported maxQuality or aggressive trimming),
+    -- return cheapest quality result to avoid nil arithmetic in calculateArrayBP
+    if numBP <= 0 or craftingDifficultyBP[0] == nil then
+        local result = CraftSim.ReagentOptimizationResult(recipeData)
+        for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
+            if reagent.hasQuality then
+                local resultReagent = reagent:Copy()
+                resultReagent:SetCheapestQualityMax(recipeData.subRecipeCostsEnabled)
+                table.insert(result.reagents, resultReagent)
+            end
+        end
+        return result
+    end
 
     local reagentMaxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
     local recipeMaxSkillBonus = reagentMaxSkillFactor * recipeData.baseProfessionStats.recipeDifficulty.value
