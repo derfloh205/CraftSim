@@ -90,11 +90,11 @@ end
 
 ---Returns the recipe weight for the reagent
 ---@param itemID integer
----@return integer weight the weight, if found, or 1 as a default to ensure the knapsack optimization works for items not yet in the weight data
+---@return integer weight the weight, if found, or 0
 function CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID)
     local weightEntry = CraftSim.REAGENT_DATA[itemID]
     if weightEntry == nil then
-        return 1
+        return 0
     end
     return weightEntry.weight
 end
@@ -120,9 +120,16 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     numReagents = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
 
+    -- Simplified (Midnight / 2-tier) recipes have quality factors 0 and 1 (max = 1 per item),
+    -- while regular (3-tier) recipes use quality factors 0, 1, and 2 (max = 2 per item).
+    -- Using 2 as the multiplier for simplified recipes would make maxWeight and tStart twice
+    -- as large as they should be, causing the optimizer to search beyond achievable weights
+    -- and always fall back to all-T1 reagents.
+    local maxQualityFactor = recipeData:IsSimplifiedQualityRecipe() and 1 or 2
+
     maxWeight = 0
     for i = 0, numReagents, 1 do
-        maxWeight = maxWeight + 2 * ks[i].numReq * ks[i].recipeFactoredWeight
+        maxWeight = maxWeight + maxQualityFactor * ks[i].numReq * ks[i].recipeFactoredWeight
     end
 
     local inf = math.huge
@@ -153,7 +160,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do initial weight first
     local i = 0
-    for k = 0, 2 * ks[i].numReq, 1 do -- for each weight and value in reagent(0)
+    for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(0)
         --print("current composition: " .. k)
         if ks[i].compositions[k] then
             b[i][ks[i].compositions[k].weight] = ks[i].compositions[k].value
@@ -163,7 +170,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do next weights
     for i = 1, numReagents, 1 do
-        for k = 0, 2 * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
+        for k = 0, maxQualityFactor * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
             for j = 0, maxWeight, 1 do -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
