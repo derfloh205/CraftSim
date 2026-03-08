@@ -90,11 +90,11 @@ end
 
 ---Returns the recipe weight for the reagent
 ---@param itemID integer
----@return integer weight the weight, if found, or 0
+---@return integer weight the weight, if found, or 1 as a default to ensure the knapsack optimization works for items not yet in the weight data
 function CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID)
     local weightEntry = CraftSim.REAGENT_DATA[itemID]
     if weightEntry == nil then
-        return 0
+        return 1
     end
     return weightEntry.weight
 end
