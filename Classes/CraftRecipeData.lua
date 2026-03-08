@@ -167,7 +167,13 @@ function CraftSim.CraftRecipeData:GetReagentCombinationDisplayString(reagentComb
     local iconSize = 17
     local displayString = ""
     for index, craftResultReagent in ipairs(reagents) do
-        local itemIcon = GUTIL:IconToText(craftResultReagent.item:GetItemIcon(), iconSize, iconSize)
+        local itemIcon
+        if craftResultReagent:IsCurrency() then
+            local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(craftResultReagent.currencyID)
+            itemIcon = currencyInfo and GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize) or "?"
+        else
+            itemIcon = GUTIL:IconToText(craftResultReagent.item:GetItemIcon(), iconSize, iconSize)
+        end
         local qualityIcon = ""
         local quantityText = "x " .. craftResultReagent.quantity
         if craftResultReagent.qualityID and craftResultReagent.qualityID > 0 then
