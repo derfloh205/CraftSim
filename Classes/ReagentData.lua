@@ -85,10 +85,17 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
 
     for _, reagentSlotSchematic in pairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = reagentSlotSchematic.reagentType
+        local hasCurrencyReagent = reagentSlotSchematic.reagents[1] and reagentSlotSchematic.reagents[1].currencyID ~= nil
+
+        print("CraftSim DEBUG reagentSlot: dataSlotIndex=" .. tostring(reagentSlotSchematic.dataSlotIndex) ..
+            " reagentType=" .. tostring(reagentType) ..
+            " dataSlotType=" .. tostring(reagentSlotSchematic.dataSlotType) ..
+            " hasCurrency=" .. tostring(hasCurrencyReagent) ..
+            " numReagents=" .. tostring(#reagentSlotSchematic.reagents))
 
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
-        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
+        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL or hasCurrencyReagent then
             if reagentSlotSchematic.required then
                 self.requiredSelectableReagentSlot = CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic)
             else
@@ -261,7 +268,7 @@ end
 -- Sets an optional currency Reagent active in a recipe if supported, if not does nothing
 ---@param currencyID number
 function CraftSim.ReagentData:SetOptionalCurrencyReagent(currencyID)
-    for _, slot in pairs(self.optionalReagentSlots) do
+    for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         local optionalReagent = GUTIL:Find(slot.possibleReagents,
             function(optionalReagent)
                 return optionalReagent:IsCurrency() and optionalReagent.currencyID == currencyID
@@ -529,10 +536,12 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
                 end
             end
         end
-        if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent then
+        if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent and not self.requiredSelectableReagentSlot:IsCurrency() then
             for _, possiblerequiredSelectableReagent in pairs(self.requiredSelectableReagentSlot.possibleReagents or {}) do
-                local itemID = possiblerequiredSelectableReagent.item:GetItemID()
-                CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+                if possiblerequiredSelectableReagent.item then
+                    local itemID = possiblerequiredSelectableReagent.item:GetItemID()
+                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+                end
             end
         end
     end
@@ -704,31 +713,44 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
 
     if self:HasRequiredSelectableReagent() then
         if self.requiredSelectableReagentSlot.activeReagent then
-            local itemID = self.requiredSelectableReagentSlot.activeReagent.item:GetItemID()
-            local isOrderReagent = self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
-            local reagentIcon = self.requiredSelectableReagentSlot.activeReagent.item:GetItemIcon()
-            local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
-            text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
-            local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
-            local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
-            if itemCount >= requiredQuantity or isOrderReagent then
-                quantityText = f.g(tostring(requiredQuantity))
-            end
-            local crafterText = ""
-            -- add crafterInfo text if reagent is supposed to be crafted by the player
-            local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
-                [itemID]
-            if not isOrderReagent and optimizedReagentRecipeData then
-                crafterText = f.white(" (" ..
-                    optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
-            end
+            if self.requiredSelectableReagentSlot:IsCurrency() then
+                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.requiredSelectableReagentSlot.activeReagent.currencyID)
+                if currencyInfo then
+                    local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
+                    text = text .. inlineIcon
+                    local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
+                    local quantityText = f.g(tostring(requiredQuantity))
+                    if currencyInfo.quantity < requiredQuantity then
+                        quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    end
+                    text = text .. " " .. quantityText .. "   "
+                end
+            else
+                local itemID = self.requiredSelectableReagentSlot.activeReagent.item:GetItemID()
+                local isOrderReagent = self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
+                local reagentIcon = self.requiredSelectableReagentSlot.activeReagent.item:GetItemIcon()
+                local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
+                text = text .. inlineIcon
+                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+                local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
+                local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
+                if itemCount >= requiredQuantity or isOrderReagent then
+                    quantityText = f.g(tostring(requiredQuantity))
+                end
+                local crafterText = ""
+                local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
+                    [itemID]
+                if not isOrderReagent and optimizedReagentRecipeData then
+                    crafterText = f.white(" (" ..
+                        optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                end
 
-            if isOrderReagent then
-                crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
-            end
+                if isOrderReagent then
+                    crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
+                end
 
-            text = text .. " " .. quantityText .. crafterText .. "   "
+                text = text .. " " .. quantityText .. crafterText .. "   "
+            end
         end
     end
 
@@ -736,28 +758,42 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         ---@type CraftSim.OptionalReagentSlot
         optionalReagentSlot = optionalReagentSlot
         if optionalReagentSlot.activeReagent then
-            local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
-            local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
-            text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
-                optionalReagentSlot.activeReagent.item:GetItemID())
-            local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
-            if itemCount >= multiplier then
-                quantityText = f.g(tostring(multiplier))
+            if optionalReagentSlot.activeReagent:IsCurrency() then
+                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(optionalReagentSlot.activeReagent.currencyID)
+                if currencyInfo then
+                    local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
+                    text = text .. inlineIcon
+                    local qualityID = optionalReagentSlot.activeReagent.qualityID or 0
+                    local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                    local quantityText = f.g(tostring(multiplier))
+                    if currencyInfo.quantity < multiplier then
+                        quantityText = f.r(tostring(multiplier) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    end
+                    text = text .. qualityIcon .. quantityText .. "   "
+                end
+            else
+                local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
+                local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
+                text = text .. inlineIcon
+                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
+                    optionalReagentSlot.activeReagent.item:GetItemID())
+                local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
+                if itemCount >= multiplier then
+                    quantityText = f.g(tostring(multiplier))
+                end
+                local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(optionalReagentSlot.activeReagent.item
+                    :GetItemID())
+                qualityID = qualityID or 0
+                local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                local crafterText = ""
+                local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
+                    [optionalReagentSlot.activeReagent.item:GetItemID()]
+                if optimizedReagentRecipeData then
+                    crafterText = f.white(" (" ..
+                        optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                end
+                text = text .. qualityIcon .. quantityText .. crafterText .. "   "
             end
-            local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(optionalReagentSlot.activeReagent.item
-                :GetItemID())
-            qualityID = qualityID or 0
-            local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
-            local crafterText = ""
-            -- add crafterInfo text if reagent is supposed to be crafted by the player
-            local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
-                [optionalReagentSlot.activeReagent.item:GetItemID()]
-            if optimizedReagentRecipeData then
-                crafterText = f.white(" (" ..
-                    optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
-            end
-            text = text .. qualityIcon .. quantityText .. crafterText .. "   "
         end
     end
     if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
@@ -794,9 +830,11 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
     local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
 
     for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
-        local itemCount = C_Item.GetItemCount(craftingReagentInfo.reagent.itemID, true, false, true)
-        -- TODO requires update: Save() doesn't exist, only per-location values exist but this is the sum of inventory and bank
-        CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.reagent.itemID, itemCount)
+        if craftingReagentInfo.reagent.itemID then
+            local itemCount = C_Item.GetItemCount(craftingReagentInfo.reagent.itemID, true, false, true)
+            -- TODO requires update: Save() doesn't exist, only per-location values exist but this is the sum of inventory and bank
+            CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.reagent.itemID, itemCount)
+        end
     end
 end
 
