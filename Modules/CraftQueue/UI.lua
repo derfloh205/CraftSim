@@ -15,6 +15,110 @@ local f = GUTIL:GetFormatter()
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
+---@param selector CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector
+---@param optionalSlot CraftSim.OptionalReagentSlot
+local function UpdateCurrencySelectorIcon(selector, optionalSlot)
+    if optionalSlot.activeReagent and optionalSlot.activeReagent:IsCurrency() then
+        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(optionalSlot.activeReagent.currencyID)
+        if currencyInfo then
+            selector.button:SetNormalTexture(currencyInfo.iconFileID)
+            local qualityID = optionalSlot.activeReagent.qualityID
+            if qualityID and qualityID > 0 then
+                selector.button.qualityIcon:SetQuality(qualityID)
+                selector.button.qualityIcon:Show()
+            else
+                selector.button.qualityIcon:Hide()
+            end
+        end
+    else
+        selector.button:SetNormalTexture(CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD)
+        selector.button.qualityIcon:Hide()
+    end
+end
+
+---@param selector CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector
+---@param optionalSlot CraftSim.OptionalReagentSlot
+local function SetupCurrencySelector(selector, optionalSlot)
+    selector:SetItems(nil)
+    selector:SetSelectedItem(nil)
+
+    if not selector.currencySlots then
+        selector.currencySlots = {}
+    end
+
+    for _, icon in pairs(selector.currencySlots) do
+        icon:Hide()
+    end
+
+    if selector.selectionFrame and selector.selectionFrame.content then
+        local xOffset = 5
+        for i, possibleReagent in ipairs(optionalSlot.possibleReagents) do
+            local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(possibleReagent.currencyID)
+            if currencyInfo then
+                local icon = selector.currencySlots[i]
+                if not icon then
+                    icon = GGUI.Icon {
+                        parent = selector.selectionFrame.content,
+                        anchorParent = selector.selectionFrame.content,
+                        anchorA = "TOPLEFT",
+                        anchorB = "TOPLEFT",
+                        offsetX = xOffset,
+                        offsetY = -5,
+                        sizeX = 30,
+                        sizeY = 30,
+                        qualityIconScale = 1.2,
+                    }
+                    selector.currencySlots[i] = icon
+                end
+
+                icon.frame:SetNormalTexture(currencyInfo.iconFileID)
+                if possibleReagent.qualityID and possibleReagent.qualityID > 0 then
+                    icon:SetQuality(possibleReagent.qualityID)
+                end
+
+                icon.frame:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    local link = C_CurrencyInfo.GetCurrencyLink(possibleReagent.currencyID)
+                    if link then
+                        GameTooltip:SetHyperlink(link)
+                    else
+                        GameTooltip:SetText(currencyInfo.name)
+                    end
+                    GameTooltip:Show()
+                end)
+                icon.frame:SetScript("OnLeave", function()
+                    GameTooltip:Hide()
+                end)
+                icon.frame:SetScript("OnClick", function()
+                    optionalSlot:SetCurrencyReagent(possibleReagent.currencyID)
+                    UpdateCurrencySelectorIcon(selector, optionalSlot)
+                    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+                        CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+                    if editRecipeFrame and editRecipeFrame.craftQueueItem then
+                        editRecipeFrame.craftQueueItem.recipeData:Update()
+                        CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                        CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                    end
+                end)
+
+                icon:Show()
+                xOffset = xOffset + 35
+            end
+        end
+    end
+
+    UpdateCurrencySelectorIcon(selector, optionalSlot)
+end
+
+---@param selector CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector
+local function HideCurrencySlots(selector)
+    if selector.currencySlots then
+        for _, icon in pairs(selector.currencySlots) do
+            icon:Hide()
+        end
+    end
+end
+
 function CraftSim.CRAFTQ.UI:Init()
     local sizeX = 880
     local sizeY = 420
@@ -1260,8 +1364,12 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     ---@param item ItemMixin?
     local function OnSelectOptionalReagent(itemSelector, item)
         if itemSelector and itemSelector.slot then
-            print("setting reagent: " .. tostring(item and item:GetItemLink()))
-            itemSelector.slot:SetReagent((item and item:GetItemID()) or nil)
+            if not item and itemSelector.slot:IsCurrency() then
+                itemSelector.slot:SetCurrencyReagent(nil)
+            else
+                print("setting reagent: " .. tostring(item and item:GetItemLink()))
+                itemSelector.slot:SetReagent((item and item:GetItemID()) or nil)
+            end
             editRecipeFrame.craftQueueItem.recipeData:Update()
             CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
             CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
@@ -1720,14 +1828,20 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         local optionalSlot = recipeData.reagentData.optionalReagentSlots[selectorIndex]
         if optionalSlot then
             selector.slot = optionalSlot
-            selector:SetItems(GUTIL:Map(optionalSlot.possibleReagents, function(pR) return pR.item end))
-            if optionalSlot.activeReagent then
-                selector:SetSelectedItem(optionalSlot.activeReagent.item)
+            if optionalSlot:IsCurrency() then
+                SetupCurrencySelector(selector, optionalSlot)
             else
-                selector:SetSelectedItem(nil)
+                HideCurrencySlots(selector)
+                selector:SetItems(GUTIL:Map(optionalSlot.possibleReagents, function(pR) return pR.item end))
+                if optionalSlot.activeReagent then
+                    selector:SetSelectedItem(optionalSlot.activeReagent.item)
+                else
+                    selector:SetSelectedItem(nil)
+                end
             end
             selector:Show()
         else
+            HideCurrencySlots(selector)
             selector:Hide()
         end
     end
@@ -1739,15 +1853,21 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         local finishingSlot = recipeData.reagentData.finishingReagentSlots[selectorIndex]
         if finishingSlot then
             selector.slot = finishingSlot
-            selector:SetItems(GUTIL:Map(finishingSlot.possibleReagents, function(pR) return pR.item end))
-            if finishingSlot.activeReagent then
-                selector:SetSelectedItem(finishingSlot.activeReagent.item)
+            if finishingSlot:IsCurrency() then
+                SetupCurrencySelector(selector, finishingSlot)
             else
-                selector:SetSelectedItem(nil)
+                HideCurrencySlots(selector)
+                selector:SetItems(GUTIL:Map(finishingSlot.possibleReagents, function(pR) return pR.item end))
+                if finishingSlot.activeReagent then
+                    selector:SetSelectedItem(finishingSlot.activeReagent.item)
+                else
+                    selector:SetSelectedItem(nil)
+                end
             end
             selector:Show()
         else
             selector.slot = nil
+            HideCurrencySlots(selector)
             selector:Hide()
         end
     end
@@ -1759,18 +1879,24 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
     if requiredSelectableReagentSlot then
         requiredSelectableReagentSelector.slot = requiredSelectableReagentSlot
-        requiredSelectableReagentSelector:SetItems(GUTIL:Map(requiredSelectableReagentSlot.possibleReagents,
-            function(reagent)
-                return reagent.item:GetItemID()
-            end))
-        if requiredSelectableReagentSlot.activeReagent then
-            requiredSelectableReagentSelector:SetSelectedItem(requiredSelectableReagentSlot.activeReagent.item)
+        if requiredSelectableReagentSlot:IsCurrency() then
+            SetupCurrencySelector(requiredSelectableReagentSelector, requiredSelectableReagentSlot)
         else
-            requiredSelectableReagentSelector:SetSelectedItem(nil)
+            HideCurrencySlots(requiredSelectableReagentSelector)
+            requiredSelectableReagentSelector:SetItems(GUTIL:Map(requiredSelectableReagentSlot.possibleReagents,
+                function(reagent)
+                    return reagent.item and reagent.item:GetItemID()
+                end))
+            if requiredSelectableReagentSlot.activeReagent then
+                requiredSelectableReagentSelector:SetSelectedItem(requiredSelectableReagentSlot.activeReagent.item)
+            else
+                requiredSelectableReagentSelector:SetSelectedItem(nil)
+            end
         end
         requiredSelectableReagentSelector:Show()
     else
         requiredSelectableReagentSelector.slot = nil
+        HideCurrencySlots(requiredSelectableReagentSelector)
         requiredSelectableReagentSelector:Hide()
     end
 
