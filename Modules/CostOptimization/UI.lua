@@ -529,7 +529,9 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
     end
 
     for _, optional in ipairs(possibleOptionals) do
-        tinsert(itemList, optional.item)
+        if not optional:IsCurrency() then
+            tinsert(itemList, optional.item)
+        end
     end
 
     for _, reagentItemMixin in pairs(itemList) do
