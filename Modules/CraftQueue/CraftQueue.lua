@@ -773,27 +773,27 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         local quantityMap = {}
         if craftQueueItem.recipeData:HasRequiredSelectableReagent() then
             local slot = craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
-            if slot and slot:IsAllocated() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
-                tinsert(activeReagents, slot
-                    .activeReagent)
-                quantityMap[slot.activeReagent.item:GetItemID()] =
-                    slot.maxQuantity or 1
+            if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
+                tinsert(activeReagents, slot.activeReagent)
+                quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
             end
         end
         for _, optionalReagent in pairs(activeReagents) do
-            local itemID = optionalReagent.item:GetItemID()
-            local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-            local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
-            local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
-            if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
-                local allocatedQuantity = quantityMap[itemID] or 1
-                reagentMap[itemID] = reagentMap[itemID] or {
-                    itemName = optionalReagent.item:GetItemName(),
-                    qualityID = qualityID,
-                    quantity = 0
-                }
-                reagentMap[itemID].quantity = reagentMap[itemID]
-                    .quantity + allocatedQuantity * craftQueueItem.amount
+            if not optionalReagent:IsCurrency() then
+                local itemID = optionalReagent.item:GetItemID()
+                local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+                local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
+                local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
+                if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                    local allocatedQuantity = quantityMap[itemID] or 1
+                    reagentMap[itemID] = reagentMap[itemID] or {
+                        itemName = optionalReagent.item:GetItemName(),
+                        qualityID = qualityID,
+                        quantity = 0
+                    }
+                    reagentMap[itemID].quantity = reagentMap[itemID]
+                        .quantity + allocatedQuantity * craftQueueItem.amount
+                end
             end
         end
     end
