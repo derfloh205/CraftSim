@@ -46,8 +46,18 @@ end
 ---@param itemID ItemID
 ---@return boolean isPossibleReagent
 function CraftSim.OptionalReagentSlot:IsPossibleReagent(itemID)
+    if self:IsCurrency() then return false end
     return GUTIL:Some(self.possibleReagents, function(possibleReagent)
-        return possibleReagent.item:GetItemID() == itemID
+        return possibleReagent.item and possibleReagent.item:GetItemID() == itemID
+    end)
+end
+
+---@param currencyID number
+---@return boolean isPossibleReagent
+function CraftSim.OptionalReagentSlot:IsPossibleCurrencyReagent(currencyID)
+    if not self:IsCurrency() then return false end
+    return GUTIL:Some(self.possibleReagents, function(possibleReagent)
+        return possibleReagent.currencyID == currencyID
     end)
 end
 
@@ -68,20 +78,43 @@ function CraftSim.OptionalReagentSlot:SetReagent(itemID)
 
     ---@type CraftSim.OptionalReagent?
     self.activeReagent = CraftSim.GUTIL:Find(self.possibleReagents,
-        function(possibleReagent) return possibleReagent.item:GetItemID() == itemID end)
+        function(possibleReagent) return possibleReagent.item and possibleReagent.item:GetItemID() == itemID end)
+end
+
+---@param currencyID number?
+function CraftSim.OptionalReagentSlot:SetCurrencyReagent(currencyID)
+    if not currencyID then
+        self.activeReagent = nil
+        return
+    end
+
+    ---@type CraftSim.OptionalReagent?
+    self.activeReagent = CraftSim.GUTIL:Find(self.possibleReagents,
+        function(possibleReagent) return possibleReagent.currencyID == currencyID end)
 end
 
 ---@return CraftingReagentInfo?
 function CraftSim.OptionalReagentSlot:GetCraftingReagentInfo()
     if self.activeReagent then
-        return {
-            reagent = {
-                itemID = self.activeReagent.item:GetItemID(),
-                currencyID = nil
-            },
-            dataSlotIndex = self.dataSlotIndex,
-            quantity = self.maxQuantity,
-        }
+        if self.activeReagent:IsCurrency() then
+            return {
+                reagent = {
+                    itemID = nil,
+                    currencyID = self.activeReagent.currencyID,
+                },
+                dataSlotIndex = self.dataSlotIndex,
+                quantity = self.maxQuantity,
+            }
+        else
+            return {
+                reagent = {
+                    itemID = self.activeReagent.item:GetItemID(),
+                    currencyID = nil,
+                },
+                dataSlotIndex = self.dataSlotIndex,
+                quantity = self.maxQuantity,
+            }
+        end
     end
 end
 
@@ -92,6 +125,12 @@ function CraftSim.OptionalReagentSlot:HasItem(multiplier, crafterUID)
     multiplier = multiplier or 1
     if not self.activeReagent then
         return true
+    end
+
+    if self.activeReagent:IsCurrency() then
+        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.activeReagent.currencyID)
+        if not currencyInfo then return false end
+        return currencyInfo.quantity >= (multiplier * self.maxQuantity)
     end
 
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
@@ -105,18 +144,35 @@ function CraftSim.OptionalReagentSlot:HasQuantityXTimes(crafterUID)
     if not self.activeReagent then
         return math.huge -- yes I have infinite a number of times yes
     end
+
+    if self.activeReagent:IsCurrency() then
+        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.activeReagent.currencyID)
+        if not currencyInfo then return 0 end
+        return currencyInfo.quantity * self.maxQuantity
+    end
+
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
     return itemCount * self.maxQuantity
 end
 
 function CraftSim.OptionalReagentSlot:Debug()
+    local activeReagentText = "None"
+    if self.activeReagent then
+        if self.activeReagent:IsCurrency() then
+            activeReagentText = "Currency:" .. tostring(self.activeReagent.currencyID) ..
+                " (" .. tostring(self.activeReagent.name) .. ")"
+        else
+            activeReagentText = tostring(self.activeReagent.item:GetItemLink() or self.activeReagent.item:GetItemID())
+        end
+    end
+
     local debugLines = {
         "slotText: " .. tostring(self.slotText),
         "dataSlotIndex: " .. tostring(self.dataSlotIndex),
+        "isCurrency: " .. tostring(self:IsCurrency()),
         "locked: " .. tostring(self.locked),
         "lockedReason: " .. tostring(self.lockedReason),
-        "activeReagent: " ..
-        ((self.activeReagent and (self.activeReagent.item:GetItemLink() or self.activeReagent.item:GetItemID()) or "None")),
+        "activeReagent: " .. activeReagentText,
         "possibleReagents: ",
     }
 
@@ -131,8 +187,13 @@ function CraftSim.OptionalReagentSlot:Copy(recipeData)
     local copy = CraftSim.OptionalReagentSlot(recipeData)
     copy.possibleReagents = CraftSim.GUTIL:Map(self.possibleReagents, function(r) return r:Copy() end)
     if self.activeReagent then
-        copy.activeReagent = CraftSim.GUTIL:Find(copy.possibleReagents,
-            function(r) return r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
+        if self.activeReagent:IsCurrency() then
+            copy.activeReagent = CraftSim.GUTIL:Find(copy.possibleReagents,
+                function(r) return r.currencyID == self.activeReagent.currencyID end)
+        else
+            copy.activeReagent = CraftSim.GUTIL:Find(copy.possibleReagents,
+                function(r) return r.item and r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
+        end
     end
 
     copy.slotText = self.slotText
