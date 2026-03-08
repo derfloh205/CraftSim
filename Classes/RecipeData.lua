@@ -410,22 +410,30 @@ end
 
 ---@param craftingReagentInfoTbl CraftingReagentInfo[]
 function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagentInfoTbl)
-    ---@type CraftingReagentInfo[], CraftingReagentInfo[]
-    local optionalReagents, requiredReagents = GUTIL:Split(craftingReagentInfoTbl,
-        ---@param craftingReagentInfo CraftingReagentInfo
-        function(craftingReagentInfo)
-            return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.reagent.itemID] ~= nil
-        end)
+    local optionalReagentIDs = {}
+    local currencyReagentIDs = {}
+    local requiredReagents = {}
 
-    local optionalReagentIDs = GUTIL:Map(optionalReagents,
-        function(optionalReagentInfo) return optionalReagentInfo.reagent.itemID end)
+    for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
+        if craftingReagentInfo.reagent.currencyID then
+            table.insert(currencyReagentIDs, craftingReagentInfo.reagent.currencyID)
+        elseif craftingReagentInfo.reagent.itemID and CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.reagent.itemID] then
+            table.insert(optionalReagentIDs, craftingReagentInfo.reagent.itemID)
+        else
+            table.insert(requiredReagents, craftingReagentInfo)
+        end
+    end
+
+    for _, currencyID in ipairs(currencyReagentIDs) do
+        self.reagentData:SetOptionalCurrencyReagent(currencyID)
+    end
 
     self:SetOptionalReagents(optionalReagentIDs)
-    local reagentListItems = GUTIL:Map(requiredReagents, function (craftingReagentInfo)
-        return CraftSim.ReagentListItem (craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID)
+    local reagentListItems = GUTIL:Map(requiredReagents, function(craftingReagentInfo)
+        return CraftSim.ReagentListItem(craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID)
     end)
-    
-    self:SetReagents(reagentListItems) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
+
+    self:SetReagents(reagentListItems)
 end
 
 ---@param itemID number
@@ -481,6 +489,8 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
 
     for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = currentSlot.reagentType
+        local hasCurrencyReagent = currentSlot.reagents[1] and currentSlot.reagents[1].currencyID ~= nil
+
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 
@@ -507,8 +517,22 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 end
                 craftSimReagentItem.quantity = allocations
             end
-        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-            if currentSlot.required then
+        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL or hasCurrencyReagent then
+            if hasCurrencyReagent then
+                local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+                if slotAllocations then
+                    for _, reagent in pairs(currentSlot.reagents) do
+                        if reagent.currencyID then
+                            local allocation = slotAllocations:FindAllocationByReagent(reagent)
+                            if allocation and allocation:GetQuantity() > 0 then
+                                self.reagentData:SetOptionalCurrencyReagent(reagent.currencyID)
+                                break
+                            end
+                        end
+                    end
+                end
+                currentOptionalReagent = currentOptionalReagent + 1
+            elseif currentSlot.required then
                 local requiredSelectableReagentSlot = reagentSlots[1][1]
                 local button = requiredSelectableReagentSlot.Button
                 local allocatedItemID = button:GetItemID()
@@ -583,43 +607,52 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
         print("- HasRequiredSelectableReagent", false, false)
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
             print("- No active reagent", false, false)
-            local orderReagent = GUTIL:Find(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {},
-                function(possibleOrderReagent)
-                    if possibleOrderReagent:IsOrderReagentIn(self) then
-                        return true
-                    end
-                    return false
-                end)
-            if orderReagent then
-                self.reagentData.requiredSelectableReagentSlot:SetReagent(orderReagent.item:GetItemID())
+            if self.reagentData.requiredSelectableReagentSlot:IsCurrency() then
+                local firstReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
+                if firstReagent then
+                    self.reagentData.requiredSelectableReagentSlot:SetCurrencyReagent(firstReagent.currencyID)
+                end
             else
-                local cheapestReagent
-                local cheapestPrice
-                local possibleReagents = GUTIL:Filter(
-                    self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}, function(optionalReagent)
-                        return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
+                local orderReagent = GUTIL:Find(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {},
+                    function(possibleOrderReagent)
+                        if possibleOrderReagent:IsCurrency() then return false end
+                        if possibleOrderReagent:IsOrderReagentIn(self) then
+                            return true
+                        end
+                        return false
                     end)
-                -- if every possible reagent is soulbound, enforce first one
-                if #possibleReagents == 0 then
-                    cheapestReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
-                else -- else search for cheapest
-                    for _, optionalReagent in ipairs(possibleReagents) do
-                        local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
-                            true, false, true)
-                        if not cheapestReagent then
-                            cheapestReagent = optionalReagent
-                            cheapestPrice = reagentPrice
-                        else
-                            if reagentPrice < cheapestPrice then
-                                cheapestPrice = reagentPrice
+                if orderReagent then
+                    self.reagentData.requiredSelectableReagentSlot:SetReagent(orderReagent.item:GetItemID())
+                else
+                    local cheapestReagent
+                    local cheapestPrice
+                    local possibleReagents = GUTIL:Filter(
+                        self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}, function(optionalReagent)
+                            if optionalReagent:IsCurrency() then return false end
+                            return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
+                        end)
+                    -- if every possible reagent is soulbound, enforce first one
+                    if #possibleReagents == 0 then
+                        cheapestReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
+                    else -- else search for cheapest
+                        for _, optionalReagent in ipairs(possibleReagents) do
+                            local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
+                                true, false, true)
+                            if not cheapestReagent then
                                 cheapestReagent = optionalReagent
+                                cheapestPrice = reagentPrice
+                            else
+                                if reagentPrice < cheapestPrice then
+                                    cheapestPrice = reagentPrice
+                                    cheapestReagent = optionalReagent
+                                end
                             end
                         end
                     end
-                end
 
-                if cheapestReagent then
-                    self.reagentData.requiredSelectableReagentSlot:SetReagent(cheapestReagent.item:GetItemID())
+                    if cheapestReagent then
+                        self.reagentData.requiredSelectableReagentSlot:SetReagent(cheapestReagent.item:GetItemID())
+                    end
                 end
             end
         end
@@ -1259,6 +1292,13 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 continue = function(frameDistributor2, _, reagent, _, _)
                     ---@type CraftSim.OptionalReagent
                     local finishingReagent = reagent
+
+                    if finishingReagent:IsCurrency() then
+                        currentItemCount = currentItemCount + 1
+                        frameDistributor2:Continue()
+                        return
+                    end
+
                     local itemID = finishingReagent.item:GetItemID()
 
                     currentItemCount = currentItemCount + 1
@@ -1968,9 +2008,11 @@ function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
         end
     end
     for _, activeReagent in ipairs(self.reagentData:GetActiveOptionalReagents()) do
-        local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(activeReagent.item:GetItemID())
-        if craftingInfo then
-            tinsert(craftingInfos, craftingInfo)
+        if not activeReagent:IsCurrency() then
+            local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(activeReagent.item:GetItemID())
+            if craftingInfo then
+                tinsert(craftingInfos, craftingInfo)
+            end
         end
     end
     return craftingInfos
@@ -2246,9 +2288,10 @@ function CraftSim.RecipeData:GetReagentUID()
 
     local uid = ""
     for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
-        uid = uid .. craftingReagentInfo.reagent.itemID .. craftingReagentInfo.quantity
+        local reagentKey = craftingReagentInfo.reagent.itemID or craftingReagentInfo.reagent.currencyID or 0
+        uid = uid .. reagentKey .. craftingReagentInfo.quantity
     end
-    
+
     return uid
 end
 
