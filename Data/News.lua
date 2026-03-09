@@ -23,9 +23,17 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("21.2.6*"),
+        newP("21.2.7"),
+        f.pg .. f.bb("Craft Log"),
+        f.a .. "- Fixed lua error based on missing currency reward links",
+        f.PG .. f.bb("Craft Queue"),
+        f.a .. "- Turned around behaviour of the '+CraftQueue' button",
+        f.a .. " now only optimizes on shift click",
+        f.p .. "Updated EasyCraft and ForgeFinder Exports",
+        newP("21.2.6"),
         f.pg .. f.bb("CraftQueue"),
         f.a .. "- Fixed a lua error when queueing partron orders",
+        f.a .. "- Fixed Craft Queue not refreshing when opening to order tab",
         f.PG .. "Internal Widget Generalizations",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("21.2.5"),

@@ -53,11 +53,10 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 return false
             end
 
-            -- finally check if its a dragon isle recipe
+            -- finally check if its current expansion recipe
 
-            local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
-            local isTWWRecipe = CraftSim.UTIL:IsTWWRecipe(recipeInfo.recipeID)
-            if not isDragonIsleRecipe and not isTWWRecipe then
+            local isCurrentExpansionRecipe = CraftSim.UTIL:IsCurrentExpansionRecipe(recipeInfo.recipeID)
+            if not isCurrentExpansionRecipe then
                 print("not correct expac")
                 return false
             end
@@ -173,10 +172,10 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
                 return false
             end
 
-            -- finally check if its a The War Within recipe
+            -- finally check if its a current expansion recipe
 
-            local isTWWRecipe = CraftSim.UTIL:IsTWWRecipe(recipeInfo.recipeID)
-            if not isTWWRecipe then
+            local isCurrentExpansionRecipe = CraftSim.UTIL:IsCurrentExpansionRecipe(recipeInfo.recipeID)
+            if not isCurrentExpansionRecipe then
                 return false
             end
 

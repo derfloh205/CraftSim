@@ -209,9 +209,12 @@ function CraftSim.CraftResult:CalculateCraftProfit()
         -- check for npcOrderRewards
         if self.orderData.npcOrderRewards then
             for _, orderRewardInfo in ipairs(self.orderData.npcOrderRewards) do
-                local itemID = GUTIL:GetItemIDByLink(orderRewardInfo.itemLink)
-                local sellPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID) * CraftSim.CONST.AUCTION_HOUSE_CUT
-                orderCommission = orderCommission + sellPrice
+                --- the other possible reward info would be currencyType but here not relevant for the price just need nil check
+                if orderRewardInfo.itemLink then
+                    local itemID = GUTIL:GetItemIDByLink(orderRewardInfo.itemLink)
+                    local sellPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID) * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    orderCommission = orderCommission + sellPrice
+                end
             end
         end
     end

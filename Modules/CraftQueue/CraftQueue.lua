@@ -956,7 +956,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     local optimizeGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_PROFESSION_GEAR")
     local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION")
 
-    if IsShiftKeyDown() then
+    if not IsShiftKeyDown() then
         -- just queue without any optimizations
         CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
         return
