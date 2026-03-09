@@ -2121,6 +2121,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             return {
                 count = reward.count,
                 item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+                rawItemLink = reward.itemLink,
                 currency = reward.currencyType,
             }
         end)
@@ -2129,17 +2130,23 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 if reward.currency then
                     local currencyLink = C_CurrencyInfo.GetCurrencyLink(reward.currency, reward.count)
                     local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
-                    craftOrderInfoText = craftOrderInfoText ..
-                        "\n- " ..
-                        GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
-                        " " .. (currencyLink or "<?>") .. " x" .. reward.count
-                end
-                if reward.item then
-                    -- itemLinks might contain no name but can be used to fetch id
+                    if currencyInfo then
+                        craftOrderInfoText = craftOrderInfoText ..
+                            "\n- " ..
+                            GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
+                            " " .. (currencyLink or currencyInfo.name or "<?>") .. " x" .. reward.count
+                    end
+                elseif reward.item then
+                    local itemLink = reward.item:GetItemLink()
+                    local itemName = reward.item:GetItemName()
+                    local displayText = itemLink
+                    if not displayText or displayText:match("%[%]") then
+                        displayText = itemName and ("[" .. itemName .. "]") or reward.rawItemLink or "<?>"
+                    end
                     craftOrderInfoText = craftOrderInfoText ..
                         "\n- " ..
                         GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
-                            " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                        " " .. displayText .. " x" .. reward.count
                 end
             end
 
