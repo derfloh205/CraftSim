@@ -33,6 +33,20 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     end
 end
 
+--- Refreshes locked/lockedReason from the current profession UI state (e.g. when opening the edit frame).
+--- If the slot becomes locked, clears activeReagent so the recipe state is valid.
+---@param recipeData CraftSim.RecipeData
+function CraftSim.OptionalReagentSlot:RefreshSlotStatus(recipeData)
+    if not recipeData then return end
+    local schematic = self.craftingReagentSlotSchematic
+    if not schematic or not schematic.slotInfo or not schematic.slotInfo.mcrSlotID then return end
+    self.locked, self.lockedReason = C_TradeSkillUI.GetReagentSlotStatus(schematic.slotInfo.mcrSlotID,
+        recipeData.recipeID, recipeData.professionData.skillLineID)
+    if self.locked and self.activeReagent then
+        self.activeReagent = nil
+    end
+end
+
 ---@return boolean isAllocated
 function CraftSim.OptionalReagentSlot:IsAllocated()
     return self.activeReagent ~= nil
