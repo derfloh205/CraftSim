@@ -43,6 +43,24 @@ function CraftSim.OptionalReagentSlot:IsCurrency()
     return self.possibleReagents and self.possibleReagents[1] and self.possibleReagents[1].currencyID ~= nil
 end
 
+---@return table[] entries
+function CraftSim.OptionalReagentSlot:GetItemSelectorEntries()
+    return GUTIL:Map(self.possibleReagents, function(reagent)
+        if reagent:IsCurrency() then
+            return {
+                type = "currency",
+                currencyID = reagent.currencyID,
+                qualityID = reagent.qualityID,
+            }
+        else
+            return {
+                type = "item",
+                item = reagent.item,
+            }
+        end
+    end)
+end
+
 ---@param itemID ItemID
 ---@return boolean isPossibleReagent
 function CraftSim.OptionalReagentSlot:IsPossibleReagent(itemID)
