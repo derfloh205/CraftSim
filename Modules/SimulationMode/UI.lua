@@ -597,16 +597,11 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
 
     -- init dropdowns
     for _, itemSelector in pairs(optionalReagentItemSelectors) do
-        itemSelector:SetItems(nil)
+        itemSelector:SetItems({})
         itemSelector:SetSelectedItem(nil)
         itemSelector.isCurrencySlot = false
         itemSelector.selectedCurrencyID = nil
         itemSelector.currencyOptionalSlot = nil
-        if itemSelector.currencySlots then
-            for _, icon in pairs(itemSelector.currencySlots) do
-                icon:Hide()
-            end
-        end
         itemSelector:Hide()
     end
 
@@ -618,102 +613,19 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
         local currentSelector = optionalReagentItemSelectors[selectorIndex]
         selectorIndex = selectorIndex + 1
 
-        if optionalReagentSlot:IsCurrency() then
-            currentSelector.isCurrencySlot = true
-            currentSelector.currencyOptionalSlot = optionalReagentSlot
-            currentSelector:SetItems(nil)
-            currentSelector:SetSelectedItem(nil)
+        currentSelector.currencyOptionalSlot = optionalReagentSlot
+        currentSelector.isCurrencySlot = optionalReagentSlot:IsCurrency()
 
-            if not currentSelector.currencySlots then
-                currentSelector.currencySlots = {}
-            end
-            for _, icon in pairs(currentSelector.currencySlots) do
-                icon:Hide()
-            end
+        currentSelector:SetItems(optionalReagentSlot:GetItemSelectorEntries())
 
-            local xOffset = 0
-            for i, possibleReagent in ipairs(optionalReagentSlot.possibleReagents) do
-                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(possibleReagent.currencyID)
-                if currencyInfo then
-                    local icon = currentSelector.currencySlots[i]
-                    if not icon then
-                        icon = GGUI.Icon {
-                            parent = currentSelector.frame,
-                            anchorParent = currentSelector.frame,
-                            anchorA = "LEFT",
-                            anchorB = "RIGHT",
-                            offsetX = 5 + xOffset,
-                            offsetY = 0,
-                            sizeX = 30,
-                            sizeY = 30,
-                            qualityIconScale = 1.2,
-                        }
-                        currentSelector.currencySlots[i] = icon
-                    end
-
-                    icon.frame:SetNormalTexture(currencyInfo.iconFileID)
-                    if possibleReagent.qualityID and possibleReagent.qualityID > 0 then
-                        icon:SetQuality(possibleReagent.qualityID)
-                    end
-
-                    icon.frame:SetScript("OnEnter", function(self)
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        local link = C_CurrencyInfo.GetCurrencyLink(possibleReagent.currencyID)
-                        if link then
-                            GameTooltip:SetHyperlink(link)
-                        else
-                            GameTooltip:SetText(currencyInfo.name)
-                        end
-                        GameTooltip:Show()
-                    end)
-                    icon.frame:SetScript("OnLeave", function()
-                        GameTooltip:Hide()
-                    end)
-
-                    local capturedCurrencyID = possibleReagent.currencyID
-                    local capturedSelector = currentSelector
-                    icon.frame:SetScript("OnClick", function()
-                        capturedSelector.selectedCurrencyID = capturedCurrencyID
-                        capturedSelector.selectedItem = nil
-                        -- Update the main selector icon
-                        capturedSelector.button:SetNormalTexture(currencyInfo.iconFileID)
-                        if possibleReagent.qualityID and possibleReagent.qualityID > 0 and capturedSelector.button.qualityIcon then
-                            capturedSelector.button.qualityIcon:SetQuality(possibleReagent.qualityID)
-                            capturedSelector.button.qualityIcon:Show()
-                        end
-                        CraftSim.INIT:TriggerModuleUpdate()
-                    end)
-
-                    icon:Show()
-                    xOffset = xOffset + 35
-                end
-            end
-
-            -- Set initial state from active reagent
-            if optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent:IsCurrency() then
-                currentSelector.selectedCurrencyID = optionalReagentSlot.activeReagent.currencyID
-                local activeCurrencyInfo = C_CurrencyInfo.GetCurrencyInfo(optionalReagentSlot.activeReagent.currencyID)
-                if activeCurrencyInfo then
-                    currentSelector.button:SetNormalTexture(activeCurrencyInfo.iconFileID)
-                    if optionalReagentSlot.activeReagent.qualityID and optionalReagentSlot.activeReagent.qualityID > 0 and currentSelector.button.qualityIcon then
-                        currentSelector.button.qualityIcon:SetQuality(optionalReagentSlot.activeReagent.qualityID)
-                        currentSelector.button.qualityIcon:Show()
-                    end
-                end
+        if optionalReagentSlot.activeReagent then
+            if optionalReagentSlot.activeReagent:IsCurrency() then
+                currentSelector:SetSelectedCurrency(optionalReagentSlot.activeReagent.currencyID, optionalReagentSlot.activeReagent.qualityID)
+            else
+                currentSelector:SetSelectedItem(optionalReagentSlot.activeReagent.item)
             end
         else
-            currentSelector.isCurrencySlot = false
-            currentSelector.selectedCurrencyID = nil
-            if currentSelector.currencySlots then
-                for _, icon in pairs(currentSelector.currencySlots) do
-                    icon:Hide()
-                end
-            end
-            local possibleReagents = GUTIL:Map(optionalReagentSlot.possibleReagents, function(reagent)
-                return reagent.item
-            end)
-            currentSelector:SetItems(possibleReagents)
-            currentSelector:SetSelectedItem(optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item)
+            currentSelector:SetSelectedItem(nil)
         end
 
         currentSelector:Show()
