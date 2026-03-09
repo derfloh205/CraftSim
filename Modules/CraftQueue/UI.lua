@@ -1686,6 +1686,8 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
+    recipeData.reagentData:RefreshSlotStatus()
+    craftQueueItem:CalculateCanCraft()
     editRecipeFrame.craftQueueItem = craftQueueItem
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.Content
     editRecipeFrame.content = editRecipeFrame.content
