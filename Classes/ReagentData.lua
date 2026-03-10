@@ -87,12 +87,6 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
         local reagentType = reagentSlotSchematic.reagentType
         local hasCurrencyReagent = reagentSlotSchematic.reagents[1] and reagentSlotSchematic.reagents[1].currencyID ~= nil
 
-        print("CraftSim DEBUG reagentSlot: dataSlotIndex=" .. tostring(reagentSlotSchematic.dataSlotIndex) ..
-            " reagentType=" .. tostring(reagentType) ..
-            " dataSlotType=" .. tostring(reagentSlotSchematic.dataSlotType) ..
-            " hasCurrency=" .. tostring(hasCurrencyReagent) ..
-            " numReagents=" .. tostring(#reagentSlotSchematic.reagents))
-
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL or hasCurrencyReagent then
