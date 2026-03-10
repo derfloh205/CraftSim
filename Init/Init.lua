@@ -65,6 +65,12 @@ local hookedEvent = false
 local freshLoginRecall = true
 local lastCallTime = 0
 function CraftSim.INIT:TriggerModuleUpdate(isInit)
+	-- Skip periodic updates while user is editing a craft queue input to prevent focus loss
+	if not isInit and CraftSim.CRAFTQ.UI and CraftSim.CRAFTQ.UI.HasFocusedInput and CraftSim.CRAFTQ.UI:HasFocusedInput() then
+		print("MODULE UPDATE SKIPPED - CraftQueue input has focus")
+		return
+	end
+
 	local callTime = GetTime()
 	if lastCallTime == callTime then
 		print("SAME FRAME, RETURN")
