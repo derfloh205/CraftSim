@@ -180,11 +180,11 @@ function CraftSim.OptionalReagentSlot:HasQuantityXTimes(crafterUID)
     if self.activeReagent:IsCurrency() then
         local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.activeReagent.currencyID)
         if not currencyInfo then return 0 end
-        return currencyInfo.quantity * self.maxQuantity
+        return math.floor(currencyInfo.quantity / self.maxQuantity)
     end
 
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
-    return itemCount * self.maxQuantity
+    return math.floor(itemCount / self.maxQuantity)
 end
 
 function CraftSim.OptionalReagentSlot:Debug()
