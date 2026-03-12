@@ -238,10 +238,16 @@ function CraftSim.CraftResult:CalculateCraftProfit()
     local resultValue = 0
     if not self.isWorkOrder then
         for _, craftResultItem in pairs(self.craftResultItems) do
-            local itemLink = craftResultItem.item:GetItemLink()
             local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-            local resultItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
-            resultValue = resultValue + resultItemPrice * quantity
+            local itemID = craftResultItem.item:GetItemID()
+            if CraftSim.UTIL:IsGreyItem(itemID) then
+                -- Grey/junk items are sold to vendor; no AH cut applied
+                resultValue = resultValue + CraftSim.UTIL:GetVendorSellPriceByItemID(itemID) * quantity
+            else
+                local itemLink = craftResultItem.item:GetItemLink()
+                local ahPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
+                resultValue = resultValue + ahPrice * quantity * CraftSim.CONST.AUCTION_HOUSE_CUT
+            end
         end
     end
 
@@ -249,7 +255,7 @@ function CraftSim.CraftResult:CalculateCraftProfit()
     if self.isWorkOrder then
         craftProfit = orderCommission - craftingCosts
     else
-        craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - craftingCosts
+        craftProfit = resultValue - craftingCosts
     end
 
     return craftProfit
