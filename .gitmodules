@@ -6,4 +6,4 @@
 	url = https://github.com/derfloh205/GUTIL.git
 [submodule "DevTools/DataMining/SpecializationData/wow-profession-tree"]
 	path = DevTools/DataMining/SpecializationData/wow-profession-tree
-	url = https://github.com/mr120/wow-profession-tree
+	url = https://github.com/derfloh205/wow-profession-tree.git
