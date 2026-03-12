@@ -6,10 +6,10 @@ import shutil
 wagoTables = ["CraftingData", "CraftingDataEnchantQuality"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/EnchantData.lua", "../../../Data/EnchantData.lua")
+    shutil.copy(f"_Result/{buildVersion}/EnchantData.lua", "../../Data/EnchantData.lua")
 
-def map(download, buildVersion):
-    csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+def map(buildVersion):
+    csvTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
     craftingDataTable = csvTables[0]
     enchantDataTable = csvTables[1]
 
@@ -19,7 +19,7 @@ def map(download, buildVersion):
     total = len(craftingDataTable)
     for craftingData in craftingDataTable:
         count = count + 1
-        wagoTools.updateProgressBar(count, total)
+        #wagoTools.updateProgressBar(count, total)
         if craftingData["Type"] == "3": # 3 .. Enchant
             craftingDataID = int(craftingData["ID"])
             for enchantData in enchantDataTable:
@@ -38,15 +38,6 @@ def map(download, buildVersion):
 
 
     wagoTools.writeLuaTable(enchantDataMappedTable, "EnchantData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.ENCHANT_RECIPE_DATA = ", buildVersion)
-
-def update(buildVersion):
-    map(True, buildVersion)
-    copy(buildVersion)
-
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    buildVersion = (len(args) > 0 and args[0]) or "Latest"
-    update(buildVersion)
 
 
     

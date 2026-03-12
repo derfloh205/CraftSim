@@ -87,6 +87,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CLEAR_BUTTON] = "清除",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION] = " 专注",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST] = "专注成本：",
+        [CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL] = "可制作于：%s",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "配方难度：",

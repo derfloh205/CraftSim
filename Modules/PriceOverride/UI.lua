@@ -306,7 +306,9 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
             allPossibleOptionalReagents = CraftSim.GUTIL:Concat({ allPossibleOptionalReagents, slot.possibleReagents })
         end)
         table.foreach(allPossibleOptionalReagents, function(_, optionalReagent)
-            table.insert(items, optionalReagent.item)
+            if not optionalReagent:IsCurrency() then
+                table.insert(items, optionalReagent.item)
+            end
         end)
 
         local allPossibleFinishingReagents = {}
@@ -314,7 +316,9 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
             allPossibleFinishingReagents = CraftSim.GUTIL:Concat({ allPossibleFinishingReagents, slot.possibleReagents })
         end)
         table.foreach(allPossibleFinishingReagents, function(_, optionalReagent)
-            table.insert(items, optionalReagent.item)
+            if not optionalReagent:IsCurrency() then
+                table.insert(items, optionalReagent.item)
+            end
         end)
 
         local dropdownData = {}
@@ -352,11 +356,13 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
                     allPossibleReagents = CraftSim.GUTIL:Concat({ allPossibleReagents, slot.possibleReagents })
                 end)
                 table.foreach(allPossibleReagents, function(_, optionalReagent)
-                    local reagentLabel = optionalReagent.item:GetItemLink()
-                    table.insert(dropdownEntry.value, {
-                        label = reagentLabel,
-                        value = CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
-                    })
+                    if not optionalReagent:IsCurrency() then
+                        local reagentLabel = optionalReagent.item:GetItemLink()
+                        table.insert(dropdownEntry.value, {
+                            label = reagentLabel,
+                            value = CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
+                        })
+                    end
                 end)
                 table.insert(dropdownData, dropdownEntry)
             end
@@ -373,11 +379,13 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
                     allPossibleReagents = CraftSim.GUTIL:Concat({ allPossibleReagents, slot.possibleReagents })
                 end)
                 table.foreach(allPossibleReagents, function(_, optionalReagent)
-                    local reagentLabel = optionalReagent.item:GetItemLink()
-                    table.insert(dropdownEntry.value, {
-                        label = reagentLabel,
-                        value = CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
-                    })
+                    if not optionalReagent:IsCurrency() then
+                        local reagentLabel = optionalReagent.item:GetItemLink()
+                        table.insert(dropdownEntry.value, {
+                            label = reagentLabel,
+                            value = CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
+                        })
+                    end
                 end)
                 table.insert(dropdownData, dropdownEntry)
             end

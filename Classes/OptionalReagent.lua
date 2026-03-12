@@ -65,7 +65,9 @@ function CraftSim.OptionalReagent:IsCurrency()
 end
 
 function CraftSim.OptionalReagent:Debug()
-    -- TODO update assumption of item (vs currency)
+    if self:IsCurrency() then
+        return { "Currency:" .. tostring(self.currencyID) .. " (" .. tostring(self.name) .. ")" }
+    end
     return {
         self.item:GetItemLink() or self.item:GetItemID()
     }
@@ -110,9 +112,9 @@ function CraftSim.OptionalReagent:GetJSON(indent)
     return jb.json
 end
 
--- TODO make this currency aware
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
+    if self:IsCurrency() then return false end
     if not recipeData.orderData then return false end
 
     local itemID = self.item:GetItemID()

@@ -148,8 +148,13 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
             recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { requiredReagentsCraftingReagentInfos, serializedCraftQueueItem.optionalReagents })
 
             if serializedCraftQueueItem.requiredSelectableReagent then
-                recipeData.reagentData:SetRequiredSelectableReagent(serializedCraftQueueItem.requiredSelectableReagent
-                    .reagent.itemID)
+                if serializedCraftQueueItem.requiredSelectableReagent.reagent.currencyID then
+                    recipeData.reagentData.requiredSelectableReagentSlot:SetCurrencyReagent(
+                        serializedCraftQueueItem.requiredSelectableReagent.reagent.currencyID)
+                elseif serializedCraftQueueItem.requiredSelectableReagent.reagent.itemID then
+                    recipeData.reagentData:SetRequiredSelectableReagent(
+                        serializedCraftQueueItem.requiredSelectableReagent.reagent.itemID)
+                end
             end
 
             recipeData:SetNonQualityReagentsMax()
