@@ -23,6 +23,15 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("NEXT_RELEASE"),
+        f.PG .. f.bb("Simulation Mode"),
+        f.a .. "- Fixed Optional Currency Reagents",
+        f.a .. "- Fixed Reagents List initializing zero quantity",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.pg .. f.bb("RecipeScan"),
+        f.a .. "- Fixed 'All Q3' Reagent Allocation crashing the scan",
+        f.PG .. f.l("Automated DB2 Datamining"),
+        f.p .. "Update DB2 Data: 12.0.1.66337",
         newP("21.2.7"),
         f.pg .. f.bb("Craft Log"),
         f.a .. "- Fixed lua error based on missing currency reward links",
