@@ -9,6 +9,10 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_PATHS: DevTools/DataMining/SpecializationData/wow-profession-tree
+
 jobs:
   update-db2:
     runs-on: ubuntu-latest
