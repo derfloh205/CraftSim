@@ -1,0 +1,67 @@
+name: Update DB2 Data
+
+on:
+  schedule:
+    - cron: '0 6 * * WED'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_PATHS: DevTools/DataMining/SpecializationData/wow-profession-tree
+
+jobs:
+  update-db2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip3 install -r DevTools/DataMining/requirements.txt
+
+      - name: Update git submodules
+        run: git submodule update --init --recursive
+
+      - name: Run db2 update script
+        run: |
+          cd DevTools/DataMining
+          python updateAll.py
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Stage Data changes and check for differences
+        id: check
+        run: |
+          # Stage the Data directory (no error if missing)
+          git add Data || true
+
+          # Determine if there are staged changes
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create pull request with changes
+        if: steps.check.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: db2 data update'
+          branch: update/db2-data-${{ github.run_id }}
+          base: main
+          title: "Update DB2 Data"
+          body: |
+            Automated update of db2 data.
+          labels: automated

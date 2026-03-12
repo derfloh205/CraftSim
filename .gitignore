@@ -2,10 +2,13 @@
 .release/
 Libs/
 !Libs/classic.lua
-DevTools/DataMining/__pycache__
+DevTools/DataMining/**/__pycache__/
+DevTools/DataMining/**/*.pyc
+DevTools/DataMining/**/*.pyo
+DevTools/DataMining/**/*.pyd
 DevTools/DataMining/_Result/
 DevTools/DataMining/**/Result/
-DevTools/DataMining/**/Data/
 DevTools/DataMining/**.db
 DevTools/DataMining/_Data/
+DevTools/DataMining/**/_Data/
 !**/*.py
