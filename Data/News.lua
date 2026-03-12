@@ -24,6 +24,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("NEXT_RELEASE"),
+        f.PG .. "Added info about the time when a recipe has enough concentration again",
+        f.a .. " in various places",
         f.PG .. f.bb("Simulation Mode"),
         f.a .. "- Fixed Optional Currency Reagents",
         f.a .. "- Fixed Reagents List initializing zero quantity",
