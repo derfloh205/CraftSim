@@ -465,6 +465,25 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
         CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end
 
+--- Returns true if the item is grey/poor quality (cannot be sold on AH, vendor-only)
+---@param itemID ItemID
+---@return boolean
+function CraftSim.UTIL:IsGreyItem(itemID)
+    local rarity = select(3, C_Item.GetItemInfo(itemID))
+    if rarity == nil then
+        return false -- item data not yet cached; treat as non-grey (safe fallback)
+    end
+    return rarity == 0 -- Enum.ItemQuality.Poor = 0
+end
+
+--- Returns the vendor sell price of an item (what you receive when selling to a vendor)
+---@param itemID ItemID
+---@return number vendorSellPrice
+function CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
+    local vendorSellPrice = select(11, C_Item.GetItemInfo(itemID))
+    return vendorSellPrice or 0
+end
+
 ---@param profession Enum.Profession
 function CraftSim.UTIL:IsProfessionLearned(profession)
     local learnedProfessions = { GetProfessions() };

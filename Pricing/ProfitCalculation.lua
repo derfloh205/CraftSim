@@ -97,8 +97,15 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
 
     if not recipeData.supportsCraftingStats then
-        local resultValue = ((priceData.qualityPriceList[1] or 0) * recipeData.baseItemAmount) *
-            CraftSim.CONST.AUCTION_HOUSE_CUT
+        local resultItemPrice = priceData.qualityPriceList[1] or 0
+        local resultItem = recipeData.resultData.itemsByQuality[1]
+        local isGrey = resultItem and CraftSim.UTIL:IsGreyItem(resultItem:GetItemID())
+        local resultValue
+        if isGrey then
+            resultValue = resultItemPrice * recipeData.baseItemAmount
+        else
+            resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+        end
         local profit = resultValue - priceData.craftingCosts - expectedDeposit
 
         local probabilityTable = { { chance = 1, profit = profit } }
@@ -113,7 +120,11 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         if recipeData.orderData and comissionProfit > 0 then
             return comissionProfit
         else
-            return value * CraftSim.CONST.AUCTION_HOUSE_CUT
+            local expectedItem = recipeData.resultData.itemsByQuality[recipeData.resultData.expectedQuality]
+            if expectedItem and CraftSim.UTIL:IsGreyItem(expectedItem:GetItemID()) then
+                return value -- grey items are sold to vendor; no AH cut
+            end
+            return value * CraftSim.CONST.AUCTION_HOUSE_CUT - expectedDeposit
         end
     end
 
