@@ -393,6 +393,20 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             justifyOptions = { type = "H", align = "RIGHT" },
             text = "0",
         }
+        simModeDetailsFrame.content.concentrationTimeTitle = GGUI.Text {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = 0,
+            justifyOptions = { type = "H", align = "LEFT" },
+            text = string.gsub(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s", ""),
+        }
+        simModeDetailsFrame.content.concentrationTimeValue = GGUI.Text {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.concentrationCostValue.frame,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = 0,
+            justifyOptions = { type = "H", align = "RIGHT" },
+            text = "",
+        }
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
         simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
@@ -524,6 +538,30 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     simModeFrames.concentrationToggleMod:SetVisible(recipeData.supportsQualities)
     detailsFrame.content.concentrationCostTitle:SetVisible(recipeData.supportsQualities)
     detailsFrame.content.concentrationCostValue:SetVisible(recipeData.supportsQualities)
+    if recipeData.supportsQualities then
+        local concentrationData = recipeData.concentrationData
+        local cost = recipeData.concentrationCost
+        if concentrationData and cost and cost > 0 then
+            if recipeData:IsCrafter() then
+                concentrationData:Update()
+            end
+            detailsFrame.content.concentrationTimeTitle:SetVisible(true)
+            local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+            local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
+            if concentrationData:GetCurrentAmount() < cost then
+                detailsFrame.content.concentrationTimeValue:SetText(f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat)))
+            else
+                detailsFrame.content.concentrationTimeValue:SetText(f.g("Ready"))
+            end
+            detailsFrame.content.concentrationTimeValue:SetVisible(true)
+        else
+            detailsFrame.content.concentrationTimeTitle:SetVisible(false)
+            detailsFrame.content.concentrationTimeValue:SetVisible(false)
+        end
+    else
+        detailsFrame.content.concentrationTimeTitle:SetVisible(false)
+        detailsFrame.content.concentrationTimeValue:SetVisible(false)
+    end
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
