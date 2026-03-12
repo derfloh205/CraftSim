@@ -3,8 +3,8 @@ import os
 import luadata
 import csv
 
-dataDirectoryPrefix = "../_Data/"
-resultDirectoryPrefix = "Result/"
+dataDirectoryPrefix = "_Data/"
+resultDirectoryPrefix = "_Result/"
 latestDirectoryPrefix = "Latest/"
 
 # just a utility to make it easier to wait ;D
@@ -79,9 +79,6 @@ def searchTable(table, searchTerms):
         return None
             
     return results
-
-def copyResult(file, destination):
-    shutil.copy(file, destination)
 
 def writeLuaTable(dataTable, fileName, prefix, buildVersion=None, silent=False):
     if not silent: print(f"\nWriting Lua File: {fileName}")
