@@ -57,43 +57,61 @@ function CraftSim.ConcentrationData:GetTimeUntilMax()
     if self.maxQuantity == 0 then
         return 0
     end
-
     return self:GetTimeUntil(self.maxQuantity)
 end
 
----@param concentrationValue number
----@return string formattedTimer
----@return boolean ready
-function CraftSim.ConcentrationData:GetFormattedTimerUntil(concentrationValue)
-    if self:GetCurrentAmount() >= concentrationValue then
-        return "00:00:00:00", true
-    end
-
-    local restTime = self:GetTimeUntil(concentrationValue)
+---@return number totalHoursUntilMax
+function CraftSim.ConcentrationData:GetHoursUntilMax()
+    local restTime = self:GetTimeUntilMax()
     local restTimeDate = date("!*t", restTime)
-
-    return string.format("%02d:%02d:%02d:%02d", restTimeDate.day - 1, restTimeDate.hour, restTimeDate.min,
-            restTimeDate.sec),
-        false
+    return ((restTimeDate.day - 1) * 24) + restTimeDate.hour
 end
 
----@return string formattedTimer
----@return boolean ready
-function CraftSim.ConcentrationData:GetFormattedTimerUntilMax()
-    return self:GetFormattedTimerUntil(self.maxQuantity)
+---@param concentrationValue number
+---@return number Unix timestamp when that amount will be reached
+function CraftSim.ConcentrationData:GetTimestampUntil(concentrationValue)
+    return GetServerTime() + self:GetTimeUntil(concentrationValue)
+end
+
+---@param concentrationValue number
+---@param useUSFormat? boolean when true, format as MM/DD HH:MM instead of DD.MM HH:MM
+---@return string dateTime
+function CraftSim.ConcentrationData:GetFormattedDateUntil(concentrationValue, useUSFormat)
+    local timestamp = self:GetTimestampUntil(concentrationValue)
+    local t = date("*t", timestamp)
+    if useUSFormat then
+        return string.format("%02d/%02d %02d:%02d", t.month, t.day, t.hour, t.min)
+    else
+        return string.format("%02d.%02d %02d:%02d", t.day, t.month, t.hour, t.min)
+    end
 end
 
 function CraftSim.ConcentrationData:GetTimestampMax()
-    return GetServerTime() + self:GetTimeUntilMax()
+    return self:GetTimestampUntil(self.maxQuantity)
 end
 
+---@return string formattedMax
 function CraftSim.ConcentrationData:GetFormattedDateMax()
-    local maxDate = self:GetTimestampMax()
+    local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+    if formatMode == "HOURS_LEFT" then
+        local restHours = self:GetHoursUntilMax()
+        return string.format("%dh", restHours)
+    else
+        return self:GetFormattedDateUntil(self.maxQuantity, formatMode == "AMERICA_MAX_DATE")
+    end
+end
 
-    local date = date("*t", maxDate) -- with local time support
-
-    return string.format("%02d.%02d %02d:%02d", date.day, date.month, date.hour, date.min),
-        not self:OnCooldown()
+---@param requiredAmount number
+---@param requiredAmount number
+---@param useUSFormat? boolean passed through to GetFormattedDateUntil
+---@return string? localized text with estimated time (date in blue), or nil if already have enough
+function CraftSim.ConcentrationData:GetEstimatedTimeUntilEnoughText(requiredAmount, useUSFormat)
+    if self:GetCurrentAmount() >= requiredAmount then
+        return nil
+    end
+    local formattedDate = self:GetFormattedDateUntil(requiredAmount, useUSFormat)
+    local f = CraftSim.GUTIL:GetFormatter()
+    return string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), f.bb(formattedDate))
 end
 
 function CraftSim.ConcentrationData:OnCooldown()
