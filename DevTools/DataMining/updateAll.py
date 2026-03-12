@@ -6,6 +6,10 @@ import wagoTools
 
 import requests
 
+# Debug
+debugBuild = None
+debugModule = None
+
 dataScripts = ["ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData"] ## SpecializationData is a special case (manually)
 
 # === AUTO-FETCH LATEST BUILD (this is the key new part) ===
@@ -45,7 +49,10 @@ def is_new_build(buildVersion):
 
 def getMappers():
     mappers = {}
-    for folderName in dataScripts:
+    dataScriptTables = dataScripts
+    if debugModule:
+        dataScriptTables = [debugModule]
+    for folderName in dataScriptTables:
         mapper_path = os.path.join(folderName, "mapper.py")
         if os.path.exists(mapper_path):
             spec = importlib.util.spec_from_file_location(f"{folderName}.mapper", mapper_path)
@@ -57,14 +64,14 @@ def getMappers():
     return mappers
 
 if __name__ == '__main__':
-    buildVersion = get_latest_build()
+    buildVersion = debugBuild or get_latest_build()
 
-    # Compare builds if an update is necessary
-    # if not is_new_build(buildVersion):
-    #     print(f"✅ Data scripts are already up to date with build {buildVersion}. No update needed.")
-    #     sys.exit(0)
+    # Compare builds if an update is necessary, dont compare if debugBuild is set
+    if not debugBuild and not is_new_build(buildVersion):
+        print(f"✅ DB2 Data up to date with Build: {buildVersion}. No update needed.")
+        sys.exit(0)
 
-    print(f"🔄 Updating data scripts for build {buildVersion}...")
+    print(f"🔄 Updating DB2 Data for Build: {buildVersion}...")
 
     update_data_scripts(buildVersion)
 
