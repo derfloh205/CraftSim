@@ -3731,7 +3731,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			nodeID = 106279,
 			maxRank = 1,
 			stats = {
-				ingenuityrefundincrease = 25,
+				ingenuityrefundincrease = 10,
 				ingenuity = 10,
 			},
 		},
@@ -3739,7 +3739,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			nodeID = 106279,
 			maxRank = 1,
 			stats = {
-				ingenuityrefundincrease = 25,
+				ingenuityrefundincrease = 10,
 				ingenuity = 10,
 			},
 		},
@@ -3754,7 +3754,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			nodeID = 106279,
 			maxRank = 1,
 			stats = {
-				ingenuityrefundincrease = 25,
+				ingenuityrefundincrease = 10,
 				ingenuity = 10,
 			},
 		},
@@ -3763,7 +3763,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			maxRank = 1,
 			stats = {
 				ingenuity = 15,
-				ingenuityrefundincrease = 25,
+				ingenuityrefundincrease = 20,
 			},
 		},
 		[106280] = {
