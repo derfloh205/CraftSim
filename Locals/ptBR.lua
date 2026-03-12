@@ -86,6 +86,7 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CLEAR_BUTTON] = "Limpar",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION] = " Concentração",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST] = "Custo de Concentração: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL] = "Fabricável às: %s",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Dificuldade da receita: ",
