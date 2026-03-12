@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r DevTools/DataMining/requirements.txt
 
+      - name: Update git submodules
+        run: git submodule update --init --recursive
+
       - name: Run db2 update script
         run: |
           cd DevTools/DataMining
