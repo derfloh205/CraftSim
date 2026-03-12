@@ -467,6 +467,20 @@ function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
     end
 end
 
+--- Fills required reagents that have no quantity allocated with requiredQuantity in the first quality tier.
+--- Used so simulation mode (and similar UIs) always show at least the required amounts instead of zeros.
+function CraftSim.ReagentData:FillUnallocatedRequiredReagents()
+    for _, reagent in pairs(self.requiredReagents) do
+        local total = 0
+        for _, reagentItem in pairs(reagent.items) do
+            total = total + reagentItem.quantity
+        end
+        if total == 0 and reagent.requiredQuantity > 0 then
+            reagent.items[1].quantity = reagent.requiredQuantity
+        end
+    end
+end
+
 ---@param optimizationResult? CraftSim.ReagentOptimizationResult
 function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult)
     if not optimizationResult then
