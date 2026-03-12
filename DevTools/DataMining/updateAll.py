@@ -4,7 +4,6 @@ import shutil
 import runpy
 import importlib
 import wagoTools
-
 import requests
 
 # Debug
@@ -13,8 +12,7 @@ debugModule = None
 
 dataScripts = ["ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData", "SpecializationData"]
 
-# === AUTO-FETCH LATEST BUILD (this is the key new part) ===
-def get_latest_build(product="wow"):  # "wow" = retail, change if you need classic etc.
+def getLatestBuildVersion(product="wow"):  # "wow" = retail
     url = "https://wago.tools/api/builds/latest"
     data = requests.get(url).json()
     build_info = data.get(product)
@@ -90,12 +88,12 @@ def getMappers():
     return mappers
 
 if __name__ == '__main__':
-    buildVersion = debugBuild or get_latest_build()
+    buildVersion = debugBuild or getLatestBuildVersion()
 
     # Compare builds if an update is necessary, dont compare if debugBuild is set
-    # if not debugBuild and not is_new_build(buildVersion):
-    #     print(f"✅ DB2 Data up to date with Build: {buildVersion}. No update needed.")
-    #     sys.exit(0)
+    if not debugBuild and not isNewBuild(buildVersion):
+        print(f"✅ DB2 Data up to date with Build: {buildVersion}. No update needed.")
+        sys.exit(0)
 
     print(f"🔄 Updating DB2 Data for Build: {buildVersion}...")
 
@@ -104,9 +102,3 @@ if __name__ == '__main__':
     # Save buildVersion to a file for reference
     with open("LAST_BUILD", "w") as f:
         f.write(buildVersion)
-
-    # for folderName in dataScripts:
-    #     print("Updating data script: " + folderName)
-    #     os.chdir(folderName)
-    #     exec(open('mapper.py').read())
-    #     os.chdir("..")
