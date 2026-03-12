@@ -426,7 +426,12 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
         recipeData.reagentData:SetReagentsMaxByQuality(2)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
-        recipeData.reagentData:SetReagentsMaxByQuality(3)
+        -- Midnight recipes do not have Q3 reagents, fall back to Q2
+        if recipeData:IsSimplifiedQualityRecipe() then
+            recipeData.reagentData:SetReagentsMaxByQuality(2)
+        else
+            recipeData.reagentData:SetReagentsMaxByQuality(3)
+        end
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
         recipeData:OptimizeReagents()
     end

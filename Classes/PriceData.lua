@@ -167,15 +167,15 @@ function CraftSim.PriceData:Update()
     })
     local quantityMap = {} -- ugly hack
     if self.recipeData.reagentData:HasRequiredSelectableReagent() then
-        if self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent then
-            tinsert(activeOptionalReagents, self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent)
-            quantityMap[self.recipeData.reagentData.requiredSelectableReagentSlot.activeReagent.item:GetItemID()] =
-                self.recipeData.reagentData.requiredSelectableReagentSlot.maxQuantity
+        local reqSlot = self.recipeData.reagentData.requiredSelectableReagentSlot
+        if reqSlot.activeReagent and not reqSlot:IsCurrency() then
+            tinsert(activeOptionalReagents, reqSlot.activeReagent)
+            quantityMap[reqSlot.activeReagent.item:GetItemID()] = reqSlot.maxQuantity
         end
     end
     print("num active optionals: " .. #activeOptionalReagents)
     for _, activeOptionalReagent in pairs(activeOptionalReagents) do
-        if activeOptionalReagent then
+        if activeOptionalReagent and not activeOptionalReagent:IsCurrency() then
             local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
             print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
             local itemID = activeOptionalReagent.item:GetItemID()

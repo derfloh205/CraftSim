@@ -172,11 +172,11 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     recipeData.reagentData:ClearOptionalReagents()
 
     local possibleRequiredSelectableItemIDs = {}
-    if recipeData.reagentData:HasRequiredSelectableReagent() then
+    if recipeData.reagentData:HasRequiredSelectableReagent() and not recipeData.reagentData.requiredSelectableReagentSlot:IsCurrency() then
         possibleRequiredSelectableItemIDs = GUTIL:Map(
             recipeData.reagentData.requiredSelectableReagentSlot.possibleReagents,
             function(reagent)
-                return reagent.item:GetItemID()
+                return reagent.item and reagent.item:GetItemID()
             end)
     end
 
@@ -184,13 +184,17 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
 
     local itemIDs = {}
     for _, optionalReagentItemSelector in pairs(optionalReagentItemSelectors) do
-        local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
-        if itemID then
-            -- try to set required selectable if available else put to optional/finishing
-            if tContains(possibleRequiredSelectableItemIDs, itemID) then
-                recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
-            else
-                table.insert(itemIDs, itemID)
+        if optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
+            recipeData.reagentData:SetOptionalCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
+        else
+            local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
+            if itemID then
+                -- try to set required selectable if available else put to optional/finishing
+                if tContains(possibleRequiredSelectableItemIDs, itemID) then
+                    recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
+                else
+                    table.insert(itemIDs, itemID)
+                end
             end
         end
     end

@@ -6,10 +6,10 @@ import shutil
 wagoTables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/ConcentrationCurveData.lua", "../../../Data/ConcentrationCurveData.lua")
+    shutil.copy(f"_Result/{buildVersion}/ConcentrationCurveData.lua", "../../Data/ConcentrationCurveData.lua")
 
-def map(download, buildVersion):
-    csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+def map(buildVersion):
+    csvTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
     craftingDataTable = csvTables[0]
     craftingDifficultyTable = csvTables[1]
     curvePointTable = csvTables[2]
@@ -24,7 +24,7 @@ def map(download, buildVersion):
         counter = counter + 1
         craftingDataID = int(craftingData["ID"])
         craftingDifficultyID = craftingData["CraftingDifficultyID"]
-        wagoTools.updateProgressBar(counter, total, craftingDataID)
+        #wagoTools.updateProgressBar(counter, total, craftingDataID)
         for craftingDifficulty in craftingDifficultyTable:
             if craftingDifficulty["ID"] == craftingDifficultyID:
                 curveID = craftingDifficulty["ConcentrationSkillCurveID"]
@@ -57,14 +57,4 @@ def map(download, buildVersion):
                                 concentrationCostDataTable[craftingDataID]["curveData"][recipeDifficultyThreshold] = skillCurveValue
 
     wagoTools.writeLuaTable(concentrationCostDataTable, "ConcentrationCurveData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.CONCENTRATION_CURVE_DATA = ", buildVersion)
-
-def update(buildVersion):
-    map(True, buildVersion)
-    copy(buildVersion)
-
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    buildVersion = (len(args) > 0 and args[0])
-
-    update(buildVersion)
         
