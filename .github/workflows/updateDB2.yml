@@ -35,6 +35,19 @@ jobs:
           cd DevTools/DataMining
           python updateAll.py
 
+      - name: Read LAST_BUILD version for PR metadata
+        id: lastbuild
+        run: |
+          BUILD_FILE="DevTools/DataMining/LAST_BUILD"
+          if [ -f "$BUILD_FILE" ]; then
+            VERSION=$(cat "$BUILD_FILE" | tr -d '[:space:]')   # removes newlines/spaces
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "✅ LAST_BUILD = ${VERSION}"
+          else
+            echo "version=unknown" >> $GITHUB_OUTPUT
+            echo "⚠️ LAST_BUILD file not found (using fallback)"
+          fi
+
       - name: Configure git user
         run: |
           git config user.name "github-actions"
@@ -45,6 +58,7 @@ jobs:
         run: |
           # Stage the Data directory (no error if missing)
           git add Data || true
+          git add DevTools/DataMining/LAST_BUILD || true
 
           # Determine if there are staged changes
           if git diff --cached --quiet; then
@@ -58,10 +72,15 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore: db2 data update'
-          branch: update/db2-data-${{ github.run_id }}
+          commit-message: 'chore: DB2 Data Update: ${{ steps.lastbuild.outputs.version }}'
+          branch: update/db2-data-update-${{ steps.lastbuild.outputs.version }}
           base: main
-          title: "Update DB2 Data"
+          title: "Update DB2 Data: ${{ steps.lastbuild.outputs.version }}"
           body: |
-            Automated update of db2 data.
-          labels: automated
+            Automated DB2 data update from wago.tools.
+
+            **Build version:** `${{ steps.lastbuild.outputs.version }}`
+            **Triggered by:** ${{ github.event_name }}
+
+            Review the changes and merge when ready.
+          labels: automated,data-update
