@@ -8,8 +8,8 @@ import wagoTools
 import requests
 
 # Debug
-debugBuild = "12.0.1.66337"
-debugModule = "SpecializationData"
+debugBuild = None
+debugModule = None
 
 dataScripts = ["ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData", "SpecializationData"]
 

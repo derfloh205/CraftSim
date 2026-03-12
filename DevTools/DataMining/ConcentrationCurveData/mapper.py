@@ -9,7 +9,7 @@ def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/ConcentrationCurveData.lua", "../../Data/ConcentrationCurveData.lua")
 
 def map(buildVersion):
-    csvTables = wagoTools.getWagoTables(wagoTables, True, buildVersion)
+    csvTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
     craftingDataTable = csvTables[0]
     craftingDifficultyTable = csvTables[1]
     curvePointTable = csvTables[2]
