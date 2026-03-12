@@ -6,7 +6,7 @@ import shutil
 wagoTables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/ConcentrationCurveData.lua", "../../../Data/ConcentrationCurveData.lua")
+    shutil.copy(f"_Result/{buildVersion}/ConcentrationCurveData.lua", "../../Data/ConcentrationCurveData.lua")
 
 def map(download, buildVersion):
     csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)

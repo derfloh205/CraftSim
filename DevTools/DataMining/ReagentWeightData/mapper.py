@@ -15,7 +15,7 @@ def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
     return 0
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/ReagentWeightData.lua", "../../../Data/ReagentWeightData.lua")
+    shutil.copy(f"_Result/{buildVersion}/ReagentWeightData.lua", "../../Data/ReagentWeightData.lua")
 
 def map(download, buildVersion):
     csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)

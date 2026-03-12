@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import importlib
+import wagoTools
 
 import requests
 
@@ -19,16 +20,21 @@ def get_latest_build(product="wow"):  # "wow" = retail, change if you need class
     return version
 
 def update_data_scripts(buildVersion):
-    for folderName in dataScripts:
-        print(f"🔄 Updating data script: {folderName} for build {buildVersion}")
-        os.chdir(folderName)
-        # Dynamically import the mapper module and call its main function
-        mapper_module = importlib.import_module('mapper')
-        if hasattr(mapper_module, 'main'):
-            mapper_module.main(buildVersion)
-        else:
-            print(f"⚠️  No main() function found in {folderName}/mapper.py")
-        os.chdir("..")
+    mappers = getMappers()
+    ## fetch wagoTables from mappers
+    wagoTables = set()
+    for mapper in mappers.values():
+        if hasattr(mapper, "wagoTables"):
+            wagoTables.update(mapper.wagoTables)
+
+    print(f"📥 Fetching DB2 Tables: {', '.join(wagoTables)}")
+
+    wagoTools.downloadWagoTablesCSV(wagoTables, buildVersion)
+    
+    for mapper in mappers.values():
+        print(f"🔄 Updating: {mapper}")
+        mapper.map(False, buildVersion)
+        mapper.copy(buildVersion)
 
 def is_new_build(buildVersion):
     if os.path.exists("LAST_BUILD"):
@@ -37,13 +43,26 @@ def is_new_build(buildVersion):
         return last_build != buildVersion
     return True
 
+def getMappers():
+    mappers = {}
+    for folderName in dataScripts:
+        mapper_path = os.path.join(folderName, "mapper.py")
+        if os.path.exists(mapper_path):
+            spec = importlib.util.spec_from_file_location(f"{folderName}.mapper", mapper_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            mappers[folderName] = module
+        else:
+            print(f"⚠️  Mapper not found for {folderName} at {mapper_path}")
+    return mappers
+
 if __name__ == '__main__':
     buildVersion = get_latest_build()
 
     # Compare builds if an update is necessary
-    if not is_new_build(buildVersion):
-        print(f"✅ Data scripts are already up to date with build {buildVersion}. No update needed.")
-        sys.exit(0)
+    # if not is_new_build(buildVersion):
+    #     print(f"✅ Data scripts are already up to date with build {buildVersion}. No update needed.")
+    #     sys.exit(0)
 
     print(f"🔄 Updating data scripts for build {buildVersion}...")
 

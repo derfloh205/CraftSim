@@ -3,8 +3,8 @@ import os
 import luadata
 import csv
 
-dataDirectoryPrefix = "../_Data/"
-resultDirectoryPrefix = "Result/"
+dataDirectoryPrefix = "_Data/"
+resultDirectoryPrefix = "_Result/"
 latestDirectoryPrefix = "Latest/"
 
 # just a utility to make it easier to wait ;D

@@ -6,8 +6,8 @@ import shutil
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse", "CurrencyTypes", "CurrencyCategory"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/OptionalReagentData.lua", "../../../Data/OptionalReagentData.lua")
-    shutil.copy(f"Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../../Data/OptionalCurrencyReagentData.lua")
+    shutil.copy(f"_Result/{buildVersion}/OptionalReagentData.lua", "../../Data/OptionalReagentData.lua")
+    shutil.copy(f"_Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../Data/OptionalCurrencyReagentData.lua")
 
 def printD(text, enabled):
     if enabled:

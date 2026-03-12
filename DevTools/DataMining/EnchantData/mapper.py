@@ -6,7 +6,7 @@ import shutil
 wagoTables = ["CraftingData", "CraftingDataEnchantQuality"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/EnchantData.lua", "../../../Data/EnchantData.lua")
+    shutil.copy(f"_Result/{buildVersion}/EnchantData.lua", "../../Data/EnchantData.lua")
 
 def map(download, buildVersion):
     csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
