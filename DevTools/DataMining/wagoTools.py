@@ -28,7 +28,7 @@ def downloadWagoTablesCSV(wagoTables, buildVersion=None):
         if os.path.isfile(filename):
             print("File already exists, skipping download: " + filename)
             continue
-        updateProgressBar(count, total, table)
+        #updateProgressBar(count, total, table)
         buildParameter = f"?build={buildVersion}"
         if buildVersion == None:
             buildParameter = ""

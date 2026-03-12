@@ -24,7 +24,7 @@ def map(buildVersion):
         counter = counter + 1
         craftingDataID = int(craftingData["ID"])
         craftingDifficultyID = craftingData["CraftingDifficultyID"]
-        wagoTools.updateProgressBar(counter, total, craftingDataID)
+        #wagoTools.updateProgressBar(counter, total, craftingDataID)
         for craftingDifficulty in craftingDifficultyTable:
             if craftingDifficulty["ID"] == craftingDifficultyID:
                 curveID = craftingDifficulty["ConcentrationSkillCurveID"]

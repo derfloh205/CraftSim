@@ -287,7 +287,7 @@ def map(buildVersion):
         if not recipeID in professionDataTable[expansion][profession]["recipeMapping"]:
             professionDataTable[expansion][profession]["recipeMapping"][recipeID] = []
 
-        wagoTools.updateProgressBar(count, total, f"{expansion}->{profession}->{recipeID}")
+        #wagoTools.updateProgressBar(count, total, f"{expansion}->{profession}->{recipeID}")
 
         if not perkID in professionDataTable[expansion][profession]["recipeMapping"][recipeID]:
             professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
