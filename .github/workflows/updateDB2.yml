@@ -21,7 +21,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install -r DevTools/DataMining/requirements.txt
 
       - name: Run db2 update script
         run: |
