@@ -130,16 +130,24 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
         if recipeData:HasRequiredSelectableReagent() then
             local slot = recipeData.reagentData.requiredSelectableReagentSlot
             if slot and slot.activeReagent then
-                local itemID = slot.activeReagent.item:GetItemID()
-                local quantity = slot.maxQuantity * aNumCrafts
-                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                local isOrderReagent = slot.activeReagent:IsOrderReagentIn(recipeData)
-                if not isOrderReagent then
-                    self.craftingCosts = self.craftingCosts + reagentCosts
+                if slot:IsCurrency() then
+                    local currencyID = slot.activeReagent.currencyID
+                    local quantity = slot.maxQuantity * aNumCrafts
+                    tinsert(self.reagents,
+                        CraftSim.CraftResultReagent(recipeData, nil, quantity, false, currencyID))
+                    tinsert(reagentItemIDs, "c" .. currencyID .. "." .. slot.maxQuantity)
+                else
+                    local itemID = slot.activeReagent.item:GetItemID()
+                    local quantity = slot.maxQuantity * aNumCrafts
+                    local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                    local isOrderReagent = slot.activeReagent:IsOrderReagentIn(recipeData)
+                    if not isOrderReagent then
+                        self.craftingCosts = self.craftingCosts + reagentCosts
+                    end
+                    tinsert(self.reagents,
+                        CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+                    tinsert(reagentItemIDs, itemID .. "." .. slot.maxQuantity)
                 end
-                tinsert(self.reagents,
-                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent)) -- how much we actually used
-                tinsert(reagentItemIDs, itemID .. "." .. slot.maxQuantity)                     -- how much the recipe called for, used for reagentCombinationID
             end
         end
 
@@ -165,16 +173,24 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
 
         for _, optionalReagentSlot in ipairs(GUTIL:Concat { recipeData.reagentData.optionalReagentSlots, recipeData.reagentData.finishingReagentSlots }) do
             if optionalReagentSlot:IsAllocated() then
-                local itemID = optionalReagentSlot.activeReagent.item:GetItemID()
-                local quantity = optionalReagentSlot.maxQuantity * aNumCrafts
-                local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
-                local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(recipeData)
-                if not isOrderReagent then
-                    self.craftingCosts = self.craftingCosts + reagentCosts
+                if optionalReagentSlot:IsCurrency() then
+                    local currencyID = optionalReagentSlot.activeReagent.currencyID
+                    local quantity = optionalReagentSlot.maxQuantity * aNumCrafts
+                    tinsert(self.reagents,
+                        CraftSim.CraftResultReagent(recipeData, nil, quantity, false, currencyID))
+                    tinsert(reagentItemIDs, "c" .. currencyID .. "." .. optionalReagentSlot.maxQuantity)
+                else
+                    local itemID = optionalReagentSlot.activeReagent.item:GetItemID()
+                    local quantity = optionalReagentSlot.maxQuantity * aNumCrafts
+                    local reagentCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, true) * quantity
+                    local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(recipeData)
+                    if not isOrderReagent then
+                        self.craftingCosts = self.craftingCosts + reagentCosts
+                    end
+                    tinsert(self.reagents,
+                        CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))
+                    tinsert(reagentItemIDs, itemID .. "." .. optionalReagentSlot.maxQuantity)
                 end
-                tinsert(self.reagents,
-                    CraftSim.CraftResultReagent(recipeData, itemID, quantity, isOrderReagent))  -- how much we actually used
-                tinsert(reagentItemIDs, itemID .. "." .. optionalReagentSlot.maxQuantity)       -- how much the recipe called for, used for reagentCombinationID
             end
         end
 

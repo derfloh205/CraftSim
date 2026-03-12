@@ -1257,11 +1257,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     end
 
     ---@param itemSelector CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector
-    ---@param item ItemMixin?
-    local function OnSelectOptionalReagent(itemSelector, item)
+    ---@param selectedItem ItemMixin?
+    ---@param selectedCurrencyID number?
+    local function OnSelectOptionalReagent(itemSelector, selectedItem, selectedCurrencyID)
         if itemSelector and itemSelector.slot then
-            print("setting reagent: " .. tostring(item and item:GetItemLink()))
-            itemSelector.slot:SetReagent((item and item:GetItemID()) or nil)
+            if selectedCurrencyID then
+                itemSelector.slot:SetCurrencyReagent(selectedCurrencyID)
+            elseif not selectedItem and itemSelector.slot:IsCurrency() then
+                itemSelector.slot:SetCurrencyReagent(nil)
+            else
+                print("setting reagent: " .. tostring(selectedItem and selectedItem:GetItemLink()))
+                itemSelector.slot:SetReagent((selectedItem and selectedItem:GetItemID()) or nil)
+            end
             editRecipeFrame.craftQueueItem.recipeData:Update()
             CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
             CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
@@ -1466,33 +1473,6 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         end
     }
 
-    editRecipeFrame.content.craftingCostsTitle = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content, anchorA = "BOTTOM", anchorB = "BOTTOM", offsetX = -30,
-        offsetY = 60, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL),
-    }
-    editRecipeFrame.content.craftingCostsValue = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = CraftSim.UTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
-    }
-    editRecipeFrame.content.averageProfitTitle = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -5, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL),
-    }
-    editRecipeFrame.content.averageProfitValue = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.averageProfitTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = CraftSim.UTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
-    }
-    editRecipeFrame.content.concentrationValueTitle = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.averageProfitTitle.frame, anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT",
-        offsetY = -5, text = "Concentration Value:",
-    }
-    editRecipeFrame.content.concentrationValue = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.concentrationValueTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = CraftSim.UTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
-    }
-
-
-
     editRecipeFrame.content.resultTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeProfitButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         offsetY = -40, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
@@ -1514,6 +1494,35 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             end
         end
     }
+    do
+        local cbFrame = editRecipeFrame.content.concentrationCB.frame
+        cbFrame:SetScript("OnEnter", function()
+            local frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+            local craftQueueItem = frame.craftQueueItem
+            if not craftQueueItem or not craftQueueItem.recipeData or not craftQueueItem.recipeData.supportsQualities then return end
+            local recipeData = craftQueueItem.recipeData
+            local concentrationData = recipeData.concentrationData
+            local cost = recipeData.concentrationCost
+            if not concentrationData or not cost or cost <= 0 then return end
+            if recipeData:IsCrafter() then
+                concentrationData:Update()
+            end
+            local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+            local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
+            if concentrationData:GetCurrentAmount() < cost then
+                local estimatedText = concentrationData:GetEstimatedTimeUntilEnoughText(cost, useUSFormat)
+                if estimatedText then
+                    GameTooltip:SetOwner(cbFrame, "ANCHOR_RIGHT")
+                    GameTooltip:ClearLines()
+                    GameTooltip:SetText(estimatedText)
+                    GameTooltip:Show()
+                end
+            end
+        end)
+        cbFrame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+    end
 
     editRecipeFrame.content.resultList = GGUI.FrameList {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
@@ -1533,6 +1542,85 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 parent = iconColumn, anchorParent = iconColumn, sizeX = 30, sizeY = 30, anchorA = "LEFT", anchorB = "LEFT", offsetX = 3,
             }
         end
+    }
+
+    -- bottom stats block (4 rows, 2 columns), centered near the bottom of the window
+    editRecipeFrame.content.statsFrame = CreateFrame("frame", nil, editRecipeFrame.content)
+    editRecipeFrame.content.statsFrame:SetSize(320, 80)
+    -- center horizontally on the whole content frame, with a fixed vertical offset from the bottom
+    editRecipeFrame.content.statsFrame:SetPoint("BOTTOM", editRecipeFrame.content, "BOTTOM", 0, 5)
+    local statsFrame = editRecipeFrame.content.statsFrame
+
+    editRecipeFrame.content.craftingCostsTitle = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = statsFrame,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+        justifyOptions = { type = "H", align = "RIGHT" },
+        fixedWidth = 150,
+        text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL),
+    }
+    editRecipeFrame.content.craftingCostsValue = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.craftingCostsTitle.frame,
+        anchorA = "LEFT", anchorB = "RIGHT",
+        offsetX = 5, offsetY = 1,
+        text = CraftSim.UTIL:FormatMoney(0, true),
+        justifyOptions = { type = "H", align = "LEFT" },
+        scale = 0.9,
+    }
+    editRecipeFrame.content.averageProfitTitle = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.craftingCostsTitle.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        offsetY = -7,
+        justifyOptions = { type = "H", align = "RIGHT" },
+        fixedWidth = 150,
+        text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL),
+    }
+    editRecipeFrame.content.averageProfitValue = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.averageProfitTitle.frame,
+        anchorA = "LEFT", anchorB = "RIGHT",
+        offsetX = 5, offsetY = 1,
+        text = CraftSim.UTIL:FormatMoney(0, true),
+        justifyOptions = { type = "H", align = "LEFT" },
+        scale = 0.9,
+    }
+    editRecipeFrame.content.concentrationValueTitle = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.averageProfitTitle.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        offsetY = -7,
+        justifyOptions = { type = "H", align = "RIGHT" },
+        fixedWidth = 150,
+        text = "Concentration Value:",
+    }
+    editRecipeFrame.content.concentrationValue = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.concentrationValueTitle.frame,
+        anchorA = "LEFT", anchorB = "RIGHT",
+        offsetX = 5, offsetY = 1,
+        text = CraftSim.UTIL:FormatMoney(0, true),
+        justifyOptions = { type = "H", align = "LEFT" },
+        scale = 0.9,
+    }
+    editRecipeFrame.content.concentrationDateTitle = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.concentrationValueTitle.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        offsetY = -7,
+        justifyOptions = { type = "H", align = "RIGHT" },
+        fixedWidth = 150,
+        text = string.gsub(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s", ""),
+    }
+    editRecipeFrame.content.concentrationDateValue = GGUI.Text {
+        parent = statsFrame,
+        anchorParent = editRecipeFrame.content.concentrationDateTitle.frame,
+        anchorA = "LEFT", anchorB = "RIGHT",
+        offsetX = 5, offsetY = 1,
+        text = "",
+        justifyOptions = { type = "H", align = "LEFT" },
+        scale = 0.9,
     }
 
     editRecipeFrame:Hide()
@@ -1679,6 +1767,8 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
+    recipeData.reagentData:RefreshSlotStatus()
+    craftQueueItem:CalculateCanCraft()
     editRecipeFrame.craftQueueItem = craftQueueItem
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.Content
     editRecipeFrame.content = editRecipeFrame.content
@@ -1704,6 +1794,27 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         CraftSim.UTIL:FormatMoney(craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
     local concentrationValue = recipeData:GetConcentrationValue()
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
+    if recipeData.supportsQualities and recipeData.concentrationData and recipeData.concentrationCost > 0 then
+        local concentrationData = recipeData.concentrationData
+        if craftQueueItem.isCrafter then
+            concentrationData:Update()
+        end
+        local requiredAmount = recipeData.concentrationCost * craftQueueItem.amount
+        local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+        local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
+        if concentrationData:GetCurrentAmount() < requiredAmount then
+            editRecipeFrame.content.concentrationDateTitle:SetVisible(true)
+            editRecipeFrame.content.concentrationDateValue:SetText(f.bb(concentrationData:GetFormattedDateUntil(requiredAmount, useUSFormat)))
+            editRecipeFrame.content.concentrationDateValue:SetVisible(true)
+        else
+            editRecipeFrame.content.concentrationDateTitle:SetVisible(true)
+            editRecipeFrame.content.concentrationDateValue:SetText(f.g("Ready"))
+            editRecipeFrame.content.concentrationDateValue:SetVisible(true)
+        end
+    else
+        editRecipeFrame.content.concentrationDateTitle:SetVisible(false)
+        editRecipeFrame.content.concentrationDateValue:SetVisible(false)
+    end
 
     -- required quality reagents
     if recipeData.hasQualityReagents then
@@ -1720,14 +1831,20 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         local optionalSlot = recipeData.reagentData.optionalReagentSlots[selectorIndex]
         if optionalSlot then
             selector.slot = optionalSlot
-            selector:SetItems(GUTIL:Map(optionalSlot.possibleReagents, function(pR) return pR.item end))
+            selector:SetItems(optionalSlot:GetItemSelectorEntries())
             if optionalSlot.activeReagent then
-                selector:SetSelectedItem(optionalSlot.activeReagent.item)
+                if optionalSlot.activeReagent:IsCurrency() then
+                    selector:SetSelectedCurrency(optionalSlot.activeReagent.currencyID, optionalSlot.activeReagent.qualityID)
+                else
+                    selector:SetSelectedItem(optionalSlot.activeReagent.item)
+                end
             else
                 selector:SetSelectedItem(nil)
             end
             selector:Show()
         else
+            selector.slot = nil
+            selector:SetItems({})
             selector:Hide()
         end
     end
@@ -1739,15 +1856,20 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         local finishingSlot = recipeData.reagentData.finishingReagentSlots[selectorIndex]
         if finishingSlot then
             selector.slot = finishingSlot
-            selector:SetItems(GUTIL:Map(finishingSlot.possibleReagents, function(pR) return pR.item end))
+            selector:SetItems(finishingSlot:GetItemSelectorEntries())
             if finishingSlot.activeReagent then
-                selector:SetSelectedItem(finishingSlot.activeReagent.item)
+                if finishingSlot.activeReagent:IsCurrency() then
+                    selector:SetSelectedCurrency(finishingSlot.activeReagent.currencyID, finishingSlot.activeReagent.qualityID)
+                else
+                    selector:SetSelectedItem(finishingSlot.activeReagent.item)
+                end
             else
                 selector:SetSelectedItem(nil)
             end
             selector:Show()
         else
             selector.slot = nil
+            selector:SetItems({})
             selector:Hide()
         end
     end
@@ -1759,18 +1881,20 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
     if requiredSelectableReagentSlot then
         requiredSelectableReagentSelector.slot = requiredSelectableReagentSlot
-        requiredSelectableReagentSelector:SetItems(GUTIL:Map(requiredSelectableReagentSlot.possibleReagents,
-            function(reagent)
-                return reagent.item:GetItemID()
-            end))
+        requiredSelectableReagentSelector:SetItems(requiredSelectableReagentSlot:GetItemSelectorEntries())
         if requiredSelectableReagentSlot.activeReagent then
-            requiredSelectableReagentSelector:SetSelectedItem(requiredSelectableReagentSlot.activeReagent.item)
+            if requiredSelectableReagentSlot.activeReagent:IsCurrency() then
+                requiredSelectableReagentSelector:SetSelectedCurrency(requiredSelectableReagentSlot.activeReagent.currencyID, requiredSelectableReagentSlot.activeReagent.qualityID)
+            else
+                requiredSelectableReagentSelector:SetSelectedItem(requiredSelectableReagentSlot.activeReagent.item)
+            end
         else
             requiredSelectableReagentSelector:SetSelectedItem(nil)
         end
         requiredSelectableReagentSelector:Show()
     else
         requiredSelectableReagentSelector.slot = nil
+        requiredSelectableReagentSelector:SetItems({})
         requiredSelectableReagentSelector:Hide()
     end
 
@@ -1947,6 +2071,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     end
 
     local concentrationData = craftQueueItem.recipeData.concentrationData
+    local concentrationTimeLine = ""
     if craftQueueItem.recipeData.concentrating and concentrationData then
         if craftQueueItem.isCrafter then
             concentrationData:Update() -- consider concentration usage on crafting before refresh
@@ -1959,6 +2084,14 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             concentrationColumn.text:SetText(f.l(concentrationCost))
         else
             concentrationColumn.text:SetText(f.r(concentrationCost))
+        end
+        if concentrationCost > currentAmount then
+            local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+            local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
+            local estimatedText = concentrationData:GetEstimatedTimeUntilEnoughText(concentrationCost, useUSFormat)
+            if estimatedText then
+                concentrationTimeLine = "\n" .. estimatedText
+            end
         end
     else
         concentrationColumn.text:SetText(f.g("-"))
@@ -1995,6 +2128,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             return {
                 count = reward.count,
                 item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+                rawItemLink = reward.itemLink,
                 currency = reward.currencyType,
             }
         end)
@@ -2003,24 +2137,30 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 if reward.currency then
                     local currencyLink = C_CurrencyInfo.GetCurrencyLink(reward.currency, reward.count)
                     local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
-                    craftOrderInfoText = craftOrderInfoText ..
-                        "\n- " ..
-                        GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
-                        " " .. (currencyLink or "<?>") .. " x" .. reward.count
-                end
-                if reward.item then
-                    -- itemLinks might contain no name but can be used to fetch id
+                    if currencyInfo then
+                        craftOrderInfoText = craftOrderInfoText ..
+                            "\n- " ..
+                            GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
+                            " " .. (currencyLink or currencyInfo.name or "<?>") .. " x" .. reward.count
+                    end
+                elseif reward.item then
+                    local itemLink = reward.item:GetItemLink()
+                    local itemName = reward.item:GetItemName()
+                    local displayText = itemLink
+                    if not displayText or displayText:match("%[%]") then
+                        displayText = itemName and ("[" .. itemName .. "]") or reward.rawItemLink or "<?>"
+                    end
                     craftOrderInfoText = craftOrderInfoText ..
                         "\n- " ..
                         GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
-                            " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+                        " " .. displayText .. " x" .. reward.count
                 end
             end
 
             row.tooltipOptions = {
                 text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                         craftQueueItem.recipeData:GetCrafterUID()) ..
-                    f.white(craftOrderInfoText),
+                    f.white(craftOrderInfoText) .. concentrationTimeLine,
                 owner = row.frame,
                 anchor = "ANCHOR_CURSOR",
             }
@@ -2029,7 +2169,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         row.tooltipOptions = {
             text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                     craftQueueItem.recipeData:GetCrafterUID()) ..
-                f.white(craftOrderInfoText),
+                f.white(craftOrderInfoText) .. concentrationTimeLine,
             owner = row.frame,
             anchor = "ANCHOR_CURSOR",
         }

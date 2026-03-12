@@ -6,15 +6,15 @@ import shutil
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse", "CurrencyTypes", "CurrencyCategory"]
 
 def copy(buildVersion):
-    shutil.copy(f"Result/{buildVersion}/OptionalReagentData.lua", "../../../Data/OptionalReagentData.lua")
-    shutil.copy(f"Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../../Data/OptionalCurrencyReagentData.lua")
+    shutil.copy(f"_Result/{buildVersion}/OptionalReagentData.lua", "../../Data/OptionalReagentData.lua")
+    shutil.copy(f"_Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../Data/OptionalCurrencyReagentData.lua")
 
 def printD(text, enabled):
     if enabled:
         print(text)
 
-def map(download, buildVersion):
-    dataTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+def map(buildVersion):
+    dataTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
     Item = dataTables[0]
     ModifiedCraftingReagentItem = dataTables[1]
     CraftingReagentEffect = dataTables[2]
@@ -78,7 +78,7 @@ def map(download, buildVersion):
         if debug and itemID != debugItemID:
             continue
 
-        wagoTools.updateProgressBar(counter, reagentCount, itemID or currencyID)
+        #wagoTools.updateProgressBar(counter, reagentCount, itemID or currencyID)
 
         if itemID is not None:
             itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})
@@ -175,13 +175,3 @@ def map(download, buildVersion):
 
     wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
     wagoTools.writeLuaTable(optionalCurrencyReagentsDataTable, "OptionalCurrencyReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_CURRENCY_REAGENT_DATA = ", buildVersion)
-
-def update(buildVersion):
-    map(True, buildVersion)
-    copy(buildVersion)        
-
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    buildVersion = (len(args) > 0 and args[0]) or "Latest"
-
-    update(buildVersion)

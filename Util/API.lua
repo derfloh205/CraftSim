@@ -20,3 +20,19 @@ end
 function CraftSimAPI:GetCraftSim()
     return CraftSim
 end
+
+---Get the expected AH deposit cost for a recipe (requires TSM + option enabled).
+---@param recipeData CraftSim.RecipeData
+---@return number depositCost copper (0 if unavailable)
+function CraftSimAPI:GetExpectedDeposit(recipeData)
+    return CraftSimTSM:GetExpectedDeposit(recipeData)
+end
+
+---Get the smart restock amount for a recipe, subtracting existing inventory.
+---@param recipeData CraftSim.RecipeData
+---@return number needed items still required
+---@return number target TSM restock target
+---@return number owned total owned across tracked sources
+function CraftSimAPI:GetSmartRestockAmount(recipeData)
+    return CraftSimTSM:GetSmartRestockAmount(recipeData)
+end
