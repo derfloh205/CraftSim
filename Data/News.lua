@@ -23,7 +23,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("NEXT_RELEASE"),
+        newP("21.3.0"),
         f.PG .. "Added info elements about the time when a recipe",
         f.a .. " has enough concentration again",
         f.PG .. f.bb("Simulation Mode"),
@@ -36,6 +36,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         collab(CraftSim.NEWS.GITHUB_COLLABS.NETOUSS),
         f.pg .. f.bb("RecipeScan"),
         f.a .. "- Fixed 'All Q3' Reagent Allocation crashing the scan",
+        f.pg .. "Grey result items will now default to vendor price",
         f.PG .. f.l("Automated DB2 Datamining"),
         f.p .. "Update DB2 Data: 12.0.1.66337",
         newP("21.2.7"),
