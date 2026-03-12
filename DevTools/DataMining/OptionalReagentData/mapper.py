@@ -78,7 +78,7 @@ def map(buildVersion):
         if debug and itemID != debugItemID:
             continue
 
-        wagoTools.updateProgressBar(counter, reagentCount, itemID or currencyID)
+        #wagoTools.updateProgressBar(counter, reagentCount, itemID or currencyID)
 
         if itemID is not None:
             itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})

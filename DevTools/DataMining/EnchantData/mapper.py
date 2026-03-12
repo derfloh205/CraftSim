@@ -19,7 +19,7 @@ def map(buildVersion):
     total = len(craftingDataTable)
     for craftingData in craftingDataTable:
         count = count + 1
-        wagoTools.updateProgressBar(count, total)
+        #wagoTools.updateProgressBar(count, total)
         if craftingData["Type"] == "3": # 3 .. Enchant
             craftingDataID = int(craftingData["ID"])
             for enchantData in enchantDataTable:
