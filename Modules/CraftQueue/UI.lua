@@ -560,6 +560,23 @@ function CraftSim.CRAFTQ.UI:Init()
                             f.bb("Ingenuity"));
                     end);
 
+                    local zeroConcentrationQueueingCB = rootDescription:CreateCheckbox(
+                        L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_ZERO_CONCENTRATION_QUEUING),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_ZERO_CONCENTRATION_QUEUING")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_ZERO_CONCENTRATION_QUEUING")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_ZERO_CONCENTRATION_QUEUING",
+                                not value)
+                        end)
+                    zeroConcentrationQueueingCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L(CraftSim.CONST.TEXT
+                                .CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_ZERO_CONCENTRATION_QUEUING_TOOLTIP));
+                    end)
+
                     local mainProfessionsCB = rootDescription:CreateCheckbox(
                         "Queue " .. f.bb("Current Main Professions"),
                         function()
