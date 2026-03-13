@@ -186,9 +186,9 @@ function CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, cont
         return true
     end
 
-    local _, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
-    print(string.format("IsItemExpansionCompatible(%s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
-        tostring(context), tostring(recipeExpansionID), tostring(itemID), tostring(itemExpacID)))
+    local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
+    print(string.format("IsItemExpansionCompatible(%s, %s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
+        tostring(context), tostring(itemName), tostring(recipeExpansionID), tostring(itemID), tostring(itemExpacID)))
 
     if not recipeExpansionID then
         return true
