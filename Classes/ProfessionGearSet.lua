@@ -69,37 +69,13 @@ end
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     self.professionStats:Clear()
 
-    local function addIfCompatible(professionGear)
-        if not professionGear or not professionGear.item then
-            return
-        end
-
-        -- Only count stats from profession tools/gear that are compatible
-        -- with this recipe's expansion. This prevents old-expansion tools
-        -- (whose stats no longer apply in-game) from affecting newer recipes.
-        local recipeExpansionID = self.recipeData
-            and self.recipeData.professionData
-            and self.recipeData.professionData.expansionID
-
-        local item = professionGear.item
-        local itemID = item and item:GetItemID()
-        if not itemID then
-            self.professionStats:add(professionGear.professionStats)
-            return
-        end
-
-        if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "ProfessionGearSet") then
-            self.professionStats:add(professionGear.professionStats)
-        end
-    end
-
     if self.isCooking then
-        addIfCompatible(self.gear2)
-        addIfCompatible(self.tool)
+        self.professionStats:add(self.gear2.professionStats)
+        self.professionStats:add(self.tool.professionStats)
     else
-        addIfCompatible(self.gear1)
-        addIfCompatible(self.gear2)
-        addIfCompatible(self.tool)
+        self.professionStats:add(self.gear1.professionStats)
+        self.professionStats:add(self.gear2.professionStats)
+        self.professionStats:add(self.tool.professionStats)
     end
 end
 
