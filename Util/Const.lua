@@ -1624,6 +1624,19 @@ CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS = {
     [246585] = true, -- https://www.wowhead.com/item=246585/
 }
 
+CraftSim.CONST.PATRON_ORDERS_ACUITY_REWARD_ITEMS = {
+    -- TWW
+    210814, -- https://www.wowhead.com/item=210814/
+    -- MIDNIGHT: acuity no longer used
+}
+
+CraftSim.CONST.PATRON_ORDERS_POWER_RUNE_REWARD_ITEMS = {
+    -- TWW
+    224572, -- https://www.wowhead.com/item=224572/
+    -- MIDNIGHT
+    259085, -- https://www.wowhead.com/item=259085/
+}
+
 CraftSim.CONST.MOXIE_CURRENCY_IDS = {
     3256, --alchemy
     3257, --blacksmithing
