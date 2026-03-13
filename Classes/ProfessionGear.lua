@@ -98,11 +98,17 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 		end
 		if lineText and string.find(lineText, enchantedMatchString) then
 			if string.find(lineText, resourcefulnessMatchString) then
-				parsedEnchantingStats.resourcefulness = tonumber(string.match(lineText, "%+(%d+)")) or 0
+				parsedEnchantingStats.resourcefulness = tonumber(string.match(lineText, "%+(%d+)")) or
+				tonumber(string.match(lineText, ".*-12-%a*(%d)"))*15 or 0
 			elseif string.find(lineText, multicraftMatchString) then
-				parsedEnchantingStats.multicraft = tonumber(string.match(lineText, "%+(%d+)")) or 0
+				parsedEnchantingStats.multicraft = tonumber(string.match(lineText, "%+(%d+)")) or
+				tonumber(string.match(lineText, ".*-12-%a*(%d)"))*15 or 0
 			elseif string.find(lineText, ingenuityMatchString) then
-				parsedEnchantingStats.ingenuity = tonumber(string.match(lineText, "%+(%d+)")) or 0
+				parsedEnchantingStats.ingenuity = tonumber(string.match(lineText, "%+(%d+)")) or
+				tonumber(string.match(lineText, ".*-12-%a*(%d)"))*15 or 0
+		--workaround for english spelling mistake
+			elseif string.find(lineText, "Resourcfulness") then
+				parsedEnchantingStats.resourcefulness = tonumber(string.match(lineText, ".*-12-%a*(%d)"))*15 or 0
 			end
 		end
 	end
