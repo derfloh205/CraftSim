@@ -320,8 +320,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                         knowledgePointsRewarded = 1
                                                         knowledgeContained = true
                                                     end
-                                                    local acuityContained = itemID == 210814
-                                                    local runeContained = itemID == 224572
+                                                    local acuityContained = tContains(CraftSim.CONST.PATRON_ORDERS_ACUITY_REWARD_ITEMS, itemID)
+                                                    local runeContained = tContains(CraftSim.CONST.PATRON_ORDERS_POWER_RUNE_REWARD_ITEMS, itemID)
                                                     if not acuityAllowed and acuityContained then
                                                         return false
                                                     end
