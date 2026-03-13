@@ -184,15 +184,17 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
 
                     local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
                     if itemLink ~= nil then
-                        local itemSubType = select(3, C_Item.GetItemInfoInstant(itemLink))
-                        local itemEquipLoc = select(4, C_Item.GetItemInfoInstant(itemLink))
+                        local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
                         if itemSubType == currentProfession and (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-                            local professionGear = CraftSim.ProfessionGear()
-                            professionGear:SetItem(itemLink)
-                            table.insert(inventoryGear, professionGear)
+                            local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
+                            if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGear") then
+                                local professionGear = CraftSim.ProfessionGear()
+                                professionGear:SetItem(itemLink)
+                                table.insert(inventoryGear, professionGear)
 
-                            CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(crafterUID,
-                                recipeData.professionData.professionInfo.profession, professionGear)
+                                CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(crafterUID,
+                                    recipeData.professionData.professionInfo.profession, professionGear)
+                            end
                         end
                     end
                 end

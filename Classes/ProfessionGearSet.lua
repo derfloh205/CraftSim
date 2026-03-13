@@ -81,11 +81,6 @@ function CraftSim.ProfessionGearSet:UpdateProfessionStats()
             and self.recipeData.professionData
             and self.recipeData.professionData.expansionID
 
-        if not recipeExpansionID then
-            self.professionStats:add(professionGear.professionStats)
-            return
-        end
-
         local item = professionGear.item
         local itemID = item and item:GetItemID()
         if not itemID then
@@ -93,10 +88,7 @@ function CraftSim.ProfessionGearSet:UpdateProfessionStats()
             return
         end
 
-        -- GetItemInfo returns the Blizzard expansion ID (expacID) at index 15.
-        -- If it's not yet cached, keep the item for now rather than stripping it.
-        local _, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
-        if not itemExpacID or itemExpacID >= recipeExpansionID then
+        if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "ProfessionGearSet") then
             self.professionStats:add(professionGear.professionStats)
         end
     end
