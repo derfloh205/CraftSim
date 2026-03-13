@@ -68,13 +68,46 @@ end
 
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     self.professionStats:Clear()
+
+    local function addIfCompatible(professionGear)
+        if not professionGear or not professionGear.item then
+            return
+        end
+
+        -- Only count stats from profession tools/gear that are compatible
+        -- with this recipe's expansion. This prevents old-expansion tools
+        -- (whose stats no longer apply in-game) from affecting newer recipes.
+        local recipeExpansionID = self.recipeData
+            and self.recipeData.professionData
+            and self.recipeData.professionData.expansionID
+
+        if not recipeExpansionID then
+            self.professionStats:add(professionGear.professionStats)
+            return
+        end
+
+        local item = professionGear.item
+        local itemID = item and item:GetItemID()
+        if not itemID then
+            self.professionStats:add(professionGear.professionStats)
+            return
+        end
+
+        -- GetItemInfo returns the Blizzard expansion ID (expacID) at index 15.
+        -- If it's not yet cached, keep the item for now rather than stripping it.
+        local _, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
+        if not itemExpacID or itemExpacID >= recipeExpansionID then
+            self.professionStats:add(professionGear.professionStats)
+        end
+    end
+
     if self.isCooking then
-        self.professionStats:add(self.gear2.professionStats)
-        self.professionStats:add(self.tool.professionStats)
+        addIfCompatible(self.gear2)
+        addIfCompatible(self.tool)
     else
-        self.professionStats:add(self.gear1.professionStats)
-        self.professionStats:add(self.gear2.professionStats)
-        self.professionStats:add(self.tool.professionStats)
+        addIfCompatible(self.gear1)
+        addIfCompatible(self.gear2)
+        addIfCompatible(self.tool)
     end
 end
 
