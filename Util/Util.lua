@@ -177,6 +177,31 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+---@param recipeExpansionID CraftSim.EXPANSION_IDS?
+---@param itemID number?
+---@param context string? debug context
+---@return boolean isCompatible
+function CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, context)
+    if not itemID then
+        return true
+    end
+
+    local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
+    print(string.format("IsItemExpansionCompatible(%s, %s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
+        tostring(context), tostring(itemName), tostring(recipeExpansionID), tostring(itemID), tostring(itemExpacID)))
+
+    if not recipeExpansionID then
+        return true
+    end
+
+    if not itemExpacID then
+        -- item data not loaded yet, don't incorrectly exclude it
+        return true
+    end
+
+    return itemExpacID >= recipeExpansionID
+end
+
 function CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local expansionID = self:GetExpansionIDBySkillLineID(skillLineID)
