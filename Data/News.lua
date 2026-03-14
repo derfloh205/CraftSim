@@ -25,6 +25,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("21.3.1"),
         f.PG .. "Fixed incorrect consideration of legacy profession gear",
+        f.p .. "Update DB2 Data: 12.0.1.66384",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         f.PG .. "Fixed identification of tool enchant stats",
         newP("21.3.0"),
