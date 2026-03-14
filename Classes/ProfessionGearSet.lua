@@ -69,37 +69,30 @@ end
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     self.professionStats:Clear()
 
-    local function addIfCompatible(professionGear)
+    -- Only count stats from gear that is from the recipe's expansion or newer.
+    -- Older-expansion tools/gear do not give stats for newer recipes in-game.
+    local recipeExpansionID = self.recipeData
+        and self.recipeData.professionData
+        and self.recipeData.professionData.expansionID
+
+    local function addIfSameOrNewerExpansion(professionGear)
         if not professionGear or not professionGear.item then
             return
         end
-
-        -- Only count stats from profession tools/gear that are compatible
-        -- with this recipe's expansion. This prevents old-expansion tools
-        -- (whose stats no longer apply in-game) from affecting newer recipes.
-        local recipeExpansionID = self.recipeData
-            and self.recipeData.professionData
-            and self.recipeData.professionData.expansionID
-
-        local item = professionGear.item
-        local itemID = item and item:GetItemID()
-        if not itemID then
-            self.professionStats:add(professionGear.professionStats)
-            return
-        end
-
+        local itemID = professionGear.item:GetItemID()
         if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "ProfessionGearSet") then
             self.professionStats:add(professionGear.professionStats)
         end
+        -- else: older expansion -> contribute 0 stats; item stays for display/equality
     end
 
     if self.isCooking then
-        addIfCompatible(self.gear2)
-        addIfCompatible(self.tool)
+        addIfSameOrNewerExpansion(self.gear2)
+        addIfSameOrNewerExpansion(self.tool)
     else
-        addIfCompatible(self.gear1)
-        addIfCompatible(self.gear2)
-        addIfCompatible(self.tool)
+        addIfSameOrNewerExpansion(self.gear1)
+        addIfSameOrNewerExpansion(self.gear2)
+        addIfSameOrNewerExpansion(self.tool)
     end
 end
 

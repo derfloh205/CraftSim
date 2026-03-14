@@ -2,9 +2,6 @@
 local CraftSim = select(2, ...)
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 	recipeMapping = {
-		[376080] = {
-			43455,
-		},
 		[377985] = {
 			34833,
 			34814,
@@ -4712,13 +4709,6 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 		},
 	},
 	nodeData = {
-		[43455] = {
-			nodeID = 43526,
-			maxRank = 1,
-			stats = {
-				unlockreagentslot = 0,
-			},
-		},
 		[34833] = {
 			nodeID = 34833,
 			maxRank = 30,
@@ -5313,6 +5303,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			maxRank = 20,
 			stats = {
 				skill = 1,
+			},
+		},
+		[43455] = {
+			nodeID = 43526,
+			maxRank = 1,
+			stats = {
+				unlockreagentslot = 0,
 			},
 		},
 		[43523] = {
