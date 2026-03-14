@@ -69,13 +69,30 @@ end
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     self.professionStats:Clear()
 
+    -- Only count stats from gear that is from the recipe's expansion or newer.
+    -- Older-expansion tools/gear do not give stats for newer recipes in-game.
+    local recipeExpansionID = self.recipeData
+        and self.recipeData.professionData
+        and self.recipeData.professionData.expansionID
+
+    local function addIfSameOrNewerExpansion(professionGear)
+        if not professionGear or not professionGear.item then
+            return
+        end
+        local itemID = professionGear.item:GetItemID()
+        if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "ProfessionGearSet") then
+            self.professionStats:add(professionGear.professionStats)
+        end
+        -- else: older expansion -> contribute 0 stats; item stays for display/equality
+    end
+
     if self.isCooking then
-        self.professionStats:add(self.gear2.professionStats)
-        self.professionStats:add(self.tool.professionStats)
+        addIfSameOrNewerExpansion(self.gear2)
+        addIfSameOrNewerExpansion(self.tool)
     else
-        self.professionStats:add(self.gear1.professionStats)
-        self.professionStats:add(self.gear2.professionStats)
-        self.professionStats:add(self.tool.professionStats)
+        addIfSameOrNewerExpansion(self.gear1)
+        addIfSameOrNewerExpansion(self.gear2)
+        addIfSameOrNewerExpansion(self.tool)
     end
 end
 
