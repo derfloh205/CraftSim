@@ -9,9 +9,6 @@ EFFECT_IDS = {
     "ingenuity": 82,
 }
 
-# Scaling constant to convert from Wago's EffectScalingPoints to the actual stat value. Calculated based on known values for certain enchants for midnight ilvl ranges.
-scalingConstant = 15 / 10.5783996582
-
 wagoTables = ["SpellItemEnchantment"]
 
 def copy(buildVersion):
@@ -43,15 +40,15 @@ def map(buildVersion):
             stat = "ingenuity"
 
         effectScalingPoints = float(toolEnchant["EffectScalingPoints_0"])
+        scalingClass = float(toolEnchant["ScalingClass"])
 
-        value = round(effectScalingPoints * scalingConstant)
+        scalingFactor = abs((effectScalingPoints / scalingClass) * 10)
 
-        itemLevelMin = int(toolEnchant["ItemLevelMin"])
-        itemlevelMax = int(toolEnchant["ItemLevelMax"])
+        value = int(scalingFactor) # floor it
 
         # remove from string suffix beginning with | and trim string
         name = toolEnchant["Name_lang"].split("|")[0].strip()
 
-        toolEnchantData[int(enchantID)] = {"name": name, "enchantID": enchantID, "stat": stat, "scalingPoints": effectScalingPoints, "itemLevelMin": itemLevelMin, "itemLevelMax": itemlevelMax, "value": value}
+        toolEnchantData[enchantID] = {"name": name, "stat": stat, "value": value}
 
     wagoTools.writeLuaTable(toolEnchantData, "ToolEnchantData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.TOOLENCHANTDATA = ", buildVersion)
