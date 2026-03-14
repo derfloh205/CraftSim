@@ -465,7 +465,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
     CraftSim.SIMULATION_MODE.UI.NO_WORKORDER =
         createSimulationModeFrames(ProfessionsFrame.CraftingPage.SchematicForm)
     CraftSim.SIMULATION_MODE.UI.WORKORDER =
-        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, true)
 end
 
 function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
@@ -689,13 +689,18 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     end
 
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local otherFrame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frame or CraftSim.SIMULATION_MODE.frameWO
     frame:Show()
+    otherFrame:Hide()
 
     local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
+    local otherSimModeFrames = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.UI.NO_WORKORDER or CraftSim.SIMULATION_MODE.UI.WORKORDER
     CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
     local craftingDetailsFrame = simModeFrames.detailsFrame
     print("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
+
+    otherSimModeFrames.detailsFrame:Hide()
 
     if not CraftSim.SIMULATION_MODE.isActive then
         -- only hide, they will be shown automatically if available
