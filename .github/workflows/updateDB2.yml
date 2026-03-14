@@ -35,17 +35,6 @@ jobs:
           cd DevTools/DataMining
           python updateAll.py
 
-      - name: Check if LAST_BUILD actually changed
-        id: changed
-        run: |
-          git fetch origin main
-          if git diff --quiet origin/main..HEAD -- DevTools/DataMining/LAST_BUILD; then
-            echo "has_real_change=false" >> $GITHUB_OUTPUT
-            echo "No new build detected - skipping PR"
-          else
-            echo "has_real_change=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Read LAST_BUILD version for PR metadata
         id: lastbuild
         run: |
@@ -79,7 +68,7 @@ jobs:
           fi
 
       - name: Create pull request with changes
-        if: steps.check.outputs.has_changes == 'true' && steps.changed.outputs.has_real_change == 'true'
+        if: steps.check.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
