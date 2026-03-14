@@ -129,6 +129,7 @@ Locals/zhTW.lua
 Locals/zhCN.lua
 
 Data/EnchantData.lua
+Data/ToolEnchantData.lua
 Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
