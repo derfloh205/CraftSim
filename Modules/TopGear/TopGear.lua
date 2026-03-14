@@ -172,6 +172,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}
+        local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
 
         for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
@@ -185,15 +186,20 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                     local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
                     if itemLink ~= nil then
                         local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
-                        if itemSubType == currentProfession and (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-                            local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
-                            if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGear") then
+                        if itemSubType == currentProfession and
+                            (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
+
+                            -- Only exclude items that are definitively from an older expansion.
+                            if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
                                 local professionGear = CraftSim.ProfessionGear()
                                 professionGear:SetItem(itemLink)
                                 table.insert(inventoryGear, professionGear)
 
-                                CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(crafterUID,
-                                    recipeData.professionData.professionInfo.profession, professionGear)
+                                CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(
+                                    crafterUID,
+                                    recipeData.professionData.professionInfo.profession,
+                                    professionGear
+                                )
                             end
                         end
                     end
