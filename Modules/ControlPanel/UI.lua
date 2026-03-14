@@ -138,6 +138,11 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP),
                 CraftSim.CONST.FRAMES.EXPLANATIONS)
 
+            addModuleCheckbox(
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_SHOPPING_LABEL),
+                "MODULE_REAGENT_SHOPPING",
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_SHOPPING_TOOLTIP))
+
             local exports = rootDescription:CreateButton("Exports")
 
             exports:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT), function()

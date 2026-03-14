@@ -112,6 +112,9 @@ Modules/Supporters/UI.lua
 Modules/CraftBuffs/CraftBuffs.lua
 Modules/CraftBuffs/UI.lua
 
+Modules/ReagentShopping/ReagentShopping.lua
+Modules/ReagentShopping/UI.lua
+
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
 

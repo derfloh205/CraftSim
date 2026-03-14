@@ -343,6 +343,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.CRAFT_BUFFS.UI:Init()
 		CraftSim.COOLDOWNS.UI:Init()
 		CraftSim.CONCENTRATION_TRACKER.UI:Init()
+		CraftSim.REAGENT_SHOPPING.UI:Init()
 
 		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()
@@ -550,6 +551,7 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 	CraftSim.EXPLANATIONS.frame:Hide()
 	CraftSim.STATISTICS.UI:SetVisible(false)
+	CraftSim.REAGENT_SHOPPING.frame:Hide()
 
 	CraftSim.CRAFTQ.queueRecipeButton:Hide()
 	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
@@ -678,6 +680,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	local showExplanations = true
 	local showStatistics = true
 	local showConcentrationTracker = true
+	local showReagentShopping = true
 
 	if recipeData.supportsCraftingStats then
 		showAverageProfit = true
@@ -707,6 +710,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
 	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
+	showReagentShopping = showReagentShopping and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_SHOPPING")
 
 	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
 	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
@@ -715,6 +719,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
 	CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
 	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
+	CraftSim.REAGENT_SHOPPING.frame:SetVisible(showReagentShopping)
 
 	if showConcentrationTracker then
 		CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
