@@ -465,7 +465,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
     CraftSim.SIMULATION_MODE.UI.NO_WORKORDER =
         createSimulationModeFrames(ProfessionsFrame.CraftingPage.SchematicForm)
     CraftSim.SIMULATION_MODE.UI.WORKORDER =
-        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, true)
+        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
 end
 
 function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
