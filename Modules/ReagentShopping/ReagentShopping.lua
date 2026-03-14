@@ -115,6 +115,7 @@ function CraftSim.REAGENT_SHOPPING:BuildShoppingList()
 
             local toBuyQuantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0)
             local unitPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true) or 0
+            local isVendorItem = CraftSim.REAGENT_SHOPPING:IsVendorItem(itemID)
 
             ---@type CraftSim.REAGENT_SHOPPING.ShoppingListItem
             local listItem = {
@@ -124,7 +125,7 @@ function CraftSim.REAGENT_SHOPPING:BuildShoppingList()
                 neededQuantity = info.quantity,
                 inventoryQuantity = tonumber(totalItemCount) or 0,
                 toBuyQuantity = toBuyQuantity,
-                isVendorItem = false,
+                isVendorItem = isVendorItem,
                 unitPrice = unitPrice,
                 totalPrice = unitPrice * toBuyQuantity,
             }
@@ -200,6 +201,19 @@ function CraftSim.REAGENT_SHOPPING:GetAuctionHouseItems()
     return GUTIL:Filter(CraftSim.REAGENT_SHOPPING.shoppingList, function(item)
         return not item.isVendorItem
     end)
+end
+
+--- Checks if an item can be purchased from a vendor.
+---@param itemID number
+---@return boolean
+function CraftSim.REAGENT_SHOPPING:IsVendorItem(itemID)
+    if Auctionator and Auctionator.API and Auctionator.API.v1 and Auctionator.API.v1.GetVendorPriceByItemID then
+        local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID("CraftSim", itemID)
+        if vendorPrice then
+            return true
+        end
+    end
+    return false
 end
 
 --- Clears the entire shopping list.
