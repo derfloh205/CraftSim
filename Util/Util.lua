@@ -526,3 +526,12 @@ function CraftSim.UTIL:IsProfessionLearned(profession)
 
     return false
 end
+
+---@param itemLink string
+---@return number? enchantID
+function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)
+    if not itemLink or not itemLink:find("|Hitem:") then return nil end
+    
+    local parts = {strsplit(":", itemLink)}    
+    return tonumber(parts[4])
+end
