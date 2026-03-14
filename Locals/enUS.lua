@@ -749,6 +749,26 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE] = "American - Max Date",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT] = "Hours Left",
 
+        -- reagent shopping module
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TITLE] = "CraftSim Reagent Shopping",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_SHOPPING_LABEL] = "Reagent Shopping",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_SHOPPING_TOOLTIP] =
+        "Standalone shopping list for reagents from your Craft Queue with cost overview and export features",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TAB_SHOPPING_LIST] = "Shopping List",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TAB_OPTIONS] = "Options",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_ITEM_HEADER] = "Item",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_NEEDED_HEADER] = "Needed",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_INVENTORY_HEADER] = "Have",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TO_BUY_HEADER] = "To Buy",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_UNIT_PRICE_HEADER] = "Unit Price",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TOTAL_PRICE_HEADER] = "Total Price",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_TOTAL_COST_LABEL] = "Total Cost",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_REFRESH_BUTTON] = "Refresh",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_CLEAR_BUTTON] = "Clear",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_EXPORT_AUCTIONATOR_BUTTON] = "Export to Auctionator",
+        [CraftSim.CONST.TEXT.REAGENT_SHOPPING_OPTIONS_INFO] =
+        "Reagent Shopping options will be available in a future update.",
+
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
