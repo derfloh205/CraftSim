@@ -73,6 +73,27 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
         salvageItemId = slot and slot.activeItem and slot.activeItem:GetItemID()
     end
 
+    -- Pre-compute the set of known recipe input reagent item IDs once, to avoid repeated work inside the loop.
+    -- Items that appear in resourcesReturned AND are known recipe inputs were saved by normal resourcefulness;
+    -- they should NOT trigger the salvage item workaround.
+    local knownReagentItemIDs = {}
+    for _, requiredReagent in ipairs(recipeData.reagentData.requiredReagents) do
+        for _, reagentItem in ipairs(requiredReagent.items) do
+            knownReagentItemIDs[reagentItem.item:GetItemID()] = true
+        end
+    end
+    for _, slot in ipairs(GUTIL:Concat { recipeData.reagentData.optionalReagentSlots, recipeData.reagentData.finishingReagentSlots }) do
+        if slot:IsAllocated() and not slot:IsCurrency() then
+            knownReagentItemIDs[slot.activeReagent.item:GetItemID()] = true
+        end
+    end
+    if recipeData:HasRequiredSelectableReagent() then
+        local slot = recipeData.reagentData.requiredSelectableReagentSlot
+        if slot and slot.activeReagent and not slot:IsCurrency() then
+            knownReagentItemIDs[slot.activeReagent.item:GetItemID()] = true
+        end
+    end
+
     -- multiple sets of results in one frame - make sure to capture all resourcefulness savings
     for _, craftResult in ipairs( craftingItemResultData ) do
         if craftResult.resourcesReturned and handledOperationIds[craftResult.operationID] ~= true then
@@ -84,7 +105,10 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
                  -- Workaround for blizzard bug where saved salvage items aren't included in craftingItemResultData[].resourcesReturned for complex salvage recipes
                 if salvageItemId == craftingResourceReturnInfo.reagent.itemID then
                     salvageItemSaved = true
-                else
+                elseif not knownReagentItemIDs[craftingResourceReturnInfo.reagent.itemID] then
+                    -- Only apply the salvage workaround for items that are NOT known recipe input reagents.
+                    -- If the returned item IS a known required reagent (e.g. Duskshrouded Stone in Midnight Crushing),
+                    -- it was saved by normal resourcefulness and does NOT imply the salvage item was also saved.
                     nonSalvageQtySaved = nonSalvageQtySaved + craftingResourceReturnInfo.quantity
                     local slot = recipeData.reagentData.salvageReagentSlot;
                     local quantity = math.min( slot.requiredQuantity, craftingResourceReturnInfo.quantity ); -- if we saved 5 bismuth, the max gems we can save is still 3
