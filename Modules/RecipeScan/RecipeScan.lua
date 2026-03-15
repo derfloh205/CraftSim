@@ -148,6 +148,12 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         return false
     end
 
+    -- This permanently blocks Midnight Glamours. Should probably be an option, but I didn't want to mess with the UI and potentially break something.
+    if tContains(CraftSim.CONST.MIDNIGHT_GLAMOURS, recipeInfo.recipeID) then
+        printF("Midnight Glamour")
+        return false
+    end   
+    
     -- use cache if available for performance
     local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeInfo.recipeID)
 
