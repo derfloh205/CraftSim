@@ -61,6 +61,34 @@ CraftSim.CONST.MULTICRAFT_CONSTANTS = {
     [5] = 1.875,
 }
 
+CraftSim.CONST.MIDNIGHT_GLAMOURS = {
+    1236461, -- Blood Elf
+    1236462, -- Night Elf
+    1236463, -- Dwarf
+    1236594, -- Earthen
+    1236465, -- Undead
+    1236466, -- Human
+    1236467, -- Orc
+    1236468, -- Draenei
+    1236469, -- Troll
+    1236470, -- Goblin
+    1236471, -- Nightborne
+    1236472, -- Void Elf
+    1236473, -- Lightforged Draenei
+    1236474, -- Dark Iron Dwarf
+    1236475, -- Kul Tiran
+    1236476, -- Mechagnome
+    1236477, -- Zandalari Troll
+    1236478, -- Mag'har Orc
+    1236479, -- Vulpera
+    1236480, -- Dracthyr
+    1236481, -- Pandaren
+    1236482, -- Worgen
+    1236483, -- Gnome
+    1236484, -- Tauren
+    1236485, -- Haranir
+}
+
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 CraftSim.CONST.PAYPAL_ME_URL = "https://www.paypal.com/paypalme/CraftSim"
 CraftSim.CONST.KOFI_URL = "https://ko-fi.com/craftsim"
