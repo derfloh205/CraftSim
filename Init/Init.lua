@@ -523,7 +523,10 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	end
 	-- hide all modules
 	CraftSim.RECIPE_SCAN.frame:Hide()
-	CraftSim.CRAFTQ.frame:Hide()
+	-- Skip hiding CraftQueue frame if user is editing a craft amount input
+	if not (CraftSim.CRAFTQ.UI and CraftSim.CRAFTQ.UI.HasFocusedInput and CraftSim.CRAFTQ.UI:HasFocusedInput()) then
+		CraftSim.CRAFTQ.frame:Hide()
+	end
 	CraftSim.CRAFT_BUFFS.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	CraftSim.COOLDOWNS.frame:Hide()
@@ -725,8 +728,11 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
-	CraftSim.CRAFTQ.UI:UpdateDisplay()
-	CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
+	-- Skip CraftQueue update if user is editing a craft amount input to prevent focus loss
+	if not (CraftSim.CRAFTQ.UI.HasFocusedInput and CraftSim.CRAFTQ.UI:HasFocusedInput()) then
+		CraftSim.CRAFTQ.UI:UpdateDisplay()
+		CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
+	end
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
 	showSimulationMode = (showSimulationMode and recipeData and not recipeData.isSalvageRecipe) or false

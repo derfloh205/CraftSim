@@ -1762,6 +1762,25 @@ function CraftSim.CRAFTQ.UI:UpdateDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
 end
 
+--- Returns true if any craft amount input in the queue list currently has focus
+function CraftSim.CRAFTQ.UI:HasFocusedInput()
+    local queueTab = CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab
+    if not queueTab then return false end
+    local craftList = queueTab.content and queueTab.content.craftList
+    if not craftList or not craftList.activeRows then return false end
+    for _, row in pairs(craftList.activeRows) do
+        local craftAmountColumn = row.columns and row.columns[9]
+        if craftAmountColumn and craftAmountColumn.input and
+            craftAmountColumn.input.textInput and
+            craftAmountColumn.input.textInput.frame and
+            craftAmountColumn.input.textInput.frame:HasFocus() then
+            return true
+        end
+    end
+    return false
+end
+
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
