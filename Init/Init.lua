@@ -156,8 +156,9 @@ function CraftSim.INIT:HookToEvents()
 			end, 1)
 		elseif recipeInfo == nil then
 			print("Hide all frames recipeInfo nil")
-			CraftSim.MODULES:Hide()
-		elseif CraftSim.INIT.visibleRecipeID then
+			CraftSim.MODULES:Hide(true, true)
+		else
+			print("Updating UI without recipeID")
 			CraftSim.MODULES:UpdateUI()
 		end
 	end

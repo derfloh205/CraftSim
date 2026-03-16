@@ -16,7 +16,8 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules")
 CraftSim.MODULES.recipeData = nil
 
 ---@param keepControlPanel boolean?
-function CraftSim.MODULES:Hide(keepControlPanel)
+---@param keepCraftQ boolean?
+function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
@@ -36,9 +37,11 @@ function CraftSim.MODULES:Hide(keepControlPanel)
 	if not keepControlPanel then
 		CraftSim.CONTROL_PANEL.frame:Hide()
 	end
+	if not keepCraftQ then
+		CraftSim.CRAFTQ.frame:Hide()
+	end
 	-- hide all modules
 	CraftSim.RECIPE_SCAN.frame:Hide()
-	CraftSim.CRAFTQ.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	CraftSim.COOLDOWNS.frame:Hide()
@@ -144,6 +147,7 @@ function CraftSim.MODULES:UpdateUI()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+        print("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
 		CraftSim.MODULES:Hide()
 		return
 	end
@@ -159,7 +163,7 @@ function CraftSim.MODULES:UpdateUI()
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
 		-- hide all modules
-		CraftSim.MODULES:Hide(true)
+		CraftSim.MODULES:Hide(true, true)
 		return
 	end
 
@@ -177,7 +181,7 @@ function CraftSim.MODULES:UpdateUI()
 
     if not recipeData then
         print("No recipe data found for visible recipe!")
-        CraftSim.MODULES:Hide() 
+        CraftSim.MODULES:Hide(true, true) 
         return 
     end
 
