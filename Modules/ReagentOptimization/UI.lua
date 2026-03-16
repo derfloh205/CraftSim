@@ -593,7 +593,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
     end
 
     local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
-        GUTIL:Filter(CraftSim.INIT.currentRecipeData.reagentData
+        GUTIL:Filter(CraftSim.MODULES.recipeData.reagentData
             .requiredReagents, function(reagent)
                 return reagent.hasQuality
             end))
@@ -601,7 +601,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
     local equalsFinishingAllocation = true
     for i, _ in ipairs(recipeData.reagentData.finishingReagentSlots) do
         local slotA = recipeData.reagentData.finishingReagentSlots[i]
-        local slotB = CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i]
+        local slotB = CraftSim.MODULES.recipeData.reagentData.finishingReagentSlots[i]
         local itemIDA, itemIDB
         if slotA and slotA.activeReagent then
             if slotA.activeReagent:IsCurrency() then
