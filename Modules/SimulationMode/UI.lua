@@ -107,7 +107,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     scale = 1.2,
                 },
                 onSelectCallback = function()
-                    CraftSim.INIT:TriggerModuleUpdate()
+                    CraftSim.MODULES:UpdateUI()
                 end
             })
             return optionalReagentDropdown
@@ -145,10 +145,10 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 bestQBox:Click()
             end
             if CraftSim.SIMULATION_MODE.isActive then
-                CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.INIT.currentRecipeData)
+                CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
             end
 
-            CraftSim.INIT:TriggerModuleUpdate()
+            CraftSim.MODULES:UpdateUI()
         end
         frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL),
@@ -671,7 +671,7 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
 end
 
 function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
-    local recipeData = CraftSim.INIT.currentRecipeData
+    local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then
         return -- In what case is this nil?
     end
