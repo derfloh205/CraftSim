@@ -21,8 +21,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 
 CraftSim.INIT.FRAMES = {}
 
----@type CraftSim.RecipeData?
-CraftSim.INIT.currentRecipeData = nil
 ---@type number?
 CraftSim.INIT.currentRecipeID = nil
 CraftSim.INIT.initialLogin = false
@@ -78,7 +76,7 @@ function CraftSim.INIT:TriggerModuleUpdate(isInit)
 
 	lastCallTime = callTime
 
-	CraftSim.INIT:HideAllModules(true)
+	CraftSim.MODULES:Hide(true)
 
 	if freshLoginRecall and isInit then
 		-- hide all frames to reduce flicker on fresh login recall
@@ -158,7 +156,7 @@ function CraftSim.INIT:HookToEvents()
 			end, 1)
 		else
 			print("Hide all frames recipeInfo nil")
-			CraftSim.INIT:HideAllModules()
+			CraftSim.MODULES:Hide()
 		end
 	end
 
@@ -208,10 +206,10 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		local recipeData
 		-- if craftsim did not call the api and we do not have reagents, use the one from the gui
 		-- still need to check if craft comes from different source (other addons for example)
-		if not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.INIT.currentRecipeData and CraftSim.INIT.currentRecipeData.recipeID == onCraftData.recipeID then
+		if not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.recipeID == onCraftData.recipeID then
 			-- craft was most probably started via default gui craft button
 			print("api was called via default gui")
-			recipeData = CraftSim.INIT.currentRecipeData:Copy()
+			recipeData = CraftSim.MODULES.recipeData:Copy()
 		else
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
 			recipeData = onCraftData:CreateRecipeData()
@@ -478,8 +476,8 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			if rest == "recipeids" then
 				local recipeIDs = CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
 				CraftSim.UTIL:ShowTextCopyBox(recipeIDs)
-			elseif CraftSim.INIT.currentRecipeData then
-				local json = CraftSim.INIT.currentRecipeData:GetJSON()
+			elseif CraftSim.MODULES.recipeData then
+				local json = CraftSim.MODULES.recipeData:GetJSON()
 				CraftSim.UTIL:ShowTextCopyBox(json)
 			end
 		elseif command == "resetdb" then
@@ -499,62 +497,6 @@ function CraftSim.INIT:PLAYER_LOGIN()
 	if CraftSim.DB.OPTIONS:Get("SHOW_NEWS") then
 		CraftSim.NEWS:ShowNews(false)
 	end
-end
-
-function CraftSim.INIT:HideAllModules(keepControlPanel)
-	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
-	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
-	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local reagentOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	local reagentOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
-	-- hide control panel and return
-	if not keepControlPanel then
-		CraftSim.CONTROL_PANEL.frame:Hide()
-	end
-	-- hide all modules
-	CraftSim.RECIPE_SCAN.frame:Hide()
-	CraftSim.CRAFTQ.frame:Hide()
-	CraftSim.CRAFT_BUFFS.frame:Hide()
-	CraftSim.CRAFT_BUFFS.frameWO:Hide()
-	CraftSim.COOLDOWNS.frame:Hide()
-	CraftSim.CRAFT_LOG.logFrame:Hide()
-	CraftSim.CRAFT_LOG.advFrame:Hide()
-	CraftSim.CONCENTRATION_TRACKER.frame:Hide()
-	customerHistoryFrame:Hide()
-	priceOverrideFrame:Hide()
-	priceOverrideFrameWO:Hide()
-	specInfoFrame:Hide()
-	specInfoFrameWO:Hide()
-	averageProfitFrame:Hide()
-	averageProfitFrameWO:Hide()
-	topgearFrame:Hide()
-	topgearFrameWO:Hide()
-	CraftSim.PRICE_DETAILS.frame:Hide()
-	CraftSim.PRICE_DETAILS.frameWO:Hide()
-	CraftSim.COST_OPTIMIZATION.frame:Hide()
-	CraftSim.COST_OPTIMIZATION.frameWO:Hide()
-	reagentOptimizationFrame:Hide()
-	reagentOptimizationFrameWO:Hide()
-	-- hide sim mode toggle button
-	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
-	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
-	CraftSim.EXPLANATIONS.frame:Hide()
-	CraftSim.STATISTICS.UI:SetVisible(false)
-
-	CraftSim.CRAFTQ.queueRecipeButton:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
 end
 
 function CraftSim_OnAddonCompartmentClick()
