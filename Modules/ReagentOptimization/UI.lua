@@ -284,14 +284,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             }
         }
 
-        frame.content.advancedOptimizationOptions = GGUI.Button {
+        frame.content.advancedOptimizationOptions = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.content.advancedOptimizationButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-            sizeX = 20, sizeY = 20,
-            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-            cleanTemplate = true,
-            clickCallback = function(_, _)
-                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            menuUtilCallback = function(ownerRegion, rootDescription)
                     local concentrationCB = rootDescription:CreateCheckbox(
                         "Optimize " .. f.gold("Concentration Value"),
                         function()
@@ -351,8 +347,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                         GameTooltip_AddInstructionLine(tooltip,
                             "Optimize Finishing Reagent Slots you do not have unlocked yet");
                     end);
-                end)
-            end
+            end,
         }
 
         local reagentListQualityIconHeaderSize = 25
