@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 function CraftSim.SIMULATION_MODE:MaxSpecData()
@@ -29,7 +29,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 ---@param userInput boolean
@@ -68,14 +68,14 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
@@ -98,7 +98,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
         inputBox:SetText(inputNumber)
     end
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -106,7 +106,7 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
 
     self:InitializeReagentList()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
@@ -251,7 +251,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     self:UpdateSimulationMode()
 
     -- recalculate modules
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 --- used by allocate button in reagent optimization module
@@ -267,7 +267,7 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     -- set simulation reagents to recipeData reagents
     CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData:GetCraftingReagentInfoTbl())
     CraftSim.SIMULATION_MODE:InitializeReagentList()
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.INIT:InitializeVisibleRecipeID()
 end
 
 
@@ -321,6 +321,6 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     local quantityFulfilled = recipeData.reagentData:SetRequiredReagent(itemID, quantity)
 
     if quantityFulfilled then
-        CraftSim.INIT:TriggerModuleUpdate()
+        CraftSim.INIT:InitializeVisibleRecipeID()
     end
 end
