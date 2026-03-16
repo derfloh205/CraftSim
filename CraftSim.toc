@@ -54,6 +54,8 @@ Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceSource.lua
 
+Modules/Modules.lua
+
 Modules/ItemCount/ItemCount.lua
 
 Modules/Explanations/Explanations.lua

@@ -80,7 +80,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     maxOptimizationQualities[currentRecipeID] = value
                 end
 
-                CraftSim.INIT:TriggerModulesByRecipeType()
+                CraftSim.MODULES:UpdateUI()
             end,
         }
 
@@ -94,7 +94,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             tooltip = "If enabled, all qualities up to the max quality will be optimized, and the one with the highest profit will be shown",
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED", checked)
-                CraftSim.INIT:TriggerModulesByRecipeType()
+                CraftSim.MODULES:UpdateUI()
             end
         }
 
