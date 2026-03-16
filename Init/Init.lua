@@ -22,7 +22,7 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 ---@type number?
-CraftSim.INIT.currentRecipeID = nil
+CraftSim.INIT.visibleRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
@@ -62,7 +62,7 @@ local hookedEvent = false
 
 local freshLoginRecall = true
 local lastCallTime = 0
-function CraftSim.INIT:TriggerModuleUpdate(isInit)
+function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 	local callTime = GetTime()
 	if lastCallTime == callTime then
 		print("SAME FRAME, RETURN")
@@ -84,14 +84,14 @@ function CraftSim.INIT:TriggerModuleUpdate(isInit)
 
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
 		C_Timer.After(0.1, function()
-			CraftSim.INIT:TriggerModuleUpdate(true)
+			CraftSim.INIT:InitializeVisibleRecipeID(true)
 		end)
 		return
 	end
 
 	GUTIL:WaitFor(function()
 		if C_TradeSkillUI.IsTradeSkillReady() then
-			local recipeID = CraftSim.INIT.currentRecipeID
+			local recipeID = CraftSim.INIT.visibleRecipeID
 			if recipeID then
 				local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 				return recipeInfo ~= nil and recipeInfo.categoryID
@@ -114,9 +114,9 @@ function CraftSim.INIT:HookToEvents()
 	hookedEvent = true
 
 	local function Update(self)
-		if CraftSim.INIT.currentRecipeID then
-			print("Update: " .. tostring(CraftSim.INIT.currentRecipeID))
-			CraftSim.INIT:TriggerModuleUpdate(false)
+		if CraftSim.INIT.visibleRecipeID then
+			print("Update: " .. tostring(CraftSim.INIT.visibleRecipeID))
+			CraftSim.INIT:InitializeVisibleRecipeID(false)
 		end
 	end
 
@@ -134,14 +134,14 @@ function CraftSim.INIT:HookToEvents()
 
 		if recipeInfo then
 			print("Init: " .. tostring(recipeInfo.recipeID))
-			CraftSim.INIT.currentRecipeID = recipeInfo.recipeID
+			CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
 
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
 			CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
 				professionInfo.profession)
-			CraftSim.INIT:TriggerModuleUpdate(true)
+			CraftSim.INIT:InitializeVisibleRecipeID(true)
 
 			local recipeID = recipeInfo.recipeID
 
@@ -149,9 +149,9 @@ function CraftSim.INIT:HookToEvents()
 			-- otherwise it just always fizzles
 			-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
 			GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
-				if recipeID == CraftSim.INIT.currentRecipeID then
+				if recipeID == CraftSim.INIT.visibleRecipeID then
 					print("Multicraft Info Loaded")
-					CraftSim.INIT:TriggerModuleUpdate(true)
+					CraftSim.INIT:InitializeVisibleRecipeID(true)
 				end
 			end, 1)
 		else
@@ -367,7 +367,7 @@ function CraftSim.INIT:HandleAuctionatorHooks()
 		---@diagnostic disable-next-line: undefined-global
 		Auctionator.API.v1.RegisterForDBUpdate(CraftSimAddonName, function()
 			print("Auctionator DB Update")
-			CraftSim.INIT:TriggerModuleUpdate(false)
+			CraftSim.INIT:InitializeVisibleRecipeID(false)
 		end)
 	end
 end

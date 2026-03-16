@@ -656,7 +656,7 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeList(recipeDa
     end
 
     subRecipeList:UpdateDisplay()
-    if CraftSim.INIT.currentRecipeID ~= CraftSim.INIT.lastRecipeID then
+    if CraftSim.INIT.visibleRecipeID ~= CraftSim.INIT.lastRecipeID then
         -- only auto select new row when switching recipes
         subRecipeList:SelectRow(1)
     end

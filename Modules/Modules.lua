@@ -74,7 +74,7 @@ end
 
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.currentRecipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
     if not recipeInfo then
         return nil
     end
@@ -155,7 +155,7 @@ function CraftSim.MODULES:UpdateUI()
 		professionInfo.profession and C_TradeSkillUI
 		.IsNearProfessionSpellFocus(professionInfo.profession))
 
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.currentRecipeID)
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
 		-- hide all modules
@@ -376,6 +376,6 @@ function CraftSim.MODULES:UpdateUI()
 		CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
 	end
 
-	CraftSim.INIT.lastRecipeID = CraftSim.INIT.currentRecipeID
+	CraftSim.INIT.lastRecipeID = CraftSim.INIT.visibleRecipeID
 end
 
