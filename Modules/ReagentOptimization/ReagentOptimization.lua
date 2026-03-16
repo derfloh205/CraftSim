@@ -611,12 +611,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     -- Optimize Knapsack
     local resultsUnfiltered = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)
 
-    -- remove any result that maps to the expected quality without reagent increase
-    -- -- NEW: any that is below! Same is fine
-    -- local results = GUTIL:Filter(resultsUnfiltered, function(result)
-    --     return result.qualityID >= expectedQualityWithoutReagents
-    -- end)
-
     local bestResult = resultsUnfiltered[1]
 
     if bestResult then
