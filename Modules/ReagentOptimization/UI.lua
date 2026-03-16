@@ -74,7 +74,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             clickCallback = function(_, label, value)
                 local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get(
                     "REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
-                local currentRecipeID = CraftSim.INIT.currentRecipeID
+                local currentRecipeID = CraftSim.INIT.visibleRecipeID
 
                 if currentRecipeID then
                     maxOptimizationQualities[currentRecipeID] = value

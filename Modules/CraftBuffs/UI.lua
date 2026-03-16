@@ -85,7 +85,7 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON),
             savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
             onSelectCallback = function()
-                CraftSim.INIT:TriggerModuleUpdate()
+                CraftSim.INIT:InitializeVisibleRecipeID()
             end,
         }
 
