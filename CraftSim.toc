@@ -42,7 +42,8 @@ DB/priceOverrideDB.lua
 Media/Media.lua
 
 Util/Frames.lua
-Util/Widgets.lua
+Util/Widgets/ContextMenu.lua
+Util/Widgets/OptionsButton.lua
 Util/Widgets/ReagentList.lua
 
 Util/Comm.lua
