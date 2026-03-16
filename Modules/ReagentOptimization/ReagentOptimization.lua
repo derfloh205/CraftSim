@@ -129,7 +129,13 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     maxWeight = 0
     for i = 0, numReagents, 1 do
-        maxWeight = maxWeight + maxQualityFactor * ks[i].numReq * ks[i].recipeFactoredWeight
+        local maxCompWeight = 0
+        for _, comp in pairs(ks[i].compositions) do
+            if comp.weight and comp.weight > maxCompWeight then
+                maxCompWeight = comp.weight
+            end
+        end
+        maxWeight = maxWeight + maxCompWeight
     end
 
     local inf = math.huge
@@ -220,6 +226,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numReagents
             minValue = inf
+            lowestj = 0
 
             -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
             for j = tStart, tEnd, 1 do
