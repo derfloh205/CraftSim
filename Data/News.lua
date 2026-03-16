@@ -23,6 +23,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.3.1"),
+        f.PG .. "Fixed incorrect consideration of legacy profession gear",
+        f.p .. "Update DB2 Data: 12.0.1.66384",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.PG .. "Fixed identification of tool enchant stats",
         newP("21.3.0"),
         f.PG .. "Added info elements about the time when a recipe",
         f.a .. " has enough concentration again",

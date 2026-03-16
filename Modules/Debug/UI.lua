@@ -167,7 +167,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
             local openRecipe = main:CreateButton("Open Recipe")
 
             openRecipe:CreateButton("Inspect RecipeData", function()
-                local recipeData = CraftSim.INIT.currentRecipeData
+                local recipeData = CraftSim.MODULES.recipeData
                 if recipeData then
                     CraftSim.DEBUG:InspectTable(recipeData, string.format("Open Recipe (%s)", recipeData.recipeName),
                         true)
@@ -175,7 +175,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
             end)
 
             openRecipe:CreateButton("Inspect SpecializationData", function()
-                local recipeData = CraftSim.INIT.currentRecipeData
+                local recipeData = CraftSim.MODULES.recipeData
                 if recipeData and recipeData
                     .specializationData then
                     CraftSim.DEBUG:InspectTable(recipeData.specializationData,
@@ -225,12 +225,12 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
             end)
 
             craftLog:CreateButton("Inspect Open CraftRecipeData", function()
-                if CraftSim.CRAFT_LOG.currentSessionData and CraftSim.INIT.currentRecipeData then
+                if CraftSim.CRAFT_LOG.currentSessionData and CraftSim.MODULES.recipeData then
                     local craftRecipeData = CraftSim.CRAFT_LOG.currentSessionData:GetCraftRecipeData(CraftSim.INIT
                         .currentRecipeData.recipeID)
                     if craftRecipeData then
                         CraftSim.DEBUG:InspectTable(craftRecipeData,
-                            string.format("CraftRecipeData (%s)", CraftSim.INIT.currentRecipeData.recipeName), true)
+                            string.format("CraftRecipeData (%s)", CraftSim.MODULES.recipeData.recipeName), true)
                     end
                 end
             end)
