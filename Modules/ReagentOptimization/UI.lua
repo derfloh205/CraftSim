@@ -332,7 +332,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "Suggest the usage of soulbound finishing reagents if profitable");
                     end);
 
-                    local finishingReagentsSoulboundCB = rootDescription:CreateCheckbox(
+                    local finishingReagentsLockedSlotsCB = rootDescription:CreateCheckbox(
                         "Include " .. f.r("Locked ") .. f.bb("Finishing Slots"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS")
@@ -343,7 +343,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                                 not value)
                         end)
 
-                    finishingReagentsSoulboundCB:SetTooltip(function(tooltip, elementDescription)
+                    finishingReagentsLockedSlotsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
                             "Optimize Finishing Reagent Slots you do not have unlocked yet");
                     end);
