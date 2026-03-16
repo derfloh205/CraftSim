@@ -107,7 +107,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     scale = 1.2,
                 },
                 onSelectCallback = function()
-                    CraftSim.INIT:InitializeVisibleRecipeID()
+                    CraftSim.MODULES:UpdateUI()
                 end
             })
             return optionalReagentDropdown
@@ -148,7 +148,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
             end
 
-            CraftSim.INIT:InitializeVisibleRecipeID()
+            CraftSim.MODULES:UpdateUI()
         end
         frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL),
