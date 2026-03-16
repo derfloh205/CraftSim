@@ -119,9 +119,10 @@ function CraftSim.INIT:HookToEvents()
 		end
 	end
 
-
 	local function InitNewRecipeID(self, recipeInfo)
+		print("InitNewRecipeID called")
 		if not self:IsVisible() then
+			print("not visible, return")
 			return
 		end
 		-- if init turn sim mode off
@@ -131,7 +132,7 @@ function CraftSim.INIT:HookToEvents()
 			CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:SetChecked(false)
 		end
 
-		if recipeInfo then
+		if recipeInfo and recipeInfo.recipeID then
 			print("Init: " .. tostring(recipeInfo.recipeID))
 			CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
 
@@ -153,9 +154,12 @@ function CraftSim.INIT:HookToEvents()
 					CraftSim.INIT:InitializeVisibleRecipeID(true)
 				end
 			end, 1)
-		else
+		elseif recipeInfo == nil then
 			print("Hide all frames recipeInfo nil")
-			CraftSim.MODULES:Hide()
+			CraftSim.MODULES:Hide(true, true)
+		else
+			print("Updating UI without recipeID")
+			CraftSim.MODULES:UpdateUI()
 		end
 	end
 
