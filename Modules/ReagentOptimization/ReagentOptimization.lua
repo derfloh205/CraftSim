@@ -120,9 +120,22 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     numReagents = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
 
+    -- Simplified (Midnight / 2-tier) recipes have quality factors 0 and 1 (max = 1 per item),
+    -- while regular (3-tier) recipes use quality factors 0, 1, and 2 (max = 2 per item).
+    -- Using 2 as the multiplier for simplified recipes would make maxWeight and tStart twice
+    -- as large as they should be, causing the optimizer to search beyond achievable weights
+    -- and always fall back to all-T1 reagents.
+    local maxQualityFactor = recipeData:IsSimplifiedQualityRecipe() and 1 or 2
+
     maxWeight = 0
     for i = 0, numReagents, 1 do
-        maxWeight = maxWeight + 2 * ks[i].numReq * ks[i].recipeFactoredWeight
+        local maxCompWeight = 0
+        for _, comp in pairs(ks[i].compositions) do
+            if comp.weight and comp.weight > maxCompWeight then
+                maxCompWeight = comp.weight
+            end
+        end
+        maxWeight = maxWeight + maxCompWeight
     end
 
     local inf = math.huge
@@ -153,7 +166,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do initial weight first
     local i = 0
-    for k = 0, 2 * ks[i].numReq, 1 do -- for each weight and value in reagent(0)
+    for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(0)
         --print("current composition: " .. k)
         if ks[i].compositions[k] then
             b[i][ks[i].compositions[k].weight] = ks[i].compositions[k].value
@@ -163,7 +176,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do next weights
     for i = 1, numReagents, 1 do
-        for k = 0, 2 * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
+        for k = 0, maxQualityFactor * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
             for j = 0, maxWeight, 1 do -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
@@ -213,6 +226,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numReagents
             minValue = inf
+            lowestj = 0
 
             -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
             for j = tStart, tEnd, 1 do
@@ -596,12 +610,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     CraftSim.DEBUG:StartProfiling("optimizeKnapsack")
     -- Optimize Knapsack
     local resultsUnfiltered = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)
-
-    -- remove any result that maps to the expected quality without reagent increase
-    -- -- NEW: any that is below! Same is fine
-    -- local results = GUTIL:Filter(resultsUnfiltered, function(result)
-    --     return result.qualityID >= expectedQualityWithoutReagents
-    -- end)
 
     local bestResult = resultsUnfiltered[1]
 
