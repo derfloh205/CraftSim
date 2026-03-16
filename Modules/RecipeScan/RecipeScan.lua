@@ -12,6 +12,9 @@ CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 CraftSim.RECIPE_SCAN.isScanningProfessions = false
 
+---@type string? last profession UID that was open when UpdateProfessionListByCache ran
+CraftSim.RECIPE_SCAN.lastOpenProfessionUID = nil
+
 ---@type GUTIL.FrameDistributor?
 CraftSim.RECIPE_SCAN.rowScanFrameDistributor = nil
 
@@ -458,8 +461,16 @@ end
 function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     -- wait til the currently open profession is cached then update list
 
+    -- capture profession UID before the async wait so we can detect changes
+    local professionInfoAtCall = C_TradeSkillUI.GetBaseProfessionInfo()
+    local professionUIDAtCall = professionInfoAtCall and
+        self:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall.profession) or ""
+
     local function update()
-        CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
+        local professionChanged = CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= nil and
+            CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= professionUIDAtCall
+        CraftSim.RECIPE_SCAN.lastOpenProfessionUID = professionUIDAtCall
+        CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     end
 
     GUTIL:WaitFor(function()

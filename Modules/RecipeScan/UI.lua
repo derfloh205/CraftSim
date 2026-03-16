@@ -205,6 +205,17 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         cleanTemplate = true,
         clickCallback = function(_, _)
             MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                local autoselectProfessionCB = rootDescription:CreateCheckbox(
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION", not value)
+                    end)
+
+                rootDescription:CreateDivider()
+
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -320,7 +331,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     }
 end
 
-function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
+function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     -- for each profession that is cached, create a tabFrame and connect it to the row of the profession
     -- do this only if the profession is not yet added to the list
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
@@ -342,10 +353,10 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
         end
     end
 
-    CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
+    CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
 end
 
-function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
+function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
     print("update prof list display")
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
@@ -386,11 +397,25 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay()
             return false
         end)
 
-    --- since this is only called when first opening or in general opening a profession just select the current profession always
-    -- only select if there is nothing selected yet
     local selectedRow = content.professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
     if not selectedRow then
+        -- nothing selected yet, select the first row (current profession is sorted to top)
         content.professionList:SelectRow(1)
+    elseif professionChanged and CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION") then
+        -- profession switched while module was open: auto-select the row matching the new profession
+        local currentProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
+        local matchingRowIndex = nil
+        for i, row in ipairs(content.professionList.activeRows) do
+            if row.crafterProfessionUID == currentProfessionUID then
+                matchingRowIndex = i
+                break
+            end
+        end
+        if matchingRowIndex then
+            content.professionList:SelectRow(matchingRowIndex)
+        else
+            CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(selectedRow) --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
+        end
     else
         CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(selectedRow) --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
     end
