@@ -113,15 +113,14 @@ function CraftSim.INIT:HookToEvents()
 	end
 	hookedEvent = true
 
-	local function Update(self)
+	local function UpdateUI(self)
 		if CraftSim.INIT.visibleRecipeID then
-			print("Update: " .. tostring(CraftSim.INIT.visibleRecipeID))
-			CraftSim.INIT:InitializeVisibleRecipeID(false)
+			CraftSim.MODULES:UpdateUI()
 		end
 	end
 
 
-	local function Init(self, recipeInfo)
+	local function InitNewRecipeID(self, recipeInfo)
 		if not self:IsVisible() then
 			return
 		end
@@ -162,20 +161,21 @@ function CraftSim.INIT:HookToEvents()
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
 	local hookFrame2 = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
-	hooksecurefunc(hookFrame, "Init", Init)
-	hooksecurefunc(hookFrame2, "Init", Init)
+	hooksecurefunc(hookFrame, "Init", InitNewRecipeID)
+	hooksecurefunc(hookFrame2, "Init", InitNewRecipeID)
 
-	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
-	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
+	-- events that update the current recipe's reagents should only update the modules' uis but not trigger a full recheck of the visible recipe
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, UpdateUI)
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, UpdateUI)
 
-	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
-	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, UpdateUI)
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, UpdateUI)
 
 	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
 	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]
 
-	recipeTab:HookScript("OnClick", Update)
-	craftingOrderTab:HookScript("OnClick", Update)
+	recipeTab:HookScript("OnClick", InitNewRecipeID)
+	craftingOrderTab:HookScript("OnClick", InitNewRecipeID)
 end
 
 function CraftSim.INIT:InitStaticPopups()
