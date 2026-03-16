@@ -42,6 +42,28 @@ function CraftSim.ProfessionGear:GetItemLevel()
 	return itemLevel
 end
 
+function CraftSim.ProfessionGear:GetStatsFromEnchant()
+	local stats = CraftSim.ProfessionStats() -- default empty stats
+
+	if not self.item then
+		return stats
+	end
+
+	local enchantID = CraftSim.UTIL:GetEnchantIDFromItemLink(self.item:GetItemLink())
+	if not enchantID then
+		return stats
+	end
+
+	local enchantData = CraftSim.TOOLENCHANTDATA[enchantID]
+	if not enchantData then
+		return stats
+	end
+
+	stats[enchantData.stat]:addValue(enchantData.value)
+
+	return stats
+end
+
 ---@param itemLink string?
 function CraftSim.ProfessionGear:SetItem(itemLink)
 	self.professionStats:Clear()
@@ -76,15 +98,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local parsedSkill = 0
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 
-	local parsedEnchantingStats = {
-		resourcefulness = 0,
-		multicraft = 0,
-	}
 	local equipMatchString = L(CraftSim.CONST.TEXT.EQUIP_MATCH_STRING)
-	local enchantedMatchString = L(CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING)
-	local resourcefulnessMatchString = L(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
-	local multicraftMatchString = L(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
-	local ingenuityMatchString = L(CraftSim.CONST.TEXT.STAT_INGENUITY)
 	--print("TooltipData lines:")
 	--print(tooltipData.lines, true)
 	for _, line in pairs(tooltipData.lines) do
@@ -96,33 +110,13 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 				parsedSkill = tonumber(string.match(lineText, "(%d+)")) or 0
 			end
 		end
-		if lineText and string.find(lineText, enchantedMatchString) then
-			if string.find(lineText, resourcefulnessMatchString) then
-				parsedEnchantingStats.resourcefulness = tonumber(string.match(lineText, "%+(%d+)")) or 0
-			elseif string.find(lineText, multicraftMatchString) then
-				parsedEnchantingStats.multicraft = tonumber(string.match(lineText, "%+(%d+)")) or 0
-			elseif string.find(lineText, ingenuityMatchString) then
-				parsedEnchantingStats.ingenuity = tonumber(string.match(lineText, "%+(%d+)")) or 0
-			end
-		end
 	end
-
+	
 	if parsedSkill > 0 then
 		self.professionStats.skill.value = parsedSkill
 	end
 
-	if parsedEnchantingStats.resourcefulness then
-		self.professionStats.resourcefulness.value = self.professionStats.resourcefulness.value +
-			parsedEnchantingStats.resourcefulness
-	end
-
-	if parsedEnchantingStats.multicraft then
-		self.professionStats.multicraft.value = self.professionStats.multicraft.value + parsedEnchantingStats.multicraft
-	end
-
-	if parsedEnchantingStats.ingenuity then
-		self.professionStats.ingenuity.value = self.professionStats.ingenuity.value + parsedEnchantingStats.ingenuity
-	end
+	self.professionStats:add(self:GetStatsFromEnchant())
 end
 
 function CraftSim.ProfessionGear:Copy()

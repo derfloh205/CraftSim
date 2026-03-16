@@ -6,7 +6,7 @@
 ## Category-deDE: Berufe
 ## Notes: Calculates the average profit based on your profession stats and other tools for the war within gold making
 ## Author: genju
-## Version: 21.3.0
+## Version: 21.3.1
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -129,6 +129,7 @@ Locals/zhTW.lua
 Locals/zhCN.lua
 
 Data/EnchantData.lua
+Data/ToolEnchantData.lua
 Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua

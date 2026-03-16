@@ -68,8 +68,12 @@ def searchTable(table, searchTerms):
     for row in table:
         match = True
         for key, value in conditions.items():
-            if row[key] != value:
-                match = False
+            if type(value) != list:
+                if row[key] != value:
+                    match = False
+            else:
+                if row[key] not in value:
+                    match = False
         if match:
             results.append(row)
             if singleResult:
