@@ -239,6 +239,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                             if claimedOrder then
                                 tinsert(orders, claimedOrder)
                             end
+                            print("[QWO] Orders fetched: " .. tostring(#orders))
 
                             GUTIL.FrameDistributor {
                                 iterationTable = orders,
@@ -263,6 +264,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             local cleanedCustomerName = gsub(order.customerName,
                                                 "-" .. realmName, "")
                                             if not tContains(cleanedCrafterUIDs, cleanedCustomerName) then
+                                                print("[QWO] SKIP guild order: customer '" .. cleanedCustomerName .. "' is not an alt")
                                                 distributor:Continue()
                                                 return
                                             end
@@ -279,6 +281,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 if slot and slot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS
                                                         .REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS) then
                                                     if slot:IsAllocated() and not slot:IsOrderReagentIn(recipeData) then
+                                                        print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": spark recipe excluded by option")
                                                         distributor:Continue()
                                                         return
                                                     end
@@ -334,6 +337,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                     return true
                                                 end)
                                             if not rewardAllowed then
+                                                print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": reward filtered")
                                                 distributor:Continue()
                                                 return
                                             end
@@ -342,16 +346,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                                         recipeData:Update()
 
-                                        print("- Knowledge Points Rewarded: " .. tostring(knowledgePointsRewarded))
-
-
                                         local function withinKPCost(averageProfit)
                                             if isPatronOrder and knowledgePointsRewarded > 0 and averageProfit < 0 then
                                                 
                                                 local kpCost = math.abs(averageProfit / knowledgePointsRewarded)
     
                                                     print("- kpCost: " .. GUTIL:FormatMoney(kpCost, true, nil, true))
-    
+
                                                 if kpCost >= maxKPCost then
                                                     return false
                                                 end
@@ -397,14 +398,32 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 queueAble = true
                                             end
 
+                                            print(string.format("[QWO] spellID=%s minQ=%s expectedQ=%s expectedQConc=%s queueAble=%s",
+                                                tostring(order.spellID), tostring(order.minQuality),
+                                                tostring(recipeData.resultData.expectedQuality),
+                                                tostring(recipeData.resultData.expectedQualityConcentration),
+                                                tostring(queueAble)))
+
                                             if queueAble then
                                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
                                                 recipeData.averageProfitCached <= 0	then
+                                                    print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": not profitable (profit=" .. tostring(recipeData.averageProfitCached) .. ")")
                                                     -- skip: not profitable
                                                 elseif withinKPCost(recipeData.averageProfitCached) and
                                                 withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
-                                                    CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+                                                    CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData })
+                                                    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+                                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+                                                        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+                                                        CraftSim.CRAFTQ.frame:Show()
+                                                        CraftSim.CRAFTQ.frame:Raise()
+                                                    end
+                                                else
+                                                    print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": cost thresholds exceeded")
                                                 end
+                                            else
+                                                print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": quality not reachable (expected=" .. tostring(recipeData.resultData.expectedQuality) .. " < min=" .. tostring(order.minQuality) .. ")")
                                             end
 
                                             distributor:Continue()
@@ -434,6 +453,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             queueRecipe()
                                         end
                                     else
+                                        print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": recipe not found or not learned")
                                         distributor:Continue()
                                     end
                                 end
@@ -957,8 +977,15 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION")
 
     if not IsShiftKeyDown() then
-        -- just queue without any optimizations
-        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        -- just queue without any optimizations (bypass wrapper - same fix as QueueWorkOrders)
+        CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+        CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData })
+        CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+            CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+            CraftSim.CRAFTQ.frame:Show()
+            CraftSim.CRAFTQ.frame:Raise()
+        end
         return
     end
 
@@ -983,14 +1010,28 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             finally = function()
                 queueButton:SetEnabled(true)
                 queueButton:SetText("+ CraftQueue")
-                CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData })
+                CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+                    CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+                    CraftSim.CRAFTQ.frame:Show()
+                    CraftSim.CRAFTQ.frame:Raise()
+                end
             end,
             progressUpdateCallback = function(progress)
                 queueButton:SetText(string.format("%.0f%%", progress))
             end
         }
     else
-        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+        CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData })
+        CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+            CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+            CraftSim.CRAFTQ.frame:Show()
+            CraftSim.CRAFTQ.frame:Raise()
+        end
     end
 end
 

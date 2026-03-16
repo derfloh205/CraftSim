@@ -152,6 +152,7 @@ function CraftSim.RecipeData:new(options)
     ---@field recipeName string
     ---@field subRecipeDepth number
     ---@field concentrating boolean
+    ---@field orderID number
     --- recipeData references for which the recipeData is used as subRecipe
     ---@type CraftSim.RecipeData.ParentRecipeInfo[]
     self.parentRecipeInfo = {}
@@ -2227,6 +2228,7 @@ function CraftSim.RecipeData:CreateParentRecipeInfo()
         recipeName = self.recipeName,
         subRecipeDepth = self.subRecipeDepth,
         concentrating = self.concentrating,
+        orderID = (self.orderData and self.orderData.orderID) or 0,
     }
     return pri
 end

@@ -189,7 +189,7 @@ end
 ---@return CraftSim.CraftQueueItem | nil
 function CraftSim.CraftQueue:FindRecipeByParentRecipeInfo(prI)
     return self.recipeCrafterMap
-        [prI.crafterUID .. ":" .. prI.recipeID .. ":" .. prI.subRecipeDepth .. ":" .. tostring(prI.concentrating)]
+        [prI.crafterUID .. ":" .. prI.recipeID .. ":" .. prI.subRecipeDepth .. ":" .. tostring(prI.orderID or 0)]
 end
 
 function CraftSim.CraftQueue:ClearAll()
@@ -353,6 +353,12 @@ function CraftSim.CraftQueue:FilterSortByPriority()
             return false
         end
 
+        local aProfitOk = a.recipeData.averageProfitCached ~= nil
+        local bProfitOk = b.recipeData.averageProfitCached ~= nil
+        if not aProfitOk or not bProfitOk then
+            print("[QWO] FilterSort: nil averageProfitCached! a=" .. tostring(a.recipeData.averageProfitCached) .. " b=" .. tostring(b.recipeData.averageProfitCached) .. " spellA=" .. tostring(a.recipeData.recipeID) .. " spellB=" .. tostring(b.recipeData.recipeID))
+            return false
+        end
         if a.recipeData.averageProfitCached > b.recipeData.averageProfitCached then
             return true
         elseif a.recipeData.averageProfitCached < b.recipeData.averageProfitCached then
