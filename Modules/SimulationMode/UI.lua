@@ -53,7 +53,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        frameLevel = ProfessionsFrame.CraftingPage.SchematicForm:GetFrameLevel() + 10,
+        frameLevel = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetFrameLevel() + 10,
         hide = true,
     })
 
