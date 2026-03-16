@@ -138,7 +138,7 @@ function CraftSim.DEBUG:GetCacheGlobalsList()
 end
 
 function CraftSim.DEBUG:ShowOutdatedSpecNodes()
-    local specializationData = CraftSim.INIT.currentRecipeData.specializationData
+    local specializationData = CraftSim.MODULES.recipeData.specializationData
     if not specializationData then return end
 
     local sortedNodes = GUTIL:Sort(specializationData.nodeData, function(a, b)
