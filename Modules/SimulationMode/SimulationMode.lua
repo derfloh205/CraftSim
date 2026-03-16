@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 function CraftSim.SIMULATION_MODE:MaxSpecData()
@@ -29,7 +29,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 ---@param userInput boolean
@@ -68,14 +68,14 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
@@ -98,7 +98,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
         inputBox:SetText(inputNumber)
     end
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -106,7 +106,7 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
 
     self:InitializeReagentList()
 
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
@@ -172,11 +172,11 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     recipeData.reagentData:ClearOptionalReagents()
 
     local possibleRequiredSelectableItemIDs = {}
-    if recipeData.reagentData:HasRequiredSelectableReagent() then
+    if recipeData.reagentData:HasRequiredSelectableReagent() and not recipeData.reagentData.requiredSelectableReagentSlot:IsCurrency() then
         possibleRequiredSelectableItemIDs = GUTIL:Map(
             recipeData.reagentData.requiredSelectableReagentSlot.possibleReagents,
             function(reagent)
-                return reagent.item:GetItemID()
+                return reagent.item and reagent.item:GetItemID()
             end)
     end
 
@@ -184,13 +184,17 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
 
     local itemIDs = {}
     for _, optionalReagentItemSelector in pairs(optionalReagentItemSelectors) do
-        local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
-        if itemID then
-            -- try to set required selectable if available else put to optional/finishing
-            if tContains(possibleRequiredSelectableItemIDs, itemID) then
-                recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
-            else
-                table.insert(itemIDs, itemID)
+        if optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
+            recipeData.reagentData:SetOptionalCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
+        else
+            local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
+            if itemID then
+                -- try to set required selectable if available else put to optional/finishing
+                if tContains(possibleRequiredSelectableItemIDs, itemID) then
+                    recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
+                else
+                    table.insert(itemIDs, itemID)
+                end
             end
         end
     end
@@ -243,11 +247,10 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     self:InitializeReagentList()
     UI:InitOptionalReagentItemSelectors(self.recipeData)
 
-    -- -- update simulation recipe data and UI
+    -- update simulation recipe data and UI
     self:UpdateSimulationMode()
 
-    -- recalculate modules
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 --- used by allocate button in reagent optimization module
@@ -263,7 +266,7 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     -- set simulation reagents to recipeData reagents
     CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData:GetCraftingReagentInfoTbl())
     CraftSim.SIMULATION_MODE:InitializeReagentList()
-    CraftSim.INIT:TriggerModuleUpdate()
+    CraftSim.MODULES:UpdateUI()
 end
 
 
@@ -317,6 +320,6 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     local quantityFulfilled = recipeData.reagentData:SetRequiredReagent(itemID, quantity)
 
     if quantityFulfilled then
-        CraftSim.INIT:TriggerModuleUpdate()
+        CraftSim.MODULES:UpdateUI()
     end
 end

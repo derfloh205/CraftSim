@@ -3,8 +3,8 @@ import os
 import luadata
 import csv
 
-dataDirectoryPrefix = "../_Data/"
-resultDirectoryPrefix = "Result/"
+dataDirectoryPrefix = "_Data/"
+resultDirectoryPrefix = "_Result/"
 latestDirectoryPrefix = "Latest/"
 
 # just a utility to make it easier to wait ;D
@@ -28,7 +28,7 @@ def downloadWagoTablesCSV(wagoTables, buildVersion=None):
         if os.path.isfile(filename):
             print("File already exists, skipping download: " + filename)
             continue
-        updateProgressBar(count, total, table)
+        #updateProgressBar(count, total, table)
         buildParameter = f"?build={buildVersion}"
         if buildVersion == None:
             buildParameter = ""
@@ -68,8 +68,12 @@ def searchTable(table, searchTerms):
     for row in table:
         match = True
         for key, value in conditions.items():
-            if row[key] != value:
-                match = False
+            if type(value) != list:
+                if row[key] != value:
+                    match = False
+            else:
+                if row[key] not in value:
+                    match = False
         if match:
             results.append(row)
             if singleResult:
@@ -79,9 +83,6 @@ def searchTable(table, searchTerms):
         return None
             
     return results
-
-def copyResult(file, destination):
-    shutil.copy(file, destination)
 
 def writeLuaTable(dataTable, fileName, prefix, buildVersion=None, silent=False):
     if not silent: print(f"\nWriting Lua File: {fileName}")

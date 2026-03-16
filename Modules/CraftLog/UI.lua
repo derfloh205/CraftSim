@@ -150,7 +150,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         if newValue then
                             CraftSim.CRAFT_LOG.advFrame:Show()
                             -- also update
-                            local recipeData = CraftSim.INIT.currentRecipeData
+                            local recipeData = CraftSim.MODULES.recipeData
                             if recipeData then
                                 self:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
                             end
@@ -351,7 +351,7 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         label = "Crafting Reagents Filter",
         menuUtilCallback = function(ownerRegion, rootDescription)
             -- get currently viewed recipe craft data
-            local recipeData = CraftSim.INIT.currentRecipeData
+            local recipeData = CraftSim.MODULES.recipeData
             if not recipeData then return end
 
             local sessionData = CraftSim.CRAFT_LOG.currentSessionData
@@ -770,8 +770,8 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
             selectedRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.SELECTED_LIGHT_WHITE,
             selectionCallback = function(row, userInput)
-                if CraftSim.INIT.currentRecipeData and userInput then
-                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
+                if CraftSim.MODULES.recipeData and userInput then
+                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.MODULES.recipeData.recipeID)
                 end
             end
         },
@@ -923,8 +923,13 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 
         if craftResult.triggeredResourcefulness then
             for _, savedReagent in pairs(craftResult.savedReagents) do
-                local itemLink = savedReagent.item:GetItemLink()
-                resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, itemLink)
+                if savedReagent:IsCurrency() then
+                    local currencyLink = C_CurrencyInfo.GetCurrencyLink(savedReagent.currencyID) or savedReagent.currencyName
+                    resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, currencyLink or "")
+                else
+                    local itemLink = savedReagent.item:GetItemLink()
+                    resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, itemLink)
+                end
             end
 
             savedCostsText = CraftSim.UTIL:FormatMoney(craftResult.savedCosts, true)
@@ -1239,15 +1244,23 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
                     row.craftResultSavedReagent = craftResultReagent
-                    craftResultReagent.item:ContinueOnItemLoad(function ()
-                        row.itemColumn.text:SetText(craftResultReagent.item:GetItemLink())
+                    if craftResultReagent:IsCurrency() then
+                        local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultReagent.currencyID)
+                        row.itemColumn.text:SetText(currencyLink or craftResultReagent.currencyName or ("Currency:" .. tostring(craftResultReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultReagent.quantity or 0)
-                        row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultReagent.costs, true))
-                        row.tooltipOptions = {
-                            anchor = "ANCHOR_CURSOR_RIGHT",
-                            itemID = craftResultReagent.item:GetItemID(),
-                        }
-                    end)
+                        row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
+                        row.tooltipOptions = nil
+                    else
+                        craftResultReagent.item:ContinueOnItemLoad(function ()
+                            row.itemColumn.text:SetText(craftResultReagent.item:GetItemLink())
+                            row.countColumn.text:SetText(craftResultReagent.quantity or 0)
+                            row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultReagent.costs, true))
+                            row.tooltipOptions = {
+                                anchor = "ANCHOR_CURSOR_RIGHT",
+                                itemID = craftResultReagent.item:GetItemID(),
+                            }
+                        end)
+                    end
                 end)
         end
 
@@ -1267,17 +1280,25 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
             ---@param row CraftSim.CRAFT_LOG_ADV.SAVED_REAGENTS_LIST.ROW
                 function(row)
                     row.craftResultSavedReagent = craftResultSavedReagent
-                    craftResultSavedReagent.item:ContinueOnItemLoad(
-                        function ()
-                            row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
-                            row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
-                            row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
-                            row.tooltipOptions = {
-                                anchor = "ANCHOR_CURSOR_RIGHT",
-                                itemID = craftResultSavedReagent.item:GetItemID(),
-                            }
-                        end
-                    )
+                    if craftResultSavedReagent:IsCurrency() then
+                        local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultSavedReagent.currencyID)
+                        row.itemColumn.text:SetText(currencyLink or craftResultSavedReagent.currencyName or ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
+                        row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
+                        row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
+                        row.tooltipOptions = nil
+                    else
+                        craftResultSavedReagent.item:ContinueOnItemLoad(
+                            function ()
+                                row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
+                                row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
+                                row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))
+                                row.tooltipOptions = {
+                                    anchor = "ANCHOR_CURSOR_RIGHT",
+                                    itemID = craftResultSavedReagent.item:GetItemID(),
+                                }
+                            end
+                        )
+                    end
                 end)
         end
 
@@ -1409,7 +1430,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateResultAnalysis(craftRecipeData)
         for _, craftResultItem in ipairs(craftResultItems.resultItems) do
             local itemLink = craftResultItem.item:GetItemLink()
             local count = craftResultItem.quantity
-            local value = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) * CraftSim.CONST.AUCTION_HOUSE_CUT
+            local itemID = GUTIL:GetItemIDByLink(itemLink)
+            local value
+            if CraftSim.UTIL:IsGreyItem(itemID) then
+                -- Grey/junk items cannot be sold on the AH; use vendor sell price directly (no AH cut)
+                value = CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
+            else
+                value = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) * CraftSim.CONST.AUCTION_HOUSE_CUT
+            end
             if isWorkOrder then
                 value = 0
             end
@@ -1444,7 +1472,7 @@ end
 ---@param recipeID RecipeID last crafted recipeID
 function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local advFrame = CraftSim.CRAFT_LOG.advFrame
-    local recipeData = CraftSim.INIT.currentRecipeData
+    local recipeData = CraftSim.MODULES.recipeData
 
     -- only update if its the shown recipeID otherwise no need
     if not recipeData or recipeData.recipeID ~= recipeID then return end

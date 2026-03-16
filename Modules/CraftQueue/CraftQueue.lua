@@ -320,8 +320,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                         knowledgePointsRewarded = 1
                                                         knowledgeContained = true
                                                     end
-                                                    local acuityContained = itemID == 210814
-                                                    local runeContained = itemID == 224572
+                                                    local acuityContained = tContains(CraftSim.CONST.PATRON_ORDERS_ACUITY_REWARD_ITEMS, itemID)
+                                                    local runeContained = tContains(CraftSim.CONST.PATRON_ORDERS_POWER_RUNE_REWARD_ITEMS, itemID)
                                                     if not acuityAllowed and acuityContained then
                                                         return false
                                                     end
@@ -773,27 +773,27 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         local quantityMap = {}
         if craftQueueItem.recipeData:HasRequiredSelectableReagent() then
             local slot = craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
-            if slot and slot:IsAllocated() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
-                tinsert(activeReagents, slot
-                    .activeReagent)
-                quantityMap[slot.activeReagent.item:GetItemID()] =
-                    slot.maxQuantity or 1
+            if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
+                tinsert(activeReagents, slot.activeReagent)
+                quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
             end
         end
         for _, optionalReagent in pairs(activeReagents) do
-            local itemID = optionalReagent.item:GetItemID()
-            local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-            local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
-            local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
-            if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
-                local allocatedQuantity = quantityMap[itemID] or 1
-                reagentMap[itemID] = reagentMap[itemID] or {
-                    itemName = optionalReagent.item:GetItemName(),
-                    qualityID = qualityID,
-                    quantity = 0
-                }
-                reagentMap[itemID].quantity = reagentMap[itemID]
-                    .quantity + allocatedQuantity * craftQueueItem.amount
+            if not optionalReagent:IsCurrency() then
+                local itemID = optionalReagent.item:GetItemID()
+                local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+                local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
+                local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
+                if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                    local allocatedQuantity = quantityMap[itemID] or 1
+                    reagentMap[itemID] = reagentMap[itemID] or {
+                        itemName = optionalReagent.item:GetItemName(),
+                        qualityID = qualityID,
+                        quantity = 0
+                    }
+                    reagentMap[itemID].quantity = reagentMap[itemID]
+                        .quantity + allocatedQuantity * craftQueueItem.amount
+                end
             end
         end
     end
@@ -935,8 +935,8 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             recipeData = CraftSim.SIMULATION_MODE.recipeData:Copy() -- need a copy or changes in simulation mode just overwrite it
         end
     else
-        if CraftSim.INIT.currentRecipeData then
-            recipeData = CraftSim.INIT.currentRecipeData:Copy()
+        if CraftSim.MODULES.recipeData then
+            recipeData = CraftSim.MODULES.recipeData:Copy()
         end
     end
 
@@ -996,7 +996,7 @@ end
 
 function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
     MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-        local recipeData = CraftSim.INIT.currentRecipeData
+        local recipeData = CraftSim.MODULES.recipeData
         if not recipeData then return end
         if recipeData.supportsQualities then
             rootDescription:CreateCheckbox(

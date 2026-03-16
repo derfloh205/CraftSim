@@ -74,13 +74,13 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             clickCallback = function(_, label, value)
                 local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get(
                     "REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
-                local currentRecipeID = CraftSim.INIT.currentRecipeID
+                local currentRecipeID = CraftSim.INIT.visibleRecipeID
 
                 if currentRecipeID then
                     maxOptimizationQualities[currentRecipeID] = value
                 end
 
-                CraftSim.INIT:TriggerModulesByRecipeType()
+                CraftSim.MODULES:UpdateUI()
             end,
         }
 
@@ -94,7 +94,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             tooltip = "If enabled, all qualities up to the max quality will be optimized, and the one with the highest profit will be shown",
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED", checked)
-                CraftSim.INIT:TriggerModulesByRecipeType()
+                CraftSim.MODULES:UpdateUI()
             end
         }
 
@@ -593,19 +593,30 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
     end
 
     local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
-        GUTIL:Filter(CraftSim.INIT.currentRecipeData.reagentData
+        GUTIL:Filter(CraftSim.MODULES.recipeData.reagentData
             .requiredReagents, function(reagent)
                 return reagent.hasQuality
             end))
 
     local equalsFinishingAllocation = true
     for i, _ in ipairs(recipeData.reagentData.finishingReagentSlots) do
-        local itemIDA = recipeData.reagentData.finishingReagentSlots[i] and
-            recipeData.reagentData.finishingReagentSlots[i].activeReagent and
-            recipeData.reagentData.finishingReagentSlots[i].activeReagent.item:GetItemID()
-        local itemIDB = CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i] and
-            CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i].activeReagent and
-            CraftSim.INIT.currentRecipeData.reagentData.finishingReagentSlots[i].activeReagent.item:GetItemID()
+        local slotA = recipeData.reagentData.finishingReagentSlots[i]
+        local slotB = CraftSim.MODULES.recipeData.reagentData.finishingReagentSlots[i]
+        local itemIDA, itemIDB
+        if slotA and slotA.activeReagent then
+            if slotA.activeReagent:IsCurrency() then
+                itemIDA = slotA.activeReagent.currencyID
+            else
+                itemIDA = slotA.activeReagent.item:GetItemID()
+            end
+        end
+        if slotB and slotB.activeReagent then
+            if slotB.activeReagent:IsCurrency() then
+                itemIDB = slotB.activeReagent.currencyID
+            else
+                itemIDB = slotB.activeReagent.item:GetItemID()
+            end
+        end
         equalsFinishingAllocation = equalsFinishingAllocation and
             (itemIDA == itemIDB)
     end
@@ -637,7 +648,17 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         for i, uiSlot in ipairs(finishingSlots) do
             local slot = recipeData.reagentData.finishingReagentSlots[i]
             if slot then
-                uiSlot:SetItem(slot.activeReagent and slot.activeReagent.item:GetItemID())
+                if slot.activeReagent and slot.activeReagent:IsCurrency() then
+                    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(slot.activeReagent.currencyID)
+                    if currencyInfo then
+                        uiSlot.frame:SetNormalTexture(currencyInfo.iconFileID)
+                    end
+                    if slot.activeReagent.qualityID and slot.activeReagent.qualityID > 0 then
+                        uiSlot:SetQuality(slot.activeReagent.qualityID)
+                    end
+                else
+                    uiSlot:SetItem(slot.activeReagent and slot.activeReagent.item:GetItemID())
+                end
                 uiSlot:Show()
             end
         end

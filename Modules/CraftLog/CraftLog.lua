@@ -103,7 +103,7 @@ function CraftSim.CRAFT_LOG:ClearData()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:Remove()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:UpdateDisplay()
     CraftSim.CRAFT_LOG.logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
+    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.MODULES.recipeData.recipeID)
 end
 
 ---Adds Results to the UI
@@ -163,6 +163,7 @@ function CraftSim.CRAFT_LOG:AccumulateCraftResults()
     local craftResult = CraftSim.CraftResult(recipeData, collectedCraftingItemResultData, craftCount )
 
     local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
+        if savedReagent:IsCurrency() then return nil end
         return savedReagent.item
     end)
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_LOG")
@@ -210,6 +211,10 @@ end
 function CraftSim.CRAFT_LOG:MergeReagentsItemData(totalReagents, newReagents)
     for _, savedReagentNew in ipairs(newReagents) do
         local savedReagentOld = CraftSim.GUTIL:Find(totalReagents, function(savedReagentOld)
+            if savedReagentNew:IsCurrency() then
+                return savedReagentOld:IsCurrency() and savedReagentNew.currencyID == savedReagentOld.currencyID
+            end
+            if savedReagentOld:IsCurrency() then return false end
             return savedReagentNew.item:GetItemID() == savedReagentOld.item:GetItemID()
         end)
 

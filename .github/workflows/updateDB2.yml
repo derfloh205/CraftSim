@@ -1,0 +1,86 @@
+name: Update DB2 Data
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_PATHS: DevTools/DataMining/SpecializationData/wow-profession-tree
+
+jobs:
+  update-db2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip3 install -r DevTools/DataMining/requirements.txt
+
+      - name: Update git submodules
+        run: git submodule update --init --recursive
+
+      - name: Run db2 update script
+        run: |
+          cd DevTools/DataMining
+          python updateAll.py
+
+      - name: Read LAST_BUILD version for PR metadata
+        id: lastbuild
+        run: |
+          BUILD_FILE="DevTools/DataMining/LAST_BUILD"
+          if [ -f "$BUILD_FILE" ]; then
+            VERSION=$(cat "$BUILD_FILE" | tr -d '[:space:]')   # removes newlines/spaces
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "✅ LAST_BUILD = ${VERSION}"
+          else
+            echo "version=unknown" >> $GITHUB_OUTPUT
+            echo "⚠️ LAST_BUILD file not found (using fallback)"
+          fi
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Stage Data changes and check for differences
+        id: check
+        run: |
+          # Stage the Data directory (no error if missing)
+          git add Data || true
+          git add DevTools/DataMining/LAST_BUILD || true
+
+          # Determine if there are staged changes
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create pull request with changes
+        if: steps.check.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: DB2 Data Update: ${{ steps.lastbuild.outputs.version }}'
+          branch: update/db2-data-update-${{ steps.lastbuild.outputs.version }}
+          base: main
+          title: "Update DB2 Data: ${{ steps.lastbuild.outputs.version }}"
+          body: |
+            Automated DB2 data update from wago.tools.
+
+            **Build version:** `${{ steps.lastbuild.outputs.version }}`
+            **Triggered by:** ${{ github.event_name }}
+
+            Review the changes and merge when ready.
+          labels: automated,data-update

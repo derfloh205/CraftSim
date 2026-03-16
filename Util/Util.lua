@@ -177,6 +177,31 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+---@param recipeExpansionID CraftSim.EXPANSION_IDS?
+---@param itemID number?
+---@param context string? debug context
+---@return boolean isCompatible
+function CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, context)
+    if not itemID then
+        return true
+    end
+
+    local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
+    print(string.format("IsItemExpansionCompatible(%s, %s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
+        tostring(context), tostring(itemName), tostring(recipeExpansionID), tostring(itemID), tostring(itemExpacID)))
+
+    if not recipeExpansionID then
+        return true
+    end
+
+    if not itemExpacID then
+        -- item data not loaded yet, don't incorrectly exclude it
+        return true
+    end
+
+    return itemExpacID >= recipeExpansionID
+end
+
 function CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local expansionID = self:GetExpansionIDBySkillLineID(skillLineID)
@@ -465,6 +490,25 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
         CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end
 
+--- Returns true if the item is grey/poor quality (cannot be sold on AH, vendor-only)
+---@param itemID ItemID
+---@return boolean
+function CraftSim.UTIL:IsGreyItem(itemID)
+    local rarity = select(3, C_Item.GetItemInfo(itemID))
+    if rarity == nil then
+        return false -- item data not yet cached; treat as non-grey (safe fallback)
+    end
+    return rarity == 0 -- Enum.ItemQuality.Poor = 0
+end
+
+--- Returns the vendor sell price of an item (what you receive when selling to a vendor)
+---@param itemID ItemID
+---@return number vendorSellPrice
+function CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
+    local vendorSellPrice = select(11, C_Item.GetItemInfo(itemID))
+    return vendorSellPrice or 0
+end
+
 ---@param profession Enum.Profession
 function CraftSim.UTIL:IsProfessionLearned(profession)
     local learnedProfessions = { GetProfessions() };
@@ -481,4 +525,13 @@ function CraftSim.UTIL:IsProfessionLearned(profession)
     end
 
     return false
+end
+
+---@param itemLink string
+---@return number? enchantID
+function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)
+    if not itemLink or not itemLink:find("|Hitem:") then return nil end
+    
+    local parts = {strsplit(":", itemLink)}    
+    return tonumber(parts[4])
 end

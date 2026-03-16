@@ -199,6 +199,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.WIDGETS.ReagentList:Populate(recipeData)
+    recipeData.reagentData:FillUnallocatedRequiredReagents()
     local simplified = recipeData:IsSimplifiedQualityRecipe()
     self.activeList = simplified and self.listSimplified or self.listQ3
     self.frame = self.activeList.frame

@@ -93,10 +93,20 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     print("Resourcefulness: " .. tostring(recipeData.supportsResourcefulness))
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
+    -- TSM Enhanced: expected deposit cost (0 when disabled or TSM not loaded)
+    local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
+
     if not recipeData.supportsCraftingStats then
-        local resultValue = ((priceData.qualityPriceList[1] or 0) * recipeData.baseItemAmount) *
-            CraftSim.CONST.AUCTION_HOUSE_CUT
-        local profit = resultValue - priceData.craftingCosts
+        local resultItemPrice = priceData.qualityPriceList[1] or 0
+        local resultItem = recipeData.resultData.itemsByQuality[1]
+        local isGrey = resultItem and CraftSim.UTIL:IsGreyItem(resultItem:GetItemID())
+        local resultValue
+        if isGrey then
+            resultValue = resultItemPrice * recipeData.baseItemAmount
+        else
+            resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+        end
+        local profit = resultValue - priceData.craftingCosts - expectedDeposit
 
         local probabilityTable = { { chance = 1, profit = profit } }
         return profit, probabilityTable
@@ -110,7 +120,11 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         if recipeData.orderData and comissionProfit > 0 then
             return comissionProfit
         else
-            return value * CraftSim.CONST.AUCTION_HOUSE_CUT
+            local expectedItem = recipeData.resultData.itemsByQuality[recipeData.resultData.expectedQuality]
+            if expectedItem and CraftSim.UTIL:IsGreyItem(expectedItem:GetItemID()) then
+                return value -- grey items are sold to vendor; no AH cut
+            end
+            return value * CraftSim.CONST.AUCTION_HOUSE_CUT - expectedDeposit
         end
     end
 
@@ -159,7 +173,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
                     recipeData.baseItemAmount)
             end
 
-            combinationProfit = resultValue - craftingCosts
+            combinationProfit = resultValue - craftingCosts - expectedDeposit
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = MC,
@@ -216,7 +230,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
                 recipeData.baseItemAmount)
 
-            combinationProfit = resultValue - craftingCosts
+            combinationProfit = resultValue - craftingCosts - expectedDeposit
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = RES,
