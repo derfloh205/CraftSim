@@ -168,7 +168,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         borderAdjustWidth = 1.15,
         borderAdjustHeight = 1.05,
         onNumberValidCallback = function()
-            local recipeData = CraftSim.INIT.currentRecipeData
+            local recipeData = CraftSim.MODULES.recipeData
             if not recipeData then
                 return
             end

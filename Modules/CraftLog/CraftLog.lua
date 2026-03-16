@@ -103,7 +103,7 @@ function CraftSim.CRAFT_LOG:ClearData()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:Remove()
     CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:UpdateDisplay()
     CraftSim.CRAFT_LOG.logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
+    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.MODULES.recipeData.recipeID)
 end
 
 ---Adds Results to the UI

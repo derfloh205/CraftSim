@@ -125,7 +125,7 @@ function CraftSim.TOPGEAR.UI:Init()
             sizeY = 25,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.INIT.currentRecipeData)
+                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MODULES.recipeData)
             end
         })
 
@@ -138,7 +138,7 @@ function CraftSim.TOPGEAR.UI:Init()
             width = 120,
             clickCallback = function(_, _, value)
                 CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", value)
-                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.INIT.currentRecipeData)
+                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MODULES.recipeData)
             end
         })
 
@@ -305,7 +305,7 @@ function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMo
     topGearFrame.content.statDiff.skill:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) ..
         ": " .. CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.skill.value, 0))
 
-    if CraftSim.INIT.currentRecipeData.supportsQualities then
+    if CraftSim.MODULES.recipeData.supportsQualities then
         topGearFrame.content.statDiff.qualityIcon:SetQuality(topResult.expectedQuality)
         topGearFrame.content.statDiff.quality:Show()
         topGearFrame.content.statDiff.qualityIcon:Show()
