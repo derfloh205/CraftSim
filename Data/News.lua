@@ -23,6 +23,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.3.2"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- Added patron work order filter support for new rewards",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.NETOUSS),
+        f.PG .. "Fixed Reagent Optimization for 2-Quality Recipes",
+        collab("https://github.com/N-Sousa"),
+        f.p .. "Internal Code Cleanups regarding Module Structure",
         newP("21.3.1"),
         f.PG .. "Fixed incorrect consideration of legacy profession gear",
         f.p .. "Update DB2 Data: 12.0.1.66384",
