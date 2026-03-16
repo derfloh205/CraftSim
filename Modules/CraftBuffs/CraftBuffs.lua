@@ -742,7 +742,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
         self.activeBuffInstanceIds = newActiveIds
 
         if haveActiveBuffsChanged and CraftSim.INIT.visibleRecipeID then
-            CraftSim.INIT:InitializeVisibleRecipeID()
+            CraftSim.MODULES:UpdateUI()
         end
         return
     end
@@ -783,6 +783,6 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 
     -- Trigger module update if the number of active buffs has changed and a recipe is selected
     if haveActiveBuffsChanged and CraftSim.INIT.visibleRecipeID then
-        CraftSim.INIT:InitializeVisibleRecipeID()
+        CraftSim.MODULES:UpdateUI()
     end
 end
