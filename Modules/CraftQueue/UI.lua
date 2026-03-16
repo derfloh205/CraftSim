@@ -682,7 +682,7 @@ function CraftSim.CRAFTQ.UI:Init()
             parent = queueTab.content,
             anchorPoints = { { anchorParent = queueTab.content.addWorkOrdersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
-                    local concentrationCB = rootDescription:CreateCheckbox("Allow " .. f.gold("Concentration"),
+                    local concentrationCB = rootDescription:CreateCheckbox(L("CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                         end, function()
@@ -708,31 +708,31 @@ function CraftSim.CRAFTQ.UI:Init()
                             L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP"))
                     end);
  
-                    local orderTypeSubMenu = rootDescription:CreateButton("Work Order Type")
+                    local orderTypeSubMenu = rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON"))
 
-                    orderTypeSubMenu:CreateCheckbox("Patron Orders", function()
+                    orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_PATRON_ORDERS_BUTTON"), function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS")
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS", not value)
                     end)
 
-                    orderTypeSubMenu:CreateCheckbox("Guild Orders", function()
+                    orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_GUILD_ORDERS_BUTTON"), function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS")
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS", not value)
                     end)
 
-                    orderTypeSubMenu:CreateCheckbox("Personal Orders", function()
+                    orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON"), function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS")
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS", not value)
                     end)
 
-                    local guildOrderOptions = rootDescription:CreateButton("Guild Orders")
-                    local altCharsOnlyGuild = guildOrderOptions:CreateCheckbox(f.r("Only ") .. "Alt Characters",
+                    local guildOrderOptions = rootDescription:CreateButton(L("CRAFT_QUEUE_GUILD_ORDERS_BUTTON"))
+                    local altCharsOnlyGuild = guildOrderOptions:CreateCheckbox(L("CRAFT_QUEUE_GUILD_ORDERS_ALTS_ONLY_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY")
                         end, function()
@@ -740,10 +740,10 @@ function CraftSim.CRAFTQ.UI:Init()
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY", not value)
                         end)
 
-                    local patronOrderOptions = rootDescription:CreateButton("Patron Orders")
+                    local patronOrderOptions = rootDescription:CreateButton(L("CRAFT_QUEUE_PATRON_ORDERS_BUTTON"))
 
                     local forceConcentrationCB = patronOrderOptions:CreateCheckbox(
-                        f.r("Force " .. f.gold("Concentration")),
+                        L("CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                         end, function()
@@ -753,10 +753,10 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     forceConcentrationCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Force the use of concentration for all patron orders if possible");
+                            L("CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP"));
                     end);
 
-                    local sparkCB = patronOrderOptions:CreateCheckbox("Include " .. f.e("Spark") .. " Recipes",
+                    local sparkCB = patronOrderOptions:CreateCheckbox(L("CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES")
                         end, function()
@@ -766,11 +766,11 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     sparkCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Include Orders that use a Spark as Reagent");
+                            L("CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_TOOLTIP"));
                     end);
 
                     local acuityCB = patronOrderOptions:CreateCheckbox(
-                        "Include " .. f.bb("Acuity") .. " Rewards",
+                        L("CRAFT_QUEUE_PATRON_ORDERS_ACUITY_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ACUITY")
                         end, function()
@@ -780,11 +780,11 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     acuityCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Include Orders with Acuity Rewards");
+                            L("CRAFT_QUEUE_PATRON_ORDERS_ACUITY_TOOLTIP"));
                     end);
 
                     local powerRuneCB = patronOrderOptions:CreateCheckbox(
-                        "Include " .. f.bb("Augment Rune") .. " Rewards",
+                        L("CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
                         end, function()
@@ -794,11 +794,11 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     powerRuneCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Include Orders with Augment Rune Rewards");
+                            L("CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_TOOLTIP"));
                     end);
 
                     local knowledgeCB = patronOrderOptions:CreateCheckbox(
-                        "Include " .. f.bb("Knowledge Point") .. " Rewards",
+                        L("CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
                         end, function()
@@ -808,7 +808,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     knowledgeCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Include Orders with Knowledge Point Rewards");
+                            L("CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP"));
                     end);
 
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
