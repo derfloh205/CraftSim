@@ -211,7 +211,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                         ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab
                                     end
                                     ProfessionsFrame.OrdersPage:ViewOrder(recipeData.orderData)
-                                    CraftSim.INIT:TriggerModulesByRecipeType()
+                                    CraftSim.MODULES:UpdateUI()
                                 else
                                     if not ProfessionsFrame.CraftingPage:IsVisible() then
                                         ProfessionsFrame:GetTabButton(1):Click()

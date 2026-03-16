@@ -146,7 +146,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
                         if newValue then
                             CraftSim.CRAFT_LOG.advFrame:Show()
                             -- also update
-                            local recipeData = CraftSim.INIT.currentRecipeData
+                            local recipeData = CraftSim.MODULES.recipeData
                             if recipeData then
                                 self:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
                             end
@@ -346,7 +346,7 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         label = "Crafting Reagents Filter",
         menuUtilCallback = function(ownerRegion, rootDescription)
             -- get currently viewed recipe craft data
-            local recipeData = CraftSim.INIT.currentRecipeData
+            local recipeData = CraftSim.MODULES.recipeData
             if not recipeData then return end
 
             local sessionData = CraftSim.CRAFT_LOG.currentSessionData
@@ -765,8 +765,8 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
             selectedRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.SELECTED_LIGHT_WHITE,
             selectionCallback = function(row, userInput)
-                if CraftSim.INIT.currentRecipeData and userInput then
-                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.INIT.currentRecipeData.recipeID)
+                if CraftSim.MODULES.recipeData and userInput then
+                    CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.MODULES.recipeData.recipeID)
                 end
             end
         },
@@ -1467,7 +1467,7 @@ end
 ---@param recipeID RecipeID last crafted recipeID
 function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     local advFrame = CraftSim.CRAFT_LOG.advFrame
-    local recipeData = CraftSim.INIT.currentRecipeData
+    local recipeData = CraftSim.MODULES.recipeData
 
     -- only update if its the shown recipeID otherwise no need
     if not recipeData or recipeData.recipeID ~= recipeID then return end

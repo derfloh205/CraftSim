@@ -935,8 +935,8 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             recipeData = CraftSim.SIMULATION_MODE.recipeData:Copy() -- need a copy or changes in simulation mode just overwrite it
         end
     else
-        if CraftSim.INIT.currentRecipeData then
-            recipeData = CraftSim.INIT.currentRecipeData:Copy()
+        if CraftSim.MODULES.recipeData then
+            recipeData = CraftSim.MODULES.recipeData:Copy()
         end
     end
 
