@@ -129,7 +129,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
-                CraftSim.INIT:TriggerModulesByRecipeType()
+                CraftSim.MODULES:UpdateUI()
             end
         }
 
@@ -208,14 +208,14 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                                     recipeID = recipeID,
                                     qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(item:GetItemID())
                                 })
-                                CraftSim.INIT:TriggerModulesByRecipeType()
+                                CraftSim.MODULES:UpdateUI()
                             end)
 
                             if priceOverrideData then
                                 local deleteButton = rootDescription:CreateButton(f.l("Delete Price Override"),
                                     function()
                                         CraftSim.DB.PRICE_OVERRIDE:DeleteGlobalOverride(item:GetItemID())
-                                        CraftSim.INIT:TriggerModulesByRecipeType()
+                                        CraftSim.MODULES:UpdateUI()
                                     end)
                             end
                         end)
@@ -344,7 +344,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
         lowText = "1", highText = "5", step = 1,
         onValueChangedCallback = function(_, value)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH", value)
-            CraftSim.INIT:TriggerModulesByRecipeType() -- to let it calculate the optimizations again
+            CraftSim.MODULES:UpdateUI() -- to let it calculate the optimizations again
         end
     }
 
@@ -358,7 +358,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
         initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION", checked)
-            CraftSim.INIT:TriggerModulesByRecipeType()
+            CraftSim.MODULES:UpdateUI()
         end
     }
 
@@ -372,7 +372,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
         initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS", checked)
-            CraftSim.INIT:TriggerModulesByRecipeType()
+            CraftSim.MODULES:UpdateUI()
         end
     }
 
@@ -441,7 +441,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
                     if userInput and row.recipeID and row.crafterUID then
                         if not CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(row.recipeID, row.crafterUID) then
                             CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(row.recipeID, row.crafterUID)
-                            CraftSim.INIT:TriggerModulesByRecipeType()
+                            CraftSim.MODULES:UpdateUI()
                         end
                     end
                 end },
