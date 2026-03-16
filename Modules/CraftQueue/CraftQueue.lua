@@ -542,7 +542,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 else
                     local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
                         "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
-                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_ZERO_CONCENTRATION_QUEUING") and recipeData.averageProfitCached > 0 then
+                    if recipeData.averageProfitCached > 0 then
                         CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = 1 + offsetAmount }
                     end
                 end
