@@ -43,6 +43,17 @@ local function generateConcentrationCacheKey(recipeData)
         end
     end
 
+    -- Add effective skill and recipe difficulty so the cache is invalidated when
+    -- simulated skill changes (e.g. spec node adjustments, buff changes, manual modifiers)
+    if recipeData.professionStats then
+        if recipeData.professionStats.skill then
+            table.insert(parts, "skill:" .. tostring(recipeData.professionStats.skill.value))
+        end
+        if recipeData.professionStats.recipeDifficulty then
+            table.insert(parts, "difficulty:" .. tostring(recipeData.professionStats.recipeDifficulty.value))
+        end
+    end
+
     return table.concat(parts, "_")
 end
 
