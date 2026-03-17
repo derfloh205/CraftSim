@@ -30,7 +30,7 @@ local BAR_OFFSET_X = 7
 local BAR_OFFSET_Y = -4
 local SKILL_TEXT_OFFSET_Y = 2
 local LABEL_TEXT_OFFSET_Y = -4
-local QUALITY_ICON_SCALE = 2.0
+local QUALITY_ICON_SCALE = 1.5
 local BAR_COLOR_NORMAL = { r = 0.0, g = 0.7, b = 0.0, a = 0.9 }
 local BAR_COLOR_CONCENTRATION = { r = 1.0, g = 0.8, b = 0.0, a = 1.0 }
 
