@@ -1257,20 +1257,6 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
         qbCache.pendingItemID = resultRow.itemKey.itemID
         qbCache.pendingItemCount = resultRow.purchaseQuantity
 
-        -- Check if the player has enough gold before starting the purchase
-        local unitPrice = resultRow.unitPrice
-        if unitPrice then
-            local estimatedCost = unitPrice * qbCache.pendingItemCount
-            if estimatedCost > GetMoney() then
-                CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
-                    f.r("Quick Buy: ") .. "Not enough gold to purchase item(s). Need " ..
-                    CraftSim.UTIL:FormatMoney(estimatedCost) .. " but only have " ..
-                    CraftSim.UTIL:FormatMoney(GetMoney()))
-                self:ResetQuickBuyCache()
-                return
-            end
-        end
-
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true
         set(QB_STATUS.PURCHASE_AWAIT)
@@ -1290,6 +1276,31 @@ end
 function CraftSim.CRAFTQ:AUCTION_HOUSE_THROTTLED_SYSTEM_READY()
     local qbCache = self.quickBuyCache
     if qbCache.pendingItemCount and qbCache.pendingItemID and qbCache.purchasePending then
+        -- Calculate actual cost from WoW's commodity search results before confirming
+        local totalCost = 0
+        local remainingQuantity = qbCache.pendingItemCount
+        local numResults = C_AuctionHouse.GetNumCommoditySearchResults(qbCache.pendingItemID)
+        for i = 1, numResults do
+            if remainingQuantity <= 0 then break end
+            local resultInfo = C_AuctionHouse.GetCommoditySearchResultInfo(qbCache.pendingItemID, i)
+            if resultInfo then
+                local buyQuantity = math.min(remainingQuantity, resultInfo.quantity)
+                totalCost = totalCost + (buyQuantity * resultInfo.unitPrice)
+                remainingQuantity = remainingQuantity - buyQuantity
+            end
+        end
+
+        if totalCost > 0 and totalCost > GetMoney() then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
+                f.r("Quick Buy: ") .. "Not enough gold to purchase item(s). Need " ..
+                CraftSim.UTIL:FormatMoney(totalCost) .. " but only have " ..
+                CraftSim.UTIL:FormatMoney(GetMoney()))
+            self:ResetQuickBuyCache()
+            return
+        elseif numResults == 0 then
+            printQB("- Could not calculate purchase cost (no commodity results available), proceeding")
+        end
+
         C_AuctionHouse.ConfirmCommoditiesPurchase(qbCache.pendingItemID, qbCache.pendingItemCount)
         -- triggers COMMODITY_PURCHASE_SUCCEEDED or COMMODITY_PURCHASE_FAILED
     end
@@ -1298,7 +1309,7 @@ end
 function CraftSim.CRAFTQ:COMMODITY_PURCHASE_FAILED()
     -- reset quick buy and notify user
     printQB("- " .. f.r("COMMODITY_PURCHASE_FAILED"))
-    if self.quickBuyCache.purchasePending then
+    if self.quickBuyCache.status == QB_STATUS.PURCHASE_AWAIT then
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
             f.r("Quick Buy: ") .. "Purchase failed - not enough gold or item no longer available")
     end
