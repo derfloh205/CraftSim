@@ -464,7 +464,7 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     -- capture profession UID before the async wait so we can detect changes
     local professionInfoAtCall = C_TradeSkillUI.GetBaseProfessionInfo()
     local professionUIDAtCall = professionInfoAtCall and
-        self:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall.profession) or ""
+        CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall.profession) or ""
 
     local function update()
         local professionChanged = CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= nil and
