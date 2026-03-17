@@ -527,12 +527,16 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 if recipeData.concentrationCost > 0 then
                     local concentrationCosts = recipeData.concentrationCost
                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT") then
+                        local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
+                        local ingenuityRefund = 0.5 + recipeData.professionStats.ingenuity:GetExtraValue()
                         concentrationCosts = concentrationCosts -
-                            (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
+                            (concentrationCosts * ingenuityChance * ingenuityRefund)
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                     if queueableAmount > 0 then
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount }
+                        local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
+                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount + offsetAmount }
                         currentConcentration = currentConcentration -
                             (concentrationCosts * queueableAmount)
                         break -- only queue first recipe in this mode
@@ -1071,13 +1075,6 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                             return
                         end
                     end
-                end
-
-                local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
-                if isAlreadyQueued then
-                    printFC("First craft is already queued, skipping: " .. tostring(recipeData.recipeName))
-                    frameDistributor:Continue()
-                    return
                 end
 
                 recipeData:SetCheapestQualityReagentsMax()
