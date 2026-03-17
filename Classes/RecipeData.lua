@@ -1324,8 +1324,9 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 iterationTable = possibleReagents,
                 iterationsPerFrame = 1,
                 finally = function()
-                    local bestResult =
-                        GUTIL:Fold(slotSimulationResults, slotSimulationResults[1], function(bestResult, nextResult)
+                    -- pick the best candidate for this slot and apply it
+                    local bestResult = GUTIL:Fold(slotSimulationResults, slotSimulationResults[1],
+                        function(bestResult, nextResult)
                             if self.concentrating then
                                 if nextResult.concentrationValue > bestResult.concentrationValue then
                                     return nextResult
@@ -1341,35 +1342,66 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                             end
                         end)
 
-                    -- then set best result
+                    if bestResult and bestResult.itemID then
+                        slot:SetReagent(bestResult.itemID)
+                        self:Update()
+                    end
 
-                    slot:SetReagent(bestResult.itemID)
-                    self:Update()
                     frameDistributor:Continue()
                 end,
                 continue = function(frameDistributor2, _, reagent, _, _)
                     ---@type CraftSim.OptionalReagent
                     local finishingReagent = reagent
 
-                    if finishingReagent:IsCurrency() then
-                        currentItemCount = currentItemCount + 1
-                        frameDistributor2:Continue()
-                        return
-                    end
-
-                    local itemID = finishingReagent.item:GetItemID()
-
                     currentItemCount = currentItemCount + 1
 
-                    if not options.includeSoulbound and GUTIL:isItemSoulbound(itemID) then
-                        frameDistributor2:Continue()
-                        return
+                    -- Ownership / availability handling:
+                    -- - Non-soulbound items: can always be considered (you can buy them).
+                    -- - Soulbound items: only consider if the crafter actually owns them.
+                    -- - Currencies: only consider if the crafter has some amount.
+                    local hasOwned = false
+                    if finishingReagent:IsCurrency() then
+                        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(finishingReagent.currencyID)
+                        hasOwned = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
+                    else
+                        if finishingReagent.item then
+                            local itemID = finishingReagent.item:GetItemID()
+                            local crafterUID = self:GetCrafterUID()
+                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                            hasOwned = count and count > 0
+                        end
                     end
 
-                    slot:SetReagent(finishingReagent.item:GetItemID())
+                    local candidateItemID = nil
+
+                    if finishingReagent:IsCurrency() then
+                        -- currencies are always treated as zero-cost but can still change stats,
+                        -- but only when the crafter actually has some of that currency
+                        if not hasOwned then
+                            frameDistributor2:Continue()
+                            return
+                        end
+
+                        slot:SetCurrencyReagent(finishingReagent.currencyID)
+                    else
+                        local itemID = finishingReagent.item:GetItemID()
+                        local isSoulbound = GUTIL:isItemSoulbound(itemID)
+
+                        if isSoulbound then
+                            -- Respect includeSoulbound flag and require ownership for soulbound finishers
+                            if not options.includeSoulbound or not hasOwned then
+                                frameDistributor2:Continue()
+                                return
+                            end
+                        end
+
+                        slot:SetReagent(itemID)
+                        candidateItemID = itemID
+                    end
+
                     self:Update()
                     tinsert(slotSimulationResults, {
-                        itemID = itemID,
+                        itemID = candidateItemID,
                         averageProfit = self.averageProfitCached,
                         concentrationValue = self:GetConcentrationValue()
                     })
@@ -1382,6 +1414,106 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
             }:Continue()
         end
     }:Continue()
+end
+
+--- Adjusts finishing reagents for batch crafting so that soulbound finishers are only used
+--- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
+--- (and currencies) may still be used even if not fully owned, as they can be bought.
+---@param amount number number of crafts that will be queued
+function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
+    amount = amount or 0
+    if amount <= 0 then return end
+
+    local reagentData = self.reagentData
+    if not reagentData or #reagentData.finishingReagentSlots == 0 then return end
+
+    local crafterUID = self:GetCrafterUID()
+
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        local active = slot.activeReagent
+        if active and not active:IsCurrency() and active.item then
+            local itemID = active.item:GetItemID()
+            if GUTIL:isItemSoulbound(itemID) then
+                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
+                local perCraft = slot.maxQuantity or 1
+                local neededTotal = perCraft * amount
+
+                if owned < neededTotal then
+                    -- Need to replace this soulbound finisher with the best non-soulbound (or currency) option
+                    local bestCandidate = nil
+                    local bestAverageProfit = nil
+                    local bestConcentrationValue = nil
+                    local useConcentration = self.concentrating
+
+                    local function considerCandidate(asCurrency, candidate)
+                        if asCurrency then
+                            local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(candidate.currencyID)
+                            if not (currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0) then
+                                return
+                            end
+                            slot:SetCurrencyReagent(candidate.currencyID)
+                        else
+                            if not candidate.item then return end
+                            local candID = candidate.item:GetItemID()
+                            if GUTIL:isItemSoulbound(candID) then
+                                -- For this adjustment pass we only want non-soulbound alternatives
+                                return
+                            end
+                            slot:SetReagent(candID)
+                        end
+
+                        self:Update()
+                        local avgProfit = self.averageProfitCached or select(1, self:GetAverageProfit())
+                        local concValue = select(1, self:GetConcentrationValue())
+
+                        if not bestCandidate then
+                            bestCandidate = { asCurrency = asCurrency, reagent = candidate }
+                            bestAverageProfit = avgProfit
+                            bestConcentrationValue = concValue
+                        else
+                            local better = false
+                            if useConcentration then
+                                better = concValue > bestConcentrationValue
+                            else
+                                better = avgProfit > bestAverageProfit
+                            end
+                            if better then
+                                bestCandidate = { asCurrency = asCurrency, reagent = candidate }
+                                bestAverageProfit = avgProfit
+                                bestConcentrationValue = concValue
+                            end
+                        end
+                    end
+
+                    -- Evaluate all possible non-soulbound / currency alternatives for this slot
+                    for _, possible in ipairs(slot.possibleReagents) do
+                        if possible:IsCurrency() then
+                            considerCandidate(true, possible)
+                        else
+                            considerCandidate(false, possible)
+                        end
+                    end
+
+                    -- Apply best alternative, or clear the slot if none is viable
+                    if bestCandidate then
+                        if bestCandidate.asCurrency then
+                            slot:SetCurrencyReagent(bestCandidate.reagent.currencyID)
+                        else
+                            if bestCandidate.reagent.item then
+                                slot:SetReagent(bestCandidate.reagent.item:GetItemID())
+                            else
+                                slot:SetReagent(nil)
+                            end
+                        end
+                    else
+                        slot:SetReagent(nil)
+                    end
+                end
+            end
+        end
+    end
+
+    self:Update()
 end
 
 ---@return number concentrationValue
@@ -1529,7 +1661,12 @@ function CraftSim.RecipeData:Optimize(options)
                     end
                 }
             elseif optimizationTask == "FINISHING_REAGENTS" then
+                -- For generic Optimize flows (e.g. Craft Queue favorites), never consider locked
+                -- finishing slots and always allow soulbound finishers (subject to ownership rules
+                -- inside OptimizeFinishingReagents).
                 self:OptimizeFinishingReagents {
+                    includeLocked = false,
+                    includeSoulbound = true,
                     finally = function()
                         frameDistributorTasks:Continue()
                     end,
