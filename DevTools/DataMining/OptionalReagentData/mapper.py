@@ -56,7 +56,12 @@ def map(buildVersion):
         isSpark = reagentData["SubclassID"] == "11" if itemID is not None else False
 
         if itemID is not None:
-            craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+            craftingReagentQualityEntries = wagoTools.searchTable(CraftingReagentQualityTable, {"conditions": {"ItemID": str(itemID)}})
+            craftingReagentQuality = None
+            for crq in craftingReagentQualityEntries:
+                # take the one with the highest id as the lower ones might be depricated entries with wrong values (e.g. multicraft matrix)
+                if not craftingReagentQuality or int(crq["ID"]) > int(craftingReagentQuality["ID"]):
+                    craftingReagentQuality = crq
         if currencyID is not None:
             results = wagoTools.searchTable(CraftingReagentQualityTable, {"conditions": {"CurrencyTypesID": str(currencyID)}})
             # data is dirty, there's a test entry for each type of Dawncrest (except Champion as it is not used as a reagent)
