@@ -249,69 +249,51 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             end,
         }
 
-        -- Concentration toggle button (below the stats list)
-        local concentrationToggleBtn
-        concentrationToggleBtn = GGUI.Button {
+        -- Concentration toggle button (centered below the stats list)
+        local concentrationLabel = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION)
+        local concentrationToggleBtn = GGUI.ToggleButton {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.statsList.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -6, offsetX = 5,
-            label = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
-                " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
+            anchorPoints = { {
+                anchorParent = simModeDetailsFrame.content.statsList.frame,
+                anchorA = "TOP", anchorB = "BOTTOM",
+                offsetY = -6,
+            } },
+            label = concentrationLabel,
             adjustWidth = true,
             sizeX = 15,
             sizeY = 24,
-            clickCallback = function()
-                concentrationToggleBtn.isActive = not concentrationToggleBtn.isActive
-                concentrationToggleBtn:UpdateGlow()
+            isOn = false,
+            labelOn = concentrationLabel,
+            labelOff = concentrationLabel,
+            onToggleCallback = function()
                 CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
             end,
         }
-        concentrationToggleBtn.isActive = false
 
-        -- Gold glow border: shown when concentration is active
-        local concGlowBorder = CreateFrame("Frame", nil, concentrationToggleBtn.frame, "BackdropTemplate")
-        concGlowBorder:SetAllPoints(concentrationToggleBtn.frame)
-        concGlowBorder:SetBackdrop({
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            edgeSize = 5,
-        })
-        concGlowBorder:SetBackdropBorderColor(1, 0.75, 0, 0) -- initially invisible
-        concGlowBorder:SetFrameLevel(concentrationToggleBtn.frame:GetFrameLevel() + 5)
-        concentrationToggleBtn.glowBorder = concGlowBorder
-
-        concentrationToggleBtn.UpdateGlow = function(self)
-            if self.isActive then
-                self.glowBorder:SetBackdropBorderColor(1, 0.75, 0, 1)
-            else
-                self.glowBorder:SetBackdropBorderColor(1, 0.75, 0, 0)
-            end
-        end
+        -- Compatibility wrappers used by UpdateCraftingDetailsPanel and SimulationMode.lua
         concentrationToggleBtn.GetChecked = function(self)
-            return self.isActive
+            return self.isOn
         end
         concentrationToggleBtn.SetChecked = function(self, checked)
-            self.isActive = checked
-            self:UpdateGlow()
-        end
-        concentrationToggleBtn.SetVisible = function(self, visible)
-            if visible then
-                self.frame:Show()
-            else
-                self.frame:Hide()
-            end
+            -- Bypass onToggleCallback to avoid re-triggering OnStatModifierChanged
+            local savedCallback = self.onToggleCallback
+            self.onToggleCallback = nil
+            self:SetToggle(checked)
+            self.onToggleCallback = savedCallback
         end
 
         simModeDetailsFrame.content.concentrationToggleBtn = concentrationToggleBtn
         frames.concentrationToggleMod = concentrationToggleBtn
 
-        -- Quality meter widget (below concentration toggle button)
+        -- Quality meter widget (centered below concentration toggle button)
         simModeDetailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
             parent = simModeDetailsFrame.content,
-            anchorParent = concentrationToggleBtn.frame,
-            anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
-            offsetX = 0,
-            offsetY = -10,
+            anchorPoints = { {
+                anchorParent = concentrationToggleBtn.frame,
+                anchorA = "TOP", anchorB = "BOTTOM",
+                offsetY = -10,
+            } },
             sizeX = simModeDetailsFrame:GetWidth() - 30,
         }
 
