@@ -21,7 +21,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UI")
 function CraftSim.SIMULATION_MODE.UI:Init()
 
     local x, y = ProfessionsFrame.CraftingPage.SchematicForm:GetSize()
-    local woX, woY = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetSize()
+    local woX, woY = ProfessionsFrame.OrdersPage.OrderView.OrderDetails:GetSize()
     local sizeOffsetX = 135
     local sizeOffsetY = 55
     local offsetY = -30
@@ -42,18 +42,18 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         hide = true,
     })
     CraftSim.SIMULATION_MODE.frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
+        anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
         anchorA = "BOTTOMLEFT",
         anchorB = "BOTTOMLEFT",
-        sizeX = woX - sizeOffsetX, sizeY = woY - sizeOffsetY,
+        sizeX = woX, sizeY = woY - sizeOffsetY,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE_WO,
         title = L("SIMULATION_MODE_LABEL"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        frameLevel = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetFrameLevel() + 10,
+        frameLevel = ProfessionsFrame.OrdersPage.OrderView.OrderDetails:GetFrameLevel() + 10,
         hide = true,
     })
 
