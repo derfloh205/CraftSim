@@ -30,6 +30,9 @@ local BAR_OFFSET_X = 7
 local BAR_OFFSET_Y = -4
 local SKILL_TEXT_OFFSET_Y = 2
 local LABEL_TEXT_OFFSET_Y = -4
+local QUALITY_ICON_SCALE = 2.0
+local BAR_COLOR_NORMAL = { r = 0.0, g = 0.7, b = 0.0, a = 0.9 }
+local BAR_COLOR_CONCENTRATION = { r = 1.0, g = 0.8, b = 0.0, a = 1.0 }
 
 ---@param options CraftSim.WIDGETS.QualityMeter.ConstructorOptions
 function CraftSim.WIDGETS.QualityMeter:new(options)
@@ -62,6 +65,7 @@ function CraftSim.WIDGETS.QualityMeter:new(options)
         sizeY = ICON_SIZE,
         offsetX = 0,
         offsetY = -4,
+        qualityIconScale = QUALITY_ICON_SCALE,
     }
 
     -- Next quality item icon (right side)
@@ -74,6 +78,7 @@ function CraftSim.WIDGETS.QualityMeter:new(options)
         sizeY = ICON_SIZE,
         offsetX = 0,
         offsetY = -4,
+        qualityIconScale = QUALITY_ICON_SCALE,
     }
 
     -- Bar background texture
@@ -91,7 +96,7 @@ function CraftSim.WIDGETS.QualityMeter:new(options)
     bar:SetMinMaxValues(0, 1)
     bar:SetValue(0)
     bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-    bar:SetStatusBarColor(0.0, 0.7, 0.0, 0.9)
+    bar:SetStatusBarColor(BAR_COLOR_NORMAL.r, BAR_COLOR_NORMAL.g, BAR_COLOR_NORMAL.b, BAR_COLOR_NORMAL.a)
     frame.bar = bar
     frame.barWidth = barWidth
 
@@ -138,6 +143,7 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
     local maxQuality = recipeData.maxQuality
     local currentSkill = GUTIL:Round(recipeData.professionStats.skill.value, 0)
     local hasNextQuality = currentQuality < maxQuality
+    local isConcentrating = recipeData.concentrating
 
     -- Update item icons with actual result items
     local currentItem = recipeData.resultData.itemsByQuality[currentQuality]
@@ -151,7 +157,37 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
             self.frame.nextQualityIcon:SetItem(nextItem)
         end
         self.frame.nextQualityIcon.frame:Show()
+    else
+        -- Show max quality item on right side too
+        local maxItem = recipeData.resultData.itemsByQuality[maxQuality]
+        if maxItem then
+            self.frame.nextQualityIcon:SetItem(maxItem)
+        end
+        self.frame.nextQualityIcon.frame:Show()
+    end
 
+    if isConcentrating then
+        -- When concentration is active: fill bar fully with gold color, hide missing skill
+        local c = BAR_COLOR_CONCENTRATION
+        self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
+        self.frame.bar:SetMinMaxValues(0, 1)
+        self.frame.bar:SetValue(1)
+
+        self.frame.currentSkillText:ClearAllPoints()
+        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT",
+            self.frame.barWidth, BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
+        self.frame.currentSkillText:SetText(f.l(currentSkill))
+
+        self.frame.neededSkillText:SetText("")
+        self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
+        return
+    end
+
+    -- Normal mode: green bar
+    local c = BAR_COLOR_NORMAL
+    self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
+
+    if hasNextQuality then
         local nextThreshold = thresholds[currentQuality] or 0
         local missingSkill = math.max(nextThreshold - currentSkill, 0)
 
@@ -191,13 +227,6 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.currentSkillText:ClearAllPoints()
         self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT", fillX, BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
-
-        -- Show max quality item on right side too
-        local maxItem = recipeData.resultData.itemsByQuality[maxQuality]
-        if maxItem then
-            self.frame.nextQualityIcon:SetItem(maxItem)
-        end
-        self.frame.nextQualityIcon.frame:Show()
 
         self.frame.neededSkillText:SetText("")
         self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
