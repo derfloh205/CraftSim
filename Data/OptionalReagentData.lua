@@ -3255,7 +3255,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Multicraft Matrix",
 		expansionID = 11,
 		stats = {
-			multicraft = 90.0,
+			multicraft = 18.0,
 		},
 	},
 	[247724] = {
@@ -3275,11 +3275,11 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[247726] = {
-		qualityID = 1,
+		qualityID = 2,
 		name = "Resourceful Routing",
 		expansionID = 11,
 		stats = {
-			resourcefulness = 15.0,
+			resourcefulness = 20.0,
 		},
 	},
 	[247788] = {

@@ -502,7 +502,9 @@ function CraftSim.CRAFTQ:QueueFavorites()
     local optimizedRecipes = {}
 
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    local currentConcentration = concentrationData:GetCurrentAmount()
+    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
+
+    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
@@ -527,8 +529,10 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 if recipeData.concentrationCost > 0 then
                     local concentrationCosts = recipeData.concentrationCost
                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT") then
+                        local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
+                        local ingenuityRefund = 0.5 + recipeData.professionStats.ingenuity:GetExtraValue()
                         concentrationCosts = concentrationCosts -
-                            (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
+                            (concentrationCosts * ingenuityChance * ingenuityRefund)
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                     if queueableAmount > 0 then
@@ -640,7 +644,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             continue = function(frameDistributor, profession, recipeIDs, _, _)
                 wipe(optimizedRecipes)
                 concentrationData = CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession,
-                    CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN)
+                    currentExpansionID)
                 if not concentrationData then
                     frameDistributor:Break()
                     return
