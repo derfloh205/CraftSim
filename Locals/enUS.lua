@@ -424,6 +424,7 @@ function CraftSim.LOCAL_EN:GetData()
             "all cached data about this character - profession combination",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK] = "Use " .. f.bb("TSM") .. " Restock Amount Expression",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD] = f.bb("TSM") .. " Sale Rate Threshold: ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "Autoselect " .. f.bb("Open Profession"),
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",
