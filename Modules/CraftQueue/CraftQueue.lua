@@ -1075,6 +1075,13 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                     end
                 end
 
+                local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                if isAlreadyQueued then
+                    printFC("First craft is already queued, skipping: " .. tostring(recipeData.recipeName))
+                    frameDistributor:Continue()
+                    return
+                end
+
                 recipeData:SetCheapestQualityReagentsMax()
                 self:AddRecipe({ recipeData = recipeData })
                 frameDistributor:Continue()
