@@ -261,8 +261,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             } },
             label = concentrationLabel,
             adjustWidth = true,
-            sizeX = 15,
-            sizeY = 24,
+            sizeX = 20,
+            sizeY = 30,
             isOn = false,
             labelOn = concentrationLabel,
             labelOff = concentrationLabel,
@@ -270,18 +270,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
             end,
         }
-
-        -- Compatibility wrappers used by UpdateCraftingDetailsPanel and SimulationMode.lua
-        concentrationToggleBtn.GetChecked = function(self)
-            return self.isOn
-        end
-        concentrationToggleBtn.SetChecked = function(self, checked)
-            -- Bypass onToggleCallback to avoid re-triggering OnStatModifierChanged
-            local savedCallback = self.onToggleCallback
-            self.onToggleCallback = nil
-            self:SetToggle(checked)
-            self.onToggleCallback = savedCallback
-        end
 
         simModeDetailsFrame.content.concentrationToggleBtn = concentrationToggleBtn
         frames.concentrationToggleMod = concentrationToggleBtn
@@ -512,7 +500,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     -- Concentration toggle button visibility and state
     simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
     if showConcentration then
-        simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
+        --simModeFrames.concentrationToggleMod:SetToggle(recipeData.concentrating)
     end
 
     -- Quality meter
