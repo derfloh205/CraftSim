@@ -502,7 +502,9 @@ function CraftSim.CRAFTQ:QueueFavorites()
     local optimizedRecipes = {}
 
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    local currentConcentration = concentrationData:GetCurrentAmount()
+    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
+
+    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
@@ -636,7 +638,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             continue = function(frameDistributor, profession, recipeIDs, _, _)
                 wipe(optimizedRecipes)
                 concentrationData = CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession,
-                    CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN)
+                    currentExpansionID)
                 if not concentrationData then
                     frameDistributor:Break()
                     return
