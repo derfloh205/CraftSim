@@ -532,9 +532,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                     if queueableAmount > 0 then
-                        local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
-                            "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount + offsetAmount }
+                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount }
                         currentConcentration = currentConcentration -
                             (concentrationCosts * queueableAmount)
                         break -- only queue first recipe in this mode
