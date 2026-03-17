@@ -179,7 +179,7 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
 
         self.frame.neededSkillText:SetText("")
-        self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
+        self.frame.missingSkillText:SetText(f.gold(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
         return
     end
 

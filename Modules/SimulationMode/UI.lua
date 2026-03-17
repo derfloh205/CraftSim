@@ -197,7 +197,10 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             hideScrollbar = true,
             rowHeight = 22,
             autoAdjustHeight = true,
-            selectionOptions = { noSelectionColor = true },
+            selectionOptions = {
+                noSelectionColor = true,
+                hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            },
             columnOptions = {
                 { width = labelColumnWidth },
                 { width = valueColumnWidth },
@@ -220,9 +223,9 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 valueColumn.text = GGUI.Text {
                     parent = valueColumn,
                     anchorParent = valueColumn,
-                    anchorA = "LEFT",
-                    anchorB = "LEFT",
-                    justifyOptions = { type = "H", align = "LEFT" },
+                    anchorA = "RIGHT",
+                    anchorB = "RIGHT",
+                    justifyOptions = { type = "H", align = "RIGHT" },
                     scale = 0.85,
                 }
 
@@ -246,71 +249,68 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             end,
         }
 
-        -- Concentration section (below the stats list)
-        simModeDetailsFrame.content.concentrationCB = GGUI.Checkbox {
+        -- Concentration toggle button (below the stats list)
+        local concentrationToggleBtn
+        concentrationToggleBtn = GGUI.Button {
             parent = simModeDetailsFrame.content,
             anchorParent = simModeDetailsFrame.content.statsList.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -6, offsetX = 5,
             label = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
+                " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
+            adjustWidth = true,
+            sizeX = 15,
+            sizeY = 24,
             clickCallback = function()
+                concentrationToggleBtn.isActive = not concentrationToggleBtn.isActive
+                concentrationToggleBtn:UpdateGlow()
                 CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+            end,
+        }
+        concentrationToggleBtn.isActive = false
+
+        -- Gold glow border: shown when concentration is active
+        local concGlowBorder = CreateFrame("Frame", nil, concentrationToggleBtn.frame, "BackdropTemplate")
+        concGlowBorder:SetAllPoints(concentrationToggleBtn.frame)
+        concGlowBorder:SetBackdrop({
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 5,
+        })
+        concGlowBorder:SetBackdropBorderColor(1, 0.75, 0, 0) -- initially invisible
+        concGlowBorder:SetFrameLevel(concentrationToggleBtn.frame:GetFrameLevel() + 5)
+        concentrationToggleBtn.glowBorder = concGlowBorder
+
+        concentrationToggleBtn.UpdateGlow = function(self)
+            if self.isActive then
+                self.glowBorder:SetBackdropBorderColor(1, 0.75, 0, 1)
+            else
+                self.glowBorder:SetBackdropBorderColor(1, 0.75, 0, 0)
             end
-        }
+        end
+        concentrationToggleBtn.GetChecked = function(self)
+            return self.isActive
+        end
+        concentrationToggleBtn.SetChecked = function(self, checked)
+            self.isActive = checked
+            self:UpdateGlow()
+        end
+        concentrationToggleBtn.SetVisible = function(self, visible)
+            if visible then
+                self.frame:Show()
+            else
+                self.frame:Hide()
+            end
+        end
 
-        frames.concentrationToggleMod = simModeDetailsFrame.content.concentrationCB
+        simModeDetailsFrame.content.concentrationToggleBtn = concentrationToggleBtn
+        frames.concentrationToggleMod = concentrationToggleBtn
 
-        simModeDetailsFrame.content.concentrationCostTitle = GGUI.Text {
-            parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCB.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -4, offsetX = 0,
-            justifyOptions = { type = "H", align = "LEFT" },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
-        }
-
-        simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {
-            parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
-            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            justifyOptions = { type = "H", align = "RIGHT" },
-            text = "0",
-        }
-        -- stretch the value frame from title's left to the panel's right so right-aligned text reaches the panel edge
-        simModeDetailsFrame.content.concentrationCostValue.frame:ClearAllPoints()
-        simModeDetailsFrame.content.concentrationCostValue.frame:SetPoint(
-            "TOPLEFT", simModeDetailsFrame.content.concentrationCostTitle.frame, "TOPLEFT")
-        simModeDetailsFrame.content.concentrationCostValue.frame:SetPoint(
-            "RIGHT", simModeDetailsFrame.content, "RIGHT", -5, 0)
-
-        simModeDetailsFrame.content.concentrationTimeTitle = GGUI.Text {
-            parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -2,
-            justifyOptions = { type = "H", align = "LEFT" },
-            text = string.gsub(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s",
-                ""),
-        }
-        simModeDetailsFrame.content.concentrationTimeValue = GGUI.Text {
-            parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationTimeTitle.frame,
-            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            justifyOptions = { type = "H", align = "RIGHT" },
-            text = "",
-        }
-        -- stretch the value frame to the right edge of the panel
-        simModeDetailsFrame.content.concentrationTimeValue.frame:ClearAllPoints()
-        simModeDetailsFrame.content.concentrationTimeValue.frame:SetPoint(
-            "TOPLEFT", simModeDetailsFrame.content.concentrationTimeTitle.frame, "TOPLEFT")
-        simModeDetailsFrame.content.concentrationTimeValue.frame:SetPoint(
-            "RIGHT", simModeDetailsFrame.content, "RIGHT", -5, 0)
-
-        -- Quality meter widget (below concentration section)
+        -- Quality meter widget (below concentration toggle button)
         simModeDetailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationTimeTitle.frame,
+            anchorParent = concentrationToggleBtn.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
-            offsetX = -5,
+            offsetX = 0,
             offsetY = -10,
             sizeX = simModeDetailsFrame:GetWidth() - 30,
         }
@@ -488,17 +488,16 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         end
     end
 
-    statsList:UpdateDisplay()
-
-    -- Concentration section visibility
+    -- Concentration cost and time rows (at bottom of stats list)
     local showConcentration = recipeData.supportsQualities
-    simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
-    detailsFrame.content.concentrationCostTitle:SetVisible(showConcentration)
-    detailsFrame.content.concentrationCostValue:SetVisible(showConcentration)
-
     if showConcentration then
-        simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
-        detailsFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
+        addStatRow(
+            L(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
+            nil,
+            f.gold(recipeData.concentrationCost),
+            nil,
+            nil
+        )
 
         local concentrationData = recipeData.concentrationData
         local cost = recipeData.concentrationCost
@@ -506,23 +505,32 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             if recipeData:IsCrafter() then
                 concentrationData:Update()
             end
-            detailsFrame.content.concentrationTimeTitle:SetVisible(true)
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
+            local timeValueText
             if concentrationData:GetCurrentAmount() < cost then
-                detailsFrame.content.concentrationTimeValue:SetText(
-                    f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat)))
+                timeValueText = f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat))
             else
-                detailsFrame.content.concentrationTimeValue:SetText(f.g("Ready"))
+                timeValueText = f.g("Ready")
             end
-            detailsFrame.content.concentrationTimeValue:SetVisible(true)
-        else
-            detailsFrame.content.concentrationTimeTitle:SetVisible(false)
-            detailsFrame.content.concentrationTimeValue:SetVisible(false)
+            local timeTitleText = string.gsub(
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s", "")
+            addStatRow(
+                timeTitleText,
+                nil,
+                timeValueText,
+                nil,
+                nil
+            )
         end
-    else
-        detailsFrame.content.concentrationTimeTitle:SetVisible(false)
-        detailsFrame.content.concentrationTimeValue:SetVisible(false)
+    end
+
+    statsList:UpdateDisplay()
+
+    -- Concentration toggle button visibility and state
+    simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
+    if showConcentration then
+        simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
     end
 
     -- Quality meter
