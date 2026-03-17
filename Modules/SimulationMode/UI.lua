@@ -159,6 +159,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
 
 
+
         -- DETAILS FRAME
         local simModeDetailsFrame = GGUI.Frame({
             parent = workOrder and CraftSim.SIMULATION_MODE.frameWO.frame or CraftSim.SIMULATION_MODE.frame.frame,
@@ -168,7 +169,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             offsetX = -5,
             offsetY = -155,
             sizeX = 350,
-            sizeY = 355,
+            sizeY = 410,
             frameID = (workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES
                 .CRAFTING_DETAILS,
             frameTable = CraftSim.INIT.FRAMES,
@@ -180,195 +181,81 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         frames.detailsFrame = simModeDetailsFrame
 
-        local offsetY = -20
-        local modOffsetX = 5
-        local valueOffsetX = -5
-        local valueOffsetY = 0.5
+        -- Stats FrameList (replaces old static layout)
+        local labelColumnWidth = 175
+        local valueColumnWidth = 105
+        local modColumnWidth = 45
 
-        -- recipe difficulty
-        simModeDetailsFrame.content.recipeDifficultyTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.recipeDifficultyTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content, "TOPLEFT", 20,
-            offsetY - 20)
-        simModeDetailsFrame.content.recipeDifficultyTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .RECIPE_DIFFICULTY_LABEL))
-        simModeDetailsFrame.content.recipeDifficultyTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyTitle, "RIGHT", "LEFT", -20, 0)
+        simModeDetailsFrame.content.statsList = GGUI.FrameList {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content,
+            anchorA = "TOPLEFT",
+            anchorB = "TOPLEFT",
+            offsetX = 5,
+            offsetY = -10,
+            sizeY = 220,
+            hideScrollbar = true,
+            rowHeight = 22,
+            autoAdjustHeight = true,
+            selectionOptions = { noSelectionColor = true },
+            columnOptions = {
+                { width = labelColumnWidth },
+                { width = valueColumnWidth },
+                { width = modColumnWidth },
+            },
+            rowConstructor = function(columns, row)
+                local labelColumn = columns[1]
+                local valueColumn = columns[2]
+                local modColumn = columns[3]
 
+                labelColumn.text = GGUI.Text {
+                    parent = labelColumn,
+                    anchorParent = labelColumn,
+                    anchorA = "LEFT",
+                    anchorB = "LEFT",
+                    justifyOptions = { type = "H", align = "LEFT" },
+                    offsetX = 5,
+                }
+                labelColumn.helpIcon = CraftSim.FRAME:CreateHelpIcon(
+                    "", labelColumn, labelColumn.text.frame, "RIGHT", "RIGHT", 15, 0)
+                labelColumn.helpIcon:Hide()
 
-        simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content,
-            "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
+                valueColumn.text = GGUI.Text {
+                    parent = valueColumn,
+                    anchorParent = valueColumn,
+                    anchorA = "LEFT",
+                    anchorB = "LEFT",
+                    justifyOptions = { type = "H", align = "LEFT" },
+                    scale = 0.85,
+                }
 
-        frames.recipeDifficultyMod = simModeDetailsFrame.content.recipeDifficultyMod
-
-        simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP
-            .CRAFTING_DETAILS_RECIPE_DIFFICULTY
-
-        simModeDetailsFrame.content.recipeDifficultyValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.recipeDifficultyValue:SetPoint("RIGHT",
-            simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.recipeDifficultyValue:SetText("0")
-
-        -- Multicraft
-        simModeDetailsFrame.content.multicraftTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.multicraftTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content
-            .recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.multicraftTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL))
-        simModeDetailsFrame.content.multicraftTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content,
-            simModeDetailsFrame.content.recipeDifficultyMod,
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
-        frames.multicraftMod = simModeDetailsFrame.content.multicraftMod
-        simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
-
-        simModeDetailsFrame.content.multicraftValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.multicraftValue:SetPoint("RIGHT", simModeDetailsFrame.content.multicraftMod, "LEFT",
-            valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.multicraftValue:SetText("0")
-
-        -- Multicraft BonusItemsFactor
-        simModeDetailsFrame.content.multicraftBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.multicraftBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftTitle,
-            "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.multicraftBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MULTICRAFT_BONUS_LABEL))
-
-        simModeDetailsFrame.content.multicraftBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.multicraftBonusValue:SetPoint("TOP", simModeDetailsFrame.content.multicraftMod,
-            "BOTTOM", 0, -3)
-        simModeDetailsFrame.content.multicraftBonusValue:SetText("0%")
-
-        -- Resourcefulness
-        simModeDetailsFrame.content.resourcefulnessTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.resourcefulnessTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.multicraftBonusTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.resourcefulnessTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .RESOURCEFULNESS_LABEL))
-        simModeDetailsFrame.content.resourcefulnessTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content,
-            simModeDetailsFrame.content.multicraftMod,
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY * 2, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
-        frames.resourcefulnessMod = simModeDetailsFrame.content.resourcefulnessMod
-        simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
-
-        simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.resourcefulnessValue:SetPoint("RIGHT", simModeDetailsFrame.content
-            .resourcefulnessMod, "LEFT", valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.resourcefulnessValue:SetText("0")
-
-        -- Resourcefulness BonusItemsFactor
-        simModeDetailsFrame.content.resourcefulnessBonusTitle = simModeDetailsFrame.content:CreateFontString(nil,
-            'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .RESOURCEFULNESS_BONUS_LABEL))
-
-        simModeDetailsFrame.content.resourcefulnessBonusValue = simModeDetailsFrame.content:CreateFontString(nil,
-            'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.resourcefulnessBonusValue:SetPoint("TOP",
-            simModeDetailsFrame.content.resourcefulnessMod, "BOTTOM", 0, -3)
-        simModeDetailsFrame.content.resourcefulnessBonusValue:SetText("0%")
-
-        -- skill
-
-        simModeDetailsFrame.content.baseSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.resourcefulnessBonusTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.baseSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SKILL_LABEL))
-
-        simModeDetailsFrame.content.baseSkillMod = GGUI.NumericInput {
-            parent = simModeDetailsFrame.content, anchorParent = simModeDetailsFrame.content.resourcefulnessMod,
-            anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", allowDecimals = false, offsetX = 0, offsetY = offsetY * 2, sizeX = 30, sizeY = 20,
-            initialValue = 0, incrementOneButtons = true, onNumberValidCallback = function(input)
-            CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
-        end,
-            borderAdjustHeight = 1.2, borderAdjustWidth = 1.3,
+                modColumn.modInput = GGUI.NumericInput {
+                    parent = modColumn,
+                    anchorParent = modColumn,
+                    anchorA = "CENTER",
+                    anchorB = "CENTER",
+                    sizeX = 38,
+                    sizeY = 18,
+                    allowNegative = true,
+                    mouseWheelStep = 1,
+                    allowDecimals = false,
+                    initialValue = 0,
+                    onNumberValidCallback = function()
+                        CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+                    end,
+                    borderAdjustHeight = 1.1,
+                    borderAdjustWidth = 1.2,
+                }
+            end,
         }
-        frames.baseSkillMod = simModeDetailsFrame.content.baseSkillMod
-        simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
 
-        simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT",
-            simModeDetailsFrame.content.baseSkillMod.textInput.frame,
-            "LEFT",
-            valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.baseSkillValue:SetText("0")
-
-        -- reagent skill
-
-        simModeDetailsFrame.content.reagentSkillIncreaseTitle = simModeDetailsFrame.content:CreateFontString(nil,
-            'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .REAGENT_QUALITY_BONUS_LABEL))
-        simModeDetailsFrame.content.reagentSkillIncreaseTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.reagentSkillIncreaseTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil,
-            'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP",
-            simModeDetailsFrame.content.baseSkillMod.textInput.frame,
-            "TOP", valueOffsetX - 15, offsetY - 5)
-        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
-
-        -- reagent max factor
-        simModeDetailsFrame.content.reagentMaxFactorTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.reagentMaxFactorTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .REAGENT_QUALITY_MAXIMUM_LABEL))
-        simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.reagentMaxFactorValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP",
-            simModeDetailsFrame.content.baseSkillMod.textInput.frame, "TOP",
-            valueOffsetX - 15, offsetY * 2 - 5)
-        simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
-
+        -- Concentration section (below the stats list)
         simModeDetailsFrame.content.concentrationCB = GGUI.Checkbox {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.reagentMaxFactorValue,
-            anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
-            labelOptions = {
-                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
-                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
-                anchorParent = simModeDetailsFrame.content.reagentMaxFactorTitle
-            },
+            anchorParent = simModeDetailsFrame.content.statsList.frame,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -6, offsetX = 5,
+            label = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
             clickCallback = function()
                 CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
             end
@@ -378,8 +265,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         simModeDetailsFrame.content.concentrationCostTitle = GGUI.Text {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCB.labelText.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
+            anchorParent = simModeDetailsFrame.content.concentrationCB.frame,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -4, offsetX = 0,
             justifyOptions = { type = "H", align = "LEFT" },
             text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
         }
@@ -387,75 +274,36 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {
             parent = simModeDetailsFrame.content,
             anchorParent = simModeDetailsFrame.content.concentrationCB.frame,
-            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -2, offsetX = -2,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -4, offsetX = 0,
             justifyOptions = { type = "H", align = "RIGHT" },
             text = "0",
         }
         simModeDetailsFrame.content.concentrationTimeTitle = GGUI.Text {
             parent = simModeDetailsFrame.content,
             anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = 0,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -2,
             justifyOptions = { type = "H", align = "LEFT" },
-            text = string.gsub(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s", ""),
+            text = string.gsub(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s",
+                ""),
         }
         simModeDetailsFrame.content.concentrationTimeValue = GGUI.Text {
             parent = simModeDetailsFrame.content,
             anchorParent = simModeDetailsFrame.content.concentrationCostValue.frame,
-            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = 0,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -2,
             justifyOptions = { type = "H", align = "RIGHT" },
             text = "",
         }
 
-        simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
-        simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
-        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY * 13)
-        local qualityFrame = simModeDetailsFrame.content.qualityFrame
-        qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
-        qualityFrame.currentQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL))
-
-        qualityFrame.currentQualityIcon = GGUI.QualityIcon({
-            parent = qualityFrame,
-            anchorParent = qualityFrame,
-            sizeX = 25,
-            sizeY = 25,
-            anchorA = "TOPRIGHT",
-            anchorB =
-            "TOPRIGHT",
-            offsetY = 5
-        })
-
-        qualityFrame.currentQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon.frame, "LEFT", -5, 0)
-        qualityFrame.currentQualityThreshold:SetText("> ???")
-
-        qualityFrame.nextQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.nextQualityTitle:SetPoint("TOPLEFT", qualityFrame.currentQualityTitle, "TOPLEFT", 0, offsetY)
-        qualityFrame.nextQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL))
-
-        qualityFrame.nextQualityIcon = GGUI.QualityIcon({
-            parent = qualityFrame,
-            anchorParent = qualityFrame.currentQualityIcon.frame,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetY = offsetY,
-            sizeX = 25,
-            sizeY = 25,
-        })
-
-        qualityFrame.nextQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon.frame, "LEFT", -5, 0)
-        qualityFrame.nextQualityThreshold:SetText("> ???")
-
-        qualityFrame.nextQualityMissingSkillTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.nextQualityMissingSkillTitle:SetPoint("TOPLEFT", qualityFrame.nextQualityTitle, "TOPLEFT", 0,
-            offsetY)
-        qualityFrame.nextQualityMissingSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_LABEL))
-
-        qualityFrame.nextQualityMissingSkillValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        qualityFrame.nextQualityMissingSkillValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityThreshold, "TOPRIGHT", 0,
-            offsetY)
-        qualityFrame.nextQualityMissingSkillValue:SetText("???")
+        -- Quality meter widget (below concentration section)
+        simModeDetailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.concentrationTimeTitle.frame,
+            anchorA = "TOPLEFT",
+            anchorB = "BOTTOMLEFT",
+            offsetX = -5,
+            offsetY = -10,
+            sizeX = simModeDetailsFrame:GetWidth() - 30,
+        }
 
         return frames
     end
@@ -472,8 +320,6 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         return
     end
 
-    local simplifiedResult = recipeData:HasSimplifiedQualityResult()
-
     local baseProfessionStats = recipeData.baseProfessionStats
     local professionStats = recipeData.professionStats
     local professionStatsMod = recipeData.professionStatModifiers
@@ -481,62 +327,166 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local detailsFrame = simModeFrames.detailsFrame
 
-    -- Multicraft Display
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftTitle, recipeData.supportsMulticraft)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftTitle.helper, recipeData.supportsMulticraft)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftValue, recipeData.supportsMulticraft)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftMod, recipeData.supportsMulticraft)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusTitle, recipeData.supportsMulticraft)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusValue, recipeData.supportsMulticraft)
+    local statsList = detailsFrame.content.statsList --[[@as GGUI.FrameList]]
+    statsList:Remove()
+
+    local function addStatRow(labelText, tooltipText, valueText, modValue, statKey)
+        statsList:Add(function(row)
+            local columns = row.columns
+            local labelColumn = columns[1]
+            local valueColumn = columns[2]
+            local modColumn = columns[3]
+
+            labelColumn.text:SetText(labelText)
+
+            if tooltipText and tooltipText ~= "" then
+                labelColumn.helpIcon:SetTooltipText(tooltipText)
+                labelColumn.helpIcon:Show()
+            else
+                labelColumn.helpIcon:Hide()
+            end
+
+            valueColumn.text:SetText(valueText)
+
+            if modValue ~= nil and statKey then
+                modColumn.modInput:SetValue(modValue)
+                modColumn.modInput.stat = statKey
+                modColumn.modInput:Show()
+                -- Store reference for UpdateProfessionStatModifiersByInputs
+                if statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY then
+                    simModeFrames.recipeDifficultyMod = modColumn.modInput
+                elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT then
+                    simModeFrames.multicraftMod = modColumn.modInput
+                elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS then
+                    simModeFrames.resourcefulnessMod = modColumn.modInput
+                elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL then
+                    simModeFrames.baseSkillMod = modColumn.modInput
+                end
+            else
+                modColumn.modInput:Hide()
+            end
+        end)
+    end
+
+    -- Recipe Difficulty (only for quality recipes)
+    if recipeData.supportsQualities then
+        local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
+        local fullRecipeDifficulty = professionStats.recipeDifficulty.value
+        local recipeDifficultyText = GUTIL:Round(fullRecipeDifficulty, 1) ..
+            " (" .. baseProfessionStats.recipeDifficulty.value ..
+            "+" .. professionStatsOptionals.recipeDifficulty.value ..
+            "+" .. professionStatsMod.recipeDifficulty.value .. ")"
+        addStatRow(
+            L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL),
+            L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP),
+            recipeDifficultyText,
+            professionStatsMod.recipeDifficulty.value,
+            CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
+        )
+    end
+
+    -- Multicraft
     if recipeData.supportsMulticraft then
         local baseMulticraft = GUTIL:Round(professionStats.multicraft.value - professionStatsMod.multicraft.value, 1)
         local percentText = GUTIL:Round(professionStats.multicraft:GetPercent(), 1) .. "%"
-        detailsFrame.content.multicraftValue:SetText(GUTIL:Round(professionStats.multicraft.value, 1) ..
-            " (" .. baseMulticraft .. "+" .. professionStatsMod.multicraft.value .. ") " .. percentText)
+        local multicraftText = GUTIL:Round(professionStats.multicraft.value, 1) ..
+            " (" .. baseMulticraft .. "+" .. professionStatsMod.multicraft.value .. ") " .. percentText
+        addStatRow(
+            L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL),
+            L(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP),
+            multicraftText,
+            professionStatsMod.multicraft.value,
+            CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
+        )
 
-        detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft:GetExtraValue() * 100 .. "%")
+        local bonusItemsText = professionStats.multicraft:GetExtraValue() * 100 .. "%"
+        addStatRow(
+            L(CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL),
+            nil,
+            bonusItemsText,
+            nil,
+            nil
+        )
     end
 
-    -- Resourcefulness Display
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessTitle, recipeData.supportsResourcefulness)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessTitle.helper, recipeData.supportsResourcefulness)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessValue, recipeData.supportsResourcefulness)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessMod, recipeData.supportsResourcefulness)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessBonusTitle, recipeData.supportsResourcefulness)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessBonusValue, recipeData.supportsResourcefulness)
+    -- Resourcefulness
     if recipeData.supportsResourcefulness then
         local baseResourcefulness = professionStats.resourcefulness.value - professionStatsMod.resourcefulness.value
         local percentText = GUTIL:Round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
-        detailsFrame.content.resourcefulnessValue:SetText(GUTIL:Round(professionStats.resourcefulness.value) ..
-            " (" ..
-            GUTIL:Round(baseResourcefulness) ..
-            "+" .. GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
+        local resourcefulnessText = GUTIL:Round(professionStats.resourcefulness.value) ..
+            " (" .. GUTIL:Round(baseResourcefulness) ..
+            "+" .. GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText
+        addStatRow(
+            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL),
+            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP),
+            resourcefulnessText,
+            professionStatsMod.resourcefulness.value,
+            CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
+        )
 
-        detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness:GetExtraValue() * 100 ..
-            "%")
+        local bonusItemsText = professionStats.resourcefulness:GetExtraValue() * 100 .. "%"
+        addStatRow(
+            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL),
+            nil,
+            bonusItemsText,
+            nil,
+            nil
+        )
     end
 
-    local qualityFrame = detailsFrame.content.qualityFrame
-    CraftSim.FRAME:ToggleFrame(qualityFrame, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillTitle, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillValue, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillMod, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyTitle, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyValue, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyMod, recipeData.supportsQualities)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentSkillIncreaseTitle,
-        recipeData.supportsQualities and recipeData.hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentSkillIncreaseValue,
-        recipeData.supportsQualities and recipeData.hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorTitle,
-        recipeData.supportsQualities and recipeData.hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorValue,
-        recipeData.supportsQualities and recipeData.hasQualityReagents)
-    simModeFrames.concentrationToggleMod.labelText:SetVisible(recipeData.supportsQualities)
-    simModeFrames.concentrationToggleMod:SetVisible(recipeData.supportsQualities)
-    detailsFrame.content.concentrationCostTitle:SetVisible(recipeData.supportsQualities)
-    detailsFrame.content.concentrationCostValue:SetVisible(recipeData.supportsQualities)
+    -- Skill (only for quality recipes)
     if recipeData.supportsQualities then
+        local reagentSkillIncrease = recipeData.reagentData:GetSkillFromRequiredReagents()
+        local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
+        local skillText = GUTIL:Round(professionStats.skill.value, 1) ..
+            " (" .. GUTIL:Round(skillNoReagents, 1) ..
+            "+" .. GUTIL:Round(reagentSkillIncrease, 1) ..
+            "+" .. professionStatsMod.skill.value .. ")"
+        addStatRow(
+            L(CraftSim.CONST.TEXT.SKILL_LABEL),
+            nil,
+            skillText,
+            professionStatsMod.skill.value,
+            CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
+        )
+
+        -- Reagent quality stats (only if recipe has quality reagents)
+        if recipeData.hasQualityReagents then
+            local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
+            local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
+            local reagentSkillText = GUTIL:Round(reagentSkillIncrease, 0) ..
+                " / " .. GUTIL:Round(maxReagentSkillIncrease, 0)
+            addStatRow(
+                L(CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL),
+                L(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP),
+                reagentSkillText,
+                nil,
+                nil
+            )
+
+            local reagentMaxFactorText = GUTIL:Round(maxSkillFactor * 100, 1) .. " %"
+            addStatRow(
+                L(CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL),
+                L(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP),
+                reagentMaxFactorText,
+                nil,
+                nil
+            )
+        end
+    end
+
+    statsList:UpdateDisplay()
+
+    -- Concentration section visibility
+    local showConcentration = recipeData.supportsQualities
+    simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
+    detailsFrame.content.concentrationCostTitle:SetVisible(showConcentration)
+    detailsFrame.content.concentrationCostValue:SetVisible(showConcentration)
+
+    if showConcentration then
+        simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
+        detailsFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
+
         local concentrationData = recipeData.concentrationData
         local cost = recipeData.concentrationCost
         if concentrationData and cost and cost > 0 then
@@ -547,7 +497,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
             if concentrationData:GetCurrentAmount() < cost then
-                detailsFrame.content.concentrationTimeValue:SetText(f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat)))
+                detailsFrame.content.concentrationTimeValue:SetText(
+                    f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat)))
             else
                 detailsFrame.content.concentrationTimeValue:SetText(f.g("Ready"))
             end
@@ -560,63 +511,14 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         detailsFrame.content.concentrationTimeTitle:SetVisible(false)
         detailsFrame.content.concentrationTimeValue:SetVisible(false)
     end
+
+    -- Quality meter
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
-        if simplifiedResult then
-            qualityFrame.currentQualityIcon:SetQualitySimplified(recipeData.resultData.expectedQuality)
-        else
-            qualityFrame.currentQualityIcon:SetQuality(recipeData.resultData.expectedQuality)
-        end
-        qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
-
-        local hasNextQuality = recipeData.resultData.expectedQuality < recipeData.maxQuality
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
-        if hasNextQuality then
-            if simplifiedResult then
-                qualityFrame.nextQualityIcon:SetQualitySimplified(recipeData.resultData.expectedQuality + 1)
-            else
-                qualityFrame.nextQualityIcon:SetQuality(recipeData.resultData.expectedQuality + 1)
-            end
-            qualityFrame.nextQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality] or 0))
-            qualityFrame.nextQualityMissingSkillValue:SetText(math.max(
-                (thresholds[recipeData.resultData.expectedQuality] or 0) - recipeData.professionStats.skill.value, 0))
-        end
-
-
-
-        -- Skill
-        local reagentSkillIncrease = recipeData.reagentData
-            :GetSkillFromRequiredReagents()
-        local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
-        local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
-        local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        detailsFrame.content.recipeDifficultyValue:SetText(GUTIL:Round(fullRecipeDifficulty, 1) ..
-            " (" ..
-            baseProfessionStats.recipeDifficulty.value ..
-            "+" ..
-            professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value .. ")")
-        detailsFrame.content.baseSkillValue:SetText(GUTIL:Round(professionStats.skill.value, 1) ..
-            " (" ..
-            GUTIL:Round(skillNoReagents, 1) ..
-            "+" .. GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value .. ")")
-
-        if recipeData.hasQualityReagents then
-            local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
-            local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
-            detailsFrame.content.reagentSkillIncreaseValue:SetText(GUTIL:Round(reagentSkillIncrease, 0) ..
-                " / " .. GUTIL:Round(maxReagentSkillIncrease, 0))
-            detailsFrame.content.reagentMaxFactorValue:SetText(GUTIL:Round(maxSkillFactor * 100, 1) .. " %")
-        end
-
-        -- Concentration
-
-        if recipeData.supportsQualities then
-            simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
-            detailsFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
-        end
+        detailsFrame.content.qualityMeter:Update(recipeData, thresholds)
+    else
+        detailsFrame.content.qualityMeter.frame:Hide()
     end
 end
 

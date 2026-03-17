@@ -88,6 +88,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION] = " Concentration",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST] = "Concentration Cost: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL] = "Craftable at: %s",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_NEEDED] = "Needed: ",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MISSING] = "Missing: ",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX] = "MAX",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Recipe Difficulty: ",

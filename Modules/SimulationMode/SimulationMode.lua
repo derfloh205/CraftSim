@@ -136,21 +136,21 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
     -- update difficulty based on input
-    local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.recipeDifficultyMod, true)
+    local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and simulationModeFrames.recipeDifficultyMod.currentValue or 0
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
-    local skillMod = simulationModeFrames.baseSkillMod.currentValue
+    local skillMod = simulationModeFrames.baseSkillMod and simulationModeFrames.baseSkillMod.currentValue or 0
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
     if recipeData.supportsMulticraft then
-        local multicraftMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.multicraftMod, true)
+        local multicraftMod = simulationModeFrames.multicraftMod and simulationModeFrames.multicraftMod.currentValue or 0
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)
     end
 
     if recipeData.supportsResourcefulness then
-        local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.resourcefulnessMod, true)
+        local resourcefulnessMod = simulationModeFrames.resourcefulnessMod and simulationModeFrames.resourcefulnessMod.currentValue or 0
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
