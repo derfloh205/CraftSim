@@ -42,6 +42,21 @@ function CraftSim.RECIPE_SCAN.UI:Init()
         text = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE),
     }
 
+    CraftSim.RECIPE_SCAN.frame.optionsButton = CraftSim.WIDGETS.OptionsButton {
+        parent = CraftSim.RECIPE_SCAN.frame.frame,
+        anchorPoints = { { anchorParent = CraftSim.RECIPE_SCAN.frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            local autoselectProfessionCB = rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION", not value)
+                end)
+        end
+    }
+
     ---@class CraftSim.RECIPE_SCAN.FRAME.CONTENT
     CraftSim.RECIPE_SCAN.frame.content = CraftSim.RECIPE_SCAN.frame.content
 
@@ -205,17 +220,6 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         cleanTemplate = true,
         clickCallback = function(_, _)
             MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
-                local autoselectProfessionCB = rootDescription:CreateCheckbox(
-                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_AUTOSELECT_OPEN_PROFESSION", not value)
-                    end)
-
-                rootDescription:CreateDivider()
-
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
