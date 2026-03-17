@@ -1131,8 +1131,9 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
 
     local qbCache = self.quickBuyCache
 
-    if not AuctionatorShoppingFrame then
-        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.r("Quick Buy only available for Auctionator Shopping Lists"))
+    if not AuctionatorShoppingFrame or not AuctionatorShoppingFrame:IsShown() then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.r("Quick Buy requires the Auctionator Shopping List window to be open"))
+        self:ResetQuickBuyCache()
         return
     end
 
@@ -1256,6 +1257,20 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
         qbCache.pendingItemID = resultRow.itemKey.itemID
         qbCache.pendingItemCount = resultRow.purchaseQuantity
 
+        -- Check if the player has enough gold before starting the purchase
+        local unitPrice = resultRow.unitPrice
+        if unitPrice then
+            local estimatedCost = unitPrice * qbCache.pendingItemCount
+            if estimatedCost > GetMoney() then
+                CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
+                    f.r("Quick Buy: ") .. "Not enough gold to purchase item(s). Need " ..
+                    CraftSim.UTIL:FormatMoney(estimatedCost) .. " but only have " ..
+                    CraftSim.UTIL:FormatMoney(GetMoney()))
+                self:ResetQuickBuyCache()
+                return
+            end
+        end
+
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true
         set(QB_STATUS.PURCHASE_AWAIT)
@@ -1274,15 +1289,19 @@ end
 
 function CraftSim.CRAFTQ:AUCTION_HOUSE_THROTTLED_SYSTEM_READY()
     local qbCache = self.quickBuyCache
-    if qbCache.pendingItemCount and qbCache.pendingItemID then
+    if qbCache.pendingItemCount and qbCache.pendingItemID and qbCache.purchasePending then
         C_AuctionHouse.ConfirmCommoditiesPurchase(qbCache.pendingItemID, qbCache.pendingItemCount)
-        -- triggers COMMODITY_PURCHASE_SUCCEEDED
-        -- TODO: Consider COMMODITY_PURCHASE_FAILED
+        -- triggers COMMODITY_PURCHASE_SUCCEEDED or COMMODITY_PURCHASE_FAILED
     end
 end
 
 function CraftSim.CRAFTQ:COMMODITY_PURCHASE_FAILED()
-    -- reset quick buy
+    -- reset quick buy and notify user
+    printQB("- " .. f.r("COMMODITY_PURCHASE_FAILED"))
+    if self.quickBuyCache.purchasePending then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
+            f.r("Quick Buy: ") .. "Purchase failed - not enough gold or item no longer available")
+    end
     self:ResetQuickBuyCache()
 end
 
@@ -1291,6 +1310,8 @@ function CraftSim.CRAFTQ:ResetQuickBuyCache()
     qbCache.status = QB_STATUS.INIT
     qbCache.currentSearchString = nil
     qbCache.purchasePending = false
+    qbCache.pendingItemID = nil
+    qbCache.pendingItemCount = nil
     wipe(qbCache.boughtSearchStrings)
     wipe(qbCache.resultRows)
 end
