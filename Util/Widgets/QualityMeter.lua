@@ -14,6 +14,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field anchorParent Frame?
 ---@field anchorA string?
 ---@field anchorB string?
+---@field anchorPoints GGUI.AnchorPoint[]?
 ---@field offsetX number?
 ---@field offsetY number?
 ---@field sizeX number?
@@ -40,18 +41,22 @@ function CraftSim.WIDGETS.QualityMeter:new(options)
 
     local sizeX = options.sizeX or 260
     local parent = options.parent
-    local anchorParent = options.anchorParent or parent
 
     local frame = CreateFrame("Frame", nil, parent)
     self.frame = frame
     frame:SetSize(sizeX, WIDGET_HEIGHT)
-    frame:SetPoint(
-        options.anchorA or "CENTER",
-        anchorParent,
-        options.anchorB or "CENTER",
-        options.offsetX or 0,
-        options.offsetY or 0
-    )
+    if options.anchorPoints then
+        GGUI:SetPointsByAnchorPoints(frame, options.anchorPoints)
+    else
+        local anchorParent = options.anchorParent or parent
+        frame:SetPoint(
+            options.anchorA or "CENTER",
+            anchorParent,
+            options.anchorB or "CENTER",
+            options.offsetX or 0,
+            options.offsetY or 0
+        )
+    end
 
     local barWidth = sizeX - ICON_SIZE * 2 - 14
 
@@ -167,16 +172,13 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
     end
 
     if isConcentrating then
-        -- When concentration is active: fill bar fully with gold color, hide missing skill
+        -- When concentration is active: fill bar fully with gold color, hide skill text
         local c = BAR_COLOR_CONCENTRATION
         self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
         self.frame.bar:SetMinMaxValues(0, 1)
         self.frame.bar:SetValue(1)
 
-        self.frame.currentSkillText:ClearAllPoints()
-        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT",
-            self.frame.barWidth, BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
-        self.frame.currentSkillText:SetText(f.l(currentSkill))
+        self.frame.currentSkillText:SetText("")
 
         self.frame.neededSkillText:SetText("")
         self.frame.missingSkillText:SetText(f.gold(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
