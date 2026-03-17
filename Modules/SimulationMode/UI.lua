@@ -216,9 +216,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     justifyOptions = { type = "H", align = "LEFT" },
                     offsetX = 5,
                 }
-                labelColumn.helpIcon = CraftSim.FRAME:CreateHelpIcon(
-                    "", labelColumn, labelColumn.text.frame, "RIGHT", "RIGHT", 15, 0)
-                labelColumn.helpIcon:Hide()
 
                 valueColumn.text = GGUI.Text {
                     parent = valueColumn,
@@ -273,11 +270,18 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCB.frame,
-            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -4, offsetX = 0,
+            anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
             justifyOptions = { type = "H", align = "RIGHT" },
             text = "0",
         }
+        -- stretch the value frame from title's left to the panel's right so right-aligned text reaches the panel edge
+        simModeDetailsFrame.content.concentrationCostValue.frame:ClearAllPoints()
+        simModeDetailsFrame.content.concentrationCostValue.frame:SetPoint(
+            "TOPLEFT", simModeDetailsFrame.content.concentrationCostTitle.frame, "TOPLEFT")
+        simModeDetailsFrame.content.concentrationCostValue.frame:SetPoint(
+            "RIGHT", simModeDetailsFrame.content, "RIGHT", -5, 0)
+
         simModeDetailsFrame.content.concentrationTimeTitle = GGUI.Text {
             parent = simModeDetailsFrame.content,
             anchorParent = simModeDetailsFrame.content.concentrationCostTitle.frame,
@@ -288,11 +292,17 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         }
         simModeDetailsFrame.content.concentrationTimeValue = GGUI.Text {
             parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content.concentrationCostValue.frame,
-            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -2,
+            anchorParent = simModeDetailsFrame.content.concentrationTimeTitle.frame,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
             justifyOptions = { type = "H", align = "RIGHT" },
             text = "",
         }
+        -- stretch the value frame to the right edge of the panel
+        simModeDetailsFrame.content.concentrationTimeValue.frame:ClearAllPoints()
+        simModeDetailsFrame.content.concentrationTimeValue.frame:SetPoint(
+            "TOPLEFT", simModeDetailsFrame.content.concentrationTimeTitle.frame, "TOPLEFT")
+        simModeDetailsFrame.content.concentrationTimeValue.frame:SetPoint(
+            "RIGHT", simModeDetailsFrame.content, "RIGHT", -5, 0)
 
         -- Quality meter widget (below concentration section)
         simModeDetailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
@@ -338,15 +348,18 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             local modColumn = columns[3]
 
             labelColumn.text:SetText(labelText)
-
-            if tooltipText and tooltipText ~= "" then
-                labelColumn.helpIcon:SetTooltipText(tooltipText)
-                labelColumn.helpIcon:Show()
-            else
-                labelColumn.helpIcon:Hide()
-            end
-
             valueColumn.text:SetText(valueText)
+
+            -- Row hover tooltip instead of legacy help button
+            if tooltipText and tooltipText ~= "" then
+                row.tooltipOptions = {
+                    anchor = "ANCHOR_CURSOR",
+                    owner = row.frame,
+                    text = tooltipText,
+                }
+            else
+                row.tooltipOptions = nil
+            end
 
             if modValue ~= nil and statKey then
                 modColumn.modInput:SetValue(modValue)
