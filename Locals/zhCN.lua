@@ -310,6 +310,7 @@ function CraftSim.LOCAL_CN:GetData()
 
         -- Price Override Frame
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "CraftSim 重订价格",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_HINT] = "（您现在可以直接在" .. f.bb("成本明细模块") .. "重订价格了）",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "必要材料",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS] = "可选材料",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS] = "完成材料",
@@ -544,6 +545,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "重置框架位置",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "选项",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "更新信息",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORTS] = "导出",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " 导出",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "正在导出",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "没有适用于地心之战资料片的导出配方",
@@ -597,6 +599,14 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS] = "材料",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_SOMENOTE] = "注释",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_AMOUNT] = "总量",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_ENABLE_HISTORY_RECORDING] = f.bb("启用") .. f.gold("历史记录"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_RECORD_PATRON_ORDERS] = "记录" .. f.bb("客人订单"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_CUSTOMERS] = "移除客户",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_AUTO_REMOVAL] = "自动移除",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_BELOW_THRESHOLD] = f.l("移除低于阈值"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMERS] = f.r("移除所有客户"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA] = f.r("确定移除所有客户数据吗？"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_DELETE_CUSTOMER] = "删除客户",
 
         -- Craft Queue
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE] = "CraftSim 制造队列",
@@ -629,8 +639,27 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_TOOLTIP] = "包含有强化符文作为奖励的订单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX] = "包含" .. f.bb("知识点") .. "奖励",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP] = "包含有知识点作为奖励的订单",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST] = f.bb("知识点") .. "最大成本：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP] = "每1知识点的最大允许金币成本\n\n格式：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST] = f.bb("客人订单") .. "最大成本：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTOP] = "每个客人订单的最大允许金币成本\n\n格式：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("材料包") .. "价值：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "将添加到您利润中的" .. f.bb("材料包奖励") .. "的价值。\n\n格式：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "全部清除",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "排队添加最爱配方",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING] = f.bb("智能") .. f.gold("专注") .. f.bb("队列"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP] = "启用后，" ..
+            f.l("CraftSim") ..
+            "首先会确定" ..
+            f.g("最有专注价值的") ..
+            "配方。然后将其加入制造队列，以达到最大可制作数量。",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT] = "偏移" .. f.gold("专注") .. f.bb("队列数量"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP] = "启用后，专注制造将会根据你的" .. f.bb("奇思") .. "预期制造数量排队",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS] = "排队添加" .. f.bb("当前的主专业"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP] = "启用后，CraftSim 将同时处理当前角色的两种主专业",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL] = "偏移队列数量：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP] = "始终将指定数量添加到排队制造的数量中",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST] = "扫描后自动创建购物清单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "专业错误",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "冷却中",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER] = "状态",
@@ -713,6 +742,15 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\n最低品质：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\n奖励：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST] = "启用后，CraftSim 扫描后会自动创建购物清单。",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL] = "忽略" .. f.e("火花") .. "配方",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP] = "忽略需要火花材料的配方",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_AUTO_SHOW] = "当配方加入制造队列后" .. f.g("自动打开"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_INGENUITY_IGNORE] = f.r("忽略") .. f.gold("奇思触发") .. "时的队列数量减少",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION] = "在" .. f.gold("专注") .. "全用完后" .. f.r("移除") ,
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP] = "当剩余的专注不足以继续制作时，自动移除已制作的配方。",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_HELP] = f.bb("左键点击") .. " .. 跳转到配方\n" ..
+            f.bb("右键点击") .. " .. 打开配方选项\n" ..
+            f.bb("中键点击") .. " .. 从队列中移除配方",
 
         -- craft buffs
 
@@ -753,6 +791,13 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE] = "欧洲 - 最大日期",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE] = "美洲 - 最大日期",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT] = "小时剩余",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_PIN_TOOLTIP] = "固定概览",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_LABEL] = "队列",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST] = "移除并加入黑名单",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_LABEL] = "选项",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_CLEAR_BLACKLIST] = "清除黑名单",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE] = "排序模式: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT] = "时间格式: ",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "是",

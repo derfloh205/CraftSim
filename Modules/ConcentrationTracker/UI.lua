@@ -117,7 +117,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
                 owner = content,
-                text = "Pin Overview",
+                text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_PIN_TOOLTIP),
             },
             clickCallback = function()
                 local nowPinned = not CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")
@@ -184,7 +184,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             parent = content,
             anchorParent = content,
             offsetY = -2,
-            label = "List",
+            label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_LABEL),
         },
         parent = content,
         anchorParent = content,
@@ -202,7 +202,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             anchorParent = content.listTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            label = "Options",
+            label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_LABEL),
         },
         parent = content,
         anchorParent = content,
@@ -269,7 +269,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                 if IsMouseButtonDown("RightButton") then
                     MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                         rootDescription:CreateTitle(row.crafterProfessionText)
-                        rootDescription:CreateButton("Remove and Blacklist", function()
+                        rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST), function()
                             CraftSim.CONCENTRATION_TRACKER:BlacklistData(row.crafterUID, row.profession)
                             CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                         end)
@@ -283,7 +283,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.clearBlacklistButton = GGUI.Button {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content, anchorA = "TOP", anchorB = "TOP", offsetY = -25 } },
-        label = "Clear Blacklist",
+        label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_CLEAR_BLACKLIST),
         adjustWidth = true,
         sizeX = 30,
         clickCallback = function()
@@ -317,7 +317,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.sortModeLabel = GGUI.Text {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content.sortModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
-        text = "Sort Mode: "
+        text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE)
     }
 
     local intialFormatModeValue = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
@@ -350,7 +350,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.formatModeLabel = GGUI.Text {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
-        text = "Time Format: "
+        text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT)
     }
 end
 
