@@ -712,12 +712,21 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         else
             local totalCount = requiredReagent:GetTotalQuantity()
             local totalCountOK = totalCount * multiplier >= requiredReagent.requiredQuantity * multiplier
+            local orderItemIDs = nil
+            if isOrderReagent and self.recipeData.orderData and self.recipeData.orderData.reagents then
+                orderItemIDs = GUTIL:ToSet(GUTIL:Map(self.recipeData.orderData.reagents, function(reagentInfo)
+                    local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, self.recipeData)
+                    return d.itemID
+                end))
+            end
             for qualityID, reagentItem in pairs(requiredReagent.items) do
                 local itemID = reagentItem.item:GetItemID()
                 -- crafting tooltip should show original item
                 if reagentItem.originalItem then
                     itemID = reagentItem.originalItem:GetItemID()
                 end
+                -- If this reagent is supplied by the order, only show the actually supplied quality to reduce noise
+                if not (isOrderReagent and orderItemIDs and not orderItemIDs[itemID] and reagentItem.quantity == 0) then
                 local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
                 local quantityText = f.r(
                     tostring(reagentItem.quantity * multiplier) .. "(" .. tostring(itemCount) .. ")")
@@ -741,6 +750,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 end
 
                 text = text .. qualityIcon .. quantityText .. crafterText .. "   "
+                end
             end
             text = text .. "\n"
         end
@@ -821,11 +831,13 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
                 local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
                 text = text .. inlineIcon
+                local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
                 local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
                     optionalReagentSlot.activeReagent.item:GetItemID())
-                local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
-                if itemCount >= multiplier then
-                    quantityText = f.g(tostring(multiplier))
+                local requiredQuantity = (optionalReagentSlot.maxQuantity or 1) * multiplier
+                local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
+                if itemCount >= requiredQuantity or isOrderReagent then
+                    quantityText = f.g(tostring(requiredQuantity))
                 end
                 local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(optionalReagentSlot.activeReagent.item
                     :GetItemID())
@@ -837,6 +849,9 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 if optimizedReagentRecipeData then
                     crafterText = f.white(" (" ..
                         optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                end
+                if isOrderReagent then
+                    crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
                 end
                 text = text .. qualityIcon .. quantityText .. crafterText .. "   "
             end
