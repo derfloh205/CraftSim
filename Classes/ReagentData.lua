@@ -734,7 +734,12 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 if itemCount >= reagentItem.quantity * multiplier or (reagentItem.quantity == 0 and totalCountOK) or isOrderReagent then
                     quantityText = f.g(tostring(reagentItem.quantity * multiplier))
                 end
-                local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                local qualityIcon
+                if self.recipeData:IsSimplifiedQualityRecipe() then
+                    qualityIcon = GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                else
+                    qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                end
                 local crafterText = ""
                 -- add crafterInfo text if reagent is supposed to be crafted by the player
                 if not isOrderReagent and self.recipeData:IsSelfCraftedReagent(itemID) and reagentItem.quantity > 0 then
@@ -761,6 +766,9 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if self.requiredSelectableReagentSlot:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.requiredSelectableReagentSlot.activeReagent.currencyID)
                 if currencyInfo then
+                    local currencyID = self.requiredSelectableReagentSlot.activeReagent.currencyID
+                    local currencyData = CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA and CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
+                    local isCrestCurrency = (currencyData and currencyData.name and string.find(string.lower(currencyData.name), "crest", 1, true)) ~= nil
                     local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
                     text = text .. inlineIcon
                     local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
@@ -773,7 +781,11 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                     if isOrderReagent then
                         crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
                     end
-                    text = text .. " " .. quantityText .. crafterText .. "   "
+                    -- Crest currencies should not show a quality marker; currency icon already communicates the reagent.
+                    local qualityIcon = isCrestCurrency and "" or
+                        GUTIL:GetQualityIconString(self.requiredSelectableReagentSlot.activeReagent.qualityID or 0, 20, 20)
+                    local spacing = (qualityIcon ~= "" and " " or "")
+                    text = text .. qualityIcon .. spacing .. quantityText .. crafterText .. "   "
                 end
             else
                 local itemID = self.requiredSelectableReagentSlot.activeReagent.item:GetItemID()
@@ -811,10 +823,20 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if optionalReagentSlot.activeReagent:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(optionalReagentSlot.activeReagent.currencyID)
                 if currencyInfo then
+                    local currencyID = optionalReagentSlot.activeReagent.currencyID
+                    local currencyData = CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA and CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
+                    local isCrestCurrency = (currencyData and currencyData.name and string.find(string.lower(currencyData.name), "crest", 1, true)) ~= nil
                     local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
                     text = text .. inlineIcon
                     local qualityID = optionalReagentSlot.activeReagent.qualityID or 0
-                    local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                    local qualityIcon
+                    if isCrestCurrency then
+                        qualityIcon = ""
+                    elseif self.recipeData:IsSimplifiedQualityRecipe() then
+                        qualityIcon = GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                    else
+                        qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                    end
                     local requiredQuantity = (optionalReagentSlot.maxQuantity or 1) * multiplier
                     local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
                     local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
@@ -825,7 +847,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                     if isOrderReagent then
                         crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
                     end
-                    text = text .. qualityIcon .. quantityText .. crafterText .. "   "
+                    local spacing = (qualityIcon ~= "" and " " or "")
+                    text = text .. qualityIcon .. spacing .. quantityText .. crafterText .. "   "
                 end
             else
                 local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
@@ -842,7 +865,12 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(optionalReagentSlot.activeReagent.item
                     :GetItemID())
                 qualityID = qualityID or 0
-                local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                local qualityIcon
+                if self.recipeData:IsSimplifiedQualityRecipe() then
+                    qualityIcon = GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                else
+                    qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                end
                 local crafterText = ""
                 local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
                     [optionalReagentSlot.activeReagent.item:GetItemID()]
