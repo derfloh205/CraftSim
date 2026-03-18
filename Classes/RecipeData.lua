@@ -178,16 +178,14 @@ function CraftSim.RecipeData:new(options)
 
     self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
 
-    if orderData then
-        self.orderData = options.orderData
-    end
-
+    -- Delay setting order data until after reagent slots exist (reagentData is created later),
+    -- so we can apply optional/finishing reagents from the order immediately.
+    local pendingOrderData = orderData
     if isWorkOrder then
         ---@type CraftingOrderInfo
-        self.orderData = ProfessionsFrame.OrdersPage.OrderView.order
-
+        pendingOrderData = ProfessionsFrame.OrdersPage.OrderView.order
         print("Craft Order Data:")
-        print(self.orderData, true)
+        print(pendingOrderData, true)
     end
 
     if self:IsCrafter() and not forceCache then
@@ -269,6 +267,10 @@ function CraftSim.RecipeData:new(options)
 
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
+
+    if pendingOrderData then
+        self:SetOrder(pendingOrderData)
+    end
 
     local qualityReagents = GUTIL:Count(self.reagentData.requiredReagents, function(reagent)
         return reagent.hasQuality
@@ -389,6 +391,82 @@ function CraftSim.RecipeData:SetOrder(orderData)
     self.isRecraft = self.orderData.isRecraft
     self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
         self.orderData.orderID, self.concentrating)
+    self:ApplyOrderReagentsToSlots()
+end
+
+---@return CraftSim.OptionalReagentSlot[] orderedSlots
+local function buildOrderedOptionalSlots(reagentData)
+    local orderedSlots = {}
+    if reagentData:HasRequiredSelectableReagent() then
+        table.insert(orderedSlots, reagentData.requiredSelectableReagentSlot)
+    end
+    for _, slot in ipairs(reagentData.optionalReagentSlots) do
+        table.insert(orderedSlots, slot)
+    end
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        table.insert(orderedSlots, slot)
+    end
+    return orderedSlots
+end
+
+---@param reagentInfo table
+---@param recipeData CraftSim.RecipeData
+---@return number? dataSlotIndex
+---@return number? itemID
+---@return number? currencyID
+local function extractOrderReagentInfo(reagentInfo, recipeData)
+    local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+    return d.dataSlotIndex, d.itemID, d.currencyID
+end
+
+---@param slot CraftSim.OptionalReagentSlot
+---@param itemID number?
+---@param currencyID number?
+local function tryApplyOrderReagentToSlot(slot, itemID, currencyID)
+    if currencyID and slot:IsCurrency() and slot:IsPossibleCurrencyReagent(currencyID) then
+        slot:SetCurrencyReagent(currencyID)
+        return true
+    end
+    if itemID and (not slot:IsCurrency()) and slot:IsPossibleReagent(itemID) then
+        slot:SetReagent(itemID)
+        return true
+    end
+    return false
+end
+
+--- Applies optional/finishing/required-selectable reagents from `orderData.reagents` to the recipe's slots.
+--- This ensures queued orders always reflect customer-provided optionals (guild/personal/work orders).
+function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
+    if not (self.orderData and self.orderData.reagents and #self.orderData.reagents > 0) then
+        return
+    end
+
+    local reagentData = self.reagentData
+    if not reagentData then
+        return
+    end
+
+    reagentData:ClearOptionalReagents()
+    if reagentData:HasRequiredSelectableReagent() then
+        reagentData.requiredSelectableReagentSlot.activeReagent = nil
+    end
+
+    local orderedSlots = buildOrderedOptionalSlots(reagentData)
+    local slotsByDataSlotIndex = {}
+    for _, slot in ipairs(orderedSlots) do
+        if slot.dataSlotIndex then
+            slotsByDataSlotIndex[slot.dataSlotIndex] = slot
+        end
+    end
+
+    for i, reagentInfo in ipairs(self.orderData.reagents) do
+        local dataSlotIndex, itemID, currencyID = extractOrderReagentInfo(reagentInfo, self)
+
+        local slot = (dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]) or orderedSlots[i]
+        if slot then
+            tryApplyOrderReagentToSlot(slot, itemID, currencyID)
+        end
+    end
 end
 
 function CraftSim.RecipeData:SetSubRecipeCostsUsage(enabled)
@@ -1742,6 +1820,44 @@ function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
     end
     
     return nil
+end
+
+--- Normalizes an order reagent entry into a simple descriptor.
+--- Blizzard's `orderData.reagents` shape differs between contexts; keep all extraction logic in one place.
+---@param reagentInfo table The reagent info from orderData.reagents
+---@param recipeData CraftSim.RecipeData The recipe data containing reagentData (for slotIndex->itemID fallback)
+---@return { dataSlotIndex: number?, itemID: number?, currencyID: number? } descriptor
+function CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+    if not reagentInfo then
+        return { dataSlotIndex = nil, itemID = nil, currencyID = nil }
+    end
+
+    local dataSlotIndex = nil
+    if reagentInfo.reagent and reagentInfo.reagent.dataSlotIndex then
+        dataSlotIndex = reagentInfo.reagent.dataSlotIndex
+    elseif reagentInfo.reagentInfo and reagentInfo.reagentInfo.dataSlotIndex then
+        dataSlotIndex = reagentInfo.reagentInfo.dataSlotIndex
+    elseif reagentInfo.dataSlotIndex then
+        dataSlotIndex = reagentInfo.dataSlotIndex
+    elseif reagentInfo.slotIndex then
+        dataSlotIndex = reagentInfo.slotIndex
+    end
+
+    local currencyID = nil
+    if reagentInfo.reagent then
+        if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.currencyID then
+            currencyID = reagentInfo.reagent.reagent.currencyID
+        elseif reagentInfo.reagent.currencyID then
+            currencyID = reagentInfo.reagent.currencyID
+        end
+    end
+    if not currencyID and reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.currencyID then
+        currencyID = reagentInfo.reagentInfo.reagent.currencyID
+    end
+
+    local itemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+
+    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID }
 end
 
 --- Requires a hardware event
