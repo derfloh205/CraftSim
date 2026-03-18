@@ -360,10 +360,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function withinMaxPatronOrderCost(craftingCost)
-                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
-                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
-                                                if craftingCost >= maxPatronOrderCost then
+                                        local function withinMaxPatronOrderCost(averageProfitCached)
+                                            --- if max cost is 0 deactivate cost check
+                                            if maxPatronOrderCost > 0 and isPatronOrder and averageProfitCached < 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(averageProfitCached, true, nil, true))
+                                                if math.abs(averageProfitCached) >= maxPatronOrderCost then
                                                     return false
                                                 end
                                                 return true
@@ -402,7 +403,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 recipeData.averageProfitCached <= 0	then
                                                     -- skip: not profitable
                                                 elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+                                                withinMaxPatronOrderCost(recipeData.averageProfitCached) then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
@@ -538,7 +539,13 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     if queueableAmount > 0 then
                         local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
                             "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount + offsetAmount }
+                        local totalAmount = queueableAmount + offsetAmount
+
+                        -- Ensure we only keep soulbound finishing reagents when we have enough
+                        -- to cover all queued crafts for this recipe.
+                        recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+
+                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
                         currentConcentration = currentConcentration -
                             (concentrationCosts * queueableAmount)
                         break -- only queue first recipe in this mode
@@ -609,7 +616,14 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                     tinsert(optimizedRecipes, recipeData)
                 else
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = 1 + tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT")) }
+                    local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
+                    local totalAmount = 1 + offsetAmount
+
+                    -- Batch-aware adjustment: only keep soulbound finishers when we have enough
+                    -- for all planned crafts of this favorite.
+                    recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+
+                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end
                 frameDistributor:Continue()
