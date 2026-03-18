@@ -312,6 +312,23 @@ function CraftSim.ReagentData:HasRequiredSelectableReagent()
     return self.requiredSelectableReagentSlot ~= nil
 end
 
+--- Returns optional reagent slots in the same order the order API typically reports them:
+--- required-selectable (if any), then optional, then finishing.
+---@return CraftSim.OptionalReagentSlot[] orderedSlots
+function CraftSim.ReagentData:GetOrderedOptionalSlots()
+    local orderedSlots = {}
+    if self:HasRequiredSelectableReagent() then
+        table.insert(orderedSlots, self.requiredSelectableReagentSlot)
+    end
+    for _, slot in ipairs(self.optionalReagentSlots) do
+        table.insert(orderedSlots, slot)
+    end
+    for _, slot in ipairs(self.finishingReagentSlots) do
+        table.insert(orderedSlots, slot)
+    end
+    return orderedSlots
+end
+
 ---@param itemID ItemID
 function CraftSim.ReagentData:SetRequiredSelectableReagent(itemID)
     if self:HasRequiredSelectableReagent() then
@@ -715,7 +732,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local orderItemIDs = nil
             if isOrderReagent and self.recipeData.orderData and self.recipeData.orderData.reagents then
                 orderItemIDs = GUTIL:ToSet(GUTIL:Map(self.recipeData.orderData.reagents, function(reagentInfo)
-                    local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, self.recipeData)
+                    local d = self.recipeData:GetOrderReagentDescriptor(reagentInfo)
                     return d.itemID
                 end))
             end

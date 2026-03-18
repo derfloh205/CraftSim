@@ -394,44 +394,14 @@ function CraftSim.RecipeData:SetOrder(orderData)
     self:ApplyOrderReagentsToSlots()
 end
 
----@return CraftSim.OptionalReagentSlot[] orderedSlots
-local function buildOrderedOptionalSlots(reagentData)
-    local orderedSlots = {}
-    if reagentData:HasRequiredSelectableReagent() then
-        table.insert(orderedSlots, reagentData.requiredSelectableReagentSlot)
-    end
-    for _, slot in ipairs(reagentData.optionalReagentSlots) do
-        table.insert(orderedSlots, slot)
-    end
-    for _, slot in ipairs(reagentData.finishingReagentSlots) do
-        table.insert(orderedSlots, slot)
-    end
-    return orderedSlots
-end
-
 ---@param reagentInfo table
 ---@param recipeData CraftSim.RecipeData
 ---@return number? dataSlotIndex
 ---@return number? itemID
 ---@return number? currencyID
 local function extractOrderReagentInfo(reagentInfo, recipeData)
-    local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+    local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
     return d.dataSlotIndex, d.itemID, d.currencyID
-end
-
----@param slot CraftSim.OptionalReagentSlot
----@param itemID number?
----@param currencyID number?
-local function tryApplyOrderReagentToSlot(slot, itemID, currencyID)
-    if currencyID and slot:IsCurrency() and slot:IsPossibleCurrencyReagent(currencyID) then
-        slot:SetCurrencyReagent(currencyID)
-        return true
-    end
-    if itemID and (not slot:IsCurrency()) and slot:IsPossibleReagent(itemID) then
-        slot:SetReagent(itemID)
-        return true
-    end
-    return false
 end
 
 --- Applies optional/finishing/required-selectable reagents from `orderData.reagents` to the recipe's slots.
@@ -451,7 +421,7 @@ function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
         reagentData.requiredSelectableReagentSlot.activeReagent = nil
     end
 
-    local orderedSlots = buildOrderedOptionalSlots(reagentData)
+    local orderedSlots = reagentData:GetOrderedOptionalSlots()
     local slotsByDataSlotIndex = {}
     for _, slot in ipairs(orderedSlots) do
         if slot.dataSlotIndex then
@@ -464,7 +434,7 @@ function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
 
         local slot = (dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]) or orderedSlots[i]
         if slot then
-            tryApplyOrderReagentToSlot(slot, itemID, currencyID)
+            slot:TryApplyOrderReagent(itemID, currencyID)
         end
     end
 end
@@ -1825,9 +1795,8 @@ end
 --- Normalizes an order reagent entry into a simple descriptor.
 --- Blizzard's `orderData.reagents` shape differs between contexts; keep all extraction logic in one place.
 ---@param reagentInfo table The reagent info from orderData.reagents
----@param recipeData CraftSim.RecipeData The recipe data containing reagentData (for slotIndex->itemID fallback)
 ---@return { dataSlotIndex: number?, itemID: number?, currencyID: number? } descriptor
-function CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
     if not reagentInfo then
         return { dataSlotIndex = nil, itemID = nil, currencyID = nil }
     end
@@ -1855,7 +1824,7 @@ function CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
         currencyID = reagentInfo.reagentInfo.reagent.currencyID
     end
 
-    local itemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+    local itemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self)
 
     return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID }
 end
