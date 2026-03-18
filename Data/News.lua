@@ -23,6 +23,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.3.4"),
+        f.PG .. f.bb("Optional Reagent Optimization"),
+        f.a .. "- Automatically consider soulbound finishing reagents",
+        f.a .. "  if available in inventory",
+        f.a .. "- Fixed some issues with optional reagent optimization",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("21.3.3"),
         f.PG .. f.g("Simulation Mode"),
         f.a .. "- Replaced the quality info with a quality meter widget",
