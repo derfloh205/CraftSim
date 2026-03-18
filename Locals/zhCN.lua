@@ -88,6 +88,9 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION] = " 专注",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST] = "专注成本：",
         [CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL] = "可制作于：%s",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_NEEDED] = "需要：",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MISSING] = "还缺：",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX] = "最大值",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "配方难度：",
@@ -421,7 +424,7 @@ function CraftSim.LOCAL_CN:GetData()
             "与此角色-职业组合相关的所有缓存数据",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK] = "使用" .. f.bb("TSM") .. "补货数量表达式",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD] = f.bb("TSM") .. "成交率阈值：",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "Autoselect Open Profession",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "自动选择打开专业",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim 最佳装备",
