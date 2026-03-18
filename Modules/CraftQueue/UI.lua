@@ -1358,6 +1358,11 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get(
                     "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
 
+                -- Never consider locked finishing slots in Craft Queue, but ALWAYS include soulbound
+                -- when optimizing via Craft Queue.
+                local includeLockedFinishing = false
+                local includeSoulboundFinishing = true
+
                 if optimizeProfessionGear then
                     recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
                 end
@@ -1373,6 +1378,8 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                             finally = function()
                                 if optimizeFinishingReagents then
                                     recipeData:OptimizeFinishingReagents {
+                                        includeLocked = includeLockedFinishing,
+                                        includeSoulbound = includeSoulboundFinishing,
                                         finally = function()
                                             CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                                             CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
@@ -1401,6 +1408,8 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                         if optimizeFinishingReagents then
                             optimizeButton:SetEnabled(false)
                             recipeData:OptimizeFinishingReagents {
+                                includeLocked = includeLockedFinishing,
+                                includeSoulbound = includeSoulboundFinishing,
                                 finally = function()
                                     CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                                     CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
@@ -2154,6 +2163,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         "\n- " ..
                         GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
                         " " .. displayText .. " x" .. reward.count
+                end
+            end
+
+            -- Show gold reward under the Rewards section too
+            if recipeData.orderData then
+                local tipAmount = tonumber(recipeData.orderData.tipAmount) or 0
+                local cutAmount = tonumber(recipeData.orderData.consortiumCut) or 0
+                local commission = tipAmount - cutAmount
+                if commission > 0 then
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " .. CraftSim.UTIL:FormatMoney(commission, true) .. " (included in profit)"
                 end
             end
 
