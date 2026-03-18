@@ -64,6 +64,7 @@ Modules/Explanations/UI.lua
 
 Modules/CraftQueue/CraftQueue.lua
 Modules/CraftQueue/UI.lua
+Modules/CraftQueue/BuffBar.lua
 
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/UI.lua

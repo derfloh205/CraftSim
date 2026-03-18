@@ -259,8 +259,8 @@ function CraftSim.CRAFTQ.UI:Init()
                     end
                 end
             },
-            sizeY = 232,
-            offsetY = -70,
+            sizeY = 204,
+            offsetY = -98,
             offsetX = -10,
             columnOptions = columnOptions,
             rowConstructor = function(columns, row)
@@ -488,6 +488,8 @@ function CraftSim.CRAFTQ.UI:Init()
                 })
             end
         })
+
+        CraftSim.CRAFTQ.UI:CreateBuffBar(frame, queueTab)
 
         local craftQueueButtonsOffsetY = -5
         local fixedButtonWidth = 180
@@ -1760,6 +1762,7 @@ end
 
 function CraftSim.CRAFTQ.UI:UpdateDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+    CraftSim.CRAFTQ.UI:UpdateBuffBarDisplay()
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem

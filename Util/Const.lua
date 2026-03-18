@@ -1471,6 +1471,17 @@ CraftSim.CONST.ITEM_IDS = {
         ARTISANS_ACUITY = 210814,
         FUSED_VITALITY = 245345,
     },
+    --- Profession buff phials ordered Q1 -> Q2 -> Q3 (TWW)
+    PHIALS_TWW = {
+        PHIAL_OF_CONCENTRATED_INGENUITY = { 212305, 212306, 212307 },
+        PHIAL_OF_BOUNTIFUL_SEASONS = { 212314, 212315, 212316 },
+        PHIAL_OF_AMBIDEXTERITY = { 212311, 212312, 212313 },
+    },
+    --- Profession buff phials ordered Q1 -> Q2 (Midnight, note item IDs do not
+    --- follow quality ordering; Q1 = 241313, Q2 = 241312)
+    PHIALS_MIDNIGHT = {
+        HARANIR_PHIAL_OF_INGENUITY = { 241313, 241312 },
+    },
 }
 
 CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME = 'CraftSim CraftQueue'
