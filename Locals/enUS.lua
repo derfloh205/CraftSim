@@ -653,7 +653,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST] = f.bb("Knowledge Point") .. " Max Cost: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP] = "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST] = f.bb("Patron Order") .. " Max Cost: ",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTOP] = "Maximum allowed gold cost of a patron order\n\nFormat: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP] = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("Reagent Bag") .. " Value: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",

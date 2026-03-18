@@ -646,7 +646,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST] = f.bb("知识点") .. "最大成本：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP] = "每1知识点的最大允许金币成本\n\n格式：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST] = f.bb("客人订单") .. "最大成本：",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTOP] = "每个客人订单的最大允许金币成本\n\n格式：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP] = "每个客人订单的最大允许金币成本\n\n格式：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("材料包") .. "价值：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "将添加到您利润中的" .. f.bb("材料包奖励") .. "的价值。\n\n格式：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "全部清除",

@@ -566,7 +566,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         end)
                     mainProfessionsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP"));
+                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP));
                     end);
 
                     local includeSoulboundFRDB = rootDescription:CreateCheckbox(
@@ -878,7 +878,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTOP) .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP) .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
                             },
                             onValueValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST",
