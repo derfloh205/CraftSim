@@ -9,7 +9,7 @@ CraftSim.CRAFTQ.UI = CraftSim.CRAFTQ.UI
 
 local f = GUTIL:GetFormatter()
 
-local BUFF_BAR_BUTTON_SIZE = 26
+local BUFF_BAR_BUTTON_SIZE = 39  -- 1.5× the original 26 px
 
 ---@class CraftSim.CRAFTQ.BuffBarPhialData
 ---@field buffID number
@@ -72,95 +72,82 @@ local function FindSalvageRecipeForCurrentProfession()
     return nil
 end
 
---- Creates and styles a buff bar icon button on the given parent frame.
---- The button has no label and uses a plain icon with highlight texture.
----@param parent Frame
----@param anchorParent Region
----@param anchorA string
----@param anchorB string
----@param offsetX number
----@param offsetY number
----@return GGUI.Button
-local function CreateIconButton(parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
-    local btn = GGUI.Button({
-        parent = parent,
-        anchorPoints = { {
-            anchorParent = anchorParent,
-            anchorA = anchorA,
-            anchorB = anchorB,
-            offsetX = offsetX,
-            offsetY = offsetY,
-        } },
-        sizeX = BUFF_BAR_BUTTON_SIZE,
-        sizeY = BUFF_BAR_BUTTON_SIZE,
-        cleanTemplate = true,
-        secure = true,
-        tooltipOptions = {
-            anchor = "ANCHOR_TOP",
-            owner = parent,
-            text = "",
-        },
-    })
-    -- Set up placeholder icon texture (replaced dynamically on each update)
-    btn.frame:SetNormalTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
-    btn.frame:GetNormalTexture():SetAllPoints()
-    btn.frame:SetPushedTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
-    btn.frame:GetPushedTexture():SetAllPoints()
-    btn.frame:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
-    return btn
-end
-
---- Creates the buff bar container and its buttons above the craft list in the
---- queue tab.  Must be called after queueTab.content.craftList has been created.
+--- Creates the buff bar container and its icon buttons at the top-left of the
+--- craft queue window.  Must be called after frame.content exists.
 ---@param frame CraftSim.CraftQueue.Frame
 ---@param queueTab CraftSim.CraftQueue.QueueTab
 function CraftSim.CRAFTQ.UI:CreateBuffBar(frame, queueTab)
     ---@class CraftSim.CRAFTQ.BuffBar : Frame
-    local buffBar = CreateFrame("Frame", nil, queueTab.content)
-    -- Align the buff bar so that it sits just above the craft list.
-    -- The craft list is anchored to frame.title.frame TOP at offsetY = -98 after
-    -- this change; the buff bar occupies the space between -70 and -96.
-    buffBar:SetPoint("TOPLEFT", queueTab.content.craftList.frame, "TOPLEFT", 0, BUFF_BAR_BUTTON_SIZE + 2)
-    buffBar:SetPoint("TOPRIGHT", queueTab.content.craftList.frame, "TOPRIGHT", 0, BUFF_BAR_BUTTON_SIZE + 2)
-    buffBar:SetHeight(BUFF_BAR_BUTTON_SIZE)
+    local buffBar = CreateFrame("Frame", nil, frame.content)
+    -- Placed at the top-left of the craft queue window content area
+    buffBar:SetPoint("TOPLEFT", frame.content, "TOPLEFT", 5, -5)
+    buffBar:SetSize(BUFF_BAR_BUTTON_SIZE * (#PHIAL_DATA + 1), BUFF_BAR_BUTTON_SIZE) -- +1 for shatter icon
 
-    queueTab.content.buffBar = buffBar
+    frame.content.buffBar = buffBar
 
-    -- "Shatter" button for the Enchanting salvage recipe
-    ---@type GGUI.Button
-    buffBar.shatterButton = CreateIconButton(buffBar, buffBar, "LEFT", "LEFT", 0, 0)
-    buffBar.shatterButton:SetVisible(false)
+    -- "Shatter" icon button for the Enchanting salvage recipe
+    ---@type GGUI.Icon
+    buffBar.shatterIcon = GGUI.Icon {
+        parent = buffBar,
+        anchorPoints = { { anchorParent = buffBar, anchorA = "LEFT", anchorB = "LEFT" } },
+        sizeX = BUFF_BAR_BUTTON_SIZE,
+        sizeY = BUFF_BAR_BUTTON_SIZE,
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            owner = buffBar,
+            text = "",
+        },
+    }
+    buffBar.shatterIcon.frame:EnableMouse(true)
+    buffBar.shatterIcon.frame:RegisterForClicks("LeftButtonUp")
+    buffBar.shatterIcon:SetVisible(false)
 
-    -- Phial buttons
-    ---@type GGUI.Button[]
-    buffBar.phialButtons = {}
-    local prevAnchor = buffBar.shatterButton.frame
+    -- Phial icon buttons
+    ---@type GGUI.Icon[]
+    buffBar.phialIcons = {}
+    local prevAnchor = buffBar.shatterIcon.frame
     for i = 1, #PHIAL_DATA do
-        local btn = CreateIconButton(buffBar, prevAnchor, "LEFT", "RIGHT", 3, 0)
-        btn.phialData = PHIAL_DATA[i]
-        btn:SetVisible(false)
-        buffBar.phialButtons[i] = btn
-        prevAnchor = btn.frame
+        ---@type GGUI.Icon
+        local icon = GGUI.Icon {
+            parent = buffBar,
+            anchorPoints = { {
+                anchorParent = prevAnchor,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                offsetX = 3,
+            } },
+            sizeX = BUFF_BAR_BUTTON_SIZE,
+            sizeY = BUFF_BAR_BUTTON_SIZE,
+            tooltipOptions = {
+                anchor = "ANCHOR_TOP",
+                owner = buffBar,
+                text = "",
+            },
+        }
+        icon.frame:EnableMouse(true)
+        icon.frame:RegisterForClicks("LeftButtonUp")
+        icon.phialData = PHIAL_DATA[i]
+        icon:SetVisible(false)
+        buffBar.phialIcons[i] = icon
+        prevAnchor = icon.frame
     end
 end
 
---- Refreshes the buff bar: shows or hides buttons and sets their icons, tooltips,
---- and secure attributes based on the current profession and bag contents.
+--- Refreshes the buff bar: shows or hides icons and updates their textures,
+--- tooltips, and click handlers based on the current profession and bag contents.
 --- Should be called whenever the CraftQueue UI is updated.
 function CraftSim.CRAFTQ.UI:UpdateBuffBarDisplay()
     local craftQueueFrame = CraftSim.CRAFTQ.frame
     if not craftQueueFrame then return end
 
-    local queueTab = craftQueueFrame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
-    if not queueTab or not queueTab.content.buffBar then return end
-
-    local buffBar = queueTab.content.buffBar
+    local buffBar = craftQueueFrame.content.buffBar
+    if not buffBar then return end
 
     -- Guard: profession window must be open
     local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
     if not professionInfo or not professionInfo.profession then
-        buffBar.shatterButton:SetVisible(false)
-        for _, btn in ipairs(buffBar.phialButtons) do btn:SetVisible(false) end
+        buffBar.shatterIcon:SetVisible(false)
+        for _, icon in ipairs(buffBar.phialIcons) do icon:SetVisible(false) end
         return
     end
 
@@ -169,7 +156,7 @@ function CraftSim.CRAFTQ.UI:UpdateBuffBarDisplay()
         C_TradeSkillUI.GetProfessionChildSkillLineID())
 
     -- ------------------------------------------------------------------ --
-    -- Shatter button
+    -- Shatter icon
     -- ------------------------------------------------------------------ --
     local isShatterExpansion = expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN
         or expansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
@@ -184,16 +171,12 @@ function CraftSim.CRAFTQ.UI:UpdateBuffBarDisplay()
                 and CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT
                 or CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE
             local spellInfo = C_Spell.GetSpellInfo(buffID)
-            if spellInfo and spellInfo.iconID then
-                buffBar.shatterButton.frame:SetNormalTexture(spellInfo.iconID)
-                buffBar.shatterButton.frame:GetNormalTexture():SetAllPoints()
-                buffBar.shatterButton.frame:SetPushedTexture(spellInfo.iconID)
-                buffBar.shatterButton.frame:GetPushedTexture():SetAllPoints()
-            end
+
+            -- Set the icon texture to the buff spell icon
+            buffBar.shatterIcon:SetSpell(buffID)
 
             -- Determine the cheapest available salvage reagent.
-            -- Items with no price data (price == 0) are only used as a fallback
-            -- when no priced alternative is present in the bags.
+            -- Items with no price data are only used as a fallback.
             local salvageItemIDs = C_TradeSkillUI.GetSalvagableItemIDs(shatterRecipeID)
             local cheapestItemID = nil
             local firstAvailableItemID = nil
@@ -217,102 +200,91 @@ function CraftSim.CRAFTQ.UI:UpdateBuffBarDisplay()
             cheapestItemID = cheapestItemID or firstAvailableItemID
 
             local isActive = C_UnitAuras.GetPlayerAuraBySpellID(buffID) ~= nil
-            buffBar.shatterButton.frame:GetNormalTexture():SetDesaturation(isActive and 0.5 or 0)
+            if isActive then
+                buffBar.shatterIcon:Desaturate()
+            else
+                buffBar.shatterIcon:Saturate()
+            end
 
             if cheapestItemID then
                 local cheapestItemName = C_Item.GetItemInfo(cheapestItemID) or ""
-                buffBar.shatterButton.tooltipOptions.text =
+                buffBar.shatterIcon.tooltipOptions.text =
                     f.gold((spellInfo and spellInfo.name) or "Shattering Essence") ..
                     "\n" .. f.white("Craft with ") .. cheapestItemName ..
                     (isActive and ("\n" .. f.g("Buff Active")) or "")
 
-                buffBar.shatterButton:SetEnabled(true)
-                buffBar.shatterButton.clickCallback = function()
+                buffBar.shatterIcon.frame:SetScript("OnMouseUp", function()
                     local salvageLocation = GUTIL:GetItemLocationFromItemID(cheapestItemID, true)
                     if salvageLocation then
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                         C_TradeSkillUI.CraftSalvage(shatterRecipeID, 1, salvageLocation, {}, false)
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                     end
-                end
+                end)
             else
-                buffBar.shatterButton.tooltipOptions.text =
+                buffBar.shatterIcon.tooltipOptions.text =
                     f.gold("Shattering Essence") ..
                     "\n" .. f.r("No salvage reagents in bags")
-                buffBar.shatterButton:SetEnabled(false)
-                buffBar.shatterButton.clickCallback = nil
+                buffBar.shatterIcon.frame:SetScript("OnMouseUp", nil)
             end
 
-            buffBar.shatterButton:SetVisible(true)
+            buffBar.shatterIcon:SetVisible(true)
         else
-            buffBar.shatterButton:SetVisible(false)
+            buffBar.shatterIcon:SetVisible(false)
         end
     else
-        buffBar.shatterButton:SetVisible(false)
+        buffBar.shatterIcon:SetVisible(false)
     end
 
     -- ------------------------------------------------------------------ --
-    -- Phial buttons
+    -- Phial icons
     -- ------------------------------------------------------------------ --
-    for _, phialButton in ipairs(buffBar.phialButtons) do
-        local phialData = phialButton.phialData
+    for _, phialIcon in ipairs(buffBar.phialIcons) do
+        local phialData = phialIcon.phialData
 
         if phialData.expansionID ~= expansionID then
-            phialButton:SetVisible(false)
+            phialIcon:SetVisible(false)
         else
             local isActive = C_UnitAuras.GetPlayerAuraBySpellID(phialData.buffID) ~= nil
             local bestItemID = GetBestPhialFromBag(phialData.itemIDs)
 
             if bestItemID or isActive then
-                -- Update icon
+                -- Display icon via item (shows quality colouring, etc.)
                 local displayItemID = bestItemID or phialData.itemIDs[#phialData.itemIDs]
-                local itemIcon = select(10, C_Item.GetItemInfo(displayItemID))
-                if itemIcon then
-                    phialButton.frame:SetNormalTexture(itemIcon)
-                    phialButton.frame:GetNormalTexture():SetAllPoints()
-                    phialButton.frame:SetPushedTexture(itemIcon)
-                    phialButton.frame:GetPushedTexture():SetAllPoints()
+                phialIcon:SetItem(displayItemID)
+
+                if isActive then
+                    phialIcon:Desaturate()
+                else
+                    phialIcon:Saturate()
                 end
 
-                -- Desaturate if buff is already active (visual feedback)
-                phialButton.frame:GetNormalTexture():SetDesaturation(isActive and 0.5 or 0)
-
-                -- Update tooltip
+                -- Tooltip
                 local itemName = C_Item.GetItemInfo(displayItemID) or ""
                 local countText = ""
                 if bestItemID then
                     local count = C_Item.GetItemCount(bestItemID, false, false, false, false)
                     countText = f.grey(" (" .. count .. "x)")
                 end
-                phialButton.tooltipOptions.text =
+                phialIcon.tooltipOptions.text =
                     f.gold(itemName) .. countText ..
                     "\n" .. f.white("Click to use") ..
                     (isActive and ("\n" .. f.g("Buff Active")) or "")
 
                 if bestItemID and not isActive then
-                    -- Use SecureActionButtonTemplate to handle the item use.
-                    -- Attributes can only be changed outside of combat.
-                    if not InCombatLockdown() then
-                        phialButton.frame:SetAttribute("type", "item")
-                        phialButton.frame:SetAttribute("item", "item:" .. bestItemID)
-                    end
-                    phialButton:SetEnabled(true)
-                elseif isActive then
-                    -- Buff already active – disable to avoid accidental re-use
-                    if not InCombatLockdown() then
-                        phialButton.frame:SetAttribute("type", "")
-                    end
-                    phialButton:SetEnabled(false)
+                    phialIcon.frame:SetScript("OnMouseUp", function()
+                        local currentItemName = C_Item.GetItemInfo(bestItemID)
+                        if currentItemName then
+                            UseItemByName(currentItemName)
+                        end
+                    end)
                 else
-                    if not InCombatLockdown() then
-                        phialButton.frame:SetAttribute("type", "")
-                    end
-                    phialButton:SetEnabled(false)
+                    phialIcon.frame:SetScript("OnMouseUp", nil)
                 end
 
-                phialButton:SetVisible(true)
+                phialIcon:SetVisible(true)
             else
-                phialButton:SetVisible(false)
+                phialIcon:SetVisible(false)
             end
         end
     end

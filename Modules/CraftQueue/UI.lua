@@ -259,8 +259,8 @@ function CraftSim.CRAFTQ.UI:Init()
                     end
                 end
             },
-            sizeY = 204,
-            offsetY = -98,
+            sizeY = 232,
+            offsetY = -70,
             offsetX = -10,
             columnOptions = columnOptions,
             rowConstructor = function(columns, row)
