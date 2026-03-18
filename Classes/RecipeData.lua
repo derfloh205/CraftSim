@@ -1759,7 +1759,7 @@ end
 ---@param reagentInfo table The reagent info from orderData.reagents
 ---@param recipeData CraftSim.RecipeData The recipe data containing reagentData
 ---@return number? itemID The itemID if found, nil otherwise
-function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+function CraftSim.RecipeData:GetItemIDFromReagentInfo(reagentInfo)
     if not reagentInfo then
         return nil
     end
@@ -1778,8 +1778,8 @@ function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
     end
     
     -- Basic reagents (or any reagent without reagent field) use slotIndex to find the reagent in requiredReagents
-    if reagentInfo.slotIndex and recipeData and recipeData.reagentData then
-        local matchingReagent = CraftSim.GUTIL:Find(recipeData.reagentData.requiredReagents, function(reagent)
+    if reagentInfo.slotIndex and self.reagentData then
+        local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
             return reagent.dataSlotIndex == reagentInfo.slotIndex
         end)
         
@@ -1823,7 +1823,7 @@ function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
         currencyID = reagentInfo.reagentInfo.reagent.currencyID
     end
 
-    local itemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self)
+    local itemID = self:GetItemIDFromReagentInfo(reagentInfo)
 
     return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID }
 end
@@ -1857,7 +1857,7 @@ function CraftSim.RecipeData:Craft(amount)
     else
         if self.orderData then
             local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
-                return CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self)
+                return self:GetItemIDFromReagentInfo(reagentInfo)
             end)
 
             craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
