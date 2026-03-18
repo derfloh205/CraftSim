@@ -395,7 +395,6 @@ function CraftSim.RecipeData:SetOrder(orderData)
 end
 
 ---@param reagentInfo table
----@param recipeData CraftSim.RecipeData
 ---@return number? dataSlotIndex
 ---@return number? itemID
 ---@return number? currencyID
