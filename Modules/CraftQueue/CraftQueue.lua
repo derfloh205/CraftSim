@@ -398,11 +398,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
+                                                local isWithinKPCost = withinKPCost(recipeData.averageProfitCached)
+                                                local isWithinMaxCost = withinMaxPatronOrderCost(recipeData.priceData.craftingCosts)
+                                                local isKPOrderWithinRange = knowledgePointsRewarded > 0 and isWithinKPCost
                                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
-                                                recipeData.averageProfitCached <= 0	then
-                                                    -- skip: not profitable
-                                                elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+                                                recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
+                                                    -- skip: not profitable and not a KP order within range
+                                                elseif isWithinKPCost and isWithinMaxCost then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
