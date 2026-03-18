@@ -1324,7 +1324,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 iterationTable = possibleReagents,
                 iterationsPerFrame = 1,
                 finally = function()
-                    CraftSim.DEBUG:InspectTable(slotSimulationResults, "slotSimulationResults")
                     -- pick the best candidate for this slot and apply it
                     local bestResult = GUTIL:Fold(slotSimulationResults, slotSimulationResults[1],
                         function(bestResult, nextResult)

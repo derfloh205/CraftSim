@@ -570,7 +570,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     end);
 
                     local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb("  Finishing Reagents"),
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
                                 "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
@@ -1490,7 +1490,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     end)
 
                 local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb("  Finishing Reagents"),
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
                                 "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
