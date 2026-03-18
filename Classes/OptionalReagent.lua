@@ -114,14 +114,23 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
-    if self:IsCurrency() then return false end
     if not recipeData.orderData then return false end
 
+    local reagents = recipeData.orderData.reagents or {}
+
+    if self:IsCurrency() then
+        local currencyID = self.currencyID
+        if not currencyID then return false end
+        return GUTIL:Some(reagents, function(reagentInfo)
+            local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+            return d.currencyID == currencyID
+        end)
+    end
+
+    if not self.item then return false end
     local itemID = self.item:GetItemID()
-
-    local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
-        return CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+    return GUTIL:Some(reagents, function(reagentInfo)
+        local d = CraftSim.RecipeData.GetOrderReagentDescriptor(reagentInfo, recipeData)
+        return d.itemID == itemID
     end)
-
-    return tContains(orderItemIDs, itemID)
 end

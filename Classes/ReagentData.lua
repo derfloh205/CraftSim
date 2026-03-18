@@ -754,11 +754,16 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                     local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
                     text = text .. inlineIcon
                     local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
-                    local quantityText = f.g(tostring(requiredQuantity))
-                    if currencyInfo.quantity < requiredQuantity then
-                        quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    local isOrderReagent = self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
+                    local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    if currencyInfo.quantity >= requiredQuantity or isOrderReagent then
+                        quantityText = f.g(tostring(requiredQuantity))
                     end
-                    text = text .. " " .. quantityText .. "   "
+                    local crafterText = ""
+                    if isOrderReagent then
+                        crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
+                    end
+                    text = text .. " " .. quantityText .. crafterText .. "   "
                 end
             else
                 local itemID = self.requiredSelectableReagentSlot.activeReagent.item:GetItemID()
@@ -800,11 +805,17 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                     text = text .. inlineIcon
                     local qualityID = optionalReagentSlot.activeReagent.qualityID or 0
                     local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
-                    local quantityText = f.g(tostring(multiplier))
-                    if currencyInfo.quantity < multiplier then
-                        quantityText = f.r(tostring(multiplier) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    local requiredQuantity = (optionalReagentSlot.maxQuantity or 1) * multiplier
+                    local isOrderReagent = optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData)
+                    local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
+                    if currencyInfo.quantity >= requiredQuantity or isOrderReagent then
+                        quantityText = f.g(tostring(requiredQuantity))
                     end
-                    text = text .. qualityIcon .. quantityText .. "   "
+                    local crafterText = ""
+                    if isOrderReagent then
+                        crafterText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 20, 20)
+                    end
+                    text = text .. qualityIcon .. quantityText .. crafterText .. "   "
                 end
             else
                 local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
