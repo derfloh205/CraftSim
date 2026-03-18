@@ -360,10 +360,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function withinMaxPatronOrderCost(craftingCost)
-                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
-                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
-                                                if craftingCost >= maxPatronOrderCost then
+                                        local function withinMaxPatronOrderCost(averageProfitCached)
+                                            --- if max cost is 0 deactivate cost check
+                                            if maxPatronOrderCost > 0 and isPatronOrder and averageProfitCached < 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(averageProfitCached, true, nil, true))
+                                                if math.abs(averageProfitCached) >= maxPatronOrderCost then
                                                     return false
                                                 end
                                                 return true
@@ -402,7 +403,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 recipeData.averageProfitCached <= 0	then
                                                     -- skip: not profitable
                                                 elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+                                                withinMaxPatronOrderCost(recipeData.averageProfitCached) then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
