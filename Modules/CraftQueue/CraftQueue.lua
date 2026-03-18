@@ -399,11 +399,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
+                                                local isWithinKPCost = withinKPCost(recipeData.averageProfitCached)
+                                                local isWithinMaxCost = withinMaxPatronOrderCost(recipeData.averageProfitCached)
+                                                local isKPOrderWithinRange = knowledgePointsRewarded > 0 and isWithinKPCost
                                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
-                                                recipeData.averageProfitCached <= 0	then
-                                                    -- skip: not profitable
-                                                elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.averageProfitCached) then
+                                                recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
+                                                    -- skip: not profitable and not a KP order within range
+                                                elseif isWithinKPCost and isWithinMaxCost then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
@@ -603,15 +605,18 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize),
                     conProgress))
             end,
-            optimizeFinishingReagents = true,
-            optimizeFinishingReagentsProgressCallback = function(frProgress)
-                queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
+            optimizeFinishingReagentsOptions = {
+                includeLocked = false,
+                includeSoulbound = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                progressUpdateCallback = function(frProgress)
+                    queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
                     progress,
                     GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], iconSize, iconSize),
                     GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize),
                     CreateAtlasMarkup("Banker", iconSize, iconSize),
                     frProgress))
-            end,
+                end,
+            },
             finally = function()
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                     tinsert(optimizedRecipes, recipeData)
