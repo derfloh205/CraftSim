@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.3.6"),
+        f.pg .. "Fix for incrementing simulation values in each module update",
         newP("21.3.5"),
         f.pg .. "Added Option to opt-in for soulbound finishing reagent usage",
         f.pg .. "Fixed finishing reagent optimization empty slot consideration",
