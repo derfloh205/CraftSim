@@ -1018,12 +1018,21 @@ function CraftSim.CRAFTQ.UI:Init()
 
     createContent(CraftSim.CRAFTQ.frame)
 
+    -- Container frame for crafting buttons (non-WO mode), anchored to the stable TrackRecipeCheckbox
+    local schematicForm = ProfessionsFrame.CraftingPage.SchematicForm
+    ---@type Frame
+    CraftSim.CRAFTQ.craftingButtonsFrame = CreateFrame("Frame", nil, schematicForm)
+    CraftSim.CRAFTQ.craftingButtonsFrame:SetSize(1, 1)
+    CraftSim.CRAFTQ.craftingButtonsFrame:SetPoint("RIGHT", schematicForm.TrackRecipeCheckbox, "LEFT", -3, -19)
+    CraftSim.CRAFTQ.craftingButtonsFrame:Hide()
+
     -- add to queue button in crafting ui
     CraftSim.CRAFTQ.queueRecipeButton = GGUI.Button {
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        parent = CraftSim.CRAFTQ.craftingButtonsFrame,
         anchorPoints = { {
-            anchorParent = ProfessionsFrame.CraftingPage.SchematicForm.TrackRecipeCheckbox,
-            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -18, offsetY = -19,
+            -- container.RIGHT = TrackRecipeCheckbox.LEFT - 3, so net offset = -18 (matches original)
+            anchorParent = CraftSim.CRAFTQ.craftingButtonsFrame,
+            anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -15, offsetY = 0,
         } },
         adjustWidth = true,
         sizeX = 15,
@@ -1038,7 +1047,7 @@ function CraftSim.CRAFTQ.UI:Init()
     }
 
     CraftSim.CRAFTQ.queueRecipeButtonOptions = GGUI.Button {
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        parent = CraftSim.CRAFTQ.craftingButtonsFrame,
         anchorPoints = { {
             anchorParent = CraftSim.CRAFTQ.queueRecipeButton.frame,
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
@@ -1051,12 +1060,21 @@ function CraftSim.CRAFTQ.UI:Init()
         end
     }
 
+    -- Container frame for WO crafting buttons, anchored to the stable TrackRecipeCheckbox
+    local schematicFormWO = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
+    ---@type Frame
+    CraftSim.CRAFTQ.craftingButtonsFrameWO = CreateFrame("Frame", nil, schematicFormWO)
+    CraftSim.CRAFTQ.craftingButtonsFrameWO:SetSize(1, 1)
+    CraftSim.CRAFTQ.craftingButtonsFrameWO:SetPoint("RIGHT", schematicFormWO.TrackRecipeCheckbox, "LEFT", -3, 0)
+    CraftSim.CRAFTQ.craftingButtonsFrameWO:Hide()
+
     -- add to queue button in crafting ui for work orders
     CraftSim.CRAFTQ.queueRecipeButtonWO = GGUI.Button {
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        parent = CraftSim.CRAFTQ.craftingButtonsFrameWO,
         anchorPoints = { {
-            anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.TrackRecipeCheckbox,
-            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15,
+            -- container.RIGHT = TrackRecipeCheckbox.LEFT - 3, so net offset = -15 (matches original WO offset)
+            anchorParent = CraftSim.CRAFTQ.craftingButtonsFrameWO,
+            anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -12, offsetY = 0,
         } },
         adjustWidth = true,
         sizeX = 15,
@@ -1067,7 +1085,7 @@ function CraftSim.CRAFTQ.UI:Init()
     }
 
     CraftSim.CRAFTQ.queueRecipeButtonOptionsWO = GGUI.Button {
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        parent = CraftSim.CRAFTQ.craftingButtonsFrameWO,
         anchorPoints = { {
             anchorParent = CraftSim.CRAFTQ.queueRecipeButtonWO.frame,
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,

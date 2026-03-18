@@ -136,10 +136,10 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
     local function createSimulationModeFrames(schematicForm, workOrder)
         local frames = {}
-        -- CHECK BUTTON
-        local clickCallback = function(self)
+        -- TOGGLE BUTTON (GGUI.Checkbox)
+        local clickCallback = function(checkbox, checked)
             print("sim mode click callback")
-            CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
+            CraftSim.SIMULATION_MODE.isActive = checked
             local bestQBox = schematicForm.AllocateBestQualityCheckbox
             if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
                 bestQBox:Click()
@@ -150,10 +150,19 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
             CraftSim.MODULES:UpdateUI()
         end
-        frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL),
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP), false, clickCallback,
-            schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
+
+        local craftingButtonsFrame = workOrder and CraftSim.CRAFTQ.craftingButtonsFrameWO or CraftSim.CRAFTQ.craftingButtonsFrame
+        local queueRecipeButton = workOrder and CraftSim.CRAFTQ.queueRecipeButtonWO or CraftSim.CRAFTQ.queueRecipeButton
+
+        frames.toggleButton = GGUI.Checkbox {
+            label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL),
+            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP),
+            initialValue = false,
+            parent = craftingButtonsFrame,
+            anchorParent = queueRecipeButton.frame,
+            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -5, offsetY = 0,
+            clickCallback = clickCallback,
+        }
 
         frames.toggleButton:Hide()
 

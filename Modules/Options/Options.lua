@@ -237,6 +237,17 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
+    local hideCraftingButtonsFrameCheckbox = GGUI.Checkbox {
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_CRAFTING_BUTTONS_FRAME_CHECKBOX),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_CRAFTING_BUTTONS_FRAME_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("HIDE_CRAFTING_BUTTONS_FRAME"),
+        parent = GeneralTab.content, anchorParent = coinMoneyFormatDB.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("HIDE_CRAFTING_BUTTONS_FRAME", checked)
+        end
+    }
+
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -210)
     supportedPriceSources:SetText(L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) ..

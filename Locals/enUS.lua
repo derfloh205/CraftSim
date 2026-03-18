@@ -505,6 +505,9 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " Minimap Button",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX] = "Use Coin Textures: ",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP] = "Use coin icons to format money",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_CRAFTING_BUTTONS_FRAME_CHECKBOX] = "Hide Crafting Buttons",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_CRAFTING_BUTTONS_FRAME_TOOLTIP] = "Hide the " ..
+            f.l("CraftSim") .. " crafting buttons (CraftQueue and Simulation Mode toggle) from the crafting UI",
 
         -- Control Panel
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Craft Queue",

@@ -63,16 +63,11 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	CraftSim.COST_OPTIMIZATION.frameWO:Hide()
 	reagentOptimizationFrame:Hide()
 	reagentOptimizationFrameWO:Hide()
-	-- hide sim mode toggle button
-	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
-	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
+	-- hide sim mode toggle button and crafting queue buttons via their shared container
+	CraftSim.CRAFTQ.craftingButtonsFrame:Hide()
+	CraftSim.CRAFTQ.craftingButtonsFrameWO:Hide()
 	CraftSim.EXPLANATIONS.frame:Hide()
 	CraftSim.STATISTICS.UI:SetVisible(false)
-
-	CraftSim.CRAFTQ.queueRecipeButton:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
 end
 
 ---@return CraftSim.RecipeData? recipeData
@@ -139,12 +134,8 @@ function CraftSim.MODULES:UpdateUI()
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
 
 	-- pre hide
-	CraftSim.CRAFTQ.queueRecipeButton:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
-	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
-	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
+	CraftSim.CRAFTQ.craftingButtonsFrame:Hide()
+	CraftSim.CRAFTQ.craftingButtonsFrameWO:Hide()
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
         print("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
@@ -262,6 +253,13 @@ function CraftSim.MODULES:UpdateUI()
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
 	CraftSim.CRAFTQ.UI:UpdateDisplay()
+
+	-- Show crafting buttons container frames unless hidden by option
+	if not CraftSim.DB.OPTIONS:Get("HIDE_CRAFTING_BUTTONS_FRAME") then
+		CraftSim.CRAFTQ.craftingButtonsFrame:Show()
+		CraftSim.CRAFTQ.craftingButtonsFrameWO:Show()
+	end
+
 	CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
