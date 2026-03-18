@@ -576,6 +576,23 @@ function CraftSim.CRAFTQ.UI:Init()
                             "If enabled, CraftSim will process both main professions of the current character at once");
                     end);
 
+                    local includeSoulboundFRDB = rootDescription:CreateCheckbox(
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+                                not value)
+                        end)
+
+                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
+                    end);
+
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                         frame.label = GGUI.Text {
                             parent = frame,
@@ -589,7 +606,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             anchorA = "RIGHT", anchorB = "RIGHT",
                             initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"),
                             borderAdjustWidth = 1.32,
-                            minValue = 1,
+                            minValue = 0,
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
@@ -1350,13 +1367,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.professionGearTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -50,
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), sizeX = 150,
         clickCallback = function(optimizeButton)
-            -- TODO: Rewrite using task list schema and export into module function
+            -- TODO: Refactor using RecipeData:Optimize
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 local optimizeProfessionGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
                 local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION")
                 local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get(
                     "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
+
+                -- Never consider locked finishing slots in Craft Queue, but ALWAYS include soulbound
+                -- when optimizing via Craft Queue.
+                local includeLockedFinishing = false
+                local includeSoulboundFinishing = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
 
                 if optimizeProfessionGear then
                     recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
@@ -1373,6 +1395,8 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                             finally = function()
                                 if optimizeFinishingReagents then
                                     recipeData:OptimizeFinishingReagents {
+                                        includeLocked = includeLockedFinishing,
+                                        includeSoulbound = includeSoulboundFinishing,
                                         finally = function()
                                             CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                                             CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
@@ -1401,6 +1425,8 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                         if optimizeFinishingReagents then
                             optimizeButton:SetEnabled(false)
                             recipeData:OptimizeFinishingReagents {
+                                includeLocked = includeLockedFinishing,
+                                includeSoulbound = includeSoulboundFinishing,
                                 finally = function()
                                     CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                                     CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
@@ -1469,6 +1495,23 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                         local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS", not value)
                     end)
+
+                local includeSoulboundFRDB = rootDescription:CreateCheckbox(
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+                                not value)
+                        end)
+
+                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
+                    end);
             end)
         end
     }
@@ -2154,6 +2197,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         "\n- " ..
                         GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
                         " " .. displayText .. " x" .. reward.count
+                end
+            end
+
+            -- Show gold reward under the Rewards section too
+            if recipeData.orderData then
+                local tipAmount = tonumber(recipeData.orderData.tipAmount) or 0
+                local cutAmount = tonumber(recipeData.orderData.consortiumCut) or 0
+                local commission = tipAmount - cutAmount
+                if commission > 0 then
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " .. CraftSim.UTIL:FormatMoney(commission, true) .. " (included in profit)"
                 end
             end
 

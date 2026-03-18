@@ -386,23 +386,32 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 recipeData:Update()
             end
 
+            local optimizeFinishingReagentOptions = nil
+
+            if optimizeFinishingReagents then
+                optimizeFinishingReagentOptions = {
+                    includeLocked = false,
+                    includeSoulbound = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                    progressUpdateCallback = function(progress)
+                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                        " " ..
+                        GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                        CreateAtlasMarkup("Banker", 20, 20))
+                end
+                }
+            end
+
             recipeData:Optimize {
                 finally = function()
                     finalizeRecipeAndContinue()
                     content.optimizationProgressStatusText:SetText("")
                 end,
                 optimizeConcentration = concentrationEnabled and optimizeConcentration,
-                optimizeFinishingReagents = optimizeFinishingReagents,
+                optimizeFinishingReagentsOptions = optimizeFinishingReagentOptions,
                 optimizeGear = optimizeGear,
                 optimizeReagentOptions = optimizationScanMode and {
                     highestProfit = optimizeTopProfit,
                 },
-                optimizeFinishingReagentsProgressCallback = function(progress)
-                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-                        " " ..
-                        GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-                        CreateAtlasMarkup("Banker", 20, 20))
-                end,
                 optimizeReagentProgressCallback = function(progress)
                     -- TODO
                 end,

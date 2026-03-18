@@ -118,7 +118,7 @@ function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 
     local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
-        return CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+        return recipeData:GetOrderReagentDescriptor(reagentInfo).itemID
     end)
 
     return tContains(orderItemIDs, self.item:GetItemID())
