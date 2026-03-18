@@ -620,7 +620,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                             not value)
                     end)
                 local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb("  Finishing Reagents"),
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
                                 "RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
