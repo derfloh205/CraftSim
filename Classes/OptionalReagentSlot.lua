@@ -125,6 +125,23 @@ function CraftSim.OptionalReagentSlot:SetCurrencyReagent(currencyID)
         function(possibleReagent) return possibleReagent.currencyID == currencyID end)
 end
 
+--- Tries to apply an order-provided reagent to this slot if compatible.
+--- Returns true if the slot accepted the reagent (and was updated), false otherwise.
+---@param itemID number?
+---@param currencyID number?
+---@return boolean applied
+function CraftSim.OptionalReagentSlot:TryApplyOrderReagent(itemID, currencyID)
+    if currencyID and self:IsCurrency() and self:IsPossibleCurrencyReagent(currencyID) then
+        self:SetCurrencyReagent(currencyID)
+        return true
+    end
+    if itemID and (not self:IsCurrency()) and self:IsPossibleReagent(itemID) then
+        self:SetReagent(itemID)
+        return true
+    end
+    return false
+end
+
 ---@return CraftingReagentInfo?
 function CraftSim.OptionalReagentSlot:GetCraftingReagentInfo()
     if self.activeReagent then
