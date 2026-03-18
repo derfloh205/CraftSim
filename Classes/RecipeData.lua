@@ -399,8 +399,8 @@ end
 ---@return number? dataSlotIndex
 ---@return number? itemID
 ---@return number? currencyID
-local function extractOrderReagentInfo(reagentInfo, recipeData)
-    local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
+function CraftSim.RecipeData:ExtractOrderReagentInfo(reagentInfo)
+    local d = self:GetOrderReagentDescriptor(reagentInfo)
     return d.dataSlotIndex, d.itemID, d.currencyID
 end
 
@@ -430,7 +430,7 @@ function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
     end
 
     for i, reagentInfo in ipairs(self.orderData.reagents) do
-        local dataSlotIndex, itemID, currencyID = extractOrderReagentInfo(reagentInfo, self)
+        local dataSlotIndex, itemID, currencyID = self:ExtractOrderReagentInfo(reagentInfo)
 
         local slot = (dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]) or orderedSlots[i]
         if slot then
