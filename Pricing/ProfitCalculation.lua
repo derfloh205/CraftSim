@@ -51,7 +51,7 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
 
         -- we also need to consider any saved crafting costs from provided reagents from the customer and the comission
         for _, reagentdata in ipairs(recipeData.orderData.reagents) do
-            local itemID = CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentdata, recipeData)
+            local itemID = recipeData:GetItemIDFromReagentInfo(reagentdata)
             if itemID then
                 local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false)
                 local quantity = reagentdata.reagentInfo and reagentdata.reagentInfo.quantity or reagentdata.quantity or 0

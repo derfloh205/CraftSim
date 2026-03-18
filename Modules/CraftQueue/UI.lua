@@ -2166,6 +2166,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 end
             end
 
+            -- Show gold reward under the Rewards section too
+            if recipeData.orderData then
+                local tipAmount = tonumber(recipeData.orderData.tipAmount) or 0
+                local cutAmount = tonumber(recipeData.orderData.consortiumCut) or 0
+                local commission = tipAmount - cutAmount
+                if commission > 0 then
+                    craftOrderInfoText = craftOrderInfoText ..
+                        "\n- " .. CraftSim.UTIL:FormatMoney(commission, true) .. " (included in profit)"
+                end
+            end
+
             row.tooltipOptions = {
                 text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                         craftQueueItem.recipeData:GetCrafterUID()) ..
