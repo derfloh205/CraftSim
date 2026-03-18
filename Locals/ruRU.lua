@@ -341,6 +341,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize Profession Gear",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize Concentration",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize Finishing Reagents",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "Autoselect Open Profession",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "Снаряжение CraftSim",

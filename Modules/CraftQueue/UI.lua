@@ -582,7 +582,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             anchorA = "RIGHT", anchorB = "RIGHT",
                             initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"),
                             borderAdjustWidth = 1.32,
-                            minValue = 1,
+                            minValue = 0,
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,

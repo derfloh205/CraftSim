@@ -421,6 +421,7 @@ function CraftSim.LOCAL_CN:GetData()
             "与此角色-职业组合相关的所有缓存数据",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_TSM_RESTOCK] = "使用" .. f.bb("TSM") .. "补货数量表达式",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD] = f.bb("TSM") .. "成交率阈值：",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "Autoselect Open Profession",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim 最佳装备",

@@ -437,13 +437,13 @@ function CraftSim.INIT:HookToConcentrationButtons()
 
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		self:UpdateUIs()
+		CraftSim.MODULES:UpdateUI()
 	end)
 
 	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
 		.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		self:UpdateUIs()
+		CraftSim.MODULES:UpdateUI()
 	end)
 end
 
