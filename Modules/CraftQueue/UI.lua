@@ -56,7 +56,7 @@ function CraftSim.CRAFTQ.UI:Init()
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
                 local autoShow = rootDescription:CreateCheckbox(
-                    f.g("Automatically Open ") .. "when a recipe is queued",
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_AUTO_SHOW),
                     function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW")
                     end, function()
@@ -67,7 +67,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     end)
 
                 local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
-                    f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_INGENUITY_IGNORE),
                     function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS")
                     end, function()
@@ -78,7 +78,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     end)
 
                 local dequeueConcentrationCB = rootDescription:CreateCheckbox(
-                    f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION),
                     function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")
                     end, function()
@@ -90,7 +90,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
                 dequeueConcentrationCB:SetTooltip(function(tooltip, elementDescription)
                     GameTooltip_AddInstructionLine(tooltip,
-                        "Autoremove a crafted recipe when remaining concentration does not allow further crafts.");
+                        L(CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP));
                 end);
             end
         }
@@ -99,9 +99,7 @@ function CraftSim.CRAFTQ.UI:Init()
             parent = frame.content,
             anchorParent = frame.content.craftQueueOptionsButton.frame,
             anchorA = "LEFT", anchorB = "RIGHT",
-            text = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
-                f.bb("Right Click") .. " .. Open Recipe Options\n" ..
-                f.bb("Middle Click") .. " .. Remove Recipe from Queue",
+            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_HELP),
         }
 
         ---@type GGUI.BlizzardTab
@@ -529,7 +527,7 @@ function CraftSim.CRAFTQ.UI:Init()
             clickCallback = function(_, _)
                 MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
                     local smartQueueCB = rootDescription:CreateCheckbox(
-                        f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+                        L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
                         end, function()
@@ -540,15 +538,11 @@ function CraftSim.CRAFTQ.UI:Init()
                         end)
                     smartQueueCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, " ..
-                            f.l("CraftSim") ..
-                            " first determines the " ..
-                            f.g("best valued concentration") ..
-                            " recipe. Then queues it for the maximum craftable amount.");
+                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP));
                     end);
 
                     local concentrationCraftsCB = rootDescription:CreateCheckbox(
-                        "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
                                 "CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT")
@@ -560,12 +554,11 @@ function CraftSim.CRAFTQ.UI:Init()
                         end)
                     concentrationCraftsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
-                            f.bb("Ingenuity"));
+                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP));
                     end);
 
                     local mainProfessionsCB = rootDescription:CreateCheckbox(
-                        "Queue " .. f.bb("Current Main Professions"),
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS),
                         function()
                             return CraftSim.DB.OPTIONS:Get(
                                 "CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
@@ -577,7 +570,24 @@ function CraftSim.CRAFTQ.UI:Init()
                         end)
                     mainProfessionsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, CraftSim will process both main professions of the current character at once");
+                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP));
+                    end);
+
+                    local includeSoulboundFRDB = rootDescription:CreateCheckbox(
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+                                not value)
+                        end)
+
+                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
                     end);
 
                     local includeSoulboundFRDB = rootDescription:CreateCheckbox(
@@ -601,7 +611,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = "Offset Queue Amount: ",
+                            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.NumericInput {
@@ -614,7 +624,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = "Always add given amount to the number of queued crafts",
+                                text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP),
                             },
                             onNumberValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT",
@@ -624,7 +634,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_OFFSET_QUEUE_AMOUNT_INPUT")
 
                     local autoShoppingListCB = rootDescription:CreateCheckbox(
-                        "Automatically create a Shopping List after Scan",
+                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
                         end, function()
@@ -680,7 +690,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     end);
 
                     local sparksCB = rootDescription:CreateCheckbox(
-                        "Ignore " .. f.e("Spark") .. " Recipes",
+                        L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES")
                         end, function()
@@ -690,7 +700,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
                     sparksCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Ignore recipes that require a spark reagent");
+                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP));
                     end);
                 end)
             end
@@ -850,7 +860,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("Knowledge Point") .. " Max Cost: ",
+                            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.CurrencyInput {
@@ -863,7 +873,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = f.white("Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP) .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
                             },
                             onValueValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
@@ -876,7 +886,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("Patron Order") .. " Max Cost: ",
+                            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.CurrencyInput {
@@ -889,7 +899,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = f.white("Maximum allowed gold cost of a patron order\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP) .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
                             },
                             onValueValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST",
@@ -902,7 +912,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         frame.label = GGUI.Text {
                             parent = frame,
                             anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = f.bb("Reagent Bag") .. " Value: ",
+                            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE),
                             justifyOptions = { type = "H", align = "LEFT" },
                         }
                         frame.input = GGUI.CurrencyInput {
@@ -915,7 +925,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             tooltipOptions = {
                                 anchor = "ANCHOR_TOP",
                                 owner = frame,
-                                text = f.white("Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: " .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP) .. GUTIL:FormatMoney(1000000, false, nil, false, false)),
                             },
                             onValueValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE",
