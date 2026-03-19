@@ -50,16 +50,6 @@ function CraftSim.DEBUG.UI:Init()
             -- dynamically create logid checkboxes use . as delimiter for categories
             local buttonCache = {}
 
-            local function setDebugIDWithChildren(id, value)
-                debugIDTable[id] = value
-                local prefix = id .. "."
-                for _, registeredID in pairs(registeredDebugIDs) do
-                    if registeredID:sub(1, #prefix) == prefix then
-                        debugIDTable[registeredID] = value
-                    end
-                end
-            end
-
             for _, debugID in pairs(registeredDebugIDs) do
                 local splitIDs = strsplittable(".", debugID)
                 local fullID = ""
@@ -78,7 +68,7 @@ function CraftSim.DEBUG.UI:Init()
                     buttonCache[capturedID] = buttonCache[capturedID] or previousButton:CreateCheckbox(splitID, function()
                         return debugIDTable[capturedID]
                     end, function()
-                        setDebugIDWithChildren(capturedID, not debugIDTable[capturedID])
+                        debugIDTable[capturedID] = not debugIDTable[capturedID]
                     end)
                 end
             end
@@ -202,7 +192,7 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
         title = "CraftSim Debug Tools",
         offsetX = 10,
         sizeX = 200,
-        sizeY = 400,
+        sizeY = 550,
         frameID = CraftSim.CONST.FRAMES.DEBUG_CONTROL,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
