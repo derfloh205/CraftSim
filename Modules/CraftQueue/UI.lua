@@ -1099,7 +1099,7 @@ function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
 
     content.quickBarFrame = GGUI.Frame {
         parent = content, anchorParent = content,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = 0, offsetX = 10,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = 5, offsetX = 10,
         sizeX = 200, sizeY = 70,
     }
 
@@ -1886,10 +1886,17 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
 
                 local activeReagent = recipeData.reagentData.salvageReagentSlot:SetCheapestItem()
                 recipeData:Update()
+                local buffActive = recipeData.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
 
                 activeReagent:ContinueOnItemLoad(function()
 
-                        if recipeData:CanCraft(1) then
+                    if buffActive then
+                        recipeCraftButton.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            text = f.bb("Shatter Buff " .. f.g("active"))
+                        }
+                        recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})    
+                    elseif recipeData:CanCraft(1) then
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
                                 text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) 
