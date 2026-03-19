@@ -1440,9 +1440,8 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                     local bestCandidate = nil
 
                     -- start without any finishing reagent
-                    for fr in self.reagentData.finishingReagentSlots do
-                        fr.activeReagent = nil
-                        fr.currencyID = nil
+                    for _, slot in ipairs(self.reagentData.finishingReagentSlots) do
+                        slot.activeReagent = nil
                     end
                     self:Update()
                     local bestAverageProfit = self.averageProfitCached
