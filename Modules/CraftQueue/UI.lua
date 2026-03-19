@@ -1099,7 +1099,7 @@ function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
 
     content.quickBarFrame = GGUI.Frame {
         parent = content, anchorParent = content,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = 5, offsetX = 10,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -1, offsetX = 10,
         sizeX = 200, sizeY = 70,
     }
 
