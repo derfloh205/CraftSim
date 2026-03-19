@@ -316,6 +316,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Price Override Frame
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "CraftSim Price Overrides",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_HINT] = "(You can now override prices directly in the " .. f.bb("Cost Optimization Module") .. ")",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "Required Reagents",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS] = "Optional Reagents",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS] = "Finishing Reagents",
@@ -552,6 +553,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Reset Frame Positions",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORTS] = "Exports",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "Exporting",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] =
@@ -608,6 +610,14 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS] = "Reagents",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_SOMENOTE] = "SomeNote",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_AMOUNT] = "Total amount",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_ENABLE_HISTORY_RECORDING] = f.bb("Enable ") .. f.gold("History Recording"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_RECORD_PATRON_ORDERS] = "Record " .. f.bb("Patron Orders"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_CUSTOMERS] = "Remove Customers",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_AUTO_REMOVAL] = "Auto Removal",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_BELOW_THRESHOLD] = f.l("Remove below Threshold"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMERS] = f.r("Remove All Customers"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA] = f.r("Remove ALL Customer Data?"),
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_DELETE_CUSTOMER] = "Delete Customer",
 
         -- Craft Queue
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE] = "CraftSim Craft Queue",
@@ -640,8 +650,27 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_TOOLTIP] = "Include Orders with Augment Rune Rewards",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX] = "Include " .. f.bb("Knowledge Point") .. " Rewards",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP] = "Include Orders with Knowledge Point Rewards",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST] = f.bb("Knowledge Point") .. " Max Cost: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP] = "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST] = f.bb("Patron Order") .. " Max Cost: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP] = "Maximum allowed gold cost of a patron order\n\nFormat: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("Reagent Bag") .. " Value: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "Queue Favorites",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING] = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP] = "If enabled, " ..
+            f.l("CraftSim") ..
+            " first determines the " ..
+            f.g("best valued concentration") ..
+            " recipe. Then queues it for the maximum craftable amount.",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT] = "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP] = "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " .. f.bb("Ingenuity"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS] = "Queue " .. f.bb("Current Main Professions"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP] = "If enabled, CraftSim will process both main professions of the current character at once",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL] = "Offset Queue Amount: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP] = "Always add given amount to the number of queued crafts",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST] = "Automatically create a Shopping List after Scan",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Wrong Profession",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "On Cooldown",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Wrong Crafter",
@@ -727,6 +756,15 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRewards:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST] = "If enabled, CraftSim will automatically create a shopping list after scanning.",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL] = "Ignore " .. f.e("Spark") .. " Recipes",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP] = "Ignore recipes that require a spark reagent",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_AUTO_SHOW] = f.g("Automatically Open ") .. "when a recipe is queued",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_INGENUITY_IGNORE] = f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION] = f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP] = "Autoremove a crafted recipe when remaining concentration does not allow further crafts.",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_HELP] = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
+            f.bb("Right Click") .. " .. Open Recipe Options\n" ..
+            f.bb("Middle Click") .. " .. Remove Recipe from Queue",
 
         -- craft buffs
 
@@ -767,6 +805,13 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE] = "European - Max Date",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE] = "American - Max Date",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT] = "Hours Left",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_PIN_TOOLTIP] = "Pin Overview",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_LABEL] = "List",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST] = "Remove and Blacklist",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_LABEL] = "Options",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_CLEAR_BLACKLIST] = "Clear Blacklist",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE] = "Sort Mode: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT] = "Time Format: ",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

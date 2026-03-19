@@ -77,7 +77,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         GGUI.Text {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -3 } },
-            text = f.r("(You can now override prices directly in the " .. f.bb("Cost Optimization Module") .. ")"),
+            text = f.r(L(CraftSim.CONST.TEXT.PRICE_OVERRIDE_HINT)),
             scale = 0.9,
         }
 
