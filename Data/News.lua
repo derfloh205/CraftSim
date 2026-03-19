@@ -23,6 +23,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.4.0"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- Added Quick Access Bar",
+        f.p .. "Localization Updates",
+        collab("https://github.com/LvWind"),
+        f.pg .. "- Fixes to soulbound finisher optimization",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("21.3.6"),
         f.pg .. "Fix for incrementing simulation values in each module update",
         newP("21.3.5"),
