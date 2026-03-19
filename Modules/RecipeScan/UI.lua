@@ -619,6 +619,22 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS",
                             not value)
                     end)
+                local includeSoulboundFRDB = rootDescription:CreateCheckbox(
+                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get(
+                                "RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get(
+                                "RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+                                not value)
+                        end)
+
+                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
+                    end);
 
                 local optimizeSubRecipes = rootDescription:CreateCheckbox(
                     L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),

@@ -360,10 +360,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function withinMaxPatronOrderCost(craftingCost)
-                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
-                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
-                                                if craftingCost >= maxPatronOrderCost then
+                                        local function withinMaxPatronOrderCost(averageProfitCached)
+                                            --- if max cost is 0 deactivate cost check
+                                            if maxPatronOrderCost > 0 and isPatronOrder and averageProfitCached < 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(averageProfitCached, true, nil, true))
+                                                if math.abs(averageProfitCached) >= maxPatronOrderCost then
                                                     return false
                                                 end
                                                 return true
@@ -398,11 +399,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
 
                                             if queueAble then
+                                                local isWithinKPCost = withinKPCost(recipeData.averageProfitCached)
+                                                local isWithinMaxCost = withinMaxPatronOrderCost(recipeData.averageProfitCached)
+                                                local isKPOrderWithinRange = knowledgePointsRewarded > 0 and isWithinKPCost
                                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
-                                                recipeData.averageProfitCached <= 0	then
-                                                    -- skip: not profitable
-                                                elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+                                                recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
+                                                    -- skip: not profitable and not a KP order within range
+                                                elseif isWithinKPCost and isWithinMaxCost then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                                 end
                                             end
@@ -602,15 +605,18 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize),
                     conProgress))
             end,
-            optimizeFinishingReagents = true,
-            optimizeFinishingReagentsProgressCallback = function(frProgress)
-                queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
+            optimizeFinishingReagentsOptions = {
+                includeLocked = false,
+                includeSoulbound = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                progressUpdateCallback = function(frProgress)
+                    queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
                     progress,
                     GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], iconSize, iconSize),
                     GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize),
                     CreateAtlasMarkup("Banker", iconSize, iconSize),
                     frProgress))
-            end,
+                end,
+            },
             finally = function()
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                     tinsert(optimizedRecipes, recipeData)
@@ -1266,8 +1272,22 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
             return
         end
 
-        qbCache.pendingItemID = resultRow.itemKey.itemID
-        qbCache.pendingItemCount = resultRow.purchaseQuantity
+        local itemID = resultRow.itemKey.itemID
+        local quantity = resultRow.purchaseQuantity
+
+        -- check if player has enough gold to buy it
+        local buyoutPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, true)
+        local totalPrice = buyoutPrice * quantity
+        local playerMoney = GetMoney()
+
+        if playerMoney < totalPrice then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. f.bb("QuickBuy:") ..  " Not enough gold")
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. f.bb("QuickBuy:") ..  " Missing: " .. CraftSim.GUTIL:FormatMoney(totalPrice - playerMoney))
+            return
+        end
+
+        qbCache.pendingItemID = itemID
+        qbCache.pendingItemCount = quantity
 
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true
