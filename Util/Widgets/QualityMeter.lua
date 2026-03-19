@@ -172,7 +172,9 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
     end
 
     if isConcentrating then
-        -- When concentration is active: fill bar fully with gold color, hide skill text
+        -- When concentration is active: hide current quality icon, show only next quality icon
+        self.frame.currentQualityIcon.frame:Hide()
+        -- Fill bar fully with gold color, hide skill text
         local c = BAR_COLOR_CONCENTRATION
         self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
         self.frame.bar:SetMinMaxValues(0, 1)
@@ -184,6 +186,9 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.missingSkillText:SetText(f.gold(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
         return
     end
+
+    -- Not concentrating: show current quality icon
+    self.frame.currentQualityIcon.frame:Show()
 
     -- Normal mode: green bar
     local c = BAR_COLOR_NORMAL
