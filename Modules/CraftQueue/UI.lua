@@ -1379,6 +1379,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 -- when optimizing via Craft Queue.
                 local includeLockedFinishing = false
                 local includeSoulboundFinishing = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                local queueAmount = editRecipeFrame.craftQueueItem.amount or 1
+
+                local function finalizeOptimize()
+                    if includeSoulboundFinishing then
+                        -- Ensure selected soulbound finishing reagents can cover the queued amount.
+                        recipeData:AdjustSoulboundFinishingForAmount(queueAmount)
+                    end
+                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                    optimizeButton:SetEnabled(true)
+                    optimizeButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                end
 
                 if optimizeProfessionGear then
                     recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
@@ -1398,23 +1410,14 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                                         includeLocked = includeLockedFinishing,
                                         includeSoulbound = includeSoulboundFinishing,
                                         finally = function()
-                                            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                                            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
-                                                .craftQueueItem)
-                                            optimizeButton:SetEnabled(true)
-                                            optimizeButton:SetText(L(CraftSim.CONST.TEXT
-                                                .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                            finalizeOptimize()
                                         end,
                                         progressUpdateCallback = function(progress)
                                             optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
                                         end
                                     }
                                 else
-                                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-                                    optimizeButton:SetEnabled(true)
-                                    optimizeButton:SetText(L(CraftSim.CONST.TEXT
-                                        .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                    finalizeOptimize()
                                 end
                             end,
                             progressUpdateCallback = function(progress)
@@ -1428,23 +1431,14 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                                 includeLocked = includeLockedFinishing,
                                 includeSoulbound = includeSoulboundFinishing,
                                 finally = function()
-                                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame
-                                        .craftQueueItem)
-                                    optimizeButton:SetEnabled(true)
-                                    optimizeButton:SetText(L(CraftSim.CONST.TEXT
-                                        .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                                    finalizeOptimize()
                                 end,
                                 progressUpdateCallback = function(progress)
                                     optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
                                 end
                             }
                         else
-                            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
-                            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
-                            optimizeButton:SetEnabled(true)
-                            optimizeButton:SetText(L(CraftSim.CONST.TEXT
-                                .CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
+                            finalizeOptimize()
                         end
                     end
                 end)
