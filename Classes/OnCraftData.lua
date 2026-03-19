@@ -55,8 +55,8 @@ function CraftSim.OnCraftData:CreateRecipeData()
 
     if recipeData.isSalvageRecipe then
         -- itemTargetLocation HAS to be set
+        CraftSim.DEBUG:InspectTable(self.itemTargetLocation or {}, "salvage - itemTargetLocation")
         local item = Item:CreateFromItemLocation(self.itemTargetLocation)
-        --CraftSim.DEBUG:InspectTable(item or {}, "salvage - itemTargetLocation item")
         if item then
             recipeData:SetSalvageItem(item:GetItemID())
         end

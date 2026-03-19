@@ -379,10 +379,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function withinMaxPatronOrderCost(craftingCost)
-                                            if isPatronOrder and craftingCost > 0 and maxPatronOrderCost > 0 then
-                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(craftingCost, true, nil, true))
-                                                if craftingCost >= maxPatronOrderCost then
+                                        local function withinMaxPatronOrderCost(averageProfitCached)
+                                            --- if max cost is 0 deactivate cost check
+                                            if maxPatronOrderCost > 0 and isPatronOrder and averageProfitCached < 0 then
+                                                print("- Crafting cost: "  .. GUTIL:FormatMoney(averageProfitCached, true, nil, true))
+                                                if math.abs(averageProfitCached) >= maxPatronOrderCost then
                                                     return false
                                                 end
                                                 return true
@@ -423,15 +424,14 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 tostring(queueAble)))
 
                                             if queueAble then
+                                                local isWithinKPCost = withinKPCost(recipeData.averageProfitCached)
+                                                local isWithinMaxCost = withinMaxPatronOrderCost(recipeData.averageProfitCached)
+                                                local isKPOrderWithinRange = knowledgePointsRewarded > 0 and isWithinKPCost
                                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
-                                                recipeData.averageProfitCached <= 0	then
-                                                    print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": not profitable (profit=" .. tostring(recipeData.averageProfitCached) .. ")")
-                                                    -- skip: not profitable
-                                                elseif withinKPCost(recipeData.averageProfitCached) and
-                                                withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
+                                                recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
+                                                    -- skip: not profitable and not a KP order within range
+                                                elseif isWithinKPCost and isWithinMaxCost then
                                                     addRecipeToQueue({ recipeData = recipeData })
-                                                else
-                                                    print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": cost thresholds exceeded")
                                                 end
                                             else
                                                 print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": quality not reachable (expected=" .. tostring(recipeData.resultData.expectedQuality) .. " < min=" .. tostring(order.minQuality) .. ")")
@@ -519,7 +519,9 @@ function CraftSim.CRAFTQ:QueueFavorites()
     local optimizedRecipes = {}
 
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    local currentConcentration = concentrationData:GetCurrentAmount()
+    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
+
+    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
@@ -544,14 +546,22 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 if recipeData.concentrationCost > 0 then
                     local concentrationCosts = recipeData.concentrationCost
                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT") then
+                        local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
+                        local ingenuityRefund = 0.5 + recipeData.professionStats.ingenuity:GetExtraValue()
                         concentrationCosts = concentrationCosts -
-                            (concentrationCosts * recipeData.professionStats.ingenuity:GetPercent(true) * recipeData.professionStats.ingenuity:GetExtraValue())
+                            (concentrationCosts * ingenuityChance * ingenuityRefund)
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
                     if queueableAmount > 0 then
                         local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
                             "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = queueableAmount + offsetAmount }
+                        local totalAmount = queueableAmount + offsetAmount
+
+                        -- Ensure we only keep soulbound finishing reagents when we have enough
+                        -- to cover all queued crafts for this recipe.
+                        recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+
+                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
                         currentConcentration = currentConcentration -
                             (concentrationCosts * queueableAmount)
                         break -- only queue first recipe in this mode
@@ -609,20 +619,30 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize),
                     conProgress))
             end,
-            optimizeFinishingReagents = true,
-            optimizeFinishingReagentsProgressCallback = function(frProgress)
-                queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
+            optimizeFinishingReagentsOptions = {
+                includeLocked = false,
+                includeSoulbound = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                progressUpdateCallback = function(frProgress)
+                    queueFavoritesButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
                     progress,
                     GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], iconSize, iconSize),
                     GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize),
                     CreateAtlasMarkup("Banker", iconSize, iconSize),
                     frProgress))
-            end,
+                end,
+            },
             finally = function()
                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                     tinsert(optimizedRecipes, recipeData)
                 else
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = 1 + tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT")) }
+                    local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
+                    local totalAmount = 1 + offsetAmount
+
+                    -- Batch-aware adjustment: only keep soulbound finishers when we have enough
+                    -- for all planned crafts of this favorite.
+                    recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+
+                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end
                 frameDistributor:Continue()
@@ -651,7 +671,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             continue = function(frameDistributor, profession, recipeIDs, _, _)
                 wipe(optimizedRecipes)
                 concentrationData = CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession,
-                    CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN)
+                    currentExpansionID)
                 if not concentrationData then
                     frameDistributor:Break()
                     return
@@ -1092,6 +1112,13 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
                     end
                 end
 
+                local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                if isAlreadyQueued then
+                    printFC("First craft is already queued, skipping: " .. tostring(recipeData.recipeName))
+                    frameDistributor:Continue()
+                    return
+                end
+
                 recipeData:SetCheapestQualityReagentsMax()
                 self:AddRecipe({ recipeData = recipeData })
                 frameDistributor:Continue()
@@ -1259,8 +1286,22 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
             return
         end
 
-        qbCache.pendingItemID = resultRow.itemKey.itemID
-        qbCache.pendingItemCount = resultRow.purchaseQuantity
+        local itemID = resultRow.itemKey.itemID
+        local quantity = resultRow.purchaseQuantity
+
+        -- check if player has enough gold to buy it
+        local buyoutPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, true)
+        local totalPrice = buyoutPrice * quantity
+        local playerMoney = GetMoney()
+
+        if playerMoney < totalPrice then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. f.bb("QuickBuy:") ..  " Not enough gold")
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. f.bb("QuickBuy:") ..  " Missing: " .. CraftSim.GUTIL:FormatMoney(totalPrice - playerMoney))
+            return
+        end
+
+        qbCache.pendingItemID = itemID
+        qbCache.pendingItemCount = quantity
 
         qbCache.currentSearchString = buyShoppingListSearchString
         qbCache.purchasePending = true

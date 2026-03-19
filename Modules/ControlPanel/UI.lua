@@ -138,7 +138,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP),
                 CraftSim.CONST.FRAMES.EXPLANATIONS)
 
-            local exports = rootDescription:CreateButton("Exports")
+            local exports = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORTS))
 
             exports:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT), function()
                 CraftSim.CONTROL_PANEL:EasycraftExportAll()

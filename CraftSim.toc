@@ -4,9 +4,20 @@
 ## Title: CraftSim
 ## Category: Professions
 ## Category-deDE: Berufe
+## Category-esES: Profesiones
+## Category-esMX: Profesiones
+## Category-frFR: Métiers
+## Category-itIT: Professioni
+## Category-koKR: 전문 기술
+## Category-ptBR: Profissões
+## Category-ruRU: Профессии
+## Category-zhCN: 专业
+## Category-zhTW: 專業技能
 ## Notes: Calculates the average profit based on your profession stats and other tools for the war within gold making
+## Notes-zhCN: 根据您的专业统计数据和其他工具计算平均利润
+## Notes-zhTW: 根據您的專業技能統計資料和其他工具計算平均利潤
 ## Author: genju
-## Version: 21.3.2
+## Version: 21.4.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -44,6 +55,7 @@ Media/Media.lua
 Util/Frames.lua
 Util/Widgets.lua
 Util/Widgets/ReagentList.lua
+Util/Widgets/QualityMeter.lua
 
 Util/Comm.lua
 Util/API.lua
