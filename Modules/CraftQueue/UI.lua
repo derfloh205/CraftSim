@@ -47,6 +47,10 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@class CraftSim.CraftQueue.Frame.Content : Frame
         frame.content = frame.content
 
+
+        self:InitializeQuickAccessBar(frame)
+
+
         frame.content.craftQueueOptionsButton = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
@@ -1089,6 +1093,74 @@ function CraftSim.CRAFTQ.UI:Init()
     end)
 end
 
+---@param frame GGUI.Frame
+function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
+    local content = frame.content
+
+    content.quickBarFrame = GGUI.Frame {
+        parent = content, anchorParent = content,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -1, offsetX = 10,
+        sizeX = 200, sizeY = 70,
+    }
+
+    local quickBarFrameButtonSize = 30
+    content.quickBarFrame.buttonList = GGUI.FrameList {
+        parent = content.quickBarFrame.frame, anchorParent = content.quickBarFrame.frame,
+        horizontal = true, offsetY = 0,
+        rowHeight = 35,
+        hideScrollbar = true,
+        sizeY = 50,
+        autoAdjustHeight = true,
+        columnOptions = {
+            {
+                width = 30, -- icon
+            },
+        },
+        anchorA = "LEFT", anchorB = "LEFT",
+        rowConstructor = function (columns, row)
+            local buttonColumn = columns[1]
+            buttonColumn.macroButton = GGUI.Button {
+                    parent = buttonColumn, anchorParent = buttonColumn, sizeX = quickBarFrameButtonSize, sizeY = quickBarFrameButtonSize, anchorA = "CENTER",
+                    anchorB = "CENTER",
+                    macro = true,
+                    macroText = "",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_TOP",
+                        text = "",
+                    },
+                    fontOptions = {
+                        fontFile = CraftSim.CONST.FONT_FILES.ROBOTO,
+                        scale = 3,
+                        flags = "THICKOUTLINE",
+                    },
+                    borderOptions = {
+                        colorRGBA = {1, 1, 1, 1},
+                        borderSize = 10,
+                        showBorder = false,
+                    },
+                }
+            buttonColumn.recipeCraftButton = GGUI.Button {
+                    parent = buttonColumn, anchorParent = buttonColumn, sizeX = quickBarFrameButtonSize, sizeY = quickBarFrameButtonSize, anchorA = "CENTER",
+                    anchorB = "CENTER",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_TOP",
+                        text = "",
+                    },
+                    fontOptions = {
+                        fontFile = CraftSim.CONST.FONT_FILES.ROBOTO,
+                        scale = 3,
+                        flags = "THICKOUTLINE",
+                    },
+                    borderOptions = {
+                        colorRGBA = {1, 1, 1, 1},
+                        borderSize = 10,
+                        showBorder = false,
+                    },
+                }
+        end,
+    }
+end
+
 ---@param parent frame
 ---@param anchorParent Region
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
@@ -1741,6 +1813,115 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
         exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 end
 
+function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+    local quickBar = CraftSim.CRAFTQ.frame.content.quickBarFrame --[[@as GGUI.Frame]]
+    local buttonList = quickBar.buttonList --[[@as GGUI.FrameList]]
+
+    buttonList:Remove()
+    -- add soulbound upcraft reagents first, then add shatter spell
+    for upcraftReagent, data in pairs(CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA) do
+        local reagentItem = Item:CreateFromItemID(data.preItemID)
+        reagentItem:ContinueOnItemLoad(function()
+            buttonList:Add(function(row)
+                local macroButton = row.columns[1].macroButton --[[@as GGUI.Button]]
+                local recipeCraftButton = row.columns[1].recipeCraftButton --[[@as GGUI.Button]]
+                macroButton:Show()
+                recipeCraftButton:Hide()
+                macroButton:SetMacroText("/use item:" .. data.preItemID)
+                macroButton:SetTexture{
+                    normal = reagentItem:GetItemIcon(),
+                    pushed = reagentItem:GetItemIcon(),
+                    highlight = reagentItem:GetItemIcon(),
+                    highlightBlendmode = "ADD",
+                }
+                local itemCountPre = C_Item.GetItemCount(data.preItemID)
+                macroButton:SetText(f.white("x" .. itemCountPre))
+
+                if itemCountPre >= 5 then
+                    macroButton:SetBorder(true, {0, 1, 0, 0.8})
+                else
+                    macroButton:SetBorder(true, {1, 0, 0, 0.8})
+                end
+
+                local items = { Item:CreateFromItemID(data.preItemID), Item:CreateFromItemID(upcraftReagent) }
+
+                GUTIL:ContinueOnAllItemsLoaded(items, function()
+                        local preItemLink = items[1]:GetItemLink()
+                        local upcraftItemLink = items[2]:GetItemLink()
+                        local missingDiff = 5 - itemCountPre
+                        local missingText = itemCountPre >= 5 and "" or f.r("\nMissing " .. missingDiff .. "x " .. preItemLink)
+                        macroButton.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            text = f.bb("Convert 5x ") .. preItemLink .. "  -> " .. upcraftItemLink .. missingText
+                        }
+                    end)
+            end)
+        end)
+    end
+
+    -- if the current profession is midnight enchanting add shatter
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local midnightEnchantingID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Enchanting][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
+    if skillLineID == midnightEnchantingID then
+        buttonList:Add(function(row)
+            local recipeCraftButton = row.columns[1].recipeCraftButton --[[@as GGUI.Button]]
+            local macroButton = row.columns[1].macroButton --[[@as GGUI.Button]]
+            macroButton:Hide()
+            recipeCraftButton:Show()
+
+            local recipeData = CraftSim.RecipeData{recipeID = CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER}
+            if recipeData then
+                recipeCraftButton:SetTexture{
+                    normal = recipeData.recipeIcon,
+                    pushed = recipeData.recipeIcon,
+                    highlight = recipeData.recipeIcon,
+                    highlightBlendmode = "ADD",
+                }
+
+                local activeReagent = recipeData.reagentData.salvageReagentSlot:SetCheapestItem()
+                recipeData:Update()
+                local buffActive = recipeData.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
+
+                activeReagent:ContinueOnItemLoad(function()
+
+                    if buffActive then
+                        recipeCraftButton.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            text = f.bb("Shatter Buff " .. f.g("active"))
+                        }
+                        recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})    
+                    elseif recipeData:CanCraft(1) then
+                            recipeCraftButton.tooltipOptions = {
+                                anchor = "ANCHOR_CURSOR_RIGHT",
+                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) 
+                            }
+                             recipeCraftButton:SetBorder(true, {0, 1, 0, 0.8})
+                        else
+                            recipeCraftButton.tooltipOptions = {
+                                anchor = "ANCHOR_CURSOR_RIGHT",
+                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. f.r(" (Missing)") .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) 
+                            }
+                            recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})
+                        end
+                    end)
+            end
+
+            recipeCraftButton.clickCallback = function()
+                if recipeData:CanCraft(1) then
+                    recipeData:Craft()
+                else
+                    local activeReagent = recipeData.reagentData.salvageReagentSlot.activeItem
+                    if activeReagent then
+                        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " .. activeReagent:GetItemLink()))
+                    end
+                end
+            end
+        end)
+    end
+
+    buttonList:UpdateDisplay()
+end
+
 function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     --- use a cache to prevent multiple redundant calls of ItemCount thus increasing performance
     CraftSim.CRAFTQ.itemCountCache = {}
@@ -1796,6 +1977,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
 end
 
 function CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
 end
 

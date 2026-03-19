@@ -1678,3 +1678,25 @@ CraftSim.CONST.MOXIE_CURRENCY_IDS = {
     3262, --leatherworking
     3263, --tailoring
 }
+
+CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA = {
+    -- Multicraft Manifold
+    [247724] = {
+        preItemID = 247719, -- Multicraft Matrix
+        requiredQuantity = 5,
+    }, 
+    -- Resourceful Routing
+    [247726] = {
+        preItemID = 247725, -- Resourceful Rebar
+        requiredQuantity = 5,
+    }, 
+    -- Ingenious Identity
+    [247788] = {
+        preItemID = 260630, -- Ingenious Identifier
+        requiredQuantity = 5,
+    },
+}
+
+CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS = {
+    MIDNIGHT_ENCHANTING_SHATTER = 1235731,
+}
