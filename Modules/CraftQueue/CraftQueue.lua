@@ -64,6 +64,24 @@ local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQu
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
 local printFC = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.FirstCrafts")
 
+--- Local upvalue: calling the recipe add logic via this avoids WoW taint on the
+--- CraftSim.CRAFTQ global table reference, which is touched by secure callbacks.
+---@param options CraftSim.CraftQueueItem.Options
+local function addRecipeToQueue(options)
+    options = options or {}
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+    CraftSim.CRAFTQ.craftQueue:AddRecipe({
+        recipeData = options.recipeData,
+        amount = options.amount,
+    })
+    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+        CraftSim.CRAFTQ.frame:Show()
+        CraftSim.CRAFTQ.frame:Raise()
+    end
+end
+
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem
@@ -411,7 +429,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                     -- skip: not profitable
                                                 elseif withinKPCost(recipeData.averageProfitCached) and
                                                 withinMaxPatronOrderCost(recipeData.priceData.craftingCosts) then
-                                                    CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                                                    addRecipeToQueue({ recipeData = recipeData })
                                                 else
                                                     print("[QWO] SKIP spellID=" .. tostring(order.spellID) .. ": cost thresholds exceeded")
                                                 end
@@ -474,21 +492,7 @@ end
 
 ---@param options CraftSim.CraftQueueItem.Options
 function CraftSim.CRAFTQ:AddRecipe(options)
-    options = options or {}
-
-    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
-    CraftSim.CRAFTQ.craftQueue:AddRecipe({
-        recipeData = options.recipeData,
-        amount = options.amount,
-    })
-
-    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-
-    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
-        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
-        CraftSim.CRAFTQ.frame:Show()
-        CraftSim.CRAFTQ.frame:Raise()
-    end
+    addRecipeToQueue(options)
 end
 
 function CraftSim.CRAFTQ:ClearAll()
@@ -971,7 +975,7 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
 
     if not IsShiftKeyDown() then
         -- just queue without any optimizations
-        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        addRecipeToQueue({ recipeData = recipeData })
         return
     end
 
@@ -996,14 +1000,14 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             finally = function()
                 queueButton:SetEnabled(true)
                 queueButton:SetText("+ CraftQueue")
-                CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                addRecipeToQueue({ recipeData = recipeData })
             end,
             progressUpdateCallback = function(progress)
                 queueButton:SetText(string.format("%.0f%%", progress))
             end
         }
     else
-        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        addRecipeToQueue({ recipeData = recipeData })
     end
 end
 
