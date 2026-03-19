@@ -1987,8 +1987,7 @@ function CraftSim.RecipeData:Craft(amount)
                     self.concentrating)
             end
         end
-    end
-    if self.isEnchantingRecipe then
+    elseif self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
             ---@cast vellumLocation ItemLocation
