@@ -312,6 +312,10 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     local baseProfessionStats = recipeData.baseProfessionStats
     local professionStats = recipeData.professionStats
     local professionStatsMod = recipeData.professionStatModifiers
+    -- Use the stored raw user inputs to initialize modInput widgets.
+    -- professionStatsMod includes spec diff on top of user inputs, so using it directly
+    -- would cause spec diff to be double-counted on every update cycle.
+    local userMods = CraftSim.SIMULATION_MODE.userStatModifiers or {}
 
     local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local detailsFrame = simModeFrames.detailsFrame
@@ -372,7 +376,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL),
             L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP),
             recipeDifficultyText,
-            professionStatsMod.recipeDifficulty.value,
+            userMods.recipeDifficulty or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
         )
     end
@@ -387,7 +391,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL),
             L(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP),
             multicraftText,
-            professionStatsMod.multicraft.value,
+            userMods.multicraft or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
         )
 
@@ -412,7 +416,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             L(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL),
             L(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP),
             resourcefulnessText,
-            professionStatsMod.resourcefulness.value,
+            userMods.resourcefulness or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
         )
 
@@ -438,7 +442,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             L(CraftSim.CONST.TEXT.SKILL_LABEL),
             nil,
             skillText,
-            professionStatsMod.skill.value,
+            userMods.skill or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
         )
 
