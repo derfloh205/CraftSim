@@ -1259,7 +1259,7 @@ end
 ---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field includeLocked? boolean
 ---@field includeSoulbound? boolean
----@field finally function callback will be called when finished
+---@field finally? function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 
 ---@param options CraftSim.RecipeData.OptimizeFinishingReagents.Options
@@ -1342,11 +1342,8 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                             end
                         end)
 
-                    if bestResult and bestResult.itemID then
-                        slot:SetReagent(bestResult.itemID)
-                        self:Update()
-                    end
-
+                    slot:SetReagent(bestResult.itemID)
+                    self:Update()
                     frameDistributor:Continue()
                 end,
                 continue = function(frameDistributor2, _, reagent, _, _)
@@ -1441,8 +1438,14 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                 if owned < neededTotal then
                     -- Need to replace this soulbound finisher with the best non-soulbound (or currency) option
                     local bestCandidate = nil
-                    local bestAverageProfit = nil
-                    local bestConcentrationValue = nil
+
+                    -- start without any finishing reagent
+                    for _, slot in ipairs(self.reagentData.finishingReagentSlots) do
+                        slot.activeReagent = nil
+                    end
+                    self:Update()
+                    local bestAverageProfit = self.averageProfitCached
+                    local bestConcentrationValue = self:GetConcentrationValue()
                     local useConcentration = self.concentrating
 
                     local function considerCandidate(asCurrency, candidate)
@@ -1466,23 +1469,19 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                         local avgProfit = self.averageProfitCached or select(1, self:GetAverageProfit())
                         local concValue = select(1, self:GetConcentrationValue())
 
-                        if not bestCandidate then
+                        
+                        local better = false
+                        if useConcentration then
+                            better = concValue > bestConcentrationValue
+                        else
+                            better = avgProfit > bestAverageProfit
+                        end
+                        if better then
                             bestCandidate = { asCurrency = asCurrency, reagent = candidate }
                             bestAverageProfit = avgProfit
                             bestConcentrationValue = concValue
-                        else
-                            local better = false
-                            if useConcentration then
-                                better = concValue > bestConcentrationValue
-                            else
-                                better = avgProfit > bestAverageProfit
-                            end
-                            if better then
-                                bestCandidate = { asCurrency = asCurrency, reagent = candidate }
-                                bestAverageProfit = avgProfit
-                                bestConcentrationValue = concValue
-                            end
                         end
+                        
                     end
 
                     -- Evaluate all possible non-soulbound / currency alternatives for this slot
@@ -1619,21 +1618,22 @@ end
 ---@field optimizeReagentProgressCallback? fun(progress: number)
 ---@field optimizeConcentration? boolean
 ---@field optimizeConcentrationProgressCallback? fun(progress: number)
----@field optimizeFinishingReagents? boolean
+---@field optimizeFinishingReagentsOptions? CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field optimizeFinishingReagentsProgressCallback? fun(progress: number)
 ---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
----@field finally function callback when optimization is finished
+---@field finally? function callback when optimization is finished
 
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)
+    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.Optimization")
     options = options or {}
 
     local optimizationTaskList = {
         options.optimizeGear and "GEAR",
         options.optimizeReagentOptions and "REAGENTS",
         self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
-        options.optimizeFinishingReagents and "FINISHING_REAGENTS",
+        options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
         options.optimizeSubRecipesOptions and "SUB_RECIPES",
     }
 
@@ -1644,12 +1644,16 @@ function CraftSim.RecipeData:Optimize(options)
         end,
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
+                print("Optimizing Gear..")
                 self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "REAGENTS" then
+                print("Optimizing Reagents..")
                 self:OptimizeReagents(options.optimizeReagentOptions)
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "CONCENTRATION" then
+                print("Optimizing Concentration..")
+
                 self:OptimizeConcentration {
                     finally = function()
                         frameDistributorTasks:Continue()
@@ -1661,20 +1665,19 @@ function CraftSim.RecipeData:Optimize(options)
                     end
                 }
             elseif optimizationTask == "FINISHING_REAGENTS" then
+                print("Optimizing Finishing Reagents..")
+                print("- includeLocked: " .. tostring(options.optimizeFinishingReagentsOptions.includeLocked))
+                print("- includeSoulbound: " .. tostring(options.optimizeFinishingReagentsOptions.includeSoulbound))
                 -- For generic Optimize flows (e.g. Craft Queue favorites), never consider locked
                 -- finishing slots and always allow soulbound finishers (subject to ownership rules
                 -- inside OptimizeFinishingReagents).
                 self:OptimizeFinishingReagents {
-                    includeLocked = false,
-                    includeSoulbound = true,
+                    includeLocked = options.optimizeFinishingReagentsOptions.includeLocked,
+                    includeSoulbound = options.optimizeFinishingReagentsOptions.includeSoulbound,
                     finally = function()
                         frameDistributorTasks:Continue()
                     end,
-                    progressUpdateCallback = function(progress)
-                        if options.optimizeFinishingReagentsProgressCallback then
-                            options.optimizeFinishingReagentsProgressCallback(progress)
-                        end
-                    end
+                    progressUpdateCallback = options.optimizeFinishingReagentsOptions.progressUpdateCallback
                 }
             elseif optimizationTask == "SUB_RECIPES" then
                 self:SetSubRecipeCostsUsage(true)
@@ -1983,8 +1986,7 @@ function CraftSim.RecipeData:Craft(amount)
                     self.concentrating)
             end
         end
-    end
-    if self.isEnchantingRecipe then
+    elseif self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
             ---@cast vellumLocation ItemLocation

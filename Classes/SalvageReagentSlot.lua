@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.SalvageReagentSlot : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData): CraftSim.SalvageReagentSlot
 CraftSim.SalvageReagentSlot = CraftSim.CraftSimObject:extend()
@@ -17,6 +19,23 @@ function CraftSim.SalvageReagentSlot:new(recipeData)
 
     self.activeItem = nil
     self.recipeData = recipeData
+end
+
+---@return ItemMixin activeItem
+function CraftSim.SalvageReagentSlot:SetCheapestItem()
+    local cheapestItem = GUTIL:Fold(self.possibleItems, self.possibleItems[1], function(cheapest, item)
+        local cheapestItemID = cheapest:GetItemID()
+        local itemID = item:GetItemID()
+        local cheapestPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(cheapestItemID, true)
+        local itemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true)
+        if itemPrice < cheapestPrice then
+            return item
+        else
+            return cheapest
+        end
+    end)
+    self.activeItem = cheapestItem
+    return self.activeItem
 end
 
 ---@param itemID number
