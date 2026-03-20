@@ -1829,8 +1829,9 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
 
     buttonList:Remove()
     -- add soulbound upcraft reagents first, then add shatter spell
-    for upcraftReagent, data in pairs(CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA) do
+    for _, data in ipairs(CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA) do
         local reagentItem = Item:CreateFromItemID(data.preItemID)
+        local upcraftItem = Item:CreateFromItemID(data.upcraftItemID)
         reagentItem:ContinueOnItemLoad(function()
             buttonList:Add(function(row)
                 local macroButton = row.columns[1].macroButton --[[@as GGUI.Button]]
@@ -1853,16 +1854,16 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                     macroButton:SetBorder(true, {1, 0, 0, 0.8})
                 end
 
-                local items = { Item:CreateFromItemID(data.preItemID), Item:CreateFromItemID(upcraftReagent) }
+                local items = { reagentItem, upcraftItem }
 
                 GUTIL:ContinueOnAllItemsLoaded(items, function()
-                        local preItemLink = items[1]:GetItemLink()
-                        local upcraftItemLink = items[2]:GetItemLink()
+                        local reagentItemLink = reagentItem:GetItemLink()
+                        local upcraftItemLink = upcraftItem:GetItemLink()
                         local missingDiff = 5 - itemCountPre
-                        local missingText = itemCountPre >= 5 and "" or f.r("\nMissing " .. missingDiff .. "x " .. preItemLink)
+                        local missingText = itemCountPre >= 5 and "" or f.r("\nMissing " .. missingDiff .. "x " .. reagentItemLink)
                         macroButton.tooltipOptions = {
                             anchor = "ANCHOR_CURSOR_RIGHT",
-                            text = f.bb("Convert 5x ") .. preItemLink .. "  -> " .. upcraftItemLink .. missingText
+                            text = f.bb("Convert 5x ") .. reagentItemLink .. "  -> " .. upcraftItemLink .. missingText
                         }
                     end)
             end)

@@ -1719,19 +1719,40 @@ CraftSim.CONST.MOXIE_CURRENCY_IDS = {
 }
 
 CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA = {
-    -- Multicraft Manifold
-    [247724] = {
+    {
+        upcraftItemID = 247724, -- Multicraft Manifold
         preItemID = 247719, -- Multicraft Matrix
         requiredQuantity = 5,
     }, 
     -- Resourceful Routing
-    [247726] = {
+    {
+        upcraftItemID = 247726, -- Resourceful Routing
         preItemID = 247725, -- Resourceful Rebar
         requiredQuantity = 5,
     }, 
     -- Ingenious Identity
-    [247788] = {
+    {
+        upcraftItemID = 247788, -- Ingenious Identity
         preItemID = 260630, -- Ingenious Identifier
+        requiredQuantity = 5,
+    },
+    --- Artisan's Ledger
+    {
+        upcraftItemID = 246448, -- Artisan's Ledger
+        preItemID = 246447, -- Apprentices Scribbles
+        requiredQuantity = 5,
+    },
+    --- Mentors Helpful Handiwork
+    {
+        upcraftItemID = 246449, -- Mentors Helpful Handiwork
+        preItemID = 246448, -- Artisan's Ledger
+        requiredQuantity = 5,
+
+    },
+    --- Artisans Consortium Goldstar
+    {
+        upcraftItemID = 246450, -- Artisans Consortium Goldstar
+        preItemID = 246449, -- Mentors Helpful Handiwork
         requiredQuantity = 5,
     },
 }
