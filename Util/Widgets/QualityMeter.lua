@@ -158,6 +158,9 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
 
     if hasNextQuality then
         local nextItem = recipeData.resultData.itemsByQuality[currentQuality + 1]
+        if isConcentrating then
+            nextItem = recipeData.resultData.itemsByQuality[currentQuality]
+        end
         if nextItem then
             self.frame.nextQualityIcon:SetItem(nextItem)
         end
@@ -172,7 +175,9 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
     end
 
     if isConcentrating then
-        -- When concentration is active: fill bar fully with gold color, hide skill text
+        -- When concentration is active: hide current quality icon, show only next quality icon
+        self.frame.currentQualityIcon.frame:Hide()
+        -- Fill bar fully with gold color, hide skill text
         local c = BAR_COLOR_CONCENTRATION
         self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
         self.frame.bar:SetMinMaxValues(0, 1)
@@ -185,16 +190,20 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         return
     end
 
+    -- Not concentrating: show current quality icon
+    self.frame.currentQualityIcon.frame:Show()
+
     -- Normal mode: green bar
     local c = BAR_COLOR_NORMAL
     self.frame.bar:SetStatusBarColor(c.r, c.g, c.b, c.a)
 
     if hasNextQuality then
         local nextThreshold = thresholds[currentQuality] or 0
+        local lastThreshold = currentQuality > 1 and thresholds[currentQuality - 1] or 0
         local missingSkill = math.max(nextThreshold - currentSkill, 0)
 
         -- Update bar
-        self.frame.bar:SetMinMaxValues(0, math.max(nextThreshold, 1))
+        self.frame.bar:SetMinMaxValues(lastThreshold, math.max(nextThreshold, 1))
         self.frame.bar:SetValue(math.min(currentSkill, nextThreshold))
 
         -- Position current skill text above the fill endpoint on the bar
@@ -216,7 +225,7 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
             self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
         end
     else
-        -- At max quality: full green bar
+        -- At max quality: full gold bar
         local maxThreshold = (thresholds and thresholds[maxQuality - 1]) or currentSkill
         local barMax = math.max(maxThreshold, currentSkill, 1)
         self.frame.bar:SetMinMaxValues(0, barMax)
