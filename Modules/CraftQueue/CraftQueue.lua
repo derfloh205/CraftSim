@@ -44,6 +44,9 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
+--- incremented by UpdateQuickAccessBarDisplay; stale async callbacks must compare to this
+CraftSim.CRAFTQ.quickAccessBarRefreshGeneration = 0
+
 --- used to cache data for auctionator quick buy macro
 CraftSim.CRAFTQ.quickBuyCache = {
     ---@type CraftSim.CRAFTQ.QB_STATUS
