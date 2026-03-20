@@ -1810,18 +1810,47 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     local quickBar = CraftSim.CRAFTQ.frame.content.quickBarFrame --[[@as GGUI.Frame]]
     local buttonList = quickBar.buttonList --[[@as GGUI.FrameList]]
 
-    CraftSim.CRAFTQ.quickAccessBarRefreshGeneration = CraftSim.CRAFTQ.quickAccessBarRefreshGeneration + 1
-    local refreshGen = CraftSim.CRAFTQ.quickAccessBarRefreshGeneration
-
     buttonList:Remove()
+    -- add soulbound upcraft reagents first, then add shatter spell
+    for _, data in ipairs(CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA) do
+        local reagentItem = Item:CreateFromItemID(data.preItemID)
+        local upcraftItem = Item:CreateFromItemID(data.upcraftItemID)
+        reagentItem:ContinueOnItemLoad(function()
+            buttonList:Add(function(row)
+                local macroButton = row.columns[1].macroButton --[[@as GGUI.Button]]
+                local recipeCraftButton = row.columns[1].recipeCraftButton --[[@as GGUI.Button]]
+                macroButton:Show()
+                recipeCraftButton:Hide()
+                macroButton:SetMacroText("/use item:" .. data.preItemID)
+                macroButton:SetTexture{
+                    normal = reagentItem:GetItemIcon(),
+                    pushed = reagentItem:GetItemIcon(),
+                    highlight = reagentItem:GetItemIcon(),
+                    highlightBlendmode = "ADD",
+                }
+                local itemCountPre = C_Item.GetItemCount(data.preItemID)
+                macroButton:SetText(f.white("x" .. itemCountPre))
 
-    local itemsToLoad = {}
-    local seenPre = {}
-    for _, data in pairs(CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA) do
-        if not seenPre[data.preItemID] then
-            seenPre[data.preItemID] = true
-            table.insert(itemsToLoad, Item:CreateFromItemID(data.preItemID))
-        end
+                if itemCountPre >= 5 then
+                    macroButton:SetBorder(true, {0, 1, 0, 0.8})
+                else
+                    macroButton:SetBorder(true, {1, 0, 0, 0.8})
+                end
+
+                local items = { reagentItem, upcraftItem }
+
+                GUTIL:ContinueOnAllItemsLoaded(items, function()
+                        local reagentItemLink = reagentItem:GetItemLink()
+                        local upcraftItemLink = upcraftItem:GetItemLink()
+                        local missingDiff = 5 - itemCountPre
+                        local missingText = itemCountPre >= 5 and "" or f.r("\nMissing " .. missingDiff .. "x " .. reagentItemLink)
+                        macroButton.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            text = f.bb("Convert 5x ") .. reagentItemLink .. "  -> " .. upcraftItemLink .. missingText
+                        }
+                    end)
+            end)
+        end)
     end
 
     local function addShatterRowAndRefreshLayout()
