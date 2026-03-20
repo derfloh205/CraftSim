@@ -230,7 +230,11 @@ function CraftSim.RecipeData:new(options)
     if self.recipeInfo.hyperlink and not self.isEnchantingRecipe then
         local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
         -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
-        self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
+        -- Guard against nil: GetItemInfoInstant can return nil for uncached items (e.g., new expansion items
+        -- in non-English locales), which would incorrectly set isGear = true
+        if itemInfoInstant[4] ~= nil then
+            self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
+        end
     end
 
     self.isOldWorldRecipe = self:IsOldWorldRecipe()
