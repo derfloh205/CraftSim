@@ -199,6 +199,8 @@ function CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, cont
         return true
     end
 
+    if recipeExpansionID == "BASE" then recipeExpansionID = 0 end
+
     return itemExpacID >= recipeExpansionID
 end
 
