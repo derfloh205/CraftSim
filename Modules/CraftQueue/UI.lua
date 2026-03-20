@@ -1850,7 +1850,6 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                         }
                     end)
             end)
-            buttonList:UpdateDisplay()
         end)
     end
 
