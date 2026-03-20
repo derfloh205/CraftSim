@@ -131,51 +131,11 @@ function CraftSim.DEBUG:StopProfiling(label)
     return diff
 end
 
----@deprecated
-function CraftSim.DEBUG:GetCacheGlobalsList()
-    return {
-    }
-end
-
-function CraftSim.DEBUG:ShowOutdatedSpecNodes()
-    local specializationData = CraftSim.MODULES.recipeData.specializationData
-    if not specializationData then return end
-
-    local sortedNodes = GUTIL:Sort(specializationData.nodeData, function(a, b)
-        if a.name > b.name then
-            return true
-        elseif a.name < b.name then
-            return false
-        end
-
-        return a.nodeID < b.nodeID
-    end)
-
-    ---@type CraftSim.NodeData[]
-    local outliers = {}
-
-    for i = 1, #sortedNodes do
-        local nodeData = sortedNodes[i]
-        local nextData = sortedNodes[i + 1]
-        if nodeData and nextData then
-            if nodeData.name == nextData.name then
-                tinsert(outliers, nodeData)
-            end
-        end
+function CraftSim.DEBUG:DisableAllLogIDs()
+    local debugIDs = self:GetRegisteredDebugIDs()
+    local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+    for _, debugID in ipairs(debugIDs) do
+        debugIDsDB[debugID] = false
     end
-
-    if #outliers == 0 then return end
-
-    local currentName = outliers[1].name
-    local text = "## " .. currentName .. "\n"
-
-    for _, nodeData in ipairs(outliers) do
-        if currentName ~= nodeData.name then
-            text = text .. "\n## " .. nodeData.name .. "\n"
-            currentName = nodeData.name
-        end
-        text = text .. nodeData.nodeID .. ", "
-    end
-
-    CraftSim.UTIL:ShowTextCopyBox(text)
+    CraftSim.DB.OPTIONS:Save("DEBUG_IDS", debugIDsDB)
 end

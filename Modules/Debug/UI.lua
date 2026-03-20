@@ -84,6 +84,10 @@ function CraftSim.DEBUG.UI:Init()
                         not value)
                 end)
 
+            rootDescription:CreateButton(f.r("Disable All"), function()
+                CraftSim.DEBUG:DisableAllLogIDs()
+            end)
+
             rootDescription:CreateButton(f.l("Clear"), function()
                 CraftSim.DEBUG.frame.content.logBox:Clear()
                 wipe(CraftSim.DEBUG.frame.logBuffer)
