@@ -24,6 +24,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("21.4.1"),
+        f.pg .. f.bb("CraftQueue"),
+        f.a .. "- Added Skill+ Finishers to Quick Access",
         f.pg .. f.bb("Simulation Mode"),
         f.a .. "- Fixes expected quality display error on concentration",
         f.p .. "Improvements to Debug Module",
