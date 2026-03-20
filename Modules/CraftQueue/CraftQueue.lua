@@ -44,9 +44,6 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
---- incremented by UpdateQuickAccessBarDisplay; stale async callbacks must compare to this
-CraftSim.CRAFTQ.quickAccessBarRefreshGeneration = 0
-
 --- used to cache data for auctionator quick buy macro
 CraftSim.CRAFTQ.quickBuyCache = {
     ---@type CraftSim.CRAFTQ.QB_STATUS
@@ -865,7 +862,6 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end
 
---- Refresh quick-access convert buttons (stack counts / borders) after bag changes; macro /use does not run through CraftSim craft handlers.
 function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     local qFrame = CraftSim.CRAFTQ.frame
     if qFrame and qFrame:IsVisible() then
