@@ -590,23 +590,6 @@ function CraftSim.CRAFTQ.UI:Init()
                             "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
                     end);
 
-                    local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
-                                not value)
-                        end)
-
-                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
-                    end);
-
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                         frame.label = GGUI.Text {
                             parent = frame,
