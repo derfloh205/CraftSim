@@ -23,6 +23,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.4.1"),
+        f.pg .. f.bb("CraftQueue"),
+        f.a .. "- Added Skill+ Finishers to Quick Access",
+        f.pg .. f.bb("Simulation Mode"),
+        f.a .. "- Fixes expected quality display error on concentration",
+        f.p .. "Improvements to Debug Module",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.NETOUSS),
+        f.p .. f.l("DB2 Data Update: 12.0.1.66527"),
         newP("21.4.0"),
         f.PG .. f.bb("CraftQueue"),
         f.a .. "- Added Quick Access Bar",

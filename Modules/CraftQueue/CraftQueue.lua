@@ -28,7 +28,8 @@ local QB_STATUS = {
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY",
-    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED" })
+    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED",
+    "BAG_UPDATE_DELAYED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -873,6 +874,13 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List"))
 
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
+end
+
+function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
+    local qFrame = CraftSim.CRAFTQ.frame
+    if qFrame and qFrame:IsVisible() then
+        CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+    end
 end
 
 ---@param craftingItemResultData CraftingItemResultData
