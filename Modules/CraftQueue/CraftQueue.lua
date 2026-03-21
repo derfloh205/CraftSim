@@ -415,25 +415,15 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         end
                                         -- try to optimize for target quality
                                         if order.minQuality and order.minQuality > 0 then
-                                            if isPatronOrder and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION") then
-                                                RunNextFrame(
-                                                    function()
-                                                        recipeData:OptimizeReagents({
-                                                            maxQuality = math.max(order.minQuality - 1, 1)
-                                                        })
-                                                        queueRecipe()
-                                                    end
-                                                )
-                                            else
-                                                RunNextFrame(
-                                                    function()
-                                                        recipeData:OptimizeReagents({
-                                                            maxQuality = order.minQuality
-                                                        })
-                                                        queueRecipe()
-                                                    end
-                                                )
-                                            end
+                                            local maxQuality = (isPatronOrder and
+                                                CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION"))
+                                                and math.max(order.minQuality - 1, 1) or order.minQuality
+                                            recipeData:Optimize {
+                                                optimizeReagentOptions = {
+                                                    maxQuality = maxQuality,
+                                                },
+                                                finally = queueRecipe,
+                                            }
                                         else
                                             queueRecipe()
                                         end
@@ -998,31 +988,20 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
         recipeData:Update()
     end
 
-    if optimizeGear then
-        recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-    end
-
-    if optimizeTopProfit then
-        recipeData:OptimizeReagents {
-            highestProfit = true,
-        }
-    end
-
-    if optimizeConcentration and recipeData.supportsQualities then
-        queueButton:SetEnabled(false)
-        recipeData:OptimizeConcentration {
-            finally = function()
-                queueButton:SetEnabled(true)
-                queueButton:SetText("+ CraftQueue")
-                CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
-            end,
-            progressUpdateCallback = function(progress)
-                queueButton:SetText(string.format("%.0f%%", progress))
-            end
-        }
-    else
-        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
-    end
+    queueButton:SetEnabled(false)
+    recipeData:Optimize {
+        optimizeGear = optimizeGear,
+        optimizeReagentOptions = optimizeTopProfit and { highestProfit = true } or nil,
+        optimizeConcentration = optimizeConcentration,
+        optimizeConcentrationProgressCallback = function(progress)
+            queueButton:SetText(string.format("%.0f%%", progress))
+        end,
+        finally = function()
+            queueButton:SetEnabled(true)
+            queueButton:SetText("+ CraftQueue")
+            CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+        end,
+    }
 end
 
 function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
