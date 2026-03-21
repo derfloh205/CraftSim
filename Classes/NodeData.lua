@@ -192,7 +192,7 @@ function CraftSim.NodeData:GetTooltipText()
         local alsoTakenBy = CraftSim.DB.CRAFTER:GetCrafterNamesWithNodeActive(self.nodeID, currentCrafterUID)
         if #alsoTakenBy > 0 then
             tooltipText = tooltipText ..
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_ALSO_TAKEN_BY) ..
+                "\n\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_ALSO_TAKEN_BY) ..
                 GUTIL:ColorizeText(table.concat(alsoTakenBy, ", "), GUTIL.COLORS.YELLOW)
         end
     end

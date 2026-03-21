@@ -285,3 +285,35 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData
         .maxProfessionStats))
 end
+
+local specNodeTooltipHooked = false
+function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
+    if specNodeTooltipHooked then return end
+    specNodeTooltipHooked = true
+
+    -- Hook into Blizzard's trait node button OnEnter to inject "Also taken by" info
+    -- into the default profession specialization UI tooltips
+    if not TraitNodeButtonMixin then return end
+
+    hooksecurefunc(TraitNodeButtonMixin, "OnEnter", function(nodeButton)
+        -- Only inject when the profession spec page is visible
+        if not (ProfessionsFrame and ProfessionsFrame:IsShown() and
+                ProfessionsFrame.SpecPage and ProfessionsFrame.SpecPage:IsShown()) then
+            return
+        end
+
+        local nodeInfo = nodeButton.nodeInfo
+        if not nodeInfo then return end
+
+        local nodeID = nodeInfo.ID
+        if not nodeID then return end
+
+        local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+        local alsoTakenBy = CraftSim.DB.CRAFTER:GetCrafterNamesWithNodeActive(nodeID, playerUID)
+        if #alsoTakenBy > 0 then
+            local label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_ALSO_TAKEN_BY)
+            GameTooltip:AddLine(label .. table.concat(alsoTakenBy, ", "), 1, 0.82, 0, true)
+            GameTooltip:Show()
+        end
+    end)
+end
