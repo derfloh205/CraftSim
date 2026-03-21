@@ -153,6 +153,33 @@ function CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationDa
         :Serialize()
 end
 
+---@param nodeID number
+---@param excludeCrafterUID CrafterUID
+---@return string[] crafterNames
+function CraftSim.DB.CRAFTER:GetCrafterNamesWithNodeActive(nodeID, excludeCrafterUID)
+    local crafterNames = {}
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        if crafterUID ~= excludeCrafterUID then
+            local specializationData = crafterData.specializationData or {}
+            local found = false
+            for _, specDataSerialized in pairs(specializationData) do
+                if found then break end
+                for _, nodeDataSerialized in ipairs(specDataSerialized.nodeData or {}) do
+                    if nodeDataSerialized.nodeID == nodeID and nodeDataSerialized.active then
+                        found = true
+                        break
+                    end
+                end
+            end
+            if found then
+                local name = strsplit("-", crafterUID)
+                tinsert(crafterNames, name)
+            end
+        end
+    end
+    return crafterNames
+end
+
 --- returns the data serialized
 ---@param crafterUID CrafterUID
 ---@param profession Enum.Profession
