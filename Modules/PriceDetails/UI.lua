@@ -67,75 +67,79 @@ function CraftSim.PRICE_DETAILS.UI:Init()
     })
 
     local function createContent(frame)
-        ---@type GGUI.FrameList | GGUI.Widget
-        frame.content.priceDetailsList = CraftSim.GGUI.FrameList({
-            parent = frame.content,
-            anchorParent = frame.title.frame,
-            anchorA = "TOP",
-            anchorB = "BOTTOM",
-            offsetY = -30,
-            offsetX = -10,
-            sizeY = 140,
-            columnOptions = {
-                {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH),
-                    width = 60,
-                    justifyOptions = { type = "H", align = "CENTER" }
-                },
-                {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM),
-                    width = 60,
-                    justifyOptions = { type = "H", align = "CENTER" }
-                },
-                {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM),
-                    width = 110,
-                },
-                {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM),
-                    width = 130,
-                }
-            },
-            rowConstructor = function(columns)
-                local invColumn = columns[1]
-                local itemColumn = columns[2]
-                local priceColumn = columns[3]
-                local profitColumn = columns[4]
-
-                invColumn.text = CraftSim.GGUI.Text({
-                    parent = invColumn, anchorParent = invColumn
-                })
-
-                itemColumn.icon = CraftSim.GGUI.Icon({
-                    parent = itemColumn,
-                    anchorParent = itemColumn,
-                    sizeX = 25,
-                    sizeY = 25,
-                    qualityIconScale = 1.4
-                })
-
-                priceColumn.text = CraftSim.GGUI.Text({
-                    parent = priceColumn,
-                    anchorParent = priceColumn,
-                    justifyOptions = { type = "H", align = "LEFT" },
-                    fixedWidth = priceColumn:GetWidth()
-                })
-                profitColumn.text = CraftSim.GGUI.Text({
-                    parent = profitColumn,
-                    anchorParent = profitColumn,
-                    justifyOptions = { type = "H", align = "LEFT" },
-                    fixedWidth = profitColumn:GetWidth()
-                })
-            end
-        })
-
-
-        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
+        CraftSim.PRICE_DETAILS.UI:CreateContent(frame)
         frame:Hide()
     end
 
     createContent(CraftSim.PRICE_DETAILS.frame)
     createContent(CraftSim.PRICE_DETAILS.frameWO)
+end
+
+---@param frame table GGUI.Frame or sub-module shim with .content and .title.frame
+function CraftSim.PRICE_DETAILS.UI:CreateContent(frame)
+    ---@type GGUI.FrameList | GGUI.Widget
+    frame.content.priceDetailsList = CraftSim.GGUI.FrameList({
+        parent = frame.content,
+        anchorParent = frame.title.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetY = -30,
+        offsetX = -10,
+        sizeY = 140,
+        columnOptions = {
+            {
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH),
+                width = 60,
+                justifyOptions = { type = "H", align = "CENTER" }
+            },
+            {
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM),
+                width = 60,
+                justifyOptions = { type = "H", align = "CENTER" }
+            },
+            {
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM),
+                width = 110,
+            },
+            {
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM),
+                width = 130,
+            }
+        },
+        rowConstructor = function(columns)
+            local invColumn = columns[1]
+            local itemColumn = columns[2]
+            local priceColumn = columns[3]
+            local profitColumn = columns[4]
+
+            invColumn.text = CraftSim.GGUI.Text({
+                parent = invColumn, anchorParent = invColumn
+            })
+
+            itemColumn.icon = CraftSim.GGUI.Icon({
+                parent = itemColumn,
+                anchorParent = itemColumn,
+                sizeX = 25,
+                sizeY = 25,
+                qualityIconScale = 1.4
+            })
+
+            priceColumn.text = CraftSim.GGUI.Text({
+                parent = priceColumn,
+                anchorParent = priceColumn,
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = priceColumn:GetWidth()
+            })
+            profitColumn.text = CraftSim.GGUI.Text({
+                parent = profitColumn,
+                anchorParent = profitColumn,
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = profitColumn:GetWidth()
+            })
+        end
+    })
+
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
 ---@param recipeData CraftSim.RecipeData

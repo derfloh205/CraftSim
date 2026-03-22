@@ -62,9 +62,9 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             end
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL),
-                "MODULE_REAGENT_OPTIMIZATION",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP))
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_OPTIMIZATION_LABEL),
+                "MODULE_OPTIMIZATION",
+                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_OPTIMIZATION_TOOLTIP))
 
             addModuleCheckbox(
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL),
@@ -72,24 +72,9 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL),
-                "MODULE_TOP_GEAR",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP))
-
-            addModuleCheckbox(
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL),
                 "MODULE_CRAFT_QUEUE",
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP))
-
-            addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL),
-                "MODULE_COST_OVERVIEW",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP))
-
-            addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL),
-                "MODULE_PRICE_OVERRIDE",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP))
 
             addModuleCheckbox(
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL),
@@ -110,11 +95,6 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL),
                 "MODULE_CRAFT_LOG",
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP))
-
-            addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),
-                "MODULE_COST_OPTIMIZATION",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP))
 
             addModuleCheckbox(
                 L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL),

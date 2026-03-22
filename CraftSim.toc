@@ -120,6 +120,9 @@ Modules/PriceDetails/UI.lua
 Modules/CostOptimization/CostOptimization.lua
 Modules/CostOptimization/UI.lua
 
+Modules/Optimization/Optimization.lua
+Modules/Optimization/UI.lua
+
 Modules/Supporters/Supporters.lua
 Modules/Supporters/UI.lua
 

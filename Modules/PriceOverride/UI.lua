@@ -64,10 +64,20 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
     })
 
     local function createContentV2(frame)
-        local overrideOptions = nil
+        CraftSim.PRICE_OVERRIDE.UI:CreateContent(frame)
+        frame:Hide()
+    end
 
-        ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
-        local function selectionCallback(_, _, overrideData)
+    createContentV2(frameNO_WO)
+    createContentV2(frameWO)
+end
+
+---@param frame table GGUI.Frame or sub-module shim with .content and .title.frame
+function CraftSim.PRICE_OVERRIDE.UI:CreateContent(frame)
+    local overrideOptions = nil
+
+    ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
+    local function selectionCallback(_, _, overrideData)
             print("Selected itemID: " .. tostring(overrideData.item:GetItemID()))
             frame.currentDropdownData = overrideData
             CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideItem(overrideData)
@@ -247,10 +257,6 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             frame.content.activeOverridesBox,
             "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, { type = "H", value = "LEFT" })
         GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
-    end
-
-    createContentV2(frameNO_WO)
-    createContentV2(frameWO)
 end
 
 ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData

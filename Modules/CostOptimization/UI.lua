@@ -72,66 +72,79 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
     })
 
     local function createContent(frame)
-        frame.content.reagentCostsTab = GGUI.BlizzardTab {
-            buttonOptions = {
-                parent = frame.content,
-                anchorParent = frame.content,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_COSTS_TAB),
-                offsetY = -2,
-            },
-            top = true,
-            initialTab = true,
-            parent = frame.content, anchorParent = frame.content,
-            sizeX = sizeX - 5,
-            sizeY = sizeY - 5,
-        }
+        CraftSim.COST_OPTIMIZATION.UI:CreateContent(frame)
+        frame:Hide()
+    end
 
-        ---@class CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab : GGUI.BlizzardTab
-        frame.content.subRecipeOptions = GGUI.BlizzardTab {
-            buttonOptions = {
-                parent = frame.content,
-                anchorParent = frame.content.reagentCostsTab.button,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB),
-                anchorA = "LEFT", anchorB = "RIGHT",
-            },
-            top = true,
-            parent = frame.content, anchorParent = frame.content,
-            sizeX = sizeX - 5,
-            sizeY = sizeY - 5,
-        }
+    createContent(CraftSim.COST_OPTIMIZATION.frame)
+    createContent(CraftSim.COST_OPTIMIZATION.frameWO)
+end
 
-        self:InitSubRecipeOptions(frame.content.subRecipeOptions)
+---@param frame table GGUI.Frame or sub-module shim with .content and .title.frame
+function CraftSim.COST_OPTIMIZATION.UI:CreateContent(frame)
+    local sizeX = 520
+    local sizeY = 280
 
-        local content = frame.content.reagentCostsTab.content
+    frame.content.reagentCostsTab = GGUI.BlizzardTab {
+        buttonOptions = {
+            parent = frame.content,
+            anchorParent = frame.content,
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_COSTS_TAB),
+            offsetY = -2,
+        },
+        top = true,
+        initialTab = true,
+        parent = frame.content, anchorParent = frame.content,
+        sizeX = sizeX - 5,
+        sizeY = sizeY - 5,
+    }
 
-        content.craftingCostsTitle = GGUI.Text({
-            parent = content,
-            anchorParent = frame.title.frame,
-            anchorA = "TOP",
-            anchorB = "BOTTOM",
-            offsetX = -30,
-            offsetY = -15,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS),
-        })
-        content.craftingCostsValue = GGUI.Text({
-            parent = content,
-            anchorParent = content.craftingCostsTitle.frame,
-            anchorA = "LEFT",
-            anchorB = "RIGHT",
-            text = CraftSim.UTIL:FormatMoney(123456789),
-            justifyOptions = { type = "H", align = "LEFT" }
-        })
+    ---@class CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab : GGUI.BlizzardTab
+    frame.content.subRecipeOptions = GGUI.BlizzardTab {
+        buttonOptions = {
+            parent = frame.content,
+            anchorParent = frame.content.reagentCostsTab.button,
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB),
+            anchorA = "LEFT", anchorB = "RIGHT",
+        },
+        top = true,
+        parent = frame.content, anchorParent = frame.content,
+        sizeX = sizeX - 5,
+        sizeY = sizeY - 5,
+    }
 
-        content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
-            parent = content, anchorParent = content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
-            offsetX = -60, offsetY = -5, label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION),
-            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP),
-            initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
-            clickCallback = function(_, checked)
-                CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
-                CraftSim.MODULES:UpdateUI()
-            end
-        }
+    self:InitSubRecipeOptions(frame.content.subRecipeOptions)
+
+    local content = frame.content.reagentCostsTab.content
+
+    content.craftingCostsTitle = GGUI.Text({
+        parent = content,
+        anchorParent = frame.title.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetX = -30,
+        offsetY = -15,
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS),
+    })
+    content.craftingCostsValue = GGUI.Text({
+        parent = content,
+        anchorParent = content.craftingCostsTitle.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        text = CraftSim.UTIL:FormatMoney(123456789),
+        justifyOptions = { type = "H", align = "LEFT" }
+    })
+
+    content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
+        offsetX = -60, offsetY = -5, label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION),
+        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
+            CraftSim.MODULES:UpdateUI()
+        end
+    }
 
         GGUI.HelpIcon({
             parent = content,
@@ -327,10 +340,6 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         })
 
         GGUI.BlizzardTabSystem { frame.content.reagentCostsTab, frame.content.subRecipeOptions }
-    end
-
-    createContent(CraftSim.COST_OPTIMIZATION.frame)
-    createContent(CraftSim.COST_OPTIMIZATION.frameWO)
 end
 
 ---@param subRecipeOptionsTab CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab

@@ -38,20 +38,11 @@ end
 function CraftSim.FRAME:RestoreModulePositions()
     local recipeScanFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
     local customerHistoryFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-    local priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-    local priceOverrideFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
     local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
     local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
     local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
-    local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-    local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-    local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
 
@@ -61,20 +52,16 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
-    priceOverrideFrame:RestoreSavedConfig(ProfessionsFrame)
-    priceOverrideFrameWO:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
-    topgearFrame:RestoreSavedConfig(ProfessionsFrame)
-    topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.PRICE_DETAILS.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.PRICE_DETAILS.frameWO:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.COST_OPTIMIZATION.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.COST_OPTIMIZATION.frameWO:RestoreSavedConfig(ProfessionsFrame)
-    reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
-    reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    if CraftSim.OPTIMIZATION.frame then
+        CraftSim.OPTIMIZATION.frame:RestoreSavedConfig(ProfessionsFrame)
+    end
+    if CraftSim.OPTIMIZATION.frameWO then
+        CraftSim.OPTIMIZATION.frameWO:RestoreSavedConfig(ProfessionsFrame)
+    end
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
 
     CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)

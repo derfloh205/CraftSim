@@ -68,16 +68,26 @@ function CraftSim.TOPGEAR.UI:Init()
     })
 
     local function createContent(frame)
-        local contentOffsetY = -40
-        local iconsOffsetY = 90
-        frame.content.autoUpdateCB = GGUI.Checkbox {
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC),
-            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP),
-            parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = -40, offsetY = -33,
-            initialValue = CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE"),
-            clickCallback = function(_, checked)
-                CraftSim.DB.OPTIONS:Save("TOP_GEAR_AUTO_UPDATE", checked)
-            end
+        CraftSim.TOPGEAR.UI:CreateContent(frame)
+        frame:Hide()
+    end
+
+    createContent(frameNO_WO)
+    createContent(frameWO)
+end
+
+---@param frame table GGUI.Frame or sub-module shim with .content and .title.frame
+function CraftSim.TOPGEAR.UI:CreateContent(frame)
+    local contentOffsetY = -40
+    local iconsOffsetY = 90
+    frame.content.autoUpdateCB = GGUI.Checkbox {
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC),
+        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP),
+        parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = -40, offsetY = -33,
+        initialValue = CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TOP_GEAR_AUTO_UPDATE", checked)
+        end
         }
         frame.content.gear1Icon = CraftSim.GGUI.Icon({
             parent = frame.content,
@@ -184,12 +194,6 @@ function CraftSim.TOPGEAR.UI:Init()
             sizeX = 20,
             sizeY = 20,
         })
-
-        frame:Hide()
-    end
-
-    createContent(frameNO_WO)
-    createContent(frameWO)
 end
 
 function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)

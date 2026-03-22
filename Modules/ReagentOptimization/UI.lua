@@ -68,16 +68,26 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     })
 
     local function createContent(frame)
-        frame.content.maxQualityDropdown = GGUI.Dropdown {
-            parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = 15, offsetY = -30,
-            width = 50,
-            clickCallback = function(_, label, value)
-                local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get(
-                    "REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
-                local currentRecipeID = CraftSim.INIT.visibleRecipeID
+        CraftSim.REAGENT_OPTIMIZATION.UI:CreateContent(frame)
+        frame:Hide()
+    end
 
-                if currentRecipeID then
-                    maxOptimizationQualities[currentRecipeID] = value
+    createContent(frameNO_WO)
+    createContent(frameWO)
+end
+
+---@param frame table GGUI.Frame or sub-module shim with .content and .title.frame
+function CraftSim.REAGENT_OPTIMIZATION.UI:CreateContent(frame)
+    frame.content.maxQualityDropdown = GGUI.Dropdown {
+        parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = 15, offsetY = -30,
+        width = 50,
+        clickCallback = function(_, label, value)
+            local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get(
+                "REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
+            local currentRecipeID = CraftSim.INIT.visibleRecipeID
+
+            if currentRecipeID then
+                maxOptimizationQualities[currentRecipeID] = value
                 end
 
                 CraftSim.MODULES:UpdateUI()
@@ -504,12 +514,6 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                 texturePath = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
             }
         }
-
-        frame:Hide()
-    end
-
-    createContent(frameNO_WO)
-    createContent(frameWO)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()

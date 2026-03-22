@@ -535,6 +535,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Cost Optimization",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
         "Module that shows detailed information about and helps with optimizing crafting costs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_OPTIMIZATION_LABEL] = "Optimization",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_OPTIMIZATION_TOOLTIP] =
+        "Merged module combining Price Details, Cost Optimization, Price Override, Reagent Optimization and Top Gear",
+        [CraftSim.CONST.TEXT.OPTIMIZATION_TITLE] = "Optimization",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL] = "Statistics",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP] =
         "Module that shows detailed outcome statistics for the currently open recipe",
