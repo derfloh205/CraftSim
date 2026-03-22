@@ -164,6 +164,33 @@ function CraftSim.NodeData:UpdateProfessionStats()
     end
 end
 
+---@param recipeData CraftSim.RecipeData
+---@return boolean
+function CraftSim.NodeData:HasRelevantStats(recipeData)
+    local maxStats = self.maxProfessionStats
+
+    -- skill and craftingspeed are always relevant
+    if maxStats.skill.value > 0 then return true end
+    if maxStats.craftingspeed.value > 0 then return true end
+
+    -- check conditional stats: only relevant if the recipe supports them
+    local conditionalStats = {
+        { stat = maxStats.multicraft,       supported = recipeData.supportsMulticraft },
+        { stat = maxStats.resourcefulness,  supported = recipeData.supportsResourcefulness },
+        { stat = maxStats.ingenuity,        supported = recipeData.supportsIngenuity },
+    }
+    for _, entry in pairs(conditionalStats) do
+        if entry.supported then
+            if entry.stat.value > 0 then return true end
+            for _, v in pairs(entry.stat.extraValues) do
+                if v > 0 then return true end
+            end
+        end
+    end
+
+    return false
+end
+
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
     local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. tostring(self.name)

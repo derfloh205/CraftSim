@@ -211,6 +211,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     local nodeDataList = specializationData.nodeData
 
     for _, nodeData in pairs(nodeDataList) do
+        if not nodeData:HasRelevantStats(recipeData) then
+            goto continue
+        end
         content.nodeList:Add(function(row)
             local columns = row.columns
             ---@class CraftSim.SPEC_INFO.NODE_LIST.NAME_COLUMN : Frame
@@ -259,6 +262,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
             row.rank = nodeData.rank
             row.isMax = nodeData.maxRank == nodeData.rank
         end)
+        ::continue::
     end
 
     -- sort only if sim mode not active
