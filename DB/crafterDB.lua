@@ -587,3 +587,33 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_4_5_Remove_gathering_concentration_data
             end
         end
 end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()
+    -- Strip all fields from serialized NodeData except nodeID, rank, name, and icon.
+    -- professionStats, maxProfessionStats, active, maxRank, and perkData are now derived
+    -- at load time from static SPECIALIZATION_DATA.NODE_DATA plus the saved rank, so
+    -- there is no need to persist them. This reduces SavedVariables size by ~200x.
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        crafterData = crafterData --[[@as CraftSim.DB.CrafterDBData]]
+        if crafterData.specializationData then
+            for recipeID, specData in pairs(crafterData.specializationData) do
+                if type(specData) == "table" and type(specData.nodeData) == "table" then
+                    local compactNodeData = {}
+                    for _, nodeData in pairs(specData.nodeData) do
+                        if nodeData.nodeID ~= nil then
+                            tinsert(compactNodeData, {
+                                nodeID = nodeData.nodeID,
+                                rank   = nodeData.rank,
+                                name   = nodeData.name,
+                                icon   = nodeData.icon,
+                            })
+                        end
+                    end
+                    crafterData.specializationData[recipeID] = {
+                        nodeData = compactNodeData,
+                    }
+                end
+            end
+        end
+    end
+end

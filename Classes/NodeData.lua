@@ -250,50 +250,101 @@ end
 
 ---@class CraftSim.NodeData.Serialized
 ---@field nodeID number
----@field perkData CraftSim.PerkData.Serialized[]
----@field professionStats CraftSim.ProfessionStats.Serialized
----@field maxProfessionStats CraftSim.ProfessionStats.Serialized
----@field name string
----@field icon number
----@field active boolean
 ---@field rank number
----@field maxRank number
+---@field name? string
+---@field icon? number
 
 ---@return CraftSim.NodeData.Serialized
 function CraftSim.NodeData:Serialize()
     ---@type CraftSim.NodeData.Serialized
     return {
         nodeID = self.nodeID,
+        rank = self.rank,
         name = self.name,
         icon = self.icon,
-        professionStats = self.professionStats:Serialize(),
-        maxProfessionStats = self.maxProfessionStats:Serialize(),
-        rank = self.rank,
-        maxRank = self.maxRank,
-        active = self.active,
-        perkData = GUTIL:Map(self.perkData, function(perkData)
-            return perkData:Serialize()
-        end)
     }
 end
 
 ---@param serializedData CraftSim.NodeData.Serialized
 ---@param recipeData CraftSim.RecipeData
----@return CraftSim.NodeData
+---@return CraftSim.NodeData?
 function CraftSim.NodeData:Deserialize(serializedData, recipeData)
+    local expansionID = recipeData.professionData.expansionID
+    local professionID = recipeData.professionData.professionInfo.profession
+    local expansionSpecData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not expansionSpecData then return nil end
+
+    local professionSpecData = expansionSpecData[professionID]
+    if not professionSpecData then return nil end
+
+    local rawNodeDataList = professionSpecData.nodeData
+    local rawBaseNodeData = rawNodeDataList[serializedData.nodeID]
+    if not rawBaseNodeData then return nil end
+
+    -- Build the perkMap for this node from static data
+    local perkMap = {}
+    for perkID, rawPerkData in pairs(rawNodeDataList) do
+        if rawPerkData.nodeID == serializedData.nodeID and rawPerkData.maxRank == 1 then
+            perkMap[perkID] = rawPerkData
+        end
+    end
+
+    -- Create an empty NodeData (skipping the WoW-API-dependent constructor) and
+    -- populate it entirely from static SPECIALIZATION_DATA + the saved rank.
     local nodeData = CraftSim.NodeData()
-    nodeData.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
-    nodeData.maxProfessionStats = CraftSim.ProfessionStats:Deserialize(serializedData.maxProfessionStats)
-    nodeData.nodeID = serializedData.nodeID
-    nodeData.recipeData = recipeData
-    nodeData.name = serializedData.name
-    nodeData.icon = serializedData.icon
-    nodeData.active = serializedData.active
-    nodeData.rank = serializedData.rank
-    nodeData.maxRank = serializedData.maxRank
-    nodeData.perkData = GUTIL:Map(serializedData.perkData, function(serializedPerkData)
-        return CraftSim.PerkData:Deserialize(nodeData, serializedPerkData)
+    nodeData.nodeID             = rawBaseNodeData.nodeID
+    nodeData.recipeData         = recipeData
+    nodeData.maxRank            = rawBaseNodeData.maxRank
+    nodeData.professionStats    = CraftSim.ProfessionStats()
+    nodeData.maxProfessionStats = CraftSim.ProfessionStats()
+    nodeData.rank               = serializedData.rank
+    nodeData.active             = false
+    -- Preserve display-only fields if available in the serialized data
+    nodeData.name               = serializedData.name or "<nodeName?>"
+    nodeData.icon               = serializedData.icon
+
+    -- Populate equals* multipliers from static raw_stats (needed by UpdateProfessionStats)
+    nodeData.raw_stats                              = rawBaseNodeData.stats or {}
+    nodeData.equalsSkill                            = 0
+    nodeData.equalsMulticraft                       = 0
+    nodeData.equalsResourcefulness                  = 0
+    nodeData.equalsIngenuity                        = 0
+    nodeData.equalsResourcefulnessExtraItemsFactor  = 0
+    nodeData.equalsIngenuityExtraConcentrationFactor = 0
+    nodeData.equalsCraftingspeed                    = 0
+
+    for stat, amount in pairs(nodeData.raw_stats) do
+        amount = amount or 0
+        if stat == "skill" then
+            nodeData.equalsSkill = amount
+        elseif stat == "multicraft" then
+            nodeData.equalsMulticraft = amount
+        elseif stat == "resourcefulness" then
+            nodeData.equalsResourcefulness = amount
+        elseif stat == "ingenuity" then
+            nodeData.equalsIngenuity = amount
+        elseif stat == "reagentssavedfromresourcefulness" then
+            nodeData.equalsResourcefulnessExtraItemsFactor = amount / 100
+        elseif stat == "ingenuityrefundincrease" then
+            nodeData.equalsIngenuityExtraConcentrationFactor = amount / 100
+        elseif stat == "craftingspeed" then
+            nodeData.equalsCraftingspeed = amount / 100
+        end
+    end
+
+    -- Build perkData from static perkMap.
+    -- CraftSim.PerkData() calls C_ProfSpecs.GetUnlockRankForPerk(perkID) which returns
+    -- static game data (threshold rank) and is safe to call regardless of current character.
+    nodeData.perkData = {}
+    for perkID, perkRawData in pairs(perkMap) do
+        tinsert(nodeData.perkData, CraftSim.PerkData(nodeData, perkID, perkRawData))
+    end
+    table.sort(nodeData.perkData, function(a, b)
+        return a.threshold < b.threshold
     end)
+
+    -- Derive active, professionStats and maxProfessionStats from rank + static data
+    nodeData:Update()
 
     return nodeData
 end

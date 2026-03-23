@@ -159,8 +159,6 @@ end
 
 ---@class CraftSim.SpecializationData.Serialized
 ---@field nodeData CraftSim.NodeData.Serialized[]
----@field professionStats CraftSim.ProfessionStats.Serialized
----@field maxProfessionStats CraftSim.ProfessionStats.Serialized
 
 ---@return CraftSim.SpecializationData.Serialized
 function CraftSim.SpecializationData:Serialize()
@@ -169,23 +167,32 @@ function CraftSim.SpecializationData:Serialize()
         nodeData = GUTIL:Map(self.nodeData, function(nodeData)
             return nodeData:Serialize()
         end),
-        professionStats = self.professionStats:Serialize(),
-        maxProfessionStats = self.maxProfessionStats:Serialize(),
     }
     return serializedData
 end
 
 ---@param serializedData CraftSim.SpecializationData.Serialized
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.SpecializationData
 function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     local specializationData = CraftSim.SpecializationData()
-    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
-    specializationData.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
-    specializationData.maxProfessionStats = CraftSim.ProfessionStats:Deserialize(serializedData.maxProfessionStats)
+    specializationData.isImplemented = recipeData:IsSpecializationInfoImplemented()
+    specializationData.recipeData = recipeData
+    specializationData.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
+        [recipeData.professionData.professionInfo.profession]
+    specializationData.professionStats = CraftSim.ProfessionStats()
+    specializationData.maxProfessionStats = CraftSim.ProfessionStats()
+    specializationData.nodeData = {}
 
-    specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
-        return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData)
-    end)
+    for _, nodeDataSerialized in pairs(serializedData.nodeData or {}) do
+        local nodeData = CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData)
+        if nodeData then
+            tinsert(specializationData.nodeData, nodeData)
+        end
+    end
+
+    -- Derive professionStats and maxProfessionStats from the reconstructed nodes
+    specializationData:UpdateProfessionStats()
 
     return specializationData
 end
