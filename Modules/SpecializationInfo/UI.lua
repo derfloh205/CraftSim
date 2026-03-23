@@ -211,54 +211,56 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     local nodeDataList = specializationData.nodeData
 
     for _, nodeData in pairs(nodeDataList) do
-        content.nodeList:Add(function(row)
-            local columns = row.columns
-            ---@class CraftSim.SPEC_INFO.NODE_LIST.NAME_COLUMN : Frame
-            local nameColumn = columns[1]
+        if nodeData:HasRelevantStats(recipeData) then
+            content.nodeList:Add(function(row)
+                local columns = row.columns
+                ---@class CraftSim.SPEC_INFO.NODE_LIST.NAME_COLUMN : Frame
+                local nameColumn = columns[1]
 
-            ---@class CraftSim.SPEC_INFO.NODE_LIST.RANK_COLUMN : Frame
-            local rankColumn = columns[2]
+                ---@class CraftSim.SPEC_INFO.NODE_LIST.RANK_COLUMN : Frame
+                local rankColumn = columns[2]
 
-            nameColumn.iconTexture:SetTexture(nodeData.icon)
-            rankColumn.text:SetVisible(not CraftSim.SIMULATION_MODE.isActive)
-            rankColumn.simText:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-            rankColumn.simInput:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-            if CraftSim.SIMULATION_MODE.isActive then
-                rankColumn.simInput.nodeData = nodeData
-                rankColumn.simInput.textInput:SetText(nodeData.rank)
-                if nodeData.active then
-                    nameColumn.text:SetText(nodeData.name)
-                    rankColumn.simText:SetText(" / " .. tostring(nodeData.maxRank))
+                nameColumn.iconTexture:SetTexture(nodeData.icon)
+                rankColumn.text:SetVisible(not CraftSim.SIMULATION_MODE.isActive)
+                rankColumn.simText:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+                rankColumn.simInput:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+                if CraftSim.SIMULATION_MODE.isActive then
+                    rankColumn.simInput.nodeData = nodeData
+                    rankColumn.simInput.textInput:SetText(nodeData.rank)
+                    if nodeData.active then
+                        nameColumn.text:SetText(nodeData.name)
+                        rankColumn.simText:SetText(" / " .. tostring(nodeData.maxRank))
+                    else
+                        nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
+                        rankColumn.simText:SetText(GUTIL:ColorizeText(" / " .. tostring(nodeData.maxRank),
+                            GUTIL.COLORS.GREY))
+                    end
                 else
-                    nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
-                    rankColumn.simText:SetText(GUTIL:ColorizeText(" / " .. tostring(nodeData.maxRank),
-                        GUTIL.COLORS.GREY))
+                    if nodeData.active then
+                        nameColumn.text:SetText(nodeData.name)
+                        rankColumn.text:SetText("(" ..
+                            tostring(nodeData.rank) .. "/" .. tostring(nodeData.maxRank) .. ")")
+                    else
+                        nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
+                        rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(nodeData.maxRank) .. ")",
+                            GUTIL.COLORS.GREY))
+                    end
                 end
-            else
-                if nodeData.active then
-                    nameColumn.text:SetText(nodeData.name)
-                    rankColumn.text:SetText("(" ..
-                        tostring(nodeData.rank) .. "/" .. tostring(nodeData.maxRank) .. ")")
-                else
-                    nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
-                    rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(nodeData.maxRank) .. ")",
-                        GUTIL.COLORS.GREY))
-                end
-            end
 
 
-            row.tooltipOptions = {
-                text = nodeData:GetTooltipText(),
-                textWrap = true,
-                owner = row.frame,
-                anchor = "ANCHOR_RIGHT",
-            }
+                row.tooltipOptions = {
+                    text = nodeData:GetTooltipText(),
+                    textWrap = true,
+                    owner = row.frame,
+                    anchor = "ANCHOR_RIGHT",
+                }
 
-            -- used to sort
-            row.active = nodeData.active
-            row.rank = nodeData.rank
-            row.isMax = nodeData.maxRank == nodeData.rank
-        end)
+                -- used to sort
+                row.active = nodeData.active
+                row.rank = nodeData.rank
+                row.isMax = nodeData.maxRank == nodeData.rank
+            end)
+        end
     end
 
     -- sort only if sim mode not active
@@ -282,8 +284,21 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         content.nodeList:UpdateDisplay()
     end
 
-    specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData
-        .maxProfessionStats))
+    local filteredStats = specializationData.professionStats:Copy()
+    local filteredMaxStats = specializationData.maxProfessionStats:Copy()
+    if not recipeData.supportsMulticraft then
+        filteredStats.multicraft:Clear()
+        filteredMaxStats.multicraft:Clear()
+    end
+    if not recipeData.supportsResourcefulness then
+        filteredStats.resourcefulness:Clear()
+        filteredMaxStats.resourcefulness:Clear()
+    end
+    if not recipeData.supportsIngenuity then
+        filteredStats.ingenuity:Clear()
+        filteredMaxStats.ingenuity:Clear()
+    end
+    specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
 end
 
 local specNodeTooltipHooked = false
