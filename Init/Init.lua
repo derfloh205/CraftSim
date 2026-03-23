@@ -352,6 +352,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:HookToProfessionUnlearnedFunction()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
+		CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
 
 		CraftSim.CONTROL_PANEL.UI:Init()
 		CraftSim.INIT:InitStaticPopups()

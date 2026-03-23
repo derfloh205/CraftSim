@@ -3,6 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
+
 ---@class CraftSim.NodeData : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData?, baseNodeData: CraftSim.RawPerkData?, perkMap?: table<number, CraftSim.RawPerkData>): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
@@ -197,7 +200,7 @@ function CraftSim.NodeData:GetTooltipText()
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkData in ipairs(self.perkData) do
-        local rankText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT) .. perkData.threshold .. ":\n"
+        local rankText = L(CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT) .. perkData.threshold .. ":\n"
         local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkData.perkID)
 
         if perkData.active then
@@ -211,8 +214,21 @@ function CraftSim.NodeData:GetTooltipText()
     end
 
     tooltipText = tooltipText ..
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP) ..
+        L(CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP) ..
         GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
+
+    local currentCrafterUID = self.recipeData and self.recipeData:GetCrafterUID()
+    if currentCrafterUID then
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(self.nodeID, currentCrafterUID)
+        if next(crafterUIDRankMap) then
+            tooltipText = tooltipText .. "\n\n"
+            for crafterUID, rank in pairs(crafterUIDRankMap) do
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local crafterNameColored = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
+                tooltipText = tooltipText .. crafterNameColored .. ": " .. rank .. "/" .. self.maxRank .. "\n"
+            end
+        end
+    end
 
     return tooltipText
 end

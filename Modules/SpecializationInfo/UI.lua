@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+
 ---@class CraftSim.SPECIALIZATION_INFO.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
 
@@ -299,4 +301,30 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         filteredMaxStats.ingenuity:Clear()
     end
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
+end
+
+local specNodeTooltipHooked = false
+function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
+    if specNodeTooltipHooked then return end
+    specNodeTooltipHooked = true
+
+    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(configID, pathID)
+                
+        local nodeID = pathID
+
+        local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            
+        local label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPECIALIZATION_INFO_TOOLTIP_LABEL)
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
+        if next(crafterUIDRankMap) then
+            GameTooltip:AddLine("\n" .. f.white(label) .. "\n")
+            for crafterUID, rank in pairs(crafterUIDRankMap) do
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local crafterNameColored = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
+                GameTooltip:AddLine(crafterNameColored .. ": " .. rank)
+            end
+
+            GameTooltip:Show()
+        end
+    end)
 end
