@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+
 ---@class CraftSim.SPECIALIZATION_INFO.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
 
@@ -306,28 +308,22 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
     if specNodeTooltipHooked then return end
     specNodeTooltipHooked = true
 
-    -- Hook into Blizzard's trait node button OnEnter to inject "Also taken by" info
-    -- into the default profession specialization UI tooltips
-    if not TraitNodeButtonMixin then return end
-
-    hooksecurefunc(TraitNodeButtonMixin, "OnEnter", function(nodeButton)
-        -- Only inject when the profession spec page is visible
-        if not (ProfessionsFrame and ProfessionsFrame:IsShown() and
-                ProfessionsFrame.SpecPage and ProfessionsFrame.SpecPage:IsShown()) then
-            return
-        end
-
-        local nodeInfo = nodeButton.nodeInfo
-        if not nodeInfo then return end
-
-        local nodeID = nodeInfo.ID
-        if not nodeID then return end
+    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(configID, pathID)
+                
+        local nodeID = pathID
 
         local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
-        local alsoTakenBy = CraftSim.DB.CRAFTER:GetCrafterNamesWithNodeActive(nodeID, playerUID)
-        if #alsoTakenBy > 0 then
-            local label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_ALSO_TAKEN_BY)
-            GameTooltip:AddLine(label .. table.concat(alsoTakenBy, ", "), 1, 0.82, 0, true)
+            
+        local label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPECIALIZATION_INFO_TOOLTIP_LABEL)
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
+        if next(crafterUIDRankMap) then
+            GameTooltip:AddLine("\n" .. f.white(label) .. "\n")
+            for crafterUID, rank in pairs(crafterUIDRankMap) do
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local crafterNameColored = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
+                GameTooltip:AddLine(crafterNameColored .. ": " .. rank)
+            end
+
             GameTooltip:Show()
         end
     end)

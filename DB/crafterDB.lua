@@ -155,29 +155,30 @@ end
 
 ---@param nodeID number
 ---@param excludeCrafterUID CrafterUID
----@return string[] crafterNames
-function CraftSim.DB.CRAFTER:GetCrafterNamesWithNodeActive(nodeID, excludeCrafterUID)
-    local crafterNames = {}
+---@return table<CrafterUID, number> crafterNodeRankMap
+function CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, excludeCrafterUID)
+    local crafterUIDs = {}
     for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
         if crafterUID ~= excludeCrafterUID then
             local specializationData = crafterData.specializationData or {}
             local found = false
+            local rank = nil
             for _, specDataSerialized in pairs(specializationData) do
                 if found then break end
                 for _, nodeDataSerialized in ipairs(specDataSerialized.nodeData or {}) do
                     if nodeDataSerialized.nodeID == nodeID and nodeDataSerialized.active then
                         found = true
+                        rank = nodeDataSerialized.rank
                         break
                     end
                 end
             end
             if found then
-                local name = strsplit("-", crafterUID)
-                tinsert(crafterNames, name)
+                crafterUIDs[crafterUID] = rank
             end
         end
     end
-    return crafterNames
+    return crafterUIDs
 end
 
 --- returns the data serialized

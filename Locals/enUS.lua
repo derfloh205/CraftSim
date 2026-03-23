@@ -830,7 +830,7 @@ greater or equal the configured sale rate threshold.
         -- node data
         [CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT] = "Rank ",
         [CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP] = "\n\nTotal Stats from Talent:\n",
-        [CraftSim.CONST.TEXT.NODE_DATA_ALSO_TAKEN_BY] = "Also taken by: ",
+        [CraftSim.CONST.TEXT.SPECIALIZATION_INFO_TOOLTIP_LABEL] = f.l("CraftSim") .. f.white(" Specialization Info:"),
 
         -- columns
         [CraftSim.CONST.TEXT.SOURCE_COLUMN_AH] = "AH",
