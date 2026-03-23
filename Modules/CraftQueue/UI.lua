@@ -1432,7 +1432,6 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.professionGearTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -50,
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), sizeX = 150,
         clickCallback = function(optimizeButton)
-            -- TODO: Refactor using RecipeData:Optimize
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 local optimizeProfessionGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
@@ -1457,56 +1456,27 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     optimizeButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
                 end
 
-                if optimizeProfessionGear then
-                    recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-                end
+                local optimizeTopProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY")
 
-                RunNextFrame(function()
-                    recipeData:OptimizeReagents {
-                        highestProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"),
-                    }
-
-                    if recipeData.supportsQualities and optimizeConcentration then
-                        optimizeButton:SetEnabled(false)
-                        recipeData:OptimizeConcentration {
-                            finally = function()
-                                if optimizeFinishingReagents then
-                                    recipeData:OptimizeFinishingReagents {
-                                        includeLocked = includeLockedFinishing,
-                                        includeSoulbound = includeSoulboundFinishing,
-                                        finally = function()
-                                            finalizeOptimize()
-                                        end,
-                                        progressUpdateCallback = function(progress)
-                                            optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
-                                        end
-                                    }
-                                else
-                                    finalizeOptimize()
-                                end
-                            end,
-                            progressUpdateCallback = function(progress)
-                                optimizeButton:SetText(string.format("CON: %.0f%%", progress))
-                            end
-                        }
-                    else
-                        if optimizeFinishingReagents then
-                            optimizeButton:SetEnabled(false)
-                            recipeData:OptimizeFinishingReagents {
-                                includeLocked = includeLockedFinishing,
-                                includeSoulbound = includeSoulboundFinishing,
-                                finally = function()
-                                    finalizeOptimize()
-                                end,
-                                progressUpdateCallback = function(progress)
-                                    optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
-                                end
-                            }
-                        else
-                            finalizeOptimize()
-                        end
-                    end
-                end)
+                optimizeButton:SetEnabled(false)
+                recipeData:Optimize {
+                    optimizeGear = optimizeProfessionGear,
+                    optimizeReagentOptions = { highestProfit = optimizeTopProfit },
+                    optimizeConcentration = optimizeConcentration,
+                    optimizeConcentrationProgressCallback = function(progress)
+                        optimizeButton:SetText(string.format("CON: %.0f%%", progress))
+                    end,
+                    optimizeFinishingReagentsOptions = optimizeFinishingReagents and {
+                        includeLocked = includeLockedFinishing,
+                        includeSoulbound = includeSoulboundFinishing,
+                        progressUpdateCallback = function(progress)
+                            optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
+                        end,
+                    } or nil,
+                    finally = function()
+                        finalizeOptimize()
+                    end,
+                }
             end
         end
     }
