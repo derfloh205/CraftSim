@@ -284,6 +284,19 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         content.nodeList:UpdateDisplay()
     end
 
-    specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData
-        .maxProfessionStats))
+    local filteredStats = specializationData.professionStats:Copy()
+    local filteredMaxStats = specializationData.maxProfessionStats:Copy()
+    if not recipeData.supportsMulticraft then
+        filteredStats.multicraft:Clear()
+        filteredMaxStats.multicraft:Clear()
+    end
+    if not recipeData.supportsResourcefulness then
+        filteredStats.resourcefulness:Clear()
+        filteredMaxStats.resourcefulness:Clear()
+    end
+    if not recipeData.supportsIngenuity then
+        filteredStats.ingenuity:Clear()
+        filteredMaxStats.ingenuity:Clear()
+    end
+    specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
 end
