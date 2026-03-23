@@ -97,6 +97,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
+        [CraftSim.CONST.TEXT.INGENUITY_LABEL] = "Ingenuity: ",
+        [CraftSim.CONST.TEXT.INGENUITY_EXPLANATION_TOOLTIP] =
+        "Ingenuity gives you a chance to receive a partial refund of concentration spent when crafting with concentration.",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Reagent Quality Bonus: ",
         [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Reagent Quality Maximum %: ",
