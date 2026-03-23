@@ -3,6 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
+
 ---@class CraftSim.NodeData : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData?, baseNodeData: CraftSim.RawPerkData?, perkMap?: table<number, CraftSim.RawPerkData>): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
@@ -164,13 +167,40 @@ function CraftSim.NodeData:UpdateProfessionStats()
     end
 end
 
+---@param recipeData CraftSim.RecipeData
+---@return boolean
+function CraftSim.NodeData:HasRelevantStats(recipeData)
+    local maxStats = self.maxProfessionStats
+
+    -- skill and craftingspeed are always relevant
+    if maxStats.skill.value > 0 then return true end
+    if maxStats.craftingspeed.value > 0 then return true end
+
+    -- check conditional stats: only relevant if the recipe supports them
+    local conditionalStats = {
+        { stat = maxStats.multicraft,       supported = recipeData.supportsMulticraft },
+        { stat = maxStats.resourcefulness,  supported = recipeData.supportsResourcefulness },
+        { stat = maxStats.ingenuity,        supported = recipeData.supportsIngenuity },
+    }
+    for _, entry in pairs(conditionalStats) do
+        if entry.supported then
+            if entry.stat.value > 0 then return true end
+            for _, v in pairs(entry.stat.extraValues) do
+                if v > 0 then return true end
+            end
+        end
+    end
+
+    return false
+end
+
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
     local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. tostring(self.name)
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkData in ipairs(self.perkData) do
-        local rankText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT) .. perkData.threshold .. ":\n"
+        local rankText = L(CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT) .. perkData.threshold .. ":\n"
         local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkData.perkID)
 
         if perkData.active then
@@ -184,8 +214,21 @@ function CraftSim.NodeData:GetTooltipText()
     end
 
     tooltipText = tooltipText ..
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP) ..
+        L(CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP) ..
         GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
+
+    local currentCrafterUID = self.recipeData and self.recipeData:GetCrafterUID()
+    if currentCrafterUID then
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(self.nodeID, currentCrafterUID)
+        if next(crafterUIDRankMap) then
+            tooltipText = tooltipText .. "\n\n"
+            for crafterUID, rank in pairs(crafterUIDRankMap) do
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local crafterNameColored = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
+                tooltipText = tooltipText .. crafterNameColored .. ": " .. rank .. "/" .. self.maxRank .. "\n"
+            end
+        end
+    end
 
     return tooltipText
 end

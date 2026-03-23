@@ -97,6 +97,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
+        [CraftSim.CONST.TEXT.INGENUITY_LABEL] = "Ingenuity: ",
+        [CraftSim.CONST.TEXT.INGENUITY_EXPLANATION_TOOLTIP] =
+        "Ingenuity gives you a chance to receive a partial refund of concentration spent when crafting with concentration.",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Reagent Quality Bonus: ",
         [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Reagent Quality Maximum %: ",
@@ -827,6 +830,7 @@ greater or equal the configured sale rate threshold.
         -- node data
         [CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT] = "Rank ",
         [CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP] = "\n\nTotal Stats from Talent:\n",
+        [CraftSim.CONST.TEXT.SPECIALIZATION_INFO_TOOLTIP_LABEL] = f.l("CraftSim") .. f.white(" Specialization Info:"),
 
         -- columns
         [CraftSim.CONST.TEXT.SOURCE_COLUMN_AH] = "AH",

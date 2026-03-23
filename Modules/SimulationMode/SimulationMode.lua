@@ -13,7 +13,7 @@ CraftSim.SIMULATION_MODE.recipeData = nil
 CraftSim.SIMULATION_MODE.specializationData = nil
 --- Stores only the user's raw stat modifier inputs (without spec diff contribution)
 --- so recreated modInput widgets are initialized with the correct value each update.
----@type {skill: number, multicraft: number, resourcefulness: number, recipeDifficulty: number}?
+---@type {skill: number, multicraft: number, resourcefulness: number, ingenuity: number, recipeDifficulty: number}?
 CraftSim.SIMULATION_MODE.userStatModifiers = nil
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
@@ -164,6 +164,12 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
+    local ingenuityMod = 0
+    if recipeData.supportsIngenuity then
+        ingenuityMod = simulationModeFrames.ingenuityMod and simulationModeFrames.ingenuityMod.currentValue or 0
+        recipeData.professionStatModifiers.ingenuity:addValue(ingenuityMod)
+    end
+
     -- Save the raw user inputs so UpdateCraftingDetailsPanel can initialize the
     -- recreated modInput widgets with the correct (non-spec-diff-contaminated) values
     if CraftSim.SIMULATION_MODE.userStatModifiers then
@@ -171,6 +177,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         CraftSim.SIMULATION_MODE.userStatModifiers.skill = skillMod
         CraftSim.SIMULATION_MODE.userStatModifiers.multicraft = multicraftMod
         CraftSim.SIMULATION_MODE.userStatModifiers.resourcefulness = resourcefulnessMod
+        CraftSim.SIMULATION_MODE.userStatModifiers.ingenuity = ingenuityMod
     end
 
     recipeData.concentrating = simulationModeFrames.concentrationToggleMod.isOn
@@ -266,6 +273,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         skill = 0,
         multicraft = 0,
         resourcefulness = 0,
+        ingenuity = 0,
         recipeDifficulty = 0,
     }
 
