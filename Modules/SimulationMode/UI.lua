@@ -348,6 +348,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
                     simModeFrames.resourcefulnessMod = modColumn.modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL then
                     simModeFrames.baseSkillMod = modColumn.modInput
+                elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INGENUITY then
+                    simModeFrames.ingenuityMod = modColumn.modInput
                 end
             else
                 modColumn.modInput:Hide()
@@ -418,6 +420,22 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             bonusItemsText,
             nil,
             nil
+        )
+    end
+
+    -- Ingenuity
+    if recipeData.supportsIngenuity then
+        local baseIngenuity = professionStats.ingenuity.value - professionStatsMod.ingenuity.value
+        local percentText = GUTIL:Round(professionStats.ingenuity:GetPercent(), 1) .. "%"
+        local ingenuityText = GUTIL:Round(professionStats.ingenuity.value) ..
+            " (" .. GUTIL:Round(baseIngenuity) ..
+            "+" .. GUTIL:Round(professionStatsMod.ingenuity.value) .. ") " .. percentText
+        addStatRow(
+            L(CraftSim.CONST.TEXT.INGENUITY_LABEL),
+            L(CraftSim.CONST.TEXT.INGENUITY_EXPLANATION_TOOLTIP),
+            ingenuityText,
+            userMods.ingenuity or 0,
+            CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INGENUITY
         )
     end
 
