@@ -419,6 +419,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION"))
                                                 and math.max(order.minQuality - 1, 1) or order.minQuality
                                             recipeData:Optimize {
+                                                optimizeGear = true,
                                                 optimizeReagentOptions = {
                                                     maxQuality = maxQuality,
                                                 },
