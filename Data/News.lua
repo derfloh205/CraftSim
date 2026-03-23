@@ -23,6 +23,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("21.5.0"),
+        f.PG .. f.bb("Specialization Info"),
+        f.a .. "- Affecting Perks List now filters redundant stat perks",
+        f.a .. "- " .. f.g("Alt Perk Rank Info") .. " added to tooltips",
+        f.pg .. f.bb("Simulation Mode"),
+        f.a .. "- Added " .. f.g("Ingenuity ") .. "Simulation Input",
+        f.pg .. f.bb("CraftQueue"),
+        f.a .. "Fixed " .. f.g("Patron Order Queueing") .. " not optimizing gear",
         newP("21.4.1"),
         f.pg .. f.bb("CraftQueue"),
         f.a .. "- Added Skill+ Finishers to Quick Access",
