@@ -243,8 +243,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     onNumberValidCallback = function()
                         CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
                     end,
-                    borderAdjustHeight = 1.1,
-                    borderAdjustWidth = 1.2,
+                    borderAdjustHeight = 1.4,
+                    borderAdjustWidth = 1.25,
                 }
             end,
         }
