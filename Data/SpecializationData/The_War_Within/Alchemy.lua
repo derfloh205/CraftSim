@@ -2650,6 +2650,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4620669,
+			base = true,
 		},
 		[99014] = {
 			nodeID = 99020,
@@ -2685,6 +2687,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554336,
+			base = true,
 		},
 		[99056] = {
 			nodeID = 99059,
@@ -2699,6 +2703,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1500960,
+			base = true,
 		},
 		[100182] = {
 			nodeID = 100205,
@@ -2727,6 +2733,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1500905,
+			base = true,
 		},
 		[100187] = {
 			nodeID = 100206,
@@ -2755,6 +2763,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1500942,
+			base = true,
 		},
 		[100193] = {
 			nodeID = 100207,
@@ -2783,6 +2793,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1500932,
+			base = true,
 		},
 		[100199] = {
 			nodeID = 100208,
@@ -2811,6 +2823,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5525214,
+			base = true,
 		},
 		[99002] = {
 			nodeID = 99019,
@@ -2860,6 +2874,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 3615513,
+			base = true,
 		},
 		[99031] = {
 			nodeID = 99040,
@@ -2902,6 +2918,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 967511,
+			base = true,
 		},
 		[99037] = {
 			nodeID = 99041,
@@ -2937,6 +2955,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5525212,
+			base = true,
 		},
 		[98962] = {
 			nodeID = 99015,
@@ -2993,6 +3013,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5536646,
+			base = true,
 		},
 		[98982] = {
 			nodeID = 99017,
@@ -3049,6 +3071,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5525213,
+			base = true,
 		},
 		[98992] = {
 			nodeID = 99018,
@@ -3105,6 +3129,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5536644,
+			base = true,
 		},
 		[98972] = {
 			nodeID = 99016,
@@ -3161,6 +3187,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 3615513,
+			base = true,
 		},
 		[98943] = {
 			nodeID = 98952,
@@ -3196,6 +3224,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 967511,
+			base = true,
 		},
 		[98949] = {
 			nodeID = 98953,
@@ -3224,6 +3254,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 4624378,
+			base = true,
 		},
 		[98937] = {
 			nodeID = 98951,
@@ -3266,6 +3298,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3615513,
+			base = true,
 		},
 		[99048] = {
 			nodeID = 99058,

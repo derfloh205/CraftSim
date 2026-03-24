@@ -3,14 +3,6 @@ import os
 sys.path.append('../')
 import wagoTools
 import shutil
-import urllib
-
-import sqlite3
-import csv
-import http.client
-import json
-import urllib.parse
-import requests
 from pathlib import Path
 
 # for missing or incorrect blizz data..
@@ -250,6 +242,8 @@ def map(buildVersion):
         stat = row["Stat"]
         stat_amount = int(row["Amount"])
         nodeName = row["NodeName"] or ""
+        icon = int(row["NodeIcon"])
+        baseNode = True if icon > 0 and nodeName != "" else False
 
         professionDF = None
         professionTWW = None
@@ -296,8 +290,12 @@ def map(buildVersion):
             professionDataTable[expansion][profession]["nodeData"][perkID] = {
                 "nodeID": nodeID,
                 "maxRank": maxRank,
-                "stats": {}
-            }            
+                "stats": {},
+            }
+
+            if baseNode:
+                 professionDataTable[expansion][profession]["nodeData"][perkID]["icon"] = icon
+                 professionDataTable[expansion][profession]["nodeData"][perkID]["base"] = True
 
         cleanStatName = stat.lower().replace(" ", "").replace("(dnt-writemanually!)", "").replace("(dnt-writemanually)", "")
         professionDataTable[expansion][profession]["nodeData"][perkID]["stats"][cleanStatName] = stat_amount

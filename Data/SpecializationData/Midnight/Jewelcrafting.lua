@@ -3639,6 +3639,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				ingenuityrefundincrease = 1,
 			},
+			icon = 5747318,
+			base = true,
 		},
 		[106990] = {
 			nodeID = 107012,
@@ -3695,6 +3697,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				multicraft = 2,
 			},
+			icon = 4555578,
+			base = true,
 		},
 		[106997] = {
 			nodeID = 107013,
@@ -3751,6 +3755,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				resourcefulness = 2,
 			},
+			icon = 3615505,
+			base = true,
 		},
 		[107004] = {
 			nodeID = 107014,
@@ -3807,6 +3813,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				ingenuity = 2,
 			},
+			icon = 7549165,
+			base = true,
 		},
 		[107011] = {
 			nodeID = 107015,
@@ -3843,6 +3851,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549136,
+			base = true,
 		},
 		[106876] = {
 			nodeID = 106900,
@@ -3872,6 +3882,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549104,
+			base = true,
 		},
 		[106882] = {
 			nodeID = 106901,
@@ -3900,6 +3912,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549127,
+			base = true,
 		},
 		[106869] = {
 			nodeID = 106899,
@@ -3929,6 +3943,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549142,
+			base = true,
 		},
 		[106865] = {
 			nodeID = 106898,
@@ -3958,6 +3974,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549131,
+			base = true,
 		},
 		[106861] = {
 			nodeID = 106897,
@@ -3987,6 +4005,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549135,
+			base = true,
 		},
 		[106847] = {
 			nodeID = 106894,
@@ -4016,6 +4036,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549130,
+			base = true,
 		},
 		[106858] = {
 			nodeID = 106896,
@@ -4045,6 +4067,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549126,
+			base = true,
 		},
 		[106851] = {
 			nodeID = 106895,
@@ -4074,6 +4098,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549141,
+			base = true,
 		},
 		[106843] = {
 			nodeID = 106893,
@@ -4103,6 +4129,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549137,
+			base = true,
 		},
 		[106820] = {
 			nodeID = 106889,
@@ -4132,6 +4160,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549143,
+			base = true,
 		},
 		[106831] = {
 			nodeID = 106891,
@@ -4161,6 +4191,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549128,
+			base = true,
 		},
 		[106824] = {
 			nodeID = 106890,
@@ -4190,6 +4222,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549132,
+			base = true,
 		},
 		[106816] = {
 			nodeID = 106888,
@@ -4219,6 +4253,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549138,
+			base = true,
 		},
 		[106806] = {
 			nodeID = 106886,
@@ -4248,6 +4284,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549129,
+			base = true,
 		},
 		[106813] = {
 			nodeID = 106887,
@@ -4277,6 +4315,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549144,
+			base = true,
 		},
 		[106802] = {
 			nodeID = 106885,
@@ -4306,6 +4346,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549133,
+			base = true,
 		},
 		[106798] = {
 			nodeID = 106884,
@@ -4335,6 +4377,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549108,
+			base = true,
 		},
 		[106908] = {
 			nodeID = 106974,
@@ -4392,6 +4436,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3622210,
+			base = true,
 		},
 		[106922] = {
 			nodeID = 106976,
@@ -4450,6 +4496,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549124,
+			base = true,
 		},
 		[106973] = {
 			nodeID = 106983,
@@ -4493,6 +4541,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4644001,
+			base = true,
 		},
 		[106915] = {
 			nodeID = 106975,
@@ -4550,6 +4600,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549155,
+			base = true,
 		},
 		[107048] = {
 			nodeID = 107058,
@@ -4622,6 +4674,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549088,
+			base = true,
 		},
 		[107055] = {
 			nodeID = 107059,
@@ -4665,6 +4719,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549118,
+			base = true,
 		},
 		[107039] = {
 			nodeID = 107057,
@@ -4737,6 +4793,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4381975,
+			base = true,
 		},
 		[107030] = {
 			nodeID = 107056,
@@ -4809,6 +4867,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134081,
+			base = true,
 		},
 		[106965] = {
 			nodeID = 106982,
@@ -4844,6 +4904,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549103,
+			base = true,
 		},
 		[106931] = {
 			nodeID = 106977,

@@ -5105,6 +5105,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 5931147,
+			base = true,
 		},
 		[104333] = {
 			nodeID = 104348,
@@ -5140,6 +5142,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 5931146,
+			base = true,
 		},
 		[104339] = {
 			nodeID = 104349,
@@ -5203,6 +5207,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 7549261,
+			base = true,
 		},
 		[104357] = {
 			nodeID = 104386,
@@ -5261,6 +5267,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 7266382,
+			base = true,
 		},
 		[104371] = {
 			nodeID = 104388,
@@ -5317,6 +5325,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 7457538,
+			base = true,
 		},
 		[104378] = {
 			nodeID = 104389,
@@ -5375,6 +5385,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549382,
+			base = true,
 		},
 		[104384] = {
 			nodeID = 104390,
@@ -5410,6 +5422,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549261,
+			base = true,
 		},
 		[104296] = {
 			nodeID = 104324,
@@ -5431,6 +5445,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549251,
+			base = true,
 		},
 		[104303] = {
 			nodeID = 104325,
@@ -5459,6 +5475,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549368,
+			base = true,
 		},
 		[104323] = {
 			nodeID = 104328,
@@ -5503,6 +5521,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549252,
+			base = true,
 		},
 		[104308] = {
 			nodeID = 104326,
@@ -5524,6 +5544,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549250,
+			base = true,
 		},
 		[104315] = {
 			nodeID = 104327,
@@ -5552,6 +5574,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266379,
+			base = true,
 		},
 		[104178] = {
 			nodeID = 104212,
@@ -5588,6 +5612,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931150,
+			base = true,
 		},
 		[104196] = {
 			nodeID = 104215,
@@ -5623,6 +5649,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549444,
+			base = true,
 		},
 		[104203] = {
 			nodeID = 104216,
@@ -5658,6 +5686,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266378,
+			base = true,
 		},
 		[104183] = {
 			nodeID = 104213,
@@ -5694,6 +5724,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266372,
+			base = true,
 		},
 		[104166] = {
 			nodeID = 104210,
@@ -5730,6 +5762,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931151,
+			base = true,
 		},
 		[104174] = {
 			nodeID = 104211,
@@ -5765,6 +5799,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266375,
+			base = true,
 		},
 		[104161] = {
 			nodeID = 104209,
@@ -5801,6 +5837,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266382,
+			base = true,
 		},
 		[104144] = {
 			nodeID = 104206,
@@ -5837,6 +5875,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931152,
+			base = true,
 		},
 		[104152] = {
 			nodeID = 104207,
@@ -5872,6 +5912,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266381,
+			base = true,
 		},
 		[104139] = {
 			nodeID = 104205,
@@ -5908,6 +5950,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266373,
+			base = true,
 		},
 		[104188] = {
 			nodeID = 104214,
@@ -5944,6 +5988,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266384,
+			base = true,
 		},
 		[104156] = {
 			nodeID = 104208,
@@ -5980,6 +6026,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7266376,
+			base = true,
 		},
 		[104134] = {
 			nodeID = 104204,
@@ -6016,6 +6064,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549328,
+			base = true,
 		},
 		[104364] = {
 			nodeID = 104387,
