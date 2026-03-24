@@ -604,53 +604,11 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_4_5_Remove_gathering_concentration_data
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()
-    -- Convert specializationData from a per-recipe format
-    --   specializationData[recipeID] = { nodeData: [{nodeID, rank, ...}] }
-    -- to a per-profession flat nodeID->rank map:
-    --   specializationData[expansionID][professionID] = { [nodeID] = rank, ... }
-    --
-    -- The recipe-to-profession mapping is resolved via SPECIALIZATION_DATA.NODE_DATA.
-    -- If a recipe is not found in any expansion/profession mapping it is silently dropped
-    -- (the player will resync on next login with that profession open).
-    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
-        crafterData = crafterData --[[@as CraftSim.DB.CrafterDBData]]
-        local oldSpecData = crafterData.specializationData
-        if type(oldSpecData) ~= "table" then
-            crafterData.specializationData = nil
-        else
-            local newSpecData = {}
-            for recipeID, specEntry in pairs(oldSpecData) do
-                -- Only process the old per-recipe format (has a nodeData array)
-                if type(specEntry) == "table" and type(specEntry.nodeData) == "table" then
-                    -- Locate which expansion/profession owns this recipeID
-                    local foundExpansion, foundProfession = nil, nil
-                    for expID, expData in pairs(CraftSim.SPECIALIZATION_DATA.NODE_DATA or {}) do
-                        if foundExpansion then break end
-                        for profID, profData in pairs(expData or {}) do
-                            if profData.recipeMapping and profData.recipeMapping[recipeID] then
-                                foundExpansion = expID
-                                foundProfession = profID
-                                break
-                            end
-                        end
-                    end
-
-                    if foundExpansion and foundProfession then
-                        newSpecData[foundExpansion] = newSpecData[foundExpansion] or {}
-                        newSpecData[foundExpansion][foundProfession] = newSpecData[foundExpansion][foundProfession] or {}
-                        local dest = newSpecData[foundExpansion][foundProfession]
-                        -- Extract nodeID->rank pairs; skip entries already set (first recipe wins)
-                        for _, nodeEntry in ipairs(specEntry.nodeData) do
-                            if nodeEntry.nodeID ~= nil and nodeEntry.rank ~= nil then
-                                if dest[nodeEntry.nodeID] == nil then
-                                    dest[nodeEntry.nodeID] = nodeEntry.rank
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-            crafterData.specializationData = newSpecData
-        end
+    -- Delete all cached specializationData for every crafter.
+    -- The new format (specializationData[expansionID][professionID] = { [nodeID] = rank })
+    -- is incompatible with the old per-recipe format.  Data will be rebuilt automatically
+    -- the next time each character logs in and opens a profession.
+    for _, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        crafterData.specializationData = nil
     end
 end
