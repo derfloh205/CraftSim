@@ -964,7 +964,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 
         local commissionText = ""
         if craftResult.isWorkOrder then
-            local commission = craftResult.orderData.tipAmount - craftResult.orderData.consortiumCut
+            local commission = (tonumber(craftResult.orderData.tipAmount) or 0) - (tonumber(craftResult.orderData.consortiumCut) or 0)
             commissionText = CraftSim.UTIL:FormatMoney(commission, true)
         end
 

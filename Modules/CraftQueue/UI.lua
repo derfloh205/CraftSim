@@ -212,7 +212,23 @@ function CraftSim.CRAFTQ.UI:Init()
                                     if not ProfessionsFrame.OrdersPage:IsVisible() then
                                         ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab
                                     end
-                                    ProfessionsFrame.OrdersPage:ViewOrder(recipeData.orderData)
+                                    -- Use fresh Blizzard order data when available to avoid tooltip taint
+                                    local orderForView = recipeData.orderData
+                                    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                                    if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                                        orderForView = claimedOrder
+                                    else
+                                        local crafterOrders = C_CraftingOrders.GetCrafterOrders()
+                                        if crafterOrders then
+                                            for _, order in ipairs(crafterOrders) do
+                                                if order.orderID == recipeData.orderData.orderID then
+                                                    orderForView = order
+                                                    break
+                                                end
+                                            end
+                                        end
+                                    end
+                                    ProfessionsFrame.OrdersPage:ViewOrder(orderForView)
                                     CraftSim.MODULES:UpdateUI()
                                 else
                                     if not ProfessionsFrame.CraftingPage:IsVisible() then
