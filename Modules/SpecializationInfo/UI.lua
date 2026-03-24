@@ -222,7 +222,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
                 ---@class CraftSim.SPEC_INFO.NODE_LIST.RANK_COLUMN : Frame
                 local rankColumn = columns[2]
 
-                nameColumn.iconTexture:SetTexture(nodeData.icon)
+                nameColumn.iconTexture:SetTexture(nodeData:GetIcon())
                 rankColumn.text:SetVisible(not CraftSim.SIMULATION_MODE.isActive)
                 rankColumn.simText:SetVisible(CraftSim.SIMULATION_MODE.isActive)
                 rankColumn.simInput:SetVisible(CraftSim.SIMULATION_MODE.isActive)

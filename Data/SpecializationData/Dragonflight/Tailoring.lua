@@ -5033,6 +5033,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 610679,
+			base = true,
 		},
 		[39980] = {
 			nodeID = 40005,
@@ -5089,6 +5091,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4624569,
+			base = true,
 		},
 		[39987] = {
 			nodeID = 40006,
@@ -5145,6 +5149,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4625111,
+			base = true,
 		},
 		[80766] = {
 			nodeID = 40008,
@@ -5189,6 +5195,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134156,
+			base = true,
 		},
 		[40049] = {
 			nodeID = 40071,
@@ -5217,6 +5225,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624558,
+			base = true,
 		},
 		[40068] = {
 			nodeID = 40074,
@@ -5259,6 +5269,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073848,
+			base = true,
 		},
 		[40173] = {
 			nodeID = 40219,
@@ -5280,6 +5292,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624564,
+			base = true,
 		},
 		[40191] = {
 			nodeID = 40222,
@@ -5329,6 +5343,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624563,
+			base = true,
 		},
 		[40213] = {
 			nodeID = 40226,
@@ -5366,6 +5382,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134155,
+			base = true,
 		},
 		[40061] = {
 			nodeID = 40073,
@@ -5394,6 +5412,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073850,
+			base = true,
 		},
 		[40158] = {
 			nodeID = 40216,
@@ -5415,6 +5435,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624561,
+			base = true,
 		},
 		[40168] = {
 			nodeID = 40217,
@@ -5464,6 +5486,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073843,
+			base = true,
 		},
 		[40152] = {
 			nodeID = 40214,
@@ -5485,6 +5509,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073849,
+			base = true,
 		},
 		[40193] = {
 			nodeID = 40223,
@@ -5506,6 +5532,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624567,
+			base = true,
 		},
 		[40206] = {
 			nodeID = 40225,
@@ -5555,6 +5583,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073844,
+			base = true,
 		},
 		[40176] = {
 			nodeID = 40220,
@@ -5576,6 +5606,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073845,
+			base = true,
 		},
 		[40155] = {
 			nodeID = 40215,
@@ -5597,6 +5629,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073851,
+			base = true,
 		},
 		[40196] = {
 			nodeID = 40224,
@@ -5618,6 +5652,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073847,
+			base = true,
 		},
 		[40179] = {
 			nodeID = 40221,
@@ -5639,6 +5675,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4073846,
+			base = true,
 		},
 		[40170] = {
 			nodeID = 40218,
@@ -5660,6 +5698,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549239,
+			base = true,
 		},
 		[40015] = {
 			nodeID = 40035,
@@ -5716,6 +5756,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624568,
+			base = true,
 		},
 		[40034] = {
 			nodeID = 40038,
@@ -5751,6 +5793,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549287,
+			base = true,
 		},
 		[40026] = {
 			nodeID = 40037,
@@ -5793,6 +5837,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549299,
+			base = true,
 		},
 		[40020] = {
 			nodeID = 40036,
@@ -5835,6 +5881,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549303,
+			base = true,
 		},
 		[40054] = {
 			nodeID = 40072,
@@ -5863,6 +5911,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549302,
+			base = true,
 		},
 		[40042] = {
 			nodeID = 40070,

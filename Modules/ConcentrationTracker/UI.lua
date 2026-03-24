@@ -267,7 +267,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             noSelectionColor = true,
             selectionCallback = function(row, userInput)
                 if IsMouseButtonDown("RightButton") then
-                    MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                    CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                         rootDescription:CreateTitle(row.crafterProfessionText)
                         rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST), function()
                             CraftSim.CONCENTRATION_TRACKER:BlacklistData(row.crafterUID, row.profession)

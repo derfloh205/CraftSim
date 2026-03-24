@@ -76,4 +76,12 @@ function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_6_7()
     CraftSim.DB.CRAFT_QUEUE:ClearAll()
 end
 
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_7_8_Clear_queue_after_specdata_format_change()
+    -- Serialized CraftQueueItem objects contain crafterData that may embed recipe
+    -- references dependent on the old specializationData format.  Clearing the queue
+    -- is the safest way to ensure a clean state after the per-profession specdata
+    -- storage migration.
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end
+
 

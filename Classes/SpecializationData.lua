@@ -157,35 +157,80 @@ function CraftSim.SpecializationData:GetJSON(indent)
     return jb.json
 end
 
----@class CraftSim.SpecializationData.Serialized
----@field nodeData CraftSim.NodeData.Serialized[]
----@field professionStats CraftSim.ProfessionStats.Serialized
----@field maxProfessionStats CraftSim.ProfessionStats.Serialized
+---@alias CraftSim.SpecializationData.Serialized table<number, number> -- nodeID -> rank
 
 ---@return CraftSim.SpecializationData.Serialized
 function CraftSim.SpecializationData:Serialize()
     ---@type CraftSim.SpecializationData.Serialized
-    local serializedData = {
-        nodeData = GUTIL:Map(self.nodeData, function(nodeData)
-            return nodeData:Serialize()
-        end),
-        professionStats = self.professionStats:Serialize(),
-        maxProfessionStats = self.maxProfessionStats:Serialize(),
-    }
-    return serializedData
+    local nodeRanks = {}
+    for _, nodeData in pairs(self.nodeData) do
+        nodeRanks[nodeData.nodeID] = nodeData.rank
+    end
+    return nodeRanks
 end
 
----@param serializedData CraftSim.SpecializationData.Serialized
+--- Deserializes a flat nodeID->rank map into a SpecializationData scoped to the given recipe.
+--- Only the nodes relevant to the recipe (via SPECIALIZATION_DATA recipeMapping) are rebuilt.
+---@param nodeRanks CraftSim.SpecializationData.Serialized nodeID -> rank flat map for the whole profession
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.SpecializationData
-function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
+function CraftSim.SpecializationData:Deserialize(nodeRanks, recipeData)
     local specializationData = CraftSim.SpecializationData()
-    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
-    specializationData.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
-    specializationData.maxProfessionStats = CraftSim.ProfessionStats:Deserialize(serializedData.maxProfessionStats)
+    specializationData.isImplemented = recipeData:IsSpecializationInfoImplemented()
+    specializationData.recipeData = recipeData
+    specializationData.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
+        [recipeData.professionData.professionInfo.profession]
+    specializationData.professionStats = CraftSim.ProfessionStats()
+    specializationData.maxProfessionStats = CraftSim.ProfessionStats()
+    specializationData.nodeData = {}
 
-    specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
-        return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData)
-    end)
+    local profession = recipeData.professionData.professionInfo.profession
+    local expansionID = recipeData.professionData.expansionID
+    local expansionSpecData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not expansionSpecData then
+        return specializationData
+    end
+    local professionSpecData = expansionSpecData[profession]
+    if not professionSpecData then
+        return specializationData
+    end
+
+    local professionNodeData = professionSpecData.nodeData
+    local recipePerks = professionSpecData.recipeMapping[recipeData.recipeID] or {}
+
+    -- Build the same nodePerkMap used by the constructor
+    local nodePerkMap = {}
+    for _, perkID in ipairs(recipePerks) do
+        local perkData = professionNodeData[perkID]
+        if perkData then
+            local baseNodeID = perkData.nodeID
+            if perkData.maxRank == 1 then
+                nodePerkMap[baseNodeID] = nodePerkMap[baseNodeID] or {}
+                tinsert(nodePerkMap[baseNodeID], perkID)
+            end
+        end
+    end
+
+    -- Build NodeData objects using saved ranks from the flat nodeRanks map
+    for nodeID, perks in pairs(nodePerkMap) do
+        local savedRank = nodeRanks[nodeID]
+        if savedRank ~= nil then
+            local rawBaseNodeData = professionNodeData[nodeID]
+            if rawBaseNodeData then
+                local perkMap = {}
+                for _, perkID in ipairs(perks) do
+                    perkMap[perkID] = professionNodeData[perkID]
+                end
+                local nodeData = CraftSim.NodeData:BuildFromStaticData(recipeData, rawBaseNodeData, perkMap, savedRank)
+                tinsert(specializationData.nodeData, nodeData)
+            end
+        end
+    end
+
+    -- Derive professionStats and maxProfessionStats from the reconstructed nodes.
+    -- UpdateProfessionStats calls nodeData:Update() for each node (which uses self.rank
+    -- as-is without re-fetching from the WoW API).
+    specializationData:UpdateProfessionStats()
 
     return specializationData
 end

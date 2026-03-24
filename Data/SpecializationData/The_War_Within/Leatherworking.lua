@@ -4279,6 +4279,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				ingenuityrefundincrease = 1,
 			},
+			icon = 4635252,
+			base = true,
 		},
 		[97622] = {
 			nodeID = 97638,
@@ -4335,6 +4337,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 4635277,
+			base = true,
 		},
 		[97629] = {
 			nodeID = 97639,
@@ -4391,6 +4395,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 4635266,
+			base = true,
 		},
 		[97636] = {
 			nodeID = 97640,
@@ -4428,6 +4434,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648237,
+			base = true,
 		},
 		[97644] = {
 			nodeID = 97702,
@@ -4464,6 +4472,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635256,
+			base = true,
 		},
 		[97667] = {
 			nodeID = 97706,
@@ -4506,6 +4516,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635264,
+			base = true,
 		},
 		[97701] = {
 			nodeID = 97712,
@@ -4550,6 +4562,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660128,
+			base = true,
 		},
 		[97686] = {
 			nodeID = 97710,
@@ -4586,6 +4600,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635274,
+			base = true,
 		},
 		[97694] = {
 			nodeID = 97711,
@@ -4628,6 +4644,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648241,
+			base = true,
 		},
 		[97681] = {
 			nodeID = 97709,
@@ -4664,6 +4682,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648244,
+			base = true,
 		},
 		[97676] = {
 			nodeID = 97708,
@@ -4700,6 +4720,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648236,
+			base = true,
 		},
 		[97649] = {
 			nodeID = 97703,
@@ -4736,6 +4758,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648242,
+			base = true,
 		},
 		[97659] = {
 			nodeID = 97705,
@@ -4772,6 +4796,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648240,
+			base = true,
 		},
 		[97654] = {
 			nodeID = 97704,
@@ -4808,6 +4834,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648238,
+			base = true,
 		},
 		[97671] = {
 			nodeID = 97707,
@@ -4844,6 +4872,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648228,
+			base = true,
 		},
 		[97726] = {
 			nodeID = 97774,
@@ -4880,6 +4910,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635261,
+			base = true,
 		},
 		[97739] = {
 			nodeID = 97778,
@@ -4922,6 +4954,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635255,
+			base = true,
 		},
 		[97773] = {
 			nodeID = 97784,
@@ -4966,6 +5000,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660129,
+			base = true,
 		},
 		[97758] = {
 			nodeID = 97782,
@@ -5002,6 +5038,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635263,
+			base = true,
 		},
 		[97766] = {
 			nodeID = 97783,
@@ -5044,6 +5082,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648232,
+			base = true,
 		},
 		[97753] = {
 			nodeID = 97781,
@@ -5080,6 +5120,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648235,
+			base = true,
 		},
 		[97748] = {
 			nodeID = 97780,
@@ -5116,6 +5158,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648227,
+			base = true,
 		},
 		[97716] = {
 			nodeID = 97775,
@@ -5152,6 +5196,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648233,
+			base = true,
 		},
 		[97721] = {
 			nodeID = 97777,
@@ -5188,6 +5234,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648231,
+			base = true,
 		},
 		[97731] = {
 			nodeID = 97776,
@@ -5224,6 +5272,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648229,
+			base = true,
 		},
 		[97743] = {
 			nodeID = 97779,
@@ -5260,6 +5310,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5929566,
+			base = true,
 		},
 		[97519] = {
 			nodeID = 97555,
@@ -5318,6 +5370,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1033487,
+			base = true,
 		},
 		[97546] = {
 			nodeID = 97559,
@@ -5369,6 +5423,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635270,
+			base = true,
 		},
 		[97554] = {
 			nodeID = 97560,
@@ -5411,6 +5467,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3528459,
+			base = true,
 		},
 		[97614] = {
 			nodeID = 97637,
@@ -5453,6 +5511,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5929558,
+			base = true,
 		},
 		[97539] = {
 			nodeID = 97558,
@@ -5504,6 +5564,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1029741,
+			base = true,
 		},
 		[97532] = {
 			nodeID = 97557,
@@ -5569,6 +5631,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615798,
+			base = true,
 		},
 		[97526] = {
 			nodeID = 97556,

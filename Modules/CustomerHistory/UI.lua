@@ -57,14 +57,10 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         }
 
 
-        frame.content.customerHistoryOptionsButton = GGUI.Button {
+        frame.content.customerHistoryOptionsButton = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-            cleanTemplate = true,
-            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-            sizeX = 20, sizeY = 20,
-            clickCallback = function(_, _)
-                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            menuUtilCallback = function(ownerRegion, rootDescription)
                     local enabledCB = rootDescription:CreateCheckbox(
                         L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_ENABLE_HISTORY_RECORDING),
                         function()
@@ -154,7 +150,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     end)
 
                     removeCustomersCategory:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMERS), function()
-                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                        CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                             rootDescription:CreateTitle(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA))
                             rootDescription:CreateButton(L(CraftSim.CONST.TEXT.STATIC_POPUPS_YES), function()
                                 CraftSim.CUSTOMER_HISTORY:PurgeCustomers(math.huge)
@@ -162,8 +158,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                             rootDescription:CreateButton(L(CraftSim.CONST.TEXT.STATIC_POPUPS_NO), function() end)
                         end)
                     end)
-                end)
-            end
+            end,
         }
 
         frame.content.customerList = GGUI.FrameList({
@@ -209,7 +204,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                 selectionCallback = function(row)
                     local customerHistory = row.customerHistory --[[@as CraftSim.DB.CustomerHistory]]
                     if IsMouseButtonDown("RightButton") then
-                        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+                        CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                             rootDescription:CreateTitle(customerHistory.customer)
                             rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_DELETE_CUSTOMER), function()
                                 CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)

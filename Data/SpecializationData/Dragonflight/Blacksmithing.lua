@@ -5089,6 +5089,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4044018,
+			base = true,
 		},
 		[23697] = {
 			nodeID = 23724,
@@ -5124,6 +5126,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624383,
+			base = true,
 		},
 		[23713] = {
 			nodeID = 23726,
@@ -5166,6 +5170,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624393,
+			base = true,
 		},
 		[23720] = {
 			nodeID = 23727,
@@ -5210,6 +5216,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 610679,
+			base = true,
 		},
 		[42812] = {
 			nodeID = 42826,
@@ -5266,6 +5274,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4624660,
+			base = true,
 		},
 		[42819] = {
 			nodeID = 42827,
@@ -5322,6 +5332,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1278389,
+			base = true,
 		},
 		[80763] = {
 			nodeID = 42828,
@@ -5366,6 +5378,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4189041,
+			base = true,
 		},
 		[23704] = {
 			nodeID = 23725,
@@ -5401,6 +5415,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4059376,
+			base = true,
 		},
 		[23677] = {
 			nodeID = 23721,
@@ -5436,6 +5452,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624387,
+			base = true,
 		},
 		[23692] = {
 			nodeID = 23723,
@@ -5478,6 +5496,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4622288,
+			base = true,
 		},
 		[23732] = {
 			nodeID = 23761,
@@ -5520,6 +5540,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4622273,
+			base = true,
 		},
 		[23760] = {
 			nodeID = 23765,
@@ -5569,6 +5591,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4529128,
+			base = true,
 		},
 		[23684] = {
 			nodeID = 23722,
@@ -5604,6 +5628,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615256,
+			base = true,
 		},
 		[23821] = {
 			nodeID = 23901,
@@ -5646,6 +5672,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624385,
+			base = true,
 		},
 		[23836] = {
 			nodeID = 23903,
@@ -5688,6 +5716,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624381,
+			base = true,
 		},
 		[23899] = {
 			nodeID = 23912,
@@ -5732,6 +5762,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615254,
+			base = true,
 		},
 		[23828] = {
 			nodeID = 23902,
@@ -5774,6 +5806,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615262,
+			base = true,
 		},
 		[23849] = {
 			nodeID = 23905,
@@ -5816,6 +5850,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624391,
+			base = true,
 		},
 		[23864] = {
 			nodeID = 23907,
@@ -5858,6 +5894,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615261,
+			base = true,
 		},
 		[23877] = {
 			nodeID = 23908,
@@ -5900,6 +5938,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624389,
+			base = true,
 		},
 		[23892] = {
 			nodeID = 23911,
@@ -5942,6 +5982,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615260,
+			base = true,
 		},
 		[23856] = {
 			nodeID = 23906,
@@ -5984,6 +6026,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615259,
+			base = true,
 		},
 		[23814] = {
 			nodeID = 23900,
@@ -6026,6 +6070,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615255,
+			base = true,
 		},
 		[23842] = {
 			nodeID = 23904,
@@ -6068,6 +6114,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4615258,
+			base = true,
 		},
 		[23884] = {
 			nodeID = 23910,
@@ -6110,6 +6158,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4614006,
+			base = true,
 		},
 		[23870] = {
 			nodeID = 23909,
@@ -6152,6 +6202,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4374707,
+			base = true,
 		},
 		[23751] = {
 			nodeID = 23764,
@@ -6201,6 +6253,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4622275,
+			base = true,
 		},
 		[23737] = {
 			nodeID = 23762,
