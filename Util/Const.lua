@@ -1534,7 +1534,9 @@ CraftSim.CONST.ATLAS_TEXTURES = {
     CROSS = 'UI-QuestTracker-Objective-Fail',
     UPGRADE_ARROW = 'CovenantSanctum-Upgrade-Icon-Available',
     UPGRADE_ARROW_2 = 'loottoast-arrow-green',
-    OPTIONS_COG_WHEEL = "mechagon-projects"
+    OPTIONS_COG_WHEEL = "mechagon-projects",
+    FILTER_NORMAL = "Map-Filter-Button",
+    FILTER_PUSHED = "Map-Filter-Button-down",
 }
 
 ---@class CraftSim.CONST.BUTTON_TEXTURE_OPTIONS
@@ -1546,7 +1548,14 @@ CraftSim.CONST.BUTTON_TEXTURE_OPTIONS = {
         highlight = CraftSim.CONST.ATLAS_TEXTURES.OPTIONS_COG_WHEEL,
         pushed = CraftSim.CONST.ATLAS_TEXTURES.OPTIONS_COG_WHEEL,
         isAtlas = true
-    }
+    },
+    FILTER = {
+        normal = CraftSim.CONST.ATLAS_TEXTURES.FILTER_NORMAL,
+        disabled = CraftSim.CONST.ATLAS_TEXTURES.FILTER_NORMAL,
+        highlight = CraftSim.CONST.ATLAS_TEXTURES.FILTER_NORMAL,
+        pushed = CraftSim.CONST.ATLAS_TEXTURES.FILTER_PUSHED,
+        isAtlas = true
+    },
 }
 
 CraftSim.CONST.CONCENTRATION_ICON = 5747318

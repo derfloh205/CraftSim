@@ -284,14 +284,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             }
         }
 
-        frame.content.advancedOptimizationOptions = GGUI.Button {
+        frame.content.advancedOptimizationOptions = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.content.advancedOptimizationButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-            sizeX = 20, sizeY = 20,
-            buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-            cleanTemplate = true,
-            clickCallback = function(_, _)
-                MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+            menuUtilCallback = function(ownerRegion, rootDescription)
                     local concentrationCB = rootDescription:CreateCheckbox(
                         "Optimize " .. f.gold("Concentration Value"),
                         function()
@@ -339,7 +335,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "Suggest the usage of soulbound finishing reagents if profitable");
                     end);
 
-                    local finishingReagentsSoulboundCB = rootDescription:CreateCheckbox(
+                    local finishingReagentsLockedSlotsCB = rootDescription:CreateCheckbox(
                         "Include " .. f.r("Locked ") .. f.bb("Finishing Slots"),
                         function()
                             return CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS")
@@ -351,12 +347,11 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             CraftSim.MODULES:UpdateUI()
                         end)
 
-                    finishingReagentsSoulboundCB:SetTooltip(function(tooltip, elementDescription)
+                    finishingReagentsLockedSlotsCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
                             "Optimize Finishing Reagent Slots you do not have unlocked yet");
                     end);
-                end)
-            end
+            end,
         }
 
         local reagentListQualityIconHeaderSize = 25

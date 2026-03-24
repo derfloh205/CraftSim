@@ -44,7 +44,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
     frame.content.controlPanelButton:SetPoint("CENTER", frame.content, "CENTER")
 
     frame.content.controlPanelButton:HookScript("OnClick", function()
-        MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+        CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
             local function addModuleCheckbox(label, moduleSV, moduleTooltip, optionalFrameToToggle)
                 local cb = rootDescription:CreateCheckbox(label, function()
                     return CraftSim.DB.OPTIONS:Get(moduleSV)
