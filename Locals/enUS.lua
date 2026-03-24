@@ -682,6 +682,8 @@ function CraftSim.LOCAL_EN:GetData()
         "All Requirements need to be fulfilled in order to craft a recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Craft Next",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Max",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC] = "Automatic (cheapest)",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT] = "\nRight-click to choose mote.",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Create Auctionator Shopping List",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Craft Queue",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "Flash Taskbar on " ..
