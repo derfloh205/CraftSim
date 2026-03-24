@@ -3780,6 +3780,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 237045,
+			base = true,
 		},
 		[104268] = {
 			nodeID = 104289,
@@ -3822,6 +3824,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 961617,
+			base = true,
 		},
 		[104273] = {
 			nodeID = 104290,
@@ -3864,6 +3868,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 5747318,
+			base = true,
 		},
 		[104278] = {
 			nodeID = 104291,
@@ -3908,6 +3914,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 				ingenuity = 1,
 				resourcefulness = 1,
 			},
+			icon = 1020356,
+			base = true,
 		},
 		[104286] = {
 			nodeID = 104292,
@@ -3960,6 +3968,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 4622273,
+			base = true,
 		},
 		[104247] = {
 			nodeID = 104257,
@@ -4009,6 +4019,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624394,
+			base = true,
 		},
 		[104253] = {
 			nodeID = 104258,
@@ -4037,6 +4049,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 3610516,
+			base = true,
 		},
 		[104241] = {
 			nodeID = 104256,
@@ -4086,6 +4100,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 132413,
+			base = true,
 		},
 		[104587] = {
 			nodeID = 104627,
@@ -4121,6 +4137,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624388,
+			base = true,
 		},
 		[104600] = {
 			nodeID = 104629,
@@ -4156,6 +4174,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624394,
+			base = true,
 		},
 		[104625] = {
 			nodeID = 104633,
@@ -4198,6 +4218,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 133507,
+			base = true,
 		},
 		[104593] = {
 			nodeID = 104628,
@@ -4233,6 +4255,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 135672,
+			base = true,
 		},
 		[104611] = {
 			nodeID = 104631,
@@ -4268,6 +4292,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624384,
+			base = true,
 		},
 		[104618] = {
 			nodeID = 104632,
@@ -4303,6 +4329,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3736886,
+			base = true,
 		},
 		[104605] = {
 			nodeID = 104630,
@@ -4338,6 +4366,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195216,
+			base = true,
 		},
 		[104486] = {
 			nodeID = 104564,
@@ -4373,6 +4403,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624386,
+			base = true,
 		},
 		[104506] = {
 			nodeID = 104567,
@@ -4415,6 +4447,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548918,
+			base = true,
 		},
 		[104563] = {
 			nodeID = 104576,
@@ -4457,6 +4491,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195219,
+			base = true,
 		},
 		[104517] = {
 			nodeID = 104569,
@@ -4492,6 +4528,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624392,
+			base = true,
 		},
 		[104531] = {
 			nodeID = 104571,
@@ -4534,6 +4572,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195194,
+			base = true,
 		},
 		[104492] = {
 			nodeID = 104565,
@@ -4569,6 +4609,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195218,
+			base = true,
 		},
 		[104542] = {
 			nodeID = 104573,
@@ -4604,6 +4646,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624390,
+			base = true,
 		},
 		[104556] = {
 			nodeID = 104575,
@@ -4646,6 +4690,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195217,
+			base = true,
 		},
 		[104523] = {
 			nodeID = 104570,
@@ -4681,6 +4727,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7369044,
+			base = true,
 		},
 		[104536] = {
 			nodeID = 104572,
@@ -4716,6 +4764,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195179,
+			base = true,
 		},
 		[104498] = {
 			nodeID = 104566,
@@ -4751,6 +4801,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195215,
+			base = true,
 		},
 		[104548] = {
 			nodeID = 104574,
@@ -4786,6 +4838,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195180,
+			base = true,
 		},
 		[104511] = {
 			nodeID = 104568,
@@ -4821,6 +4875,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 3,
 			},
+			icon = 135252,
+			base = true,
 		},
 		[104581] = {
 			nodeID = 104626,
@@ -4863,6 +4919,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 134455,
+			base = true,
 		},
 		[104235] = {
 			nodeID = 104255,
@@ -4912,6 +4970,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 4,
 			},
+			icon = 5931155,
+			base = true,
 		},
 		[104263] = {
 			nodeID = 104288,

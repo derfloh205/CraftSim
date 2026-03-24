@@ -3642,6 +3642,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 655652,
+			base = true,
 		},
 		[106255] = {
 			nodeID = 106277,
@@ -3684,6 +3686,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 133146,
+			base = true,
 		},
 		[106262] = {
 			nodeID = 106278,
@@ -3726,6 +3730,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 655651,
+			base = true,
 		},
 		[106269] = {
 			nodeID = 106279,
@@ -3774,6 +3780,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 				ingenuity = 1,
 				resourcefulness = 1,
 			},
+			icon = 4638492,
+			base = true,
 		},
 		[106273] = {
 			nodeID = 106280,
@@ -3799,6 +3807,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549077,
+			base = true,
 		},
 		[109609] = {
 			nodeID = 109654,
@@ -3849,6 +3859,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1392950,
+			base = true,
 		},
 		[109616] = {
 			nodeID = 109655,
@@ -3905,6 +3917,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1495827,
+			base = true,
 		},
 		[109651] = {
 			nodeID = 109660,
@@ -3962,6 +3976,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4643988,
+			base = true,
 		},
 		[109595] = {
 			nodeID = 109652,
@@ -4012,6 +4028,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4485499,
+			base = true,
 		},
 		[106127] = {
 			nodeID = 106184,
@@ -4069,6 +4087,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554979,
+			base = true,
 		},
 		[106147] = {
 			nodeID = 106187,
@@ -4104,6 +4124,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1392951,
+			base = true,
 		},
 		[106183] = {
 			nodeID = 106192,
@@ -4155,6 +4177,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 237445,
+			base = true,
 		},
 		[106134] = {
 			nodeID = 106185,
@@ -4212,6 +4236,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4419477,
+			base = true,
 		},
 		[106141] = {
 			nodeID = 106186,
@@ -4269,6 +4295,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3717602,
+			base = true,
 		},
 		[109637] = {
 			nodeID = 109658,
@@ -4319,6 +4347,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4643988,
+			base = true,
 		},
 		[109644] = {
 			nodeID = 109659,
@@ -4375,6 +4405,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549085,
+			base = true,
 		},
 		[109623] = {
 			nodeID = 109656,
@@ -4425,6 +4457,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549180,
+			base = true,
 		},
 		[109630] = {
 			nodeID = 109657,
@@ -4475,6 +4509,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287363,
+			base = true,
 		},
 		[106169] = {
 			nodeID = 106190,
@@ -4532,6 +4568,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4638485,
+			base = true,
 		},
 		[106176] = {
 			nodeID = 106191,
@@ -4574,6 +4612,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7431122,
+			base = true,
 		},
 		[106155] = {
 			nodeID = 106188,
@@ -4631,6 +4671,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 6998205,
+			base = true,
 		},
 		[106162] = {
 			nodeID = 106189,
@@ -4688,6 +4730,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 7549068,
+			base = true,
 		},
 		[106300] = {
 			nodeID = 106349,
@@ -4730,6 +4774,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549033,
+			base = true,
 		},
 		[106309] = {
 			nodeID = 106351,
@@ -4765,6 +4811,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1100023,
+			base = true,
 		},
 		[106345] = {
 			nodeID = 106358,
@@ -4808,6 +4856,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 7549074,
+			base = true,
 		},
 		[106285] = {
 			nodeID = 106346,
@@ -4850,6 +4900,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549043,
+			base = true,
 		},
 		[106294] = {
 			nodeID = 106348,
@@ -4885,6 +4937,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 7549067,
+			base = true,
 		},
 		[106315] = {
 			nodeID = 106352,
@@ -4927,6 +4981,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549023,
+			base = true,
 		},
 		[106324] = {
 			nodeID = 106354,
@@ -4962,6 +5018,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 7549071,
+			base = true,
 		},
 		[106330] = {
 			nodeID = 106355,
@@ -5004,6 +5062,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549053,
+			base = true,
 		},
 		[106339] = {
 			nodeID = 106357,
@@ -5039,6 +5099,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549073,
+			base = true,
 		},
 		[106304] = {
 			nodeID = 106350,
@@ -5074,6 +5136,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549069,
+			base = true,
 		},
 		[106289] = {
 			nodeID = 106347,
@@ -5109,6 +5173,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549072,
+			base = true,
 		},
 		[106319] = {
 			nodeID = 106353,
@@ -5144,6 +5210,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549075,
+			base = true,
 		},
 		[106334] = {
 			nodeID = 106356,
@@ -5179,6 +5247,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549081,
+			base = true,
 		},
 		[109602] = {
 			nodeID = 109653,

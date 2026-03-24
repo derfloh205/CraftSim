@@ -5588,6 +5588,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 134070,
+			base = true,
 		},
 		[100797] = {
 			nodeID = 100836,
@@ -5632,6 +5634,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 3610505,
+			base = true,
 		},
 		[100826] = {
 			nodeID = 100842,
@@ -5681,6 +5685,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4777831,
+			base = true,
 		},
 		[100835] = {
 			nodeID = 100843,
@@ -5723,6 +5729,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4741994,
+			base = true,
 		},
 		[100717] = {
 			nodeID = 100759,
@@ -5772,6 +5780,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 3610524,
+			base = true,
 		},
 		[100730] = {
 			nodeID = 100761,
@@ -5800,6 +5810,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2735955,
+			base = true,
 		},
 		[100758] = {
 			nodeID = 100765,
@@ -5849,6 +5861,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1405813,
+			base = true,
 		},
 		[100736] = {
 			nodeID = 100762,
@@ -5898,6 +5912,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 3610509,
+			base = true,
 		},
 		[100749] = {
 			nodeID = 100764,
@@ -5926,6 +5942,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4559124,
+			base = true,
 		},
 		[100724] = {
 			nodeID = 100760,
@@ -5968,6 +5986,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548878,
+			base = true,
 		},
 		[100817] = {
 			nodeID = 100841,
@@ -5996,6 +6016,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624638,
+			base = true,
 		},
 		[100778] = {
 			nodeID = 100790,
@@ -6031,6 +6053,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548852,
+			base = true,
 		},
 		[100787] = {
 			nodeID = 100791,
@@ -6080,6 +6104,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624652,
+			base = true,
 		},
 		[100771] = {
 			nodeID = 100789,
@@ -6108,6 +6134,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1405821,
+			base = true,
 		},
 		[100743] = {
 			nodeID = 100763,
@@ -6157,6 +6185,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548895,
+			base = true,
 		},
 		[100806] = {
 			nodeID = 100839,
@@ -6178,6 +6208,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548893,
+			base = true,
 		},
 		[100809] = {
 			nodeID = 100840,
@@ -6199,6 +6231,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548892,
+			base = true,
 		},
 		[100800] = {
 			nodeID = 100837,
@@ -6220,6 +6254,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548894,
+			base = true,
 		},
 		[100803] = {
 			nodeID = 100838,

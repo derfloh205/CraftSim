@@ -3476,6 +3476,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 4549287,
+			base = true,
 		},
 		[100914] = {
 			nodeID = 100936,
@@ -3532,6 +3534,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 3622220,
+			base = true,
 		},
 		[100921] = {
 			nodeID = 100937,
@@ -3588,6 +3592,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 236914,
+			base = true,
 		},
 		[100928] = {
 			nodeID = 100938,
@@ -3644,6 +3650,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660125,
+			base = true,
 		},
 		[101741] = {
 			nodeID = 101793,
@@ -3679,6 +3687,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624566,
+			base = true,
 		},
 		[101754] = {
 			nodeID = 101795,
@@ -3740,6 +3750,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624558,
+			base = true,
 		},
 		[101788] = {
 			nodeID = 101801,
@@ -3797,6 +3809,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660127,
+			base = true,
 		},
 		[101729] = {
 			nodeID = 101791,
@@ -3832,6 +3846,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624560,
+			base = true,
 		},
 		[101737] = {
 			nodeID = 101792,
@@ -3893,6 +3909,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660119,
+			base = true,
 		},
 		[101768] = {
 			nodeID = 101798,
@@ -3928,6 +3946,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624565,
+			base = true,
 		},
 		[101781] = {
 			nodeID = 101800,
@@ -3989,6 +4009,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660120,
+			base = true,
 		},
 		[101724] = {
 			nodeID = 101790,
@@ -4024,6 +4046,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5361632,
+			base = true,
 		},
 		[101763] = {
 			nodeID = 101797,
@@ -4059,6 +4083,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660123,
+			base = true,
 		},
 		[101773] = {
 			nodeID = 101799,
@@ -4094,6 +4120,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660126,
+			base = true,
 		},
 		[101746] = {
 			nodeID = 101794,
@@ -4129,6 +4157,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660118,
+			base = true,
 		},
 		[101719] = {
 			nodeID = 101789,
@@ -4164,6 +4194,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660121,
+			base = true,
 		},
 		[101758] = {
 			nodeID = 101796,
@@ -4199,6 +4231,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549278,
+			base = true,
 		},
 		[100882] = {
 			nodeID = 100904,
@@ -4255,6 +4289,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624569,
+			base = true,
 		},
 		[100903] = {
 			nodeID = 100907,
@@ -4312,6 +4348,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931422,
+			base = true,
 		},
 		[101306] = {
 			nodeID = 100302,
@@ -4340,6 +4378,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931428,
+			base = true,
 		},
 		[101313] = {
 			nodeID = 100303,
@@ -4370,6 +4410,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4914680,
+			base = true,
 		},
 		[101332] = {
 			nodeID = 100306,
@@ -4401,6 +4443,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931421,
+			base = true,
 		},
 		[101318] = {
 			nodeID = 100304,
@@ -4429,6 +4473,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931426,
+			base = true,
 		},
 		[101325] = {
 			nodeID = 100305,
@@ -4459,6 +4505,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549270,
+			base = true,
 		},
 		[100895] = {
 			nodeID = 100906,
@@ -4511,6 +4559,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549246,
+			base = true,
 		},
 		[100888] = {
 			nodeID = 100905,

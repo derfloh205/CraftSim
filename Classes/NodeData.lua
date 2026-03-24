@@ -44,7 +44,6 @@ function CraftSim.NodeData:new(recipeData, baseNodeData, perkMap)
         return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
     end)
     if definitionInfos[1] then
-        self.icon = definitionInfos[1].overrideIcon
         -- each entry of a node has the same overrideName but could have different descriptions, this is used for the professions to contain the node names..
         self.name = definitionInfos[1].overrideName
     end
@@ -194,9 +193,26 @@ function CraftSim.NodeData:HasRelevantStats(recipeData)
     return false
 end
 
+---@return number? icon
+function CraftSim.NodeData:GetIcon()
+    local entryIDs = C_Traits.GetNodeInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), self.nodeID).entryIDs
+    local entryInfos = GUTIL:Map(entryIDs, function(entryID)
+        return C_Traits.GetEntryInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), entryID)
+    end)
+    local definitionInfos   = GUTIL:Map(entryInfos, function(entryInfo)
+        return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+    end)
+    if definitionInfos[1] then
+        return definitionInfos[1].overrideIcon
+    end
+
+    return nil
+end
+
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
-    local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. tostring(self.name)
+    local icon = self:GetIcon()
+    local header = GUTIL:IconToText(icon, 30, 30) .. " " .. tostring(self.name)
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkData in ipairs(self.perkData) do
@@ -254,7 +270,6 @@ end
 ---@field professionStats CraftSim.ProfessionStats.Serialized
 ---@field maxProfessionStats CraftSim.ProfessionStats.Serialized
 ---@field name string
----@field icon number
 ---@field active boolean
 ---@field rank number
 ---@field maxRank number
@@ -265,7 +280,6 @@ function CraftSim.NodeData:Serialize()
     return {
         nodeID = self.nodeID,
         name = self.name,
-        icon = self.icon,
         professionStats = self.professionStats:Serialize(),
         maxProfessionStats = self.maxProfessionStats:Serialize(),
         rank = self.rank,
@@ -287,7 +301,6 @@ function CraftSim.NodeData:Deserialize(serializedData, recipeData)
     nodeData.nodeID = serializedData.nodeID
     nodeData.recipeData = recipeData
     nodeData.name = serializedData.name
-    nodeData.icon = serializedData.icon
     nodeData.active = serializedData.active
     nodeData.rank = serializedData.rank
     nodeData.maxRank = serializedData.maxRank
