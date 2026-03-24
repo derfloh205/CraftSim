@@ -23,6 +23,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("22.0.1"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- Added option to choose shatter reagent in quick access",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("22.0.0"),
         f.PG .. f.r("Saved Variables Optimization"),
         f.PG .. "This led to significant data reduction in your SavedVariables",
