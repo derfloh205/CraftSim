@@ -193,6 +193,25 @@ function CraftSim.NodeData:HasRelevantStats(recipeData)
     return false
 end
 
+---@return string
+function CraftSim.NodeData:GetName()
+    if self.name then return self.name end
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
+    local nodeInfo = C_Traits.GetNodeInfo(configID, self.nodeID)
+    if nodeInfo and nodeInfo.entryIDs then
+        local entryInfos = GUTIL:Map(nodeInfo.entryIDs, function(entryID)
+            return C_Traits.GetEntryInfo(configID, entryID)
+        end)
+        local definitionInfos = GUTIL:Map(entryInfos, function(entryInfo)
+            return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+        end)
+        if definitionInfos[1] then
+            return definitionInfos[1].overrideName or "<nodeName?>"
+        end
+    end
+    return "<nodeName?>"
+end
+
 ---@return number? icon
 function CraftSim.NodeData:GetIcon()
     local entryIDs = C_Traits.GetNodeInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), self.nodeID).entryIDs
@@ -212,7 +231,7 @@ end
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
     local icon = self:GetIcon()
-    local header = GUTIL:IconToText(icon, 30, 30) .. " " .. tostring(self.name)
+    local header = GUTIL:IconToText(icon, 30, 30) .. " " .. self:GetName()
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkData in ipairs(self.perkData) do
@@ -267,8 +286,6 @@ end
 ---@class CraftSim.NodeData.Serialized
 ---@field nodeID number
 ---@field rank number
----@field name? string
----@field icon? number
 
 ---@return CraftSim.NodeData.Serialized
 function CraftSim.NodeData:Serialize()
@@ -276,8 +293,6 @@ function CraftSim.NodeData:Serialize()
     return {
         nodeID = self.nodeID,
         rank = self.rank,
-        name = self.name,
-        icon = self.icon,
     }
 end
 
@@ -305,29 +320,38 @@ function CraftSim.NodeData:Deserialize(serializedData, recipeData)
         end
     end
 
-    -- Create an empty NodeData (skipping the WoW-API-dependent constructor) and
-    -- populate it entirely from static SPECIALIZATION_DATA + the saved rank.
+    return CraftSim.NodeData:BuildFromStaticData(recipeData, rawBaseNodeData, perkMap, serializedData.rank)
+end
+
+--- Builds a NodeData object from static SPECIALIZATION_DATA without calling
+--- character-specific WoW APIs (C_Traits.GetNodeInfo activeRank etc.).
+--- Name is intentionally omitted so it is fetched lazily via GetName() when needed for display.
+---@param recipeData CraftSim.RecipeData
+---@param rawBaseNodeData CraftSim.RawPerkData
+---@param perkMap table<number, CraftSim.RawPerkData>
+---@param rank number
+---@return CraftSim.NodeData
+function CraftSim.NodeData:BuildFromStaticData(recipeData, rawBaseNodeData, perkMap, rank)
     local nodeData = CraftSim.NodeData()
     nodeData.nodeID             = rawBaseNodeData.nodeID
     nodeData.recipeData         = recipeData
     nodeData.maxRank            = rawBaseNodeData.maxRank
     nodeData.professionStats    = CraftSim.ProfessionStats()
     nodeData.maxProfessionStats = CraftSim.ProfessionStats()
-    nodeData.rank               = serializedData.rank
+    nodeData.rank               = rank
     nodeData.active             = false
-    -- Preserve display-only fields if available in the serialized data
-    nodeData.name               = serializedData.name or "<nodeName?>"
-    nodeData.icon               = serializedData.icon
+    -- icon is available in the static raw data; name is fetched lazily via GetName()
+    nodeData.icon               = rawBaseNodeData.icon
 
     -- Populate equals* multipliers from static raw_stats (needed by UpdateProfessionStats)
-    nodeData.raw_stats                              = rawBaseNodeData.stats or {}
-    nodeData.equalsSkill                            = 0
-    nodeData.equalsMulticraft                       = 0
-    nodeData.equalsResourcefulness                  = 0
-    nodeData.equalsIngenuity                        = 0
-    nodeData.equalsResourcefulnessExtraItemsFactor  = 0
+    nodeData.raw_stats                               = rawBaseNodeData.stats or {}
+    nodeData.equalsSkill                             = 0
+    nodeData.equalsMulticraft                        = 0
+    nodeData.equalsResourcefulness                   = 0
+    nodeData.equalsIngenuity                         = 0
+    nodeData.equalsResourcefulnessExtraItemsFactor   = 0
     nodeData.equalsIngenuityExtraConcentrationFactor = 0
-    nodeData.equalsCraftingspeed                    = 0
+    nodeData.equalsCraftingspeed                     = 0
 
     for stat, amount in pairs(nodeData.raw_stats) do
         amount = amount or 0
@@ -349,8 +373,8 @@ function CraftSim.NodeData:Deserialize(serializedData, recipeData)
     end
 
     -- Build perkData from static perkMap.
-    -- CraftSim.PerkData() calls C_ProfSpecs.GetUnlockRankForPerk(perkID) which returns
-    -- static game data (threshold rank) and is safe to call regardless of current character.
+    -- C_ProfSpecs.GetUnlockRankForPerk returns static game data (threshold rank),
+    -- safe to call regardless of current character.
     nodeData.perkData = {}
     for perkID, perkRawData in pairs(perkMap) do
         tinsert(nodeData.perkData, CraftSim.PerkData(nodeData, perkID, perkRawData))
@@ -359,7 +383,9 @@ function CraftSim.NodeData:Deserialize(serializedData, recipeData)
         return a.threshold < b.threshold
     end)
 
-    -- Derive active, professionStats and maxProfessionStats from rank + static data
+    -- Derive active, professionStats and maxProfessionStats from rank + static data.
+    -- Update() uses self.rank as-is and does NOT call UpdateRank() (which would overwrite
+    -- the saved rank with the current character's rank from the WoW API).
     nodeData:Update()
 
     return nodeData
