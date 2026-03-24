@@ -479,17 +479,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
     content.scanFiltersButton = CraftSim.WIDGETS.OptionsButton {
         parent = content,
+        isFilter = true,
         anchorPoints = { { anchorParent = content.scanButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
-                rootDescription:CreateCheckbox(
-                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION", not value)
-                    end)
-
                 rootDescription:CreateCheckbox(
                     L(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES),
                     function()
@@ -552,6 +544,15 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         parent = content,
         anchorPoints = { { anchorParent = content.scanFiltersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
+                rootDescription:CreateCheckbox(
+                    L(CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION", not value)
+                    end)
+
                 local reagentAllocation = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION))
 
                 reagentAllocation:CreateRadio(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1) .. " " .. GUTIL:GetQualityIconString(1, 20, 20),

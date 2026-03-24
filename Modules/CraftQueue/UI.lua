@@ -1513,12 +1513,11 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                                 not value)
                         end)
 
-                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
-                    end);
-            end)
-        end
+                includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "If enabled, CraftSim will suggest soulbound finishing reagents during optimization")
+                end)
+            end
     }
 
     editRecipeFrame.content.resultTitle = GGUI.Text {

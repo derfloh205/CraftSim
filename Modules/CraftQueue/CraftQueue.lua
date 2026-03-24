@@ -1007,7 +1007,7 @@ end
 
 ---@param rootDescription any MenuUtil root description to build the menu on (from OptionsButton's menuUtilCallback)
 function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
-    local recipeData = CraftSim.INIT.currentRecipeData
+    local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then return end
     if recipeData.supportsQualities then
         rootDescription:CreateCheckbox(
