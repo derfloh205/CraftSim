@@ -23,6 +23,15 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("22.0.0"),
+        f.PG .. f.r("Saved Variables Optimization"),
+        f.PG .. "This led to significant data reduction in your SavedVariables",
+        f.a .. "E.g: Data for my 12 Chars was reduced from 80mb -> 7mb",
+        f.PG .. f.l("It is recommended to backup your " .. f.bb("Craftsim.lua") .. " file"),
+        f.a .. f.l(" in your WTF\\Account\\<AccNr>\\SavedVariables folder"),
+        f.a .. f.r("ALL CHARACTER DATA HAS BEEN WIPED"),
+        f.a .. "We recommend to login on all alts and scan both professions",
+        f.a .. "to rebuild the data with the new optimized format",
         newP("21.5.0"),
         f.PG .. f.bb("Specialization Info"),
         f.a .. "- Affecting Perks List now filters redundant stat perks",
