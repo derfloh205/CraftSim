@@ -604,11 +604,9 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_4_5_Remove_gathering_concentration_data
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()
-    -- Delete all cached specializationData for every crafter.
-    -- The new format (specializationData[expansionID][professionID] = { [nodeID] = rank })
-    -- is incompatible with the old per-recipe format.  Data will be rebuilt automatically
-    -- the next time each character logs in and opens a profession.
-    for _, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
-        crafterData.specializationData = nil
-    end
+    -- Clear all crafter data.  The new specializationData format is incompatible
+    -- with the old per-recipe format, and stale data without spec ranks would
+    -- produce incorrect profit values during alt scanning.  Everything repopulates
+    -- automatically the next time each character logs in and opens a profession.
+    CraftSim.DB.CRAFTER:ClearAll()
 end
