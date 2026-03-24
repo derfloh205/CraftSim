@@ -43,6 +43,17 @@ local function generateConcentrationCacheKey(recipeData)
         end
     end
 
+    -- Add effective skill and recipe difficulty so the cache is invalidated when
+    -- simulated skill changes (e.g. spec node adjustments, buff changes, manual modifiers)
+    if recipeData.professionStats then
+        if recipeData.professionStats.skill then
+            table.insert(parts, "skill:" .. tostring(recipeData.professionStats.skill.value))
+        end
+        if recipeData.professionStats.recipeDifficulty then
+            table.insert(parts, "difficulty:" .. tostring(recipeData.professionStats.recipeDifficulty.value))
+        end
+    end
+
     return table.concat(parts, "_")
 end
 
@@ -167,16 +178,14 @@ function CraftSim.RecipeData:new(options)
 
     self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
 
-    if orderData then
-        self.orderData = options.orderData
-    end
-
+    -- Delay setting order data until after reagent slots exist (reagentData is created later),
+    -- so we can apply optional/finishing reagents from the order immediately.
+    local pendingOrderData = orderData
     if isWorkOrder then
         ---@type CraftingOrderInfo
-        self.orderData = ProfessionsFrame.OrdersPage.OrderView.order
-
+        pendingOrderData = ProfessionsFrame.OrdersPage.OrderView.order
         print("Craft Order Data:")
-        print(self.orderData, true)
+        print(pendingOrderData, true)
     end
 
     if self:IsCrafter() and not forceCache then
@@ -258,6 +267,10 @@ function CraftSim.RecipeData:new(options)
 
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
+
+    if pendingOrderData then
+        self:SetOrder(pendingOrderData)
+    end
 
     local qualityReagents = GUTIL:Count(self.reagentData.requiredReagents, function(reagent)
         return reagent.hasQuality
@@ -378,6 +391,51 @@ function CraftSim.RecipeData:SetOrder(orderData)
     self.isRecraft = self.orderData.isRecraft
     self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
         self.orderData.orderID, self.concentrating)
+    self:ApplyOrderReagentsToSlots()
+end
+
+---@param reagentInfo table
+---@return number? dataSlotIndex
+---@return number? itemID
+---@return number? currencyID
+function CraftSim.RecipeData:ExtractOrderReagentInfo(reagentInfo)
+    local d = self:GetOrderReagentDescriptor(reagentInfo)
+    return d.dataSlotIndex, d.itemID, d.currencyID
+end
+
+--- Applies optional/finishing/required-selectable reagents from `orderData.reagents` to the recipe's slots.
+--- This ensures queued orders always reflect customer-provided optionals (guild/personal/work orders).
+function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
+    if not (self.orderData and self.orderData.reagents and #self.orderData.reagents > 0) then
+        return
+    end
+
+    local reagentData = self.reagentData
+    if not reagentData then
+        return
+    end
+
+    reagentData:ClearOptionalReagents()
+    if reagentData:HasRequiredSelectableReagent() then
+        reagentData.requiredSelectableReagentSlot.activeReagent = nil
+    end
+
+    local orderedSlots = reagentData:GetOrderedOptionalSlots()
+    local slotsByDataSlotIndex = {}
+    for _, slot in ipairs(orderedSlots) do
+        if slot.dataSlotIndex then
+            slotsByDataSlotIndex[slot.dataSlotIndex] = slot
+        end
+    end
+
+    for i, reagentInfo in ipairs(self.orderData.reagents) do
+        local dataSlotIndex, itemID, currencyID = self:ExtractOrderReagentInfo(reagentInfo)
+
+        local slot = (dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]) or orderedSlots[i]
+        if slot then
+            slot:TryApplyOrderReagent(itemID, currencyID)
+        end
+    end
 end
 
 function CraftSim.RecipeData:SetSubRecipeCostsUsage(enabled)
@@ -1201,7 +1259,7 @@ end
 ---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field includeLocked? boolean
 ---@field includeSoulbound? boolean
----@field finally function callback will be called when finished
+---@field finally? function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 
 ---@param options CraftSim.RecipeData.OptimizeFinishingReagents.Options
@@ -1266,8 +1324,9 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 iterationTable = possibleReagents,
                 iterationsPerFrame = 1,
                 finally = function()
-                    local bestResult =
-                        GUTIL:Fold(slotSimulationResults, slotSimulationResults[1], function(bestResult, nextResult)
+                    -- pick the best candidate for this slot and apply it
+                    local bestResult = GUTIL:Fold(slotSimulationResults, slotSimulationResults[1],
+                        function(bestResult, nextResult)
                             if self.concentrating then
                                 if nextResult.concentrationValue > bestResult.concentrationValue then
                                     return nextResult
@@ -1283,8 +1342,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                             end
                         end)
 
-                    -- then set best result
-
                     slot:SetReagent(bestResult.itemID)
                     self:Update()
                     frameDistributor:Continue()
@@ -1293,25 +1350,55 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                     ---@type CraftSim.OptionalReagent
                     local finishingReagent = reagent
 
-                    if finishingReagent:IsCurrency() then
-                        currentItemCount = currentItemCount + 1
-                        frameDistributor2:Continue()
-                        return
-                    end
-
-                    local itemID = finishingReagent.item:GetItemID()
-
                     currentItemCount = currentItemCount + 1
 
-                    if not options.includeSoulbound and GUTIL:isItemSoulbound(itemID) then
-                        frameDistributor2:Continue()
-                        return
+                    -- Ownership / availability handling:
+                    -- - Non-soulbound items: can always be considered (you can buy them).
+                    -- - Soulbound items: only consider if the crafter actually owns them.
+                    -- - Currencies: only consider if the crafter has some amount.
+                    local hasOwned = false
+                    if finishingReagent:IsCurrency() then
+                        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(finishingReagent.currencyID)
+                        hasOwned = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
+                    else
+                        if finishingReagent.item then
+                            local itemID = finishingReagent.item:GetItemID()
+                            local crafterUID = self:GetCrafterUID()
+                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                            hasOwned = count and count > 0
+                        end
                     end
 
-                    slot:SetReagent(finishingReagent.item:GetItemID())
+                    local candidateItemID = nil
+
+                    if finishingReagent:IsCurrency() then
+                        -- currencies are always treated as zero-cost but can still change stats,
+                        -- but only when the crafter actually has some of that currency
+                        if not hasOwned then
+                            frameDistributor2:Continue()
+                            return
+                        end
+
+                        slot:SetCurrencyReagent(finishingReagent.currencyID)
+                    else
+                        local itemID = finishingReagent.item:GetItemID()
+                        local isSoulbound = GUTIL:isItemSoulbound(itemID)
+
+                        if isSoulbound then
+                            -- Respect includeSoulbound flag and require ownership for soulbound finishers
+                            if not options.includeSoulbound or not hasOwned then
+                                frameDistributor2:Continue()
+                                return
+                            end
+                        end
+
+                        slot:SetReagent(itemID)
+                        candidateItemID = itemID
+                    end
+
                     self:Update()
                     tinsert(slotSimulationResults, {
-                        itemID = itemID,
+                        itemID = candidateItemID,
                         averageProfit = self.averageProfitCached,
                         concentrationValue = self:GetConcentrationValue()
                     })
@@ -1324,6 +1411,108 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
             }:Continue()
         end
     }:Continue()
+end
+
+--- Adjusts finishing reagents for batch crafting so that soulbound finishers are only used
+--- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
+--- (and currencies) may still be used even if not fully owned, as they can be bought.
+---@param amount number number of crafts that will be queued
+function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
+    amount = amount or 0
+    if amount <= 0 then return end
+
+    local reagentData = self.reagentData
+    if not reagentData or #reagentData.finishingReagentSlots == 0 then return end
+
+    local crafterUID = self:GetCrafterUID()
+
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        local active = slot.activeReagent
+        if active and not active:IsCurrency() and active.item then
+            local itemID = active.item:GetItemID()
+            if GUTIL:isItemSoulbound(itemID) then
+                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
+                local perCraft = slot.maxQuantity or 1
+                local neededTotal = perCraft * amount
+
+                if owned < neededTotal then
+                    -- Need to replace this soulbound finisher with the best non-soulbound (or currency) option
+                    local bestCandidate = nil
+
+                    -- start without any finishing reagent
+                    for _, slot in ipairs(self.reagentData.finishingReagentSlots) do
+                        slot.activeReagent = nil
+                    end
+                    self:Update()
+                    local bestAverageProfit = self.averageProfitCached
+                    local bestConcentrationValue = self:GetConcentrationValue()
+                    local useConcentration = self.concentrating
+
+                    local function considerCandidate(asCurrency, candidate)
+                        if asCurrency then
+                            local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(candidate.currencyID)
+                            if not (currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0) then
+                                return
+                            end
+                            slot:SetCurrencyReagent(candidate.currencyID)
+                        else
+                            if not candidate.item then return end
+                            local candID = candidate.item:GetItemID()
+                            if GUTIL:isItemSoulbound(candID) then
+                                -- For this adjustment pass we only want non-soulbound alternatives
+                                return
+                            end
+                            slot:SetReagent(candID)
+                        end
+
+                        self:Update()
+                        local avgProfit = self.averageProfitCached or select(1, self:GetAverageProfit())
+                        local concValue = select(1, self:GetConcentrationValue())
+
+                        
+                        local better = false
+                        if useConcentration then
+                            better = concValue > bestConcentrationValue
+                        else
+                            better = avgProfit > bestAverageProfit
+                        end
+                        if better then
+                            bestCandidate = { asCurrency = asCurrency, reagent = candidate }
+                            bestAverageProfit = avgProfit
+                            bestConcentrationValue = concValue
+                        end
+                        
+                    end
+
+                    -- Evaluate all possible non-soulbound / currency alternatives for this slot
+                    for _, possible in ipairs(slot.possibleReagents) do
+                        if possible:IsCurrency() then
+                            considerCandidate(true, possible)
+                        else
+                            considerCandidate(false, possible)
+                        end
+                    end
+
+                    -- Apply best alternative, or clear the slot if none is viable
+                    if bestCandidate then
+                        if bestCandidate.asCurrency then
+                            slot:SetCurrencyReagent(bestCandidate.reagent.currencyID)
+                        else
+                            if bestCandidate.reagent.item then
+                                slot:SetReagent(bestCandidate.reagent.item:GetItemID())
+                            else
+                                slot:SetReagent(nil)
+                            end
+                        end
+                    else
+                        slot:SetReagent(nil)
+                    end
+                end
+            end
+        end
+    end
+
+    self:Update()
 end
 
 ---@return number concentrationValue
@@ -1429,21 +1618,22 @@ end
 ---@field optimizeReagentProgressCallback? fun(progress: number)
 ---@field optimizeConcentration? boolean
 ---@field optimizeConcentrationProgressCallback? fun(progress: number)
----@field optimizeFinishingReagents? boolean
+---@field optimizeFinishingReagentsOptions? CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field optimizeFinishingReagentsProgressCallback? fun(progress: number)
 ---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
----@field finally function callback when optimization is finished
+---@field finally? function callback when optimization is finished
 
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)
+    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.Optimization")
     options = options or {}
 
     local optimizationTaskList = {
         options.optimizeGear and "GEAR",
         options.optimizeReagentOptions and "REAGENTS",
         self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
-        options.optimizeFinishingReagents and "FINISHING_REAGENTS",
+        options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
         options.optimizeSubRecipesOptions and "SUB_RECIPES",
     }
 
@@ -1454,12 +1644,16 @@ function CraftSim.RecipeData:Optimize(options)
         end,
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
+                print("Optimizing Gear..")
                 self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "REAGENTS" then
+                print("Optimizing Reagents..")
                 self:OptimizeReagents(options.optimizeReagentOptions)
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "CONCENTRATION" then
+                print("Optimizing Concentration..")
+
                 self:OptimizeConcentration {
                     finally = function()
                         frameDistributorTasks:Continue()
@@ -1471,15 +1665,19 @@ function CraftSim.RecipeData:Optimize(options)
                     end
                 }
             elseif optimizationTask == "FINISHING_REAGENTS" then
+                print("Optimizing Finishing Reagents..")
+                print("- includeLocked: " .. tostring(options.optimizeFinishingReagentsOptions.includeLocked))
+                print("- includeSoulbound: " .. tostring(options.optimizeFinishingReagentsOptions.includeSoulbound))
+                -- For generic Optimize flows (e.g. Craft Queue favorites), never consider locked
+                -- finishing slots and always allow soulbound finishers (subject to ownership rules
+                -- inside OptimizeFinishingReagents).
                 self:OptimizeFinishingReagents {
+                    includeLocked = options.optimizeFinishingReagentsOptions.includeLocked,
+                    includeSoulbound = options.optimizeFinishingReagentsOptions.includeSoulbound,
                     finally = function()
                         frameDistributorTasks:Continue()
                     end,
-                    progressUpdateCallback = function(progress)
-                        if options.optimizeFinishingReagentsProgressCallback then
-                            options.optimizeFinishingReagentsProgressCallback(progress)
-                        end
-                    end
+                    progressUpdateCallback = options.optimizeFinishingReagentsOptions.progressUpdateCallback
                 }
             elseif optimizationTask == "SUB_RECIPES" then
                 self:SetSubRecipeCostsUsage(true)
@@ -1701,7 +1899,7 @@ end
 ---@param reagentInfo table The reagent info from orderData.reagents
 ---@param recipeData CraftSim.RecipeData The recipe data containing reagentData
 ---@return number? itemID The itemID if found, nil otherwise
-function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
+function CraftSim.RecipeData:GetItemIDFromReagentInfo(reagentInfo)
     if not reagentInfo then
         return nil
     end
@@ -1720,8 +1918,8 @@ function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
     end
     
     -- Basic reagents (or any reagent without reagent field) use slotIndex to find the reagent in requiredReagents
-    if reagentInfo.slotIndex and recipeData and recipeData.reagentData then
-        local matchingReagent = CraftSim.GUTIL:Find(recipeData.reagentData.requiredReagents, function(reagent)
+    if reagentInfo.slotIndex and self.reagentData then
+        local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
             return reagent.dataSlotIndex == reagentInfo.slotIndex
         end)
         
@@ -1731,6 +1929,43 @@ function CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, recipeData)
     end
     
     return nil
+end
+
+--- Normalizes an order reagent entry into a simple descriptor.
+--- Blizzard's `orderData.reagents` shape differs between contexts; keep all extraction logic in one place.
+---@param reagentInfo table The reagent info from orderData.reagents
+---@return { dataSlotIndex: number?, itemID: number?, currencyID: number? } descriptor
+function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
+    if not reagentInfo then
+        return { dataSlotIndex = nil, itemID = nil, currencyID = nil }
+    end
+
+    local dataSlotIndex = nil
+    if reagentInfo.reagent and reagentInfo.reagent.dataSlotIndex then
+        dataSlotIndex = reagentInfo.reagent.dataSlotIndex
+    elseif reagentInfo.reagentInfo and reagentInfo.reagentInfo.dataSlotIndex then
+        dataSlotIndex = reagentInfo.reagentInfo.dataSlotIndex
+    elseif reagentInfo.dataSlotIndex then
+        dataSlotIndex = reagentInfo.dataSlotIndex
+    elseif reagentInfo.slotIndex then
+        dataSlotIndex = reagentInfo.slotIndex
+    end
+
+    local currencyID = nil
+    if reagentInfo.reagent then
+        if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.currencyID then
+            currencyID = reagentInfo.reagent.reagent.currencyID
+        elseif reagentInfo.reagent.currencyID then
+            currencyID = reagentInfo.reagent.currencyID
+        end
+    end
+    if not currencyID and reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.currencyID then
+        currencyID = reagentInfo.reagentInfo.reagent.currencyID
+    end
+
+    local itemID = self:GetItemIDFromReagentInfo(reagentInfo)
+
+    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID }
 end
 
 --- Requires a hardware event
@@ -1751,8 +1986,7 @@ function CraftSim.RecipeData:Craft(amount)
                     self.concentrating)
             end
         end
-    end
-    if self.isEnchantingRecipe then
+    elseif self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
             ---@cast vellumLocation ItemLocation
@@ -1762,7 +1996,7 @@ function CraftSim.RecipeData:Craft(amount)
     else
         if self.orderData then
             local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
-                return CraftSim.RecipeData.GetItemIDFromReagentInfo(reagentInfo, self)
+                return self:GetItemIDFromReagentInfo(reagentInfo)
             end)
 
             craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)

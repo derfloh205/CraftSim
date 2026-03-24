@@ -295,6 +295,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                         end, function()
                             local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE")
                             CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE", not value)
+                            CraftSim.MODULES:UpdateUI()
                         end)
 
                     concentrationCB:SetTooltip(function(tooltip, elementDescription)
@@ -309,6 +310,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                         end, function()
                             local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS")
                             CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS", not value)
+                            CraftSim.MODULES:UpdateUI()
                         end)
 
                     finishingReagentsCB:SetTooltip(function(tooltip, elementDescription)
@@ -325,6 +327,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                                 "REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS")
                             CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS",
                                 not value)
+                            CraftSim.MODULES:UpdateUI()
                         end)
 
                     finishingReagentsSoulboundCB:SetTooltip(function(tooltip, elementDescription)
@@ -341,6 +344,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                                 "REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS")
                             CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS",
                                 not value)
+                            CraftSim.MODULES:UpdateUI()
                         end)
 
                     finishingReagentsLockedSlotsCB:SetTooltip(function(tooltip, elementDescription)

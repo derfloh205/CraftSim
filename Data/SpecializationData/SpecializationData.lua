@@ -10,6 +10,8 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field nodeID number
 ---@field maxRank number
 ---@field stats? table<string, number> statname -> amount
+---@field icon? number texture file ID (only present on base nodes, i.e. base = true)
+---@field base? boolean true if this entry is the base node (maxRank > 1)
 
 ---@class CraftSim.RawNodeData
 ---@field recipeMapping table<RecipeID, number[]>

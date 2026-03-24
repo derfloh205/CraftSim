@@ -2049,6 +2049,70 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 5,
 		},
 	},
+	[244697] = {
+		qualityID = 1,
+		name = "Flux Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[244698] = {
+		qualityID = 2,
+		name = "Flux Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[244699] = {
+		qualityID = 1,
+		name = "Greased Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[244700] = {
+		qualityID = 2,
+		name = "Greased Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[244701] = {
+		qualityID = 1,
+		name = "Perfected Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[244702] = {
+		qualityID = 2,
+		name = "Perfected Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[244703] = {
+		qualityID = 1,
+		name = "Consistent Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[244704] = {
+		qualityID = 2,
+		name = "Consistent Cogwheel",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
 	[245781] = {
 		qualityID = 1,
 		name = "Thalassian Missive of the Aurora",
@@ -3255,7 +3319,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Multicraft Matrix",
 		expansionID = 11,
 		stats = {
-			multicraft = 90.0,
+			multicraft = 18.0,
 		},
 	},
 	[247724] = {
@@ -3275,11 +3339,11 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		},
 	},
 	[247726] = {
-		qualityID = 1,
+		qualityID = 2,
 		name = "Resourceful Routing",
 		expansionID = 11,
 		stats = {
-			resourcefulness = 15.0,
+			resourcefulness = 20.0,
 		},
 	},
 	[247788] = {

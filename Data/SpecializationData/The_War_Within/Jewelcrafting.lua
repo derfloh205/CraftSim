@@ -817,6 +817,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 5931407,
+			base = true,
 		},
 		[98618] = {
 			nodeID = 98659,
@@ -838,6 +840,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 5931409,
+			base = true,
 		},
 		[98623] = {
 			nodeID = 98660,
@@ -859,6 +863,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 5931405,
+			base = true,
 		},
 		[98628] = {
 			nodeID = 98661,
@@ -880,6 +886,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 5931406,
+			base = true,
 		},
 		[98633] = {
 			nodeID = 98662,
@@ -915,6 +923,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134081,
+			base = true,
 		},
 		[98614] = {
 			nodeID = 98614,
@@ -922,6 +932,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 132595,
+			base = true,
 		},
 		[98597] = {
 			nodeID = 98614,
@@ -958,6 +970,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931390,
+			base = true,
 		},
 		[98578] = {
 			nodeID = 98612,
@@ -993,6 +1007,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931406,
+			base = true,
 		},
 		[98585] = {
 			nodeID = 98613,
@@ -1014,6 +1030,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931391,
+			base = true,
 		},
 		[98575] = {
 			nodeID = 98611,
@@ -1049,6 +1067,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931389,
+			base = true,
 		},
 		[98572] = {
 			nodeID = 98610,
@@ -1084,6 +1104,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931393,
+			base = true,
 		},
 		[98562] = {
 			nodeID = 98608,
@@ -1119,6 +1141,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931405,
+			base = true,
 		},
 		[98569] = {
 			nodeID = 98609,
@@ -1140,6 +1164,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931394,
+			base = true,
 		},
 		[98559] = {
 			nodeID = 98607,
@@ -1175,6 +1201,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931392,
+			base = true,
 		},
 		[98556] = {
 			nodeID = 98606,
@@ -1210,6 +1238,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931409,
+			base = true,
 		},
 		[98553] = {
 			nodeID = 98605,
@@ -1231,6 +1261,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931401,
+			base = true,
 		},
 		[98546] = {
 			nodeID = 98604,
@@ -1266,6 +1298,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931399,
+			base = true,
 		},
 		[98543] = {
 			nodeID = 98603,
@@ -1301,6 +1335,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931400,
+			base = true,
 		},
 		[98540] = {
 			nodeID = 98602,
@@ -1336,6 +1372,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931403,
+			base = true,
 		},
 		[98530] = {
 			nodeID = 98600,
@@ -1371,6 +1409,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931407,
+			base = true,
 		},
 		[98537] = {
 			nodeID = 98601,
@@ -1392,6 +1432,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931404,
+			base = true,
 		},
 		[98527] = {
 			nodeID = 98599,
@@ -1427,6 +1469,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931402,
+			base = true,
 		},
 		[98524] = {
 			nodeID = 98598,
@@ -1483,6 +1527,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631358,
+			base = true,
 		},
 		[98651] = {
 			nodeID = 98665,
@@ -1511,6 +1557,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631356,
+			base = true,
 		},
 		[98658] = {
 			nodeID = 98666,
@@ -1546,6 +1594,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548902,
+			base = true,
 		},
 		[98647] = {
 			nodeID = 98664,
@@ -1574,6 +1624,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 132595,
+			base = true,
 		},
 		[98242] = {
 			nodeID = 98245,
@@ -1623,6 +1675,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 2531330,
+			base = true,
 		},
 		[101952] = {
 			nodeID = 101953,
@@ -1679,6 +1733,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 348286,
+			base = true,
 		},
 		[98225] = {
 			nodeID = 98243,
@@ -1728,6 +1784,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 2,
 			},
+			icon = 1359995,
+			base = true,
 		},
 		[98232] = {
 			nodeID = 98244,

@@ -62,7 +62,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
                     local enabledCB = rootDescription:CreateCheckbox(
-                        f.bb("Enable ") .. f.gold("History Recording"),
+                        L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_ENABLE_HISTORY_RECORDING),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED")
                         end, function()
@@ -73,7 +73,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                         end)
 
                     local patronOrderCB = rootDescription:CreateCheckbox(
-                        "Record " .. f.bb("Patron Orders"),
+                        L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_RECORD_PATRON_ORDERS),
                         function()
                             return CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS")
                         end, function()
@@ -83,9 +83,9 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                                 not value)
                         end)
 
-                    local removeCustomersCategory = rootDescription:CreateButton("Remove Customers")
+                    local removeCustomersCategory = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_CUSTOMERS))
 
-                    local autoRemovalCategory = removeCustomersCategory:CreateButton("Auto Removal")
+                    local autoRemovalCategory = removeCustomersCategory:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_AUTO_REMOVAL))
 
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(autoRemovalCategory, function(frame)
                         frame.label = GGUI.Text {
@@ -144,18 +144,18 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                         }
                     end, 200, 25, "CUSTOMER_HISTORY_OPTIONS_REMOVAL_TIP_THRESHOLD_INPUT")
 
-                    removeCustomersCategory:CreateButton(f.l("Remove below Threshold"), function()
+                    removeCustomersCategory:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_BELOW_THRESHOLD), function()
                         CraftSim.CUSTOMER_HISTORY:PurgeCustomers(CraftSim.DB.OPTIONS:Get(
                             "CUSTOMER_HISTORY_REMOVAL_TIP_THRESHOLD"))
                     end)
 
-                    removeCustomersCategory:CreateButton(f.r("Remove All Customers"), function()
+                    removeCustomersCategory:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMERS), function()
                         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
-                            rootDescription:CreateTitle(f.r("Remove ALL Customer Data?"))
-                            rootDescription:CreateButton("Yes", function()
+                            rootDescription:CreateTitle(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA))
+                            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.STATIC_POPUPS_YES), function()
                                 CraftSim.CUSTOMER_HISTORY:PurgeCustomers(math.huge)
                             end)
-                            rootDescription:CreateButton("No", function() end)
+                            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.STATIC_POPUPS_NO), function() end)
                         end)
                     end)
             end,
@@ -206,7 +206,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     if IsMouseButtonDown("RightButton") then
                         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                             rootDescription:CreateTitle(customerHistory.customer)
-                            rootDescription:CreateButton("Delete Customer", function()
+                            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CATEGORY_DELETE_CUSTOMER), function()
                                 CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
                             end)
                         end)

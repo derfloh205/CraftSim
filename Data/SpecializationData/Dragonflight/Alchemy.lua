@@ -4246,6 +4246,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 413583,
+			base = true,
 		},
 		[19494] = {
 			nodeID = 19534,
@@ -4302,6 +4304,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4497599,
+			base = true,
 		},
 		[19501] = {
 			nodeID = 19535,
@@ -4358,6 +4362,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624375,
+			base = true,
 		},
 		[19533] = {
 			nodeID = 19539,
@@ -4409,6 +4415,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 4624377,
+			base = true,
 		},
 		[22445] = {
 			nodeID = 22478,
@@ -4451,6 +4459,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624658,
+			base = true,
 		},
 		[22456] = {
 			nodeID = 22480,
@@ -4486,6 +4496,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497584,
+			base = true,
 		},
 		[22462] = {
 			nodeID = 22481,
@@ -4535,6 +4547,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497574,
+			base = true,
 		},
 		[22476] = {
 			nodeID = 22483,
@@ -4563,6 +4577,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554327,
+			base = true,
 		},
 		[19507] = {
 			nodeID = 19536,
@@ -4598,6 +4614,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497573,
+			base = true,
 		},
 		[22469] = {
 			nodeID = 22482,
@@ -4647,6 +4665,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 4624378,
+			base = true,
 		},
 		[19449] = {
 			nodeID = 19482,
@@ -4682,6 +4702,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624657,
+			base = true,
 		},
 		[19460] = {
 			nodeID = 19484,
@@ -4717,6 +4739,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497591,
+			base = true,
 		},
 		[19473] = {
 			nodeID = 19486,
@@ -4759,6 +4783,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497592,
+			base = true,
 		},
 		[19480] = {
 			nodeID = 19487,
@@ -4787,6 +4813,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4497566,
+			base = true,
 		},
 		[19466] = {
 			nodeID = 19485,
@@ -4829,6 +4857,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4554441,
+			base = true,
 		},
 		[19522] = {
 			nodeID = 19538,
@@ -4857,6 +4887,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3615504,
+			base = true,
 		},
 		[19517] = {
 			nodeID = 19537,

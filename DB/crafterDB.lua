@@ -21,7 +21,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.crafterDB")
 ---@field recipeInfos table<RecipeID, TradeSkillRecipeInfo>
 ---@field professionInfos table<RecipeID, ProfessionInfo>
 ---@field operationInfos table<RecipeID, CraftingOperationInfo>
----@field specializationData table<RecipeID, CraftSim.SpecializationData.Serialized>
+---@field specializationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.SpecializationData.Serialized>>
 ---@field professionGear table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>
 ---@field class ClassFile
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
@@ -131,13 +131,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.SpecializationData?
 function CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, recipeData)
-    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    CraftSimDB.crafterDB.data[crafterUID].specializationData = CraftSimDB.crafterDB.data[crafterUID].specializationData or
-        {}
-    local specializationDataSerialized = CraftSimDB.crafterDB.data[crafterUID].specializationData[recipeData.recipeID]
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID]
+    if not crafterData then return nil end
 
-    if specializationDataSerialized then
-        return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, recipeData)
+    local expansionID = recipeData.professionData.expansionID
+    local professionID = recipeData.professionData.professionInfo.profession
+
+    local expansionData = (crafterData.specializationData or {})[expansionID]
+    local nodeRanks = expansionData and expansionData[professionID]
+
+    if nodeRanks then
+        return CraftSim.SpecializationData:Deserialize(nodeRanks, recipeData)
     end
 
     return nil
@@ -146,11 +150,47 @@ end
 ---@param crafterUID CrafterUID
 ---@param specializationData CraftSim.SpecializationData
 function CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
-    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    CraftSimDB.crafterDB.data[crafterUID].specializationData = CraftSimDB.crafterDB.data[crafterUID].specializationData or
-        {}
-    CraftSimDB.crafterDB.data[crafterUID].specializationData[specializationData.recipeData.recipeID] = specializationData
-        :Serialize()
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID] = crafterData
+    crafterData.specializationData = crafterData.specializationData or {}
+
+    local expansionID = specializationData.recipeData.professionData.expansionID
+    local professionID = specializationData.recipeData.professionData.professionInfo.profession
+
+    crafterData.specializationData[expansionID] = crafterData.specializationData[expansionID] or {}
+    local existing = crafterData.specializationData[expansionID][professionID] or {}
+
+    -- Merge this recipe's node ranks into the profession-level store.
+    -- Different recipes share the same spec tree so ranks are consistent.
+    local serialized = specializationData:Serialize()
+    for nodeID, rank in pairs(serialized) do
+        existing[nodeID] = rank
+    end
+    crafterData.specializationData[expansionID][professionID] = existing
+end
+
+---@param nodeID number
+---@param excludeCrafterUID CrafterUID
+---@return table<CrafterUID, number> crafterNodeRankMap
+function CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, excludeCrafterUID)
+    local crafterUIDs = {}
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        if crafterUID ~= excludeCrafterUID then
+            local found = false
+            for _, expData in pairs(crafterData.specializationData or {}) do
+                if found then break end
+                for _, nodeRanks in pairs(expData) do
+                    local rank = nodeRanks[nodeID]
+                    if rank ~= nil and rank >= 0 then
+                        crafterUIDs[crafterUID] = rank
+                        found = true
+                        break
+                    end
+                end
+            end
+        end
+    end
+    return crafterUIDs
 end
 
 --- returns the data serialized
@@ -433,6 +473,10 @@ function CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(crafterUID, profession)
         expansionData[profession] = nil
     end
 
+    -- Clear per-profession specialization data across all expansions
+    for _, expansionData in pairs(CraftSimDB.crafterDB.data[crafterUID].specializationData) do
+        expansionData[profession] = nil
+    end
 
     for _, recipeID in ipairs(cachedRecipeIDs or {}) do
         if tContains(cachedRecipeIDs, recipeID) then
@@ -440,7 +484,6 @@ function CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(crafterUID, profession)
             CraftSimDB.crafterDB.data[crafterUID].operationInfos[recipeID] = nil
             CraftSimDB.crafterDB.data[crafterUID].professionInfos[recipeID] = nil
             CraftSimDB.crafterDB.data[crafterUID].recipeInfos[recipeID] = nil
-            CraftSimDB.crafterDB.data[crafterUID].specializationData[recipeID] = nil
         end
     end
 
@@ -558,4 +601,12 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_4_5_Remove_gathering_concentration_data
                 end
             end
         end
+end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()
+    -- Clear all crafter data.  The new specializationData format is incompatible
+    -- with the old per-recipe format, and stale data without spec ranks would
+    -- produce incorrect profit values during alt scanning.  Everything repopulates
+    -- automatically the next time each character logs in and opens a profession.
+    CraftSim.DB.CRAFTER:ClearAll()
 end

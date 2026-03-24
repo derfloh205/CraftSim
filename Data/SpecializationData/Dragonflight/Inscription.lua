@@ -4715,6 +4715,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 134544,
+			base = true,
 		},
 		[34814] = {
 			nodeID = 34833,
@@ -4771,6 +4773,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 457654,
+			base = true,
 		},
 		[34821] = {
 			nodeID = 34834,
@@ -4827,6 +4831,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4643988,
+			base = true,
 		},
 		[34830] = {
 			nodeID = 34835,
@@ -4881,6 +4887,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554357,
+			base = true,
 		},
 		[34807] = {
 			nodeID = 34832,
@@ -4924,6 +4932,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554993,
+			base = true,
 		},
 		[43503] = {
 			nodeID = 43533,
@@ -4966,6 +4976,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4644011,
+			base = true,
 		},
 		[43512] = {
 			nodeID = 43534,
@@ -5002,6 +5014,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4638485,
+			base = true,
 		},
 		[43520] = {
 			nodeID = 43535,
@@ -5067,6 +5081,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 457654,
+			base = true,
 		},
 		[43463] = {
 			nodeID = 43527,
@@ -5105,6 +5121,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 458721,
+			base = true,
 		},
 		[43476] = {
 			nodeID = 43529,
@@ -5151,6 +5169,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 590337,
+			base = true,
 		},
 		[34840] = {
 			nodeID = 34886,
@@ -5197,6 +5217,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 633005,
+			base = true,
 		},
 		[34859] = {
 			nodeID = 34889,
@@ -5240,6 +5262,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1122137,
+			base = true,
 		},
 		[34885] = {
 			nodeID = 34893,
@@ -5283,6 +5307,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631344,
+			base = true,
 		},
 		[43453] = {
 			nodeID = 43525,
@@ -5304,6 +5330,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 656542,
+			base = true,
 		},
 		[43455] = {
 			nodeID = 43526,
@@ -5318,6 +5346,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631346,
+			base = true,
 		},
 		[43447] = {
 			nodeID = 43523,
@@ -5339,6 +5369,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631347,
+			base = true,
 		},
 		[43450] = {
 			nodeID = 43524,
@@ -5360,6 +5392,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631345,
+			base = true,
 		},
 		[43444] = {
 			nodeID = 43522,
@@ -5381,6 +5415,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631343,
+			base = true,
 		},
 		[43441] = {
 			nodeID = 43521,
@@ -5402,6 +5438,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4175482,
+			base = true,
 		},
 		[34851] = {
 			nodeID = 34888,
@@ -5452,6 +5490,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4636980,
+			base = true,
 		},
 		[34864] = {
 			nodeID = 34890,
@@ -5495,6 +5535,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 442743,
+			base = true,
 		},
 		[34878] = {
 			nodeID = 34892,
@@ -5538,6 +5580,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4555023,
+			base = true,
 		},
 		[34845] = {
 			nodeID = 34887,
@@ -5584,6 +5628,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 643416,
+			base = true,
 		},
 		[34871] = {
 			nodeID = 34891,
@@ -5619,6 +5665,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549158,
+			base = true,
 		},
 		[43469] = {
 			nodeID = 43528,
@@ -5664,6 +5712,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4555003,
+			base = true,
 		},
 		[43496] = {
 			nodeID = 43532,
@@ -5706,6 +5756,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554973,
+			base = true,
 		},
 		[43489] = {
 			nodeID = 43531,
@@ -5748,6 +5800,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554983,
+			base = true,
 		},
 		[43482] = {
 			nodeID = 43530,
@@ -5790,6 +5844,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1500931,
+			base = true,
 		},
 		[34802] = {
 			nodeID = 34831,

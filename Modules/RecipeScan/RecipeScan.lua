@@ -12,6 +12,9 @@ CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 CraftSim.RECIPE_SCAN.isScanningProfessions = false
 
+---@type string? last profession UID that was open when UpdateProfessionListByCache ran
+CraftSim.RECIPE_SCAN.lastOpenProfessionUID = nil
+
 ---@type GUTIL.FrameDistributor?
 CraftSim.RECIPE_SCAN.rowScanFrameDistributor = nil
 
@@ -383,23 +386,32 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 recipeData:Update()
             end
 
+            local optimizeFinishingReagentOptions = nil
+
+            if optimizeFinishingReagents then
+                optimizeFinishingReagentOptions = {
+                    includeLocked = false,
+                    includeSoulbound = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                    progressUpdateCallback = function(progress)
+                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
+                        " " ..
+                        GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
+                        CreateAtlasMarkup("Banker", 20, 20))
+                end
+                }
+            end
+
             recipeData:Optimize {
                 finally = function()
                     finalizeRecipeAndContinue()
                     content.optimizationProgressStatusText:SetText("")
                 end,
                 optimizeConcentration = concentrationEnabled and optimizeConcentration,
-                optimizeFinishingReagents = optimizeFinishingReagents,
+                optimizeFinishingReagentsOptions = optimizeFinishingReagentOptions,
                 optimizeGear = optimizeGear,
                 optimizeReagentOptions = optimizationScanMode and {
                     highestProfit = optimizeTopProfit,
                 },
-                optimizeFinishingReagentsProgressCallback = function(progress)
-                    content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
-                        " " ..
-                        GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-                        CreateAtlasMarkup("Banker", 20, 20))
-                end,
                 optimizeReagentProgressCallback = function(progress)
                     -- TODO
                 end,
@@ -458,8 +470,16 @@ end
 function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     -- wait til the currently open profession is cached then update list
 
+    -- capture profession UID before the async wait so we can detect changes
+    local professionInfoAtCall = C_TradeSkillUI.GetBaseProfessionInfo()
+    local professionUIDAtCall = professionInfoAtCall and
+        CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall.profession) or ""
+
     local function update()
-        CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
+        local professionChanged = CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= nil and
+            CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= professionUIDAtCall
+        CraftSim.RECIPE_SCAN.lastOpenProfessionUID = professionUIDAtCall
+        CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     end
 
     GUTIL:WaitFor(function()

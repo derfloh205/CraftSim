@@ -4959,6 +4959,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 3622214,
+			base = true,
 		},
 		[107896] = {
 			nodeID = 107918,
@@ -5015,6 +5017,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				ingenuityrefundincrease = 1,
 			},
+			icon = 5747318,
+			base = true,
 		},
 		[107903] = {
 			nodeID = 107919,
@@ -5071,6 +5075,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4635276,
+			base = true,
 		},
 		[107910] = {
 			nodeID = 107920,
@@ -5127,6 +5133,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 7549215,
+			base = true,
 		},
 		[107917] = {
 			nodeID = 107921,
@@ -5163,6 +5171,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287089,
+			base = true,
 		},
 		[107848] = {
 			nodeID = 107884,
@@ -5199,6 +5209,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549217,
+			base = true,
 		},
 		[107871] = {
 			nodeID = 107888,
@@ -5235,6 +5247,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549214,
+			base = true,
 		},
 		[107878] = {
 			nodeID = 107889,
@@ -5279,6 +5293,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287091,
+			base = true,
 		},
 		[107863] = {
 			nodeID = 107887,
@@ -5315,6 +5331,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287092,
+			base = true,
 		},
 		[107831] = {
 			nodeID = 107881,
@@ -5351,6 +5369,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549212,
+			base = true,
 		},
 		[107844] = {
 			nodeID = 107883,
@@ -5387,6 +5407,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287086,
+			base = true,
 		},
 		[107826] = {
 			nodeID = 107880,
@@ -5423,6 +5445,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287088,
+			base = true,
 		},
 		[107821] = {
 			nodeID = 107879,
@@ -5459,6 +5483,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287093,
+			base = true,
 		},
 		[107858] = {
 			nodeID = 107886,
@@ -5495,6 +5521,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287094,
+			base = true,
 		},
 		[107836] = {
 			nodeID = 107882,
@@ -5531,6 +5559,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7287095,
+			base = true,
 		},
 		[107853] = {
 			nodeID = 107885,
@@ -5567,6 +5597,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082304,
+			base = true,
 		},
 		[107935] = {
 			nodeID = 107985,
@@ -5603,6 +5635,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549210,
+			base = true,
 		},
 		[107948] = {
 			nodeID = 107987,
@@ -5639,6 +5673,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549216,
+			base = true,
 		},
 		[107982] = {
 			nodeID = 107993,
@@ -5683,6 +5719,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082302,
+			base = true,
 		},
 		[107952] = {
 			nodeID = 107988,
@@ -5719,6 +5757,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549211,
+			base = true,
 		},
 		[107975] = {
 			nodeID = 107992,
@@ -5755,6 +5795,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082303,
+			base = true,
 		},
 		[107967] = {
 			nodeID = 107991,
@@ -5791,6 +5833,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082301,
+			base = true,
 		},
 		[107925] = {
 			nodeID = 107983,
@@ -5827,6 +5871,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082300,
+			base = true,
 		},
 		[107930] = {
 			nodeID = 107984,
@@ -5863,6 +5909,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082305,
+			base = true,
 		},
 		[107962] = {
 			nodeID = 107990,
@@ -5899,6 +5947,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082306,
+			base = true,
 		},
 		[107940] = {
 			nodeID = 107986,
@@ -5935,6 +5985,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7082307,
+			base = true,
 		},
 		[107957] = {
 			nodeID = 107989,
@@ -5971,6 +6023,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549219,
+			base = true,
 		},
 		[107779] = {
 			nodeID = 107812,
@@ -6007,6 +6061,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549218,
+			base = true,
 		},
 		[107797] = {
 			nodeID = 107815,
@@ -6064,6 +6120,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549213,
+			base = true,
 		},
 		[107811] = {
 			nodeID = 107817,
@@ -6107,6 +6165,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4421108,
+			base = true,
 		},
 		[107804] = {
 			nodeID = 107816,
@@ -6164,6 +6224,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549222,
+			base = true,
 		},
 		[107785] = {
 			nodeID = 107813,
@@ -6207,6 +6269,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7549198,
+			base = true,
 		},
 		[107789] = {
 			nodeID = 107814,

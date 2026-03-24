@@ -11,6 +11,10 @@ CraftSim.SIMULATION_MODE.isActive = false
 CraftSim.SIMULATION_MODE.recipeData = nil
 ---@type CraftSim.SpecializationData?
 CraftSim.SIMULATION_MODE.specializationData = nil
+--- Stores only the user's raw stat modifier inputs (without spec diff contribution)
+--- so recreated modInput widgets are initialized with the correct value each update.
+---@type {skill: number, multicraft: number, resourcefulness: number, ingenuity: number, recipeDifficulty: number}?
+CraftSim.SIMULATION_MODE.userStatModifiers = nil
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
 
@@ -135,26 +139,48 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
 
     local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
+    -- Read raw user inputs from modInput widgets (these widgets are recreated each update
+    -- and must be initialized from userStatModifiers, not from professionStatModifiers which
+    -- also includes spec diff -- otherwise spec diff gets double-counted each update cycle)
+
     -- update difficulty based on input
-    local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.recipeDifficultyMod, true)
+    local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and simulationModeFrames.recipeDifficultyMod.currentValue or 0
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
-    local skillMod = simulationModeFrames.baseSkillMod.currentValue
+    local skillMod = simulationModeFrames.baseSkillMod and simulationModeFrames.baseSkillMod.currentValue or 0
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
+    local multicraftMod = 0
     if recipeData.supportsMulticraft then
-        local multicraftMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.multicraftMod, true)
+        multicraftMod = simulationModeFrames.multicraftMod and simulationModeFrames.multicraftMod.currentValue or 0
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)
     end
 
+    local resourcefulnessMod = 0
     if recipeData.supportsResourcefulness then
-        local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.resourcefulnessMod, true)
+        resourcefulnessMod = simulationModeFrames.resourcefulnessMod and simulationModeFrames.resourcefulnessMod.currentValue or 0
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
-    recipeData.concentrating = simulationModeFrames.concentrationToggleMod:GetChecked()
+    local ingenuityMod = 0
+    if recipeData.supportsIngenuity then
+        ingenuityMod = simulationModeFrames.ingenuityMod and simulationModeFrames.ingenuityMod.currentValue or 0
+        recipeData.professionStatModifiers.ingenuity:addValue(ingenuityMod)
+    end
+
+    -- Save the raw user inputs so UpdateCraftingDetailsPanel can initialize the
+    -- recreated modInput widgets with the correct (non-spec-diff-contaminated) values
+    if CraftSim.SIMULATION_MODE.userStatModifiers then
+        CraftSim.SIMULATION_MODE.userStatModifiers.recipeDifficulty = recipeDifficultyMod
+        CraftSim.SIMULATION_MODE.userStatModifiers.skill = skillMod
+        CraftSim.SIMULATION_MODE.userStatModifiers.multicraft = multicraftMod
+        CraftSim.SIMULATION_MODE.userStatModifiers.resourcefulness = resourcefulnessMod
+        CraftSim.SIMULATION_MODE.userStatModifiers.ingenuity = ingenuityMod
+    end
+
+    recipeData.concentrating = simulationModeFrames.concentrationToggleMod.isOn
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
@@ -241,6 +267,15 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     if recipeData.specializationData then
         self.specializationData = recipeData.specializationData:Copy()
     end
+
+    -- Reset user stat modifier inputs for the new simulation session
+    self.userStatModifiers = {
+        skill = 0,
+        multicraft = 0,
+        resourcefulness = 0,
+        ingenuity = 0,
+        recipeDifficulty = 0,
+    }
 
     -- update frame visiblity and initialize the input fields
     UI:UpdateVisibility()

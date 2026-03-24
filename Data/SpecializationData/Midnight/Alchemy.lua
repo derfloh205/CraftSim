@@ -2017,6 +2017,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548895,
+			base = true,
 		},
 		[107280] = {
 			nodeID = 107284,
@@ -2052,6 +2054,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 7548916,
+			base = true,
 		},
 		[107064] = {
 			nodeID = 107101,
@@ -2094,6 +2098,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 7548914,
+			base = true,
 		},
 		[107069] = {
 			nodeID = 107102,
@@ -2136,6 +2142,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548917,
+			base = true,
 		},
 		[107076] = {
 			nodeID = 107103,
@@ -2178,6 +2186,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548896,
+			base = true,
 		},
 		[107100] = {
 			nodeID = 107107,
@@ -2213,6 +2223,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 7548892,
+			base = true,
 		},
 		[107268] = {
 			nodeID = 107282,
@@ -2255,6 +2267,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548900,
+			base = true,
 		},
 		[107236] = {
 			nodeID = 107254,
@@ -2297,6 +2311,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3528280,
+			base = true,
 		},
 		[107256] = {
 			nodeID = 107256,
@@ -2304,6 +2320,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 7548890,
+			base = true,
 		},
 		[107246] = {
 			nodeID = 107256,
@@ -2346,6 +2364,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548897,
+			base = true,
 		},
 		[107253] = {
 			nodeID = 107257,
@@ -2374,6 +2394,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 7548915,
+			base = true,
 		},
 		[107273] = {
 			nodeID = 107283,
@@ -2416,6 +2438,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 7548909,
+			base = true,
 		},
 		[107081] = {
 			nodeID = 107104,
@@ -2458,6 +2482,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 7548908,
+			base = true,
 		},
 		[107086] = {
 			nodeID = 107105,
@@ -2500,6 +2526,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548911,
+			base = true,
 		},
 		[107093] = {
 			nodeID = 107106,
@@ -2542,6 +2570,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 7548901,
+			base = true,
 		},
 		[107171] = {
 			nodeID = 107208,
@@ -2584,6 +2614,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 7548900,
+			base = true,
 		},
 		[107176] = {
 			nodeID = 107209,
@@ -2626,6 +2658,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548899,
+			base = true,
 		},
 		[107183] = {
 			nodeID = 107210,
@@ -2668,6 +2702,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548894,
+			base = true,
 		},
 		[107207] = {
 			nodeID = 107214,
@@ -2703,6 +2739,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 7548906,
+			base = true,
 		},
 		[107263] = {
 			nodeID = 107281,
@@ -2745,6 +2783,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 7548902,
+			base = true,
 		},
 		[107188] = {
 			nodeID = 107211,
@@ -2787,6 +2827,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 7548905,
+			base = true,
 		},
 		[107193] = {
 			nodeID = 107212,
@@ -2829,6 +2871,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ALCHEMY_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548903,
+			base = true,
 		},
 		[107200] = {
 			nodeID = 107213,

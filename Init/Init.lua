@@ -156,8 +156,9 @@ function CraftSim.INIT:HookToEvents()
 			end, 1)
 		elseif recipeInfo == nil then
 			print("Hide all frames recipeInfo nil")
-			CraftSim.MODULES:Hide()
-		elseif CraftSim.INIT.visibleRecipeID then
+			CraftSim.MODULES:Hide(true, true)
+		else
+			print("Updating UI without recipeID")
 			CraftSim.MODULES:UpdateUI()
 		end
 	end
@@ -351,6 +352,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:HookToProfessionUnlearnedFunction()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
+		CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
 
 		CraftSim.CONTROL_PANEL.UI:Init()
 		CraftSim.INIT:InitStaticPopups()
@@ -436,13 +438,13 @@ function CraftSim.INIT:HookToConcentrationButtons()
 
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		self:UpdateUIs()
+		CraftSim.MODULES:UpdateUI()
 	end)
 
 	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
 		.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		self:UpdateUIs()
+		CraftSim.MODULES:UpdateUI()
 	end)
 end
 
