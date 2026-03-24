@@ -4182,6 +4182,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 3,
 			},
+			icon = 4624652,
+			base = true,
 		},
 		[106726] = {
 			nodeID = 106752,
@@ -4224,6 +4226,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				multicraft = 3,
 			},
+			icon = 4624652,
+			base = true,
 		},
 		[106733] = {
 			nodeID = 106753,
@@ -4266,6 +4270,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				ingenuity = 3,
 			},
+			icon = 4624638,
+			base = true,
 		},
 		[106740] = {
 			nodeID = 106754,
@@ -4312,6 +4318,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548852,
+			base = true,
 		},
 		[106751] = {
 			nodeID = 106755,
@@ -4361,6 +4369,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548859,
+			base = true,
 		},
 		[106777] = {
 			nodeID = 106788,
@@ -4416,6 +4426,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548866,
+			base = true,
 		},
 		[106786] = {
 			nodeID = 106789,
@@ -4474,6 +4486,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1391897,
+			base = true,
 		},
 		[109127] = {
 			nodeID = 109140,
@@ -4509,6 +4523,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 348559,
+			base = true,
 		},
 		[109119] = {
 			nodeID = 109139,
@@ -4544,6 +4560,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 6100222,
+			base = true,
 		},
 		[109111] = {
 			nodeID = 109138,
@@ -4579,6 +4597,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2915721,
+			base = true,
 		},
 		[109137] = {
 			nodeID = 109141,
@@ -4629,6 +4649,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4559125,
+			base = true,
 		},
 		[106700] = {
 			nodeID = 106717,
@@ -4679,6 +4701,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4643988,
+			base = true,
 		},
 		[106704] = {
 			nodeID = 106718,
@@ -4707,6 +4731,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3615515,
+			base = true,
 		},
 		[106710] = {
 			nodeID = 106719,
@@ -4756,6 +4782,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7456074,
+			base = true,
 		},
 		[106686] = {
 			nodeID = 106715,
@@ -4806,6 +4834,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7449348,
+			base = true,
 		},
 		[106662] = {
 			nodeID = 106711,
@@ -4857,6 +4887,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3610525,
+			base = true,
 		},
 		[106680] = {
 			nodeID = 106714,
@@ -4885,6 +4917,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4202230,
+			base = true,
 		},
 		[106693] = {
 			nodeID = 106716,
@@ -4935,6 +4969,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7504902,
+			base = true,
 		},
 		[106676] = {
 			nodeID = 106713,
@@ -4986,6 +5022,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7457538,
+			base = true,
 		},
 		[106669] = {
 			nodeID = 106712,
@@ -5037,6 +5075,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1405820,
+			base = true,
 		},
 		[106765] = {
 			nodeID = 106787,
@@ -5084,6 +5124,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7525805,
+			base = true,
 		},
 		[110350] = {
 			nodeID = 110352,

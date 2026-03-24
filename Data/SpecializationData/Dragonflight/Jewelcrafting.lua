@@ -4764,6 +4764,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 132595,
+			base = true,
 		},
 		[80764] = {
 			nodeID = 28672,
@@ -4808,6 +4810,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 237199,
+			base = true,
 		},
 		[81113] = {
 			nodeID = 81118,
@@ -4864,6 +4868,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 237215,
+			base = true,
 		},
 		[28663] = {
 			nodeID = 81119,
@@ -4920,6 +4926,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624552,
+			base = true,
 		},
 		[28655] = {
 			nodeID = 28660,
@@ -4969,6 +4977,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554440,
+			base = true,
 		},
 		[28645] = {
 			nodeID = 28659,
@@ -5011,6 +5021,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554437,
+			base = true,
 		},
 		[28636] = {
 			nodeID = 28658,
@@ -5053,6 +5065,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554439,
+			base = true,
 		},
 		[28618] = {
 			nodeID = 28656,
@@ -5095,6 +5109,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554438,
+			base = true,
 		},
 		[28627] = {
 			nodeID = 28657,
@@ -5137,6 +5153,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624556,
+			base = true,
 		},
 		[28720] = {
 			nodeID = 28728,
@@ -5165,6 +5183,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548902,
+			base = true,
 		},
 		[28592] = {
 			nodeID = 28608,
@@ -5214,6 +5234,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631356,
+			base = true,
 		},
 		[28605] = {
 			nodeID = 28610,
@@ -5249,6 +5271,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4631357,
+			base = true,
 		},
 		[28585] = {
 			nodeID = 28607,
@@ -5291,6 +5315,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548930,
+			base = true,
 		},
 		[28686] = {
 			nodeID = 28723,
@@ -5347,6 +5373,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134448,
+			base = true,
 		},
 		[28693] = {
 			nodeID = 28724,
@@ -5389,6 +5417,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548904,
+			base = true,
 		},
 		[28707] = {
 			nodeID = 28726,
@@ -5445,6 +5475,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624555,
+			base = true,
 		},
 		[28714] = {
 			nodeID = 28727,
@@ -5487,6 +5519,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548920,
+			base = true,
 		},
 		[28700] = {
 			nodeID = 28725,
@@ -5543,6 +5577,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548931,
+			base = true,
 		},
 		[28679] = {
 			nodeID = 28722,
@@ -5592,6 +5628,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 134081,
+			base = true,
 		},
 		[28598] = {
 			nodeID = 28609,

@@ -8742,6 +8742,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 348562,
+			base = true,
 		},
 		[31157] = {
 			nodeID = 31181,
@@ -8770,6 +8772,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 4635253,
+			base = true,
 		},
 		[31165] = {
 			nodeID = 31182,
@@ -8826,6 +8830,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 4635276,
+			base = true,
 		},
 		[31172] = {
 			nodeID = 31183,
@@ -8882,6 +8888,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635266,
+			base = true,
 		},
 		[86725] = {
 			nodeID = 31184,
@@ -8919,6 +8927,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581053,
+			base = true,
 		},
 		[28478] = {
 			nodeID = 28536,
@@ -8954,6 +8964,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635257,
+			base = true,
 		},
 		[28501] = {
 			nodeID = 28540,
@@ -8996,6 +9008,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635265,
+			base = true,
 		},
 		[28535] = {
 			nodeID = 28546,
@@ -9040,6 +9054,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581054,
+			base = true,
 		},
 		[28505] = {
 			nodeID = 28541,
@@ -9075,6 +9091,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635275,
+			base = true,
 		},
 		[28528] = {
 			nodeID = 28545,
@@ -9117,6 +9135,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581056,
+			base = true,
 		},
 		[28520] = {
 			nodeID = 28544,
@@ -9152,6 +9172,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628903,
+			base = true,
 		},
 		[28380] = {
 			nodeID = 28430,
@@ -9187,6 +9209,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635260,
+			base = true,
 		},
 		[28393] = {
 			nodeID = 28432,
@@ -9229,6 +9253,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635254,
+			base = true,
 		},
 		[28427] = {
 			nodeID = 28438,
@@ -9273,6 +9299,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628904,
+			base = true,
 		},
 		[28397] = {
 			nodeID = 28433,
@@ -9308,6 +9336,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635262,
+			base = true,
 		},
 		[28420] = {
 			nodeID = 28437,
@@ -9350,6 +9380,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628906,
+			base = true,
 		},
 		[28412] = {
 			nodeID = 28436,
@@ -9385,6 +9417,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581057,
+			base = true,
 		},
 		[28488] = {
 			nodeID = 28538,
@@ -9420,6 +9454,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581058,
+			base = true,
 		},
 		[28515] = {
 			nodeID = 28543,
@@ -9455,6 +9491,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581059,
+			base = true,
 		},
 		[28493] = {
 			nodeID = 28539,
@@ -9490,6 +9528,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581060,
+			base = true,
 		},
 		[28510] = {
 			nodeID = 28542,
@@ -9525,6 +9565,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4581052,
+			base = true,
 		},
 		[28483] = {
 			nodeID = 28537,
@@ -9560,6 +9602,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628907,
+			base = true,
 		},
 		[28385] = {
 			nodeID = 28431,
@@ -9595,6 +9639,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628908,
+			base = true,
 		},
 		[28402] = {
 			nodeID = 28434,
@@ -9630,6 +9676,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628913,
+			base = true,
 		},
 		[28407] = {
 			nodeID = 28435,
@@ -9665,6 +9713,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628914,
+			base = true,
 		},
 		[28375] = {
 			nodeID = 28429,
@@ -9700,6 +9750,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4628902,
+			base = true,
 		},
 		[28370] = {
 			nodeID = 28428,
@@ -9735,6 +9787,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1029737,
+			base = true,
 		},
 		[31128] = {
 			nodeID = 31144,
@@ -9777,6 +9831,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4635270,
+			base = true,
 		},
 		[31142] = {
 			nodeID = 31146,
@@ -9820,6 +9876,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1029009,
+			base = true,
 		},
 		[31122] = {
 			nodeID = 31143,
@@ -9862,6 +9920,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 136028,
+			base = true,
 		},
 		[31133] = {
 			nodeID = 31145,
@@ -9904,6 +9964,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2032169,
+			base = true,
 		},
 		[31152] = {
 			nodeID = 31180,

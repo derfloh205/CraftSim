@@ -2378,6 +2378,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5660159,
+			base = true,
 		},
 		[99211] = {
 			nodeID = 99237,
@@ -2413,6 +2415,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5395684,
+			base = true,
 		},
 		[99219] = {
 			nodeID = 99238,
@@ -2455,6 +2459,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5799475,
+			base = true,
 		},
 		[99226] = {
 			nodeID = 99239,
@@ -2504,6 +2510,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648219,
+			base = true,
 		},
 		[99174] = {
 			nodeID = 99231,
@@ -2539,6 +2547,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5384471,
+			base = true,
 		},
 		[99194] = {
 			nodeID = 99234,
@@ -2581,6 +2591,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648222,
+			base = true,
 		},
 		[99149] = {
 			nodeID = 99227,
@@ -2616,6 +2628,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5395680,
+			base = true,
 		},
 		[99169] = {
 			nodeID = 99230,
@@ -2658,6 +2672,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648223,
+			base = true,
 		},
 		[99186] = {
 			nodeID = 99233,
@@ -2693,6 +2709,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648224,
+			base = true,
 		},
 		[99205] = {
 			nodeID = 99236,
@@ -2728,6 +2746,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648226,
+			base = true,
 		},
 		[99180] = {
 			nodeID = 99232,
@@ -2763,6 +2783,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648218,
+			base = true,
 		},
 		[99161] = {
 			nodeID = 99229,
@@ -2798,6 +2820,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5648220,
+			base = true,
 		},
 		[99155] = {
 			nodeID = 99228,
@@ -2833,6 +2857,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931157,
+			base = true,
 		},
 		[99526] = {
 			nodeID = 99580,
@@ -2875,6 +2901,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5931163,
+			base = true,
 		},
 		[99538] = {
 			nodeID = 99582,
@@ -2931,6 +2959,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4624394,
+			base = true,
 		},
 		[99578] = {
 			nodeID = 99589,
@@ -2959,6 +2989,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5370895,
+			base = true,
 		},
 		[99199] = {
 			nodeID = 99235,
@@ -2994,6 +3026,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5328751,
+			base = true,
 		},
 		[99433] = {
 			nodeID = 99451,
@@ -3036,6 +3070,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5547326,
+			base = true,
 		},
 		[99439] = {
 			nodeID = 99452,
@@ -3085,6 +3121,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5547326,
+			base = true,
 		},
 		[99446] = {
 			nodeID = 99453,
@@ -3141,6 +3179,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5524353,
+			base = true,
 		},
 		[99427] = {
 			nodeID = 99450,
@@ -3183,6 +3223,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5607356,
+			base = true,
 		},
 		[99415] = {
 			nodeID = 99448,
@@ -3218,6 +3260,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5739869,
+			base = true,
 		},
 		[99421] = {
 			nodeID = 99449,
@@ -3267,6 +3311,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 5501775,
+			base = true,
 		},
 		[99409] = {
 			nodeID = 99447,
@@ -3309,6 +3355,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4374707,
+			base = true,
 		},
 		[99565] = {
 			nodeID = 99587,
@@ -3351,6 +3399,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4622273,
+			base = true,
 		},
 		[99571] = {
 			nodeID = 99588,
@@ -3400,6 +3450,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4777833,
+			base = true,
 		},
 		[99560] = {
 			nodeID = 99586,
@@ -3442,6 +3494,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 986492,
+			base = true,
 		},
 		[99531] = {
 			nodeID = 99581,
@@ -3484,6 +3538,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3622199,
+			base = true,
 		},
 		[99547] = {
 			nodeID = 99584,
@@ -3519,6 +3575,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3622196,
+			base = true,
 		},
 		[99555] = {
 			nodeID = 99585,
@@ -3568,6 +3626,8 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3622202,
+			base = true,
 		},
 		[99542] = {
 			nodeID = 99583,

@@ -7904,6 +7904,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				ingenuityrefundincrease = 1,
 			},
+			icon = 3610508,
+			base = true,
 		},
 		[50956] = {
 			nodeID = 50956,
@@ -7911,6 +7913,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 136125,
+			base = true,
 		},
 		[50990] = {
 			nodeID = 50990,
@@ -7918,6 +7922,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4620673,
+			base = true,
 		},
 		[50965] = {
 			nodeID = 50990,
@@ -7981,6 +7987,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				reagentssavedfromresourcefulness = 1,
 			},
+			icon = 2915728,
+			base = true,
 		},
 		[50973] = {
 			nodeID = 50991,
@@ -8016,6 +8024,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3610509,
+			base = true,
 		},
 		[80765] = {
 			nodeID = 50993,
@@ -8086,6 +8096,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 4741994,
+			base = true,
 		},
 		[50915] = {
 			nodeID = 50928,
@@ -8142,6 +8154,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 896469,
+			base = true,
 		},
 		[50925] = {
 			nodeID = 50929,
@@ -8191,6 +8205,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 465879,
+			base = true,
 		},
 		[50872] = {
 			nodeID = 50892,
@@ -8226,6 +8242,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 133715,
+			base = true,
 		},
 		[50881] = {
 			nodeID = 50893,
@@ -8275,6 +8293,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 133035,
+			base = true,
 		},
 		[50890] = {
 			nodeID = 50894,
@@ -8296,6 +8316,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 3610511,
+			base = true,
 		},
 		[50942] = {
 			nodeID = 50955,
@@ -8331,6 +8353,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 4548896,
+			base = true,
 		},
 		[50900] = {
 			nodeID = 50926,
@@ -8366,6 +8390,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 4548893,
+			base = true,
 		},
 		[50907] = {
 			nodeID = 50927,
@@ -8394,6 +8420,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 3610527,
+			base = true,
 		},
 		[50981] = {
 			nodeID = 50992,
@@ -8443,6 +8471,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4548870,
+			base = true,
 		},
 		[50866] = {
 			nodeID = 50891,

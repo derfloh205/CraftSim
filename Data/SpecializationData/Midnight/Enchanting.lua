@@ -3418,6 +3418,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				multicraft = 1,
 			},
+			icon = 915852,
+			base = true,
 		},
 		[107592] = {
 			nodeID = 107614,
@@ -3453,6 +3455,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 5747318,
+			base = true,
 		},
 		[107599] = {
 			nodeID = 107615,
@@ -3488,6 +3492,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 3622204,
+			base = true,
 		},
 		[107606] = {
 			nodeID = 107616,
@@ -3523,6 +3529,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 7548988,
+			base = true,
 		},
 		[107613] = {
 			nodeID = 107617,
@@ -3551,6 +3559,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7433340,
+			base = true,
 		},
 		[107723] = {
 			nodeID = 107763,
@@ -3587,6 +3597,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2446021,
+			base = true,
 		},
 		[107729] = {
 			nodeID = 107764,
@@ -3630,6 +3642,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548962,
+			base = true,
 		},
 		[107756] = {
 			nodeID = 107769,
@@ -3667,6 +3681,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 135111,
+			base = true,
 		},
 		[107718] = {
 			nodeID = 107762,
@@ -3703,6 +3719,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7474640,
+			base = true,
 		},
 		[107713] = {
 			nodeID = 107761,
@@ -3739,6 +3757,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7431122,
+			base = true,
 		},
 		[107703] = {
 			nodeID = 107759,
@@ -3775,6 +3795,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 132125,
+			base = true,
 		},
 		[107709] = {
 			nodeID = 107760,
@@ -3818,6 +3840,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2480888,
+			base = true,
 		},
 		[107698] = {
 			nodeID = 107758,
@@ -3854,6 +3878,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 462328,
+			base = true,
 		},
 		[107693] = {
 			nodeID = 107757,
@@ -3890,6 +3916,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7151971,
+			base = true,
 		},
 		[107743] = {
 			nodeID = 107767,
@@ -3926,6 +3954,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 255126,
+			base = true,
 		},
 		[107749] = {
 			nodeID = 107768,
@@ -3969,6 +3999,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7195215,
+			base = true,
 		},
 		[107738] = {
 			nodeID = 107766,
@@ -4005,6 +4037,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7457557,
+			base = true,
 		},
 		[107733] = {
 			nodeID = 107765,
@@ -4041,6 +4075,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1354190,
+			base = true,
 		},
 		[107676] = {
 			nodeID = 107688,
@@ -4085,6 +4121,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548989,
+			base = true,
 		},
 		[107683] = {
 			nodeID = 107689,
@@ -4122,6 +4160,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7457449,
+			base = true,
 		},
 		[107665] = {
 			nodeID = 107686,
@@ -4158,6 +4198,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2439451,
+			base = true,
 		},
 		[107671] = {
 			nodeID = 107687,
@@ -4201,6 +4243,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 135487,
+			base = true,
 		},
 		[107660] = {
 			nodeID = 107685,
@@ -4237,6 +4281,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 7548983,
+			base = true,
 		},
 		[107656] = {
 			nodeID = 107684,
@@ -4295,6 +4341,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 4631361,
+			base = true,
 		},
 		[107638] = {
 			nodeID = 107648,
@@ -4344,6 +4392,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 7548961,
+			base = true,
 		},
 		[107645] = {
 			nodeID = 107649,
@@ -4379,6 +4429,8 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.ENCHANTING_DATA = {
 			stats = {
 				["traitranksbypoints-modifierlabel(dnt)"] = 1,
 			},
+			icon = 4631360,
+			base = true,
 		},
 		[107631] = {
 			nodeID = 107647,

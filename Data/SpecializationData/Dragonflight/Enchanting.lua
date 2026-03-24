@@ -7853,6 +7853,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 2000856,
+			base = true,
 		},
 		[64075] = {
 			nodeID = 64133,
@@ -7896,6 +7898,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1379180,
+			base = true,
 		},
 		[64099] = {
 			nodeID = 64136,
@@ -7952,6 +7956,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4549112,
+			base = true,
 		},
 		[64132] = {
 			nodeID = 64143,
@@ -8101,6 +8107,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				ingenuity = 1,
 			},
+			icon = 610679,
+			base = true,
 		},
 		[68409] = {
 			nodeID = 68441,
@@ -8136,6 +8144,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				resourcefulness = 1,
 			},
+			icon = 3622209,
+			base = true,
 		},
 		[68416] = {
 			nodeID = 68442,
@@ -8192,6 +8202,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 463530,
+			base = true,
 		},
 		[80762] = {
 			nodeID = 68445,
@@ -8262,6 +8274,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 237017,
+			base = true,
 		},
 		[64089] = {
 			nodeID = 64135,
@@ -8298,6 +8312,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554434,
+			base = true,
 		},
 		[64101] = {
 			nodeID = 64137,
@@ -8319,6 +8335,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554437,
+			base = true,
 		},
 		[64110] = {
 			nodeID = 64140,
@@ -8340,6 +8358,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4392927,
+			base = true,
 		},
 		[64124] = {
 			nodeID = 64142,
@@ -8396,6 +8416,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1278390,
+			base = true,
 		},
 		[64082] = {
 			nodeID = 64134,
@@ -8439,6 +8461,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554438,
+			base = true,
 		},
 		[64113] = {
 			nodeID = 64141,
@@ -8460,6 +8484,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554442,
+			base = true,
 		},
 		[64107] = {
 			nodeID = 64139,
@@ -8481,6 +8507,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 4554439,
+			base = true,
 		},
 		[64104] = {
 			nodeID = 64138,
@@ -8502,6 +8530,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 948259,
+			base = true,
 		},
 		[68432] = {
 			nodeID = 68444,
@@ -8566,6 +8596,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
 			stats = {
 				skill = 1,
 			},
+			icon = 1411835,
+			base = true,
 		},
 		[68423] = {
 			nodeID = 68443,
