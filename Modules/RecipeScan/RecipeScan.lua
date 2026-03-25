@@ -142,6 +142,10 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         printF("Is Dummy2: Exclude")
         return false
     end
+    if tContains(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS, recipeInfo.recipeID) then
+        printF("Is Base Recraft Recipe: Exclude")
+        return false
+    end
     if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED") and not recipeInfo.learned then
         printF("Is not learned: Exclude")
         return false
