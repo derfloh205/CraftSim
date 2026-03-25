@@ -279,7 +279,7 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
             end
 
             if #allRecipeIDs > 0 then
-                local listName = "Character Favorites"
+                local listName = crafterUID .. " Favorites"
                 CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or {}
                 local options = DefaultOptions()
                 if CraftSimDB.optionsDB and CraftSimDB.optionsDB.data then

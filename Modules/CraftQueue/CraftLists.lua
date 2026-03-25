@@ -166,13 +166,39 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             recipeData:Update()
         end
 
+        local iconSize = 15
+        local recipeIcon = GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize)
+        local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[recipeData.professionData.professionInfo.profession], iconSize, iconSize)
+        local bagIcon = CreateAtlasMarkup("Banker", iconSize, iconSize)
+        local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
+
         recipeData:Optimize {
             optimizeReagentOptions = options.autoselectTopProfitQuality and { highestProfit = true } or nil,
             optimizeConcentration = options.optimizeConcentration,
+            optimizeConcentrationProgressCallback = function(progress)
+                if queueListsButton then
+                    queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
+                    progress,
+                    professionIcon,
+                    recipeIcon,
+                    concentrationIcon,
+                    progress))
+                end
+            end,
             optimizeGear = options.optimizeProfessionTools,
             optimizeFinishingReagentsOptions = options.optimizeFinishingReagents and {
                 includeLocked = false,
                 includeSoulbound = options.includeSoulboundFinishingReagents,
+                progressUpdateCallback = function(progress)
+                    if queueListsButton then
+                        queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
+                        progress,
+                        professionIcon,
+                        recipeIcon,
+                        bagIcon,
+                        progress))
+                    end
+                end,
             } or nil,
             finally = function()
                 if options.smartConcentrationQueuing then

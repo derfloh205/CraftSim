@@ -1146,7 +1146,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         columnOptions = {
             {
                 label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_NAME_HEADER),
-                width = 200,
+                width = 300,
             },
             {
                 label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_TYPE_HEADER),
