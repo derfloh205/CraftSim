@@ -400,6 +400,8 @@ function CraftSim.LOCAL_PT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize Profession Gear",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize Concentration",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize Finishing Reagents",
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS] = "Optimize Profession Tools",
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS] = "Include Soulbound Finishing Reagents",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION] = "Autoselect Open Profession",
 
         -- Recipe Top Gear

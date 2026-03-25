@@ -414,6 +414,11 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "Optimize " .. f.bb("Profession Gear"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "Optimize " .. f.gold("Concentration"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "Optimize " .. f.bb("Finishing Reagents"),
+
+        -- Shared OptimizationOptions Widget
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS] = "Optimize " .. f.bb("Profession Tools"),
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS] = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SEND_TO_CRAFT_QUEUE] = "Send to Craft Queue",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD] = "Profit Margin Threshold (%): ",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT] = "Default Queue Amount: ",

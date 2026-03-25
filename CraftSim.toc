@@ -40,6 +40,7 @@ Util/Util.lua
 
 DB/DB.lua
 DB/optionsDB.lua
+DB/optimizationOptionsDB.lua
 DB/itemCountDB.lua
 DB/craftQueueDB.lua
 DB/itemRecipeDB.lua
@@ -55,6 +56,7 @@ Media/Media.lua
 Util/Frames.lua
 Util/Widgets/ContextMenu.lua
 Util/Widgets/OptionsButton.lua
+Util/Widgets/OptimizationOptions.lua
 Util/Widgets/ReagentList.lua
 Util/Widgets/QualityMeter.lua
 

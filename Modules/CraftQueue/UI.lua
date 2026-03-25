@@ -1019,14 +1019,25 @@ function CraftSim.CRAFTQ.UI:Init()
         end,
     }
 
-    CraftSim.CRAFTQ.queueRecipeButtonOptions = CraftSim.WIDGETS.OptionsButton {
+    CraftSim.CRAFTQ.queueRecipeButtonOptions = CraftSim.WIDGETS.OptimizationOptions {
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorPoints = { {
             anchorParent = CraftSim.CRAFTQ.queueRecipeButton.frame,
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
         } },
-        menuUtilCallback = function(ownerRegion, rootDescription)
-            CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
+        optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_ADD_RECIPE,
+        showOptions = {
+            autoselectTopProfitQuality = true,
+            optimizeProfessionTools    = true,
+            optimizeConcentration      = true,
+        },
+        defaults = {
+            autoselectTopProfitQuality = true,
+            optimizeProfessionTools    = true,
+            optimizeConcentration      = true,
+        },
+        recipeDataProvider = function()
+            return CraftSim.MODULES.recipeData
         end,
     }
 
@@ -1045,14 +1056,25 @@ function CraftSim.CRAFTQ.UI:Init()
         end,
     }
 
-    CraftSim.CRAFTQ.queueRecipeButtonOptionsWO = CraftSim.WIDGETS.OptionsButton {
+    CraftSim.CRAFTQ.queueRecipeButtonOptionsWO = CraftSim.WIDGETS.OptimizationOptions {
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorPoints = { {
             anchorParent = CraftSim.CRAFTQ.queueRecipeButtonWO.frame,
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
         } },
-        menuUtilCallback = function(ownerRegion, rootDescription)
-            CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
+        optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_ADD_RECIPE,
+        showOptions = {
+            autoselectTopProfitQuality = true,
+            optimizeProfessionTools    = true,
+            optimizeConcentration      = true,
+        },
+        defaults = {
+            autoselectTopProfitQuality = true,
+            optimizeProfessionTools    = true,
+            optimizeConcentration      = true,
+        },
+        recipeDataProvider = function()
+            return CraftSim.MODULES.recipeData
         end,
     }
 
@@ -1413,15 +1435,15 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function(optimizeButton)
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
-                local optimizeProfessionGear = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
-                local optimizeConcentration = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION")
-                local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get(
-                    "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
+                local OPT_ID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE
+                local optimizeProfessionGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeProfessionTools", true)
+                local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeConcentration", true)
+                local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeFinishingReagents", true)
 
                 -- Never consider locked finishing slots in Craft Queue, but ALWAYS include soulbound
                 -- when optimizing via Craft Queue.
                 local includeLockedFinishing = false
-                local includeSoulboundFinishing = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                local includeSoulboundFinishing = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "includeSoulboundFinishingReagents", false)
                 local queueAmount = editRecipeFrame.craftQueueItem.amount or 1
 
                 local function finalizeOptimize()
@@ -1435,7 +1457,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     optimizeButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
                 end
 
-                local optimizeTopProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY")
+                local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "autoselectTopProfitQuality", true)
 
                 optimizeButton:SetEnabled(false)
                 recipeData:Optimize {
@@ -1460,64 +1482,27 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         end
     }
 
-    editRecipeFrame.content.optimizeProfitButtonOptions = CraftSim.WIDGETS.OptionsButton {
-        parent = editRecipeFrame.content, anchorPoints = { { anchorParent = editRecipeFrame.content.optimizeProfitButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-        menuUtilCallback = function(ownerRegion, rootDescription)
-                local recipeData = editRecipeFrame.craftQueueItem.recipeData
-                if recipeData and recipeData.supportsQualities then
-                    rootDescription:CreateCheckbox(
-                        "Optimize " .. f.g("Top Profit Quality"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY", not value)
-                        end)
-                end
-                rootDescription:CreateCheckbox(
-                    "Optimize " .. f.bb("Profession Gear"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR")
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR", not value)
-                    end)
-                if recipeData and recipeData.supportsQualities then
-                    rootDescription:CreateCheckbox(
-                        "Optimize " .. f.gold("Concentration"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION", not value)
-                        end)
-                end
-                rootDescription:CreateCheckbox(
-                    "Optimize " .. f.bb("Finishing Reagents"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS")
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS", not value)
-                    end)
-
-                local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
-                                not value)
-                        end)
-
-                includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        "If enabled, CraftSim will suggest soulbound finishing reagents during optimization")
-                end)
-            end
+    editRecipeFrame.content.optimizeProfitButtonOptions = CraftSim.WIDGETS.OptimizationOptions {
+        parent = editRecipeFrame.content,
+        anchorPoints = { { anchorParent = editRecipeFrame.content.optimizeProfitButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE,
+        showOptions = {
+            autoselectTopProfitQuality        = true,
+            optimizeProfessionTools           = true,
+            optimizeConcentration             = true,
+            optimizeFinishingReagents         = true,
+            includeSoulboundFinishingReagents = true,
+        },
+        defaults = {
+            autoselectTopProfitQuality        = true,
+            optimizeProfessionTools           = true,
+            optimizeConcentration             = true,
+            optimizeFinishingReagents         = true,
+            includeSoulboundFinishingReagents = false,
+        },
+        recipeDataProvider = function()
+            return editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData
+        end,
     }
 
     editRecipeFrame.content.resultTitle = GGUI.Text {
