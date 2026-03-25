@@ -552,15 +552,15 @@ function CraftSim.CRAFTQ.UI:Init()
                 else
                     rootDescription:CreateTitle("Select Lists to Queue:")
                     for _, list in ipairs(allLists) do
-                        local listName = list.name
+                        local listRef = list
                         rootDescription:CreateCheckbox(
-                            listName,
+                            listRef.name,
                             function()
-                                return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
+                                return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.id)
                             end,
                             function()
-                                local current = CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
-                                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listName, not current)
+                                local current = CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.id)
+                                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listRef.id, not current)
                             end)
                     end
                 end
@@ -1046,8 +1046,8 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
     local content = craftListsTab.content
 
     -- Selected list state
-    ---@type string?
-    content.selectedListName = nil
+    ---@type number?
+    content.selectedListID = nil
     ---@type boolean
     content.selectedListIsGlobal = false
 
@@ -1464,9 +1464,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
 
     for _, list in ipairs(allLists) do
         local listRef = list
-        local isGlobal = CraftSimDB.craftListsDB.globalLists[list.name] ~= nil
+        local isGlobal = listRef.isGlobal
         content.craftListsList:Add(function(row)
-            row.listName = listRef.name
+            row.listID = listRef.id
             row.isGlobal = isGlobal
             row.listData = listRef
 
@@ -1474,9 +1474,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             local nameColumn = row.columns[2]
             local typeColumn = row.columns[3]
 
-            queueColumn.checkbox:SetChecked(CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.name))
+            queueColumn.checkbox:SetChecked(CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.id))
             queueColumn.checkbox.clickCallback = function(_, checked)
-                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listRef.name, checked)
+                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listRef.id, checked)
             end
             nameColumn.text:SetText(listRef.name)
             typeColumn.text:SetText(isGlobal and L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL)
@@ -1496,17 +1496,15 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
 
     content.recipeList:Remove()
 
-    if not content.selectedListName then
+    if not content.selectedListID then
         content.selectedListLabel:SetText(L(CraftSim.CONST.TEXT.CRAFT_LISTS_SELECT_LIST_HINT))
         content.recipeList:UpdateDisplay()
         return
     end
 
-    content.selectedListLabel:SetText(f.bb(content.selectedListName))
-
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     local list = CraftSim.DB.CRAFT_LISTS:GetList(
-        content.selectedListName,
+        content.selectedListID,
         content.selectedListIsGlobal,
         crafterUID)
 
@@ -1514,6 +1512,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         content.recipeList:UpdateDisplay()
         return
     end
+
+    content.selectedListLabel:SetText(f.bb(list.name))
 
     for _, recipeID in ipairs(list.recipeIDs) do
         local id = recipeID
