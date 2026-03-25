@@ -1067,29 +1067,78 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         anchorA = "TOPLEFT",
         anchorB = "TOPLEFT",
         offsetX = 5,
-        offsetY = -5,
+        offsetY = 0,
         sizeY = panelHeight,
         showBorder = true,
         selectionOptions = {
             hoverRGBA = { 1, 1, 1, 0.1 },
             selectedRGBA = { 0.3, 0.7, 1, 0.3 },
-            selectionCallback = function(row)
-                if row.listID then
-                    content.selectedListID = row.listID
-                    content.selectedListIsGlobal = row.isGlobal
-                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+            selectionCallback = function(row, userInput, alreadySelected)
+                if not row.listID then return end
+                    if IsMouseButtonDown("RightButton") then
+                        -- show context menu for list
+                        local listID = row.listID
+                        CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                            {
+                                type = "button",
+                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
+                                onClick = function()
+                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
+                                        listID, row.isGlobal, crafterUID)
+                                    if exportString == "" then return end
+                                    CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
+                                end
+                            },
+                            {
+                                type = "button",
+
+                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
+                                onClick = function()
+                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
+                                        listID, row.isGlobal, crafterUID)
+                                    CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
+                                        L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
+                                        currentList and currentList.name or "",
+                                        row.isGlobal,
+                                        function(name, isGlobal)
+                                            if name and name ~= "" then
+                                                CraftSim.DB.CRAFT_LISTS:RenameList(
+                                                    listID, name, row.isGlobal, crafterUID)
+                                                CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                                            end
+                                        end)
+                                end
+                            },
+                            {
+                                type = "button",
+                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
+                                onClick = function()
+                                    if not content.selectedListID then return end
+                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    CraftSim.DB.CRAFT_LISTS:DeleteList(
+                                        listID, row.isGlobal, crafterUID)
+                                    content.selectedListID = nil
+                                    content.selectedListIsGlobal = false
+                                    CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                                end
+                            },
+                        })
+                    else if IsMouseButtonDown("LeftButton") then
+                        -- select list and show recipes
+                        content.selectedListID = row.listID
+                        content.selectedListIsGlobal = row.isGlobal
+                        CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                    end
                 end
             end,
         },
         columnOptions = {
             {
-                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_QUEUE_HEADER),
-                width = 40,
-                justifyOptions = { type = "H", align = "CENTER" },
-            },
-            {
                 label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_NAME_HEADER),
-                width = 160,
+                width = 200,
             },
             {
                 label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_TYPE_HEADER),
@@ -1098,15 +1147,8 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             },
         },
         rowConstructor = function(columns, row)
-            local queueColumn = columns[1]
-            local nameColumn = columns[2]
-            local typeColumn = columns[3]
-
-            queueColumn.checkbox = GGUI.Checkbox {
-                parent = queueColumn,
-                anchorParent = queueColumn,
-                scale = 1.5,
-            }
+            local nameColumn = columns[1]
+            local typeColumn = columns[2]
 
             nameColumn.text = GGUI.Text {
                 parent = nameColumn,
@@ -1115,8 +1157,9 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 anchorB = "LEFT",
                 justifyOptions = { type = "H", align = "LEFT" },
                 scale = 0.9,
-                fixedWidth = nameColumn:GetWidth() - 5,
+                fixedWidth = nameColumn:GetWidth() - 2,
                 wrap = false,
+                offsetX = 5,
             }
 
             typeColumn.text = GGUI.Text {
@@ -1278,8 +1321,9 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 anchorB = "LEFT",
                 justifyOptions = { type = "H", align = "LEFT" },
                 scale = 0.9,
-                fixedWidth = nameColumn:GetWidth() - 5,
+                fixedWidth = nameColumn:GetWidth() - 2,
                 wrap = false,
+                offsetX = 5,
             }
         end,
     }
@@ -1473,14 +1517,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             row.isGlobal = isGlobal
             row.listData = listRef
 
-            local queueColumn = row.columns[1]
-            local nameColumn = row.columns[2]
-            local typeColumn = row.columns[3]
+            local nameColumn = row.columns[1]
+            local typeColumn = row.columns[2]
 
-            queueColumn.checkbox:SetChecked(CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.id))
-            queueColumn.checkbox.clickCallback = function(_, checked)
-                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listRef.id, checked)
-            end
             nameColumn.text:SetText(listRef.name)
             typeColumn.text:SetText(isGlobal and L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL)
                 or L(CraftSim.CONST.TEXT.CRAFT_LISTS_CHARACTER_LABEL))
@@ -1525,7 +1564,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local nameColumn = row.columns[1]
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
             local name = (recipeInfo and recipeInfo.name) or (f.grey("Unknown Recipe (ID: " .. tostring(id) .. ")"))
-            nameColumn.text:SetText(name)
+            local icon = (recipeInfo and recipeInfo.icon) and GUTIL:IconToText(recipeInfo.icon, 18, 18) or "<i>"
+            local profession = C_TradeSkillUI.GetProfessionInfoByRecipeID(id).profession
+            local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession] or "inv_misc_questionmark"
+            local professionIconText = GUTIL:IconToText(professionIcon, 18, 18)
+            nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name)
         end)
     end
 

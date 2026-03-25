@@ -787,7 +787,6 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL] = "Import",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_NAME_HEADER] = "List Name",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_TYPE_HEADER] = "Scope",
-        [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_QUEUE_HEADER] = "Queue",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_RECIPE_NAME_HEADER] = "Recipe",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL] = f.bb("Global"),
         [CraftSim.CONST.TEXT.CRAFT_LISTS_CHARACTER_LABEL] = f.g("Character"),
