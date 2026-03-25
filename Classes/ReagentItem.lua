@@ -12,6 +12,9 @@ local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ReagentData.Rea
 ---@param qualityID QualityID?
 ---@param currencyID CurrencyID
 function CraftSim.ReagentItem:new(originalItemID, qualityID, currencyID)
+    if not originalItemID then
+        return
+    end
     -- consider possible exception mappings
     local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[originalItemID]
     local itemID = alternativeItemID or originalItemID
