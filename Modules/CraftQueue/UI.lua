@@ -1082,10 +1082,8 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                             label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
                             onClick = function()
                                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                CraftSim.DEBUG:SystemPrint("Exporting list with ID " .. tostring(row.listID) .. ", isGlobal: " .. tostring(row.isGlobal) .. ", crafterUID: " .. tostring(crafterUID))
                                 local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
                                     row.listID, row.isGlobal, crafterUID)
-                                CraftSim.DEBUG:SystemPrint("Export string: " .. tostring(exportString))
                                 if exportString == "" then return end
                                 CraftSim.UTIL:ShowTextCopyBox(exportString)
                             end
