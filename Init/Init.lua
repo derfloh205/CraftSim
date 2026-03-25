@@ -8,9 +8,6 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
 CraftSim.SPECIALIZATION_DATA.MIDNIGHT = {}
 
-CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
-CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
-
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()

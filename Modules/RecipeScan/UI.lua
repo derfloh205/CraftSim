@@ -136,7 +136,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
         showBorder = true, selectionOptions = {
         selectionCallback =
         ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
-            function(row, userInput)
+            function(row, userInput, alreadySelected)
                 if not userInput or IsMouseButtonDown("LeftButton") then
                     CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(row, userInput)
                 elseif IsMouseButtonDown("RightButton") then

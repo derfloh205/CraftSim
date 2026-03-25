@@ -214,7 +214,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
 
                 jb.json = jb.json .. "\n]"
                 -- CraftSim.UTIL:ShowTextCopyBox(jb.json)
-                CraftSim.UTIL:ShowTextCopyBox(CraftSim.UTIL:atob(jb.json))
+                CraftSim.UTIL:ShowTextCopyBox(GUTIL:EncodeBase64(jb.json))
             end
         end
 
