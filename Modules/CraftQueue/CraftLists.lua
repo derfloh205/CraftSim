@@ -84,7 +84,6 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
-    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
 

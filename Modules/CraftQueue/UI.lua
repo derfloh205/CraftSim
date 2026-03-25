@@ -1305,7 +1305,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                         opts.offsetQueueAmount = tonumber(input.currentValue) or 0
                     end,
                 }
-            end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_" .. (content.selectedListName or ""))
+            end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
 
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST),
@@ -1529,7 +1529,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             row.recipeID = id
             local nameColumn = row.columns[1]
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
-            local name = (recipeInfo and recipeInfo.name) or ("Recipe " .. tostring(id))
+            local name = (recipeInfo and recipeInfo.name) or (f.grey("Unknown Recipe (ID: " .. tostring(id) .. ")"))
             nameColumn.text:SetText(name)
         end)
     end
