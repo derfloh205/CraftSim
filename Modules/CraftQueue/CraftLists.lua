@@ -94,7 +94,13 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local optimizedRecipes = {}
 
-    local function finalizeProfession()
+    local queueListsButton = CraftSim.CRAFTQ.frame and
+        CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab and
+        CraftSim.CRAFTQ.frame.content.queueTab.content and
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
+
+    local function finalizeRecipe()
         if options.smartConcentrationQueuing then
             optimizedRecipes = GUTIL:Filter(optimizedRecipes,
                 function(recipeData)
@@ -188,7 +194,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         iterationsPerFrame = 1,
         maxIterations = 1000,
         finally = function()
-            finalizeProfession()
+            finalizeRecipe()
             if finally then finally() end
         end,
         continue = function(frameDistributor, _, recipeID)
