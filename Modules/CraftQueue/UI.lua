@@ -516,7 +516,7 @@ function CraftSim.CRAFTQ.UI:Init()
         local craftQueueButtonsOffsetY = -5
         local fixedButtonWidth = 180
         ---@type GGUI.Button
-        queueTab.content.queueFavoritesButton = GGUI.Button({
+        queueTab.content.queueCraftListsButton = GGUI.Button({
             parent = queueTab.content,
             anchorParent = queueTab.content.craftList.frame,
             anchorA = "TOPLEFT",
@@ -531,7 +531,7 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         })
 
-        queueTab.content.queueFavoritesButton:SetStatusList {
+        queueTab.content.queueCraftListsButton:SetStatusList {
             {
                 statusID = "Ready",
                 enabled = true,
@@ -540,9 +540,9 @@ function CraftSim.CRAFTQ.UI:Init()
             },
         }
 
-        queueTab.content.queueFavoritesButtonOptions = CraftSim.WIDGETS.OptionsButton {
+        queueTab.content.queueCraftListsButtonOptions = CraftSim.WIDGETS.OptionsButton {
             parent = queueTab.content,
-            anchorPoints = { { anchorParent = queueTab.content.queueFavoritesButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+            anchorPoints = { { anchorParent = queueTab.content.queueCraftListsButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                 local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
@@ -552,24 +552,36 @@ function CraftSim.CRAFTQ.UI:Init()
                 else
                     rootDescription:CreateTitle("Select Lists to Queue:")
                     for _, list in ipairs(allLists) do
-                        local listRef = list
+                        local listName = list.name
                         rootDescription:CreateCheckbox(
-                            listRef.name,
+                            listName,
                             function()
-                                return listRef.options and listRef.options.selectedForQueue
+                                return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
                             end,
                             function()
-                                listRef.options = listRef.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
-                                listRef.options.selectedForQueue = not listRef.options.selectedForQueue
+                                local current = CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
+                                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listName, not current)
                             end)
                     end
                 end
+
+                rootDescription:CreateDivider()
+
+                local autoShoppingListCB = rootDescription:CreateCheckbox(
+                    L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
+                    end,
+                    function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST", not value)
+                    end)
             end
         }
 
         queueTab.content.addAllFirstCraftsButton = GGUI.Button({
             parent = queueTab.content,
-            anchorParent = queueTab.content.queueFavoritesButton.frame,
+            anchorParent = queueTab.content.queueCraftListsButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = 0,
@@ -1274,14 +1286,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             rootDescription:CreateDivider()
 
             -- Queue options
-            local queueMainCB = rootDescription:CreateCheckbox(
-                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS),
-                function() return opts.queueMainProfessions end,
-                function() opts.queueMainProfessions = not opts.queueMainProfessions end)
-            queueMainCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS_TOOLTIP))
-            end)
-
             GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                 frame.label = GGUI.Text {
                     parent = frame,
@@ -1306,11 +1310,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     end,
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
-
-            rootDescription:CreateCheckbox(
-                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST),
-                function() return opts.autoShoppingList end,
-                function() opts.autoShoppingList = not opts.autoShoppingList end)
         end,
     }
 
@@ -1481,10 +1480,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             local nameColumn = row.columns[2]
             local typeColumn = row.columns[3]
 
-            queueColumn.checkbox:SetChecked(listRef.options and listRef.options.selectedForQueue or false)
+            queueColumn.checkbox:SetChecked(CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listRef.name))
             queueColumn.checkbox.clickCallback = function(_, checked)
-                listRef.options = listRef.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
-                listRef.options.selectedForQueue = checked
+                CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listRef.name, checked)
             end
             nameColumn.text:SetText(listRef.name)
             typeColumn.text:SetText(isGlobal and L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL)

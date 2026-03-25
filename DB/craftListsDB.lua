@@ -19,9 +19,6 @@ CraftSim.DB = CraftSim.DB
 ---@field fixedCrafterUID CrafterUID?
 ---@field restockAmount number
 ---@field offsetQueueAmount number
----@field autoShoppingList boolean
----@field queueMainProfessions boolean
----@field selectedForQueue boolean
 
 ---@class CraftSim.CraftList
 ---@field name string
@@ -48,9 +45,6 @@ local function DefaultOptions()
         fixedCrafterUID = nil,
         restockAmount = 1,
         offsetQueueAmount = 0,
-        autoShoppingList = false,
-        queueMainProfessions = false,
-        selectedForQueue = true,
     }
 end
 
@@ -65,11 +59,30 @@ function CraftSim.DB.CRAFT_LISTS:Init()
             globalLists = {},
             ---@type table<CrafterUID, table<string, CraftSim.CraftList>>
             characterLists = {},
+            ---@type table<CrafterUID, table<string, boolean>>
+            selectedForQueue = {},
         }
     end
     self.db = CraftSimDB.craftListsDB
     CraftSimDB.craftListsDB.globalLists = CraftSimDB.craftListsDB.globalLists or {}
     CraftSimDB.craftListsDB.characterLists = CraftSimDB.craftListsDB.characterLists or {}
+    CraftSimDB.craftListsDB.selectedForQueue = CraftSimDB.craftListsDB.selectedForQueue or {}
+end
+
+---@param crafterUID CrafterUID
+---@param listName string
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
+    CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
+    return CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] == true
+end
+
+---@param crafterUID CrafterUID
+---@param listName string
+---@param selected boolean
+function CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listName, selected)
+    CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
+    CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] = selected or nil
 end
 
 ---@param crafterUID? CrafterUID
@@ -138,10 +151,17 @@ end
 function CraftSim.DB.CRAFT_LISTS:DeleteList(name, isGlobal, crafterUID)
     if isGlobal then
         CraftSimDB.craftListsDB.globalLists[name] = nil
+        -- Clean up per-character selectedForQueue for all characters
+        for uid, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
+            selected[name] = nil
+        end
     else
         crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
         if CraftSimDB.craftListsDB.characterLists[crafterUID] then
             CraftSimDB.craftListsDB.characterLists[crafterUID][name] = nil
+        end
+        if CraftSimDB.craftListsDB.selectedForQueue[crafterUID] then
+            CraftSimDB.craftListsDB.selectedForQueue[crafterUID][name] = nil
         end
     end
 end
@@ -167,6 +187,13 @@ function CraftSim.DB.CRAFT_LISTS:RenameList(oldName, newName, isGlobal, crafterU
             CraftSimDB.craftListsDB.globalLists[newName] = listData
             CraftSimDB.craftListsDB.globalLists[oldName] = nil
         end
+        -- Update selectedForQueue for all characters
+        for _, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
+            if selected[oldName] ~= nil then
+                selected[newName] = selected[oldName]
+                selected[oldName] = nil
+            end
+        end
     else
         if CraftSimDB.craftListsDB.characterLists[crafterUID] then
             local listData = CraftSimDB.craftListsDB.characterLists[crafterUID][oldName]
@@ -174,6 +201,14 @@ function CraftSim.DB.CRAFT_LISTS:RenameList(oldName, newName, isGlobal, crafterU
                 listData.name = newName
                 CraftSimDB.craftListsDB.characterLists[crafterUID][newName] = listData
                 CraftSimDB.craftListsDB.characterLists[crafterUID][oldName] = nil
+            end
+        end
+        -- Update selectedForQueue for the owning character
+        if CraftSimDB.craftListsDB.selectedForQueue[crafterUID] then
+            local sel = CraftSimDB.craftListsDB.selectedForQueue[crafterUID]
+            if sel[oldName] ~= nil then
+                sel[newName] = sel[oldName]
+                sel[oldName] = nil
             end
         end
     end
@@ -321,12 +356,6 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                     if od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"] ~= nil then
                         options.offsetQueueAmount = tonumber(od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"]) or 0
                     end
-                    if od["CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS"] ~= nil then
-                        options.queueMainProfessions = od["CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS"]
-                    end
-                    if od["CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST"] ~= nil then
-                        options.autoShoppingList = od["CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST"]
-                    end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"] ~= nil then
                         options.includeSoulboundFinishingReagents = od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
                     end
@@ -336,6 +365,9 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                     recipeIDs = allRecipeIDs,
                     options = options,
                 }
+                -- Mark "Character Favorites" as selected for queue for this character
+                CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
+                CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] = true
             end
         end
     end

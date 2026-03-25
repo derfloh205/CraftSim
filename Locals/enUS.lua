@@ -665,7 +665,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("Reagent Bag") .. " Value: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "Queue Craft Lists",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING] = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP] = "If enabled, " ..
             f.l("CraftSim") ..
@@ -813,8 +812,6 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT] = "Offset Queue Amount: ",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP] = "Always add given amount to the number of queued crafts",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST] = "Automatically create Shopping List after Queue",
-        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS] = "Queue " .. f.bb("Current Main Professions"),
-        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS_TOOLTIP] = "If enabled, CraftSim will process both main professions of the current character at once",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_NO_LIST_SELECTED] = f.grey("No list selected"),
         [CraftSim.CONST.TEXT.CRAFT_LISTS_SELECT_LIST_HINT] = f.grey("Select a list to view recipes"),
 

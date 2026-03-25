@@ -12,7 +12,7 @@ CraftSim.CRAFT_LISTS = {}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
 
---- Queue all craft lists that are selected for queue (selectedForQueue = true)
+--- Queue all craft lists that are selected for queue by the current character
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
@@ -20,7 +20,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
     local selectedLists = GUTIL:Filter(allLists, function(list)
-        return list.options and list.options.selectedForQueue
+        return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, list.name)
     end)
 
     if #selectedLists == 0 then
@@ -31,7 +31,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         CraftSim.CRAFTQ.frame.content and
         CraftSim.CRAFTQ.frame.content.queueTab and
         CraftSim.CRAFTQ.frame.content.queueTab.content and
-        CraftSim.CRAFTQ.frame.content.queueTab.content.queueFavoritesButton --[[@as GGUI.Button?]]
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
 
     if queueListsButton then
         queueListsButton:SetEnabled(false)
@@ -40,6 +40,11 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     local function finishQueue()
         if queueListsButton then
             queueListsButton:SetStatus("Ready")
+        end
+        -- auto shopping list is a general CraftQueue option
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
+            and CraftSim.CRAFTQ.CreateAuctionatorShoppingList then
+            CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
         end
         CraftSim.CRAFTQ.UI:UpdateDisplay()
     end
@@ -182,9 +187,6 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         maxIterations = 1000,
         finally = function()
             finalizeProfession()
-            if options.autoShoppingList and CraftSim.CRAFTQ.CreateAuctionatorShoppingList then
-                CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
-            end
             if finally then finally() end
         end,
         continue = function(frameDistributor, _, recipeID)
