@@ -665,7 +665,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = f.bb("Reagent Bag") .. " Value: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP] = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "Queue Favorites",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL] = "Queue Craft Lists",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING] = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP] = "If enabled, " ..
             f.l("CraftSim") ..
@@ -775,6 +775,48 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_HELP] = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
             f.bb("Right Click") .. " .. Open Recipe Options\n" ..
             f.bb("Middle Click") .. " .. Remove Recipe from Queue",
+
+        -- craft lists
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_TAB_LABEL] = "Craft Lists",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_QUEUE_BUTTON_LABEL] = "Queue Craft Lists",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_CREATE_BUTTON_LABEL] = "Create",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL] = f.r("Delete"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL] = "Rename",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL] = f.r("Remove"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL] = "Export",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL] = "Import",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_NAME_HEADER] = "List Name",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_TYPE_HEADER] = "Scope",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_QUEUE_HEADER] = "Queue",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_RECIPE_NAME_HEADER] = "Recipe",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL] = f.bb("Global"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_CHARACTER_LABEL] = f.g("Character"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_NEW_LIST_DEFAULT_NAME] = "New List",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE] = "Rename Craft List",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_CREATE_POPUP_TITLE] = "Create Craft List",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_POPUP_TITLE] = "Export Craft List",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_POPUP_TITLE] = "Import Craft List",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION] = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. f.gold(" Enable Concentration"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION] = "Optimize " .. f.gold("Concentration"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION] = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP] = "Queue recipes in order of most concentration value per point, spending all available concentration",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION] = "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP] = "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " .. f.bb("Ingenuity"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS] = "Optimize Profession Tools",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY] = "Autoselect Top Profit Quality",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING] = "Optimize Finishing Reagents",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND] = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER] = "Craft with current character",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_FIXED_CRAFTER] = "Fixed Crafter: ",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT] = "Restock Amount: ",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT] = "Offset Queue Amount: ",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP] = "Always add given amount to the number of queued crafts",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST] = "Automatically create Shopping List after Queue",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS] = "Queue " .. f.bb("Current Main Professions"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS_TOOLTIP] = "If enabled, CraftSim will process both main professions of the current character at once",
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_NO_LIST_SELECTED] = f.grey("No list selected"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_SELECT_LIST_HINT] = f.grey("Select a list to view recipes"),
 
         -- craft buffs
 

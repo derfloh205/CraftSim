@@ -124,7 +124,29 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@class CraftSim.CraftQueue.QueueTab.Content
         queueTab.content = queueTab.content
 
-        GGUI.BlizzardTabSystem({ queueTab })
+        ---@type GGUI.BlizzardTab
+        frame.content.craftListsTab = GGUI.BlizzardTab({
+            buttonOptions = {
+                parent = frame.content,
+                anchorParent = frame.content.queueTab.button,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_TAB_LABEL),
+            },
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = tabContentSizeX,
+            sizeY = tabContentSizeY,
+            canBeEnabled = true,
+            offsetY = -30,
+            top = true,
+        })
+        ---@class CraftSim.CraftQueue.CraftListsTab : GGUI.BlizzardTab
+        local craftListsTab = frame.content.craftListsTab
+        ---@class CraftSim.CraftQueue.CraftListsTab.Content
+        craftListsTab.content = craftListsTab.content
+
+        GGUI.BlizzardTabSystem({ queueTab, craftListsTab })
 
         ---@type GGUI.FrameList.ColumnOption[]
         local columnOptions = {
@@ -502,10 +524,10 @@ function CraftSim.CRAFTQ.UI:Init()
             offsetY = craftQueueButtonsOffsetY,
             offsetX = 0,
             sizeX = fixedButtonWidth,
-            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL),
+            label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_QUEUE_BUTTON_LABEL),
             initialStatusID = "Ready",
             clickCallback = function()
-                CraftSim.CRAFTQ:QueueFavorites()
+                CraftSim.CRAFT_LISTS:QueueSelectedLists()
             end
         })
 
@@ -514,7 +536,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 statusID = "Ready",
                 enabled = true,
                 sizeX = fixedButtonWidth,
-                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL),
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_QUEUE_BUTTON_LABEL),
             },
         }
 
@@ -522,110 +544,26 @@ function CraftSim.CRAFTQ.UI:Init()
             parent = queueTab.content,
             anchorPoints = { { anchorParent = queueTab.content.queueFavoritesButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
-                    local smartQueueCB = rootDescription:CreateCheckbox(
-                        L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING",
-                                not value)
-                        end)
-                    smartQueueCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP));
-                    end);
+                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
 
-                    local concentrationCraftsCB = rootDescription:CreateCheckbox(
-                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT",
-                                not value)
-                        end)
-                    concentrationCraftsCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP));
-                    end);
-
-                    local mainProfessionsCB = rootDescription:CreateCheckbox(
-                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS",
-                                not value)
-                        end)
-                    mainProfessionsCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP));
-                    end);
-
-                    local includeSoulboundFRDB = rootDescription:CreateCheckbox(
-                        "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
-                                not value)
-                        end)
-
-                    includeSoulboundFRDB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization");
-                    end);
-
-                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
-                        frame.label = GGUI.Text {
-                            parent = frame,
-                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL),
-                            justifyOptions = { type = "H", align = "LEFT" },
-                        }
-                        frame.input = GGUI.NumericInput {
-                            parent = frame, anchorParent = frame,
-                            sizeX = 30, sizeY = 25, offsetX = 5,
-                            anchorA = "RIGHT", anchorB = "RIGHT",
-                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"),
-                            borderAdjustWidth = 1.32,
-                            minValue = 0,
-                            tooltipOptions = {
-                                anchor = "ANCHOR_TOP",
-                                owner = frame,
-                                text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP),
-                            },
-                            onNumberValidCallback = function(input)
-                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT",
-                                    tonumber(input.currentValue))
+                if #allLists == 0 then
+                    rootDescription:CreateTitle(f.grey("No Craft Lists created yet"))
+                else
+                    rootDescription:CreateTitle("Select Lists to Queue:")
+                    for _, list in ipairs(allLists) do
+                        local listRef = list
+                        rootDescription:CreateCheckbox(
+                            listRef.name,
+                            function()
+                                return listRef.options and listRef.options.selectedForQueue
                             end,
-                        }
-                    end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_OFFSET_QUEUE_AMOUNT_INPUT")
-
-                    local autoShoppingListCB = rootDescription:CreateCheckbox(
-                    L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST",
-                                not value)
-                        end)
-                    autoShoppingListCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST"));
-                    end)
+                            function()
+                                listRef.options = listRef.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+                                listRef.options.selectedForQueue = not listRef.options.selectedForQueue
+                            end)
+                    end
+                end
             end
         }
 
@@ -996,6 +934,8 @@ function CraftSim.CRAFTQ.UI:Init()
         })
 
         queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(queueTab.content, frame.content)
+
+        CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
     end
 
     createContent(CraftSim.CRAFTQ.frame)
@@ -1085,6 +1025,673 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         end)
     end)
+end
+
+---@param craftListsTab CraftSim.CraftQueue.CraftListsTab
+---@param parentFrame CraftSim.CraftQueue.Frame
+function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
+    ---@class CraftSim.CraftQueue.CraftListsTab.Content
+    local content = craftListsTab.content
+
+    -- Selected list state
+    ---@type string?
+    content.selectedListName = nil
+    ---@type boolean
+    content.selectedListIsGlobal = false
+
+    local listsPanelWidth = 300
+    local recipesPanelWidth = 330
+    local panelHeight = 265
+
+    -- ===== LEFT PANEL: Craft Lists =====
+
+    ---@type GGUI.FrameList
+    content.craftListsList = GGUI.FrameList {
+        parent = content,
+        anchorParent = content,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPLEFT",
+        offsetX = 5,
+        offsetY = -5,
+        sizeY = panelHeight,
+        showBorder = true,
+        selectionOptions = {
+            hoverRGBA = { 1, 1, 1, 0.1 },
+            selectedRGBA = { 0.3, 0.7, 1, 0.3 },
+            selectionCallback = function(row)
+                if row.listName then
+                    content.selectedListName = row.listName
+                    content.selectedListIsGlobal = row.isGlobal
+                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                end
+            end,
+        },
+        columnOptions = {
+            {
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_QUEUE_HEADER),
+                width = 40,
+                justifyOptions = { type = "H", align = "CENTER" },
+            },
+            {
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_NAME_HEADER),
+                width = 160,
+            },
+            {
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_LIST_TYPE_HEADER),
+                width = 70,
+                justifyOptions = { type = "H", align = "CENTER" },
+            },
+        },
+        rowConstructor = function(columns, row)
+            local queueColumn = columns[1]
+            local nameColumn = columns[2]
+            local typeColumn = columns[3]
+
+            queueColumn.checkbox = GGUI.Checkbox {
+                parent = queueColumn,
+                anchorParent = queueColumn,
+                scale = 1.5,
+            }
+
+            nameColumn.text = GGUI.Text {
+                parent = nameColumn,
+                anchorParent = nameColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                justifyOptions = { type = "H", align = "LEFT" },
+                scale = 0.9,
+                fixedWidth = nameColumn:GetWidth() - 5,
+                wrap = false,
+            }
+
+            typeColumn.text = GGUI.Text {
+                parent = typeColumn,
+                anchorParent = typeColumn,
+                scale = 0.8,
+                justifyOptions = { type = "H", align = "CENTER" },
+            }
+        end,
+    }
+
+    -- Buttons below the list panel
+    local buttonOffsetY = -3
+
+    content.createListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.craftListsList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = buttonOffsetY,
+        offsetX = 0,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_CREATE_BUTTON_LABEL),
+        clickCallback = function()
+            -- Show popup to enter list name
+            CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_CREATE_POPUP_TITLE),
+                "",
+                false, -- not global by default
+                function(name, isGlobal)
+                    if name and name ~= "" then
+                        local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                        local newList = CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
+                        if not newList then
+                            CraftSim.DEBUG:SystemPrint(f.r("A list with that name already exists!"))
+                        end
+                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                    end
+                end)
+        end,
+    }
+
+    content.deleteListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.createListButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListName then return end
+            CraftSim.DB.CRAFT_LISTS:DeleteList(
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                CraftSim.UTIL:GetPlayerCrafterUID())
+            content.selectedListName = nil
+            content.selectedListIsGlobal = false
+            CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+        end,
+    }
+
+    content.renameListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.deleteListButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListName then return end
+            CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                function(name, isGlobal)
+                    if name and name ~= "" then
+                        local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                        local success = CraftSim.DB.CRAFT_LISTS:RenameList(
+                            content.selectedListName, name,
+                            content.selectedListIsGlobal, crafterUID)
+                        if not success then
+                            CraftSim.DEBUG:SystemPrint(f.r("A list with that name already exists!"))
+                        else
+                            content.selectedListName = name
+                        end
+                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                    end
+                end)
+        end,
+    }
+
+    content.listOptionsButton = CraftSim.WIDGETS.OptionsButton {
+        parent = content,
+        anchorPoints = { { anchorParent = content.renameListButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            if not content.selectedListName then
+                rootDescription:CreateTitle(f.grey("No list selected"))
+                return
+            end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            local list = CraftSim.DB.CRAFT_LISTS:GetList(
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                crafterUID)
+            if not list then return end
+
+            list.options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+            local opts = list.options
+
+            rootDescription:CreateTitle(f.bb(content.selectedListName) .. " Options:")
+
+            -- Optimization options
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION),
+                function() return opts.enableConcentration end,
+                function() opts.enableConcentration = not opts.enableConcentration end)
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION),
+                function() return opts.optimizeConcentration end,
+                function() opts.optimizeConcentration = not opts.optimizeConcentration end)
+
+            local smartCB = rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION),
+                function() return opts.smartConcentrationQueuing end,
+                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
+            smartCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP))
+            end)
+
+            local offsetConCB = rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION),
+                function() return opts.offsetConcentrationCraftAmount end,
+                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
+            offsetConCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP))
+            end)
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS),
+                function() return opts.optimizeProfessionTools end,
+                function() opts.optimizeProfessionTools = not opts.optimizeProfessionTools end)
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY),
+                function() return opts.autoselectTopProfitQuality end,
+                function() opts.autoselectTopProfitQuality = not opts.autoselectTopProfitQuality end)
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING),
+                function() return opts.optimizeFinishingReagents end,
+                function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND),
+                function() return opts.includeSoulboundFinishingReagents end,
+                function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
+
+            rootDescription:CreateDivider()
+
+            -- Character assignment
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER),
+                function() return opts.useCurrentCharacter end,
+                function() opts.useCurrentCharacter = not opts.useCurrentCharacter end)
+
+            rootDescription:CreateDivider()
+
+            -- Queue options
+            local queueMainCB = rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS),
+                function() return opts.queueMainProfessions end,
+                function() opts.queueMainProfessions = not opts.queueMainProfessions end)
+            queueMainCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_QUEUE_MAIN_PROFESSIONS_TOOLTIP))
+            end)
+
+            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                frame.label = GGUI.Text {
+                    parent = frame,
+                    anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                    text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT),
+                    justifyOptions = { type = "H", align = "LEFT" },
+                }
+                frame.input = GGUI.NumericInput {
+                    parent = frame, anchorParent = frame,
+                    sizeX = 30, sizeY = 25, offsetX = 5,
+                    anchorA = "RIGHT", anchorB = "RIGHT",
+                    initialValue = opts.offsetQueueAmount or 0,
+                    borderAdjustWidth = 1.32,
+                    minValue = 0,
+                    tooltipOptions = {
+                        anchor = "ANCHOR_TOP",
+                        owner = frame,
+                        text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP),
+                    },
+                    onNumberValidCallback = function(input)
+                        opts.offsetQueueAmount = tonumber(input.currentValue) or 0
+                    end,
+                }
+            end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_" .. (content.selectedListName or ""))
+
+            rootDescription:CreateCheckbox(
+                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST),
+                function() return opts.autoShoppingList end,
+                function() opts.autoShoppingList = not opts.autoShoppingList end)
+        end,
+    }
+
+    content.exportListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.createListButton.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = buttonOffsetY,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListName then return end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                crafterUID)
+            if exportString == "" then return end
+            CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
+        end,
+    }
+
+    content.importListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.exportListButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL),
+        clickCallback = function()
+            CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(function(importString, isGlobal)
+                if importString and importString ~= "" then
+                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    local success = CraftSim.DB.CRAFT_LISTS:ImportList(importString, isGlobal, crafterUID)
+                    if success then
+                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                    else
+                        CraftSim.DEBUG:SystemPrint(f.r("Failed to import craft list!"))
+                    end
+                end
+            end)
+        end,
+    }
+
+    -- ===== RIGHT PANEL: Recipes in Selected List =====
+
+    content.selectedListLabel = GGUI.Text {
+        parent = content,
+        anchorParent = content.craftListsList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPRIGHT",
+        offsetX = 10,
+        text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_NO_LIST_SELECTED),
+        scale = 1.0,
+    }
+
+    content.recipeList = GGUI.FrameList {
+        parent = content,
+        anchorParent = content.craftListsList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPRIGHT",
+        offsetX = 10,
+        offsetY = -20,
+        sizeY = panelHeight - 20,
+        showBorder = true,
+        selectionOptions = {
+            hoverRGBA = { 1, 1, 1, 0.1 },
+            selectedRGBA = { 1, 0.3, 0.3, 0.2 },
+        },
+        columnOptions = {
+            {
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RECIPE_NAME_HEADER),
+                width = recipesPanelWidth,
+            },
+        },
+        rowConstructor = function(columns, row)
+            local nameColumn = columns[1]
+            nameColumn.text = GGUI.Text {
+                parent = nameColumn,
+                anchorParent = nameColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                justifyOptions = { type = "H", align = "LEFT" },
+                scale = 0.9,
+                fixedWidth = nameColumn:GetWidth() - 5,
+                wrap = false,
+            }
+        end,
+    }
+
+    content.addRecipeButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.recipeList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = buttonOffsetY,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListName then return end
+            local recipeData = CraftSim.MODULES.recipeData
+            if not recipeData then
+                CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
+                return
+            end
+            local recipeInfo = recipeData.recipeInfo
+            if recipeInfo and (recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
+                or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe) then
+                CraftSim.DEBUG:SystemPrint(f.r("This recipe type cannot be added to a Craft List!"))
+                return
+            end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            CraftSim.DB.CRAFT_LISTS:AddRecipe(
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                crafterUID,
+                recipeData.recipeID)
+            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+        end,
+    }
+
+    content.removeRecipeButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.addRecipeButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListName then return end
+            local selectedRow = content.recipeList.selectedRow
+            if not selectedRow or not selectedRow.recipeID then return end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                content.selectedListName,
+                content.selectedListIsGlobal,
+                crafterUID,
+                selectedRow.recipeID)
+            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+        end,
+    }
+end
+
+--- Update the craft lists display (left panel)
+function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+    if not CraftSim.CRAFTQ.frame or not CraftSim.CRAFTQ.frame.content then return end
+    local craftListsTab = CraftSim.CRAFTQ.frame.content.craftListsTab --[[@as CraftSim.CraftQueue.CraftListsTab?]]
+    if not craftListsTab then return end
+    local content = craftListsTab.content
+
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
+
+    content.craftListsList:Remove()
+
+    for _, list in ipairs(allLists) do
+        local listRef = list
+        local isGlobal = CraftSimDB.craftListsDB.globalLists[list.name] ~= nil
+        content.craftListsList:Add(function(row)
+            row.listName = listRef.name
+            row.isGlobal = isGlobal
+            row.listData = listRef
+
+            local queueColumn = row.columns[1]
+            local nameColumn = row.columns[2]
+            local typeColumn = row.columns[3]
+
+            queueColumn.checkbox:SetChecked(listRef.options and listRef.options.selectedForQueue or false)
+            queueColumn.checkbox.clickCallback = function(_, checked)
+                listRef.options = listRef.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+                listRef.options.selectedForQueue = checked
+            end
+            nameColumn.text:SetText(listRef.name)
+            typeColumn.text:SetText(isGlobal and L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL)
+                or L(CraftSim.CONST.TEXT.CRAFT_LISTS_CHARACTER_LABEL))
+        end)
+    end
+
+    content.craftListsList:UpdateDisplay()
+end
+
+--- Update the recipe display for the selected craft list (right panel)
+function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+    if not CraftSim.CRAFTQ.frame or not CraftSim.CRAFTQ.frame.content then return end
+    local craftListsTab = CraftSim.CRAFTQ.frame.content.craftListsTab --[[@as CraftSim.CraftQueue.CraftListsTab?]]
+    if not craftListsTab then return end
+    local content = craftListsTab.content
+
+    content.recipeList:Remove()
+
+    if not content.selectedListName then
+        content.selectedListLabel:SetText(L(CraftSim.CONST.TEXT.CRAFT_LISTS_SELECT_LIST_HINT))
+        content.recipeList:UpdateDisplay()
+        return
+    end
+
+    content.selectedListLabel:SetText(f.bb(content.selectedListName))
+
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local list = CraftSim.DB.CRAFT_LISTS:GetList(
+        content.selectedListName,
+        content.selectedListIsGlobal,
+        crafterUID)
+
+    if not list then
+        content.recipeList:UpdateDisplay()
+        return
+    end
+
+    for _, recipeID in ipairs(list.recipeIDs) do
+        local id = recipeID
+        content.recipeList:Add(function(row)
+            row.recipeID = id
+            local nameColumn = row.columns[1]
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
+            local name = (recipeInfo and recipeInfo.name) or ("Recipe " .. tostring(id))
+            nameColumn.text:SetText(name)
+        end)
+    end
+
+    content.recipeList:UpdateDisplay()
+end
+
+--- Show a popup dialog to enter/confirm a craft list name
+---@param title string
+---@param defaultName string
+---@param isGlobal boolean
+---@param callback function(name: string, isGlobal: boolean)
+function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal, callback)
+    local popupFrame = GGUI.Frame {
+        parent = UIParent,
+        anchorParent = UIParent,
+        sizeX = 350, sizeY = 160,
+        frameID = "CRAFT_LIST_NAME_POPUP",
+        frameTable = {},
+        title = title,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        closeable = true,
+        moveable = true,
+    }
+
+    local nameEditBox = CreateFrame("EditBox", nil, popupFrame.content, "InputBoxTemplate")
+    nameEditBox:SetPoint("TOP", popupFrame.content, "TOP", 0, -30)
+    nameEditBox:SetSize(280, 25)
+    nameEditBox:SetAutoFocus(true)
+    nameEditBox:SetFontObject("ChatFontNormal")
+    nameEditBox:SetText(defaultName or "")
+    nameEditBox:SetScript("OnEscapePressed", function() nameEditBox:ClearFocus() end)
+    nameEditBox:SetScript("OnEnterPressed", function() nameEditBox:ClearFocus() end)
+    popupFrame.content.nameEditBox = nameEditBox
+
+    popupFrame.content.globalCB = GGUI.Checkbox {
+        parent = popupFrame.content,
+        anchorParent = nameEditBox,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = -5,
+        isOn = isGlobal,
+        labelOptions = {
+            text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL) .. " (visible to all characters)",
+        },
+    }
+
+    popupFrame.content.confirmButton = GGUI.Button {
+        parent = popupFrame.content,
+        anchorParent = popupFrame.content,
+        anchorA = "BOTTOM",
+        anchorB = "BOTTOM",
+        offsetY = 10,
+        label = "Confirm",
+        adjustWidth = true,
+        clickCallback = function()
+            local name = nameEditBox:GetText()
+            local global = popupFrame.content.globalCB.isOn
+            popupFrame:Hide()
+            if callback then callback(name, global) end
+        end,
+    }
+
+    popupFrame:Show()
+end
+
+--- Show a popup to display an export string
+---@param exportString string
+function CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
+    local popupFrame = GGUI.Frame {
+        parent = UIParent,
+        anchorParent = UIParent,
+        sizeX = 500, sizeY = 180,
+        frameID = "CRAFT_LIST_EXPORT_POPUP",
+        frameTable = {},
+        title = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_POPUP_TITLE),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        closeable = true,
+        moveable = true,
+    }
+
+    local exportEditBox = CreateFrame("EditBox", nil, popupFrame.content, "InputBoxTemplate")
+    exportEditBox:SetPoint("TOP", popupFrame.content, "TOP", 0, -30)
+    exportEditBox:SetSize(460, 25)
+    exportEditBox:SetAutoFocus(false)
+    exportEditBox:SetFontObject("ChatFontNormal")
+    exportEditBox:SetText(exportString)
+    exportEditBox:HighlightText()
+    exportEditBox:SetScript("OnEscapePressed", function() exportEditBox:ClearFocus() end)
+    exportEditBox:SetScript("OnEnterPressed", function() exportEditBox:ClearFocus() end)
+
+    popupFrame.content.hint = GGUI.Text {
+        parent = popupFrame.content,
+        anchorParent = exportEditBox,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = -5,
+        text = f.grey("Select all (Ctrl+A) and copy (Ctrl+C)"),
+        scale = 0.85,
+    }
+
+    popupFrame:Show()
+    exportEditBox:SetFocus()
+end
+
+--- Show a popup to paste an import string
+---@param callback function(importString: string, isGlobal: boolean)
+function CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(callback)
+    local popupFrame = GGUI.Frame {
+        parent = UIParent,
+        anchorParent = UIParent,
+        sizeX = 500, sizeY = 200,
+        frameID = "CRAFT_LIST_IMPORT_POPUP",
+        frameTable = {},
+        title = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_POPUP_TITLE),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        closeable = true,
+        moveable = true,
+    }
+
+    local importEditBox = CreateFrame("EditBox", nil, popupFrame.content, "InputBoxTemplate")
+    importEditBox:SetPoint("TOP", popupFrame.content, "TOP", 0, -30)
+    importEditBox:SetSize(460, 25)
+    importEditBox:SetAutoFocus(true)
+    importEditBox:SetFontObject("ChatFontNormal")
+    importEditBox:SetText("")
+    importEditBox:SetScript("OnEscapePressed", function() importEditBox:ClearFocus() end)
+    importEditBox:SetScript("OnEnterPressed", function() importEditBox:ClearFocus() end)
+    popupFrame.content.importEditBox = importEditBox
+
+    popupFrame.content.globalCB = GGUI.Checkbox {
+        parent = popupFrame.content,
+        anchorParent = importEditBox,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = -5,
+        isOn = false,
+        labelOptions = {
+            text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL) .. " (visible to all characters)",
+        },
+    }
+
+    popupFrame.content.confirmButton = GGUI.Button {
+        parent = popupFrame.content,
+        anchorParent = popupFrame.content,
+        anchorA = "BOTTOM",
+        anchorB = "BOTTOM",
+        offsetY = 10,
+        label = "Import",
+        adjustWidth = true,
+        clickCallback = function()
+            local importString = importEditBox:GetText()
+            local isGlobal = popupFrame.content.globalCB.isOn
+            popupFrame:Hide()
+            if callback then callback(importString, isGlobal) end
+        end,
+    }
+
+    popupFrame:Show()
 end
 
 ---@param frame GGUI.Frame
@@ -1966,6 +2573,7 @@ end
 function CraftSim.CRAFTQ.UI:UpdateDisplay()
     CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+    CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
