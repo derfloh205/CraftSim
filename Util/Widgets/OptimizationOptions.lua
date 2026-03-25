@@ -1,23 +1,11 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
 CraftSim.WIDGETS = CraftSim.WIDGETS or {}
-
----Reagent allocation mode values used by OptimizationOptions.
----@enum CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
-CraftSim.WIDGETS.OptimizationOptions = CraftSim.WIDGETS.OptimizationOptions or {}
-CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
-    Q1       = "Q1",
-    Q2       = "Q2",
-    Q3       = "Q3",
-    OPTIMIZE = "OPTIMIZE",
-}
 
 ---Which standard optimization options to show on this button.
 ---@class CraftSim.WIDGETS.OptimizationOptions.ShowOptions
@@ -43,11 +31,15 @@ CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
 ---@field parent Frame
 ---@field anchorPoints GGUI.AnchorPoint[]
 ---@field isFilter boolean?                            use filter icon instead of options icon
----@field optimizationOptionsID string?                ID used to persist option values in CraftSim.DB.OPTIMIZATION_OPTIONS
----@field savedVariablesTable table?                   alternative persistence: read/write directly to this table
+---@field optimizationOptionsID string?                ID used to persist option values in CraftSim.DB.OPTIMIZATION_OPTIONS.
+---                                                    Mutually exclusive with savedVariablesTable; provide at most one.
+---@field savedVariablesTable table?                   alternative persistence: read/write directly to this table.
+---                                                    Mutually exclusive with optimizationOptionsID; provide at most one.
 ---@field defaults CraftSim.WIDGETS.OptimizationOptions.Defaults? per-key default values
 ---@field showOptions CraftSim.WIDGETS.OptimizationOptions.ShowOptions which standard options to expose
----@field recipeDataProvider (fun(): CraftSim.RecipeData?)? provider called when menu opens to conditionally show quality-gated options
+---@field recipeDataProvider (fun(): CraftSim.RecipeData?)? optional provider called when the menu opens.
+---                                                    When provided and returns nil, quality-gated options are hidden.
+---                                                    When omitted, quality-gated options are always visible.
 ---@field additionalMenu (fun(ownerRegion: Region, rootDescription: any))? extra items appended after the standard options
 
 ---@class CraftSim.WIDGETS.OptimizationOptions : CraftSim.WIDGETS.OptionsButton
@@ -56,6 +48,15 @@ CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
 ---@field optimizationOptionsID string?
 ---@overload fun(options: CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions): CraftSim.WIDGETS.OptimizationOptions
 CraftSim.WIDGETS.OptimizationOptions = CraftSim.WIDGETS.OptionsButton:extend()
+
+---Reagent allocation mode values mirroring CraftSim.RECIPE_SCAN.SCAN_MODES.
+---@enum CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
+    Q1       = "Q1",
+    Q2       = "Q2",
+    Q3       = "Q3",
+    OPTIMIZE = "OPTIMIZE",
+}
 
 ---@param options CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
 function CraftSim.WIDGETS.OptimizationOptions:new(options)
@@ -95,7 +96,14 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
 
     local function buildMenu(ownerRegion, rootDescription)
         local recipeData = options.recipeDataProvider and options.recipeDataProvider()
-        local supportsQualities = (recipeData == nil) or recipeData.supportsQualities
+        -- If a provider was given but returned nil (no active recipe), hide quality-gated options.
+        -- If no provider was specified, always show them (caller shows all options unconditionally).
+        local supportsQualities
+        if options.recipeDataProvider then
+            supportsQualities = (recipeData ~= nil) and recipeData.supportsQualities
+        else
+            supportsQualities = true
+        end
 
         -- Enable Concentration
         if showOptions.enableConcentration then
