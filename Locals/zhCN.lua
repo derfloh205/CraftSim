@@ -407,6 +407,8 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_PROFESSION_GEAR] = "优化" .. f.bb("专业工具"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION] = "优化" .. f.gold("专注"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS] = "优化" .. f.bb("完成材料"),
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS] = "Optimize Profession Tools",
+        [CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS] = "Include Soulbound Finishing Reagents",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SEND_TO_CRAFT_QUEUE] = "发送到制造队列",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD] = "利润率阈值 (%)：",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT] = "默认队列数量：",
