@@ -10,24 +10,24 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---Which standard optimization options to show on this button.
 ---Use CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS values as field names.
 ---@class CraftSim.WIDGETS.OptimizationOptions.ShowOptions
----@field enableConcentration boolean?           show "Enable Concentration" checkbox
----@field reagentAllocation boolean?             show "Reagent Allocation" radio sub-menu
----@field autoselectTopProfitQuality boolean?    show "Autoselect Top Profit Quality" checkbox (hidden when recipe does not support qualities)
----@field optimizeProfessionTools boolean?       show "Optimize Profession Tools" checkbox
----@field optimizeConcentration boolean?         show "Optimize Concentration" checkbox (hidden when recipe does not support qualities)
----@field optimizeFinishingReagents boolean?     show "Optimize Finishing Reagents" checkbox
----@field includeSoulboundFinishingReagents boolean? show "Include Soulbound Finishing Reagents" sub-option (only visible when optimizeFinishingReagents is also shown)
+---@field ENABLE_CONCENTRATION boolean?           show "Enable Concentration" checkbox
+---@field REAGENT_ALLOCATION boolean?             show "Reagent Allocation" radio sub-menu
+---@field AUTOSELECT_TOP_PROFIT_QUALITY boolean?  show "Autoselect Top Profit Quality" checkbox (hidden when recipe does not support qualities)
+---@field OPTIMIZE_PROFESSION_TOOLS boolean?      show "Optimize Profession Tools" checkbox
+---@field OPTIMIZE_CONCENTRATION boolean?         show "Optimize Concentration" checkbox (hidden when recipe does not support qualities)
+---@field OPTIMIZE_FINISHING_REAGENTS boolean?    show "Optimize Finishing Reagents" checkbox
+---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean? show "Include Soulbound Finishing Reagents" sub-option (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
 
 ---Default values for each option key when no stored value exists.
 ---Use CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS values as field names.
 ---@class CraftSim.WIDGETS.OptimizationOptions.Defaults
----@field enableConcentration boolean?
----@field reagentAllocation string?              one of CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
----@field autoselectTopProfitQuality boolean?
----@field optimizeProfessionTools boolean?
----@field optimizeConcentration boolean?
----@field optimizeFinishingReagents boolean?
----@field includeSoulboundFinishingReagents boolean?
+---@field ENABLE_CONCENTRATION boolean?
+---@field REAGENT_ALLOCATION string?              one of CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+---@field AUTOSELECT_TOP_PROFIT_QUALITY boolean?
+---@field OPTIMIZE_PROFESSION_TOOLS boolean?
+---@field OPTIMIZE_CONCENTRATION boolean?
+---@field OPTIMIZE_FINISHING_REAGENTS boolean?
+---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean?
 
 ---@class CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
 ---@field parent Frame
@@ -63,13 +63,13 @@ CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
 ---DB key names for each individual optimization option value.
 ---@enum CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
 CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS = {
-    ENABLE_CONCENTRATION                 = "enableConcentration",
-    REAGENT_ALLOCATION                   = "reagentAllocation",
-    AUTOSELECT_TOP_PROFIT_QUALITY        = "autoselectTopProfitQuality",
-    OPTIMIZE_PROFESSION_TOOLS            = "optimizeProfessionTools",
-    OPTIMIZE_CONCENTRATION               = "optimizeConcentration",
-    OPTIMIZE_FINISHING_REAGENTS          = "optimizeFinishingReagents",
-    INCLUDE_SOULBOUND_FINISHING_REAGENTS = "includeSoulboundFinishingReagents",
+    ENABLE_CONCENTRATION                 = "ENABLE_CONCENTRATION",
+    REAGENT_ALLOCATION                   = "REAGENT_ALLOCATION",
+    AUTOSELECT_TOP_PROFIT_QUALITY        = "AUTOSELECT_TOP_PROFIT_QUALITY",
+    OPTIMIZE_PROFESSION_TOOLS            = "OPTIMIZE_PROFESSION_TOOLS",
+    OPTIMIZE_CONCENTRATION               = "OPTIMIZE_CONCENTRATION",
+    OPTIMIZE_FINISHING_REAGENTS          = "OPTIMIZE_FINISHING_REAGENTS",
+    INCLUDE_SOULBOUND_FINISHING_REAGENTS = "INCLUDE_SOULBOUND_FINISHING_REAGENTS",
 }
 
 ---@param options CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions

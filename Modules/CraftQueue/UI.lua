@@ -1027,14 +1027,14 @@ function CraftSim.CRAFTQ.UI:Init()
         } },
         optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_ADD_RECIPE,
         showOptions = {
-            autoselectTopProfitQuality = true,
-            optimizeProfessionTools    = true,
-            optimizeConcentration      = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY = true,
+            OPTIMIZE_PROFESSION_TOOLS     = true,
+            OPTIMIZE_CONCENTRATION        = true,
         },
         defaults = {
-            autoselectTopProfitQuality = true,
-            optimizeProfessionTools    = true,
-            optimizeConcentration      = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY = true,
+            OPTIMIZE_PROFESSION_TOOLS     = true,
+            OPTIMIZE_CONCENTRATION        = true,
         },
         recipeDataProvider = function()
             return CraftSim.MODULES.recipeData
@@ -1064,21 +1064,21 @@ function CraftSim.CRAFTQ.UI:Init()
         } },
         optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_ADD_RECIPE,
         showOptions = {
-            autoselectTopProfitQuality = true,
-            optimizeProfessionTools    = true,
-            optimizeConcentration      = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY = true,
+            OPTIMIZE_PROFESSION_TOOLS     = true,
+            OPTIMIZE_CONCENTRATION        = true,
         },
         defaults = {
-            autoselectTopProfitQuality = true,
-            optimizeProfessionTools    = true,
-            optimizeConcentration      = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY = true,
+            OPTIMIZE_PROFESSION_TOOLS     = true,
+            OPTIMIZE_CONCENTRATION        = true,
         },
         recipeDataProvider = function()
             return CraftSim.MODULES.recipeData
         end,
     }
 
-    CraftSim.CRAFTQ.frame:HookScript("OnShow", function()
+    CraftSim.CRAFTQ.frame:HookScript("OnShow",function()
         RunNextFrame(function()
             if CraftSim.CRAFTQ.frame:IsVisible() then
                 CraftSim.CRAFTQ.UI:UpdateDisplay()
@@ -1488,18 +1488,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         anchorPoints = { { anchorParent = editRecipeFrame.content.optimizeProfitButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE,
         showOptions = {
-            autoselectTopProfitQuality        = true,
-            optimizeProfessionTools           = true,
-            optimizeConcentration             = true,
-            optimizeFinishingReagents         = true,
-            includeSoulboundFinishingReagents = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY        = true,
+            OPTIMIZE_PROFESSION_TOOLS            = true,
+            OPTIMIZE_CONCENTRATION               = true,
+            OPTIMIZE_FINISHING_REAGENTS          = true,
+            INCLUDE_SOULBOUND_FINISHING_REAGENTS = true,
         },
         defaults = {
-            autoselectTopProfitQuality        = true,
-            optimizeProfessionTools           = true,
-            optimizeConcentration             = true,
-            optimizeFinishingReagents         = true,
-            includeSoulboundFinishingReagents = false,
+            AUTOSELECT_TOP_PROFIT_QUALITY        = true,
+            OPTIMIZE_PROFESSION_TOOLS            = true,
+            OPTIMIZE_CONCENTRATION               = true,
+            OPTIMIZE_FINISHING_REAGENTS          = true,
+            INCLUDE_SOULBOUND_FINISHING_REAGENTS = false,
         },
         recipeDataProvider = function()
             return editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData
