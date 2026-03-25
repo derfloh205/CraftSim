@@ -9,7 +9,7 @@
 -- Date: $Date: 2018-07-03 14:33:48 +0000 (Tue, 03 Jul 2018) $
 ----------------------------------------------------------------------------------
 
-
+---@class LibCompress
 local LibCompress = LibStub:NewLibrary("LibCompress", 90000 + tonumber(("$Revision: 83 $"):match("%d+")))
 
 if not LibCompress then return end

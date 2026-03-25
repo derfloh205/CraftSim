@@ -12,3 +12,12 @@ CraftSim.GUTIL = LibStub:GetLibrary("GUTIL-2.0")
 ---@source ../Libs/LibGraph-2.0/LibGraph-2.0/LibGraph-2.0.lua
 ---@class LibGraph-2.0
 CraftSim.LibGraph = LibStub:GetLibrary("LibGraph-2.0")
+
+---@class AceSerializer-3.0
+CraftSim.AceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
+
+---@class LibCompress
+CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
+
+---@class LibDBIcon
+CraftSim.LibIcon = LibStub("LibDBIcon-1.0")

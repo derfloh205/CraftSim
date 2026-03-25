@@ -52,7 +52,7 @@ function CraftSim.CRAFTQ.UI:Init()
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
             menuUtilCallback = function(ownerRegion, rootDescription)
-                local autoShow = rootDescription:CreateCheckbox(
+                local auto = rootDescription:CreateCheckbox(
                     L(CraftSim.CONST.TEXT.CRAFT_QUEUE_MENU_AUTO_SHOW),
                     function()
                         return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW")
@@ -1075,63 +1075,71 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             selectedRGBA = { 0.3, 0.7, 1, 0.3 },
             selectionCallback = function(row, userInput, alreadySelected)
                 if not row.listID then return end
-                    if IsMouseButtonDown("RightButton") then
-                        -- show context menu for list
-                        local listID = row.listID
-                        CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
-                            {
-                                type = "button",
-                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
-                                onClick = function()
-                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                    local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
-                                        listID, row.isGlobal, crafterUID)
-                                    if exportString == "" then return end
-                                    CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
-                                end
-                            },
-                            {
-                                type = "button",
+                if IsMouseButtonDown("RightButton") then
+                    -- show context menu for list
+                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                        {
+                            type = "button",
+                            label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
+                            onClick = function()
+                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                CraftSim.DEBUG:SystemPrint("Exporting list with ID " .. tostring(row.listID) .. ", isGlobal: " .. tostring(row.isGlobal) .. ", crafterUID: " .. tostring(crafterUID))
+                                local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
+                                    row.listID, row.isGlobal, crafterUID)
+                                CraftSim.DEBUG:SystemPrint("Export string: " .. tostring(exportString))
+                                if exportString == "" then return end
+                                CraftSim.UTIL:ShowTextCopyBox(exportString)
+                            end
+                        },
+                        {
+                            type = "button",
 
-                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
-                                onClick = function()
-                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                    local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
-                                        listID, row.isGlobal, crafterUID)
-                                    CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
-                                        L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
-                                        currentList and currentList.name or "",
-                                        row.isGlobal,
-                                        function(name, isGlobal)
-                                            if name and name ~= "" then
-                                                CraftSim.DB.CRAFT_LISTS:RenameList(
-                                                    listID, name, row.isGlobal, crafterUID)
-                                                CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-                                            end
-                                        end)
-                                end
-                            },
-                            {
-                                type = "button",
-                                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
-                                onClick = function()
-                                    if not content.selectedListID then return end
-                                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                    CraftSim.DB.CRAFT_LISTS:DeleteList(
-                                        listID, row.isGlobal, crafterUID)
-                                    content.selectedListID = nil
-                                    content.selectedListIsGlobal = false
-                                    CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-                                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
-                                end
-                            },
-                        })
-                    else if IsMouseButtonDown("LeftButton") then
-                        -- select list and show recipes
-                        content.selectedListID = row.listID
-                        content.selectedListIsGlobal = row.isGlobal
-                        CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
-                    end
+                            label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
+                            onClick = function()
+                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
+                                    row.listID, row.isGlobal, crafterUID)
+                                CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
+                                    L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
+                                    currentList and currentList.name or "",
+                                    row.isGlobal,
+                                    function(name, isGlobal)
+                                        if name and name ~= "" then
+                                            CraftSim.DB.CRAFT_LISTS:RenameList(
+                                                row.listID, name, row.isGlobal, crafterUID)
+                                            CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                                        end
+                                    end, true)
+                            end
+                        },
+                        {
+                            type = "button",
+                            label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
+                            onClick = function()
+                                if not content.selectedListID then return end
+                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                CraftSim.DB.CRAFT_LISTS:DeleteList(
+                                    row.listID, row.isGlobal, crafterUID)
+                                content.selectedListID = nil
+                                content.selectedListIsGlobal = false
+                                CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                                CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                            end
+                        },
+                    })
+                elseif IsMouseButtonDown("LeftButton") then
+                    -- select list and show recipes
+                    content.selectedListID = row.listID
+                    content.selectedListIsGlobal = row.isGlobal
+                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                elseif IsMouseButtonDown("MiddleButton") then
+                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    CraftSim.DB.CRAFT_LISTS:DeleteList(
+                        row.listID, row.isGlobal, crafterUID)
+                    content.selectedListID = nil
+                    content.selectedListIsGlobal = false
+                    CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 end
             end,
         },
@@ -1199,78 +1207,9 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         end,
     }
 
-    content.deleteListButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.createListButton.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        offsetX = 3,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            CraftSim.DB.CRAFT_LISTS:DeleteList(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                CraftSim.UTIL:GetPlayerCrafterUID())
-            content.selectedListID = nil
-            content.selectedListIsGlobal = false
-            CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
-        end,
-    }
-
-    content.renameListButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.deleteListButton.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        offsetX = 3,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
-                content.selectedListID, content.selectedListIsGlobal, crafterUID)
-            CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
-                L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
-                currentList and currentList.name or "",
-                content.selectedListIsGlobal,
-                function(name, isGlobal)
-                    if name and name ~= "" then
-                        CraftSim.DB.CRAFT_LISTS:RenameList(
-                            content.selectedListID, name,
-                            content.selectedListIsGlobal, crafterUID)
-                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-                    end
-                end)
-        end,
-    }
-
-    content.exportListButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.createListButton.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = buttonOffsetY,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                crafterUID)
-            if exportString == "" then return end
-            CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
-        end,
-    }
-
     content.importListButton = GGUI.Button {
         parent = content,
-        anchorParent = content.exportListButton.frame,
+        anchorParent = content.createListButton.frame,
         anchorA = "LEFT",
         anchorB = "RIGHT",
         offsetX = 3,
@@ -1579,12 +1518,13 @@ end
 ---@param title string
 ---@param defaultName string
 ---@param isGlobal boolean
----@param callback function(name: string, isGlobal: boolean)
-function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal, callback)
+---@param callback fun(name: string, isGlobal: boolean)
+---@param isRename boolean?
+function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal, callback, isRename)
     local popupFrame = GGUI.Frame {
         parent = UIParent,
         anchorParent = UIParent,
-        sizeX = 350, sizeY = 160,
+        sizeX = 350, sizeY = isRename and 100 or 120,
         frameID = "CRAFT_LIST_NAME_POPUP",
         frameTable = {},
         title = title,
@@ -1610,11 +1550,13 @@ function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal,
         anchorA = "TOPLEFT",
         anchorB = "BOTTOMLEFT",
         offsetY = -5,
-        isOn = isGlobal,
+        initialValue = isGlobal,
         labelOptions = {
             text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL) .. " (visible to all characters)",
         },
     }
+
+    popupFrame.content.globalCB:SetVisible(not isRename) -- hide global option when renaming, as it cannot be changed during rename
 
     popupFrame.content.confirmButton = GGUI.Button {
         parent = popupFrame.content,
@@ -1626,7 +1568,7 @@ function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal,
         adjustWidth = true,
         clickCallback = function()
             local name = nameEditBox:GetText()
-            local global = popupFrame.content.globalCB.isOn
+            local global = popupFrame.content.globalCB:GetChecked()
             popupFrame:Hide()
             if callback then callback(name, global) end
         end,
@@ -1635,53 +1577,13 @@ function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal,
     popupFrame:Show()
 end
 
---- Show a popup to display an export string
----@param exportString string
-function CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
-    local popupFrame = GGUI.Frame {
-        parent = UIParent,
-        anchorParent = UIParent,
-        sizeX = 500, sizeY = 180,
-        frameID = "CRAFT_LIST_EXPORT_POPUP",
-        frameTable = {},
-        title = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_POPUP_TITLE),
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata = "DIALOG",
-        closeable = true,
-        moveable = true,
-    }
-
-    local exportEditBox = CreateFrame("EditBox", nil, popupFrame.content, "InputBoxTemplate")
-    exportEditBox:SetPoint("TOP", popupFrame.content, "TOP", 0, -30)
-    exportEditBox:SetSize(460, 25)
-    exportEditBox:SetAutoFocus(false)
-    exportEditBox:SetFontObject("ChatFontNormal")
-    exportEditBox:SetText(exportString)
-    exportEditBox:HighlightText()
-    exportEditBox:SetScript("OnEscapePressed", function() exportEditBox:ClearFocus() end)
-    exportEditBox:SetScript("OnEnterPressed", function() exportEditBox:ClearFocus() end)
-
-    popupFrame.content.hint = GGUI.Text {
-        parent = popupFrame.content,
-        anchorParent = exportEditBox,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = -5,
-        text = f.grey("Select all (Ctrl+A) and copy (Ctrl+C)"),
-        scale = 0.85,
-    }
-
-    popupFrame:Show()
-    exportEditBox:SetFocus()
-end
-
 --- Show a popup to paste an import string
 ---@param callback function(importString: string, isGlobal: boolean)
 function CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(callback)
     local popupFrame = GGUI.Frame {
         parent = UIParent,
         anchorParent = UIParent,
-        sizeX = 500, sizeY = 200,
+        sizeX = 500, sizeY = 130,
         frameID = "CRAFT_LIST_IMPORT_POPUP",
         frameTable = {},
         title = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_POPUP_TITLE),
@@ -1707,7 +1609,7 @@ function CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(callback)
         anchorA = "TOPLEFT",
         anchorB = "BOTTOMLEFT",
         offsetY = -5,
-        isOn = false,
+        initialValue = false,
         labelOptions = {
             text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_GLOBAL_LABEL) .. " (visible to all characters)",
         },
@@ -1723,7 +1625,7 @@ function CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(callback)
         adjustWidth = true,
         clickCallback = function()
             local importString = importEditBox:GetText()
-            local isGlobal = popupFrame.content.globalCB.isOn
+            local isGlobal = popupFrame.content.globalCB:GetChecked()
             popupFrame:Hide()
             if callback then callback(importString, isGlobal) end
         end,

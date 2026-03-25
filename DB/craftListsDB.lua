@@ -229,9 +229,7 @@ end
 function CraftSim.DB.CRAFT_LISTS:ExportList(id, isGlobal, crafterUID)
     local list = self:GetList(id, isGlobal, crafterUID)
     if not list then return "" end
-    local serialized = CraftSim.COMM:Serialize(list)
-    local compressed = CraftSim.LibCompress:Compress(serialized)
-    local encoded = CraftSim.LibCompress:GetAddonEncodeTable():Encode(compressed)
+    local encoded = CraftSim.UTIL:EncodeTable(list)
     return encoded
 end
 
@@ -241,17 +239,7 @@ end
 ---@return boolean success
 function CraftSim.DB.CRAFT_LISTS:ImportList(exportString, isGlobal, crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    local decoded = CraftSim.LibCompress:GetAddonEncodeTable():Decode(exportString)
-    local decompressed, err = CraftSim.LibCompress:Decompress(decoded)
-    if not decompressed then
-        print("CraftListsDB Import Error: " .. tostring(err))
-        return false
-    end
-    local success, listData = CraftSim.COMM:Deserialize(decompressed)
-    if not success then
-        print("CraftListsDB Import Error: Could not deserialize")
-        return false
-    end
+    local listData = CraftSim.UTIL:DecodeTable(exportString) --[[@as CraftSim.CraftList]]
 
     ---@type CraftSim.CraftList
     local list = listData
