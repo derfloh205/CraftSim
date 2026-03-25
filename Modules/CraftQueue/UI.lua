@@ -1269,6 +1269,34 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         selectionOptions = {
             hoverRGBA = { 1, 1, 1, 0.1 },
             selectedRGBA = { 1, 0.3, 0.3, 0.2 },
+            selectionCallback = function (row, userInput, alreadySelected)
+                if IsMouseButtonDown("MiddleButton") then
+                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                        content.selectedListID,
+                        content.selectedListIsGlobal,
+                        crafterUID,
+                        row.recipeID)
+                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                elseif IsMouseButtonDown("RightButton") then
+                    -- show context menu for recipe
+                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                        {
+                            type = "button",
+                            label = f.r("Remove"),
+                            onClick = function()
+                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                                CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                                    content.selectedListID,
+                                    content.selectedListIsGlobal,
+                                    crafterUID,
+                                    row.recipeID)
+                                CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                            end
+                        },
+                    })
+                end
+            end,
         },
         columnOptions = {
             {
@@ -1333,31 +1361,13 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         end,
     }
 
-    content.removeRecipeButton = GGUI.Button {
+    content.listOptionsButton = CraftSim.WIDGETS.OptionsButton {
         parent = content,
-        anchorParent = content.addRecipeButton.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        offsetX = 3,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local selectedRow = content.recipeList.selectedRow
-            if not selectedRow or not selectedRow.recipeID then return end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                crafterUID,
-                selectedRow.recipeID)
-            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
-        end,
-    }
-
-        content.listOptionsButton = CraftSim.WIDGETS.OptionsButton {
-        parent = content,
-        anchorPoints = { { anchorParent = content.removeRecipeButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
+        anchorPoints = { { anchorParent = content.addRecipeButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            text = "Configure the " .. f.bb("selected") .. " Craft List",
+        },
         menuUtilCallback = function(ownerRegion, rootDescription)
             if not content.selectedListID then
                 rootDescription:CreateTitle(f.grey("No list selected"))

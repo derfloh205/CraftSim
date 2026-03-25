@@ -7,6 +7,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 
 ---@class CraftSim.WIDGETS.OptionsButton.ConstructorOptions
 ---@field isFilter boolean? if true, the button will use the filter texture, otherwise the options texture
+---@field tooltipOptions GGUI.TooltipOptions? tooltip options for the button
 ---@field parent Frame
 ---@field anchorPoints GGUI.AnchorPoint[]
 ---@field menuUtilCallback? fun(ownerRegion: Region, rootDescription: any) legacy: same as menu (function)
@@ -23,6 +24,7 @@ function CraftSim.WIDGETS.OptionsButton:new(options)
         parent = options.parent,
         anchorPoints = options.anchorPoints,
         cleanTemplate = true,
+        tooltipOptions = options.tooltipOptions,
         buttonTextureOptions = options.isFilter and CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.FILTER or CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
         sizeX = 20,
         sizeY = 20,

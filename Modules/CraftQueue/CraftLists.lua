@@ -163,14 +163,12 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         recipeData.craftListID = list.id
 
-        recipeData:SetEquippedProfessionGearSet()
         recipeData:SetCheapestQualityReagentsMax()
-        recipeData:Update()
 
         if recipeData.supportsQualities and options.enableConcentration then
             recipeData.concentrating = true
-            recipeData:Update()
         end
+        recipeData:Update()
 
         local iconSize = 15
         local recipeIcon = GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize)
@@ -207,7 +205,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end,
             } or nil,
             finally = function()
-                if options.smartConcentrationQueuing then
+                if options.enableConcentration and options.smartConcentrationQueuing then
                     tinsert(optimizedRecipes, recipeData)
                 else
                     local offsetAmount = tonumber(options.offsetQueueAmount) or 0
