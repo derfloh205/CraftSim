@@ -902,6 +902,19 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             end
         end
     end
+    if self.recipeData.isEnchantingRecipe then
+        local vellumItemID = CraftSim.CONST.ENCHANTING_VELLUM_ID
+        local vellumIcon = C_Item.GetItemIconByID(vellumItemID)
+        local inlineIcon = GUTIL:IconToText(vellumIcon, iconSize, iconSize)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, vellumItemID, true)
+        local requiredQuantity = multiplier
+        local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
+        if itemCount >= requiredQuantity then
+            quantityText = f.g(tostring(requiredQuantity))
+        end
+        text = text .. "\n" .. inlineIcon .. " x " .. quantityText
+    end
+
     if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
         local crafterName = self.recipeData:GetFormattedCrafterText(true)
         text = text .. f.white("\n(Inventory of " .. crafterName .. ")")

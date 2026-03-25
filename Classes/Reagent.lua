@@ -22,8 +22,10 @@ function CraftSim.Reagent:new(reagentSlotSchematic)
     ---@type CraftSim.ReagentItem[]
     self.items = {}
     for qualityID, itemInfo in pairs(reagentSlotSchematic.reagents) do
-        local reagentItem = CraftSim.ReagentItem(itemInfo.itemID, qualityID)
-        table.insert(self.items, reagentItem)
+        if itemInfo.itemID then
+            local reagentItem = CraftSim.ReagentItem(itemInfo.itemID, qualityID)
+            table.insert(self.items, reagentItem)
+        end
     end
 end
 
