@@ -1054,7 +1054,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
     ---@type boolean
     content.selectedListIsGlobal = false
 
-    local listsPanelWidth = 300
     local recipesPanelWidth = 330
     local panelHeight = 265
 
@@ -1215,18 +1214,44 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         offsetX = 3,
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL),
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            text = "Right-click for more Import Options",
+        },
         clickCallback = function()
-            CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(function(importString, isGlobal)
-                if importString and importString ~= "" then
-                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                    local success = CraftSim.DB.CRAFT_LISTS:ImportList(importString, isGlobal, crafterUID)
-                    if success then
-                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-                    else
-                        CraftSim.DEBUG:SystemPrint(f.r("Failed to import craft list!"))
+            if IsMouseButtonDown("LeftButton") then
+                CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(function(importString, isGlobal)
+                    if importString and importString ~= "" then
+                        local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                        local success = CraftSim.DB.CRAFT_LISTS:ImportList(importString, isGlobal, crafterUID)
+                        if success then
+                            CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                        else
+                            CraftSim.DEBUG:SystemPrint(f.r("Failed to import craft list!"))
+                        end
                     end
-                end
-            end)
+                end)
+            elseif IsMouseButtonDown("RightButton") then
+                CraftSim.WIDGETS.ContextMenu.Open(content.importListButton.frame, {
+                    {
+                        type = "button",
+                        label = "Import " .. f.bb("Favorites"),
+                        onClick = function()
+                            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                            local favoriteRecipes = CraftSim.DB.CRAFTER:GetFavoriteRecipeProfessions(CraftSim.UTIL:GetPlayerCrafterUID())
+                            if favoriteRecipes and #favoriteRecipes > 0 then
+                                local newList = CraftSim.DB.CRAFT_LISTS:CreateList(crafterUID .. " Favorites", false, crafterUID)
+                                for profession, recipeIDList in pairs(favoriteRecipes) do
+                                    for _, recipeID in ipairs(recipeIDList) do
+                                        CraftSim.DB.CRAFT_LISTS:AddRecipe(newList.id, false, crafterUID, recipeID)
+                                    end
+                                end
+                            end
+                            CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                        end
+                    },
+                })
+            end
         end,
     }
 
@@ -1398,13 +1423,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
 
             rootDescription:CreateDivider()
-
-            -- Character assignment
-            rootDescription:CreateCheckbox(
-                L(CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER),
-                function() return opts.useCurrentCharacter end,
-                function() opts.useCurrentCharacter = not opts.useCurrentCharacter end)
-
             rootDescription:CreateDivider()
 
             -- Queue options

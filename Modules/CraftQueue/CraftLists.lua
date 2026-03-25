@@ -81,17 +81,9 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
 
-    -- Determine which crafter to use
-    local effectiveCrafterUID = crafterUID
-    if not options.useCurrentCharacter and options.fixedCrafterUID then
-        effectiveCrafterUID = options.fixedCrafterUID
-    end
-
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
-    local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
-
+    ---@type CraftSim.RecipeData[]
     local optimizedRecipes = {}
 
     local queueListsButton = CraftSim.CRAFTQ.frame and
@@ -101,34 +93,48 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
 
     local function finalizeRecipe()
-        if options.smartConcentrationQueuing then
-            optimizedRecipes = GUTIL:Filter(optimizedRecipes,
-                function(recipeData)
-                    return recipeData.concentrationCost <= currentConcentration
-                end)
+        if options.enableConcentration and options.smartConcentrationQueuing then
+            ---@type table<CrafterUID, table<number, CraftSim.RecipeData[]>>
+            local crafterUIDProfessionMap = {}
 
-            table.sort(optimizedRecipes,
-                function(recipeDataA, recipeDataB)
-                    return recipeDataA:GetConcentrationValue() > recipeDataB:GetConcentrationValue()
-                end)
-
+            -- need to map per crafter and per skillline id cause they are all individual concentration currencies
             for _, recipeData in ipairs(optimizedRecipes) do
-                if recipeData.concentrationCost > 0 then
-                    local concentrationCosts = recipeData.concentrationCost
-                    if options.offsetConcentrationCraftAmount then
-                        local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
-                        local ingenuityRefund = 0.5 + recipeData.professionStats.ingenuity:GetExtraValue()
-                        concentrationCosts = concentrationCosts -
-                            (concentrationCosts * ingenuityChance * ingenuityRefund)
-                    end
-                    local queueableAmount = math.floor(currentConcentration / concentrationCosts)
-                    if queueableAmount > 0 then
-                        local offsetAmount = tonumber(options.offsetQueueAmount) or 0
-                        local totalAmount = queueableAmount + offsetAmount
-                        recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
-                        currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
-                        break
+                if recipeData.concentrating and recipeData.concentrationCost > 0 then
+                    local professionSkillLineID = recipeData.professionData.skillLineID
+                    local crafterUID = recipeData:GetCrafterUID()
+                    crafterUIDProfessionMap[crafterUID] = crafterUIDProfessionMap[crafterUID] or {}
+                    crafterUIDProfessionMap[crafterUID][professionSkillLineID] = crafterUIDProfessionMap[crafterUID][professionSkillLineID] or {}
+                    tinsert(crafterUIDProfessionMap[crafterUID][professionSkillLineID], recipeData)
+                end
+            end
+
+            for crafterUID, professionMap in pairs(crafterUIDProfessionMap) do
+                for professionSkillLineID, recipeDataList in pairs(professionMap) do
+                    local concentrationData = recipeDataList[1].concentrationData
+                    table.sort(recipeDataList,
+                        function(recipeDataA, recipeDataB)
+                            return recipeDataA:GetConcentrationValue() > recipeDataB:GetConcentrationValue()
+                        end)
+                    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
+                    for _, recipeData in ipairs(recipeDataList) do
+                        if recipeData.concentrationCost > 0 then
+                            local concentrationCosts = recipeData.concentrationCost
+                            if options.offsetConcentrationCraftAmount then
+                                local ingenuityChance = recipeData.professionStats.ingenuity:GetPercent(true)
+                                local ingenuityRefund = 0.5 + recipeData.professionStats.ingenuity:GetExtraValue()
+                                concentrationCosts = concentrationCosts -
+                                    (concentrationCosts * ingenuityChance * ingenuityRefund)
+                            end
+                            local queueableAmount = math.floor(currentConcentration / concentrationCosts)
+                            if queueableAmount > 0 then
+                                local offsetAmount = tonumber(options.offsetQueueAmount) or 0
+                                local totalAmount = queueableAmount + offsetAmount
+                                recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                                currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
+                                break
+                            end
+                        end
                     end
                 end
             end
@@ -173,7 +179,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
 
         recipeData:Optimize {
-            optimizeReagentOptions = options.autoselectTopProfitQuality and { highestProfit = true } or nil,
+            optimizeReagentOptions = options.autoselectTopProfitQuality and { highestProfit = true },
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then

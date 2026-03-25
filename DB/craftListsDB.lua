@@ -15,7 +15,6 @@ CraftSim.DB = CraftSim.DB
 ---@field autoselectTopProfitQuality boolean
 ---@field optimizeFinishingReagents boolean
 ---@field includeSoulboundFinishingReagents boolean
----@field useCurrentCharacter boolean
 ---@field fixedCrafterUID CrafterUID?
 ---@field restockAmount number
 ---@field offsetQueueAmount number
@@ -43,7 +42,6 @@ local function DefaultOptions()
         autoselectTopProfitQuality = true,
         optimizeFinishingReagents = false,
         includeSoulboundFinishingReagents = false,
-        useCurrentCharacter = true,
         fixedCrafterUID = nil,
         restockAmount = 1,
         offsetQueueAmount = 0,
@@ -264,7 +262,7 @@ end
 
 function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from_CrafterDB()
     if not CraftSimDB.crafterDB or not CraftSimDB.crafterDB.data then
-        return
+        error("CrafterDB data not found, cannot import character favorites into CraftListsDB")
     end
 
     for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data) do
