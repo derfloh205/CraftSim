@@ -20,7 +20,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
     local selectedLists = GUTIL:Filter(allLists, function(list)
-        return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, list.name)
+        return CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, list.id)
     end)
 
     if #selectedLists == 0 then
@@ -148,6 +148,8 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             frameDistributor:Continue()
             return
         end
+
+        recipeData.craftListID = list.id
 
         recipeData:SetEquippedProfessionGearSet()
         recipeData:SetCheapestQualityReagentsMax()

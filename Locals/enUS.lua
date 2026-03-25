@@ -796,7 +796,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_LISTS_CREATE_POPUP_TITLE] = "Create Craft List",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_POPUP_TITLE] = "Export Craft List",
         [CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_POPUP_TITLE] = "Import Craft List",
-        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION] = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. f.gold(" Enable Concentration"),
+        [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION] = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. f.gold(" Enable Concentration"),
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION] = "Optimize " .. f.gold("Concentration"),
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION] = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
         [CraftSim.CONST.TEXT.CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP] = "Queue recipes in order of most concentration value per point, spending all available concentration",

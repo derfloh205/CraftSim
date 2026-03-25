@@ -1071,8 +1071,8 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             hoverRGBA = { 1, 1, 1, 0.1 },
             selectedRGBA = { 0.3, 0.7, 1, 0.3 },
             selectionCallback = function(row)
-                if row.listName then
-                    content.selectedListName = row.listName
+                if row.listID then
+                    content.selectedListID = row.listID
                     content.selectedListIsGlobal = row.isGlobal
                     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 end
@@ -1146,10 +1146,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function(name, isGlobal)
                     if name and name ~= "" then
                         local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                        local newList = CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
-                        if not newList then
-                            CraftSim.DEBUG:SystemPrint(f.r("A list with that name already exists!"))
-                        end
+                        CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
                         CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
                     end
                 end)
@@ -1165,12 +1162,12 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_DELETE_BUTTON_LABEL),
         clickCallback = function()
-            if not content.selectedListName then return end
+            if not content.selectedListID then return end
             CraftSim.DB.CRAFT_LISTS:DeleteList(
-                content.selectedListName,
+                content.selectedListID,
                 content.selectedListIsGlobal,
                 CraftSim.UTIL:GetPlayerCrafterUID())
-            content.selectedListName = nil
+            content.selectedListID = nil
             content.selectedListIsGlobal = false
             CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
@@ -1186,22 +1183,19 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_BUTTON_LABEL),
         clickCallback = function()
-            if not content.selectedListName then return end
+            if not content.selectedListID then return end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
+                content.selectedListID, content.selectedListIsGlobal, crafterUID)
             CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
                 L(CraftSim.CONST.TEXT.CRAFT_LISTS_RENAME_POPUP_TITLE),
-                content.selectedListName,
+                currentList and currentList.name or "",
                 content.selectedListIsGlobal,
                 function(name, isGlobal)
                     if name and name ~= "" then
-                        local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                        local success = CraftSim.DB.CRAFT_LISTS:RenameList(
-                            content.selectedListName, name,
+                        CraftSim.DB.CRAFT_LISTS:RenameList(
+                            content.selectedListID, name,
                             content.selectedListIsGlobal, crafterUID)
-                        if not success then
-                            CraftSim.DEBUG:SystemPrint(f.r("A list with that name already exists!"))
-                        else
-                            content.selectedListName = name
-                        end
                         CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
                     end
                 end)
@@ -1212,13 +1206,13 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         parent = content,
         anchorPoints = { { anchorParent = content.renameListButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
-            if not content.selectedListName then
+            if not content.selectedListID then
                 rootDescription:CreateTitle(f.grey("No list selected"))
                 return
             end
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             local list = CraftSim.DB.CRAFT_LISTS:GetList(
-                content.selectedListName,
+                content.selectedListID,
                 content.selectedListIsGlobal,
                 crafterUID)
             if not list then return end
@@ -1226,7 +1220,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             list.options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
             local opts = list.options
 
-            rootDescription:CreateTitle(f.bb(content.selectedListName) .. " Options:")
+            rootDescription:CreateTitle(f.bb(list.name) .. " Options:")
 
             -- Optimization options
             rootDescription:CreateCheckbox(
@@ -1322,10 +1316,10 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
         clickCallback = function()
-            if not content.selectedListName then return end
+            if not content.selectedListID then return end
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
-                content.selectedListName,
+                content.selectedListID,
                 content.selectedListIsGlobal,
                 crafterUID)
             if exportString == "" then return end
@@ -1411,7 +1405,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL),
         clickCallback = function()
-            if not content.selectedListName then return end
+            if not content.selectedListID then return end
             local recipeData = CraftSim.MODULES.recipeData
             if not recipeData then
                 CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
@@ -1425,7 +1419,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             end
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             CraftSim.DB.CRAFT_LISTS:AddRecipe(
-                content.selectedListName,
+                content.selectedListID,
                 content.selectedListIsGlobal,
                 crafterUID,
                 recipeData.recipeID)
@@ -1442,12 +1436,12 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL),
         clickCallback = function()
-            if not content.selectedListName then return end
+            if not content.selectedListID then return end
             local selectedRow = content.recipeList.selectedRow
             if not selectedRow or not selectedRow.recipeID then return end
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                content.selectedListName,
+                content.selectedListID,
                 content.selectedListIsGlobal,
                 crafterUID,
                 selectedRow.recipeID)

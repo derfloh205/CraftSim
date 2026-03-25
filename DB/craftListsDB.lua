@@ -21,7 +21,9 @@ CraftSim.DB = CraftSim.DB
 ---@field offsetQueueAmount number
 
 ---@class CraftSim.CraftList
+---@field id number unique incrementing ID
 ---@field name string
+---@field isGlobal boolean
 ---@field recipeIDs RecipeID[]
 ---@field options CraftSim.CraftList.Options
 
@@ -55,34 +57,43 @@ function CraftSim.DB.CRAFT_LISTS:Init()
         ---@class CraftSimDB.CraftListsDB : CraftSimDB.Database
         CraftSimDB.craftListsDB = {
             version = 0,
-            ---@type table<string, CraftSim.CraftList>
+            nextListID = 1,
+            ---@type table<number, CraftSim.CraftList>
             globalLists = {},
-            ---@type table<CrafterUID, table<string, CraftSim.CraftList>>
+            ---@type table<CrafterUID, table<number, CraftSim.CraftList>>
             characterLists = {},
-            ---@type table<CrafterUID, table<string, boolean>>
+            ---@type table<CrafterUID, table<number, boolean>>
             selectedForQueue = {},
         }
     end
     self.db = CraftSimDB.craftListsDB
+    CraftSimDB.craftListsDB.nextListID = CraftSimDB.craftListsDB.nextListID or 1
     CraftSimDB.craftListsDB.globalLists = CraftSimDB.craftListsDB.globalLists or {}
     CraftSimDB.craftListsDB.characterLists = CraftSimDB.craftListsDB.characterLists or {}
     CraftSimDB.craftListsDB.selectedForQueue = CraftSimDB.craftListsDB.selectedForQueue or {}
 end
 
----@param crafterUID CrafterUID
----@param listName string
----@return boolean
-function CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listName)
-    CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
-    return CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] == true
+---@return number newID
+local function NextID()
+    local id = CraftSimDB.craftListsDB.nextListID
+    CraftSimDB.craftListsDB.nextListID = id + 1
+    return id
 end
 
 ---@param crafterUID CrafterUID
----@param listName string
----@param selected boolean
-function CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listName, selected)
+---@param listID number
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS:IsSelectedForQueue(crafterUID, listID)
     CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
-    CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] = selected or nil
+    return CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listID] == true
+end
+
+---@param crafterUID CrafterUID
+---@param listID number
+---@param selected boolean
+function CraftSim.DB.CRAFT_LISTS:SetSelectedForQueue(crafterUID, listID, selected)
+    CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
+    CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listID] = selected or nil
 end
 
 ---@param crafterUID? CrafterUID
@@ -101,179 +112,122 @@ function CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
     return lists
 end
 
----@param crafterUID? CrafterUID
----@return table<string, boolean> listNames map of list name -> isGlobal
-function CraftSim.DB.CRAFT_LISTS:GetAllListNames(crafterUID)
-    local names = {}
-    for name, _ in pairs(CraftSimDB.craftListsDB.globalLists) do
-        names[name] = true
-    end
-    if crafterUID then
-        CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or {}
-        for name, _ in pairs(CraftSimDB.craftListsDB.characterLists[crafterUID]) do
-            names[name] = false
-        end
-    end
-    return names
-end
-
 ---@param name string
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
----@return CraftSim.CraftList? list nil if name already taken
+---@return CraftSim.CraftList new list
 function CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    local allNames = self:GetAllListNames(crafterUID)
-    if allNames[name] ~= nil then
-        return nil -- name already taken
-    end
+    local id = NextID()
 
     ---@type CraftSim.CraftList
     local newList = {
+        id = id,
         name = name,
+        isGlobal = isGlobal,
         recipeIDs = {},
         options = DefaultOptions(),
     }
 
     if isGlobal then
-        CraftSimDB.craftListsDB.globalLists[name] = newList
+        CraftSimDB.craftListsDB.globalLists[id] = newList
     else
         CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or {}
-        CraftSimDB.craftListsDB.characterLists[crafterUID][name] = newList
+        CraftSimDB.craftListsDB.characterLists[crafterUID][id] = newList
     end
 
     return newList
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
-function CraftSim.DB.CRAFT_LISTS:DeleteList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:DeleteList(id, isGlobal, crafterUID)
     if isGlobal then
-        CraftSimDB.craftListsDB.globalLists[name] = nil
-        -- Clean up per-character selectedForQueue for all characters
-        for uid, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
-            selected[name] = nil
+        CraftSimDB.craftListsDB.globalLists[id] = nil
+        for _, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
+            selected[id] = nil
         end
     else
         crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
         if CraftSimDB.craftListsDB.characterLists[crafterUID] then
-            CraftSimDB.craftListsDB.characterLists[crafterUID][name] = nil
+            CraftSimDB.craftListsDB.characterLists[crafterUID][id] = nil
         end
         if CraftSimDB.craftListsDB.selectedForQueue[crafterUID] then
-            CraftSimDB.craftListsDB.selectedForQueue[crafterUID][name] = nil
+            CraftSimDB.craftListsDB.selectedForQueue[crafterUID][id] = nil
         end
     end
 end
 
----@param oldName string
+---@param id number
 ---@param newName string
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
----@return boolean success false if newName already taken
-function CraftSim.DB.CRAFT_LISTS:RenameList(oldName, newName, isGlobal, crafterUID)
-    if oldName == newName then return true end
-    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-
-    local allNames = self:GetAllListNames(crafterUID)
-    if allNames[newName] ~= nil then
-        return false -- name already taken
+function CraftSim.DB.CRAFT_LISTS:RenameList(id, newName, isGlobal, crafterUID)
+    local list = self:GetList(id, isGlobal, crafterUID)
+    if list then
+        list.name = newName
     end
-
-    if isGlobal then
-        local listData = CraftSimDB.craftListsDB.globalLists[oldName]
-        if listData then
-            listData.name = newName
-            CraftSimDB.craftListsDB.globalLists[newName] = listData
-            CraftSimDB.craftListsDB.globalLists[oldName] = nil
-        end
-        -- Update selectedForQueue for all characters
-        for _, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
-            if selected[oldName] ~= nil then
-                selected[newName] = selected[oldName]
-                selected[oldName] = nil
-            end
-        end
-    else
-        if CraftSimDB.craftListsDB.characterLists[crafterUID] then
-            local listData = CraftSimDB.craftListsDB.characterLists[crafterUID][oldName]
-            if listData then
-                listData.name = newName
-                CraftSimDB.craftListsDB.characterLists[crafterUID][newName] = listData
-                CraftSimDB.craftListsDB.characterLists[crafterUID][oldName] = nil
-            end
-        end
-        -- Update selectedForQueue for the owning character
-        if CraftSimDB.craftListsDB.selectedForQueue[crafterUID] then
-            local sel = CraftSimDB.craftListsDB.selectedForQueue[crafterUID]
-            if sel[oldName] ~= nil then
-                sel[newName] = sel[oldName]
-                sel[oldName] = nil
-            end
-        end
-    end
-
-    return true
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@return CraftSim.CraftList?
-function CraftSim.DB.CRAFT_LISTS:GetList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:GetList(id, isGlobal, crafterUID)
     if isGlobal then
-        return CraftSimDB.craftListsDB.globalLists[name]
+        return CraftSimDB.craftListsDB.globalLists[id]
     else
         crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
         if CraftSimDB.craftListsDB.characterLists[crafterUID] then
-            return CraftSimDB.craftListsDB.characterLists[crafterUID][name]
+            return CraftSimDB.craftListsDB.characterLists[crafterUID][id]
         end
     end
     return nil
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:AddRecipe(name, isGlobal, crafterUID, recipeID)
-    local list = self:GetList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, isGlobal, crafterUID, recipeID)
+    local list = self:GetList(id, isGlobal, crafterUID)
     if not list then return end
     if not tContains(list.recipeIDs, recipeID) then
         tinsert(list.recipeIDs, recipeID)
     end
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(name, isGlobal, crafterUID, recipeID)
-    local list = self:GetList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, isGlobal, crafterUID, recipeID)
+    local list = self:GetList(id, isGlobal, crafterUID)
     if not list then return end
-    local _, index = GUTIL:Find(list.recipeIDs, function(id) return id == recipeID end)
+    local _, index = GUTIL:Find(list.recipeIDs, function(rid) return rid == recipeID end)
     if index then
         tremove(list.recipeIDs, index)
     end
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param options CraftSim.CraftList.Options
-function CraftSim.DB.CRAFT_LISTS:SaveOptions(name, isGlobal, crafterUID, options)
-    local list = self:GetList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:SaveOptions(id, isGlobal, crafterUID, options)
+    local list = self:GetList(id, isGlobal, crafterUID)
     if list then
         list.options = options
     end
 end
 
----@param name string
+---@param id number
 ---@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@return string exportString
-function CraftSim.DB.CRAFT_LISTS:ExportList(name, isGlobal, crafterUID)
-    local list = self:GetList(name, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:ExportList(id, isGlobal, crafterUID)
+    local list = self:GetList(id, isGlobal, crafterUID)
     if not list then return "" end
     local serialized = CraftSim.COMM:Serialize(list)
     local compressed = CraftSim.LibCompress:Compress(serialized)
@@ -303,21 +257,16 @@ function CraftSim.DB.CRAFT_LISTS:ImportList(exportString, isGlobal, crafterUID)
     local list = listData
     if not list or not list.name then return false end
 
-    -- Ensure unique name
-    local targetName = list.name
-    local counter = 1
-    local allNames = self:GetAllListNames(crafterUID)
-    while allNames[targetName] ~= nil do
-        targetName = list.name .. " (" .. counter .. ")"
-        counter = counter + 1
-    end
-    list.name = targetName
+    -- Assign a fresh ID for this installation
+    local newID = NextID()
+    list.id = newID
+    list.isGlobal = isGlobal
 
     if isGlobal then
-        CraftSimDB.craftListsDB.globalLists[targetName] = list
+        CraftSimDB.craftListsDB.globalLists[newID] = list
     else
         CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or {}
-        CraftSimDB.craftListsDB.characterLists[crafterUID][targetName] = list
+        CraftSimDB.craftListsDB.characterLists[crafterUID][newID] = list
     end
 
     return true
@@ -360,14 +309,17 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                         options.includeSoulboundFinishingReagents = od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
                     end
                 end
-                CraftSimDB.craftListsDB.characterLists[crafterUID][listName] = {
+                local newID = NextID()
+                CraftSimDB.craftListsDB.characterLists[crafterUID][newID] = {
+                    id = newID,
                     name = listName,
+                    isGlobal = false,
                     recipeIDs = allRecipeIDs,
                     options = options,
                 }
                 -- Mark "Character Favorites" as selected for queue for this character
                 CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
-                CraftSimDB.craftListsDB.selectedForQueue[crafterUID][listName] = true
+                CraftSimDB.craftListsDB.selectedForQueue[crafterUID][newID] = true
             end
         end
     end
