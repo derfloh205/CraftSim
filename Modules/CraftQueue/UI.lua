@@ -48,9 +48,6 @@ function CraftSim.CRAFTQ.UI:Init()
         frame.content = frame.content
 
 
-        self:InitializeQuickAccessBar(frame)
-
-
         frame.content.craftQueueOptionsButton = CraftSim.WIDGETS.OptionsButton {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
@@ -135,10 +132,13 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             parent = frame.content,
             anchorParent = frame.content,
+            anchorA = "TOPLEFT",
+            anchorB = "TOPLEFT",
             sizeX = tabContentSizeX,
             sizeY = tabContentSizeY,
             canBeEnabled = true,
-            offsetY = -30,
+            offsetY = -80,
+            offsetX = 20,
             top = true,
         })
         ---@class CraftSim.CraftQueue.CraftListsTab : GGUI.BlizzardTab
@@ -948,6 +948,9 @@ function CraftSim.CRAFTQ.UI:Init()
         queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(queueTab.content, frame.content)
 
         CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
+
+        self:InitializeQuickAccessBar(frame)
+
     end
 
     createContent(CraftSim.CRAFTQ.frame)
@@ -1202,9 +1205,151 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         end,
     }
 
-    content.listOptionsButton = CraftSim.WIDGETS.OptionsButton {
+    content.exportListButton = GGUI.Button {
         parent = content,
-        anchorPoints = { { anchorParent = content.renameListButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
+        anchorParent = content.createListButton.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = buttonOffsetY,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListID then return end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
+                content.selectedListID,
+                content.selectedListIsGlobal,
+                crafterUID)
+            if exportString == "" then return end
+            CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
+        end,
+    }
+
+    content.importListButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.exportListButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL),
+        clickCallback = function()
+            CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(function(importString, isGlobal)
+                if importString and importString ~= "" then
+                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    local success = CraftSim.DB.CRAFT_LISTS:ImportList(importString, isGlobal, crafterUID)
+                    if success then
+                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+                    else
+                        CraftSim.DEBUG:SystemPrint(f.r("Failed to import craft list!"))
+                    end
+                end
+            end)
+        end,
+    }
+
+    -- ===== RIGHT PANEL: Recipes in Selected List =====
+
+    content.recipeList = GGUI.FrameList {
+        parent = content,
+        anchorParent = content.craftListsList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPRIGHT",
+        offsetX = 30,
+        offsetY = 0,
+        sizeY = panelHeight,
+        showBorder = true,
+        selectionOptions = {
+            hoverRGBA = { 1, 1, 1, 0.1 },
+            selectedRGBA = { 1, 0.3, 0.3, 0.2 },
+        },
+        columnOptions = {
+            {
+                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RECIPE_NAME_HEADER),
+                width = recipesPanelWidth,
+            },
+        },
+        rowConstructor = function(columns, row)
+            local nameColumn = columns[1]
+            nameColumn.text = GGUI.Text {
+                parent = nameColumn,
+                anchorParent = nameColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                justifyOptions = { type = "H", align = "LEFT" },
+                scale = 0.9,
+                fixedWidth = nameColumn:GetWidth() - 5,
+                wrap = false,
+            }
+        end,
+    }
+
+        content.selectedListLabel = GGUI.Text {
+        parent = content,
+        anchorParent = content.recipeList.frame,
+        anchorA = "BOTTOM",
+        anchorB = "TOP",
+        offsetY = 5,
+        text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_NO_LIST_SELECTED),
+        scale = 1.0,
+    }
+
+    content.addRecipeButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.recipeList.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = buttonOffsetY,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListID then return end
+            local recipeData = CraftSim.MODULES.recipeData
+            if not recipeData then
+                CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
+                return
+            end
+            local recipeInfo = recipeData.recipeInfo
+            if recipeInfo and (recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
+                or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe) then
+                CraftSim.DEBUG:SystemPrint(f.r("This recipe type cannot be added to a Craft List!"))
+                return
+            end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            CraftSim.DB.CRAFT_LISTS:AddRecipe(
+                content.selectedListID,
+                content.selectedListIsGlobal,
+                crafterUID,
+                recipeData.recipeID)
+            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+        end,
+    }
+
+    content.removeRecipeButton = GGUI.Button {
+        parent = content,
+        anchorParent = content.addRecipeButton.frame,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 3,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL),
+        clickCallback = function()
+            if not content.selectedListID then return end
+            local selectedRow = content.recipeList.selectedRow
+            if not selectedRow or not selectedRow.recipeID then return end
+            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                content.selectedListID,
+                content.selectedListIsGlobal,
+                crafterUID,
+                selectedRow.recipeID)
+            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+        end,
+    }
+
+        content.listOptionsButton = CraftSim.WIDGETS.OptionsButton {
+        parent = content,
+        anchorPoints = { { anchorParent = content.removeRecipeButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
             if not content.selectedListID then
                 rootDescription:CreateTitle(f.grey("No list selected"))
@@ -1304,148 +1449,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     end,
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
-        end,
-    }
-
-    content.exportListButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.createListButton.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = buttonOffsetY,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_EXPORT_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                crafterUID)
-            if exportString == "" then return end
-            CraftSim.CRAFTQ.UI:ShowCraftListExportPopup(exportString)
-        end,
-    }
-
-    content.importListButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.exportListButton.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        offsetX = 3,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_IMPORT_BUTTON_LABEL),
-        clickCallback = function()
-            CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(function(importString, isGlobal)
-                if importString and importString ~= "" then
-                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                    local success = CraftSim.DB.CRAFT_LISTS:ImportList(importString, isGlobal, crafterUID)
-                    if success then
-                        CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
-                    else
-                        CraftSim.DEBUG:SystemPrint(f.r("Failed to import craft list!"))
-                    end
-                end
-            end)
-        end,
-    }
-
-    -- ===== RIGHT PANEL: Recipes in Selected List =====
-
-    content.selectedListLabel = GGUI.Text {
-        parent = content,
-        anchorParent = content.craftListsList.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPRIGHT",
-        offsetX = 10,
-        text = L(CraftSim.CONST.TEXT.CRAFT_LISTS_NO_LIST_SELECTED),
-        scale = 1.0,
-    }
-
-    content.recipeList = GGUI.FrameList {
-        parent = content,
-        anchorParent = content.craftListsList.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPRIGHT",
-        offsetX = 10,
-        offsetY = -20,
-        sizeY = panelHeight - 20,
-        showBorder = true,
-        selectionOptions = {
-            hoverRGBA = { 1, 1, 1, 0.1 },
-            selectedRGBA = { 1, 0.3, 0.3, 0.2 },
-        },
-        columnOptions = {
-            {
-                label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_RECIPE_NAME_HEADER),
-                width = recipesPanelWidth,
-            },
-        },
-        rowConstructor = function(columns, row)
-            local nameColumn = columns[1]
-            nameColumn.text = GGUI.Text {
-                parent = nameColumn,
-                anchorParent = nameColumn,
-                anchorA = "LEFT",
-                anchorB = "LEFT",
-                justifyOptions = { type = "H", align = "LEFT" },
-                scale = 0.9,
-                fixedWidth = nameColumn:GetWidth() - 5,
-                wrap = false,
-            }
-        end,
-    }
-
-    content.addRecipeButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.recipeList.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = buttonOffsetY,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local recipeData = CraftSim.MODULES.recipeData
-            if not recipeData then
-                CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
-                return
-            end
-            local recipeInfo = recipeData.recipeInfo
-            if recipeInfo and (recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
-                or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe) then
-                CraftSim.DEBUG:SystemPrint(f.r("This recipe type cannot be added to a Craft List!"))
-                return
-            end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            CraftSim.DB.CRAFT_LISTS:AddRecipe(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                crafterUID,
-                recipeData.recipeID)
-            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
-        end,
-    }
-
-    content.removeRecipeButton = GGUI.Button {
-        parent = content,
-        anchorParent = content.addRecipeButton.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        offsetX = 3,
-        adjustWidth = true,
-        label = L(CraftSim.CONST.TEXT.CRAFT_LISTS_REMOVE_RECIPE_BUTTON_LABEL),
-        clickCallback = function()
-            if not content.selectedListID then return end
-            local selectedRow = content.recipeList.selectedRow
-            if not selectedRow or not selectedRow.recipeID then return end
-            local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                content.selectedListID,
-                content.selectedListIsGlobal,
-                crafterUID,
-                selectedRow.recipeID)
-            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         end,
     }
 end
@@ -1688,11 +1691,11 @@ end
 
 ---@param frame GGUI.Frame
 function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
-    local content = frame.content
+    local content = frame.content.queueTab.content
 
     content.quickBarFrame = GGUI.Frame {
         parent = content, anchorParent = content,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -1, offsetX = 10,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = 70, offsetX = 75,
         sizeX = 200, sizeY = 70,
     }
 
@@ -2390,7 +2393,7 @@ local function ShowQuickBarShatterMoteMenu(recipeData)
 end
 
 function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
-    local quickBar = CraftSim.CRAFTQ.frame.content.quickBarFrame --[[@as GGUI.Frame]]
+    local quickBar = CraftSim.CRAFTQ.frame.content.queueTab.content.quickBarFrame --[[@as GGUI.Frame]]
     local buttonList = quickBar.buttonList --[[@as GGUI.FrameList]]
 
     buttonList:Remove()

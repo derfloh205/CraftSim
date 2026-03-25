@@ -61,7 +61,6 @@ Util/Widgets/OptimizationOptions.lua
 Util/Widgets/ReagentList.lua
 Util/Widgets/QualityMeter.lua
 
-Util/Comm.lua
 Util/API.lua
 
 Init/Init.lua
