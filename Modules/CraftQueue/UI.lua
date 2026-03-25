@@ -1436,14 +1436,15 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 local OPT_ID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE
-                local optimizeProfessionGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeProfessionTools", true)
-                local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeConcentration", true)
-                local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeFinishingReagents", true)
+                local KEYS   = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+                local optimizeProfessionGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, true)
+                local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, true)
+                local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_FINISHING_REAGENTS, true)
 
                 -- Never consider locked finishing slots in Craft Queue, but ALWAYS include soulbound
                 -- when optimizing via Craft Queue.
                 local includeLockedFinishing = false
-                local includeSoulboundFinishing = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "includeSoulboundFinishingReagents", false)
+                local includeSoulboundFinishing = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS, false)
                 local queueAmount = editRecipeFrame.craftQueueItem.amount or 1
 
                 local function finalizeOptimize()
@@ -1457,7 +1458,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     optimizeButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON))
                 end
 
-                local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "autoselectTopProfitQuality", true)
+                local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, true)
 
                 optimizeButton:SetEnabled(false)
                 recipeData:Optimize {

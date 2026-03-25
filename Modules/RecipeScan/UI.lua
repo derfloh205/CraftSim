@@ -711,7 +711,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 if recipeData then
                     if IsShiftKeyDown() and IsMouseButtonDown("LeftButton") then
                         -- queue into CraftQueue
-                        if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, "enableConcentration", true) then
+                        if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION, true) then
                             recipeData.concentrating = true
                         end
                         CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
@@ -721,7 +721,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                             rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_ADD_TO_CRAFT_QUEUE), function()
                                 -- queue into CraftQueue
-                                if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, "enableConcentration", true) then
+                                if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION, true) then
                                     recipeData.concentrating = true
                                 end
                                 CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
@@ -1065,7 +1065,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.recipeData = recipeData
 
             local enableConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(
-                    CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, "enableConcentration", true) and
+                    CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION, true) and
                 recipeData.supportsQualities
 
             local recipeRarity = ITEM_QUALITY_COLORS[0] -- default white
@@ -1124,7 +1124,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(averageProfit, true, relativeTo, true))
 
-            if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, "optimizeProfessionTools", false) then
+            if CraftSim.DB.OPTIMIZATION_OPTIONS:Get(CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.OPTIMIZE_PROFESSION_TOOLS, false) then
                 if recipeData.professionGearSet:IsEquipped() then
                     topGearColumn.equippedText:Show()
                     topGearColumn.equippedText:SetEquipped()

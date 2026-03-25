@@ -30,7 +30,7 @@ function CraftSim.DB.OPTIMIZATION_OPTIONS:ClearAll()
 end
 
 ---@param id string the OptimizationOptionsID
----@param key string the option key (e.g. "optimizeProfessionTools")
+---@param key CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS the option key
 ---@param default? any default value if not set
 ---@return any
 function CraftSim.DB.OPTIMIZATION_OPTIONS:Get(id, key, default)
@@ -46,7 +46,7 @@ function CraftSim.DB.OPTIMIZATION_OPTIONS:Get(id, key, default)
 end
 
 ---@param id string the OptimizationOptionsID
----@param key string the option key
+---@param key CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS the option key
 ---@param value any
 function CraftSim.DB.OPTIMIZATION_OPTIONS:Save(id, key, value)
     if CraftSimDB.optimizationOptionsDB.data[id] == nil then
@@ -67,28 +67,30 @@ end
 function CraftSim.DB.OPTIMIZATION_OPTIONS.MIGRATION:M_0_1_Import_from_OptionsDB()
     local newData = CraftSimDB.optimizationOptionsDB.data
     local oldData = CraftSimDB.optionsDB and CraftSimDB.optionsDB.data or {}
+    local KEYS    = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local IDS     = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS
 
-    newData[CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_ADD_RECIPE] = {
-        autoselectTopProfitQuality = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"],
-        optimizeProfessionTools    = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
-        optimizeConcentration      = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION"],
+    newData[IDS.CRAFTQUEUE_ADD_RECIPE] = {
+        [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY] = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"],
+        [KEYS.OPTIMIZE_PROFESSION_TOOLS]     = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
+        [KEYS.OPTIMIZE_CONCENTRATION]        = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION"],
     }
 
-    newData[CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE] = {
-        autoselectTopProfitQuality         = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"],
-        optimizeProfessionTools            = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
-        optimizeConcentration              = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION"],
-        optimizeFinishingReagents          = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS"],
-        includeSoulboundFinishingReagents  = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
+    newData[IDS.CRAFTQUEUE_EDIT_RECIPE] = {
+        [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY]        = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"],
+        [KEYS.OPTIMIZE_PROFESSION_TOOLS]            = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
+        [KEYS.OPTIMIZE_CONCENTRATION]               = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION"],
+        [KEYS.OPTIMIZE_FINISHING_REAGENTS]          = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS"],
+        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
     }
 
-    newData[CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN] = {
-        enableConcentration                = oldData["RECIPESCAN_ENABLE_CONCENTRATION"],
-        reagentAllocation                  = oldData["RECIPESCAN_SCAN_MODE"],
-        autoselectTopProfitQuality         = oldData["RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"],
-        optimizeProfessionTools            = oldData["RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"],
-        optimizeConcentration              = oldData["RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"],
-        optimizeFinishingReagents          = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"],
-        includeSoulboundFinishingReagents  = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
+    newData[IDS.RECIPESCAN_SCAN] = {
+        [KEYS.ENABLE_CONCENTRATION]                  = oldData["RECIPESCAN_ENABLE_CONCENTRATION"],
+        [KEYS.REAGENT_ALLOCATION]                    = oldData["RECIPESCAN_SCAN_MODE"],
+        [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY]         = oldData["RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"],
+        [KEYS.OPTIMIZE_PROFESSION_TOOLS]             = oldData["RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"],
+        [KEYS.OPTIMIZE_CONCENTRATION]                = oldData["RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"],
+        [KEYS.OPTIMIZE_FINISHING_REAGENTS]           = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"],
+        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS]  = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
     }
 end

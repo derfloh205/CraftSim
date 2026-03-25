@@ -8,6 +8,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 
 ---Which standard optimization options to show on this button.
+---Use CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS values as field names.
 ---@class CraftSim.WIDGETS.OptimizationOptions.ShowOptions
 ---@field enableConcentration boolean?           show "Enable Concentration" checkbox
 ---@field reagentAllocation boolean?             show "Reagent Allocation" radio sub-menu
@@ -18,6 +19,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field includeSoulboundFinishingReagents boolean? show "Include Soulbound Finishing Reagents" sub-option (only visible when optimizeFinishingReagents is also shown)
 
 ---Default values for each option key when no stored value exists.
+---Use CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS values as field names.
 ---@class CraftSim.WIDGETS.OptimizationOptions.Defaults
 ---@field enableConcentration boolean?
 ---@field reagentAllocation string?              one of CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
@@ -58,6 +60,18 @@ CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
     OPTIMIZE = "OPTIMIZE",
 }
 
+---DB key names for each individual optimization option value.
+---@enum CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS = {
+    ENABLE_CONCENTRATION                 = "enableConcentration",
+    REAGENT_ALLOCATION                   = "reagentAllocation",
+    AUTOSELECT_TOP_PROFIT_QUALITY        = "autoselectTopProfitQuality",
+    OPTIMIZE_PROFESSION_TOOLS            = "optimizeProfessionTools",
+    OPTIMIZE_CONCENTRATION               = "optimizeConcentration",
+    OPTIMIZE_FINISHING_REAGENTS          = "optimizeFinishingReagents",
+    INCLUDE_SOULBOUND_FINISHING_REAGENTS = "includeSoulboundFinishingReagents",
+}
+
 ---@param options CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
 function CraftSim.WIDGETS.OptimizationOptions:new(options)
     local showOptions    = options.showOptions or {}
@@ -92,7 +106,8 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
         end
     end
 
-    local RA = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+    local RA   = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+    local KEYS = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
 
     local function buildMenu(ownerRegion, rootDescription)
         local recipeData = options.recipeDataProvider and options.recipeDataProvider()
@@ -106,76 +121,76 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
         end
 
         -- Enable Concentration
-        if showOptions.enableConcentration then
+        if showOptions[KEYS.ENABLE_CONCENTRATION] then
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_ENABLE_CONCENTRATION),
-                function() return getOption("enableConcentration") end,
-                function() saveOption("enableConcentration", not getOption("enableConcentration")) end)
+                function() return getOption(KEYS.ENABLE_CONCENTRATION) end,
+                function() saveOption(KEYS.ENABLE_CONCENTRATION, not getOption(KEYS.ENABLE_CONCENTRATION)) end)
         end
 
         -- Reagent Allocation radio sub-menu
-        if showOptions.reagentAllocation then
+        if showOptions[KEYS.REAGENT_ALLOCATION] then
             local sub = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION))
 
             sub:CreateRadio(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q1) .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
-                function() return getOption("reagentAllocation") == RA.Q1 end,
-                function() saveOption("reagentAllocation", RA.Q1) end)
+                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q1 end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q1) end)
 
             sub:CreateRadio(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q2) .. " " .. GUTIL:GetQualityIconString(2, 20, 20),
-                function() return getOption("reagentAllocation") == RA.Q2 end,
-                function() saveOption("reagentAllocation", RA.Q2) end)
+                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q2 end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q2) end)
 
             sub:CreateRadio(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_REAGENT_ALLOCATION_Q3) .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
-                function() return getOption("reagentAllocation") == RA.Q3 end,
-                function() saveOption("reagentAllocation", RA.Q3) end)
+                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q3 end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q3) end)
 
             sub:CreateRadio(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE),
-                function() return getOption("reagentAllocation") == RA.OPTIMIZE end,
-                function() saveOption("reagentAllocation", RA.OPTIMIZE) end)
+                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.OPTIMIZE end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.OPTIMIZE) end)
         end
 
         -- Autoselect Top Profit Quality (quality-gated)
-        if showOptions.autoselectTopProfitQuality and supportsQualities then
+        if showOptions[KEYS.AUTOSELECT_TOP_PROFIT_QUALITY] and supportsQualities then
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT),
-                function() return getOption("autoselectTopProfitQuality") end,
-                function() saveOption("autoselectTopProfitQuality", not getOption("autoselectTopProfitQuality")) end)
+                function() return getOption(KEYS.AUTOSELECT_TOP_PROFIT_QUALITY) end,
+                function() saveOption(KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, not getOption(KEYS.AUTOSELECT_TOP_PROFIT_QUALITY)) end)
         end
 
         -- Optimize Profession Tools
-        if showOptions.optimizeProfessionTools then
+        if showOptions[KEYS.OPTIMIZE_PROFESSION_TOOLS] then
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS),
-                function() return getOption("optimizeProfessionTools") end,
-                function() saveOption("optimizeProfessionTools", not getOption("optimizeProfessionTools")) end)
+                function() return getOption(KEYS.OPTIMIZE_PROFESSION_TOOLS) end,
+                function() saveOption(KEYS.OPTIMIZE_PROFESSION_TOOLS, not getOption(KEYS.OPTIMIZE_PROFESSION_TOOLS)) end)
         end
 
         -- Optimize Concentration (quality-gated)
-        if showOptions.optimizeConcentration and supportsQualities then
+        if showOptions[KEYS.OPTIMIZE_CONCENTRATION] and supportsQualities then
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION),
-                function() return getOption("optimizeConcentration") end,
-                function() saveOption("optimizeConcentration", not getOption("optimizeConcentration")) end)
+                function() return getOption(KEYS.OPTIMIZE_CONCENTRATION) end,
+                function() saveOption(KEYS.OPTIMIZE_CONCENTRATION, not getOption(KEYS.OPTIMIZE_CONCENTRATION)) end)
         end
 
         -- Optimize Finishing Reagents (+ optional soulbound sub-option)
-        if showOptions.optimizeFinishingReagents then
+        if showOptions[KEYS.OPTIMIZE_FINISHING_REAGENTS] then
             rootDescription:CreateCheckbox(
                 L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS),
-                function() return getOption("optimizeFinishingReagents") end,
-                function() saveOption("optimizeFinishingReagents", not getOption("optimizeFinishingReagents")) end)
+                function() return getOption(KEYS.OPTIMIZE_FINISHING_REAGENTS) end,
+                function() saveOption(KEYS.OPTIMIZE_FINISHING_REAGENTS, not getOption(KEYS.OPTIMIZE_FINISHING_REAGENTS)) end)
 
-            if showOptions.includeSoulboundFinishingReagents then
+            if showOptions[KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] then
                 local includeSBCB = rootDescription:CreateCheckbox(
                     L(CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS),
-                    function() return getOption("includeSoulboundFinishingReagents") end,
+                    function() return getOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS) end,
                     function()
-                        saveOption("includeSoulboundFinishingReagents",
-                            not getOption("includeSoulboundFinishingReagents"))
+                        saveOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS,
+                            not getOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS))
                     end)
                 includeSBCB:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip,

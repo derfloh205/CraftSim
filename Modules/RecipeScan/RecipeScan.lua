@@ -297,13 +297,14 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     CraftSim.RECIPE_SCAN.UI:ResetResults(row)
 
     local OPT_ID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN
-    local optimizeGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeProfessionTools", false)
-    local concentrationEnabled = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "enableConcentration", true)
+    local KEYS   = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local optimizeGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, false)
+    local concentrationEnabled = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ENABLE_CONCENTRATION, true)
     local optimizeSubRecipes = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
-    local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeConcentration", false)
-    local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "autoselectTopProfitQuality", false)
-    local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "optimizeFinishingReagents", false)
-    local reagentAllocation = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "reagentAllocation", CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
+    local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, false)
+    local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
+    local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_FINISHING_REAGENTS, false)
+    local reagentAllocation = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION, CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
     local optimizationScanMode = reagentAllocation == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 
 
@@ -392,7 +393,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             if optimizeFinishingReagents then
                 optimizeFinishingReagentOptions = {
                     includeLocked = false,
-                    includeSoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, "includeSoulboundFinishingReagents", false),
+                    includeSoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS, false),
                     progressUpdateCallback = function(progress)
                     content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
                         " " ..
@@ -433,9 +434,10 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
+    local KEYS    = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
     local scanMode = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(
         CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN,
-        "reagentAllocation",
+        KEYS.REAGENT_ALLOCATION,
         CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
     if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
         recipeData.reagentData:SetReagentsMaxByQuality(1)
@@ -594,7 +596,7 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
 
     local concentrationEnabled = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(
         CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN,
-        "enableConcentration",
+        CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION,
         true)
 
     GUTIL.FrameDistributor {
