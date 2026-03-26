@@ -134,7 +134,6 @@ Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
 
 Locals/Localization.lua
-Locals/LocalizationIDs.lua
 Locals/enUS.lua
 Locals/deDE.lua
 Locals/itIT.lua
