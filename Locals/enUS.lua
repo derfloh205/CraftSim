@@ -19,6 +19,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- shared prof cds
         [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutations",
+        [CraftSim.CONST.TEXT.MIDNIGHT_ALCHEMY_TRANSMUTATIONS] = "Midnight – Transmutations",
 
         -- expansions
 
