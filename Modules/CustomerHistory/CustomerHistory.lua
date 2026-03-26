@@ -83,7 +83,7 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
         local customerCraft = {
             timestamp = C_DateAndTime.GetServerTimeLocal(),
             itemLink = claimedOrder.outputItemHyperlink,
-            tip = claimedOrder.tipAmount,
+            tip = tonumber(claimedOrder.tipAmount) or 0,
             reagents = claimedOrder.reagents,
             customerNotes = claimedOrder.customerNotes or "",
             reagentState = claimedOrder.reagentState,

@@ -220,7 +220,7 @@ function CraftSim.CraftResult:CalculateCraftProfit()
 
     local orderCommission = 0
     if self.isWorkOrder then
-        orderCommission = self.orderData.tipAmount - self.orderData.consortiumCut
+        orderCommission = (tonumber(self.orderData.tipAmount) or 0) - (tonumber(self.orderData.consortiumCut) or 0)
 
         -- check for npcOrderRewards
         if self.orderData.npcOrderRewards then
