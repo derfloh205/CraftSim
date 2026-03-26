@@ -787,8 +787,6 @@ CraftSim.CONST.LOCALES = {
     CN = "zhCN",
 }
 
----@alias CraftSim.LOCALIZATION_IDS keyof<CraftSim.LOCALIZATION_DATA>
-
 ---@type table<CraftSim.EXPANSION_IDS, Enum.Profession[]>
 CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
 {
