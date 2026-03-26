@@ -129,6 +129,12 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                             if queueableAmount > 0 then
                                 local offsetAmount = tonumber(options.offsetQueueAmount) or 0
                                 local totalAmount = queueableAmount + offsetAmount
+
+                                -- if its a cd recipe, always queue current charge amount at maximum
+                                if recipeData.cooldownData.isCooldownRecipe then
+                                    totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
+                                end
+
                                 recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
                                 CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
                                 currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
@@ -170,6 +176,13 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         end
         recipeData:Update()
 
+        -- check if recipeData is on cooldown, and skip if it is
+        if recipeData:OnCooldown() then
+            print("Skipping recipe on cooldown: " .. recipeData.recipeName)
+            frameDistributor:Continue()
+            return
+        end
+
         local iconSize = 15
         local recipeIcon = GUTIL:IconToText(recipeData.recipeIcon, iconSize, iconSize)
         local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[recipeData.professionData.professionInfo.profession], iconSize, iconSize)
@@ -181,8 +194,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then
-                    queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
-                    progress,
+                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
                     professionIcon,
                     recipeIcon,
                     concentrationIcon,
@@ -195,8 +207,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 includeSoulbound = options.includeSoulboundFinishingReagents,
                 progressUpdateCallback = function(progress)
                     if queueListsButton then
-                        queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
-                        progress,
+                        queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
                         professionIcon,
                         recipeIcon,
                         bagIcon,
@@ -210,6 +221,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 else
                     local offsetAmount = tonumber(options.offsetQueueAmount) or 0
                     local totalAmount = 1 + offsetAmount
+
+                    -- if its a cd recipe, always queue maximum based on charges
+                    if recipeData.cooldownData.isCooldownRecipe then
+                        totalAmount = recipeData.cooldownData:GetCurrentCharges()
+                    end
                     recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
                     CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()

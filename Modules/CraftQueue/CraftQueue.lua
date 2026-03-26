@@ -39,6 +39,9 @@ CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
 
 --- used to check if CraftSim was the one calling the C_TradeSkillUI.CraftRecipe api function
 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+-- if craftqueue craftlisted recipe was crafted via queue, need to remember for auto decrement and recognition
+---@type number | nil
+CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 
 --- used to cache player item counts during sorting and recalculation of craft queue
 --- if canCraft and such functions are not called by craftqueue it should be nil

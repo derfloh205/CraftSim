@@ -27,3 +27,4 @@ ignore:
   - Libs/**/*.txt
   - README.md
   - DevTools
+  - Dev.md

@@ -214,6 +214,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		else
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
 			recipeData = onCraftData:CreateRecipeData()
+			recipeData.craftListID = CraftSim.CRAFTQ.currentlyCraftedCraftListID
 		end
 
 		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)

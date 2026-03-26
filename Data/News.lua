@@ -23,7 +23,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("23.0.0"),
+        newP("23.0.3"),
         f.PG .. f.bb("CraftQueue"),
         f.a .. "- New Feature: " .. f.l("Craft Lists"),
         f.a .. "- Replaces " .. f.g("Queue Favorites"),

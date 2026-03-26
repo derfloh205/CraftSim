@@ -1237,7 +1237,11 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                         onClick = function()
                             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                             local favoriteRecipes = CraftSim.DB.CRAFTER:GetFavoriteRecipeProfessions(CraftSim.UTIL:GetPlayerCrafterUID())
-                            if favoriteRecipes and #favoriteRecipes > 0 then
+                            local totalFavorites = 0
+                            for _, recipeIDList in pairs(favoriteRecipes or {}) do
+                                totalFavorites = totalFavorites + #recipeIDList
+                            end
+                            if favoriteRecipes and totalFavorites > 0 then
                                 local newList = CraftSim.DB.CRAFT_LISTS:CreateList(crafterUID .. " Favorites", false, crafterUID)
                                 for profession, recipeIDList in pairs(favoriteRecipes) do
                                     for _, recipeID in ipairs(recipeIDList) do
@@ -3079,7 +3083,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
             craftButtonColumn.craftButton.clickCallback = function()
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
                 recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
             end
         end
