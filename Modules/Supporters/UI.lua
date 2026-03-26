@@ -23,7 +23,7 @@ function CraftSim.SUPPORTERS.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.SUPPORTERS,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON),
+        title = CraftSim.LOCAL:GetText("CONTROL_PANEL_SUPPORTERS_BUTTON"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -44,7 +44,7 @@ function CraftSim.SUPPORTERS.UI:Init()
             anchorB = "TOP",
             offsetY = -40,
             text =
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION)
+                CraftSim.LOCAL:GetText("SUPPORTERS_DESCRIPTION")
         })
 
         frame.content.donateBox = CraftSim.FRAME:CreateInput(
@@ -55,7 +55,7 @@ function CraftSim.SUPPORTERS.UI:Init()
             end)
         frame.content.donateBox:SetScale(0.75)
         frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-            f.patreon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2)), frame.content,
+            f.patreon(CraftSim.LOCAL:GetText("SUPPORTERS_DESCRIPTION_2")), frame.content,
             frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 1)
 
         frame.content.supportersList = CraftSim.GGUI.FrameList({
@@ -69,15 +69,15 @@ function CraftSim.SUPPORTERS.UI:Init()
             showBorder = true,
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DATE),
+                    label = CraftSim.LOCAL:GetText("SUPPORTERS_DATE"),
                     width = 100,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER),
+                    label = CraftSim.LOCAL:GetText("SUPPORTERS_SUPPORTER"),
                     width = 100,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE),
+                    label = CraftSim.LOCAL:GetText("SUPPORTERS_MESSAGE"),
                     width = 300,
                 },
             },

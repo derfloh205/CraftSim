@@ -26,18 +26,18 @@ function CraftSim.PRICE_API:InitPriceSource()
 
     if #loadedSources == 0 then
         systemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM))
+            " " .. CraftSim.LOCAL:GetText("POPUP_NO_PRICE_SOURCE_SYSTEM"))
         CraftSim.PRICE_APIS.available = false
         if not CraftSim.DB.OPTIONS:Get("PRICE_SOURCE_REMINDER_DISABLED") then
             CraftSim.GGUI:ShowPopup({
                 sizeX = 400,
                 sizeY = 250,
                 title = CraftSim.GUTIL:ColorizeText(
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE), CraftSim.GUTIL.COLORS.RED),
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING) ..
+                    CraftSim.LOCAL:GetText("POPUP_NO_PRICE_SOURCE_TITLE"), CraftSim.GUTIL.COLORS.RED),
+                text = CraftSim.LOCAL:GetText("POPUP_NO_PRICE_SOURCE_WARNING") ..
                     table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"),
-                acceptButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT),
-                declineButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS),
+                acceptButtonLabel = CraftSim.LOCAL:GetText("POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT"),
+                declineButtonLabel = CraftSim.LOCAL:GetText("POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS"),
                 onDecline = function()
                     StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
                 end

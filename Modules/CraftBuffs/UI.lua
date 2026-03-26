@@ -33,7 +33,7 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE),
+        title = CraftSim.LOCAL:GetText("CRAFT_BUFFS_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -56,9 +56,9 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE) ..
+        title = CraftSim.LOCAL:GetText("CRAFT_BUFFS_TITLE") ..
             " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
                 CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
@@ -82,7 +82,7 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         frame.content.simulateBuffSelector = GGUI.CheckboxSelector {
             parent = frame.content, anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5 } },
             sizeX = 30, sizeY = 25,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON),
+            label = CraftSim.LOCAL:GetText("CRAFT_BUFFS_SIMULATE_BUTTON"),
             savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
             onSelectCallback = function()
                 CraftSim.MODULES:UpdateUI()

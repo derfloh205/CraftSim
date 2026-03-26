@@ -62,109 +62,109 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             end
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL),
+                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
                 "MODULE_REAGENT_OPTIMIZATION",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL),
+                L("CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL"),
                 "MODULE_AVERAGE_PROFIT",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL),
+                L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),
                 "MODULE_TOP_GEAR",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL),
+                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL"),
                 "MODULE_CRAFT_QUEUE",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL),
+                L("CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL"),
                 "MODULE_COST_OVERVIEW",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL),
+                L("CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL"),
                 "MODULE_PRICE_OVERRIDE",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL),
+                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
                 "MODULE_CRAFT_BUFFS",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL),
+                L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
                 "MODULE_COOLDOWNS",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL),
+                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL"),
                 "MODULE_SPEC_INFO",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL),
+                L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
                 "MODULE_CRAFT_LOG",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),
+                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
                 "MODULE_COST_OPTIMIZATION",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL),
+                L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),
                 "MODULE_STATISTICS",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL),
+                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
                 "MODULE_RECIPE_SCAN",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP))
+                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"))
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL),
+                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
                 "MODULE_CUSTOMER_HISTORY",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP),
+                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
                 CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 
             addModuleCheckbox(
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL),
+                L("CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL"),
                 "MODULE_EXPLANATIONS",
-                L(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP),
+                L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
                 CraftSim.CONST.FRAMES.EXPLANATIONS)
 
-            local exports = rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORTS))
+            local exports = rootDescription:CreateButton(L("CONTROL_PANEL_EXPORTS"))
 
-            exports:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT), function()
+            exports:CreateButton(L("CONTROL_PANEL_EASYCRAFT_EXPORT"), function()
                 CraftSim.CONTROL_PANEL:EasycraftExportAll()
             end)
 
-            exports:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT), function()
+            exports:CreateButton(L("CONTROL_PANEL_FORGEFINDER_EXPORT"), function()
                 CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
             end)
 
-            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES), function()
+            rootDescription:CreateButton(L("CONTROL_PANEL_RESET_FRAMES"), function()
                 CraftSim.FRAME:ResetFrames()
             end)
 
-            rootDescription:CreateButton(f.patreon(L(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON)), function()
+            rootDescription:CreateButton(f.patreon(L("CONTROL_PANEL_SUPPORTERS_BUTTON")), function()
                 GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
             end)
 
-            rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS), function()
+            rootDescription:CreateButton(L("CONTROL_PANEL_OPTIONS"), function()
                 Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
             end)
 
-            rootDescription:CreateButton(f.bb(L(CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS)), function()
+            rootDescription:CreateButton(f.bb(L("CONTROL_PANEL_NEWS")), function()
                 CraftSim.NEWS:ShowNews(true)
             end)
 
-            rootDescription:CreateButton(f.grey(L(CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG)), function()
+            rootDescription:CreateButton(f.grey(L("CONTROL_PANEL_DEBUG")), function()
                 GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
             end)
         end)

@@ -28,7 +28,7 @@ function CraftSim.STATISTICS.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.STATISTICS,
-        title = L(CraftSim.CONST.TEXT.STATISTICS_TITLE),
+        title = L("STATISTICS_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -46,8 +46,8 @@ function CraftSim.STATISTICS.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.STATISTICS_WORKORDER,
-        title = L(CraftSim.CONST.TEXT.STATISTICS_TITLE) ..
-            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), GUTIL.COLORS.GREY),
+        title = L("STATISTICS_TITLE") ..
+            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"), GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -73,7 +73,7 @@ function CraftSim.STATISTICS.UI:Init()
                 parent = frame.content,
                 anchorParent = frame.content,
                 offsetY = -2,
-                label = L(CraftSim.CONST.TEXT.STATISTICS_PROBABILITY_TABLE_TAB),
+                label = L("STATISTICS_PROBABILITY_TABLE_TAB"),
             },
             parent = frame.content,
             anchorParent = frame.content,
@@ -92,7 +92,7 @@ function CraftSim.STATISTICS.UI:Init()
                 anchorParent = frame.content.probabilityTableTab.button,
                 anchorA = "LEFT",
                 anchorB = "RIGHT",
-                label = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_TAB),
+                label = L("STATISTICS_CONCENTRATION_TAB"),
 
             },
             parent = frame.content,
@@ -129,7 +129,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         anchorA = "TOP",
         anchorB = "TOP",
         offsetY = -20,
-        text = L(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT)
+        text = L("STATISTICS_EXPECTED_PROFIT")
     })
     ---@type GGUI.Text | GGUI.Widget
     content.expectedProfitValue = GGUI.Text({
@@ -146,9 +146,9 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         anchorA = "TOP",
         anchorB = "BOTTOM",
         offsetY = -30,
-        text = L(CraftSim.CONST.TEXT.STATISTICS_CHANCE_OF) ..
-            GUTIL:ColorizeText(L(CraftSim.CONST.TEXT.STATISTICS_PROFIT) .. " > 0",
-                GUTIL.COLORS.GREEN) .. L(CraftSim.CONST.TEXT.STATISTICS_AFTER),
+        text = L("STATISTICS_CHANCE_OF") ..
+            GUTIL:ColorizeText(L("STATISTICS_PROFIT") .. " > 0",
+                GUTIL.COLORS.GREEN) .. L("STATISTICS_AFTER"),
     })
 
     ---@type GGUI.NumericInput
@@ -179,7 +179,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
     content.cdfExplanation = GGUI.HelpIcon({
         parent = content,
         anchorParent = content.numCraftsInput.textInput.frame,
-        text = L(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION),
+        text = L("STATISTICS_CDF_EXPLANATION"),
         anchorA = "RIGHT",
         anchorB = "LEFT",
         offsetX = -10,
@@ -191,7 +191,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         parent = content,
         anchorParent = content.numCraftsInput.textInput.frame,
         offsetX = 20,
-        text = L(CraftSim.CONST.TEXT.STATISTICS_CRAFTS),
+        text = L("STATISTICS_CRAFTS"),
         anchorA = "LEFT",
         anchorB = "RIGHT",
     })
@@ -212,7 +212,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         anchorParent = content,
         anchorA = "TOP",
         anchorB = "TOP",
-        text = L(CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE),
+        text = L("PROBABILITY_TABLE_TITLE"),
         offsetY = -150,
     })
 
@@ -228,22 +228,22 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         offsetY = -30,
         columnOptions = {
             {
-                label = L(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
+                label = L("STATISTICS_CHANCE_HEADER"),
                 width = 70,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
-                label = L(CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER),
+                label = L("STATISTICS_MULTICRAFT_HEADER"),
                 width = 110,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
-                label = L(CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER),
+                label = L("STATISTICS_RESOURCEFULNESS_HEADER"),
                 width = 110,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
-                label = L(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER),
+                label = L("STATISTICS_EXPECTED_PROFIT_HEADER"),
                 width = 120,
             },
         },
@@ -335,14 +335,14 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
             anchorA = "BOTTOM",
             anchorB = "TOP", offsetY = 5,
         } },
-        text = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_CURVE_GRAPH)
+        text = L("STATISTICS_CONCENTRATION_CURVE_GRAPH")
     }
 
     GGUI.HelpIcon {
         parent = content,
         anchorParent = content.graphTitle.frame,
         anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP),
+        text = L("STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP"),
     }
 end
 
