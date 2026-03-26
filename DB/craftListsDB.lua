@@ -18,6 +18,9 @@ CraftSim.DB = CraftSim.DB
 ---@field fixedCrafterUID CrafterUID?
 ---@field restockAmount number
 ---@field offsetQueueAmount number
+---@field reagentAllocation string reagent quality allocation mode: Q1, Q2, Q3, or OPTIMIZE
+---@field enableUnlearned boolean if false, skip recipes the crafter has not learned
+---@field useTSMRestockExpression boolean if true, use global TSM restock expression to determine restock amount
 
 ---@class CraftSim.CraftList
 ---@field id number unique incrementing ID
@@ -45,6 +48,9 @@ local function DefaultOptions()
         fixedCrafterUID = nil,
         restockAmount = 1,
         offsetQueueAmount = 0,
+        reagentAllocation = "OPTIMIZE",
+        enableUnlearned = false,
+        useTSMRestockExpression = false,
     }
 end
 

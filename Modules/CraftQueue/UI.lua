@@ -1450,6 +1450,45 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() return opts.includeSoulboundFinishingReagents end,
                 function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
 
+            -- Reagent Allocation submenu
+            local RA = CraftSim.RECIPE_SCAN.SCAN_MODES
+            local reagentAllocationButton = rootDescription:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q1 end,
+                function() opts.reagentAllocation = RA.Q1 end)
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q2 end,
+                function() opts.reagentAllocation = RA.Q2 end)
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q3") .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q3 end,
+                function() opts.reagentAllocation = RA.Q3 end)
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_MODE_OPTIMIZE"),
+                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.OPTIMIZE end,
+                function() opts.reagentAllocation = RA.OPTIMIZE end)
+
+            rootDescription:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),
+                function() return opts.enableUnlearned end,
+                function() opts.enableUnlearned = not opts.enableUnlearned end)
+
+            rootDescription:CreateDivider()
+            rootDescription:CreateDivider()
+
+            -- TSM options
+            local tsmButton = rootDescription:CreateButton(f.bb("TSM"))
+
+            local tsmCB = tsmButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK"),
+                function() return opts.useTSMRestockExpression end,
+                function() opts.useTSMRestockExpression = not opts.useTSMRestockExpression end)
+            tsmCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK_TOOLTIP"))
+            end)
+
             rootDescription:CreateDivider()
             rootDescription:CreateDivider()
 
