@@ -48,7 +48,7 @@ local function DefaultOptions()
         fixedCrafterUID = nil,
         restockAmount = 1,
         offsetQueueAmount = 0,
-        reagentAllocation = "OPTIMIZE",
+        reagentAllocation = "OPTIMIZE_HIGHEST",
         enableUnlearned = false,
         useTSMRestockExpression = false,
     }

@@ -1436,11 +1436,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() opts.optimizeProfessionTools = not opts.optimizeProfessionTools end)
 
             rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY"),
-                function() return opts.autoselectTopProfitQuality end,
-                function() opts.autoselectTopProfitQuality = not opts.autoselectTopProfitQuality end)
-
-            rootDescription:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING"),
                 function() return opts.optimizeFinishingReagents end,
                 function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
@@ -1453,22 +1448,48 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             -- Reagent Allocation submenu
             local RA = CraftSim.RECIPE_SCAN.SCAN_MODES
             local reagentAllocationButton = rootDescription:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
+
             reagentAllocationButton:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
-                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q1 end,
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q1 end,
                 function() opts.reagentAllocation = RA.Q1 end)
             reagentAllocationButton:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20),
-                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q2 end,
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q2 end,
                 function() opts.reagentAllocation = RA.Q2 end)
             reagentAllocationButton:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q3") .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
-                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.Q3 end,
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q3 end,
                 function() opts.reagentAllocation = RA.Q3 end)
-            reagentAllocationButton:CreateRadio(
-                L("RECIPE_SCAN_MODE_OPTIMIZE"),
-                function() return (opts.reagentAllocation or "OPTIMIZE") == RA.OPTIMIZE end,
-                function() opts.reagentAllocation = RA.OPTIMIZE end)
+
+            -- Optimize sub-submenu
+            local optimizeButton = reagentAllocationButton:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
+
+            optimizeButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST"),
+                function()
+                    local ra = opts.reagentAllocation or "OPTIMIZE_HIGHEST"
+                    return ra == "OPTIMIZE_HIGHEST" or ra == "OPTIMIZE"
+                end,
+                function() opts.reagentAllocation = "OPTIMIZE_HIGHEST" end)
+
+            optimizeButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE"),
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == "OPTIMIZE_MOST_PROFITABLE" end,
+                function() opts.reagentAllocation = "OPTIMIZE_MOST_PROFITABLE" end)
+
+            -- Target Quality sub-submenu
+            local targetQualityButton = optimizeButton:CreateButton(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY"))
+
+            for i = 1, 5 do
+                local qualityID = i
+                local allocationValue = "OPTIMIZE_TARGET_" .. qualityID
+                targetQualityButton:CreateRadio(
+                    GUTIL:GetQualityIconString(qualityID, 20, 20),
+                    function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == allocationValue end,
+                    function() opts.reagentAllocation = allocationValue end)
+            end
 
             rootDescription:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),

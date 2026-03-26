@@ -175,7 +175,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         recipeData.craftListID = list.id
 
-        local reagentAllocation = options.reagentAllocation or "OPTIMIZE"
+        local reagentAllocation = options.reagentAllocation or "OPTIMIZE_HIGHEST"
         local SCAN_MODES = CraftSim.RECIPE_SCAN.SCAN_MODES
         if reagentAllocation == SCAN_MODES.Q1 then
             recipeData.reagentData:SetReagentsMaxByQuality(1)
@@ -188,7 +188,20 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 recipeData.reagentData:SetReagentsMaxByQuality(3)
             end
         else
+            -- OPTIMIZE_* modes (and legacy "OPTIMIZE"): use cheapest quality as base for optimization
             recipeData:SetCheapestQualityReagentsMax()
+        end
+
+        -- Derive reagent optimize options from the allocation mode
+        -- OPTIMIZE_HIGHEST and legacy "OPTIMIZE" leave optimizeReagentOptions as nil (default: optimize to highest quality)
+        local optimizeReagentOptions = nil
+        if reagentAllocation == "OPTIMIZE_MOST_PROFITABLE" then
+            optimizeReagentOptions = { highestProfit = true }
+        else
+            local targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
+            if targetQuality then
+                optimizeReagentOptions = { maxQuality = targetQuality }
+            end
         end
 
         if recipeData.supportsQualities and options.enableConcentration then
@@ -210,7 +223,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
 
         recipeData:Optimize {
-            optimizeReagentOptions = options.autoselectTopProfitQuality and { highestProfit = true },
+            optimizeReagentOptions = optimizeReagentOptions,
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then
