@@ -207,8 +207,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
             iterationsPerFrame = 1,
             maxIterations = 10,
             finally = function()
-                queueWorkOrdersButton:SetText(L(CraftSim.CONST.TEXT
-                    .CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL))
+                queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
                 queueWorkOrdersButton:SetEnabled(true)
             end,
             continue = function(frameDistributor, _, workOrderType, _, progress)
@@ -1017,7 +1016,7 @@ function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
     local KEYS   = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
     if recipeData.supportsQualities then
         rootDescription:CreateCheckbox(
-            L(CraftSim.CONST.TEXT.RECIPE_SCAN_AUTOSELECT_TOP_PROFIT),
+            L("RECIPE_SCAN_AUTOSELECT_TOP_PROFIT"),
             function()
                 return CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, true)
             end, function()
@@ -1026,7 +1025,7 @@ function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
             end)
     end
     rootDescription:CreateCheckbox(
-        L(CraftSim.CONST.TEXT.OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS),
+        L("OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS"),
         function()
             return CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, true)
         end, function()
@@ -1035,7 +1034,7 @@ function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
         end)
     if recipeData.supportsQualities then
         rootDescription:CreateCheckbox(
-            L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_CONCENTRATION),
+            L("RECIPE_SCAN_OPTIMIZE_CONCENTRATION"),
             function()
                 return CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, true)
             end, function()

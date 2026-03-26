@@ -15,7 +15,7 @@ CraftSim.EXPLANATIONS.UI = {}
 
 function CraftSim.EXPLANATIONS.UI:Init()
     CraftSim.EXPLANATIONS.frame = GGUI.Frame {
-        title = L(CraftSim.CONST.TEXT.EXPLANATIONS_TITLE),
+        title = L("EXPLANATIONS_TITLE"),
         parent = ProfessionsFrame, anchorParent = ProfessionsFrame,
         sizeX = 1000, sizeY = 600,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"), frameTable = CraftSim.INIT.FRAMES,
@@ -35,13 +35,13 @@ function CraftSim.EXPLANATIONS.UI:Init()
             top = true, initialTab = true,
             buttonOptions = {
                 offsetY = -5,
-                label = L(CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB),
+                label = L("EXPLANATIONS_BASIC_PROFIT_TAB"),
             },
         }
 
         frame.content.profitExplanationTab.content.description = GGUI.Text {
             parent = frame.content.profitExplanationTab.content, anchorParent = frame.content.profitExplanationTab.content,
-            text = L(CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION), anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            text = L("EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION"), anchorA = "TOPLEFT", anchorB = "TOPLEFT",
             offsetY = -20, justifyOptions = { type = "H", align = "LEFT" }, wrap = true
         }
 

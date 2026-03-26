@@ -14,7 +14,6 @@ local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
-local LID = CraftSim.CONST.TEXT
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 
@@ -35,7 +34,7 @@ function CraftSim.COOLDOWNS.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COOLDOWNS,
-        title = L(CraftSim.CONST.TEXT.COOLDOWNS_TITLE),
+        title = L("COOLDOWNS_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -59,7 +58,7 @@ function CraftSim.COOLDOWNS.UI:Init()
             parent = content,
             anchorParent = content,
             offsetY = -2,
-            label = L(LID.COOLDOWNS_TAB_OVERVIEW),
+            label = L("COOLDOWNS_TAB_OVERVIEW"),
         },
         parent = content,
         anchorParent = content,
@@ -76,7 +75,7 @@ function CraftSim.COOLDOWNS.UI:Init()
             anchorParent = content.overviewTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            label = L(LID.COOLDOWNS_TAB_OPTIONS),
+            label = L("COOLDOWNS_TAB_OPTIONS"),
         },
         parent = content,
         anchorParent = content,
@@ -112,25 +111,25 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
         showBorder = true, sizeY = 147, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
         columnOptions = {
             {
-                label = L(LID.COOLDOWNS_CRAFTER_HEADER),
+                label = L("COOLDOWNS_CRAFTER_HEADER"),
                 width = 150,
             },
             {
-                label = L(LID.COOLDOWNS_RECIPE_HEADER),
+                label = L("COOLDOWNS_RECIPE_HEADER"),
                 width = 150,
             },
             {
-                label = L(LID.COOLDOWNS_CHARGES_HEADER),
+                label = L("COOLDOWNS_CHARGES_HEADER"),
                 width = 70,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = L(LID.COOLDOWNS_NEXT_HEADER),
+                label = L("COOLDOWNS_NEXT_HEADER"),
                 width = 120,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = L(LID.COOLDOWNS_ALL_HEADER),
+                label = L("COOLDOWNS_ALL_HEADER"),
                 width = 120,
             },
         },
@@ -222,12 +221,12 @@ function CraftSim.COOLDOWNS.UI:InitializeCooldownOptionsTab(cooldownOptionsTab)
         end),
         parent = content,
         anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -10 } },
-        label = L(LID.COOLDOWNS_EXPANSION_FILTER_BUTTON),
+        label = L("COOLDOWNS_EXPANSION_FILTER_BUTTON"),
         sizeX = 30, sizeY = 25,
         buttonOptions = {
             parent = content, anchorParent = content,
             anchorA = "TOP", anchorB = "TOP", offsetY = -10,
-            label = L(LID.COOLDOWNS_EXPANSION_FILTER_BUTTON),
+            label = L("COOLDOWNS_EXPANSION_FILTER_BUTTON"),
             adjustWidth = true, sizeX = 20,
         },
         onSelectCallback = function(_, _, _)
@@ -304,7 +303,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                             end
                             if #recipeListText > 0 then
                                 tooltipText = tooltipText ..
-                                    L(CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP) .. f.white(recipeListText)
+                                    L("COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP") .. f.white(recipeListText)
                             end
                         else
                             recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
@@ -326,7 +325,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                                 f.bb(cooldownData:GetFormattedTimerNextCharge()))
                             row.allchargesFullTimestamp = allFullTS
                             if cdReady then
-                                allColumn.text:SetText(L(CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_READY))
+                                allColumn.text:SetText(L("COOLDOWNS_RECIPE_READY"))
                             else
                                 allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
                             end

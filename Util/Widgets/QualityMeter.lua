@@ -186,7 +186,7 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.currentSkillText:SetText("")
 
         self.frame.neededSkillText:SetText("")
-        self.frame.missingSkillText:SetText(f.gold(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
+        self.frame.missingSkillText:SetText(f.gold(L("SIMULATION_MODE_QUALITY_METER_MAX")))
         return
     end
 
@@ -216,13 +216,13 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
 
         -- Update bottom labels
-        self.frame.neededSkillText:SetText(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_NEEDED) ..
+        self.frame.neededSkillText:SetText(L("SIMULATION_MODE_QUALITY_METER_NEEDED") ..
             f.bb(nextThreshold))
         if missingSkill > 0 then
-            self.frame.missingSkillText:SetText(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MISSING) ..
+            self.frame.missingSkillText:SetText(L("SIMULATION_MODE_QUALITY_METER_MISSING") ..
                 f.r(missingSkill))
         else
-            self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
+            self.frame.missingSkillText:SetText(f.g(L("SIMULATION_MODE_QUALITY_METER_MAX")))
         end
     else
         -- At max quality: full gold bar
@@ -240,6 +240,6 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
 
         self.frame.neededSkillText:SetText("")
-        self.frame.missingSkillText:SetText(f.g(L(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_METER_MAX)))
+        self.frame.missingSkillText:SetText(f.g(L("SIMULATION_MODE_QUALITY_METER_MAX")))
     end
 end

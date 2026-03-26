@@ -34,7 +34,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE),
+        title = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -56,8 +56,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE) .. " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+        title = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_TITLE") .. " " ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
                 CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
@@ -76,7 +76,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             buttonOptions = {
                 parent = frame.content,
                 anchorParent = frame.content,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_COSTS_TAB),
+                label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_COSTS_TAB"),
                 offsetY = -2,
             },
             top = true,
@@ -91,7 +91,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             buttonOptions = {
                 parent = frame.content,
                 anchorParent = frame.content.reagentCostsTab.button,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB),
+                label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB"),
                 anchorA = "LEFT", anchorB = "RIGHT",
             },
             top = true,
@@ -111,7 +111,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             anchorB = "BOTTOM",
             offsetX = -30,
             offsetY = -15,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS),
+            text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_CRAFTING_COSTS"),
         })
         content.craftingCostsValue = GGUI.Text({
             parent = content,
@@ -124,8 +124,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
 
         content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
             parent = content, anchorParent = content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
-            offsetX = -60, offsetY = -5, label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION),
-            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP),
+            offsetX = -60, offsetY = -5, label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION"),
+            tooltip = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP"),
             initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
@@ -139,7 +139,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 5,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION)
+            text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_EXPLANATION")
         })
 
         ---@type GGUI.CurrencyInput
@@ -224,24 +224,24 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             },
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER),
+                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_ITEM_HEADER"),
                     width = 40,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER),
+                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_AH_PRICE_HEADER"),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER),
+                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_OVERRIDE_HEADER"),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER),
+                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_CRAFTING_HEADER"),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE),
+                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_USED_SOURCE"),
                     width = 80,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
@@ -294,16 +294,16 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                     parent = usedPriceColumn,
                     anchorParent = usedPriceColumn,
                     text = CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_AH), CraftSim.GUTIL.COLORS.GREEN)
+                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN)
                 })
                 function usedPriceColumn:SetAH()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_AH), CraftSim.GUTIL.COLORS.GREEN))
+                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN))
                 end
 
                 function usedPriceColumn:SetOverride()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE),
+                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_OVERRIDE"),
                         CraftSim.GUTIL.COLORS.LEGENDARY))
                 end
 
@@ -340,7 +340,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
 
     content.maxRecipeDepthSlider = GGUI.Slider {
         parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -30, offsetX = 70,
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH_LABEL), minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
+        label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH_LABEL"), minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
         lowText = "1", highText = "5", step = 1,
         onValueChangedCallback = function(_, value)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH", value)
@@ -351,10 +351,10 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
     content.useConcentrationCB = GGUI.Checkbox {
         parent = content, anchorParent = content.maxRecipeDepthSlider.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         labelOptions = {
-            anchorA = "RIGHT", anchorB = "LEFT", text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION), justifyOptions = { type = "H", align = "RIGHT" },
+            anchorA = "RIGHT", anchorB = "LEFT", text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION"), justifyOptions = { type = "H", align = "RIGHT" },
             offsetX = -7,
         },
-        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION_TOOLTIP),
+        tooltip = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION_TOOLTIP"),
         initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION", checked)
@@ -365,10 +365,10 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
     content.includeCooldownsCB = GGUI.Checkbox {
         parent = content, anchorParent = content.useConcentrationCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         labelOptions = {
-            anchorA = "RIGHT", anchorB = "LEFT", text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES), justifyOptions = { type = "H", align = "RIGHT" },
+            anchorA = "RIGHT", anchorB = "LEFT", text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES"), justifyOptions = { type = "H", align = "RIGHT" },
             offsetX = -7,
         },
-        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP),
+        tooltip = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP"),
         initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS", checked)
@@ -425,7 +425,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
         parent = content, anchorParent = content.subRecipeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, offsetY = -40, sizeY = 130,
         columnOptions = {
             {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER),
+                label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER"),
                 width = 200, -- crafterName
             }
         },
@@ -555,19 +555,19 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
 
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) ..
+                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
                     f.grey("-")
                 ahColumn.text:SetText(f.grey("-"))
             else
                 ahColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceInfo.ahPrice))
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) ..
+                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
                     CraftSim.UTIL:FormatMoney(priceInfo.ahPrice)
             end
             if priceInfo.isOverride then
                 overrideColumn.text:SetText(CraftSim.UTIL:FormatMoney(price))
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE) ..
+                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE") ..
                     CraftSim.UTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
             else
                 overrideColumn.text:SetText(f.grey("-"))
@@ -581,14 +581,14 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
                         13, 13) ..
                     " " .. crafterName
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP) ..
+                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP") ..
                     crafterName .. ":" ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM) ..
+                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM") ..
                     CraftSim.UTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsPerItem)
                 if priceInfo.expectedCostsData.concentration then
                     tooltip = tooltip ..
                         "\n- " ..
-                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST) ..
+                        CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST") ..
                         priceInfo.expectedCostsData.concentrationCost
                 end
             else
@@ -730,14 +730,12 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
                                         "\n" .. GUTIL:IconToText(item:GetItemIcon(), 20, 20) .. " "
                                         ..
                                         GUTIL:GetQualityIconString(optimizedCostData.qualityID, 20, 20) ..
-                                        f.white(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                                                .COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM) ..
+                                        f.white(CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM") ..
                                             CraftSim.UTIL:FormatMoney(optimizedCostData.expectedCostsPerItem))
                                     if optimizedCostData.concentration then
                                         tooltipText = tooltipText ..
                                             f.white("\n- " ..
-                                                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                                                    .COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION) ..
+                                                CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION") ..
                                                 optimizedCostData.concentrationCost) .. "\n"
                                     end
                                 end

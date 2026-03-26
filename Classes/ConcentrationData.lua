@@ -111,7 +111,7 @@ function CraftSim.ConcentrationData:GetEstimatedTimeUntilEnoughText(requiredAmou
     end
     local formattedDate = self:GetFormattedDateUntil(requiredAmount, useUSFormat)
     local f = CraftSim.GUTIL:GetFormatter()
-    return string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), f.bb(formattedDate))
+    return string.format(CraftSim.LOCAL:GetText("CONCENTRATION_ESTIMATED_TIME_UNTIL"), f.bb(formattedDate))
 end
 
 function CraftSim.ConcentrationData:OnCooldown()

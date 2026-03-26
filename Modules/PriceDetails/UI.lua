@@ -27,7 +27,7 @@ function CraftSim.PRICE_DETAILS.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_DETAILS,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE),
+        title = CraftSim.LOCAL:GetText("COST_OVERVIEW_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -50,9 +50,9 @@ function CraftSim.PRICE_DETAILS.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE) ..
+        title = CraftSim.LOCAL:GetText("COST_OVERVIEW_TITLE") ..
             " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
                 CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
@@ -78,21 +78,21 @@ function CraftSim.PRICE_DETAILS.UI:Init()
             sizeY = 140,
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH),
+                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_INV_AH"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM),
+                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_ITEM"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM),
+                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_PRICE_ITEM"),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM),
+                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_PROFIT_ITEM"),
                     width = 130,
                 }
             },
