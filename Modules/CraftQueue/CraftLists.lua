@@ -181,8 +181,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then
-                    queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
-                    progress,
+                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
                     professionIcon,
                     recipeIcon,
                     concentrationIcon,
@@ -195,8 +194,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 includeSoulbound = options.includeSoulboundFinishingReagents,
                 progressUpdateCallback = function(progress)
                     if queueListsButton then
-                        queueListsButton:SetText(string.format("%.0f%% - %s %s %s - %.0f%%",
-                        progress,
+                        queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
                         professionIcon,
                         recipeIcon,
                         bagIcon,

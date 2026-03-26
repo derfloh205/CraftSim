@@ -3083,7 +3083,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT))
             craftButtonColumn.craftButton.clickCallback = function()
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
                 recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
             end
         end

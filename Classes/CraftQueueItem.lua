@@ -62,6 +62,7 @@ end
 ---@class CraftSim.CraftQueueItem.Serialized
 ---@field recipeID number
 ---@field amount? number
+---@field craftListID? number
 ---@field concentrating? boolean
 ---@field crafterData CraftSim.CrafterData
 ---@field requiredReagents CraftSim.Reagent.Serialized[]
@@ -80,6 +81,7 @@ function CraftSim.CraftQueueItem:Serialize()
         ---@type CraftSim.CraftQueueItem.Serialized
         local serializedData = {
             recipeID = recipeData.recipeID,
+            craftListID = recipeData.craftListID,
             crafterData = recipeData.crafterData,
             concentrating = recipeData.concentrating,
             requiredReagents = recipeData.reagentData:SerializeRequiredReagents(),
@@ -123,6 +125,7 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
             crafterData = serializedCraftQueueItem.crafterData,
             forceCache = true, -- necessary here due to execution after login
         })
+        recipeData.craftListID = serializedCraftQueueItem.craftListID or 0
         recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
         recipeData.concentrating = serializedCraftQueueItem.concentrating
         recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled

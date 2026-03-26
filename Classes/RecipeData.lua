@@ -128,6 +128,7 @@ function CraftSim.RecipeData:new(options)
     local forceCache = options.forceCache or false
 
     self.recipeID = recipeID --[[@as RecipeID]]
+    self.craftListID = 0 -- default
 
     -- important to set first so self:IsCrafter() can be used
     self.crafterData = options.crafterData or CraftSim.UTIL:GetPlayerCrafterData()
@@ -894,6 +895,7 @@ function CraftSim.RecipeData:Copy()
     })
 
     copy.allocationItemGUID = self.allocationItemGUID
+    copy.craftListID = self.craftListID
 
     copy.concentrating = self.concentrating
     copy.concentrationCost = self.concentrationCost
