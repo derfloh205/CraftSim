@@ -1,0 +1,3 @@
+#!/bin/sh
+# Sync submodule commits after the superproject history moves (merge or rebase).
+git submodule update --init --recursive
