@@ -8,9 +8,6 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
 CraftSim.SPECIALIZATION_DATA.MIDNIGHT = {}
 
-CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
-CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
-
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
@@ -217,6 +214,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		else
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
 			recipeData = onCraftData:CreateRecipeData()
+			recipeData.craftListID = CraftSim.CRAFTQ.currentlyCraftedCraftListID
 		end
 
 		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)

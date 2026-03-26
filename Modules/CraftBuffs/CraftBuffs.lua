@@ -54,7 +54,7 @@ end
 ---@return CraftSim.Buff chefsHat
 function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,
-        L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
+        L("CRAFT_BUFF_CHEFS_HAT_TOOLTIP"))
 end
 
 ---@param recipeData CraftSim.RecipeData?

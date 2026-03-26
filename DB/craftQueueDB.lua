@@ -84,4 +84,8 @@ function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_7_8_Clear_queue_after_specdata_form
     CraftSim.DB.CRAFT_QUEUE:ClearAll()
 end
 
-
+function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_8_9_Clear_queue_for_craft_list_uid_changes()
+    -- Clearing the queue to ensure craft list related UID changes don't interfere
+    -- with previously cached craft queue items.
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+end

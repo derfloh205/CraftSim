@@ -128,6 +128,7 @@ function CraftSim.RecipeData:new(options)
     local forceCache = options.forceCache or false
 
     self.recipeID = recipeID --[[@as RecipeID]]
+    self.craftListID = 0 -- default
 
     -- important to set first so self:IsCrafter() can be used
     self.crafterData = options.crafterData or CraftSim.UTIL:GetPlayerCrafterData()
@@ -894,6 +895,7 @@ function CraftSim.RecipeData:Copy()
     })
 
     copy.allocationItemGUID = self.allocationItemGUID
+    copy.craftListID = self.craftListID
 
     copy.concentrating = self.concentrating
     copy.concentrationCost = self.concentrationCost
@@ -2491,12 +2493,13 @@ end
 ---@alias RecipeCraftQueueUID string
 
 --- Returns a unique id for the recipe within the craftqueue
---- Unique in recipeID, depth, crafter and concentration usage
+--- Unique in recipeID, depth, crafter, concentration usage and craft list
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
         ":" ..
-        self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0)
+        self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
+        ":" .. tostring(self.craftListID or 0)
 end
 
 ---@return boolean hasActiveSubRecipes

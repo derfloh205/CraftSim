@@ -23,6 +23,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.0.3"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- New Feature: " .. f.l("Craft Lists"),
+        f.a .. "- Replaces " .. f.g("Queue Favorites"),
+        f.a .. "- " .. f.bb("Add, Configure and Queue") .. " multiple list of recipes",
+        f.a .. "- " .. f.bb("Import and Export") .. " your lists to share them with others",
+        f.p .. "Your crafter favorites should have been migrated to a list",
+        f.a .. "- If not, its possible to create a list from your favorite list",
         newP("22.0.1"),
         f.PG .. f.bb("CraftQueue"),
         f.a .. "- Added option to choose shatter reagent in quick access",

@@ -333,7 +333,7 @@ function CraftSim.CRAFT_LOG.UI:InitAdvancedLogFrame(frame)
         parent = frame.content, anchorPoints = {
         { anchorParent = frame.content,     anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", offsetY = -16, offsetX = -10 },
         { anchorParent = frame.title.frame, anchorA = "LEFT",     anchorB = "RIGHT" }, },
-        prefix = L(CraftSim.CONST.TEXT.CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX),
+        prefix = L("CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX"),
     }
 
     local reagentCombinationIDsSaveTable = CraftSim.DB.OPTIONS:Get(
@@ -965,11 +965,11 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 
         local messageText =
             resultsText ..
-            L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_1) .. profitText .. "\n" ..
-            ((craftResult.triggeredIngenuity and (f.gold(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_2)) .. savedConcentrationText .. "\n")) or "") ..
+            L("CRAFT_LOG_LOG_1") .. profitText .. "\n" ..
+            ((craftResult.triggeredIngenuity and (f.gold(L("CRAFT_LOG_LOG_2")) .. savedConcentrationText .. "\n")) or "") ..
             ((craftResult.isWorkOrder and (f.gold("Commission: ") .. commissionText .. "\n")) or "") ..
-            ((craftResult.triggeredMulticraft and (f.e(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_3)) .. "\n" .. multicraftExtraItemsText)) or "") ..
-            ((craftResult.triggeredResourcefulness and (f.g(L(CraftSim.CONST.TEXT.CRAFT_LOG_LOG_4) .. savedCostsText) .. resourcesText)) or "")
+            ((craftResult.triggeredMulticraft and (f.e(L("CRAFT_LOG_LOG_3")) .. "\n" .. multicraftExtraItemsText)) or "") ..
+            ((craftResult.triggeredResourcefulness and (f.g(L("CRAFT_LOG_LOG_4") .. savedCostsText) .. resourcesText)) or "")
         craftLog:AddMessage("\n" .. messageText)
     end
     -- FrameList

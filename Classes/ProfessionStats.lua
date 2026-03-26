@@ -42,10 +42,10 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
 		-- check each stat individually to consider localization
-		local multicraft = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT))
-		local resourcefulness = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS))
-		local ingenuity = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY))
-		local craftingspeed = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED))
+		local multicraft = string.lower(CraftSim.LOCAL:GetText("STAT_MULTICRAFT"))
+		local resourcefulness = string.lower(CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS"))
+		local ingenuity = string.lower(CraftSim.LOCAL:GetText("STAT_INGENUITY"))
+		local craftingspeed = string.lower(CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED"))
 		print(CraftSim.LOCAL)
 		if statName == craftingspeed then
 			self.craftingspeed:SetValueByPercent(statInfo.ratingPct / 100)
@@ -127,16 +127,16 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	local r = math.floor
 	if not maxProfessionStats then
 		local text =
-			((self.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. "\n")) or "") ..
-			((self.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. "\n")) or "") ..
-			((self.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
-			((self.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. "\n")) or "") ..
-			((self.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
-			((self.ingenuity.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY) .. ": " .. r(self.ingenuity.value) .. "\n")) or "") ..
-			((self.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS) .. ": " .. self.ingenuity:GetExtraValue() * 100 .. "%" .. "\n")) or "") ..
-			((self.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION) .. ": " .. self.ingenuity:GetExtraValue(2) * 100 .. "%" .. "\n")) or "") ..
-			((self.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. "\n")) or "") ..
-			((self.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. "\n")) or "")
+			((self.skill.value > 0 and (CraftSim.LOCAL:GetText("STAT_SKILL") .. ": " .. r(self.skill.value) .. "\n")) or "") ..
+			((self.multicraft.value > 0 and (CraftSim.LOCAL:GetText("STAT_MULTICRAFT") .. ": " .. r(self.multicraft.value) .. "\n")) or "") ..
+			((self.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_MULTICRAFT_BONUS") .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
+			((self.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS") .. ": " .. r(self.resourcefulness.value) .. "\n")) or "") ..
+			((self.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS_BONUS") .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
+			((self.ingenuity.value > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY") .. ": " .. r(self.ingenuity.value) .. "\n")) or "") ..
+			((self.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY_BONUS") .. ": " .. self.ingenuity:GetExtraValue() * 100 .. "%" .. "\n")) or "") ..
+			((self.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY_LESS_CONCENTRATION") .. ": " .. self.ingenuity:GetExtraValue(2) * 100 .. "%" .. "\n")) or "") ..
+			((self.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED") .. ": " .. r(self.craftingspeed.value) .. "\n")) or "") ..
+			((self.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED_BONUS") .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. "\n")) or "")
 		return text
 	end
 
@@ -144,16 +144,16 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	local f = CraftSim.GUTIL:GetFormatter()
 	-- use the maxProfessionStats as reference to show the line at all
 	local text =
-		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. " / " .. f.grey(r(maxProfessionStats.skill.value)) .. "\n")) or "") ..
-		((maxProfessionStats.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. " / " .. f.grey(r(maxProfessionStats.multicraft.value)) .. "\n")) or "") ..
-		((maxProfessionStats.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.multicraft:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
-		((maxProfessionStats.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.value)) .. "\n")) or "") ..
-		((maxProfessionStats.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.resourcefulness:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
-		((maxProfessionStats.ingenuity.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY) .. ": " .. r(self.ingenuity.value) .. " / " .. f.grey(r(maxProfessionStats.ingenuity.value)) .. "\n")) or "") ..
-		((maxProfessionStats.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS) .. ": " .. self.ingenuity:GetExtraValue() * 100 .. "%" .. " / " .. f.grey(maxProfessionStats.ingenuity:GetExtraValue() * 100 .. "%") .. "\n")) or "") ..
-		((maxProfessionStats.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION) .. ": " .. self.ingenuity:GetExtraValue(2) * 100 .. "%" .. " / " .. f.grey(maxProfessionStats.ingenuity:GetExtraValue(2) * 100 .. "%") .. "\n")) or "") ..
-		((maxProfessionStats.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.value)) .. "\n")) or "") ..
-		((maxProfessionStats.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.craftingspeed:GetExtraValue() * 100) .. "%") .. "\n")) or "")
+		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText("STAT_SKILL") .. ": " .. r(self.skill.value) .. " / " .. f.grey(r(maxProfessionStats.skill.value)) .. "\n")) or "") ..
+		((maxProfessionStats.multicraft.value > 0 and (CraftSim.LOCAL:GetText("STAT_MULTICRAFT") .. ": " .. r(self.multicraft.value) .. " / " .. f.grey(r(maxProfessionStats.multicraft.value)) .. "\n")) or "") ..
+		((maxProfessionStats.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_MULTICRAFT_BONUS") .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.multicraft:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS") .. ": " .. r(self.resourcefulness.value) .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.value)) .. "\n")) or "") ..
+		((maxProfessionStats.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS_BONUS") .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.resourcefulness:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.ingenuity.value > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY") .. ": " .. r(self.ingenuity.value) .. " / " .. f.grey(r(maxProfessionStats.ingenuity.value)) .. "\n")) or "") ..
+		((maxProfessionStats.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY_BONUS") .. ": " .. self.ingenuity:GetExtraValue() * 100 .. "%" .. " / " .. f.grey(maxProfessionStats.ingenuity:GetExtraValue() * 100 .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText("STAT_INGENUITY_LESS_CONCENTRATION") .. ": " .. self.ingenuity:GetExtraValue(2) * 100 .. "%" .. " / " .. f.grey(maxProfessionStats.ingenuity:GetExtraValue(2) * 100 .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED") .. ": " .. r(self.craftingspeed.value) .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.value)) .. "\n")) or "") ..
+		((maxProfessionStats.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED_BONUS") .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.craftingspeed:GetExtraValue() * 100) .. "%") .. "\n")) or "")
 
 	return text
 end

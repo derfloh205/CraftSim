@@ -29,15 +29,15 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE = {
 }
 
 CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALIZATION_IDS = {
-    CHARACTER = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER,
-    CONCENTRATION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION,
-    PROFESSION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION,
+    CHARACTER = "CONCENTRATION_TRACKER_SORT_MODE_CHARACTER",
+    CONCENTRATION = "CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION",
+    PROFESSION = "CONCENTRATION_TRACKER_SORT_MODE_PROFESSION",
 }
 
 CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
-    EUROPE_MAX_DATE = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE,
-    AMERICA_MAX_DATE = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE,
-    HOURS_LEFT = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT,
+    EUROPE_MAX_DATE = "CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE",
+    AMERICA_MAX_DATE = "CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE",
+    HOURS_LEFT = "CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT",
 }
 
 local f = GUTIL:GetFormatter()
@@ -117,7 +117,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
                 owner = content,
-                text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_PIN_TOOLTIP),
+                text = L("CONCENTRATION_TRACKER_PIN_TOOLTIP"),
             },
             clickCallback = function()
                 local nowPinned = not CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")
@@ -184,7 +184,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             parent = content,
             anchorParent = content,
             offsetY = -2,
-            label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_LABEL),
+            label = L("CONCENTRATION_TRACKER_LIST_TAB_LABEL"),
         },
         parent = content,
         anchorParent = content,
@@ -202,7 +202,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             anchorParent = content.listTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_LABEL),
+            label = L("CONCENTRATION_TRACKER_OPTIONS_TAB_LABEL"),
         },
         parent = content,
         anchorParent = content,
@@ -220,16 +220,16 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.listTab.content.concentrationList = GGUI.FrameList {
         columnOptions = {
             {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LABEL_CRAFTER),
+                label = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_LABEL_CRAFTER"),
                 width = 160,
             },
             {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LABEL_CURRENT),
+                label = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_LABEL_CURRENT"),
                 width = 70,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LABEL_MAX),
+                label = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_LABEL_MAX"),
                 width = 90,
                 justifyOptions = { type = "H", align = "CENTER" },
             }
@@ -269,7 +269,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                 if IsMouseButtonDown("RightButton") then
                     CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                         rootDescription:CreateTitle(row.crafterProfessionText)
-                        rootDescription:CreateButton(L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST), function()
+                        rootDescription:CreateButton(L("CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST"), function()
                             CraftSim.CONCENTRATION_TRACKER:BlacklistData(row.crafterUID, row.profession)
                             CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                         end)
@@ -283,7 +283,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.clearBlacklistButton = GGUI.Button {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content, anchorA = "TOP", anchorB = "TOP", offsetY = -25 } },
-        label = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_CLEAR_BLACKLIST),
+        label = L("CONCENTRATION_TRACKER_OPTIONS_TAB_CLEAR_BLACKLIST"),
         adjustWidth = true,
         sizeX = 30,
         clickCallback = function()
@@ -317,7 +317,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.sortModeLabel = GGUI.Text {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content.sortModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
-        text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE)
+        text = L("CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE")
     }
 
     local intialFormatModeValue = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
@@ -350,7 +350,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.formatModeLabel = GGUI.Text {
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
-        text = L(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT)
+        text = L("CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT")
     }
 end
 
@@ -413,7 +413,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 local concentrationFull = currentConcentration >= concentrationData.maxQuantity
 
                 if concentrationFull then
-                    maxedColumnText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX)
+                    maxedColumnText = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_MAX")
                 else
                     maxedColumnText = f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
                 end
@@ -459,7 +459,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
     content.maxValue:SetText(concentrationData.maxQuantity)
 
     if currentConcentration >= concentrationData.maxQuantity then
-        content.maxTimer:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL))
+        content.maxTimer:SetText(CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_FULL"))
     else
         content.maxTimer:SetText(f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)))
     end

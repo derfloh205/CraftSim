@@ -30,7 +30,7 @@ function CraftSim.AVERAGEPROFIT.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.AVERAGE_PROFIT,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE),
+        title = CraftSim.LOCAL:GetText("STAT_WEIGHTS_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -53,8 +53,8 @@ function CraftSim.AVERAGEPROFIT.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE) ..
-            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), GUTIL.COLORS.GREY),
+        title = CraftSim.LOCAL:GetText("STAT_WEIGHTS_TITLE") ..
+            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"), GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -156,21 +156,21 @@ function CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(recipeData, statWeights)
     if statWeights ~= nil then
         if statWeights.averageProfit then
             local relativeValue = showProfitPercentage and craftingCosts or nil
-            addToList(L(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT),
+            addToList(L("STAT_WEIGHTS_PROFIT_CRAFT"),
                 CraftSim.UTIL:FormatMoney(statWeights.averageProfit, true, relativeValue),
                 f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
         end
         if statWeights.multicraftWeight then
-            addToList(L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL), CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight),
+            addToList(L("MULTICRAFT_LABEL"), CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight),
                 f.white("Profit increase " .. f.l("per point ") .. f.bb("Multicraft")))
         end
         if statWeights.resourcefulnessWeight then
-            addToList(L(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL),
+            addToList(L("RESOURCEFULNESS_LABEL"),
                 CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight),
                 f.white("Profit increase " .. f.l("per point ") .. f.bb("Resourcefulness")))
         end
         if statWeights.concentrationWeight then
-            addToList(L(CraftSim.CONST.TEXT.CONCENTRATION_LABEL),
+            addToList(L("CONCENTRATION_LABEL"),
                 CraftSim.UTIL:FormatMoney(statWeights.concentrationWeight),
                 f.white("Profit " .. f.l("per point ") .. f.bb("Concentration")) .. " considering " .. f.bb("Ingenuity"))
         end

@@ -123,8 +123,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         end
 
         CraftSim.DEBUG:StartProfiling("FORGEFINDER_EXPORT")
-        -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-        --     .CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " 0%")
+        -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText("CONTROL_PANEL_FORGEFINDER_EXPORTING") .. " 0%")
         -- CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetEnabled(false)
         mapRecipe()
     end
@@ -190,7 +189,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
 
         if (numRecipes == 0) then
             CraftSim.DEBUG:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
-                " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND))
+                " " .. CraftSim.LOCAL:GetText("CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND"))
             return
         end
 
@@ -214,7 +213,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
 
                 jb.json = jb.json .. "\n]"
                 -- CraftSim.UTIL:ShowTextCopyBox(jb.json)
-                CraftSim.UTIL:ShowTextCopyBox(CraftSim.UTIL:atob(jb.json))
+                CraftSim.UTIL:ShowTextCopyBox(GUTIL:EncodeBase64(jb.json))
             end
         end
 
@@ -249,8 +248,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
         end
 
         CraftSim.DEBUG:StartProfiling("EASYCRAFT_EXPORT")
-        -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-        --     .CONTROL_PANEL_EASYCRAFT_EXPORTING) .. " 0%")
+        -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetText(CraftSim.LOCAL:GetText("CONTROL_PANEL_EASYCRAFT_EXPORTING") .. " 0%")
         -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetEnabled(false)
         mapRecipe()
     end

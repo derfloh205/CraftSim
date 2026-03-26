@@ -33,7 +33,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_OVERRIDE,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE),
+        title = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -49,9 +49,9 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE) ..
+        title = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_TITLE") ..
             " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO),
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
                 CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
@@ -77,7 +77,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         GGUI.Text {
             parent = frame.content,
             anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -3 } },
-            text = f.r(L(CraftSim.CONST.TEXT.PRICE_OVERRIDE_HINT)),
+            text = f.r(L("PRICE_OVERRIDE_HINT")),
             scale = 0.9,
         }
 
@@ -160,23 +160,23 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
                 CraftSim.MODULES:UpdateUI()
             end,
             initialStatus = "READY",
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE),
+            label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_SAVE"),
         })
         overrideOptions.saveButton:SetStatusList({
             {
                 statusID = "READY",
                 enabled = true,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE),
+                label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_SAVE"),
             },
             {
                 statusID = "SAVED",
                 enabled = false,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVED),
+                label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_SAVED"),
             },
             {
                 statusID = "INVALID",
                 enabled = false,
-                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE),
+                label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_SAVE"),
             },
         })
 
@@ -195,7 +195,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
                 overrideOptions.currencyInputGold:SetValue(0)
                 CraftSim.MODULES:UpdateUI()
             end,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE),
+            label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_REMOVE"),
         })
 
         overrideOptions.currencyInputGold = GGUI.CurrencyInput({
@@ -215,16 +215,16 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content,
             -170, 50, -50, 30)
         local title = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES), frame.content,
+            CraftSim.LOCAL:GetText("PRICE_OVERRIDE_ACTIVE_OVERRIDES"), frame.content,
             frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)
         CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP), frame.content, title,
+            CraftSim.LOCAL:GetText("PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP"), frame.content, title,
             "LEFT",
             "RIGHT", 3, 0)
 
 
         frame.content.clearAllButton = GGUI.Button({
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_CLEAR_ALL),
+            label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_CLEAR_ALL"),
             parent = frame.content,
             anchorParent = title,
             anchorA = "LEFT",
@@ -327,8 +327,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
             local reagentData = recipeData.reagentData
             if #reagentData.requiredReagents > 0 then
                 local dropdownEntry = {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                        .PRICE_OVERRIDE_REQUIRED_REAGENTS),
+                    label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_REQUIRED_REAGENTS"),
                     value = {},
                     isCategory = true
                 }
@@ -346,8 +345,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
 
             if #reagentData.optionalReagentSlots > 0 then
                 local dropdownEntry = {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                        .PRICE_OVERRIDE_OPTIONAL_REAGENTS),
+                    label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_OPTIONAL_REAGENTS"),
                     value = {},
                     isCategory = true
                 }
@@ -369,8 +367,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
 
             if #reagentData.finishingReagentSlots > 0 then
                 local dropdownEntry = {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                        .PRICE_OVERRIDE_FINISHING_REAGENTS),
+                    label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_FINISHING_REAGENTS"),
                     value = {},
                     isCategory = true
                 }
@@ -391,7 +388,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
             end
 
             if #recipeData.resultData.itemsByQuality > 0 then
-                local dropdownEntry = { label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS), value = {}, isCategory = true }
+                local dropdownEntry = { label = CraftSim.LOCAL:GetText("PRICE_OVERRIDE_RESULT_ITEMS"), value = {}, isCategory = true }
                 table.foreach(recipeData.resultData.itemsByQuality, function(qualityID, item)
                     table.insert(dropdownEntry.value, {
                         label = item:GetItemLink(),

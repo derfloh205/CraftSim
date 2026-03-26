@@ -12,6 +12,8 @@
 -- @name AceSerializer-3.0
 -- @release $Id: AceSerializer-3.0.lua 1284 2022-09-25 09:15:30Z nevcairiel $
 local MAJOR, MINOR = "AceSerializer-3.0", 5
+
+---@class AceSerializer-3.0
 local AceSerializer, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceSerializer then return end
