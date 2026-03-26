@@ -48,9 +48,9 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(row, value)
     content.scanButton:SetEnabled(value)
     content.cancelScanButton:SetVisible(not value)
     if not value then
-        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " 0%")
+        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCANNING") .. " 0%")
     else
-        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES))
+        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCAN_RECIPIES"))
     end
 
     -- if within professionscan always hide the cancel button in the scanning row
@@ -321,7 +321,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             CraftSim.DEBUG:StartProfiling("Single Recipe Scan")
 
             -- update button
-            content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) ..
+            content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCANNING") ..
                 string.format(" %.0f%%", progress))
             content.resultAmount:SetText(recipeInfoIndex .. "/" .. #recipeInfos)
 

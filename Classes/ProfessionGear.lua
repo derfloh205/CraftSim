@@ -98,7 +98,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local parsedSkill = 0
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 
-	local equipMatchString = L(CraftSim.CONST.TEXT.EQUIP_MATCH_STRING)
+	local equipMatchString = L("EQUIP_MATCH_STRING")
 	--print("TooltipData lines:")
 	--print(tooltipData.lines, true)
 	for _, line in pairs(tooltipData.lines) do

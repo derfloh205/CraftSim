@@ -26,7 +26,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.SPEC_INFO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_TITLE),
+        title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -50,7 +50,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.SPEC_INFO_WO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_TITLE),
+        title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -76,7 +76,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         frame:Hide()
 
         frame.content.notImplementedText = CraftSim.FRAME:CreateText(
-            GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS),
+            GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SPEC_INFO_WORK_IN_PROGRESS"),
                 GUTIL.COLORS.LEGENDARY),
             frame.content, frame.content, "CENTER", "CENTER", 0, 0)
 
@@ -314,7 +314,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
 
         local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
             
-        local label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPECIALIZATION_INFO_TOOLTIP_LABEL)
+        local label = CraftSim.LOCAL:GetText("SPECIALIZATION_INFO_TOOLTIP_LABEL")
         local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
         if next(crafterUIDRankMap) then
             GameTooltip:AddLine("\n" .. f.white(label) .. "\n")

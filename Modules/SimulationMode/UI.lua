@@ -151,8 +151,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             CraftSim.MODULES:UpdateUI()
         end
         frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL),
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP), false, clickCallback,
+            " " .. CraftSim.LOCAL:GetText("SIMULATION_MODE_LABEL"),
+            CraftSim.LOCAL:GetText("SIMULATION_MODE_TOOLTIP"), false, clickCallback,
             schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
 
         frames.toggleButton:Hide()
@@ -251,7 +251,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         -- Concentration toggle button (centered below the stats list)
         local concentrationLabel = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION)
+            " " .. CraftSim.LOCAL:GetText("SIMULATION_MODE_CONCENTRATION")
         local concentrationToggleBtn = GGUI.ToggleButton {
             parent = simModeDetailsFrame.content,
             anchorPoints = { {
@@ -366,8 +366,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             "+" .. professionStatsOptionals.recipeDifficulty.value ..
             "+" .. professionStatsMod.recipeDifficulty.value .. ")"
         addStatRow(
-            L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL),
-            L(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP),
+            L("RECIPE_DIFFICULTY_LABEL"),
+            L("RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP"),
             recipeDifficultyText,
             userMods.recipeDifficulty or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
@@ -381,8 +381,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         local multicraftText = GUTIL:Round(professionStats.multicraft.value, 1) ..
             " (" .. baseMulticraft .. "+" .. professionStatsMod.multicraft.value .. ") " .. percentText
         addStatRow(
-            L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL),
-            L(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP),
+            L("MULTICRAFT_LABEL"),
+            L("MULTICRAFT_EXPLANATION_TOOLTIP"),
             multicraftText,
             userMods.multicraft or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
@@ -390,7 +390,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 
         local bonusItemsText = professionStats.multicraft:GetExtraValue() * 100 .. "%"
         addStatRow(
-            L(CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL),
+            L("MULTICRAFT_BONUS_LABEL"),
             nil,
             bonusItemsText,
             nil,
@@ -406,8 +406,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             " (" .. GUTIL:Round(baseResourcefulness) ..
             "+" .. GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText
         addStatRow(
-            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL),
-            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP),
+            L("RESOURCEFULNESS_LABEL"),
+            L("RESOURCEFULNESS_EXPLANATION_TOOLTIP"),
             resourcefulnessText,
             userMods.resourcefulness or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
@@ -415,7 +415,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 
         local bonusItemsText = professionStats.resourcefulness:GetExtraValue() * 100 .. "%"
         addStatRow(
-            L(CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL),
+            L("RESOURCEFULNESS_BONUS_LABEL"),
             nil,
             bonusItemsText,
             nil,
@@ -431,8 +431,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             " (" .. GUTIL:Round(baseIngenuity) ..
             "+" .. GUTIL:Round(professionStatsMod.ingenuity.value) .. ") " .. percentText
         addStatRow(
-            L(CraftSim.CONST.TEXT.INGENUITY_LABEL),
-            L(CraftSim.CONST.TEXT.INGENUITY_EXPLANATION_TOOLTIP),
+            L("INGENUITY_LABEL"),
+            L("INGENUITY_EXPLANATION_TOOLTIP"),
             ingenuityText,
             userMods.ingenuity or 0,
             CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INGENUITY
@@ -448,7 +448,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             "+" .. GUTIL:Round(reagentSkillIncrease, 1) ..
             "+" .. professionStatsMod.skill.value .. ")"
         addStatRow(
-            L(CraftSim.CONST.TEXT.SKILL_LABEL),
+            L("SKILL_LABEL"),
             nil,
             skillText,
             userMods.skill or 0,
@@ -462,8 +462,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             local reagentSkillText = GUTIL:Round(reagentSkillIncrease, 0) ..
                 " / " .. GUTIL:Round(maxReagentSkillIncrease, 0)
             addStatRow(
-                L(CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL),
-                L(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP),
+                L("REAGENT_QUALITY_BONUS_LABEL"),
+                L("REAGENTSKILL_EXPLANATION_TOOLTIP"),
                 reagentSkillText,
                 nil,
                 nil
@@ -471,8 +471,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 
             local reagentMaxFactorText = GUTIL:Round(maxSkillFactor * 100, 1) .. " %"
             addStatRow(
-                L(CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL),
-                L(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP),
+                L("REAGENT_QUALITY_MAXIMUM_LABEL"),
+                L("REAGENTFACTOR_EXPLANATION_TOOLTIP"),
                 reagentMaxFactorText,
                 nil,
                 nil
@@ -484,7 +484,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     local showConcentration = recipeData.supportsQualities
     if showConcentration then
         addStatRow(
-            L(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
+            L("SIMULATION_MODE_CONCENTRATION_COST"),
             nil,
             f.gold(recipeData.concentrationCost),
             nil,
@@ -506,7 +506,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
                 timeValueText = f.g("Ready")
             end
             local timeTitleText = string.gsub(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_ESTIMATED_TIME_UNTIL), " %%s", "")
+                CraftSim.LOCAL:GetText("CONCENTRATION_ESTIMATED_TIME_UNTIL"), " %%s", "")
             addStatRow(
                 timeTitleText,
                 nil,
