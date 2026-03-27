@@ -635,18 +635,17 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_6_7_Normalize_shared_cooldown_storage()
                     local sharedKey = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[serializationID]
                     if sharedKey then
                         if cd[sharedKey] then
-                            toRemove[serializationID] = true
                         else
                             if type(serialized) == "table" then
                                 serialized.sharedCD = sharedKey
                             end
                             cd[sharedKey] = serialized
-                            toRemove[serializationID] = true
                         end
+                        tinsert(toRemove, serializationID)
                     end
                 end
             end
-            for keyToRemove in pairs(toRemove) do
+            for _, keyToRemove in ipairs(toRemove) do
                 cd[keyToRemove] = nil
             end
         end

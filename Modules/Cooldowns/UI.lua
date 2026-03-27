@@ -18,7 +18,7 @@ local f = GUTIL:GetFormatter()
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 
 function CraftSim.COOLDOWNS.UI:Init()
-    local sizeX = 670
+    local sizeX = 680
     local sizeY = 220
     local offsetX = 0
     local offsetY = 0
@@ -116,7 +116,7 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
             },
             {
                 label = L("COOLDOWNS_RECIPE_HEADER"),
-                width = 150,
+                width = 160,
             },
             {
                 label = L("COOLDOWNS_CHARGES_HEADER"),
@@ -152,11 +152,11 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
 
             crafterColumn.text = GGUI.Text {
                 parent = crafterColumn, anchorParent = crafterColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT",
+                anchorA = "LEFT", anchorB = "LEFT", scale = 0.9
             }
             recipeColumn.text = GGUI.Text {
                 parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT", fixedWidth = 150,
+                anchorA = "LEFT", anchorB = "LEFT", fixedWidth = 180, scale = 0.9
             }
             chargesColumn.slash = GGUI.Text {
                 parent = chargesColumn, anchorParent = chargesColumn, text = "/"
