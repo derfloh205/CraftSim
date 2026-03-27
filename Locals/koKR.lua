@@ -260,7 +260,7 @@ function CraftSim.LOCAL_KO:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP = "활성화 시, " ..
             f.l("CraftSim") .. "은 직접 제작 재료를 계산할 때 레시피의 재사용 대기시간 제한을 무시합니다.",
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "레시피 제작자 선택",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "경매장 즉시시가: ",
+        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "경매장 즉시 구매가가: ",
         COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\n직접 설정됨",
         COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\n제작 중 ",
         COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- 아이템당 예상 비용: ",
