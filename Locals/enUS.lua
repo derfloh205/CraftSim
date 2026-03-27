@@ -757,7 +757,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST = "Highest Quality",
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE = "Most Profitable Quality",
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY = "Target Quality",
-        CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED = "Enable Unlearned Recipes",
+        CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED = "Enable " .. f.r("Unlearned") .. " Recipes",
         CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK = "Use TSM Restock Expression",
         CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "Expression:",
         CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "Craft with current character",

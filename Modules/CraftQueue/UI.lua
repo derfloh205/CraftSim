@@ -1500,61 +1500,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() return opts.enableUnlearned end,
                 function() opts.enableUnlearned = not opts.enableUnlearned end)
 
-            rootDescription:CreateDivider()
-            rootDescription:CreateDivider()
-
-            -- TSM options
-            if TSM_API then
-                local tsmButton = rootDescription:CreateButton(f.bb("TSM"))
-
-                tsmButton:CreateCheckbox(
-                    L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK"),
-                    function() return opts.useTSMRestockExpression end,
-                    function() opts.useTSMRestockExpression = not opts.useTSMRestockExpression end)
-
-                GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmButton, function(frame)
-                    if not frame.expressionLabel then
-                        frame.expressionLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-                        frame.expressionLabel:SetPoint("LEFT", frame, "LEFT", 5, 0)
-                        frame.expressionLabel:SetText(L("CRAFT_LISTS_OPTIONS_TSM_EXPRESSION"))
-
-                        frame.validationText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-                        frame.validationText:SetPoint("RIGHT", frame, "RIGHT", -5, 0)
-
-                        frame.editBox = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
-                        frame.editBox:SetSize(130, 20)
-                        frame.editBox:SetPoint("CENTER", frame, "CENTER", 15, 0)
-                        frame.editBox:SetAutoFocus(false)
-                        frame.editBox:SetFontObject("ChatFontNormal")
-                        frame.editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-                        frame.editBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
-                    end
-
-                    local currentExpr = opts.tsmRestockExpression or "1"
-                    frame.editBox:SetText(currentExpr)
-
-                    local function validateAndSave(expr)
-                        if TSM_API.IsCustomPriceValid(expr) then
-                            frame.validationText:SetText(GUTIL:ColorizeText(
-                                L("OPTIONS_TSM_VALID_EXPRESSION"), GUTIL.COLORS.GREEN))
-                            opts.tsmRestockExpression = expr
-                        else
-                            frame.validationText:SetText(GUTIL:ColorizeText(
-                                L("OPTIONS_TSM_INVALID_EXPRESSION"), GUTIL.COLORS.RED))
-                        end
-                    end
-
-                    validateAndSave(currentExpr)
-                    -- Re-register on each open so the closure captures the current opts reference
-                    frame.editBox:SetScript("OnTextChanged", function(self)
-                        validateAndSave(self:GetText())
-                    end)
-                end, 300, 30, "CRAFT_LISTS_TSM_EXPRESSION_INPUT")
-
-                rootDescription:CreateDivider()
-                rootDescription:CreateDivider()
-            end
-
             -- Queue options
             GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                 frame.label = GGUI.Text {
@@ -1580,6 +1525,58 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     end,
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
+
+            rootDescription:CreateDivider()
+
+            -- TSM options
+            if TSM_API then
+                local tsmButton = rootDescription:CreateButton(f.bb("TSM"))
+
+                tsmButton:CreateCheckbox(
+                    L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK"),
+                    function() return opts.useTSMRestockExpression end,
+                    function() opts.useTSMRestockExpression = not opts.useTSMRestockExpression end)
+
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmButton, function(frame)
+                    if not frame.expressionLabel then
+                        frame.expressionLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                        frame.expressionLabel:SetPoint("LEFT", frame, "LEFT", 5, 0)
+                        frame.expressionLabel:SetText(L("CRAFT_LISTS_OPTIONS_TSM_EXPRESSION"))
+
+                        frame.editBox = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
+                        frame.editBox:SetSize(130, 20)
+                        frame.editBox:SetPoint("CENTER", frame, "CENTER", 15, 0)
+                        frame.editBox:SetAutoFocus(false)
+                        frame.editBox:SetFontObject("ChatFontNormal")
+                        frame.editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+                        frame.editBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+                        frame.validationText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                        frame.validationText:SetPoint("LEFT", frame.editBox, "RIGHT", 5, 0)
+                    end
+
+                    local currentExpr = opts.tsmRestockExpression or "1"
+                    frame.editBox:SetText(currentExpr)
+
+                    local function validateAndSave(expr)
+                        if TSM_API.IsCustomPriceValid(expr) then
+                            frame.validationText:SetText(f.g(L("OPTIONS_TSM_VALID_EXPRESSION")))
+                            opts.tsmRestockExpression = expr
+                        else
+                            frame.validationText:SetText(f.r(L("OPTIONS_TSM_INVALID_EXPRESSION")))
+                        end
+                    end
+
+                    validateAndSave(currentExpr)
+                    -- Re-register on each open so the closure captures the current opts reference
+                    frame.editBox:SetScript("OnTextChanged", function(self)
+                        validateAndSave(self:GetText())
+                    end)
+                end, 300, 30, "CRAFT_LISTS_TSM_EXPRESSION_INPUT")
+
+                rootDescription:CreateDivider()
+                rootDescription:CreateDivider()
+            end
         end,
     }
 end
