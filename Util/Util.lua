@@ -533,13 +533,13 @@ function CraftSim.UTIL:EncodeTable(table)
         error("CraftSim: Failed to encode table: " .. tostring(compressError))
         return nil
     end
-    return self:EncodeBase64(compressedData)
+    return GUTIL:EncodeBase64(compressedData)
 end
 
 ---@param string string base64 encoded string
 ---@return table?
 function CraftSim.UTIL:DecodeTable(string)
-    local decodedData = self:DecodeBase64(string)
+    local decodedData = GUTIL:DecodeBase64(string)
     local decompressedData, decompressError = LibCompress:Decompress(decodedData)
     if not decompressedData then
         error("CraftSim: Failed to decode table: " .. tostring(decompressError))
