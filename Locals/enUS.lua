@@ -705,7 +705,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_BUTTON_NOTHING_QUEUED = "Nothing Queued",
         CRAFT_QUEUE_BUTTON_ORDER = "Order",
         CRAFT_QUEUE_BUTTON_SUBMIT = "Submit",
-        CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "Equip Tools",
+        CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "Equip",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "Ignore Acuity Recipes",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\nQueued Crafts: ",
