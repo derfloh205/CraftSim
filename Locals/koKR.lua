@@ -307,7 +307,7 @@ function CraftSim.LOCAL_KO:GetData()
         PRICE_OVERRIDE_SAVED = "저장됨",
         PRICE_OVERRIDE_REMOVE = "제거",
 
-	    -- Recipe Scan Frame
+        -- Recipe Scan Frame
         RECIPE_SCAN_TITLE = "CraftSim 레시피 스캔",
         RECIPE_SCAN_MODE = "스캔 모드",
         RECIPE_SCAN_SORT_MODE = "정렬 모드",
@@ -783,7 +783,7 @@ function CraftSim.LOCAL_KO:GetData()
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\n이 대기시간을 공유하는 제작법:\n"),
         COOLDOWNS_RECIPE_READY = f.g("준비됨"),
 	
-	    -- concentration module (집중 모듈)
+        -- concentration module (집중 모듈)
         CONCENTRATION_TRACKER_TITLE = "CraftSim 집중",
         CONCENTRATION_TRACKER_LABEL_CRAFTER = "제작자",
         CONCENTRATION_TRACKER_LABEL_CURRENT = "현재",
