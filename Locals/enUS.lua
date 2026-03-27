@@ -638,6 +638,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "Craft Next",
         CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "Max",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",
+        CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "Automatic (cheapest owned)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\nRight-click to choose mote.",
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Create Auctionator Shopping List",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "Craft Queue",

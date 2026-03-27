@@ -38,6 +38,32 @@ function CraftSim.SalvageReagentSlot:SetCheapestItem()
     return self.activeItem
 end
 
+---@return ItemMixin activeItem
+function CraftSim.SalvageReagentSlot:SetCheapestOwnedItem()
+    local ownedItems = GUTIL:Filter(self.possibleItems, function(item)
+        return C_Item.GetItemCount(item:GetItemID()) > 0
+    end)
+
+    if #ownedItems == 0 then
+        return self:SetCheapestItem()
+    end
+
+    local cheapestOwnedItem = GUTIL:Fold(ownedItems, ownedItems[1], function(cheapest, item)
+        local cheapestItemID = cheapest:GetItemID()
+        local itemID = item:GetItemID()
+        local cheapestPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(cheapestItemID, true)
+        local itemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true)
+        if itemPrice < cheapestPrice then
+            return item
+        else
+            return cheapest
+        end
+    end)
+
+    self.activeItem = cheapestOwnedItem
+    return self.activeItem
+end
+
 ---@param itemID number
 function CraftSim.SalvageReagentSlot:SetItem(itemID)
     local item = CraftSim.GUTIL:Find(self.possibleItems, function(item) return item:GetItemID() == itemID end)

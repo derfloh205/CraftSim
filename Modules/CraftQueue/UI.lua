@@ -12,6 +12,9 @@ CraftSim.CRAFTQ.UI = {}
 
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
+local SHATTER_MOTE_SELECTION_MODE = {
+    CHEAPEST_OWNED = "__CHEAPEST_OWNED__",
+}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
@@ -2437,6 +2440,9 @@ local function ApplyQuickBarShatterSalvageSelection(recipeData)
     if savedID == nil then
         return slot:SetCheapestItem()
     end
+    if savedID == SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED then
+        return slot:SetCheapestOwnedItem()
+    end
     local found = GUTIL:Find(slot.possibleItems, function(item)
         return item:GetItemID() == savedID
     end)
@@ -2456,6 +2462,12 @@ local function ShowQuickBarShatterMoteMenu(recipeData)
             return CraftSim.DB.OPTIONS:Get(optKey) == nil
         end, function()
             CraftSim.DB.OPTIONS:Save(optKey, nil)
+            CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+        end)
+        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED"), function()
+            return CraftSim.DB.OPTIONS:Get(optKey) == SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED
+        end, function()
+            CraftSim.DB.OPTIONS:Save(optKey, SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED)
             CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         end)
         for _, item in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
