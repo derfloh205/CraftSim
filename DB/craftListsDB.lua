@@ -233,7 +233,7 @@ end
 function CraftSim.DB.CRAFT_LISTS:ExportList(id, isGlobal, crafterUID)
     local list = self:GetList(id, isGlobal, crafterUID)
     if not list then return "" end
-    local encoded = CraftSim.UTIL:EncodeTable(list)
+    local encoded = GUTIL:EncodeTable(list)
     return encoded
 end
 
@@ -243,7 +243,7 @@ end
 ---@return boolean success
 function CraftSim.DB.CRAFT_LISTS:ImportList(exportString, isGlobal, crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    local listData = CraftSim.UTIL:DecodeTable(exportString) --[[@as CraftSim.CraftList]]
+    local listData = GUTIL:DecodeTable(exportString) --[[@as CraftSim.CraftList]]
 
     ---@type CraftSim.CraftList
     local list = listData

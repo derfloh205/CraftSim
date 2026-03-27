@@ -3126,6 +3126,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
+                elseif not craftQueueItem.gearEquipped then
+                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_EQUIP_TOOLS"))
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        recipeData.professionGearSet:Equip()
+                    end
                 elseif craftQueueItem.allowedToCraft then
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
@@ -3154,15 +3160,25 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_ORDER"))
         end
     else
-        craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
-        if craftQueueItem.allowedToCraft then
-            craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+        local shouldEquipTools = craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen and
+            not craftQueueItem.gearEquipped
+        if shouldEquipTools then
+            craftButtonColumn.craftButton:SetEnabled(true)
+            craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_EQUIP_TOOLS"))
             craftButtonColumn.craftButton.clickCallback = function()
-                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
-                recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
-                CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
-                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                recipeData.professionGearSet:Equip()
+            end
+        else
+            craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
+            if craftQueueItem.allowedToCraft then
+                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+                craftButtonColumn.craftButton.clickCallback = function()
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
+                    recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                end
             end
         end
     end
