@@ -782,7 +782,7 @@ function CraftSim.LOCAL_KO:GetData()
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "확장팩 필터",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\n이 대기시간을 공유하는 제작법:\n"),
         COOLDOWNS_RECIPE_READY = f.g("준비됨"),
-	
+
         -- concentration module (집중 모듈)
         CONCENTRATION_TRACKER_TITLE = "CraftSim 집중",
         CONCENTRATION_TRACKER_LABEL_CRAFTER = "제작자",
