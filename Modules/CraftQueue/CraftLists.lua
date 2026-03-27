@@ -160,6 +160,12 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             return
         end
 
+        -- Skip unlearned recipes unless enableUnlearned option is set
+        if not options.enableUnlearned and not recipeInfo.learned then
+            frameDistributor:Continue()
+            return
+        end
+
         local recipeData = CraftSim.RecipeData { recipeID = recipeID, crafterData = playerCrafterData }
 
         if not recipeData then
@@ -169,7 +175,34 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         recipeData.craftListID = list.id
 
-        recipeData:SetCheapestQualityReagentsMax()
+        local reagentAllocation = options.reagentAllocation or "OPTIMIZE_HIGHEST"
+        local SCAN_MODES = CraftSim.RECIPE_SCAN.SCAN_MODES
+        if reagentAllocation == SCAN_MODES.Q1 then
+            recipeData.reagentData:SetReagentsMaxByQuality(1)
+        elseif reagentAllocation == SCAN_MODES.Q2 then
+            recipeData.reagentData:SetReagentsMaxByQuality(2)
+        elseif reagentAllocation == SCAN_MODES.Q3 then
+            if recipeData:IsSimplifiedQualityRecipe() then
+                recipeData.reagentData:SetReagentsMaxByQuality(2)
+            else
+                recipeData.reagentData:SetReagentsMaxByQuality(3)
+            end
+        else
+            -- OPTIMIZE_* modes (and legacy "OPTIMIZE"): use cheapest quality as base for optimization
+            recipeData:SetCheapestQualityReagentsMax()
+        end
+
+        -- Derive reagent optimize options from the allocation mode
+        -- OPTIMIZE_HIGHEST and legacy "OPTIMIZE" leave optimizeReagentOptions as nil (default: optimize to highest quality)
+        local optimizeReagentOptions = nil
+        if reagentAllocation == "OPTIMIZE_MOST_PROFITABLE" then
+            optimizeReagentOptions = { highestProfit = true }
+        else
+            local targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
+            if targetQuality then
+                optimizeReagentOptions = { maxQuality = targetQuality }
+            end
+        end
 
         if recipeData.supportsQualities and options.enableConcentration then
             recipeData.concentrating = true
@@ -190,7 +223,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         local concentrationIcon = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize)
 
         recipeData:Optimize {
-            optimizeReagentOptions = options.autoselectTopProfitQuality and { highestProfit = true },
+            optimizeReagentOptions = optimizeReagentOptions,
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then
@@ -221,6 +254,21 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 else
                     local offsetAmount = tonumber(options.offsetQueueAmount) or 0
                     local totalAmount = 1 + offsetAmount
+
+                    -- Use TSM restock expression if enabled and available
+                    if options.useTSMRestockExpression and TSM_API
+                        and recipeData.resultData and recipeData.resultData.expectedItem then
+                        local itemLink = recipeData.resultData.expectedItem:GetItemLink()
+                        if itemLink then
+                            local tsmItemString = TSM_API.ToItemString(itemLink)
+                            if tsmItemString then
+                                local tsmAmount = TSM_API.GetCustomPriceValue(
+                                    options.tsmRestockExpression or "1",
+                                    tsmItemString) or 0
+                                totalAmount = tsmAmount + offsetAmount
+                            end
+                        end
+                    end
 
                     -- if its a cd recipe, always queue maximum based on charges
                     if recipeData.cooldownData.isCooldownRecipe then
