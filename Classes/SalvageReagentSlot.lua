@@ -41,7 +41,7 @@ end
 ---@return ItemMixin activeItem
 function CraftSim.SalvageReagentSlot:SetCheapestOwnedItem()
     local ownedItems = GUTIL:Filter(self.possibleItems, function(item)
-        return C_Item.GetItemCount(item:GetItemID()) > 0
+        return C_Item.GetItemCount(item:GetItemID(), true, false, true, true) > 0
     end)
 
     if #ownedItems == 0 then

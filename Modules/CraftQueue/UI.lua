@@ -2567,6 +2567,8 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
 
                 if activeReagent then
                     activeReagent:ContinueOnItemLoad(function()
+                        local ownedCount = C_Item.GetItemCount(activeReagent:GetItemID(), true, false, true, true)
+                        local ownedCountText = " (" .. tostring(ownedCount) .. ")"
                         if buffActive then
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
@@ -2574,15 +2576,21 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                             }
                             recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})
                         elseif recipeData:CanCraft(1) then
+                            local moteWithIcon = GUTIL:IconToText(activeReagent:GetItemIcon(), 15, 15) .. " " ..
+                                activeReagent:GetItemLink() .. ownedCountText
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
-                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
+                                text = f.bb("Shatter " .. moteWithIcon) .. "\nCosts: " ..
+                                    CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
                             }
                             recipeCraftButton:SetBorder(true, {0, 1, 0, 0.8})
                         else
+                            local moteWithIcon = GUTIL:IconToText(activeReagent:GetItemIcon(), 15, 15) .. " " ..
+                                activeReagent:GetItemLink() .. ownedCountText
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
-                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. f.r(" (Missing)") .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
+                                text = f.bb("Shatter " .. moteWithIcon) .. f.r(" (Missing)") .. "\nCosts: " ..
+                                    CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
                             }
                             recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})
                         end
