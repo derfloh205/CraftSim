@@ -1403,58 +1403,108 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
 
             rootDescription:CreateTitle(f.bb(list.name) .. " Options:")
 
-            -- Optimization options
             rootDescription:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION"),
                 function() return opts.enableConcentration end,
                 function() opts.enableConcentration = not opts.enableConcentration end)
 
             rootDescription:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),
+                function() return opts.enableUnlearned end,
+                function() opts.enableUnlearned = not opts.enableUnlearned end)
+
+            local optimizationButton = rootDescription:CreateButton("Optimization")
+
+            -- Reagent Allocation submenu
+            local RA = CraftSim.RECIPE_SCAN.SCAN_MODES
+            local reagentAllocationButton = optimizationButton:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
+
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q1 end,
+                function() opts.reagentAllocation = RA.Q1 end)
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q2 end,
+                function() opts.reagentAllocation = RA.Q2 end)
+            reagentAllocationButton:CreateRadio(
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q3") .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q3 end,
+                function() opts.reagentAllocation = RA.Q3 end)
+
+            -- Optimize sub-submenu
+            local reagentAllocationOptimizeButton = reagentAllocationButton:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
+
+            reagentAllocationOptimizeButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST"),
+                function()
+                    local ra = opts.reagentAllocation or "OPTIMIZE_HIGHEST"
+                    return ra == "OPTIMIZE_HIGHEST" or ra == "OPTIMIZE"
+                end,
+                function() opts.reagentAllocation = "OPTIMIZE_HIGHEST" end)
+
+            reagentAllocationOptimizeButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE"),
+                function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == "OPTIMIZE_MOST_PROFITABLE" end,
+                function() opts.reagentAllocation = "OPTIMIZE_MOST_PROFITABLE" end)
+
+            -- Target Quality sub-submenu
+            local targetQualityButton = reagentAllocationOptimizeButton:CreateButton(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY"))
+
+            for i = 1, 5 do
+                local qualityID = i
+                local allocationValue = "OPTIMIZE_TARGET_" .. qualityID
+                local qualityLabel = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                if qualityID <= 2 then
+                    qualityLabel = qualityLabel .. " | " .. GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                end
+                targetQualityButton:CreateRadio(
+                    qualityLabel,
+                    function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == allocationValue end,
+                    function() opts.reagentAllocation = allocationValue end)
+            end
+
+            optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION"),
                 function() return opts.optimizeConcentration end,
                 function() opts.optimizeConcentration = not opts.optimizeConcentration end)
 
-            local smartCB = rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION"),
-                function() return opts.smartConcentrationQueuing end,
-                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
-            smartCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP"))
-            end)
-
-            local offsetConCB = rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
-                function() return opts.offsetConcentrationCraftAmount end,
-                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
-            offsetConCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
-            end)
-
-            rootDescription:CreateCheckbox(
+            optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS"),
                 function() return opts.optimizeProfessionTools end,
                 function() opts.optimizeProfessionTools = not opts.optimizeProfessionTools end)
 
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY"),
-                function() return opts.autoselectTopProfitQuality end,
-                function() opts.autoselectTopProfitQuality = not opts.autoselectTopProfitQuality end)
-
-            rootDescription:CreateCheckbox(
+            optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING"),
                 function() return opts.optimizeFinishingReagents end,
                 function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
 
-            rootDescription:CreateCheckbox(
+            optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
                 function() return opts.includeSoulboundFinishingReagents end,
                 function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
 
-            rootDescription:CreateDivider()
-            rootDescription:CreateDivider()
+            local restockingButton = rootDescription:CreateButton("Restocking")
+
+            local offsetConCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
+                function() return opts.offsetConcentrationCraftAmount end,
+                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
+                    offsetConCB:SetTooltip(function(tooltip)
+                    GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
+            end)
+            
+            local smartCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION"),
+                function() return opts.smartConcentrationQueuing end,
+                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
+                    smartCB:SetTooltip(function(tooltip)
+                    GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP"))
+            end)
 
             -- Queue options
-            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+            GUTIL:CreateReuseableMenuUtilContextMenuFrame(restockingButton, function(frame)
                 frame.label = GGUI.Text {
                     parent = frame,
                     anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
@@ -1478,6 +1528,55 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     end,
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
+
+            restockingButton:CreateDivider()
+
+            -- TSM options
+            if TSM_API then
+                local tsmButton = restockingButton:CreateButton(f.bb("TSM"))
+
+                tsmButton:CreateCheckbox(
+                    L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK"),
+                    function() return opts.useTSMRestockExpression end,
+                    function() opts.useTSMRestockExpression = not opts.useTSMRestockExpression end)
+
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmButton, function(frame)
+                    if not frame.expressionLabel then
+                        frame.expressionLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                        frame.expressionLabel:SetPoint("LEFT", frame, "LEFT", 5, 0)
+                        frame.expressionLabel:SetText(L("CRAFT_LISTS_OPTIONS_TSM_EXPRESSION"))
+
+                        frame.editBox = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
+                        frame.editBox:SetSize(130, 20)
+                        frame.editBox:SetPoint("CENTER", frame, "CENTER", 15, 0)
+                        frame.editBox:SetAutoFocus(false)
+                        frame.editBox:SetFontObject("ChatFontNormal")
+                        frame.editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+                        frame.editBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+                        frame.validationText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                        frame.validationText:SetPoint("LEFT", frame.editBox, "RIGHT", 5, 0)
+                    end
+
+                    local currentExpr = opts.tsmRestockExpression or "1"
+                    frame.editBox:SetText(currentExpr)
+
+                    local function validateAndSave(expr)
+                        if TSM_API.IsCustomPriceValid(expr) then
+                            frame.validationText:SetText(CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK, 18, 18))
+                            opts.tsmRestockExpression = expr
+                        else
+                            frame.validationText:SetText(CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.CROSS, 18, 18))
+                        end
+                    end
+
+                    validateAndSave(currentExpr)
+                    -- Re-register on each open so the closure captures the current opts reference
+                    frame.editBox:SetScript("OnTextChanged", function(self)
+                        validateAndSave(self:GetText())
+                    end)
+                end, 230, 30, "CRAFT_LISTS_TSM_EXPRESSION_INPUT")
+            end
         end,
     }
 end
@@ -3066,6 +3165,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
+                elseif not craftQueueItem.gearEquipped then
+                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_EQUIP_TOOLS"))
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        recipeData.professionGearSet:Equip()
+                    end
                 elseif craftQueueItem.allowedToCraft then
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
@@ -3094,15 +3199,25 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_ORDER"))
         end
     else
-        craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
-        if craftQueueItem.allowedToCraft then
-            craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+        local shouldEquipTools = craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen and
+            not craftQueueItem.gearEquipped
+        if shouldEquipTools then
+            craftButtonColumn.craftButton:SetEnabled(true)
+            craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_EQUIP_TOOLS"))
             craftButtonColumn.craftButton.clickCallback = function()
-                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
-                recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
-                CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
-                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                recipeData.professionGearSet:Equip()
+            end
+        else
+            craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
+            if craftQueueItem.allowedToCraft then
+                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+                craftButtonColumn.craftButton.clickCallback = function()
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
+                    recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                end
             end
         end
     end
