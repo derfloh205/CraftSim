@@ -287,41 +287,11 @@ function CraftSim.DB.CRAFTER:SaveClass(crafterUID, class)
     CraftSimDB.crafterDB.data[crafterUID].class = class
 end
 
---- Merges legacy per-recipe cooldown rows into the shared serialization key and drops duplicates so the Cooldowns list shows one row per shared lockout.
----@param crafterUID CrafterUID
-function CraftSim.DB.CRAFTER:NormalizeSharedCooldownStorage(crafterUID)
-    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    local cd = CraftSimDB.crafterDB.data[crafterUID].cooldownData
-    if not cd then return end
-
-    local toRemove = {}
-    for serializationID, serialized in pairs(cd) do
-        if type(serializationID) == "number" then
-            local sharedKey = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[serializationID]
-            if sharedKey then
-                if cd[sharedKey] then
-                    toRemove[serializationID] = true
-                else
-                    if type(serialized) == "table" then
-                        serialized.sharedCD = sharedKey
-                    end
-                    cd[sharedKey] = serialized
-                    toRemove[serializationID] = true
-                end
-            end
-        end
-    end
-    for k in pairs(toRemove) do
-        cd[k] = nil
-    end
-end
-
 --- returns data serialized
 ---@param crafterUID CrafterUID
 ---@param recipeID RecipeID
 ---@return CraftSim.CooldownData.Serialized?
 function CraftSim.DB.CRAFTER:GetRecipeCooldownData(crafterUID, recipeID)
-    self:NormalizeSharedCooldownStorage(crafterUID)
     local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
         recipeID
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
@@ -363,7 +333,6 @@ function CraftSim.DB.CRAFTER:GetCrafterCooldownData()
     local crafterCooldownData = {}
 
     for crafterUID, crafterDBData in pairs(CraftSimDB.crafterDB.data) do
-        self:NormalizeSharedCooldownStorage(crafterUID)
         crafterCooldownData[crafterUID] = crafterDBData.cooldownData
     end
 
@@ -651,4 +620,35 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()
     -- produce incorrect profit values during alt scanning.  Everything repopulates
     -- automatically the next time each character logs in and opens a profession.
     CraftSim.DB.CRAFTER:ClearAll()
+end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_6_7_Normalize_shared_cooldown_storage()
+    -- Merges legacy per-recipe cooldown rows into shared serialization keys.
+    -- Removes duplicate per-recipe entries so Cooldowns show one shared row.
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+        local cd = crafterData.cooldownData
+        if cd then
+            local toRemove = {}
+            for serializationID, serialized in pairs(cd) do
+                if type(serializationID) == "number" then
+                    local sharedKey = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[serializationID]
+                    if sharedKey then
+                        if cd[sharedKey] then
+                            toRemove[serializationID] = true
+                        else
+                            if type(serialized) == "table" then
+                                serialized.sharedCD = sharedKey
+                            end
+                            cd[sharedKey] = serialized
+                            toRemove[serializationID] = true
+                        end
+                    end
+                end
+            end
+            for keyToRemove in pairs(toRemove) do
+                cd[keyToRemove] = nil
+            end
+        end
+    end
 end
