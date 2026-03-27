@@ -12,6 +12,9 @@ CraftSim.CRAFTQ.UI = {}
 
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
+local SHATTER_MOTE_SELECTION_MODE = {
+    CHEAPEST_OWNED = "__CHEAPEST_OWNED__",
+}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
@@ -2437,6 +2440,9 @@ local function ApplyQuickBarShatterSalvageSelection(recipeData)
     if savedID == nil then
         return slot:SetCheapestItem()
     end
+    if savedID == SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED then
+        return slot:SetCheapestOwnedItem()
+    end
     local found = GUTIL:Find(slot.possibleItems, function(item)
         return item:GetItemID() == savedID
     end)
@@ -2456,6 +2462,12 @@ local function ShowQuickBarShatterMoteMenu(recipeData)
             return CraftSim.DB.OPTIONS:Get(optKey) == nil
         end, function()
             CraftSim.DB.OPTIONS:Save(optKey, nil)
+            CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+        end)
+        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED"), function()
+            return CraftSim.DB.OPTIONS:Get(optKey) == SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED
+        end, function()
+            CraftSim.DB.OPTIONS:Save(optKey, SHATTER_MOTE_SELECTION_MODE.CHEAPEST_OWNED)
             CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         end)
         for _, item in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
@@ -2555,6 +2567,8 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
 
                 if activeReagent then
                     activeReagent:ContinueOnItemLoad(function()
+                        local ownedCount = C_Item.GetItemCount(activeReagent:GetItemID(), true, false, true, true)
+                        local ownedCountText = " (" .. tostring(ownedCount) .. ")"
                         if buffActive then
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
@@ -2562,15 +2576,21 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                             }
                             recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})
                         elseif recipeData:CanCraft(1) then
+                            local moteWithIcon = GUTIL:IconToText(activeReagent:GetItemIcon(), 15, 15) .. " " ..
+                                activeReagent:GetItemLink() .. ownedCountText
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
-                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
+                                text = f.bb("Shatter " .. moteWithIcon) .. "\nCosts: " ..
+                                    CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
                             }
                             recipeCraftButton:SetBorder(true, {0, 1, 0, 0.8})
                         else
+                            local moteWithIcon = GUTIL:IconToText(activeReagent:GetItemIcon(), 15, 15) .. " " ..
+                                activeReagent:GetItemLink() .. ownedCountText
                             recipeCraftButton.tooltipOptions = {
                                 anchor = "ANCHOR_CURSOR_RIGHT",
-                                text = f.bb("Shatter " .. activeReagent:GetItemLink()) .. f.r(" (Missing)") .. "\nCosts: " .. CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
+                                text = f.bb("Shatter " .. moteWithIcon) .. f.r(" (Missing)") .. "\nCosts: " ..
+                                    CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts, true) .. shatterHint
                             }
                             recipeCraftButton:SetBorder(true, {1, 0, 0, 0.8})
                         end
