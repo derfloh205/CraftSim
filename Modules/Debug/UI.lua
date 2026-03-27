@@ -325,6 +325,18 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
                 CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()
             end)
 
+            local resetDBVersions = rootDescription:CreateButton("Reset DB Versions")
+            local repositories = CraftSim.DB.repositories
+            for _, repository in ipairs(repositories) do
+                local version = repository.db.version
+                if version > 0 then
+                    resetDBVersions:CreateButton(repository.name .. " " .. repository.db.version .. " -> " .. (repository.db.version - 1), function()
+                        repository.db.version = version - 1
+                        CraftSim.DEBUG:SystemPrint(f.l(string.format("CraftSim DB Version for %s set to %d", repository.name, repository.db.version)))
+                    end)
+                end
+            end
+
             rootDescription:CreateButton(f.r("Factory Reset"), function()
                 GGUI:ShowPopup {
                     title = "CraftSim " .. f.r("Factory Reset"),
