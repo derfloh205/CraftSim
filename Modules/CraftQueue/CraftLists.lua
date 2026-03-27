@@ -263,7 +263,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                             local tsmItemString = TSM_API.ToItemString(itemLink)
                             if tsmItemString then
                                 local tsmAmount = TSM_API.GetCustomPriceValue(
-                                    CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") or "1",
+                                    options.tsmRestockExpression or "1",
                                     tsmItemString) or 0
                                 totalAmount = tsmAmount + offsetAmount
                             end

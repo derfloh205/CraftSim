@@ -759,7 +759,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY = "Target Quality",
         CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED = "Enable Unlearned Recipes",
         CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK = "Use TSM Restock Expression",
-        CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK_TOOLTIP = "If enabled, restock amount will be determined by the configured TSM Expression (Options > TSM)",
+        CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "Expression:",
         CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "Craft with current character",
         CRAFT_LISTS_OPTIONS_FIXED_CRAFTER = "Fixed Crafter: ",
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "Restock Amount: ",
