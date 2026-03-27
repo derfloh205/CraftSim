@@ -1403,58 +1403,28 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
 
             rootDescription:CreateTitle(f.bb(list.name) .. " Options:")
 
-            -- Optimization options
             rootDescription:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION"),
                 function() return opts.enableConcentration end,
                 function() opts.enableConcentration = not opts.enableConcentration end)
 
             rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION"),
-                function() return opts.optimizeConcentration end,
-                function() opts.optimizeConcentration = not opts.optimizeConcentration end)
+                L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),
+                function() return opts.enableUnlearned end,
+                function() opts.enableUnlearned = not opts.enableUnlearned end)
 
-            local smartCB = rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION"),
-                function() return opts.smartConcentrationQueuing end,
-                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
-            smartCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP"))
-            end)
-
-            local offsetConCB = rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
-                function() return opts.offsetConcentrationCraftAmount end,
-                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
-            offsetConCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
-            end)
-
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS"),
-                function() return opts.optimizeProfessionTools end,
-                function() opts.optimizeProfessionTools = not opts.optimizeProfessionTools end)
-
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING"),
-                function() return opts.optimizeFinishingReagents end,
-                function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
-
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
-                function() return opts.includeSoulboundFinishingReagents end,
-                function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
+            local optimizationButton = rootDescription:CreateButton("Optimization")
 
             -- Reagent Allocation submenu
             local RA = CraftSim.RECIPE_SCAN.SCAN_MODES
-            local reagentAllocationButton = rootDescription:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
+            local reagentAllocationButton = optimizationButton:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
 
             reagentAllocationButton:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20) .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q1 end,
                 function() opts.reagentAllocation = RA.Q1 end)
             reagentAllocationButton:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20) .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q2 end,
                 function() opts.reagentAllocation = RA.Q2 end)
             reagentAllocationButton:CreateRadio(
@@ -1463,9 +1433,9 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() opts.reagentAllocation = RA.Q3 end)
 
             -- Optimize sub-submenu
-            local optimizeButton = reagentAllocationButton:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
+            local reagentAllocationOptimizeButton = reagentAllocationButton:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
 
-            optimizeButton:CreateRadio(
+            reagentAllocationOptimizeButton:CreateRadio(
                 L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST"),
                 function()
                     local ra = opts.reagentAllocation or "OPTIMIZE_HIGHEST"
@@ -1473,13 +1443,13 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 end,
                 function() opts.reagentAllocation = "OPTIMIZE_HIGHEST" end)
 
-            optimizeButton:CreateRadio(
+            reagentAllocationOptimizeButton:CreateRadio(
                 L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE"),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == "OPTIMIZE_MOST_PROFITABLE" end,
                 function() opts.reagentAllocation = "OPTIMIZE_MOST_PROFITABLE" end)
 
             -- Target Quality sub-submenu
-            local targetQualityButton = optimizeButton:CreateButton(
+            local targetQualityButton = reagentAllocationOptimizeButton:CreateButton(
                 L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY"))
 
             for i = 1, 5 do
@@ -1487,7 +1457,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 local allocationValue = "OPTIMIZE_TARGET_" .. qualityID
                 local qualityLabel = GUTIL:GetQualityIconString(qualityID, 20, 20)
                 if qualityID <= 2 then
-                    qualityLabel = qualityLabel .. GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                    qualityLabel = qualityLabel .. " | " .. GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
                 end
                 targetQualityButton:CreateRadio(
                     qualityLabel,
@@ -1495,13 +1465,46 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     function() opts.reagentAllocation = allocationValue end)
             end
 
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),
-                function() return opts.enableUnlearned end,
-                function() opts.enableUnlearned = not opts.enableUnlearned end)
+            optimizationButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION"),
+                function() return opts.optimizeConcentration end,
+                function() opts.optimizeConcentration = not opts.optimizeConcentration end)
+
+            optimizationButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS"),
+                function() return opts.optimizeProfessionTools end,
+                function() opts.optimizeProfessionTools = not opts.optimizeProfessionTools end)
+
+            optimizationButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING"),
+                function() return opts.optimizeFinishingReagents end,
+                function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
+
+            optimizationButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
+                function() return opts.includeSoulboundFinishingReagents end,
+                function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
+
+            local restockingButton = rootDescription:CreateButton("Restocking")
+
+            local offsetConCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
+                function() return opts.offsetConcentrationCraftAmount end,
+                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
+                    offsetConCB:SetTooltip(function(tooltip)
+                    GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
+            end)
+            
+            local smartCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION"),
+                function() return opts.smartConcentrationQueuing end,
+                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
+                    smartCB:SetTooltip(function(tooltip)
+                    GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP"))
+            end)
 
             -- Queue options
-            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+            GUTIL:CreateReuseableMenuUtilContextMenuFrame(restockingButton, function(frame)
                 frame.label = GGUI.Text {
                     parent = frame,
                     anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
@@ -1526,11 +1529,11 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
 
-            rootDescription:CreateDivider()
+            restockingButton:CreateDivider()
 
             -- TSM options
             if TSM_API then
-                local tsmButton = rootDescription:CreateButton(f.bb("TSM"))
+                local tsmButton = restockingButton:CreateButton(f.bb("TSM"))
 
                 tsmButton:CreateCheckbox(
                     L("CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK"),
@@ -1560,10 +1563,10 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
 
                     local function validateAndSave(expr)
                         if TSM_API.IsCustomPriceValid(expr) then
-                            frame.validationText:SetText(f.g(L("OPTIONS_TSM_VALID_EXPRESSION")))
+                            frame.validationText:SetText(CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK, 18, 18))
                             opts.tsmRestockExpression = expr
                         else
-                            frame.validationText:SetText(f.r(L("OPTIONS_TSM_INVALID_EXPRESSION")))
+                            frame.validationText:SetText(CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.CROSS, 18, 18))
                         end
                     end
 
@@ -1572,10 +1575,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     frame.editBox:SetScript("OnTextChanged", function(self)
                         validateAndSave(self:GetText())
                     end)
-                end, 300, 30, "CRAFT_LISTS_TSM_EXPRESSION_INPUT")
-
-                rootDescription:CreateDivider()
-                rootDescription:CreateDivider()
+                end, 230, 30, "CRAFT_LISTS_TSM_EXPRESSION_INPUT")
             end
         end,
     }
