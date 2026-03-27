@@ -25,16 +25,6 @@ local function GetCraftListsForRecipe(recipeData)
     end)
 end
 
---- Returns the craft list icon prefix text (or empty string) based on membership
----@param recipeLists CraftSim.CraftList[]
----@return string
-local function GetCraftListIconPrefix(recipeLists)
-    if #recipeLists > 0 then
-        return CreateAtlasMarkup("communities-icon-addmember", 13, 13) .. " "
-    end
-    return ""
-end
-
 --- Builds the tooltip text for a recipe row, appending craft list membership info
 ---@param recipeData CraftSim.RecipeData
 ---@param recipeLists CraftSim.CraftList[]
@@ -1151,7 +1141,6 @@ function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
     if not recipeColumn then return end
 
     local recipeLists = GetCraftListsForRecipe(recipeData)
-    local craftListIcon = GetCraftListIconPrefix(recipeLists)
 
     local recipeRarity = ITEM_QUALITY_COLORS[0] -- default white
     if recipeData.resultData.expectedItem then
@@ -1166,7 +1155,7 @@ function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
         cooldownInfoText = " " .. timeIcon .. "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
     end
 
-    recipeColumn.text:SetText(craftListIcon .. recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
+    recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
 
     resultRow.tooltipOptions = {
         text = BuildRecipeTooltipText(recipeData, recipeLists),
@@ -1219,9 +1208,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             -- Check if recipe belongs to any craft lists
             local recipeLists = GetCraftListsForRecipe(recipeData)
-            local craftListIcon = GetCraftListIconPrefix(recipeLists)
 
-            recipeColumn.text:SetText(craftListIcon .. recipeRarity.hex ..
+            recipeColumn.text:SetText(recipeRarity.hex ..
                 recipeData.recipeName .. "|r" .. cooldownInfoText)
 
             learnedColumn:SetLearned(recipeData.learned, isFavorite)

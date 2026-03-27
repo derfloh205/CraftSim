@@ -1532,10 +1532,10 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 }
             end, 200, 25, "CRAFT_LISTS_OFFSET_QUEUE_AMOUNT_INPUT")
 
-            restockingButton:CreateDivider()
-
+            
             -- TSM options
             if TSM_API then
+                restockingButton:CreateDivider()
                 local tsmButton = restockingButton:CreateButton(f.bb("TSM"))
 
                 tsmButton:CreateCheckbox(
