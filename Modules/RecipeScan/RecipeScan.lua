@@ -589,6 +589,24 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
         return relativeProfit >= marginThreshold;
     end)
 
+    -- If "Create CraftList" mode is enabled, show name popup and create a craft list
+    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST") then
+        CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
+            L("CRAFT_LISTS_CREATE_POPUP_TITLE"),
+            L("CRAFT_LISTS_NEW_LIST_DEFAULT_NAME"),
+            false,
+            function(name, isGlobal)
+                if not name or name == "" then return end
+                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                local newList = CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
+                for _, recipeData in ipairs(filteredResults) do
+                    CraftSim.DB.CRAFT_LISTS:AddRecipe(newList.id, newList.isGlobal, crafterUID, recipeData.recipeID)
+                end
+                CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+            end)
+        return
+    end
+
     local sendToCraftQueueButton = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content
         .sendToCraftQueueButton --[[@as GGUI.Button]]
 

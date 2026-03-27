@@ -399,6 +399,11 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "Send to Craft Queue",
+        RECIPE_SCAN_CREATE_CRAFT_LIST = "Create CraftList",
+        RECIPE_SCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST = "Create " .. f.bb("Craft List") .. " instead",
+        RECIPE_SCAN_ADD_TO_CRAFT_LIST = f.g("Add") .. " to Craft List",
+        RECIPE_SCAN_REMOVE_FROM_CRAFT_LIST = f.r("Remove") .. " from Craft List",
+        RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER = f.bb("Craft Lists") .. ":",
         RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD = "Profit Margin Threshold (%): ",
         RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT = "Default Queue Amount: ",
         RECIPE_SCAN_ADD_TO_CRAFT_QUEUE = "Add to Craft Queue",

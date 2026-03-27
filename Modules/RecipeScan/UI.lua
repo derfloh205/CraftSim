@@ -14,6 +14,42 @@ CraftSim.RECIPE_SCAN.UI = {}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.UI")
 
+--- Returns the craft lists that contain the given recipeID for the given crafter
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.CraftList[]
+local function GetCraftListsForRecipe(recipeData)
+    local crafterUID = recipeData:GetCrafterUID()
+    local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
+    return GUTIL:Filter(allLists, function(list)
+        return tContains(list.recipeIDs, recipeData.recipeID)
+    end)
+end
+
+--- Returns the craft list icon prefix text (or empty string) based on membership
+---@param recipeLists CraftSim.CraftList[]
+---@return string
+local function GetCraftListIconPrefix(recipeLists)
+    if #recipeLists > 0 then
+        return CreateAtlasMarkup("communities-icon-addmember", 13, 13) .. " "
+    end
+    return ""
+end
+
+--- Builds the tooltip text for a recipe row, appending craft list membership info
+---@param recipeData CraftSim.RecipeData
+---@param recipeLists CraftSim.CraftList[]
+---@return string
+local function BuildRecipeTooltipText(recipeData, recipeLists)
+    local crafterUID = recipeData:GetCrafterUID()
+    local tooltipText = recipeData.reagentData:GetTooltipText(1, crafterUID)
+    if #recipeLists > 0 then
+        local listNames = GUTIL:Map(recipeLists, function(list) return "  - " .. list.name end)
+        tooltipText = tooltipText .. "\n\n" .. L("RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER") ..
+            "\n" .. table.concat(listNames, "\n")
+    end
+    return tooltipText
+end
+
 function CraftSim.RECIPE_SCAN.UI:Init()
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
@@ -195,11 +231,19 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     end,
     }
 
+    local function GetSendButtonLabel()
+        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST") then
+            return L("RECIPE_SCAN_CREATE_CRAFT_LIST")
+        else
+            return L("RECIPE_SCAN_SEND_TO_CRAFT_QUEUE")
+        end
+    end
+
     content.sendToCraftQueueButton = GGUI.Button {
         parent = content,
         sizeX = 170,
         anchorPoints = { { anchorParent = content.professionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = 32, offsetY = -45, } },
-        label = L("RECIPE_SCAN_SEND_TO_CRAFT_QUEUE"),
+        label = GetSendButtonLabel(),
         initialStatusID = "Ready",
         clickCallback = function()
             CraftSim.RECIPE_SCAN:SendToCraftQueue()
@@ -209,7 +253,7 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     content.sendToCraftQueueButton:SetStatusList {
         {
             statusID = "Ready",
-            label = L("RECIPE_SCAN_SEND_TO_CRAFT_QUEUE"),
+            label = GetSendButtonLabel(),
             enabled = true,
         }
     }
@@ -217,6 +261,26 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     content.sendToCraftQueueOptionsButton = CraftSim.WIDGETS.OptionsButton {
         parent = content, anchorPoints = { { anchorParent = content.sendToCraftQueueButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
+                rootDescription:CreateCheckbox(
+                    L("RECIPE_SCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST", not value)
+                        content.sendToCraftQueueButton:SetText(GetSendButtonLabel())
+                        content.sendToCraftQueueButton:SetStatusList {
+                            {
+                                statusID = "Ready",
+                                label = GetSendButtonLabel(),
+                                enabled = true,
+                            }
+                        }
+                        content.sendToCraftQueueButton:SetStatus("Ready")
+                    end)
+
+                rootDescription:CreateDivider()
+
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -742,6 +806,41 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                             else
                                 rootDescription:CreateButton(L("RECIPE_SCAN_FAVORITES_CRAFTER_ONLY"))
                             end
+
+                            -- Craft Lists integration
+                            local ctxCrafterUID = recipeData:GetCrafterUID()
+                            local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(ctxCrafterUID)
+                            if #allLists > 0 then
+                                rootDescription:CreateDivider()
+                                local addSubmenu = rootDescription:CreateButton(L("RECIPE_SCAN_ADD_TO_CRAFT_LIST"))
+                                local removeSubmenu = rootDescription:CreateButton(L("RECIPE_SCAN_REMOVE_FROM_CRAFT_LIST"))
+                                local hasAdd = false
+                                local hasRemove = false
+                                for _, list in ipairs(allLists) do
+                                    local listRef = list
+                                    if tContains(listRef.recipeIDs, recipeData.recipeID) then
+                                        hasRemove = true
+                                        removeSubmenu:CreateButton(listRef.name, function()
+                                            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                                                listRef.id, listRef.isGlobal, ctxCrafterUID, recipeData.recipeID)
+                                            CraftSim.RECIPE_SCAN.UI:RefreshResultRow(row, recipeData)
+                                        end)
+                                    else
+                                        hasAdd = true
+                                        addSubmenu:CreateButton(listRef.name, function()
+                                            CraftSim.DB.CRAFT_LISTS:AddRecipe(
+                                                listRef.id, listRef.isGlobal, ctxCrafterUID, recipeData.recipeID)
+                                            CraftSim.RECIPE_SCAN.UI:RefreshResultRow(row, recipeData)
+                                        end)
+                                    end
+                                end
+                                if not hasAdd then
+                                    addSubmenu:CreateButton(GUTIL:ColorizeText("-", GUTIL.COLORS.GREY))
+                                end
+                                if not hasRemove then
+                                    removeSubmenu:CreateButton(GUTIL:ColorizeText("-", GUTIL.COLORS.GREY))
+                                end
+                            end
                         end)
                     end
                 end
@@ -1043,6 +1142,39 @@ function CraftSim.RECIPE_SCAN.UI:ResetResults(row)
     row.content.resultAmount:SetText("")
 end
 
+--- Refresh the visual state of a result list row (craft list icon and tooltip) after craft list membership changes
+---@param resultRow GGUI.FrameList.Row
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
+    -- column 2 is the recipe name column
+    local recipeColumn = resultRow.columns[2]
+    if not recipeColumn then return end
+
+    local recipeLists = GetCraftListsForRecipe(recipeData)
+    local craftListIcon = GetCraftListIconPrefix(recipeLists)
+
+    local recipeRarity = ITEM_QUALITY_COLORS[0] -- default white
+    if recipeData.resultData.expectedItem then
+        recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
+    end
+
+    local cooldownInfoText = ""
+    local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
+    if cooldownData and cooldownData.isCooldownRecipe then
+        local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
+        local currentCharges = cooldownData:GetCurrentCharges()
+        cooldownInfoText = " " .. timeIcon .. "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
+    end
+
+    recipeColumn.text:SetText(craftListIcon .. recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
+
+    resultRow.tooltipOptions = {
+        text = BuildRecipeTooltipText(recipeData, recipeLists),
+        owner = resultRow.frame,
+        anchor = "ANCHOR_CURSOR",
+    }
+end
+
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
@@ -1085,7 +1217,11 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             local isFavorite = CraftSim.DB.CRAFTER:IsFavorite(recipeData.recipeID, recipeData:GetCrafterUID(),
                 recipeData.professionData.professionInfo.profession)
 
-            recipeColumn.text:SetText(recipeRarity.hex ..
+            -- Check if recipe belongs to any craft lists
+            local recipeLists = GetCraftListsForRecipe(recipeData)
+            local craftListIcon = GetCraftListIconPrefix(recipeLists)
+
+            recipeColumn.text:SetText(craftListIcon .. recipeRarity.hex ..
                 recipeData.recipeName .. "|r" .. cooldownInfoText)
 
             learnedColumn:SetLearned(recipeData.learned, isFavorite)
@@ -1192,9 +1328,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             countColumn.text:SetText(countText)
 
             -- show reagents in tooltip when recipe is hovered
-
             row.tooltipOptions = {
-                text = recipeData.reagentData:GetTooltipText(1, recipeData:GetCrafterUID()),
+                text = BuildRecipeTooltipText(recipeData, recipeLists),
                 owner = row.frame,
                 anchor = "ANCHOR_CURSOR",
             }
