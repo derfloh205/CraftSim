@@ -20,6 +20,7 @@ function CraftSim.LOCAL_KO:GetData()
 
         -- shared prof cds
         DF_ALCHEMY_TRANSMUTATIONS = "용군단 - 변환",
+        MIDNIGHT_ALCHEMY_TRANSMUTATIONS = "한밤 – 변환",
 
         -- expansions
 
@@ -103,37 +104,45 @@ function CraftSim.LOCAL_KO:GetData()
         SKILL_LABEL = "숙련도: ",
         MULTICRAFT_BONUS_LABEL = "복수 제작 아이템 보너스: ",
 
-        -- Statistics
-        STATISTICS_CDF_EXPLANATION =         "이 수치는 CDF(누적 분포 함수)의 1985년 'abramowitz and stegun' 근사치를 사용하여 계산되었습니다.\n\n1회 제작 시 항상 50% 근처인 것을 볼 수 있는데, 이는 대개 0이 평균 이익에 가깝기 때문입니다.\n누적 분포 함수에서 평균값을 얻을 확률은 항상 50%입니다.\n\n하지만 변화율은 레시피마다 크게 다를 수 있습니다.\n손해보다 이익을 볼 확률이 높다면 수치가 꾸준히 상승하며, 반대의 경우도 마찬가지입니다.",
-        EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION =             f.r("경고: ") .. " 수학적인 내용입니다!\n\n" ..
-            "아이템을 제작할 때 제작 능력치에 따라 결과가 달라질 확률이 존재합니다.\n" ..
-            "통계학에서는 이를 " .. f.l("확률 분포") .. "라고 부릅니다.\n\n" ..
-            "하지만 각 발동 확률의 합이 1(100%)이 되지 않는다는 점을 눈치채셨을 겁니다.\n" ..
-            "(확률 분포에서는 모든 사건의 합이 100%여야 모든 가능성이 포함된 것을 의미합니다)\n\n" ..
-            "이는 " .. f.bb("지혜") .. "와 " .. f.bb("복수 제작") .. "이 " .. f.g("동시에 발생") .. "할 수 있기 때문입니다.\n" ..
-            "따라서 먼저 모든 사례를 포함하여 합계가 100%가 되는 " .. f.l("확률 분포") .. "로 변환해야 합니다.\n" ..
-            "이를 위해 한 번의 제작에서 발생할 수 있는 " .. f.l("모든") .. " 결과값을 계산합니다.\n\n" ..
-            "예: \n" ..
-            f.p .. f.bb("아무것도") .. " 발동하지 않은 경우\n" ..
-            f.p .. f.bb("지혜") .. " 혹은 " .. f.bb("복수 제작") .. " 중 하나만 발동한 경우\n" ..
-            f.p .. f.bb("지혜") .. "와 " .. f.bb("복수 제작") .. "이 모두 발동한 경우\n" ..
+        -- Statistics (통계)
+        STATISTICS_CDF_EXPLANATION = "이 수치는 누적 분포 함수(CDF)의 'abramowitz and stegun' 근사치(1985)를 사용하여 계산되었습니다.\n\n제작 횟수가 1회일 때 수치가 항상 50% 부근인 것을 알 수 있는데,\n이는 대부분의 경우 0이 평균 수익에 가깝기 때문입니다.\n그리고 누적 분포 함수에서 평균값을 얻을 확률은 항상 50%입니다.\n\n하지만 변화율은 제작법마다 크게 다를 수 있습니다.\n손해보다 이익을 볼 확률이 더 높다면 수치는 꾸준히 상승할 것이며,\n그 반대의 경우도 마찬가지입니다.",
+
+        EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION = f.r("경고: ") .. " 수학 주의!\n\n" ..
+            "무언가를 제작할 때, 여러분의 제작 능력치에 따라 결과물에 대한 다양한 확률을 갖게 됩니다.\n" ..
+            "통계학에서는 이를 " .. f.l("확률 분포") .. "라고 부릅니다.\n" ..
+            "하지만 각 발동(Proc) 확률의 합이 1이 되지 않는다는 점을 발견하실 텐데,\n" ..
+            "(확률 분포가 되려면 어떤 일이든 일어날 확률의 합이 100%가 되어야 합니다)\n\n" ..
+            "그 이유는 " .. f.bb("재활용 ") .. "이나 " .. f.bb("복수 제작") .. " 같은 효과들이 " .. f.g("동시에 발생할 수 있기 때문입니다.\n") ..
+            "따라서 먼저 우리는 발동 확률을 모든 경우의 수를 포함하는 합계 100%의 " ..
+            f.l("확률 분포") .. "로 변환해야 합니다.\n" ..
+            "이를 위해 한 번의 제작에서 발생할 수 있는 " .. f.l("모든") .. " 결과의 수를 계산해야 하죠.\n\n" ..
+            "예를 들어: \n" ..
+            f.p .. "아무것도 " .. f.bb("발동하지 않을") .. " 확률은?\n" ..
+            f.p .. f.bb("재활용") .. " 혹은 " .. f.bb("복수 제작") .. " 중 하나만 발동할 확률은?\n" ..
+            f.p .. f.bb("재활용") .. "과 " .. f.bb("복수 제작") .. "이 모두 발동할 확률은?\n" ..
             f.p .. "기타 등등..\n\n" ..
-            "모든 발동 능력을 고려할 때, 결과의 가짓수는 2의 제곱수로 계산됩니다(2가지 능력치라면 4가지 결과).\n" ..
+            "모든 발동 효과를 고려하는 제작법의 경우, 결과의 가짓수는 2의 2제곱인 4가지가 됩니다.\n" ..
             f.bb("복수 제작") .. "만 발생할 확률을 구하려면 다른 모든 가능성을 고려해야 합니다!\n" ..
-            f.l("오직") .. f.bb(" 복수 제작") .. "만 발동할 확률은 사실 " .. f.bb("복수 제작") .. "이 발동하고\n" ..
-            f.bb("지혜") .. "는 발동하지 " .. f.l("않을") .. " 확률입니다.\n" ..
-            "수학적으로 어떤 사건이 발생하지 않을 확률은 (1 - 발생 확률)입니다.\n" ..
-            "따라서 오직 " .. f.bb("복수 제작") .. "만 발동할 확률은 " .. f.g("복수제작확률 * (1 - 지혜확률)") .. "이 됩니다.\n\n" ..
-            "이런 방식으로 모든 가능성을 계산하면 개별 확률의 합이 1이 됩니다!\n" ..
-            "이제 통계 공식을 적용할 수 있습니다. 가장 흥미로운 수치는 " .. f.bb("기대값") .. "입니다.\n" ..
-            "이름 그대로 평균적으로 얻을 수 있는 가치이며, 우리에게는 " .. f.bb(" 제작당 예상 이익") .. "을 의미합니다!\n" ..
+            f.l("오직 ") .. f.bb("복수 제작") .. "만 발동할 확률은 실제로는 " .. f.bb("복수 제작") .. "이 발동하고\n" ..
+            f.bb("재활용") .. "은 발동하지 " .. f.l("않을 ") .. "확률입니다.\n" ..
+            "수학적으로 어떤 사건이 일어나지 않을 확률은 '1 - 일어날 확률'입니다.\n" ..
+            "따라서 오직 " .. f.bb("복수 제작") .. "만 발동할 실제 확률은\n" ..
+            f.g("복수제작확률 * (1-재활용확률)\n\n") ..
+            "이런 방식으로 각 가능성을 계산하면 개별 확률의 합이 정확히 1이 됩니다!\n" ..
+            "이제 통계 공식을 적용할 수 있게 된 것이죠. 우리에게 가장 흥미로운 공식은 바로 " ..
+            f.bb("기댓값") .. "입니다.\n" ..
+            "이름에서 알 수 있듯이, 이는 우리가 평균적으로 얻을 것이라 기대할 수 있는 값이며, 우리 상황에서는 " ..
+            f.bb(" 제작당 예상 수익") .. "을 의미합니다!\n" ..
             "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
-            "확률 분포 " .. f.l("X") .. "의 기대값 " .. f.l("E") .. "는 모든 결과값에 각각의 확률을 곱해 더한 값의 합계입니다.\n" ..
-            "예를 들어 " .. f.bb("사례 A(확률 30%)") .. "의 이익이 " .. CraftSim.UTIL:FormatMoney(-100 * 10000, true) .. "이고\n" ..
-            f.bb("사례 B(확률 70%)") .. "의 이익이 " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. "라면, 기대 이익은\n" ..
+            "이 공식은 확률 분포 " .. f.l("X") .. "의 기댓값 " .. f.l("E") .. "가 모든 값에 각각의 확률을 곱한 것의 합임을 알려줍니다.\n" ..
+            "만약 우리가 " ..
+            f.bb("30% 확률의 사례 A") .. "에서 수익이 " ..
+            CraftSim.UTIL:FormatMoney(-100 * 10000, true) .. "이고,\n" ..
+            f.bb("70% 확률의 사례 B") .. "에서 수익이 " .. 
+            CraftSim.UTIL:FormatMoney(300 * 10000, true) .. "라면, 예상 수익은 다음과 같습니다.\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "즉 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "가 됩니다.\n" ..
-            "현재 레시피의 모든 사례는 " .. f.bb("통계") .. " 창에서 확인하실 수 있습니다!"
+            "결과는 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "가 됩니다.\n" ..
+            "현재 제작법에 대한 모든 사례는 " .. f.bb("통계") .. " 창에서 확인하실 수 있습니다!"
         ,
 
         -- Popups
@@ -159,7 +168,8 @@ function CraftSim.LOCAL_KO:GetData()
         REAGENTS_CONCENTRATION_LABEL = "집중: ",
         REAGENTS_OPTIMIZE_INFO = "숫자 위에서 Shift + 클릭 시 아이템 링크를 채팅창에 입력",
         ADVANCED_OPTIMIZATION_BUTTON = "고급 최적화",
-        REAGENTS_OPTIMIZE_TOOLTIP =             "(수정 시 초기화)\n" .. f.gold("집중 가치") .. " 및 " .. f.bb("마무리 재료") .. " 최적화 활성화",
+        REAGENTS_OPTIMIZE_TOOLTIP =             "(수정 시 초기화)\n" .. 
+            f.gold("집중 가치") .. " 및 " .. f.bb("마무리 재료") .. " 최적화 활성화",
 
         -- Specialization Info Frame
         SPEC_INFO_TITLE = "CraftSim 전문화 정보",
@@ -194,7 +204,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1 = "이익: ",
         CRAFT_LOG_SAVED_REAGENTS = "절약된 재료",
         CRAFT_LOG_DISABLE_CHECKBOX = f.r("비활성화") .. " 제작 기록",
-        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP =             "비활성화 시 제작 중 기록을 중단하며 " .. f.g("성능이 향상") .. "될 수 있습니다.",
+        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP =             "비활성화 시 제작 중 기록을 중단하며 " ..f.g("성능이 향상") .. "될 수 있습니다.",
         CRAFT_LOG_REAGENT_DETAILS_TAB = "재료 상세",
         CRAFT_LOG_RESULT_ANALYSIS_TAB = "결과 분석",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL = "결과 분포",
@@ -372,12 +382,18 @@ function CraftSim.LOCAL_KO:GetData()
         RECIPE_SCAN_OPTIMIZE_CONCENTRATION = f.gold("집중") .. " 최적화",
         RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS = f.bb("마무리에 재료") .. " 최적화",
 
-        -- Shared OptimizationOptions Widget
+
+        -- Shared OptimizationOptions Widget (공유 최적화 옵션 위젯)
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = f.bb("전문 기술 도구") .. " 최적화",
-        OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = f.e("귀속") .. f.bb(" 마무리 재료") .. " 포함",
+        OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = f.e("획득 시 귀속") .. f.bb(" 마무리 재료") .. " 포함",
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "제작 대기열로 보내기",
-        RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD = "이익률 임계값 (%): ",
+        RECIPE_SCAN_CREATE_CRAFT_LIST = "제작 목록 만들기",
+        RECIPE_SCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST = "대신 " .. f.bb("제작 목록") .. " 만들기",
+        RECIPE_SCAN_ADD_TO_CRAFT_LIST = "제작 목록에 " .. f.g("추가"),
+        RECIPE_SCAN_REMOVE_FROM_CRAFT_LIST = "제작 목록에서 " .. f.r("제거"),
+        RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER = f.bb("제작 목록") .. ":",
+        RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD = "수익률 임계값 (%): ",
         RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT = "기본 대기열 수량: ",
         RECIPE_SCAN_ADD_TO_CRAFT_QUEUE = "제작 대기열에 추가",
         RECIPE_SCAN_SORT_BY = "정렬 기준",
@@ -385,15 +401,13 @@ function CraftSim.LOCAL_KO:GetData()
         RECIPE_SCAN_REMOVE_FAVORITE = "즐겨찾기 " .. f.r("제거"),
         RECIPE_SCAN_ADD_FAVORITE = "즐겨찾기 " .. f.g("추가"),
         RECIPE_SCAN_FAVORITES_CRAFTER_ONLY = f.r("즐겨찾기는 해당 제작자 캐릭터에서만 변경할 수 있습니다."),
-        RECIPE_SCAN_QUEUE_HINT = 
-            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift 클릭 시 선택한 레시피를 " ..
+        RECIPE_SCAN_QUEUE_HINT = CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift 키를 눌러 선택한 제작법을 " ..
             f.bb("제작 대기열") .. "에 추가합니다.",
         RECIPE_SCAN_REMOVE_CACHED_DATA = f.r("제거"),
-        RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP = 
-            "이 캐릭터-전문 기술 조합에 대한 모든 캐시 데이터를 " .. f.r("삭제") .. "합니다.",
-        RECIPE_SCAN_USE_TSM_RESTOCK = f.bb("TSM") .. " 재입고 수량 식 사용",
+        RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP = "이 캐릭터와 전문 기술 조합에 대한 " .. f.r("모든 캐시 데이터") .. "를 제거합니다.",
+        RECIPE_SCAN_USE_TSM_RESTOCK = f.bb("TSM") .. " 재입고 수량 공식 사용",
         RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD = f.bb("TSM") .. " 판매율 임계값: ",
-        RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = f.bb("열린 전문 기술") .. " 자동 선택",
+        RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = f.bb("연 전문 기술") .. " 자동 선택",
 
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim 최적 도구",
@@ -616,11 +630,11 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "다음 제작",
         CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "최대",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "자동 (최저가)",
+        CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "자동 (보유 중인 가장 저렴한 재료)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\n우클릭하여 티끌 선택.",
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Auctionator 쇼핑 목록 생성",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "제작 대기열",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = f.bb("제작 대기열") .. " 완료 시 작업표시줄 깜빡임",
-        -- CraftQueue (제작 대기열)
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP = 
             "WoW 게임 창이 최소화되어 있을 때 " .. f.bb("제작 대기열") .. 
             "에서 제작이 완료되면, " .. f.l(" CraftSim") .. "이 작업표시줄의 WoW 아이콘을 깜빡여 알립니다.",
@@ -684,6 +698,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_BUTTON_NOTHING_QUEUED = "대기열 비어 있음",
         CRAFT_QUEUE_BUTTON_ORDER = "주문",
         CRAFT_QUEUE_BUTTON_SUBMIT = "제출",
+        CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "착용",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "장인의 기미 제작법 무시",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             f.bb("장인의 기미") .. "가 소모되는 첫 제작 아이템을 대기열에 추가하지 않습니다.",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\n예약된 제작: ",
@@ -731,7 +746,13 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "최고 수익 품질 자동 선택",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "마무제 재료 최적화",
         CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND = f.e("획득 시 귀속") .. f.bb(" 마무리 재료 포함"),
-        CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "현재 캐릭터로 제작",
+        CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION = "재료 배분",
+        CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST = "최고 품질",
+        CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE = "최고 수익 품질",
+        CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY = "목표 품질",
+        CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED = f.r("배우지 않은") .. " 제작법 활성화",
+        CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK = f.bb("TSM") .. " 재입고 공식 사용",
+        CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "공식:",        CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "현재 캐릭터로 제작",
         CRAFT_LISTS_OPTIONS_FIXED_CRAFTER = "고정 제작자: ",
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "재입고 수량: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "대기열 수량 오프셋: ",
