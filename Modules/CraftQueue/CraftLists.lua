@@ -16,6 +16,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    print("QueueSelectedLists called with crafterUID: " .. crafterUID)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
@@ -59,6 +60,8 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
 
         local list = selectedLists[listIndex]
         listIndex = listIndex + 1
+
+        print("Queueing list: " .. list.name)
 
         CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, processNextList)
     end
@@ -152,23 +155,43 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     ---@param frameDistributor GUTIL.FrameDistributor
     ---@param recipeID RecipeID
     local function processRecipe(frameDistributor, recipeID)
-        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+        -- Try Cache
+        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
+        if not recipeInfo and CraftSim.UTIL:GetPlayerCrafterUID() == crafterUID then
+            -- fallback to global recipe info if crafter-specific info is not available for the current player
+            recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+            if recipeInfo then
+                CraftSim.DB.CRAFTER:SaveRecipeInfo(crafterUID, recipeID, recipeInfo)
+            else
+                frameDistributor:Continue()
+                return
+            end
+        end
 
         if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
             or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+            if not recipeInfo then
+                print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
+            else
+                print("Skipping unsupported recipe (dummy/gathering/recraft/salvage): " .. recipeInfo.name .. " (recipeID: " .. recipeID .. ")", false, false, 1)
+            end
             frameDistributor:Continue()
             return
         end
 
         -- Skip unlearned recipes unless enableUnlearned option is set
         if not options.enableUnlearned and not recipeInfo.learned then
+            print("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
             frameDistributor:Continue()
             return
         end
 
+        print("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
+
         local recipeData = CraftSim.RecipeData { recipeID = recipeID, crafterData = playerCrafterData }
 
         if not recipeData then
+            print("Failed to create RecipeData", false, false, 1)
             frameDistributor:Continue()
             return
         end
