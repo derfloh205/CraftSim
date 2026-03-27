@@ -538,7 +538,7 @@ function CraftSim.LOCAL_KO:GetData()
         CUSTOMER_HISTORY_FROM = "보낸 사람",
         CUSTOMER_HISTORY_TO = "받는 사람",
         CUSTOMER_HISTORY_FOR = "항목",
-        CUSTOMER_HISTORY_CRAFT_FORMAT = "%2$s에게 %1$s 제작함",
+        CUSTOMER_HISTORY_CRAFT_FORMAT = "%s에게 %s 제작함",
         CUSTOMER_HISTORY_DELETE_BUTTON = "고객 삭제",
         CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL = "귓속말..",
         CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL = "수수료 0골드 고객 삭제",
