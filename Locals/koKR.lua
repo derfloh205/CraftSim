@@ -213,7 +213,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS = "지혜",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION = "생산량 분포",
 
-	-- Stats Weight Frame
+        -- Stats Weight Frame
         STAT_WEIGHTS_TITLE = "CraftSim 평균 이익",
         EXPLANATIONS_TITLE = "CraftSim 평균 이익 설명",
         STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON = "설명 보기",
@@ -744,7 +744,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP = "활성화하면 " .. f.bb("독창") .. "에 따른 예상 제작 횟수만큼 집중 제작 대기열을 추가합니다.",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "전문 기술 도구 최적화",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "최고 수익 품질 자동 선택",
-        CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "마무제 재료 최적화",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "마무리 재료 최적화",
         CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND = f.e("획득 시 귀속") .. f.bb(" 마무리 재료 포함"),
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION = "재료 배분",
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST = "최고 품질",
