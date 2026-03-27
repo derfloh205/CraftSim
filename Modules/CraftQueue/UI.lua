@@ -1450,11 +1450,11 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local reagentAllocationButton = rootDescription:CreateButton(L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION"))
 
             reagentAllocationButton:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20) .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q1 end,
                 function() opts.reagentAllocation = RA.Q1 end)
             reagentAllocationButton:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20) .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q2 end,
                 function() opts.reagentAllocation = RA.Q2 end)
             reagentAllocationButton:CreateRadio(
@@ -1485,8 +1485,12 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             for i = 1, 5 do
                 local qualityID = i
                 local allocationValue = "OPTIMIZE_TARGET_" .. qualityID
+                local qualityLabel = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                if qualityID <= 2 then
+                    qualityLabel = qualityLabel .. GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                end
                 targetQualityButton:CreateRadio(
-                    GUTIL:GetQualityIconString(qualityID, 20, 20),
+                    qualityLabel,
                     function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == allocationValue end,
                     function() opts.reagentAllocation = allocationValue end)
             end
