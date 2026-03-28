@@ -395,6 +395,11 @@ function CraftSim.INIT:HookToProfessionsFrame()
 				CraftSim.CUSTOMER_HISTORY.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY"))
 				CraftSim.COOLDOWNS.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS"))
 				CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(true)
+
+				local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+				CraftSim.CRAFTQ.frame.content.queueTab.content.addWorkOrdersButton:SetEnabled(
+					professionInfo and professionInfo.profession and
+					C_TradeSkillUI.IsNearProfessionSpellFocus(professionInfo.profession))
 			end
 
 			CraftSim.DEBUG:StartProfiling("Update Customer History")
