@@ -850,6 +850,7 @@ greater or equal the configured sale rate threshold.
 
         -- last crafting cost tooltip
         LAST_CRAFTING_COST_TOOLTIP_LABEL = f.l("CraftSim") .. f.white(" Last Crafting Cost: "),
+        LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.grey("Crafter: "),
         LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.grey("Updated: "),
 
         -- columns

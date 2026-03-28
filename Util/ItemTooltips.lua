@@ -32,21 +32,24 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
         local itemID = select(1, C_Item.GetItemInfoInstant(itemLink))
         if not itemID then return end
 
-        local data
         -- Try quality-specific lookup first (for gear where itemID is shared per quality)
+        local crafterUID, cost, timestamp
         local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
         if qualityID and qualityID > 0 then
-            data = CraftSim.DB.LAST_CRAFTING_COST:GetByItemIDAndQuality(itemID, qualityID)
+            crafterUID, cost, timestamp = CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemIDAndQuality(itemID, qualityID)
         end
         -- Fall back to plain itemID lookup (for non-gear / reagents)
-        if not data then
-            data = CraftSim.DB.LAST_CRAFTING_COST:GetByItemID(itemID)
+        if not cost then
+            crafterUID, cost, timestamp = CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemID(itemID)
         end
 
-        if data and data.cost and data.cost > 0 then
-            local costText = CraftSim.UTIL:FormatMoney(data.cost, true)
-            local timeText = FormatTimestamp(data.timestamp)
+        if cost and cost > 0 then
+            local costText = CraftSim.UTIL:FormatMoney(cost, true)
+            local timeText = FormatTimestamp(timestamp)
             tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL") .. costText)
+            if crafterUID then
+                tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER") .. crafterUID)
+            end
             tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED") .. timeText)
             tooltip:Show()
         end

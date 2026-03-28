@@ -20,7 +20,7 @@ function CraftSim.DB.LAST_CRAFTING_COST:Init()
         ---@class CraftSimDB.Database
         CraftSimDB.lastCraftingCostDB = {
             version = 0,
-            ---@type table<string, CraftSim.LastCraftingCostData>
+            ---@type table<string, table<CrafterUID, CraftSim.LastCraftingCostData>>
             data = {},
         }
     end
@@ -47,66 +47,63 @@ function CraftSim.DB.LAST_CRAFTING_COST:GetKeyByItemIDAndQuality(itemID, quality
     return tostring(itemID) .. ":" .. tostring(qualityID)
 end
 
+--- Save the expected crafting cost for a recipe's expected quality, keyed per crafter.
+--- Only the expectedQuality is stored (concentration-adjusted when recipeData.concentrating is true).
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
     if not recipeData.learned then return end
     if not recipeData.resultData then return end
 
+    local expectedQuality = recipeData.resultData.expectedQuality
+    local item = recipeData.resultData.itemsByQuality[expectedQuality]
+    if not item then return end
+
+    local itemID = item:GetItemID()
+    if not itemID then return end
+
+    local key
+    if recipeData.isGear then
+        -- For gear all qualities share the same itemID; differentiate by qualityID
+        key = self:GetKeyByItemIDAndQuality(itemID, expectedQuality)
+    else
+        -- For non-gear each quality has a unique itemID
+        key = self:GetKeyByItemID(itemID)
+    end
+
+    local crafterUID = recipeData:GetCrafterUID()
     local expectedCostsPerItem = recipeData.priceData and recipeData.priceData.expectedCostsPerItem or 0
     local timestamp = time()
 
-    if recipeData.isGear then
-        -- For gear, each quality has the same itemID but different qualityID in the itemLink
-        -- Store by itemID:qualityID
-        for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
-            local itemID = item:GetItemID()
-            if itemID then
-                local key = self:GetKeyByItemIDAndQuality(itemID, qualityID)
-                print("Saving LastCraftingCost for gear: " .. tostring(recipeData.recipeName) .. " q" .. qualityID .. " key=" .. key)
-                CraftSimDB.lastCraftingCostDB.data[key] = {
-                    cost = expectedCostsPerItem,
-                    timestamp = timestamp,
-                }
-            end
-        end
-    else
-        -- For non-gear, each quality has a different itemID
-        for _, item in ipairs(recipeData.resultData.itemsByQuality) do
-            local itemID = item:GetItemID()
-            if itemID then
-                local key = self:GetKeyByItemID(itemID)
-                print("Saving LastCraftingCost for item: " .. tostring(recipeData.recipeName) .. " itemID=" .. tostring(itemID))
-                CraftSimDB.lastCraftingCostDB.data[key] = {
-                    cost = expectedCostsPerItem,
-                    timestamp = timestamp,
-                }
-            end
-        end
-    end
+    print("Saving LastCraftingCost: " .. tostring(recipeData.recipeName) .. " q" .. tostring(expectedQuality) .. " crafter=" .. crafterUID)
+
+    CraftSimDB.lastCraftingCostDB.data[key] = CraftSimDB.lastCraftingCostDB.data[key] or {}
+    CraftSimDB.lastCraftingCostDB.data[key][crafterUID] = {
+        cost = expectedCostsPerItem,
+        timestamp = timestamp,
+    }
 end
 
---- Get the last crafting cost for an item by itemID (for non-gear items)
+--- Get all crafter entries for a non-gear item.
 ---@param itemID ItemID
----@return CraftSim.LastCraftingCostData?
+---@return table<CrafterUID, CraftSim.LastCraftingCostData>?
 function CraftSim.DB.LAST_CRAFTING_COST:GetByItemID(itemID)
     local key = self:GetKeyByItemID(itemID)
     return CraftSimDB.lastCraftingCostDB.data[key]
 end
 
---- Get the last crafting cost for a gear item by itemID and qualityID
+--- Get all crafter entries for a gear item by itemID and qualityID.
 ---@param itemID ItemID
 ---@param qualityID QualityID
----@return CraftSim.LastCraftingCostData?
+---@return table<CrafterUID, CraftSim.LastCraftingCostData>?
 function CraftSim.DB.LAST_CRAFTING_COST:GetByItemIDAndQuality(itemID, qualityID)
     local key = self:GetKeyByItemIDAndQuality(itemID, qualityID)
     return CraftSimDB.lastCraftingCostDB.data[key]
 end
 
---- Get the last crafting cost from an itemLink.
---- For gear items, the quality is extracted from the itemLink.
---- For non-gear items, the itemID is used as the key.
+--- Get all crafter entries from an itemLink.
+--- For gear items, the qualityID is extracted from the itemLink.
 ---@param itemLink string
----@return CraftSim.LastCraftingCostData?
+---@return table<CrafterUID, CraftSim.LastCraftingCostData>?
 function CraftSim.DB.LAST_CRAFTING_COST:GetByItemLink(itemLink)
     if not itemLink then return nil end
     local itemID = select(1, C_Item.GetItemInfoInstant(itemLink))
@@ -114,11 +111,64 @@ function CraftSim.DB.LAST_CRAFTING_COST:GetByItemLink(itemLink)
 
     local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
     if qualityID and qualityID > 0 then
-        -- Likely a gear item with quality in the link
         local gearData = self:GetByItemIDAndQuality(itemID, qualityID)
         if gearData then return gearData end
     end
 
-    -- Fall back to non-gear lookup by itemID
     return self:GetByItemID(itemID)
+end
+
+--- Find the cheapest crafter entry from a crafter map.
+---@param entries table<CrafterUID, CraftSim.LastCraftingCostData>?
+---@return CrafterUID? cheapestCrafterUID
+---@return number? cheapestCost
+---@return number? cheapestTimestamp
+function CraftSim.DB.LAST_CRAFTING_COST:GetCheapestEntry(entries)
+    if not entries then return nil, nil, nil end
+    local cheapestCrafterUID, cheapestCost, cheapestTimestamp
+    for crafterUID, data in pairs(entries) do
+        if not cheapestCost or data.cost < cheapestCost then
+            cheapestCrafterUID = crafterUID
+            cheapestCost = data.cost
+            cheapestTimestamp = data.timestamp
+        end
+    end
+    return cheapestCrafterUID, cheapestCost, cheapestTimestamp
+end
+
+--- Get the cheapest crafter entry for a non-gear item by itemID.
+---@param itemID ItemID
+---@return CrafterUID? cheapestCrafterUID
+---@return number? cheapestCost
+---@return number? cheapestTimestamp
+function CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemID(itemID)
+    return self:GetCheapestEntry(self:GetByItemID(itemID))
+end
+
+--- Get the cheapest crafter entry for a gear item by itemID and qualityID.
+---@param itemID ItemID
+---@param qualityID QualityID
+---@return CrafterUID? cheapestCrafterUID
+---@return number? cheapestCost
+---@return number? cheapestTimestamp
+function CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemIDAndQuality(itemID, qualityID)
+    return self:GetCheapestEntry(self:GetByItemIDAndQuality(itemID, qualityID))
+end
+
+--- Get the cheapest crafter entry from an itemLink.
+---@param itemLink string
+---@return CrafterUID? cheapestCrafterUID
+---@return number? cheapestCost
+---@return number? cheapestTimestamp
+function CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemLink(itemLink)
+    return self:GetCheapestEntry(self:GetByItemLink(itemLink))
+end
+
+--- Migrations
+
+function CraftSim.DB.LAST_CRAFTING_COST.MIGRATION:M_0_1_Clear_Non_Per_Crafter_Data()
+    -- Old structure: data[key] = {cost, timestamp}
+    -- New structure: data[key][crafterUID] = {cost, timestamp}
+    -- Cannot migrate since old entries have no crafter info - clear all
+    wipe(CraftSimDB.lastCraftingCostDB.data)
 end
