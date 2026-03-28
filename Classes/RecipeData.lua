@@ -1172,12 +1172,23 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
         end,
         continue = function(frameDistributor)
             local concentrationValue = self:GetConcentrationValue()
+            -- Save the pre-upgrade concentration value so we can detect whether a
+            -- bracket-boundary crossing (concentration cost jump) was still beneficial.
+            local lastConcentrationValue = concentrationValue
             local lastProfit = self.averageProfitCached
             local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true)
             local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
 
             local unitsBudget = MAX_UNITS_PER_FRAME
             local performed = 0
+
+            -- Shared helper: apply a reagent quality conversion and update tracking variables.
+            local function applyConversion(upgrade, units)
+                upgrade.reagent.items[upgrade.fromQ].quantity = upgrade.reagent.items[upgrade.fromQ].quantity - units
+                upgrade.reagent.items[upgrade.toQ].quantity   = upgrade.reagent.items[upgrade.toQ].quantity   + units
+                performed       = performed       + units
+                convertedUnits  = convertedUnits  + units
+            end
 
             while unitsBudget > 0 do
                 local best
@@ -1197,12 +1208,21 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local units = math.min(maxUnits, unitsBudget)
                 if units <= 0 then break end
 
-                -- Apply conversion (no Update yet)
-                best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - units
-                best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + units
+                applyConversion(best, units)
                 unitsBudget = unitsBudget - units
-                performed = performed + units
-                convertedUnits = convertedUnits + units
+            end
+
+            -- For simplified quality recipes (Midnight), the greedy pre-upgrade concentration
+            -- value check in the loop above can miss the last beneficial upgrade: each Q1->Q2
+            -- conversion reduces concentration cost, raising the post-upgrade CV above the
+            -- pre-upgrade CV used in the check. When no upgrade passed the pre-upgrade
+            -- threshold, attempt the cheapest available upgrade as a threshold test and let
+            -- the post-check below decide using the actual post-upgrade CV.
+            if performed == 0 and isSimplifiedQualityRecipe then
+                local best = findBestUpgradeSimplified()
+                if best then
+                    applyConversion(best, math.min(best.available, MAX_UNITS_PER_FRAME))
+                end
             end
 
             if performed == 0 then
@@ -1217,7 +1237,20 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true)
             local boughtConcentration = lastConcentrationCost - currentConcentrationCost
             if boughtConcentration <= 0 then
-                frameDistributor:Break()
+                -- Concentration cost increased rather than decreased.  This can happen when
+                -- a skill-bracket boundary is crossed (the concentration curve has upward
+                -- jumps at certain skill thresholds).  Check whether the upgrade still
+                -- improved the overall concentration value (e.g. by enabling a higher output
+                -- quality).  If it did, continue optimising in the new bracket; otherwise
+                -- roll back and stop.
+                concentrationValue = self:GetConcentrationValue()
+                if concentrationValue > lastConcentrationValue then
+                    frameDistributor:Continue()
+                else
+                    self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+                    self:Update()
+                    frameDistributor:Break()
+                end
                 return
             end
             local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
