@@ -369,6 +369,11 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
 
                     table.insert(row.currentResults, recipeData)
 
+                    -- Update last crafting cost DB if option is enabled
+                    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_UPDATE_LAST_CRAFTING_COST") then
+                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                    end
+
                     printS("Continue Scan..")
 
                     frameDistributor:Continue()

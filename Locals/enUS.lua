@@ -421,6 +421,9 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_USE_TSM_RESTOCK = "Use " .. f.bb("TSM") .. " Restock Amount Expression",
         RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD = f.bb("TSM") .. " Sale Rate Threshold: ",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "Autoselect " .. f.bb("Open Profession"),
+        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
+        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
+            " database is updated for each scanned recipe.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
 
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim Top Gear",
@@ -776,6 +779,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "Offset Queue Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after Queue",
+        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
+        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
+            " database is updated for each recipe when queuing craft lists.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("No list selected"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("Select a list to view recipes"),
 
@@ -841,6 +847,10 @@ greater or equal the configured sale rate threshold.
         NODE_DATA_RANK_TEXT = "Rank ",
         NODE_DATA_TOOLTIP = "\n\nTotal Stats from Talent:\n",
         SPECIALIZATION_INFO_TOOLTIP_LABEL = f.l("CraftSim") .. f.white(" Specialization Info:"),
+
+        -- last crafting cost tooltip
+        LAST_CRAFTING_COST_TOOLTIP_LABEL = f.l("CraftSim") .. f.white(" Last Crafting Cost: "),
+        LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.grey("Updated: "),
 
         -- columns
         SOURCE_COLUMN_AH = "AH",

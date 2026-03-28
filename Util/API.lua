@@ -36,3 +36,27 @@ end
 function CraftSimAPI:GetSmartRestockAmount(recipeData)
     return CraftSimTSM:GetSmartRestockAmount(recipeData)
 end
+
+---Get the last recorded average crafting cost for an item.
+---For non-gear items, each quality has its own itemID, so pass the itemID directly.
+---For gear items, the same itemID is shared across qualities - pass either:
+---  - An itemLink (from which the qualityID is extracted), or
+---  - A numeric itemID to look up any stored quality.
+---@param itemIDOrLink number|string itemID (number) or itemLink (string)
+---@return number|nil cost last average crafting cost per item in copper, or nil if not available
+---@return number|nil timestamp unix timestamp of the last update, or nil if not available
+function CraftSimAPI:GetLastCraftingCost(itemIDOrLink)
+    if not CraftSim.DB.LAST_CRAFTING_COST then return nil, nil end
+
+    local data
+    if type(itemIDOrLink) == "number" then
+        data = CraftSim.DB.LAST_CRAFTING_COST:GetByItemID(itemIDOrLink)
+    elseif type(itemIDOrLink) == "string" then
+        data = CraftSim.DB.LAST_CRAFTING_COST:GetByItemLink(itemIDOrLink)
+    end
+
+    if data then
+        return data.cost, data.timestamp
+    end
+    return nil, nil
+end
