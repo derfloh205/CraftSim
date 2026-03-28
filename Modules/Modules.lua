@@ -75,6 +75,28 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
 end
 
+--- Shows recipe-independent modules based on saved options.
+--- Called from ProfessionsFrame OnShow to ensure modules are visible even when
+--- SchematicForm:Init or tab OnClick does not fire (e.g. opening on the Crafting Orders tab).
+function CraftSim.MODULES:ShowRecipeIndependentModules()
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		return
+	end
+
+	CraftSim.CONTROL_PANEL.frame:Show()
+	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
+	CraftSim.RECIPE_SCAN.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN"))
+	CraftSim.CRAFT_LOG.logFrame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG"))
+	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY"))
+	CraftSim.COOLDOWNS.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS"))
+	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(true)
+
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	CraftSim.CRAFTQ.frame.content.queueTab.content.addWorkOrdersButton:SetEnabled(
+		professionInfo and professionInfo.profession and
+		C_TradeSkillUI.IsNearProfessionSpellFocus(professionInfo.profession))
+end
+
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
