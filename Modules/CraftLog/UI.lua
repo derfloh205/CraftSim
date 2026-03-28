@@ -289,7 +289,7 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
             row.itemCountColumn.text = GGUI.Text {
                 parent = row.itemCountColumn, anchorPoints = { { anchorParent = row.itemCountColumn } },
                 scale = 0.9,
-                fixedWidth = 25
+                fixedWidth = 30
             }
 
             row.itemLinkColumn.text = GGUI.Text {
