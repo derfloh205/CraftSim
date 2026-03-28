@@ -27,6 +27,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.PG .. f.bb("Collaborations"),
         f.a .. "- Added " .. f.g("Public Orders") .. " to the queueable work order type",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.a .. "- Updates to Korean Localization",
+        collab("https://github.com/heartwell0710"),
         newP("23.1.0"),
         f.PG .. f.bb("CraftLists"),
         f.a .. "- " .. f.bb("RecipeScan") .. " integration for " .. f.bb("Craft Lists") .. " added",
