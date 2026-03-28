@@ -23,6 +23,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.1.1"),
+        f.PG .. f.bb("Collaborations"),
+        f.a .. "- Added " .. f.g("Public Orders") .. " to the queueable work order type",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("23.1.0"),
         f.PG .. f.bb("CraftLists"),
         f.a .. "- " .. f.bb("RecipeScan") .. " integration for " .. f.bb("Craft Lists") .. " added",
