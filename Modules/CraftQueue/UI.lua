@@ -714,6 +714,13 @@ function CraftSim.CRAFTQ.UI:Init()
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS", not value)
                     end)
 
+                    orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_PUBLIC_ORDERS_BUTTON"), function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS", not value)
+                    end)
+
                     local guildOrderOptions = rootDescription:CreateButton(L("CRAFT_QUEUE_GUILD_ORDERS_BUTTON"))
                     local altCharsOnlyGuild = guildOrderOptions:CreateCheckbox(L("CRAFT_QUEUE_GUILD_ORDERS_ALTS_ONLY_CHECKBOX"),
                         function()
@@ -722,6 +729,34 @@ function CraftSim.CRAFTQ.UI:Init()
                             local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY")
                             CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY", not value)
                         end)
+
+                    local publicOrderOptions = rootDescription:CreateButton(L("CRAFT_QUEUE_PUBLIC_ORDERS_BUTTON"))
+
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(publicOrderOptions, function(frame)
+                        frame.label = GGUI.Text {
+                            parent = frame,
+                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = L("CRAFT_QUEUE_PUBLIC_ORDERS_MAX_COUNT"),
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        }
+                        frame.input = GGUI.NumericInput {
+                            parent = frame, anchorParent = frame,
+                            sizeX = 30, sizeY = 25, offsetX = 5,
+                            anchorA = "RIGHT", anchorB = "RIGHT",
+                            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT"),
+                            borderAdjustWidth = 1.32,
+                            minValue = 0,
+                            tooltipOptions = {
+                                anchor = "ANCHOR_TOP",
+                                owner = frame,
+                                text = f.white(L("CRAFT_QUEUE_PUBLIC_ORDERS_MAX_COUNT_TOOLTIP")),
+                            },
+                            onNumberValidCallback = function(input)
+                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT",
+                                    tonumber(input.currentValue) or 0)
+                            end,
+                        }
+                    end, 210, 25, "CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT_INPUT")
 
                     local patronOrderOptions = rootDescription:CreateButton(L("CRAFT_QUEUE_PATRON_ORDERS_BUTTON"))
 
