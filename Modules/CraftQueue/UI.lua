@@ -3012,7 +3012,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.orderData then
         upCraftText = upCraftText .. " " .. CraftSim.UTIL:GetOrderTypeText(recipeData.orderData.orderType)
     end
-    recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
+    local firstCraftText = ""
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+        firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
+    end
+    recipeColumn.text:SetText(recipeData.recipeName .. upCraftText .. firstCraftText)
 
     resultColumn.icon:SetItem(recipeData.resultData.expectedItem)
 
@@ -3071,6 +3075,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         end
     end
 
+    local firstCraftRewardLine = ""
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+        firstCraftRewardLine = "\n- " .. CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 20, 20) .. " First Craft"
+    end
+
     -- if we got npcOrderRewards than we need to delay the tooltip display data
 
     local tooltipHeader = recipeData:GetFormattedCrafterText(true, true, 20, 20) ..
@@ -3122,6 +3131,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 end
             end
 
+            craftOrderInfoText = craftOrderInfoText .. firstCraftRewardLine
+
             row.tooltipOptions = {
                 text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                         craftQueueItem.recipeData:GetCrafterUID()) ..
@@ -3131,6 +3142,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             }
         end)
     else
+        if firstCraftRewardLine ~= "" then
+            craftOrderInfoText = craftOrderInfoText .. "\nRewards:" .. firstCraftRewardLine
+        end
         row.tooltipOptions = {
             text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
                     craftQueueItem.recipeData:GetCrafterUID()) ..

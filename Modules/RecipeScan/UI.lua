@@ -32,6 +32,10 @@ end
 local function BuildRecipeTooltipText(recipeData, recipeLists)
     local crafterUID = recipeData:GetCrafterUID()
     local tooltipText = recipeData.reagentData:GetTooltipText(1, crafterUID)
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+        tooltipText = tooltipText .. "\nRewards:\n- " ..
+            CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 20, 20) .. " First Craft"
+    end
     if #recipeLists > 0 then
         local listNames = GUTIL:Map(recipeLists, function(list) return "  - " .. list.name end)
         tooltipText = tooltipText .. "\n\n" .. L("RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER") ..
@@ -1155,7 +1159,12 @@ function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
         cooldownInfoText = " " .. timeIcon .. "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
     end
 
-    recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
+    local firstCraftInfoText = ""
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+        firstCraftInfoText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
+    end
+
+    recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText .. firstCraftInfoText)
 
     resultRow.tooltipOptions = {
         text = BuildRecipeTooltipText(recipeData, recipeLists),
@@ -1203,6 +1212,11 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                     "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
             end
 
+            local firstCraftInfoText = ""
+            if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+                firstCraftInfoText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
+            end
+
             local isFavorite = CraftSim.DB.CRAFTER:IsFavorite(recipeData.recipeID, recipeData:GetCrafterUID(),
                 recipeData.professionData.professionInfo.profession)
 
@@ -1210,7 +1224,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             local recipeLists = GetCraftListsForRecipe(recipeData)
 
             recipeColumn.text:SetText(recipeRarity.hex ..
-                recipeData.recipeName .. "|r" .. cooldownInfoText)
+                recipeData.recipeName .. "|r" .. cooldownInfoText .. firstCraftInfoText)
 
             learnedColumn:SetLearned(recipeData.learned, isFavorite)
 
