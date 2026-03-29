@@ -160,20 +160,20 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             {
                 label = L("RECIPE_SCAN_RECIPE_HEADER"),
-                width = 210,
+                width = 180,
             },
             {
                 label = L("RECIPE_SCAN_RESULT_HEADER"),
-                width = 60,
+                width = 80,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
                 label = L("RECIPE_SCAN_AVERAGE_PROFIT_HEADER"),
-                width = 100,
+                width = 120,
             },
             {
                 label = L("CRAFT_QUEUE_CRAFTING_COSTS_HEADER"),
-                width = 80,
+                width = 110,
                 justifyOptions = { type = "H", align = "RIGHT" }
             },
             {
@@ -183,7 +183,7 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             {
                 label = L("CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER"),
-                width = 50,
+                width = 20,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
@@ -198,7 +198,7 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             {
                 label = L("CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER"), -- Status
-                width = 50,
+                width = 20,
                 justifyOptions = { type = "H", align = "CENTER" },
                 tooltipOptions = {
                     ---@diagnostic disable-next-line: assign-type-mismatch
@@ -359,7 +359,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 resultColumn.rewardText = GGUI.Text {
                     parent = resultColumn,
                     anchorParent = resultColumn,
-                    scale = 0.9,
+                    scale = 1.2,
                 }
 
                 ---@type GGUI.Text | GGUI.Widget
