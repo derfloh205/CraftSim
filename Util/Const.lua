@@ -918,6 +918,7 @@ CraftSim.CONST.BUTTON_TEXTURE_OPTIONS = {
 }
 
 CraftSim.CONST.CONCENTRATION_ICON = 5747318
+CraftSim.CONST.FIRST_CRAFT_KP_ICON = "Professions_Icon_FirstTimeCraft"
 
 ---@type table<Enum.Profession, string>
 CraftSim.CONST.PROFESSION_ICONS = {
