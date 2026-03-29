@@ -160,20 +160,20 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             {
                 label = L("RECIPE_SCAN_RECIPE_HEADER"),
-                width = 150,
+                width = 210,
             },
             {
                 label = L("RECIPE_SCAN_RESULT_HEADER"),
-                width = 50,
+                width = 60,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
                 label = L("RECIPE_SCAN_AVERAGE_PROFIT_HEADER"),
-                width = 120,
+                width = 100,
             },
             {
                 label = L("CRAFT_QUEUE_CRAFTING_COSTS_HEADER"),
-                width = 130,
+                width = 80,
                 justifyOptions = { type = "H", align = "RIGHT" }
             },
             {
@@ -354,6 +354,12 @@ function CraftSim.CRAFTQ.UI:Init()
                     qualityIconScale = 1.2,
                     sizeX = iconSize,
                     sizeY = iconSize,
+                }
+
+                resultColumn.rewardText = GGUI.Text {
+                    parent = resultColumn,
+                    anchorParent = resultColumn,
+                    scale = 0.9,
                 }
 
                 ---@type GGUI.Text | GGUI.Widget
@@ -3018,7 +3024,37 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText .. firstCraftText)
 
-    resultColumn.icon:SetItem(recipeData.resultData.expectedItem)
+    if recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc and recipeData.orderData.npcOrderRewards then
+        resultColumn.icon.frame:Hide()
+        local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
+            return {
+                count = reward.count,
+                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+                currency = reward.currencyType,
+            }
+        end)
+        GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(r) return r.item end), function()
+            local iconParts = {}
+            for _, reward in ipairs(rewardItems) do
+                if reward.currency then
+                    local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
+                    if currencyInfo then
+                        tinsert(iconParts, GUTIL:IconToText(currencyInfo.icon, 16, 16))
+                    end
+                elseif reward.item then
+                    tinsert(iconParts, GUTIL:IconToText(reward.item:GetItemIcon(), 16, 16))
+                end
+            end
+            if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+                tinsert(iconParts, CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 16, 16))
+            end
+            resultColumn.rewardText:SetText(table.concat(iconParts, ""))
+        end)
+    else
+        resultColumn.icon.frame:Show()
+        resultColumn.icon:SetItem(recipeData.resultData.expectedItem)
+        resultColumn.rewardText:SetText("")
+    end
 
     if craftQueueItem.recipeData:IsSubRecipe() then
         averageProfitColumn.text:SetText(f.g("-"))
