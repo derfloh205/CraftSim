@@ -96,6 +96,11 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     -- TSM Enhanced: expected deposit cost (0 when disabled or TSM not loaded)
     local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
 
+    local firstCraftKPBonus = 0
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
+        firstCraftKPBonus = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST") or 0
+    end
+
     if not recipeData.supportsCraftingStats then
         local resultItemPrice = priceData.qualityPriceList[1] or 0
         local resultItem = recipeData.resultData.itemsByQuality[1]
@@ -106,7 +111,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         else
             resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
         end
-        local profit = resultValue - priceData.craftingCosts - expectedDeposit
+        local profit = resultValue - priceData.craftingCosts - expectedDeposit + firstCraftKPBonus
 
         local probabilityTable = { { chance = 1, profit = profit } }
         return profit, probabilityTable
@@ -193,7 +198,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("Probability Sum: " .. tostring(probabilitySum))
         print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
-        return expectedProfit, probabilityTable
+        return expectedProfit + firstCraftKPBonus, probabilityTable
     elseif not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
         -- no insp no hsv
         local resChance = professionStats.resourcefulness:GetPercent(true)
@@ -249,7 +254,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("Probability Sum: " .. tostring(probabilitySum))
         print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
-        return expectedProfit, probabilityTable
+        return expectedProfit + firstCraftKPBonus, probabilityTable
     elseif not recipeData.supportsResourcefulness then
         -- before having a salvage item allocated in prospecting e.g.
         print("recipe does not support anything?")
