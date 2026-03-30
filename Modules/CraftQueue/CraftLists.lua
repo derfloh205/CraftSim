@@ -14,8 +14,8 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
 
 --- Returns a sort-priority comparator for smart cooldown / soulbound triage.
 --- Concentrating recipes always outrank non-concentrating ones.
---- Among items with the same concentration status, sort by concentration value
---- (profit-per-concentration-point) when concentrating, or by average profit otherwise.
+--- Among concentrating items, sort by concentration value (from GetConcentrationValue()).
+--- Among non-concentrating items, sort by average profit.
 ---@param a CraftSim.CraftQueueItem
 ---@param b CraftSim.CraftQueueItem
 ---@return boolean aBeforeB
@@ -25,10 +25,8 @@ local function sortBySmartPriority(a, b)
         return aRd.concentrating -- true sorts before false
     end
     if aRd.concentrating then
-        local aCost = math.max(aRd.concentrationCost or 0, 1)
-        local bCost = math.max(bRd.concentrationCost or 0, 1)
-        local aVal = (aRd.averageProfitCached or 0) / aCost
-        local bVal = (bRd.averageProfitCached or 0) / bCost
+        local aVal = aRd:GetConcentrationValue()
+        local bVal = bRd:GetConcentrationValue()
         return aVal > bVal
     else
         return (aRd.averageProfitCached or 0) > (bRd.averageProfitCached or 0)
