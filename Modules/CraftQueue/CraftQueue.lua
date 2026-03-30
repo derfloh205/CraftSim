@@ -183,7 +183,10 @@ end
 function CraftSim.CRAFTQ:QueueWorkOrders()
     local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.QueueWorkOrders")
     print("QueueWorkOrders", false, true)
-    local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
+    if not profession or not CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton() then
+        return
+    end
     local normalizedRealmName = GetNormalizedRealmName()
     local realmName = GetRealmName()
     local cleanedCrafterUIDs = GUTIL:Map(CraftSim.DB.CRAFTER:GetCrafterUIDs(), function(crafterUID)
@@ -199,19 +202,18 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS") and Enum.CraftingOrderType.Personal,
         CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS") and Enum.CraftingOrderType.Public,
     }
-    if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
-        local queueWorkOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
-            .addWorkOrdersButton --[[@as GGUI.Button]]
+    local queueWorkOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
+        .addWorkOrdersButton --[[@as GGUI.Button]]
 
-        queueWorkOrdersButton:SetEnabled(false)
+    queueWorkOrdersButton:SetEnabled(false)
 
-        GUTIL.FrameDistributor {
+    GUTIL.FrameDistributor {
             iterationTable = workOrderTypes,
             iterationsPerFrame = 1,
             maxIterations = 10,
             finally = function()
                 queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
-                queueWorkOrdersButton:SetEnabled(true)
+                queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
             end,
             continue = function(frameDistributor, _, workOrderType, _, progress)
                 local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
@@ -464,7 +466,6 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 C_CraftingOrders.RequestCrafterOrders(request)
             end
         }:Continue()
-    end
 end
 
 function CraftSim.CRAFTQ:InitializeCraftQueue()
@@ -506,7 +507,10 @@ end
 function CraftSim.CRAFTQ:QueueFavorites()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
-    local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
+    if not profession then
+        return
+    end
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     local favoriteRecipeIDs = CraftSim.DB.CRAFTER:GetFavoriteRecipes(crafterUID, profession)
     local bothMainProfessions = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_QUEUE_MAIN_PROFESSIONS")
