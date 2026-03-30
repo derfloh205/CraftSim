@@ -50,7 +50,14 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_HEADER"))
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL"), costText)
             if crafterUID then
-                tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"), f.grey(crafterUID))
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local crafterText
+                if crafterClass then
+                    crafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
+                else
+                    crafterText = f.grey(crafterUID)
+                end
+                tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"), crafterText)
             end
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED"), f.grey(timeText))
             tooltip:Show()
