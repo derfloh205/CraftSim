@@ -20,6 +20,9 @@ local SHATTER_MOTE_SELECTION_MODE = {
 local CRAFT_QUEUE_RESULT_ICON_SIZE = 18
 local CRAFT_QUEUE_RESULT_ICON_SPACING = 2
 local CRAFT_QUEUE_RESULT_ICON_SLOTS = 6
+--- Result column: three icons + two gaps + small side padding (no extra dead space)
+local CRAFT_QUEUE_RESULT_COLUMN_WIDTH =
+    CRAFT_QUEUE_RESULT_ICON_SIZE * 3 + CRAFT_QUEUE_RESULT_ICON_SPACING * 2 + 16
 
 ---@class CraftSim.CraftQueue.ResultColumnEntry
 ---@field kind "item"|"currency"|"firstcraft"
@@ -241,7 +244,7 @@ end
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
 function CraftSim.CRAFTQ.UI:Init()
-    local sizeX = 880
+    local sizeX = 900
     local sizeY = 420
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
@@ -382,11 +385,11 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             {
                 label = L("RECIPE_SCAN_RECIPE_HEADER"),
-                width = 180,
+                width = 260,
             },
             {
                 label = L("RECIPE_SCAN_RESULT_HEADER"),
-                width = 80,
+                width = CRAFT_QUEUE_RESULT_COLUMN_WIDTH,
                 justifyOptions = { type = "H", align = "CENTER" },
             },
             {
