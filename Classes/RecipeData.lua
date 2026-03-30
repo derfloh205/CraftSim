@@ -1094,7 +1094,9 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
     end
     local convertedUnits = 0
 
-    -- Helper to compute best upgrade (single unit) each selection
+    -- Helper to compute best upgrade (single unit) each selection for 3-tier (non-simplified) recipes.
+    -- Uses marginal slope approximation (1-skill-point delta) which is acceptable for 3-tier recipes
+    -- where per-unit skill deltas are small.
     local function findBestUpgrade()
         local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
         local best
@@ -1134,23 +1136,40 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
         return best
     end
 
-    local function findBestUpgradeSimplified()
-        local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
+    -- For simplified (Q1/Q2-only, e.g. Midnight) recipes: find the best single-unit upgrade using the
+    -- ACTUAL concentration cost reduction C(virtualSkill) - C(virtualSkill + deltaSkill) rather than
+    -- the 1-point marginal slope.  This correctly handles concentration-curve threshold crossings.
+    ---@param virtualSkill number current skill including any pending (not-yet-Updated) upgrades
+    local function findBestUpgradeSimplifiedActual(virtualSkill)
+        local currentConcCost = self:GetConcentrationCostForSkill(virtualSkill, true)
         local best
         for _, reagent in ipairs(qualityReagents) do
-            -- Q1->Q2
             local q1 = reagent.items[1].quantity
             if q1 > 0 then
                 local itemID1 = reagent.items[1].item:GetItemID()
                 local itemID2 = reagent.items[2].item:GetItemID()
-                local price1 = self.priceData.reagentPriceInfos[itemID1].itemPrice
-                local price2 = self.priceData.reagentPriceInfos[itemID2].itemPrice
-                local skill1 = skillContributionMap[itemID1]
-                local skill2 = skillContributionMap[itemID2]
-                local costPerSkill = (price2 - price1) / (skill2 - skill1)
-                local costPerConcPoint = costPerSkill * skillPerConcentrationPoint
-                if not best or costPerConcPoint < best.costPerConcPoint then
-                    best = { reagent = reagent, fromQ = 1, toQ = 2, costPerConcPoint = costPerConcPoint, available = q1 }
+                -- skill added per unit when at Q2 (Q1 contributes 0 in simplified recipes)
+                local deltaSkill = skillContributionMap[itemID2]
+                if deltaSkill and deltaSkill > 0 then
+                    -- Compute the real concentration-cost drop for upgrading one unit
+                    local newConcCost = self:GetConcentrationCostForSkill(virtualSkill + deltaSkill, true)
+                    local actualConcReduction = currentConcCost - newConcCost
+                    if actualConcReduction > 0 then
+                        local price1 = self.priceData.reagentPriceInfos[itemID1].itemPrice
+                        local price2 = self.priceData.reagentPriceInfos[itemID2].itemPrice
+                        local deltaCost = price2 - price1
+                        local costPerConcPoint = deltaCost / actualConcReduction
+                        if not best or costPerConcPoint < best.costPerConcPoint then
+                            best = {
+                                reagent = reagent,
+                                fromQ = 1,
+                                toQ = 2,
+                                costPerConcPoint = costPerConcPoint,
+                                deltaSkill = deltaSkill,
+                                deltaCost = deltaCost,
+                            }
+                        end
+                    end
                 end
             end
         end
@@ -1179,30 +1198,78 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local unitsBudget = MAX_UNITS_PER_FRAME
             local performed = 0
 
-            while unitsBudget > 0 do
-                local best
-                if isSimplifiedQualityRecipe then
-                    best = findBestUpgradeSimplified()
-                else
-                    best = findBestUpgrade()
-                end
-                if not best then break end
-                if best.costPerConcPoint >= concentrationValue then break end
+            if isSimplifiedQualityRecipe then
+                -- Refactored algorithm for simplified (Q1/Q2) recipes.
+                --
+                -- Key differences vs. the old approach:
+                --  1. Uses actual concentration-cost reduction per unit (handles curve thresholds).
+                --  2. Tracks virtualSkill so that each intra-frame iteration sees the correct skill
+                --     level without needing an expensive self:Update() call.
+                --  3. Tracks the virtual concentration value (virtualCV) so the stopping condition
+                --     uses the profit and cost state after all pending upgrades, not the stale
+                --     value from the last Update().
 
-                local maxUnits = best.available
-                if best.toQ == 3 and best.space then
-                    maxUnits = math.min(maxUnits, best.space)
-                end
-                -- Limit units by remaining frame budget
-                local units = math.min(maxUnits, unitsBudget)
-                if units <= 0 then break end
+                local virtualSkill = self.professionStats.skill.value
+                local ingenuityChance = self.professionStats.ingenuity:GetPercent(true)
+                -- 0.5 is the base 50% concentration refund; GetExtraValue() is the bonus from specs/gear
+                local ingenuityRefund = 0.5 + self.professionStats.ingenuity:GetExtraValue()
+                -- Effective concentration-cost multiplier (constant within a frame because ingenuity
+                -- stats only change with gear/spec updates, not required-reagent quality changes)
+                local ingenuityFactor = 1 - ingenuityChance * ingenuityRefund
 
-                -- Apply conversion (no Update yet)
-                best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - units
-                best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + units
-                unitsBudget = unitsBudget - units
-                performed = performed + units
-                convertedUnits = convertedUnits + units
+                -- Recover profit-when-concentrating at the start of this frame by inverting
+                -- the concentrationValue formula:
+                --   concentrationValue = profitConc / (lastConcCost * ingenuityFactor)
+                --   => profitConc = concentrationValue * lastConcCost * ingenuityFactor
+                -- Note: if concentrationValue is 0 the recipe is not worth concentrating;
+                -- all upgrades will fail the virtualCV check below and we break immediately.
+                local virtualProfitConc = concentrationValue * (lastConcentrationCost * ingenuityFactor)
+                local accumulatedDeltaCost = 0
+
+                while unitsBudget > 0 do
+                    -- Recompute virtual concentration value at the current virtual state
+                    local virtualConcCost = self:GetConcentrationCostForSkill(virtualSkill, true) * ingenuityFactor
+                    -- Guard against division by zero; a zero or negative effective cost means
+                    -- concentration is essentially free at this skill level and no upgrade is needed
+                    if virtualConcCost <= 0 then break end
+                    local virtualCV = (virtualProfitConc - accumulatedDeltaCost) / virtualConcCost
+
+                    -- Find the best single-unit upgrade using actual concentration-cost changes
+                    local best = findBestUpgradeSimplifiedActual(virtualSkill)
+                    if not best then break end
+                    if best.costPerConcPoint >= virtualCV then break end
+
+                    -- Apply ONE unit upgrade (no Update() yet)
+                    best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - 1
+                    best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + 1
+                    virtualSkill = virtualSkill + best.deltaSkill
+                    accumulatedDeltaCost = accumulatedDeltaCost + best.deltaCost
+                    unitsBudget = unitsBudget - 1
+                    performed = performed + 1
+                    convertedUnits = convertedUnits + 1
+                end
+            else
+                -- Existing algorithm for non-simplified (3-tier Q1/Q2/Q3) recipes
+                while unitsBudget > 0 do
+                    local best = findBestUpgrade()
+                    if not best then break end
+                    if best.costPerConcPoint >= concentrationValue then break end
+
+                    local maxUnits = best.available
+                    if best.toQ == 3 and best.space then
+                        maxUnits = math.min(maxUnits, best.space)
+                    end
+                    -- Limit units by remaining frame budget
+                    local units = math.min(maxUnits, unitsBudget)
+                    if units <= 0 then break end
+
+                    -- Apply conversion (no Update yet)
+                    best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - units
+                    best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + units
+                    unitsBudget = unitsBudget - units
+                    performed = performed + units
+                    convertedUnits = convertedUnits + units
+                end
             end
 
             if performed == 0 then
@@ -1236,20 +1303,28 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             end
 
             -- Continue if further profitable upgrades exist
-            local probe
-            if isSimplifiedQualityRecipe then
-                probe = findBestUpgradeSimplified()
-            else
-                probe = findBestUpgrade()
-            end
-            if not probe then
-                frameDistributor:Break()
-                return
-            end
             concentrationValue = self:GetConcentrationValue()
-            if probe.costPerConcPoint >= concentrationValue then
-                frameDistributor:Break()
-                return
+            if isSimplifiedQualityRecipe then
+                local currentSkill = self.professionStats.skill.value
+                local probe = findBestUpgradeSimplifiedActual(currentSkill)
+                if not probe then
+                    frameDistributor:Break()
+                    return
+                end
+                if probe.costPerConcPoint >= concentrationValue then
+                    frameDistributor:Break()
+                    return
+                end
+            else
+                local probe = findBestUpgrade()
+                if not probe then
+                    frameDistributor:Break()
+                    return
+                end
+                if probe.costPerConcPoint >= concentrationValue then
+                    frameDistributor:Break()
+                    return
+                end
             end
             frameDistributor:Continue()
         end
