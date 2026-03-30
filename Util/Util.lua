@@ -509,9 +509,10 @@ end
 ---@param copperValue number
 ---@param useColor? boolean -- colors the numbers green if positive and red if negative
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
-function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
+---@param showCopper? boolean -- whether to show copper value false by default
+function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo, showCopper)
     return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, true,
-        CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
+        CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"), showCopper)
 end
 
 --- Returns true if the item is grey/poor quality (cannot be sold on AH, vendor-only)
