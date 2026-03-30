@@ -12,6 +12,118 @@ CraftSim.CRAFT_LISTS = {}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
 
+--- Returns a sort-priority comparator for smart cooldown / soulbound triage.
+--- Concentrating recipes always outrank non-concentrating ones.
+--- Among items with the same concentration status, sort by concentration value
+--- (profit-per-concentration-point) when concentrating, or by average profit otherwise.
+---@param a CraftSim.CraftQueueItem
+---@param b CraftSim.CraftQueueItem
+---@return boolean aBeforeB
+local function sortBySmartPriority(a, b)
+    local aRd, bRd = a.recipeData, b.recipeData
+    if aRd.concentrating ~= bRd.concentrating then
+        return aRd.concentrating -- true sorts before false
+    end
+    if aRd.concentrating then
+        local aCost = math.max(aRd.concentrationCost or 0, 1)
+        local bCost = math.max(bRd.concentrationCost or 0, 1)
+        local aVal = (aRd.averageProfitCached or 0) / aCost
+        local bVal = (bRd.averageProfitCached or 0) / bCost
+        return aVal > bVal
+    else
+        return (aRd.averageProfitCached or 0) > (bRd.averageProfitCached or 0)
+    end
+end
+
+--- After all lists have been queued, apply smart triage so that cooldown charges
+--- and limited soulbound finishing reagents are assigned to the highest-value
+--- queue entries first (concentration crafts take priority, then by value).
+--- Entries that receive zero allocation are removed from the queue.
+function CraftSim.CRAFT_LISTS:ApplySmartQueueing()
+    local craftQueue = CraftSim.CRAFTQ.craftQueue
+    if not craftQueue then return end
+
+    -- ── Smart Cooldown Queueing ──────────────────────────────────────────────
+    -- Group cooldown-recipe CQIs by crafterUID:recipeID (ignoring craftListID).
+    ---@type table<string, CraftSim.CraftQueueItem[]>
+    local cooldownGroups = {}
+    for _, cqi in ipairs(craftQueue.craftQueueItems) do
+        if cqi.recipeData.cooldownData.isCooldownRecipe then
+            local key = cqi.recipeData:GetCrafterUID() .. ":" .. cqi.recipeData.recipeID
+            cooldownGroups[key] = cooldownGroups[key] or {}
+            tinsert(cooldownGroups[key], cqi)
+        end
+    end
+
+    local toRemove = {}
+    for _, group in pairs(cooldownGroups) do
+        if #group > 1 then
+            -- Determine available charges from the first item (all share the same recipe)
+            local availableCharges = group[1].recipeData.cooldownData:GetCurrentCharges() or 0
+            table.sort(group, sortBySmartPriority)
+            for _, cqi in ipairs(group) do
+                if availableCharges <= 0 then
+                    tinsert(toRemove, cqi)
+                else
+                    local assigned = math.min(cqi.amount, availableCharges)
+                    availableCharges = availableCharges - assigned
+                    if assigned == 0 then
+                        tinsert(toRemove, cqi)
+                    else
+                        cqi.amount = assigned
+                    end
+                end
+            end
+        end
+    end
+
+    -- ── Smart Soulbound Finisher Queueing ────────────────────────────────────
+    -- Group CQIs that use a soulbound finishing reagent by crafterUID:recipeID:itemID.
+    ---@type table<string, {items: CraftSim.CraftQueueItem[], perCraft: number, owned: number}>
+    local soulboundGroups = {}
+    for _, cqi in ipairs(craftQueue.craftQueueItems) do
+        local sbItemID, perCraft = cqi.recipeData:GetSoulboundFinishingReagentInfo()
+        if sbItemID then
+            local crafterUID = cqi.recipeData:GetCrafterUID()
+            local key = crafterUID .. ":" .. cqi.recipeData.recipeID .. ":" .. sbItemID
+            if not soulboundGroups[key] then
+                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, sbItemID, true) or 0
+                soulboundGroups[key] = { items = {}, perCraft = perCraft or 1, owned = owned }
+            end
+            tinsert(soulboundGroups[key].items, cqi)
+        end
+    end
+
+    for _, group in pairs(soulboundGroups) do
+        if #group.items > 1 then
+            local availableSoulbound = math.floor(group.owned / group.perCraft)
+            table.sort(group.items, sortBySmartPriority)
+            for _, cqi in ipairs(group.items) do
+                if availableSoulbound <= 0 then
+                    tinsert(toRemove, cqi)
+                else
+                    local assigned = math.min(cqi.amount, availableSoulbound)
+                    availableSoulbound = availableSoulbound - assigned
+                    if assigned == 0 then
+                        tinsert(toRemove, cqi)
+                    else
+                        cqi.amount = assigned
+                    end
+                end
+            end
+        end
+    end
+
+    -- Perform removals (deduplicated to avoid double-removal crashes)
+    local removed = {}
+    for _, cqi in ipairs(toRemove) do
+        if not removed[cqi] then
+            removed[cqi] = true
+            craftQueue:Remove(cqi)
+        end
+    end
+end
+
 --- Queue all craft lists that are selected for queue by the current character
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
@@ -39,6 +151,8 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     end
 
     local function finishQueue()
+        -- Triage cooldown charges and soulbound finishing reagents across all queued lists
+        CraftSim.CRAFT_LISTS:ApplySmartQueueing()
         if queueListsButton then
             queueListsButton:SetStatus("Ready")
         end
