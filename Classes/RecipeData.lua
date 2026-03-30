@@ -8,6 +8,7 @@ local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
+local printOC = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.OptimizeConcentration")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
@@ -1065,8 +1066,6 @@ end
 ---@param options CraftSim.RecipeData.OptimizeConcentration.Options?
 function CraftSim.RecipeData:OptimizeConcentration(options)
     options = options or {}
-
-    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.OptimizeConcentration")
     -- for each reagent, find its lowest "quality upgrade" costs per skill point
 
     if not self.supportsQualities then return end
@@ -1159,7 +1158,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
 
-    local MAX_UNITS_PER_FRAME = 40
+    local MAX_UNITS_PER_FRAME = 1
 
     GUTIL.FrameDistributor {
         maxIterations = 1500,
@@ -1170,7 +1169,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             end
             CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
         end,
-        continue = function(frameDistributor)
+        continue = function(frameDistributor, key, value, currentIteration)
             local concentrationValue = self:GetConcentrationValue()
             -- Save the pre-upgrade concentration value so we can detect whether a
             -- bracket-boundary crossing (concentration cost jump) was still beneficial.
@@ -1179,8 +1178,15 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true)
             local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
 
+            local function Rollback()
+                self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+                self:Update()
+            end
+
             local unitsBudget = MAX_UNITS_PER_FRAME
             local performed = 0
+
+            printOC("Starting Concentration Optimization Iteration #" .. currentIteration)
 
             -- Shared helper: apply a reagent quality conversion and update tracking variables.
             local function applyConversion(upgrade, units)
@@ -1194,6 +1200,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local best
                 if isSimplifiedQualityRecipe then
                     best = findBestUpgradeSimplified()
+                    CraftSim.DEBUG:InspectTable(best, "Best Upgrade Simplified #" .. currentIteration)
                 else
                     best = findBestUpgrade()
                 end
@@ -1208,6 +1215,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local units = math.min(maxUnits, unitsBudget)
                 if units <= 0 then break end
 
+                printOC("- Converting " .. math.min(best.available, MAX_UNITS_PER_FRAME) .. " x " .. best.reagent.items[1].item:GetItemLink())
                 applyConversion(best, units)
                 unitsBudget = unitsBudget - units
             end
@@ -1221,11 +1229,13 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             if performed == 0 and isSimplifiedQualityRecipe then
                 local best = findBestUpgradeSimplified()
                 if best then
+                    printOC("- No upgrades passed pre-upgrade CV check, testing cheapest upgrade anyway")
                     applyConversion(best, math.min(best.available, MAX_UNITS_PER_FRAME))
                 end
             end
 
             if performed == 0 then
+                printOC("- No beneficial upgrades found, ending optimization")
                 frameDistributor:Break()
                 return
             end
@@ -1247,19 +1257,19 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 if concentrationValue > lastConcentrationValue then
                     frameDistributor:Continue()
                 else
-                    self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
-                    self:Update()
+                    printOC("- Upgrade crossed a concentration bracket boundary but did not improve concentration value, rolling back")
+                    Rollback()
                     frameDistributor:Break()
                 end
                 return
             end
             local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
             local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
+            printOC("- Bought " .. boughtConcentration .. " concentration for: " .. CraftSim.UTIL:FormatMoney(averageConcentrationBuyPrice) .. " per point")
             concentrationValue = self:GetConcentrationValue()
-            if averageConcentrationBuyPrice >= concentrationValue then
-                -- rollback
-                self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
-                self:Update()
+            if averageConcentrationBuyPrice >= concentrationValue and boughtConcentration < 1 then
+                printOC("- Average concentration buy price exceeded concentration value, rolling back")
+                Rollback()
                 frameDistributor:Break()
                 return
             end
@@ -1276,11 +1286,14 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 probe = findBestUpgrade()
             end
             if not probe then
+                printOC("- No further upgrades available, ending optimization")
                 frameDistributor:Break()
                 return
             end
             concentrationValue = self:GetConcentrationValue()
             if probe.costPerConcPoint >= concentrationValue then
+                printOC("- No further upgrades below concentration value, ending optimization")
+                CraftSim.DEBUG:InspectTable(probe, "Best Remaining Upgrade")
                 frameDistributor:Break()
                 return
             end
@@ -1289,6 +1302,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
     }:Continue()
 
     -- recipe should now be optimized
+    printOC("- Recipe optimization complete")
 end
 
 ---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
