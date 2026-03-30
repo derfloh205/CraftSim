@@ -101,72 +101,67 @@ local function ApplyResultColumnEntries(resultColumn, entries)
     end
 end
 
+--- Only wrong profession gear slots; empty string if all match or equippedSet is nil.
 ---@param professionGearSet CraftSim.ProfessionGearSet
 ---@param equippedSet CraftSim.ProfessionGearSet?
----@return string
-local function GetCraftQueueProfessionToolsTooltipText(professionGearSet, equippedSet)
-    local tooltipText = ""
+---@return string suffix (includes leading newlines and header when non-empty)
+local function GetCraftQueueWrongProfessionToolsTooltipBlock(professionGearSet, equippedSet)
+    if not equippedSet then
+        return ""
+    end
     local toolIconSize = 18
-    local equipStatusIconSize = 13
+    local markSize = 13
+    local cross = CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.CROSS, markSize, markSize) .. " "
     local emptySlotIcon = GUTIL:IconToText(CraftSim.CONST.EMPTY_SLOT_TEXTURE, toolIconSize, toolIconSize)
+    ---@type string[]
+    local lines = {}
 
-    local function equipLinePrefix(slot)
-        if not equippedSet then
-            return ""
+    ---@param slot "gear1"|"gear2"|"tool"
+    local function appendLineIfWrong(slot)
+        if professionGearSet:ExpectedSlotMatchesEquipped(slot, equippedSet) then
+            return
         end
-        local ok = professionGearSet:ExpectedSlotMatchesEquipped(slot, equippedSet)
-        local atlas = ok and CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK or CraftSim.CONST.ATLAS_TEXTURES.CROSS
-        return CreateAtlasMarkup(atlas, equipStatusIconSize, equipStatusIconSize) .. " "
+        local gear = slot == "gear1" and professionGearSet.gear1 or slot == "gear2" and professionGearSet.gear2 or
+            professionGearSet.tool
+        if not gear then
+            return
+        end
+        local item = gear.item
+        if item then
+            local statText = ""
+            if slot == "tool" then
+                if gear.professionStats.craftingspeed.value > 0 then
+                    statText = string.format(" (%s)", L("STAT_CRAFTINGSPEED"))
+                elseif gear.professionStats.multicraft.value > 0 then
+                    statText = string.format(" (%s)", L("STAT_MULTICRAFT"))
+                elseif gear.professionStats.resourcefulness.value > 0 then
+                    statText = string.format(" (%s)", L("STAT_RESOURCEFULNESS"))
+                elseif gear.professionStats.ingenuity.value > 0 then
+                    statText = string.format(" (%s)", L("STAT_INGENUITY"))
+                end
+            end
+            tinsert(lines,
+                cross .. GUTIL:IconToText(item:GetItemIcon(), toolIconSize, toolIconSize) .. " " .. item:GetItemLink() ..
+                    f.bb(statText))
+        else
+            tinsert(lines, cross .. emptySlotIcon .. f.grey(" [Empty Slot]"))
+        end
     end
 
     if professionGearSet.gear1 then
-        local item = professionGearSet.gear1.item
-        local pfx = equipLinePrefix("gear1")
-        if item then
-            local icon = item:GetItemIcon()
-            tooltipText = tooltipText ..
-                pfx .. GUTIL:IconToText(icon, toolIconSize, toolIconSize) .. " " .. item:GetItemLink() .. "\n"
-        else
-            tooltipText = tooltipText .. pfx .. emptySlotIcon .. f.grey(" [Empty Slot]\n")
-        end
+        appendLineIfWrong("gear1")
     end
-
     if professionGearSet.gear2 then
-        local item = professionGearSet.gear2.item
-        local pfx = equipLinePrefix("gear2")
-        if item then
-            local icon = item:GetItemIcon()
-            tooltipText = tooltipText ..
-                pfx .. GUTIL:IconToText(icon, toolIconSize, toolIconSize) .. " " .. item:GetItemLink() .. "\n"
-        else
-            tooltipText = tooltipText .. pfx .. emptySlotIcon .. f.grey(" [Empty Slot]\n")
-        end
+        appendLineIfWrong("gear2")
     end
-
     if professionGearSet.tool then
-        local item = professionGearSet.tool.item
-        local pfx = equipLinePrefix("tool")
-        if item then
-            local icon = item:GetItemIcon()
-            local statText = ""
-            if professionGearSet.tool.professionStats.craftingspeed.value > 0 then
-                statText = string.format(" (%s)", L("STAT_CRAFTINGSPEED"))
-            elseif professionGearSet.tool.professionStats.multicraft.value > 0 then
-                statText = string.format(" (%s)", L("STAT_MULTICRAFT"))
-            elseif professionGearSet.tool.professionStats.resourcefulness.value > 0 then
-                statText = string.format(" (%s)", L("STAT_RESOURCEFULNESS"))
-            elseif professionGearSet.tool.professionStats.ingenuity.value > 0 then
-                statText = string.format(" (%s)", L("STAT_INGENUITY"))
-            end
-            tooltipText = tooltipText ..
-                pfx .. GUTIL:IconToText(icon, toolIconSize, toolIconSize) ..
-                " " .. item:GetItemLink() .. f.bb(statText) .. "\n"
-        else
-            tooltipText = tooltipText .. pfx .. emptySlotIcon .. f.grey(" [Empty Slot]")
-        end
+        appendLineIfWrong("tool")
     end
 
-    return tooltipText
+    if #lines == 0 then
+        return ""
+    end
+    return "\n\n" .. f.bb(L("CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER")) .. "\n" .. table.concat(lines, "\n")
 end
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
@@ -609,9 +604,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 function statusColumn.statusIcon:SetCraftQueueRowStatus(allowedToCraft, errorTooltip, professionGearSet)
                     local equippedSet = CraftSim.ProfessionGearSet(professionGearSet.recipeData)
                     equippedSet:LoadCurrentEquippedSet()
-                    local toolsTT = GetCraftQueueProfessionToolsTooltipText(professionGearSet, equippedSet)
-                    local toolsHeader = L("CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER")
-                    local toolsBlock = "\n\n" .. f.bb(toolsHeader) .. "\n" .. toolsTT
+                    local toolsBlock = GetCraftQueueWrongProfessionToolsTooltipBlock(professionGearSet, equippedSet)
 
                     if allowedToCraft then
                         self:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK)
