@@ -95,7 +95,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         CraftSim.CRAFTQ.frame.content.queueTab.content and
         CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
 
-    local function finalizeRecipe()
+    local function finalizeList()
         if options.enableConcentration and options.smartConcentrationQueuing then
             ---@type table<CrafterUID, table<number, CraftSim.RecipeData[]>>
             local crafterUIDProfessionMap = {}
@@ -138,8 +138,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
                                 end
 
-                                recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                                CraftSim.CRAFTQ:AddRecipe {
+                                    recipeData = recipeData,
+                                    amount = totalAmount,
+                                    splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                                }
 
                                 -- Update last crafting cost DB if option is enabled
                                 if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
@@ -303,8 +306,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                     if recipeData.cooldownData.isCooldownRecipe then
                         totalAmount = recipeData.cooldownData:GetCurrentCharges()
                     end
-                    recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                    CraftSim.CRAFTQ:AddRecipe {
+                        recipeData = recipeData,
+                        amount = totalAmount,
+                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                    }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
 
                     -- Update last crafting cost DB if option is enabled
@@ -322,7 +328,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         iterationsPerFrame = 1,
         maxIterations = 1000,
         finally = function()
-            finalizeRecipe()
+            finalizeList()
             if finally then finally() end
         end,
         continue = function(frameDistributor, _, recipeID)

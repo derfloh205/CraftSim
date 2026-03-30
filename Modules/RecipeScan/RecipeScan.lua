@@ -91,7 +91,8 @@ end
 
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 function CraftSim.RECIPE_SCAN:EndScan(row)
-    printS("scan finished")
+    local ms = CraftSim.DEBUG:StopProfiling("Total Recipe Scan")
+    printS("Scan finished: " .. ms .. " ms")
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, true)
     CraftSim.RECIPE_SCAN.isScanning = false
@@ -307,6 +308,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     local reagentAllocation = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION, CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
     local optimizationScanMode = reagentAllocation == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 
+    CraftSim.DEBUG:StartProfiling("Total Recipe Scan")
 
     CraftSim.RECIPE_SCAN.rowScanFrameDistributor = GUTIL.FrameDistributor {
         iterationTable = recipeInfos,

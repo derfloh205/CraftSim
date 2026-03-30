@@ -180,6 +180,46 @@ function CraftSim.ProfessionGearSet:IsEquipped()
     return self:Equals(equippedSet)
 end
 
+--- Whether the expected item for this logical slot is satisfied by what is equipped (same rules as Equals).
+---@param slot "gear1"|"gear2"|"tool"
+---@param equippedSet CraftSim.ProfessionGearSet
+---@return boolean
+function CraftSim.ProfessionGearSet:ExpectedSlotMatchesEquipped(slot, equippedSet)
+    if self.isCooking then
+        if slot == "gear1" then
+            return true
+        end
+        local expected = slot == "gear2" and self.gear2 or self.tool
+        if not expected.item then
+            if slot == "gear2" then
+                return equippedSet.gear2.item == nil
+            end
+            return equippedSet.tool.item == nil
+        end
+        if slot == "gear2" then
+            return equippedSet.gear2.item ~= nil and equippedSet.gear2:Equals(expected)
+        end
+        return equippedSet.tool.item ~= nil and equippedSet.tool:Equals(expected)
+    end
+
+    local expected = self[slot] ---@type CraftSim.ProfessionGear
+    if slot == "tool" then
+        if not expected.item then
+            return equippedSet.tool.item == nil
+        end
+        return equippedSet.tool.item ~= nil and equippedSet.tool:Equals(expected)
+    end
+
+    -- gear1 / gear2: either jewelry slot may hold the piece
+    if not expected.item then
+        local g1 = equippedSet.gear1 ---@type CraftSim.ProfessionGear
+        local g2 = equippedSet.gear2 ---@type CraftSim.ProfessionGear
+        return (g1.item == nil or g2.item == nil)
+    end
+    return (equippedSet.gear1.item ~= nil and equippedSet.gear1:Equals(expected)) or
+        (equippedSet.gear2.item ~= nil and equippedSet.gear2:Equals(expected))
+end
+
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
     CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
