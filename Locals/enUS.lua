@@ -852,9 +852,10 @@ greater or equal the configured sale rate threshold.
         SPECIALIZATION_INFO_TOOLTIP_LABEL = f.l("CraftSim") .. f.white(" Specialization Info:"),
 
         -- last crafting cost tooltip
-        LAST_CRAFTING_COST_TOOLTIP_LABEL = f.l("CraftSim") .. f.white(" Last Crafting Cost: "),
-        LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.grey("Crafter: "),
-        LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.grey("Updated: "),
+        LAST_CRAFTING_COST_TOOLTIP_HEADER = f.l("CraftSim"),
+        LAST_CRAFTING_COST_TOOLTIP_LABEL = f.white("Last Average Crafting Costs:"),
+        LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.white("Crafter:"),
+        LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.white("Updated:"),
 
         -- columns
         SOURCE_COLUMN_AH = "AH",

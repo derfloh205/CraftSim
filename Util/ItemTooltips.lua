@@ -47,11 +47,12 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
         if cost and cost > 0 then
             local costText = CraftSim.UTIL:FormatMoney(cost, true)
             local timeText = FormatTimestamp(timestamp)
-            tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL") .. costText)
+            tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_HEADER"))
+            tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL"), costText)
             if crafterUID then
-                tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER") .. crafterUID)
+                tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"), f.grey(crafterUID))
             end
-            tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED") .. timeText)
+            tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED"), f.grey(timeText))
             tooltip:Show()
         end
     end)
