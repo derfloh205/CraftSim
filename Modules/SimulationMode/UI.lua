@@ -34,7 +34,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         sizeX = x - sizeOffsetX, sizeY = y - sizeOffsetY,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE,
-        title = L("SIMULATION_MODE_LABEL"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
