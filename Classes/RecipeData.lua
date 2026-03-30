@@ -1136,17 +1136,14 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
         return best
     end
 
-    -- For simplified (Q1/Q2-only, e.g. Midnight) recipes: find the best single-unit upgrade using the
-    -- ACTUAL integer concentration cost reduction C(virtualSkill) - C(virtualSkill + deltaSkill) rather
-    -- than the 1-point marginal slope.  This correctly handles concentration-curve threshold crossings.
-    --
-    -- Importantly, uses ROUNDED (integer) costs because WoW stores and uses concentration as an integer.
-    -- A raw cost reduction of <1 means the integer cost doesn't change at all, so the upgrade is
-    -- worthless in practice even if the unrounded math suggests a tiny benefit.
+    -- For simplified (Q1/Q2-only, e.g. Midnight) recipes: find the best single-unit upgrade candidate.
+    -- Uses raw (unrounded) concentration costs to rank candidates so that upgrades with sub-1 raw
+    -- reductions are still considered — multiple such upgrades can collectively achieve >= 1 integer
+    -- concentration point reduction.  The caller batches upgrades and evaluates viability per integer
+    -- point saved, not per individual unit.
     ---@param virtualSkill number current skill including any pending (not-yet-Updated) upgrades
     local function findBestUpgradeSimplifiedActual(virtualSkill)
-        -- Use rounded integer costs; this is what the game actually charges
-        local currentConcCostInt = self:GetConcentrationCostForSkill(virtualSkill, false)
+        local currentConcCost = self:GetConcentrationCostForSkill(virtualSkill, true)
         local best
         for _, reagent in ipairs(qualityReagents) do
             local q1 = reagent.items[1].quantity
@@ -1156,16 +1153,13 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 -- skill added per unit when at Q2 (Q1 contributes 0 in simplified recipes)
                 local deltaSkill = skillContributionMap[itemID2]
                 if deltaSkill and deltaSkill > 0 then
-                    -- Compute the integer concentration cost after upgrading this unit
-                    local newConcCostInt = self:GetConcentrationCostForSkill(virtualSkill + deltaSkill, false)
-                    local actualConcReductionInt = currentConcCostInt - newConcCostInt
-                    -- Skip upgrades that don't reduce the integer cost by at least 1 concentration point.
-                    -- A sub-1 raw reduction leaves the actual in-game cost unchanged.
-                    if actualConcReductionInt >= 1 then
+                    local newConcCost = self:GetConcentrationCostForSkill(virtualSkill + deltaSkill, true)
+                    local rawConcReduction = currentConcCost - newConcCost
+                    if rawConcReduction > 0 then
                         local price1 = self.priceData.reagentPriceInfos[itemID1].itemPrice
                         local price2 = self.priceData.reagentPriceInfos[itemID2].itemPrice
                         local deltaCost = price2 - price1
-                        local costPerConcPoint = deltaCost / actualConcReductionInt
+                        local costPerConcPoint = deltaCost / rawConcReduction
                         if not best or costPerConcPoint < best.costPerConcPoint then
                             best = {
                                 reagent = reagent,
@@ -1174,7 +1168,6 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                                 costPerConcPoint = costPerConcPoint,
                                 deltaSkill = deltaSkill,
                                 deltaCost = deltaCost,
-                                actualConcReductionInt = actualConcReductionInt,
                             }
                         end
                     end
@@ -1211,10 +1204,14 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 -- Refactored algorithm for simplified (Q1/Q2) recipes.
                 --
                 -- Key differences vs. the old approach:
-                --  1. Uses actual concentration-cost reduction per unit (handles curve thresholds).
+                --  1. Uses actual (raw float) concentration-cost reduction per unit for ranking.
                 --  2. Tracks virtualSkill so that each intra-frame iteration sees the correct skill
                 --     level without needing an expensive self:Update() call.
-                --  3. Tracks the virtual concentration value (virtualCV) so the stopping condition
+                --  3. Uses a repeat-until inner loop that accumulates unit upgrades until at least
+                --     1 integer concentration point is saved (2-3 sub-1-reduction upgrades can
+                --     collectively achieve this).  Viability is evaluated per integer-point batch,
+                --     not per individual unit.
+                --  4. Tracks the virtual concentration value (virtualCV) so the stopping condition
                 --     uses the profit and cost state after all pending upgrades, not the stale
                 --     value from the last Update().
 
@@ -1231,32 +1228,55 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 --   concentrationValue = profitConc / (lastConcCost * ingenuityFactor)
                 --   => profitConc = concentrationValue * lastConcCost * ingenuityFactor
                 -- Note: if concentrationValue is 0 the recipe is not worth concentrating;
-                -- all upgrades will fail the virtualCV check below and we break immediately.
+                -- the virtualCV check below will fail immediately and we break.
                 local virtualProfitConc = concentrationValue * (lastConcentrationCost * ingenuityFactor)
                 local accumulatedDeltaCost = 0
 
                 while unitsBudget > 0 do
-                    -- Recompute virtual concentration value at the current virtual state.
-                    -- Use rounded (integer) cost to match what the game actually charges.
-                    local virtualConcCost = self:GetConcentrationCostForSkill(virtualSkill, false) * ingenuityFactor
-                    -- Guard against division by zero; a zero or negative effective cost means
-                    -- concentration is essentially free at this skill level and no upgrade is needed
-                    if virtualConcCost <= 0 then break end
-                    local virtualCV = (virtualProfitConc - accumulatedDeltaCost) / virtualConcCost
+                    -- Record the integer concentration cost at the start of this batch.
+                    -- Viability is measured in whole integer concentration points because
+                    -- WoW uses integers; a batch that only saves fractional points provides
+                    -- no real benefit and must be rolled back.
+                    local batchStartConcCostInt = self:GetConcentrationCostForSkill(virtualSkill, false)
+                    if batchStartConcCostInt <= 0 then break end
 
-                    -- Find the best single-unit upgrade using actual concentration-cost changes
-                    local best = findBestUpgradeSimplifiedActual(virtualSkill)
-                    if not best then break end
-                    if best.costPerConcPoint >= virtualCV then break end
+                    local virtualConcCostEff = batchStartConcCostInt * ingenuityFactor
+                    if virtualConcCostEff <= 0 then break end
+                    local virtualCV = (virtualProfitConc - accumulatedDeltaCost) / virtualConcCostEff
 
-                    -- Apply ONE unit upgrade (no Update() yet)
-                    best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - 1
-                    best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + 1
-                    virtualSkill = virtualSkill + best.deltaSkill
-                    accumulatedDeltaCost = accumulatedDeltaCost + best.deltaCost
-                    unitsBudget = unitsBudget - 1
-                    performed = performed + 1
-                    convertedUnits = convertedUnits + 1
+                    local batchDeltaCost = 0
+                    local earlyBreak = false
+
+                    -- Accumulate unit upgrades until the integer concentration cost drops by >= 1.
+                    -- A single upgrade may only reduce the raw cost by 0.5; we keep going until
+                    -- the rounded integer cost actually decreases (2-3 upgrades may be needed).
+                    repeat
+                        local best = findBestUpgradeSimplifiedActual(virtualSkill)
+                        if not best or unitsBudget <= 0 then
+                            -- No more upgrades available or budget exhausted before
+                            -- reaching a full integer-point reduction.
+                            earlyBreak = true
+                            break
+                        end
+
+                        -- Apply ONE unit upgrade (no Update() yet)
+                        best.reagent.items[best.fromQ].quantity = best.reagent.items[best.fromQ].quantity - 1
+                        best.reagent.items[best.toQ].quantity = best.reagent.items[best.toQ].quantity + 1
+                        virtualSkill = virtualSkill + best.deltaSkill
+                        accumulatedDeltaCost = accumulatedDeltaCost + best.deltaCost
+                        batchDeltaCost = batchDeltaCost + best.deltaCost
+                        unitsBudget = unitsBudget - 1
+                        performed = performed + 1
+                        convertedUnits = convertedUnits + 1
+                    until self:GetConcentrationCostForSkill(virtualSkill, false) < batchStartConcCostInt
+
+                    if earlyBreak then break end
+
+                    -- This batch saved at least 1 integer concentration point.
+                    -- Evaluate whether the reagent cost increase was economically worth it.
+                    local batchIntReduction = batchStartConcCostInt - self:GetConcentrationCostForSkill(virtualSkill, false)
+                    local batchCostPerPoint = batchDeltaCost / batchIntReduction
+                    if batchCostPerPoint >= virtualCV then break end
                 end
             else
                 -- Existing algorithm for non-simplified (3-tier Q1/Q2/Q3) recipes
@@ -1295,6 +1315,11 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, false)
             local boughtConcentration = lastConcentrationCost - currentConcentrationCost
             if boughtConcentration <= 0 then
+                -- No integer concentration points were saved (e.g. a partial batch of sub-1
+                -- raw-reduction upgrades that was cut short before crossing an integer boundary).
+                -- Roll back to avoid a net-negative change: higher reagent cost, same conc cost.
+                self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+                self:Update()
                 frameDistributor:Break()
                 return
             end
