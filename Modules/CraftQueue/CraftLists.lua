@@ -95,6 +95,40 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         CraftSim.CRAFTQ.frame.content.queueTab.content and
         CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
 
+    --- Queue recipeData into the craft queue, splitting into a soulbound-finisher version and a
+    --- non-soulbound version when includeSoulboundFinishingReagents is enabled and the recipe uses
+    --- one. The split is based on how many of the soulbound finishing reagent the crafter owns.
+    ---@param recipeData CraftSim.RecipeData
+    ---@param amount number
+    ---@param addRecipeFn fun(recipeData: CraftSim.RecipeData, amount: number)
+    local function queueWithSoulboundSplit(recipeData, amount, addRecipeFn)
+        if options.includeSoulboundFinishingReagents and amount > 0
+            and recipeData:IsUsingSoulboundFinishingReagent() then
+            local soulboundItemID, perCraft = recipeData:GetSoulboundFinishingReagentInfo()
+            if soulboundItemID then
+                local rcUID = recipeData:GetCrafterUID()
+                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(rcUID, soulboundItemID, true) or 0
+                local soulboundAmount = math.min(math.floor(owned / perCraft), amount)
+                local nonSoulboundAmount = amount - soulboundAmount
+
+                if soulboundAmount > 0 then
+                    addRecipeFn(recipeData, soulboundAmount)
+                end
+
+                if nonSoulboundAmount > 0 then
+                    local recipeDataCopy = recipeData:Copy()
+                    -- Pass owned+1 to force AdjustSoulboundFinishingForAmount to replace the soulbound reagent
+                    recipeDataCopy:AdjustSoulboundFinishingForAmount(owned + 1)
+                    addRecipeFn(recipeDataCopy, nonSoulboundAmount)
+                end
+                return
+            end
+        end
+        -- Default: adjust soulbound finishing for the given amount and queue
+        recipeData:AdjustSoulboundFinishingForAmount(amount)
+        addRecipeFn(recipeData, amount)
+    end
+
     local function finalizeRecipe()
         if options.enableConcentration and options.smartConcentrationQueuing then
             ---@type table<CrafterUID, table<number, CraftSim.RecipeData[]>>
@@ -138,8 +172,10 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
                                 end
 
-                                recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                                queueWithSoulboundSplit(recipeData, totalAmount,
+                                    function(rd, amt)
+                                        CraftSim.CRAFTQ:AddRecipe { recipeData = rd, amount = amt }
+                                    end)
                                 currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
                                 break
                             end
@@ -297,8 +333,10 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                     if recipeData.cooldownData.isCooldownRecipe then
                         totalAmount = recipeData.cooldownData:GetCurrentCharges()
                     end
-                    recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                    queueWithSoulboundSplit(recipeData, totalAmount,
+                        function(rd, amt)
+                            CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = rd, amount = amt }
+                        end)
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end
                 frameDistributor:Continue()
