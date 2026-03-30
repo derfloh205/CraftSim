@@ -164,6 +164,80 @@ local function GetCraftQueueWrongProfessionToolsTooltipBlock(professionGearSet, 
     return "\n\n" .. f.bb(L("CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER")) .. "\n" .. table.concat(lines, "\n")
 end
 
+---@param craftButton GGUI.Button
+---@param allowedToCraft boolean
+---@param errorTooltip string
+---@param professionGearSet CraftSim.ProfessionGearSet
+local function SetCraftQueueCraftButtonRowStatusTooltip(craftButton, allowedToCraft, errorTooltip, professionGearSet)
+    if not craftButton.tooltipOptions then
+        craftButton.tooltipOptions = {}
+    end
+    craftButton.tooltipOptions.anchor = craftButton.tooltipOptions.anchor or "ANCHOR_CURSOR_RIGHT"
+    craftButton.tooltipOptions.textWrap = true
+
+    local equippedSet = CraftSim.ProfessionGearSet(professionGearSet.recipeData)
+    equippedSet:LoadCurrentEquippedSet()
+    local toolsBlock = GetCraftQueueWrongProfessionToolsTooltipBlock(professionGearSet, equippedSet)
+
+    if allowedToCraft then
+        craftButton.tooltipOptions.text = f.g("Ready to Craft") .. toolsBlock
+    else
+        local err = (errorTooltip and errorTooltip ~= "") and errorTooltip or
+            f.r(L("CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK"))
+        craftButton.tooltipOptions.text = err .. toolsBlock
+    end
+end
+
+--- Disabled WoW buttons ignore the mouse, so GGUI's OnEnter tooltip never runs. Overlay matches the button bounds
+--- and only receives mouse input while the button is disabled.
+---@param gguiButton GGUI.Button
+local function AttachCraftQueueButtonDisabledTooltipProxy(gguiButton)
+    if gguiButton.craftQueueTooltipProxy then
+        return
+    end
+    local btn = gguiButton.frame
+    local proxy = CreateFrame("Frame", nil, btn:GetParent())
+    proxy:SetPoint("TOPLEFT", btn, "TOPLEFT")
+    proxy:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT")
+    proxy:SetFrameLevel(btn:GetFrameLevel() + 10)
+    proxy:EnableMouse(false)
+    proxy:Hide()
+    proxy:SetScript("OnEnter", function()
+        local o = gguiButton.tooltipOptions
+        if not o or not o.text or o.text == "" then
+            return
+        end
+        GameTooltip:SetOwner(o.owner or btn, o.anchor or "ANCHOR_CURSOR_RIGHT")
+        GameTooltip:SetText(o.text, nil, nil, nil, nil, o.textWrap)
+        GameTooltip:SetScale(o.scale or 1)
+        GameTooltip:Show()
+    end)
+    proxy:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+    gguiButton.craftQueueTooltipProxy = proxy
+end
+
+---@param gguiButton GGUI.Button
+local function SyncCraftQueueButtonDisabledTooltipProxy(gguiButton)
+    if not gguiButton or not gguiButton.craftQueueTooltipProxy then
+        return
+    end
+    local btn = gguiButton.frame
+    local proxy = gguiButton.craftQueueTooltipProxy
+    proxy:ClearAllPoints()
+    proxy:SetPoint("TOPLEFT", btn, "TOPLEFT")
+    proxy:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT")
+    proxy:SetFrameLevel(btn:GetFrameLevel() + 10)
+    if not btn:IsEnabled() then
+        proxy:Show()
+        proxy:EnableMouse(true)
+    else
+        proxy:Hide()
+        proxy:EnableMouse(false)
+    end
+end
+
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
 function CraftSim.CRAFTQ.UI:Init()
@@ -340,18 +414,6 @@ function CraftSim.CRAFTQ.UI:Init()
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = L("CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER"),
-                width = 40,
-                justifyOptions = { type = "H", align = "CENTER" },
-                tooltipOptions = {
-                    ---@diagnostic disable-next-line: assign-type-mismatch
-                    anchor = nil,
-                    owner = nil,
-                    text = f.white(L("CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP")),
-                    textWrap = true,
-                },
-            },
-            {
                 label = "", -- craftButtonColumn
                 width = 60,
                 justifyOptions = { type = "H", align = "CENTER" }
@@ -466,10 +528,8 @@ function CraftSim.CRAFTQ.UI:Init()
                 local craftAbleColumn = columns[7]
                 ---@class CraftSim.CraftQueue.CraftList.CraftAmountColumn : Frame
                 local craftAmountColumn = columns[8]
-                ---@class CraftSim.CraftQueue.CraftList.StatusColumn : Frame
-                local statusColumn = columns[9]
                 ---@class CraftSim.CraftQueue.CraftList.CraftButtonColumn : Frame
-                local craftButtonColumn = columns[10]
+                local craftButtonColumn = columns[9]
 
                 crafterColumn.text = GGUI.Text {
                     parent = crafterColumn, anchorParent = crafterColumn,
@@ -540,8 +600,6 @@ function CraftSim.CRAFTQ.UI:Init()
                     scale = 0.9,
                 }
 
-                local statusIconSize = 17
-
                 craftAbleColumn.text = GGUI.Text({
                     parent = craftAbleColumn, anchorParent = craftAbleColumn
                 })
@@ -588,42 +646,19 @@ function CraftSim.CRAFTQ.UI:Init()
                     hide = true,
                 }
 
-                statusColumn.statusIcon = GGUI.Texture {
-                    parent = statusColumn, anchorParent = statusColumn,
-                    sizeX = statusIconSize, sizeY = statusIconSize,
-                    atlas = CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK,
-                    tooltipOptions = {
-                        anchor = "ANCHOR_CURSOR_RIGHT",
-                        text = f.g("Ready to Craft"),
-                    },
-                }
-
-                ---@param allowedToCraft boolean
-                ---@param errorTooltip string
-                ---@param professionGearSet CraftSim.ProfessionGearSet
-                function statusColumn.statusIcon:SetCraftQueueRowStatus(allowedToCraft, errorTooltip, professionGearSet)
-                    local equippedSet = CraftSim.ProfessionGearSet(professionGearSet.recipeData)
-                    equippedSet:LoadCurrentEquippedSet()
-                    local toolsBlock = GetCraftQueueWrongProfessionToolsTooltipBlock(professionGearSet, equippedSet)
-
-                    if allowedToCraft then
-                        self:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK)
-                        self.tooltipOptions.text = f.g("Ready to Craft") .. toolsBlock
-                    else
-                        self:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CROSS)
-                        local err = (errorTooltip and errorTooltip ~= "") and errorTooltip or
-                            f.r(L("CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK"))
-                        self.tooltipOptions.text = err .. toolsBlock
-                    end
-                end
-
                 craftButtonColumn.craftButton = GGUI.Button({
                     parent = craftButtonColumn,
                     anchorParent = craftButtonColumn,
                     label = L("CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL"),
                     adjustWidth = true,
                     secure = true,
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = f.g("Ready to Craft"),
+                        textWrap = true,
+                    },
                 })
+                AttachCraftQueueButtonDisabledTooltipProxy(craftButtonColumn.craftButton)
             end
         })
 
@@ -1028,7 +1063,7 @@ function CraftSim.CRAFTQ.UI:Init()
             offsetX = 0,
             adjustWidth = true,
             label = L("CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL"),
-            clickCallback = nil
+            clickCallback = nil,
         })
 
 
@@ -2765,7 +2800,7 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         -- set the craft next button to the same status as the button in the queue on pos 1
         -- if first item can be crafted (so if anything can be crafted cause the items are sorted by craftable status)
         local firstRow = queueTab.content.craftList.activeRows[1]
-        local craftButton = firstRow.columns[10].craftButton --[[@as GGUI.Button]]
+        local craftButton = firstRow.columns[9].craftButton --[[@as GGUI.Button]]
         local button = craftButton.frame --[[@as Button]]
         queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
         queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
@@ -3077,8 +3112,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local concentrationColumn = columns[6] --[[@as CraftSim.CraftQueue.CraftList.ConcentrationColumn]]
     local craftAbleColumn = columns[7] --[[@as CraftSim.CraftQueue.CraftList.CraftAbleColumn]]
     local craftAmountColumn = columns[8] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
-    local statusColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.StatusColumn]]
-    local craftButtonColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
+    local craftButtonColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
 
     row.craftQueueItem = craftQueueItem
 
@@ -3318,9 +3352,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession")
     end
 
-    statusColumn.statusIcon:SetCraftQueueRowStatus(craftQueueItem.allowedToCraft, statusColumnTooltip,
-        craftQueueItem.recipeData.professionGearSet)
-
     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
 
     if recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
@@ -3400,6 +3431,15 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             end
         end
     end
+
+    local craftBtn = craftButtonColumn.craftButton
+    if craftBtn.frame:GetText() == L("CRAFT_QUEUE_BUTTON_SUBMIT") then
+        craftBtn.tooltipOptions = nil
+    else
+        SetCraftQueueCraftButtonRowStatusTooltip(craftBtn, craftQueueItem.allowedToCraft,
+            statusColumnTooltip, craftQueueItem.recipeData.professionGearSet)
+    end
+    SyncCraftQueueButtonDisabledTooltipProxy(craftBtn)
 
     CraftSim.DEBUG:StopProfiling(profilingID)
 end
