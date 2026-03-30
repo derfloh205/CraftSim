@@ -138,8 +138,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
                                 end
 
-                                --recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                                CraftSim.CRAFTQ:AddRecipe {
+                                    recipeData = recipeData,
+                                    amount = totalAmount,
+                                    splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                                }
                                 currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
                                 break
                             end
@@ -297,8 +300,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                     if recipeData.cooldownData.isCooldownRecipe then
                         totalAmount = recipeData.cooldownData:GetCurrentCharges()
                     end
-                    recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                    CraftSim.CRAFTQ:AddRecipe {
+                        recipeData = recipeData,
+                        amount = totalAmount,
+                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                    }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end
                 frameDistributor:Continue()

@@ -2550,16 +2550,42 @@ function CraftSim.RecipeData:HasActiveSubRecipeInCraftQueue()
     return CraftSim.CRAFTQ.craftQueue:RecipeHasActiveSubRecipesInQueue(self)
 end
 
+--- Returns itemID and perCraft for the first active soulbound finishing reagent, or nil if none.
+---@return number? itemID
+---@return number? perCraft
+function CraftSim.RecipeData:GetSoulboundFinishingReagentInfo()
+    local reagentData = self.reagentData
+    if not reagentData or #reagentData.finishingReagentSlots == 0 then return nil, nil end
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        local active = slot.activeReagent
+        if active and not active:IsCurrency() and active.item then
+            local itemID = active.item:GetItemID()
+            if GUTIL:isItemSoulbound(itemID) then
+                return itemID, (slot.maxQuantity or 1)
+            end
+        end
+    end
+    return nil, nil
+end
+
+--- Returns true if any active finishing reagent slot contains a soulbound item
+---@return boolean
+function CraftSim.RecipeData:IsUsingSoulboundFinishingReagent()
+    local itemID = self:GetSoulboundFinishingReagentInfo()
+    return itemID ~= nil
+end
+
 ---@alias RecipeCraftQueueUID string
 
 --- Returns a unique id for the recipe within the craftqueue
---- Unique in recipeID, depth, crafter, concentration usage and craft list
+--- Unique in recipeID, depth, crafter, concentration usage, craft list and soulbound finishing reagent usage
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
         ":" ..
         self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
-        ":" .. tostring(self.craftListID or 0)
+        ":" .. tostring(self.craftListID or 0) ..
+        ":" .. tostring(self:IsUsingSoulboundFinishingReagent())
 end
 
 ---@return boolean hasActiveSubRecipes

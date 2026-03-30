@@ -480,23 +480,66 @@ function CraftSim.CRAFTQ:InitializeCraftQueue()
     end)
 end
 
----@param options CraftSim.CraftQueueItem.Options
+---@class CraftSim.CRAFTQ.AddRecipe.Options : CraftSim.CraftQueueItem.Options
+---@field splitSoulboundFinishingReagent? boolean when true, split the queue entry into a soulbound-finisher version and a non-soulbound version based on how many of the soulbound finishing reagent the crafter owns
+
+---@param options CraftSim.CRAFTQ.AddRecipe.Options
 function CraftSim.CRAFTQ:AddRecipe(options)
     options = options or {}
 
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+
+    local recipeData = options.recipeData
+    local amount = options.amount or 1
+
+    local function finalizeAdd()
+        CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
+            CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+            CraftSim.CRAFTQ.frame:Show()
+            CraftSim.CRAFTQ.frame:Raise()
+        end
+    end
+
+    if options.splitSoulboundFinishingReagent and amount > 0 and recipeData:IsUsingSoulboundFinishingReagent() then
+        local soulboundItemID, perCraft = recipeData:GetSoulboundFinishingReagentInfo()
+        if soulboundItemID then
+            local crafterUID = recipeData:GetCrafterUID()
+            local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, soulboundItemID, true) or 0
+            local soulboundAmount = math.min(math.floor(owned / perCraft), amount)
+            local nonSoulboundAmount = amount - soulboundAmount
+
+            if soulboundAmount > 0 then
+                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = soulboundAmount })
+            end
+
+            if nonSoulboundAmount > 0 then
+                local recipeDataCopy = recipeData:Copy()
+                -- Clear soulbound finishing reagents from the copy so it gets a different UID
+                for _, slot in ipairs(recipeDataCopy.reagentData.finishingReagentSlots) do
+                    local active = slot.activeReagent
+                    if active and not active:IsCurrency() and active.item then
+                        local itemID = active.item:GetItemID()
+                        if GUTIL:isItemSoulbound(itemID) then
+                            slot:SetReagent(nil)
+                        end
+                    end
+                end
+                recipeDataCopy:Update()
+                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeDataCopy, amount = nonSoulboundAmount })
+            end
+
+            finalizeAdd()
+            return
+        end
+    end
+
     CraftSim.CRAFTQ.craftQueue:AddRecipe({
-        recipeData = options.recipeData,
-        amount = options.amount,
+        recipeData = recipeData,
+        amount = amount,
     })
 
-    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-
-    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
-        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
-        CraftSim.CRAFTQ.frame:Show()
-        CraftSim.CRAFTQ.frame:Raise()
-    end
+    finalizeAdd()
 end
 
 function CraftSim.CRAFTQ:ClearAll()
