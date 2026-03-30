@@ -95,7 +95,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         CraftSim.CRAFTQ.frame.content.queueTab.content and
         CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
 
-    local function finalizeRecipe()
+    local function finalizeList()
         if options.enableConcentration and options.smartConcentrationQueuing then
             ---@type table<CrafterUID, table<number, CraftSim.RecipeData[]>>
             local crafterUIDProfessionMap = {}
@@ -317,7 +317,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         iterationsPerFrame = 1,
         maxIterations = 1000,
         finally = function()
-            finalizeRecipe()
+            finalizeList()
             if finally then finally() end
         end,
         continue = function(frameDistributor, _, recipeID)

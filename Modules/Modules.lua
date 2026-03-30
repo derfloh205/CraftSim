@@ -91,10 +91,20 @@ function CraftSim.MODULES:ShowRecipeIndependentModules()
 	CraftSim.COOLDOWNS.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS"))
 	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(true)
 
-	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	CraftSim.CRAFTQ.frame.content.queueTab.content.addWorkOrdersButton:SetEnabled(
-		professionInfo and professionInfo.profession and
-		C_TradeSkillUI.IsNearProfessionSpellFocus(professionInfo.profession))
+	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+end
+
+--- Updates only the Craft Queue "add work orders" enabled state (near table or Crafting Orders tab available).
+function CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+	local craftQ = CraftSim.CRAFTQ.frame
+	if not craftQ or not craftQ.content or not craftQ.content.queueTab or not craftQ.content.queueTab.content then
+		return
+	end
+	local btn = craftQ.content.queueTab.content.addWorkOrdersButton
+	if not btn then
+		return
+	end
+	btn:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
 end
 
 ---@return CraftSim.RecipeData? recipeData
@@ -176,10 +186,7 @@ function CraftSim.MODULES:UpdateUI()
 
 	CraftSim.CONTROL_PANEL.frame:Show()
 	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
-	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	CraftSim.CRAFTQ.frame.content.queueTab.content.addWorkOrdersButton:SetEnabled(professionInfo and
-		professionInfo.profession and C_TradeSkillUI
-		.IsNearProfessionSpellFocus(professionInfo.profession))
+	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 
 	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
 

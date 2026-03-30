@@ -402,6 +402,22 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			end
 		end)
 
+	local function refreshAddWorkOrdersButtonDeferred()
+		RunNextFrame(function()
+			if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
+				CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+			end
+		end)
+	end
+
+	if ProfessionsFrame.OrdersPage then
+		ProfessionsFrame.OrdersPage:HookScript("OnShow", refreshAddWorkOrdersButtonDeferred)
+	end
+	local craftingOrdersTab = ProfessionsFrame.TabSystem and ProfessionsFrame.TabSystem.tabs[3]
+	if craftingOrdersTab then
+		craftingOrdersTab:HookScript("OnClick", refreshAddWorkOrdersButtonDeferred)
+	end
+
 	ProfessionsFrame.CraftingPage:HookScript("OnHide",
 		function()
 			local professionInfo = ProfessionsFrame:GetProfessionInfo()
