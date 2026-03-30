@@ -36,6 +36,43 @@ function CraftSim.UTIL:GetOrderTypeText(orderType)
     return orderTypeText
 end
 
+--- Profession id for the open Professions UI. Prefer GetChildProfessionInfo (crafting tab); fall back to
+--- ProfessionsFrame.professionInfo (e.g. orders tab) so work-order actions still resolve a profession.
+---@return number? profession
+function CraftSim.UTIL:GetProfessionsFrameProfession()
+    local child = C_TradeSkillUI.GetChildProfessionInfo()
+    if child and child.profession then
+        return child.profession
+    end
+    if ProfessionsFrame and ProfessionsFrame.professionInfo and ProfessionsFrame.professionInfo.profession then
+        return ProfessionsFrame.professionInfo.profession
+    end
+    return nil
+end
+
+--- True when the player is in range of the crafting table / spell focus for the current professions frame profession.
+---@return boolean
+function CraftSim.UTIL:IsNearProfessionsFrameCraftingTable()
+    local p = CraftSim.UTIL:GetProfessionsFrameProfession()
+    return p ~= nil and C_TradeSkillUI.IsNearProfessionSpellFocus(p)
+end
+
+--- True when "Add work orders" should be clickable: at the profession table, or the Crafting Orders tab is allowed
+--- and enabled by Blizzard while the Professions frame is open (with a profession we can resolve for API calls).
+---@return boolean
+function CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton()
+    if CraftSim.UTIL:IsNearProfessionsFrameCraftingTable() then
+        return true
+    end
+    if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+        return false
+    end
+    if not C_CraftingOrders.ShouldShowCraftingOrderTab() or not ProfessionsFrame.isCraftingOrdersTabEnabled then
+        return false
+    end
+    return CraftSim.UTIL:GetProfessionsFrameProfession() ~= nil
+end
+
 -- thx ketho forum guy
 function CraftSim.UTIL:ShowTextCopyBox(text)
     if not KethoEditBox then
