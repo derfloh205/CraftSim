@@ -597,6 +597,18 @@ function CraftSim.CRAFTQ.UI:Init()
                     justifyOptions = { type = "H", align = "RIGHT" }
                 }
 
+                craftingCostsColumn.soulboundIcon = GGUI.Icon {
+                    parent = craftingCostsColumn,
+                    anchorParent = craftingCostsColumn,
+                    anchorA = "LEFT",
+                    anchorB = "LEFT",
+                    offsetX = 2,
+                    offsetY = 0,
+                    sizeX = 18,
+                    sizeY = 18,
+                }
+                craftingCostsColumn.soulboundIcon.frame:Hide()
+
                 concentrationColumn.text = GGUI.Text {
                     parent = concentrationColumn,
                     anchorParent = concentrationColumn,
@@ -3171,9 +3183,25 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if craftQueueItem.recipeData:IsSubRecipe() then
         averageProfitColumn.text:SetText(f.g("-"))
         craftingCostsColumn.text:SetText(f.g("-"))
+        craftingCostsColumn.soulboundIcon.frame:Hide()
     else
         averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(select(1, row.averageProfit), true, row.craftingCosts))
         craftingCostsColumn.text:SetText(f.r(CraftSim.UTIL:FormatMoney(row.craftingCosts)))
+        local soulboundItemID = recipeData:GetSoulboundFinishingReagentInfo()
+        local soulboundIcon = craftingCostsColumn.soulboundIcon
+        if soulboundItemID then
+            soulboundIcon._pendingItemID = soulboundItemID
+            local soulboundItem = Item:CreateFromItemID(soulboundItemID)
+            soulboundItem:ContinueOnItemLoad(function()
+                if soulboundIcon._pendingItemID == soulboundItemID then
+                    soulboundIcon:SetItem(soulboundItem)
+                    soulboundIcon.frame:Show()
+                end
+            end)
+        else
+            soulboundIcon._pendingItemID = nil
+            soulboundIcon.frame:Hide()
+        end
     end
 
     local concentrationData = craftQueueItem.recipeData.concentrationData
