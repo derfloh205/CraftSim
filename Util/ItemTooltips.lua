@@ -20,23 +20,24 @@ local function FormatTimestamp(timestamp)
     return string.format("%02d.%02d.%d %02d:%02d", d.day, d.month, d.year, d.hour, d.min)
 end
 
---- Hook GameTooltip to append last crafting cost information for items
+--- Register a TooltipDataProcessor post-call to append last crafting cost information for items
 function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
     if tooltipHooked then return end
     tooltipHooked = true
 
-    local function addCraftingCostLine(tooltip)
-        local _, itemLink = tooltip:GetItem()
-        if not itemLink then return end
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, tooltipInfo)
+        if not tooltipInfo or not tooltipInfo.id then return end
 
-        local itemID = select(1, C_Item.GetItemInfoInstant(itemLink))
-        if not itemID then return end
+        local itemID = tooltipInfo.id
+        local itemLink = tooltipInfo.hyperlink
 
         -- Try quality-specific lookup first (for gear where itemID is shared per quality)
         local crafterUID, cost, timestamp
-        local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
-        if qualityID and qualityID > 0 then
-            crafterUID, cost, timestamp = CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemIDAndQuality(itemID, qualityID)
+        if itemLink then
+            local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
+            if qualityID and qualityID > 0 then
+                crafterUID, cost, timestamp = CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemIDAndQuality(itemID, qualityID)
+            end
         end
         -- Fall back to plain itemID lookup (for non-gear / reagents)
         if not cost then
@@ -53,15 +54,5 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED") .. timeText)
             tooltip:Show()
         end
-    end
-
-    GameTooltip:HookScript("OnTooltipSetItem", addCraftingCostLine)
-
-    -- Also hook shopping tooltips if available
-    if ShoppingTooltip1 then
-        ShoppingTooltip1:HookScript("OnTooltipSetItem", addCraftingCostLine)
-    end
-    if ShoppingTooltip2 then
-        ShoppingTooltip2:HookScript("OnTooltipSetItem", addCraftingCostLine)
-    end
+    end)
 end
