@@ -85,3 +85,24 @@ An example that uses CraftSim's API to fetch a recipeData object, optimizes gear
 
 ### More Functionality and Methods 
 More can be found in the RecipeData class
+## *CraftSimAPI:GetLastCraftingCost(itemIDOrLink)*
+
+Returns the cheapest crafting cost across all known crafters for an item.
+
+### Parameters
+- `itemIDOrLink` (number|string): An itemID (number) or itemLink (string).
+  - For non-gear items (reagents), each quality has its own itemID, so pass the itemID directly.
+  - For gear items, the same itemID is shared across qualities. Pass an itemLink to get the quality-specific cost, or pass the itemID to retrieve any stored entry.
+
+### Returns
+- `cost` (number|nil): The cheapest average crafting cost per item in copper across all crafters, or nil if not available.
+- `timestamp` (number|nil): Unix timestamp of the last update for the cheapest entry, or nil if not available.
+- `crafterUID` (string|nil): The crafter UID ("Name-Realm") with the cheapest cost, or nil if not available.
+
+### Notes
+This database is populated when:
+- Recipe Scan runs with the **"Update Last Crafting Cost DB"** option enabled.
+- Craft Lists are queued with the **"Update Last Crafting Cost DB"** option enabled.
+
+Multiple characters crafting the same recipe are tracked individually.
+The function returns the cheapest cost across all of them.

@@ -255,6 +255,12 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     amount = totalAmount,
                                     splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
                                 }
+
+                                -- Update last crafting cost DB if option is enabled
+                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                                    CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                                end
+
                                 currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
                                 break
                             end
@@ -418,6 +424,11 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                         splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
                     }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
+
+                    -- Update last crafting cost DB if option is enabled
+                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                    end
                 end
                 frameDistributor:Continue()
             end,

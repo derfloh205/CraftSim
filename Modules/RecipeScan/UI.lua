@@ -630,6 +630,18 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_SUBRECIPES", not value)
                 end)
 
+            local updateLastCostCB = rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_UPDATE_LAST_CRAFTING_COST")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_UPDATE_LAST_CRAFTING_COST")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_UPDATE_LAST_CRAFTING_COST", not value)
+                end)
+            updateLastCostCB:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip, L("RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP"))
+            end)
+
             rootDescription:CreateDivider()
 
             GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)

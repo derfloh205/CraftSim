@@ -51,6 +51,7 @@ DB/customerHistoryDB.lua
 DB/crafterDB.lua
 DB/priceOverrideDB.lua
 DB/craftListsDB.lua
+DB/lastCraftingCostDB.lua
 
 Media/Media.lua
 
@@ -62,6 +63,7 @@ Util/Widgets/ReagentList.lua
 Util/Widgets/QualityMeter.lua
 
 Util/API.lua
+Util/ItemTooltips.lua
 
 Init/Init.lua
 
