@@ -2230,6 +2230,23 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     return cooldownData
 end
 
+--- Re-query cooldown/charges from the trade skill UI when the crafter has this recipe's profession open (keeps queue and edit UI accurate after a craft).
+function CraftSim.RecipeData:RefreshCooldownDataIfProfessionOpen()
+    if not self:IsCrafter() or not self:IsProfessionOpen() then
+        return
+    end
+    local currentCooldown, isDayCooldown, _, maxCharges = C_TradeSkillUI.GetRecipeCooldown(self.recipeID)
+    currentCooldown = currentCooldown or 0
+    local mightBeCD = self.cooldownData.isCooldownRecipe or
+        CraftSim.DB.CRAFTER:IsRecipeCooldownRecipe(self:GetCrafterUID(), self.recipeID) or
+        (maxCharges and maxCharges > 0) or
+        isDayCooldown or
+        currentCooldown > 0
+    if mightBeCD then
+        self.cooldownData = self:GetCooldownDataForRecipeCrafter()
+    end
+end
+
 ---@return CraftSim.ConcentrationData?
 function CraftSim.RecipeData:GetConcentrationDataForCrafter()
     local crafterUID = self:GetCrafterUID()
