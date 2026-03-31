@@ -644,6 +644,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = "Automatically create a Shopping List after Scan",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
+        CRAFT_QUEUE_COOLDOWN_CHARGES_TOOLTIP = "Cooldown charges: %d / %d",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER = "Wrong Crafter",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER = "Status",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "All Requirements need to be fulfilled in order to craft a recipe",

@@ -24,6 +24,22 @@ local CRAFT_QUEUE_RESULT_ICON_SLOTS = 6
 local CRAFT_QUEUE_RESULT_COLUMN_WIDTH =
     CRAFT_QUEUE_RESULT_ICON_SIZE * 3 + CRAFT_QUEUE_RESULT_ICON_SPACING * 2 + 16
 
+--- Same pattern as Recipe Scan: clock atlas + (current/max) for charge-based cooldown recipes.
+---@param recipeData CraftSim.RecipeData
+---@return string
+local function CraftQueueRecipeCooldownChargesInlineText(recipeData)
+    local cd = recipeData.cooldownData
+    if not cd or not cd.isCooldownRecipe or (cd.maxCharges or 0) <= 0 then
+        return ""
+    end
+    local currentCharges = cd:GetCurrentCharges()
+    if currentCharges == nil then
+        currentCharges = 0
+    end
+    local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
+    return " " .. timeIcon .. "(" .. currentCharges .. "/" .. cd.maxCharges .. ")"
+end
+
 ---@class CraftSim.CraftQueue.ResultColumnEntry
 ---@field kind "item"|"currency"|"firstcraft"
 ---@field item? ItemMixin
@@ -2550,6 +2566,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     craftQueue:UpdateSubRecipes()
+    craftQueue:RefreshQueuedRecipeCooldownData()
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         craftQueueItem:CalculateCanCraft()
     end
@@ -2868,13 +2885,14 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
     recipeData.reagentData:RefreshSlotStatus()
+    recipeData:RefreshCooldownDataIfProfessionOpen()
     craftQueueItem:CalculateCanCraft()
     editRecipeFrame.craftQueueItem = craftQueueItem
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.Content
     editRecipeFrame.content = editRecipeFrame.content
 
     editRecipeFrame.content.recipeName:SetText(GUTIL:IconToText(recipeData.recipeIcon, 15, 15) ..
-        " " .. recipeData.recipeName)
+        " " .. recipeData.recipeName .. CraftQueueRecipeCooldownChargesInlineText(recipeData))
     editRecipeFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
     local concentrationCostText = ""
@@ -3160,7 +3178,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
     end
-    recipeColumn.text:SetText(recipeData.recipeName .. upCraftText .. firstCraftText)
+    recipeColumn.text:SetText(recipeData.recipeName ..
+        upCraftText .. CraftQueueRecipeCooldownChargesInlineText(recipeData) .. firstCraftText)
 
     if recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc and recipeData.orderData.npcOrderRewards then
         ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
@@ -3243,8 +3262,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     -- if we got npcOrderRewards than we need to delay the tooltip display data
 
+    local cooldownChargesTooltipLine = ""
+    do
+        local cdTip = recipeData.cooldownData
+        if cdTip and cdTip.isCooldownRecipe and (cdTip.maxCharges or 0) > 0 then
+            local curTip = cdTip:GetCurrentCharges() or 0
+            cooldownChargesTooltipLine = f.white("\n" ..
+                string.format(L("CRAFT_QUEUE_COOLDOWN_CHARGES_TOOLTIP"), curTip, cdTip.maxCharges))
+        end
+    end
     local tooltipHeader = recipeData:GetFormattedCrafterText(true, true, 20, 20) ..
-        "\n" .. f.bb(recipeData.recipeName) .. "\n\n"
+        "\n" .. f.bb(recipeData.recipeName) .. cooldownChargesTooltipLine .. "\n\n"
 
     if recipeData.orderData and recipeData.orderData.npcOrderRewards then
         craftOrderInfoText = craftOrderInfoText .. L("CRAFT_QUEUE_ORDER_REWARDS")

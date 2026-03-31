@@ -17,6 +17,72 @@ local f = GUTIL:GetFormatter()
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 
+--- When the matching profession is open, replace stale saved cooldown with live C_TradeSkillUI data.
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param cooldownData CraftSim.CooldownData
+---@return CraftSim.CooldownData
+local function TryRefreshCooldownDataFromTradeSkillUI(crafterUID, recipeID, cooldownData)
+    if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
+        return cooldownData
+    end
+    if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+        return cooldownData
+    end
+    local openProf = CraftSim.UTIL:GetProfessionsFrameProfession()
+    if not openProf then
+        return cooldownData
+    end
+    local pinfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+    if not pinfo or pinfo.profession ~= openProf then
+        return cooldownData
+    end
+    local live = CraftSim.CooldownData(recipeID)
+    live:Update()
+    if live.isCooldownRecipe then
+        return live
+    end
+    return cooldownData
+end
+
+function CraftSim.COOLDOWNS.UI:OnTradeSkillItemCrafted()
+    if not CraftSim.COOLDOWNS.frame or not CraftSim.COOLDOWNS.frame:IsVisible() then
+        return
+    end
+    CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
+    CraftSim.COOLDOWNS.UI:UpdateTimers()
+end
+
+--- Writes live cooldown state for the open profession so the list and saved data match after a craft.
+function CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
+    local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+        return
+    end
+    local openProf = CraftSim.UTIL:GetProfessionsFrameProfession()
+    if not openProf then
+        return
+    end
+    local allCooldowns = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
+    local recipeCooldowns = allCooldowns[playerUID]
+    if not recipeCooldowns then
+        return
+    end
+    for _, cooldownDataSerialized in pairs(recipeCooldowns) do
+        local cd = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
+        local recipeID = cd.recipeID
+        local pinfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+        if pinfo and pinfo.profession == openProf then
+            local live = CraftSim.CooldownData(recipeID)
+            live:Update()
+            local rInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+            if live.isCooldownRecipe and rInfo and rInfo.learned then
+                live:Save(playerUID)
+            end
+        end
+    end
+end
+
 function CraftSim.COOLDOWNS.UI:Init()
     local sizeX = 680
     local sizeY = 220
@@ -252,6 +318,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
         for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
             local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
             local recipeID = cooldownData.recipeID
+            cooldownData = TryRefreshCooldownDataFromTradeSkillUI(crafterUID, recipeID, cooldownData)
             local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
                 C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
 
@@ -264,6 +331,8 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                 cooldownList:Add(
                 ---@param row CraftSim.COOLDOWNS.CooldownList.Row
                     function(row)
+                        row.crafterUID = crafterUID
+                        row.recipeID = recipeID
                         row.cooldownData = cooldownData
                         local columns = row.columns
                         local crafterColumn = columns[1] --[[@as CraftSim.COOLDOWNS.CooldownList.CrafterColumn]]
@@ -317,6 +386,8 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
 
                         row.UpdateTimers = function(self)
                             print("Updating Timers for " .. tostring(recipeInfo.name))
+                            self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID,
+                                self.recipeID, self.cooldownData)
                             local cooldownData = self.cooldownData
                             chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
                             local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
