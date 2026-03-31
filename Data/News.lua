@@ -23,6 +23,16 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.2.0"),
+        f.PG .. f.g("Crafting orders load on first profession open after login"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- Merged the " .. f.bb("Status") .. "/" .. f.bb("Tools") .. " column into the " .. f.bb("Craft") .. " button tooltip",
+        f.a .. "- Display Cooldown charges inline in the queue",
+        f.a .. "- Set gold value for Moxie rewards",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.pg .. f.bb("Fixes"),
+        f.a .. "- Midnight concentration fixes",
+        f.a .. "- Patron work order tooltip taint",
         newP("23.1.1"),
         f.PG .. f.bb("Collaborations"),
         f.a .. "- Added " .. f.g("Public Orders") .. " to the queueable work order type",
