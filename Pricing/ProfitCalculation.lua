@@ -79,15 +79,6 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
             end
         end
 
-        -- First craft grants 10 profession Moxie (all work order types; not always in npcOrderRewards).
-        if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
-            local moxieCurrencyID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
-            if moxieCurrencyID then
-                local perUnit = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieCurrencyID)
-                comissionProfit = comissionProfit +
-                    perUnit * CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
-            end
-        end
     end
     return comissionProfit
 end
@@ -118,7 +109,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     end
 
     local firstCraftMoxieBonus = 0
-    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft and not recipeData.orderData then
+    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         local moxieCurrencyID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
         if moxieCurrencyID then
             firstCraftMoxieBonus = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieCurrencyID) *
