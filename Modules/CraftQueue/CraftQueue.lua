@@ -602,7 +602,9 @@ function CraftSim.CRAFTQ:QueueFavorites()
                             (concentrationCosts * ingenuityChance * ingenuityRefund)
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
-                    if queueableAmount > 0 then
+                    -- Only queue recipes where at least one craft is possible with current reagents
+                    local canCraftAtLeastOnce = recipeData.reagentData:GetCraftableAmount(recipeData:GetCrafterUID()) > 0
+                    if queueableAmount > 0 and canCraftAtLeastOnce then
                         local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
                             "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
                         local totalAmount = queueableAmount + offsetAmount
