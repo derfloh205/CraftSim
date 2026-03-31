@@ -2235,6 +2235,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     ---@param selectedItem ItemMixin?
     ---@param selectedCurrencyID number?
     local function OnSelectOptionalReagent(itemSelector, selectedItem, selectedCurrencyID)
+        local currentCraftQueueUID = editRecipeFrame.craftQueueItem.recipeData:GetRecipeCraftQueueUID()
         if itemSelector and itemSelector.slot then
             if selectedCurrencyID then
                 itemSelector.slot:SetCurrencyReagent(selectedCurrencyID)
@@ -2245,6 +2246,24 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 itemSelector.slot:SetReagent((selectedItem and selectedItem:GetItemID()) or nil)
             end
             editRecipeFrame.craftQueueItem.recipeData:Update()
+
+            -- Update craftQueueUID if it has changed
+            local newCraftQueueUID = editRecipeFrame.craftQueueItem.recipeData:GetRecipeCraftQueueUID()
+            if currentCraftQueueUID ~= newCraftQueueUID then
+                -- if there is already another mapping with the same uid, merge the others amount into the current one
+                if CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[newCraftQueueUID] then
+                    local existingItem = CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[newCraftQueueUID]
+                    editRecipeFrame.craftQueueItem.amount = existingItem.amount + editRecipeFrame.craftQueueItem.amount
+                    -- remove old item from craftqueue
+                    CraftSim.CRAFTQ.craftQueue:Remove(existingItem)
+                else
+                    -- if not just update the mapping
+                    CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[newCraftQueueUID] = editRecipeFrame.craftQueueItem
+                    CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[currentCraftQueueUID] = nil
+                    editRecipeFrame.craftQueueItem.craftQueueUID = newCraftQueueUID
+                end
+            end
+
             CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
             CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
         end
