@@ -24,22 +24,6 @@ local CRAFT_QUEUE_RESULT_ICON_SLOTS = 4
 local CRAFT_QUEUE_RESULT_COLUMN_WIDTH =
     CRAFT_QUEUE_RESULT_ICON_SIZE * 4 + CRAFT_QUEUE_RESULT_ICON_SPACING * 3 + 16
 
---- Same pattern as Recipe Scan: clock atlas + (current/max) for charge-based cooldown recipes.
----@param recipeData CraftSim.RecipeData
----@return string
-local function CraftQueueRecipeCooldownChargesInlineText(recipeData)
-    local cd = recipeData.cooldownData
-    if not cd or not cd.isCooldownRecipe or (cd.maxCharges or 0) <= 0 then
-        return ""
-    end
-    local currentCharges = cd:GetCurrentCharges()
-    if currentCharges == nil then
-        currentCharges = 0
-    end
-    local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
-    return " " .. timeIcon .. "(" .. currentCharges .. "/" .. cd.maxCharges .. ")"
-end
-
 ---@class CraftSim.CraftQueue.ResultColumnEntry
 ---@field kind "item"|"currency"|"firstcraft"
 ---@field item? ItemMixin
@@ -3168,7 +3152,7 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     editRecipeFrame.content = editRecipeFrame.content
 
     editRecipeFrame.content.recipeName:SetText(GUTIL:IconToText(recipeData.recipeIcon, 15, 15) ..
-        " " .. recipeData.recipeName .. CraftQueueRecipeCooldownChargesInlineText(recipeData))
+        " " .. recipeData.recipeName .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData))
     editRecipeFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
     local concentrationCostText = ""
@@ -3455,7 +3439,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
     end
     recipeColumn.text:SetText(recipeData.recipeName ..
-        upCraftText .. CraftQueueRecipeCooldownChargesInlineText(recipeData) .. firstCraftText)
+        upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
     ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
     local rewardItems = BuildCraftQueueRewardItemRows(recipeData, false)
@@ -3532,11 +3516,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     local cooldownChargesTooltipLine = ""
     do
-        local cdTip = recipeData.cooldownData
-        if cdTip and cdTip.isCooldownRecipe and (cdTip.maxCharges or 0) > 0 then
+        local cdTip = recipeData:GetCooldownDataForRecipeCrafter()
+        if cdTip and cdTip.isCooldownRecipe then
             local curTip = cdTip:GetCurrentCharges() or 0
             cooldownChargesTooltipLine = f.white("\n" ..
-                string.format(L("CRAFT_QUEUE_COOLDOWN_CHARGES_TOOLTIP"), curTip, cdTip.maxCharges))
+                string.format(L("RECIPE_COOLDOWN_CHARGES_TOOLTIP"), curTip, cdTip.maxCharges))
         end
     end
     local tooltipHeader = recipeData:GetFormattedCrafterText(true, true, 20, 20) ..
