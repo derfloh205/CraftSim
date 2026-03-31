@@ -111,6 +111,7 @@ CraftSim.CONST.FRAMES = {
     POPUP = "POPUP",
     SUPPORTERS = "SUPPORTERS",
     CRAFT_QUEUE = "CRAFT_QUEUE",
+    CRAFTQUEUE_PATRON_REWARD_VALUES = "CRAFTQUEUE_PATRON_REWARD_VALUES",
     CRAFT_BUFFS = "CRAFT_BUFFS",
     CRAFT_BUFFS_WORKORDER = "CRAFT_BUFFS_WORKORDER",
     CRAFT_QUEUE_EDIT_RECIPE = "CRAFT_QUEUE_EDIT_RECIPE",
@@ -403,6 +404,8 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST",
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE",
+    --- table<currencyID, copperPerUnit> patron Manu Moxie reward valuation (nil until user sets any value)
+    CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES",
     CRAFTQUEUE_AUTO_SHOW = "CRAFTQUEUE_AUTO_SHOW",
     CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = "CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST",
     CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND = "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
@@ -1103,16 +1106,39 @@ CraftSim.CONST.PATRON_ORDERS_POWER_RUNE_REWARD_ITEMS = {
     259085, -- https://www.wowhead.com/item=259085/
 }
 
+--- Midnight expansion: contiguous IDs 3256–3266 (gathering professions included). See Wowhead currency pages.
 CraftSim.CONST.MOXIE_CURRENCY_IDS = {
-    3256, --alchemy
-    3257, --blacksmithing
-    3258, --enchanting
-    3259, --engineering
-    3260, --inscription
-    3261, --jewelcrafting
-    3262, --leatherworking
-    3263, --tailoring
+    3256, -- alchemy
+    3257, -- blacksmithing
+    3258, -- enchanting
+    3259, -- engineering
+    3260, -- herbalism
+    3261, -- inscription (Artisan Scribe's Moxie)
+    3262, -- jewelcrafting
+    3263, -- leatherworking
+    3264, -- mining
+    3265, -- skinning
+    3266, -- tailoring
 }
+
+--- Manu Moxie currency per profession (same order as MOXIE_CURRENCY_IDS where applicable).
+---@type table<Enum.Profession, number>
+CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION = {
+    [Enum.Profession.Alchemy] = 3256,
+    [Enum.Profession.Blacksmithing] = 3257,
+    [Enum.Profession.Enchanting] = 3258,
+    [Enum.Profession.Engineering] = 3259,
+    [Enum.Profession.Herbalism] = 3260,
+    [Enum.Profession.Inscription] = 3261,
+    [Enum.Profession.Jewelcrafting] = 3262,
+    [Enum.Profession.Leatherworking] = 3263,
+    [Enum.Profession.Mining] = 3264,
+    [Enum.Profession.Skinning] = 3265,
+    [Enum.Profession.Tailoring] = 3266,
+}
+
+--- Extra Moxie from a recipe's first craft (10; stacked on npc patron listed rewards when the same currency appears).
+CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE = 10
 
 CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA = {
     {
