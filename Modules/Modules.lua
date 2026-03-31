@@ -40,6 +40,11 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	if not keepCraftQ then
 		CraftSim.CRAFTQ.frame:Hide()
 	end
+	local patronRewardValuesFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+		CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
+	if patronRewardValuesFrame then
+		patronRewardValuesFrame:Hide()
+	end
 	-- hide all modules
 	CraftSim.RECIPE_SCAN.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frame:Hide()
