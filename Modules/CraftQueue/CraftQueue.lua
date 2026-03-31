@@ -607,14 +607,16 @@ function CraftSim.CRAFTQ:QueueFavorites()
                             "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
                         local totalAmount = queueableAmount + offsetAmount
 
-                        -- Ensure we only keep soulbound finishing reagents when we have enough
-                        -- to cover all queued crafts for this recipe.
-                        recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+                        if totalAmount > 0 then
+                            -- Ensure we only keep soulbound finishing reagents when we have enough
+                            -- to cover all queued crafts for this recipe.
+                            recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
 
-                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
-                        currentConcentration = currentConcentration -
-                            (concentrationCosts * queueableAmount)
-                        break -- only queue first recipe in this mode
+                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = totalAmount }
+                            currentConcentration = currentConcentration -
+                                (concentrationCosts * queueableAmount)
+                            break -- only queue first recipe in this mode
+                        end
                     end
                 end
             end

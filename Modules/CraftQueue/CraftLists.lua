@@ -250,19 +250,21 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
                                 end
 
-                                CraftSim.CRAFTQ:AddRecipe {
-                                    recipeData = recipeData,
-                                    amount = totalAmount,
-                                    splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
-                                }
+                                if totalAmount > 0 then
+                                    CraftSim.CRAFTQ:AddRecipe {
+                                        recipeData = recipeData,
+                                        amount = totalAmount,
+                                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                                    }
 
-                                -- Update last crafting cost DB if option is enabled
-                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                                    CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                                    -- Update last crafting cost DB if option is enabled
+                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                                    end
+
+                                    currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
+                                    break
                                 end
-
-                                currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
-                                break
                             end
                         end
                     end
