@@ -386,6 +386,23 @@ function CraftSim.UTIL:GetLocalizer()
     end
 end
 
+--- Clock icon + localized current/max charges. Same data path as Recipe Scan (`GetCooldownDataForRecipeCrafter`).
+---@param recipeData CraftSim.RecipeData
+---@return string
+function CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData)
+    local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
+    if not cooldownData or not cooldownData.isCooldownRecipe then
+        return ""
+    end
+    local currentCharges = cooldownData:GetCurrentCharges()
+    if currentCharges == nil then
+        currentCharges = 0
+    end
+    local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
+    local fmt = CraftSim.LOCAL:GetText("RECIPE_COOLDOWN_CHARGES_INLINE")
+    return " " .. timeIcon .. string.format(fmt, currentCharges, cooldownData.maxCharges)
+end
+
 ---@param costConstant number
 ---@param playerSkill number
 ---@param skillStart number
