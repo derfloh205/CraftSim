@@ -728,6 +728,19 @@ function CraftSim.CRAFTQ.UI:Init()
                         local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST", not value)
                     end)
+
+                local updateLastCostCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST")
+                    end,
+                    function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST", not value)
+                    end)
+                updateLastCostCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP"))
+                end)
             end
         }
 
