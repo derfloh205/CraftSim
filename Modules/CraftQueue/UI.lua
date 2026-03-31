@@ -2826,6 +2826,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     craftQueue:UpdateSubRecipes()
+    craftQueue:RefreshQueuedRecipeCooldownData()
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         craftQueueItem:CalculateCanCraft()
     end
@@ -3144,13 +3145,14 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
     recipeData.reagentData:RefreshSlotStatus()
+    recipeData:RefreshCooldownDataIfProfessionOpen()
     craftQueueItem:CalculateCanCraft()
     editRecipeFrame.craftQueueItem = craftQueueItem
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.Content
     editRecipeFrame.content = editRecipeFrame.content
 
     editRecipeFrame.content.recipeName:SetText(GUTIL:IconToText(recipeData.recipeIcon, 15, 15) ..
-        " " .. recipeData.recipeName)
+        " " .. recipeData.recipeName .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData))
     editRecipeFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
     local concentrationCostText = ""
@@ -3436,7 +3438,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
     end
-    recipeColumn.text:SetText(recipeData.recipeName .. upCraftText .. firstCraftText)
+    recipeColumn.text:SetText(recipeData.recipeName ..
+        upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
     ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
     local rewardItems = BuildCraftQueueRewardItemRows(recipeData, false)
@@ -3511,8 +3514,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     -- if we got npcOrderRewards than we need to delay the tooltip display data
 
+    local cooldownChargesTooltipLine = ""
+    do
+        local cdTip = recipeData:GetCooldownDataForRecipeCrafter()
+        if cdTip and cdTip.isCooldownRecipe then
+            local curTip = cdTip:GetCurrentCharges() or 0
+            cooldownChargesTooltipLine = f.white("\n" ..
+                string.format(L("RECIPE_COOLDOWN_CHARGES_TOOLTIP"), curTip, cdTip.maxCharges))
+        end
+    end
     local tooltipHeader = recipeData:GetFormattedCrafterText(true, true, 20, 20) ..
-        "\n" .. f.bb(recipeData.recipeName) .. "\n\n"
+        "\n" .. f.bb(recipeData.recipeName) .. cooldownChargesTooltipLine .. "\n\n"
 
     if CraftQueueOrderRewardsTooltipSectionWanted(recipeData) then
         craftOrderInfoText = craftOrderInfoText .. L("CRAFT_QUEUE_ORDER_REWARDS")

@@ -1163,13 +1163,7 @@ function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
         recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
     end
 
-    local cooldownInfoText = ""
-    local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
-    if cooldownData and cooldownData.isCooldownRecipe then
-        local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
-        local currentCharges = cooldownData:GetCurrentCharges()
-        cooldownInfoText = " " .. timeIcon .. "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
-    end
+    local cooldownInfoText = CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData)
 
     local firstCraftInfoText = ""
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
@@ -1215,14 +1209,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
             end
 
-            local cooldownInfoText = ""
-            local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
-            if cooldownData and cooldownData.isCooldownRecipe then
-                local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
-                local currentCharges = cooldownData:GetCurrentCharges()
-                cooldownInfoText = " " .. timeIcon ..
-                    "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
-            end
+            local cooldownInfoText = CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData)
 
             local firstCraftInfoText = ""
             if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then

@@ -1,15 +1,20 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.COOLDOWNS
-CraftSim.COOLDOWNS = {}
-
 local GUTIL = CraftSim.GUTIL
-local GGUI = CraftSim.GGUI
+
+---@class CraftSim.COOLDOWNS : Frame
+CraftSim.COOLDOWNS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns")
 
 CraftSim.COOLDOWNS.isUpdatingTimers = false
+
+function CraftSim.COOLDOWNS:TRADE_SKILL_ITEM_CRAFTED_RESULT()
+    if CraftSim.COOLDOWNS.UI and CraftSim.COOLDOWNS.UI.OnTradeSkillItemCrafted then
+        CraftSim.COOLDOWNS.UI:OnTradeSkillItemCrafted()
+    end
+end
 
 function CraftSim.COOLDOWNS:StartTimerUpdate()
     -- prevent duplicate timer updates

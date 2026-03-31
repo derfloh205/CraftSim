@@ -215,6 +215,13 @@ function CraftSim.CraftQueue:CacheQueueItems()
     CraftSim.DEBUG:StopProfiling("CraftQueue Item DB Save")
 end
 
+--- While each row's crafter profession is open, refresh cooldown/charges so the list matches the game after crafts.
+function CraftSim.CraftQueue:RefreshQueuedRecipeCooldownData()
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        craftQueueItem.recipeData:RefreshCooldownDataIfProfessionOpen()
+    end
+end
+
 function CraftSim.CraftQueue:RestoreFromDB()
     CraftSim.DEBUG:StartProfiling("CraftQueue Item Restoration")
     print("Restore CraftQ From DB Start...")
