@@ -19,10 +19,10 @@ local SHATTER_MOTE_SELECTION_MODE = {
 --- Single result icon and NPC reward inline icons use the same size
 local CRAFT_QUEUE_RESULT_ICON_SIZE = 18
 local CRAFT_QUEUE_RESULT_ICON_SPACING = 2
-local CRAFT_QUEUE_RESULT_ICON_SLOTS = 6
---- Result column: three icons + two gaps + small side padding (no extra dead space)
+local CRAFT_QUEUE_RESULT_ICON_SLOTS = 4
+--- Result column: four icons + three gaps + small side padding (no extra dead space)
 local CRAFT_QUEUE_RESULT_COLUMN_WIDTH =
-    CRAFT_QUEUE_RESULT_ICON_SIZE * 3 + CRAFT_QUEUE_RESULT_ICON_SPACING * 2 + 16
+    CRAFT_QUEUE_RESULT_ICON_SIZE * 4 + CRAFT_QUEUE_RESULT_ICON_SPACING * 3 + 16
 
 ---@class CraftSim.CraftQueue.ResultColumnEntry
 ---@field kind "item"|"currency"|"firstcraft"
@@ -43,13 +43,103 @@ local function BuildCraftQueueResultEntries(recipeData, rewardRows)
             tinsert(entries, { kind = "item", item = reward.item })
         end
     end
-    if #entries == 0 then
+    local isNpcPatronOrder = recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc
+    if not isNpcPatronOrder then
+        tinsert(entries, 1, { kind = "item", item = recipeData.resultData.expectedItem })
+    elseif #entries == 0 then
         tinsert(entries, { kind = "item", item = recipeData.resultData.expectedItem })
     end
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         tinsert(entries, { kind = "firstcraft" })
     end
     return entries
+end
+
+--- First-craft moxie (+PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE): merge into an existing moxie row or append one (matches profit calc).
+---@param rewardItems { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }[]
+---@param recipeData CraftSim.RecipeData
+local function ApplyFirstCraftMoxieToRewardRows(rewardItems, recipeData)
+    if not (recipeData.recipeInfo and recipeData.recipeInfo.firstCraft) then
+        return
+    end
+    local moxieID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+    if not moxieID then
+        return
+    end
+    local add = CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
+    for _, row in ipairs(rewardItems) do
+        if row.currency == moxieID then
+            row.count = (tonumber(row.count) or 0) + add
+            return
+        end
+    end
+    tinsert(rewardItems, { count = add, currency = moxieID, item = nil })
+end
+
+--- Patron NPC listed rewards (if any) plus first-craft moxie for every queued recipe type.
+---@param recipeData CraftSim.RecipeData
+---@param includeRawItemLink boolean
+---@return { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }[]
+local function BuildCraftQueueRewardItemRows(recipeData, includeRawItemLink)
+    local npcList = {}
+    if recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
+        npcList = recipeData.orderData.npcOrderRewards or {}
+    end
+    local rewardItems = GUTIL:Map(npcList, function(reward)
+        ---@type { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }
+        local row = {
+            count = reward.count,
+            item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
+            currency = reward.currencyType,
+        }
+        if includeRawItemLink then
+            row.rawItemLink = reward.itemLink
+        end
+        return row
+    end)
+    ApplyFirstCraftMoxieToRewardRows(rewardItems, recipeData)
+    return rewardItems
+end
+
+--- Result column shows at most CRAFT_QUEUE_RESULT_ICON_SLOTS icons; first-craft moxie can be clipped when listed last.
+---@param recipeData CraftSim.RecipeData
+---@param entries CraftSim.CraftQueue.ResultColumnEntry[]
+local function PrioritizeFirstCraftMoxieInResultEntries(recipeData, entries)
+    if not (recipeData.recipeInfo and recipeData.recipeInfo.firstCraft) then
+        return
+    end
+    local moxieID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+    if not moxieID then
+        return
+    end
+    for i = 1, #entries do
+        local e = entries[i]
+        if e.kind == "currency" and e.currencyID == moxieID then
+            if i > 1 then
+                tremove(entries, i)
+                tinsert(entries, 1, e)
+            end
+            return
+        end
+    end
+end
+
+--- Rich "Rewards" tooltip block (NPC patron rows, or any work order with first-craft moxie).
+---@param recipeData CraftSim.RecipeData
+---@return boolean
+local function CraftQueueOrderRewardsTooltipSectionWanted(recipeData)
+    if not recipeData.orderData then
+        return false
+    end
+    if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
+        if recipeData.orderData.npcOrderRewards then
+            return true
+        end
+        return recipeData.recipeInfo and recipeData.recipeInfo.firstCraft and
+            CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData) ~= nil
+    end
+    return recipeData.recipeInfo and recipeData.recipeInfo.firstCraft and
+        CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData) ~= nil
 end
 
 ---@param gIcon GGUI.Icon
@@ -242,6 +332,127 @@ local function SyncCraftQueueButtonDisabledTooltipProxy(gguiButton)
 end
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
+
+local moxieValuesOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES
+
+function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
+    local sizeX = 360
+    local sizeY = 450 -- one row per MOXIE_CURRENCY_IDS + intro
+
+    ---@type GGUI.Frame
+    CraftSim.CRAFTQ.patronRewardValuesFrame = CraftSim.GGUI.Frame({
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES,
+        title = L("CRAFT_QUEUE_PATRON_REWARD_VALUES_TITLE"),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        hide = true,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable = CraftSim.INIT.FRAMES,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+    })
+
+    local gFrame = CraftSim.CRAFTQ.patronRewardValuesFrame
+    local content = gFrame.content
+
+    local padX = 12
+    local rowInnerW = sizeX - 2 * padX
+    local currencyColW = 68
+
+    local introText = GGUI.Text({
+        parent = content,
+        anchorParent = content,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPLEFT",
+        offsetX = padX,
+        offsetY = -35,
+        text = L("CRAFT_QUEUE_PATRON_REWARD_VALUES_INTRO"),
+        justifyOptions = { type = "H", align = "LEFT" },
+        wrap = true,
+        fixedWidth = rowInnerW,
+    })
+
+    local moxieRowIconGap = 6
+    local moxieRowIconSlot = CRAFT_QUEUE_RESULT_ICON_SIZE
+
+    local prevBottom = introText.frame
+    for _, moxieCurrencyID in ipairs(CraftSim.CONST.MOXIE_CURRENCY_IDS) do
+        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(moxieCurrencyID)
+        local labelText = (currencyInfo and currencyInfo.name or ("#" .. tostring(moxieCurrencyID))) .. ": "
+
+        local row = CreateFrame("Frame", nil, content, "BackdropTemplate")
+        row:SetSize(rowInnerW, 26)
+        row:SetPoint("TOPLEFT", prevBottom, "BOTTOMLEFT", 0, -6)
+
+        local labelLeft = 0
+        if currencyInfo then
+            local rowIcon = GGUI.Icon({
+                parent = row,
+                anchorParent = row,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 0,
+                offsetY = 0,
+                sizeX = moxieRowIconSlot,
+                sizeY = moxieRowIconSlot,
+                hideQualityIcon = true,
+            })
+            rowIcon:SetCurrency(moxieCurrencyID)
+            labelLeft = moxieRowIconSlot + moxieRowIconGap
+        end
+
+        GGUI.Text {
+            parent = row,
+            anchorParent = row,
+            anchorA = "LEFT",
+            anchorB = "LEFT",
+            offsetX = labelLeft,
+            text = labelText,
+            justifyOptions = { type = "H", align = "LEFT" },
+            fixedWidth = rowInnerW - currencyColW - labelLeft,
+        }
+        local values = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
+        local initial = (type(values) == "table" and tonumber(values[moxieCurrencyID])) or 0
+        GGUI.CurrencyInput {
+            parent = row, anchorParent = row,
+            sizeX = 60, sizeY = 22, offsetX = 0,
+            anchorA = "RIGHT", anchorB = "RIGHT",
+            initialValue = initial,
+            borderAdjustWidth = 1,
+            minValue = 0.94,
+            tooltipOptions = {
+                anchor = "ANCHOR_TOP",
+                owner = row,
+                text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP") ..
+                    GUTIL:FormatMoney(1000000, false, nil, false, false)),
+            },
+            onValueValidCallback = function(input)
+                local stored = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
+                if type(stored) ~= "table" then
+                    stored = {}
+                    CraftSim.DB.OPTIONS:Save(moxieValuesOptionKey, stored)
+                end
+                stored[moxieCurrencyID] = tonumber(input.total) or 0
+            end,
+        }
+        prevBottom = row
+    end
+end
+
+function CraftSim.CRAFTQ.UI:ShowPatronRewardValuesFrame()
+    if not CraftSim.CRAFTQ.patronRewardValuesFrame then
+        return
+    end
+    CraftSim.CRAFTQ.patronRewardValuesFrame:Show()
+    CraftSim.CRAFTQ.patronRewardValuesFrame:Raise()
+end
 
 function CraftSim.CRAFTQ.UI:Init()
     local sizeX = 900
@@ -1052,6 +1263,50 @@ function CraftSim.CRAFTQ.UI:Init()
                             end,
                         }
                     end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
+
+                    patronOrderOptions:CreateDivider()
+                    -- 210x20 matches MenuUtil checkbox row height (custom inputs above stay 25px tall).
+                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(menuRowFrame)
+                        local function openPatronMoxieValues()
+                            CraftSim.CRAFTQ.UI:ShowPatronRewardValuesFrame()
+                            if CloseMenus then
+                                CloseMenus()
+                            end
+                        end
+
+                        local hit = CreateFrame("Frame", nil, menuRowFrame)
+                        hit:SetAllPoints(menuRowFrame)
+                        hit:EnableMouse(true)
+                        menuRowFrame:SetClipsChildren(true)
+
+                        local hl = hit:CreateTexture(nil, "ARTWORK")
+                        hl:SetTexture("Interface/QuestFrame/UI-QuestTitleHighlight")
+                        hl:SetBlendMode("ADD")
+                        hl:SetAlpha(0.9)
+                        hl:SetVertexColor(1, 0.92, 0.62)
+                        hl:SetPoint("TOPLEFT", hit, "TOPLEFT", -10, 0)
+                        hl:SetPoint("BOTTOMRIGHT", hit, "BOTTOMRIGHT", 10, 0)
+                        hl:Hide()
+
+                        hit:SetScript("OnEnter", function()
+                            hl:Show()
+                        end)
+                        hit:SetScript("OnLeave", function()
+                            hl:Hide()
+                        end)
+                        hit:SetScript("OnMouseUp", function(_, btn)
+                            if btn == "LeftButton" then
+                                openPatronMoxieValues()
+                            end
+                        end)
+
+                        GGUI.Text({
+                            parent = hit,
+                            anchorPoints = { { anchorParent = hit, anchorA = "LEFT", anchorB = "LEFT" } },
+                            text = L("CRAFT_QUEUE_PATRON_REWARD_VALUES_MENU_BUTTON"),
+                            justifyOptions = { type = "H", align = "LEFT" },
+                        })
+                    end, 210, 20, "CRAFTQUEUE_PATRON_REWARD_VALUES_MENU_ROW")
             end
         }
 
@@ -1154,6 +1409,8 @@ function CraftSim.CRAFTQ.UI:Init()
     end
 
     createContent(CraftSim.CRAFTQ.frame)
+
+    CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
 
     -- add to queue button in crafting ui
     CraftSim.CRAFTQ.queueRecipeButton = GGUI.Button {
@@ -3162,24 +3419,16 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText .. firstCraftText)
 
-    if recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc and recipeData.orderData.npcOrderRewards then
-        ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
-        local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
-            return {
-                count = reward.count,
-                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
-                currency = reward.currencyType,
-            }
-        end)
-        local rewardItemMixins = GUTIL:Filter(GUTIL:Map(rewardItems, function(r) return r.item end), function(m)
-            return m ~= nil
-        end)
-        GUTIL:ContinueOnAllItemsLoaded(rewardItemMixins, function()
-            ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, rewardItems))
-        end)
-    else
-        ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, nil))
-    end
+    ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
+    local rewardItems = BuildCraftQueueRewardItemRows(recipeData, false)
+    local rewardItemMixins = GUTIL:Filter(GUTIL:Map(rewardItems, function(r) return r.item end), function(m)
+        return m ~= nil
+    end)
+    GUTIL:ContinueOnAllItemsLoaded(rewardItemMixins, function()
+        local entries = BuildCraftQueueResultEntries(recipeData, rewardItems)
+        PrioritizeFirstCraftMoxieInResultEntries(recipeData, entries)
+        ApplyResultColumnEntries(resultColumn, entries)
+    end)
 
     if craftQueueItem.recipeData:IsSubRecipe() then
         averageProfitColumn.text:SetText(f.g("-"))
@@ -3246,16 +3495,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local tooltipHeader = recipeData:GetFormattedCrafterText(true, true, 20, 20) ..
         "\n" .. f.bb(recipeData.recipeName) .. "\n\n"
 
-    if recipeData.orderData and recipeData.orderData.npcOrderRewards then
+    if CraftQueueOrderRewardsTooltipSectionWanted(recipeData) then
         craftOrderInfoText = craftOrderInfoText .. L("CRAFT_QUEUE_ORDER_REWARDS")
-        local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
-            return {
-                count = reward.count,
-                item = reward.itemLink and Item:CreateFromItemLink(reward.itemLink) or nil,
-                rawItemLink = reward.itemLink,
-                currency = reward.currencyType,
-            }
-        end)
+        local rewardItems = BuildCraftQueueRewardItemRows(recipeData, true)
         GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
             for _, reward in ipairs(rewardItems) do
                 if reward.currency then
@@ -3303,8 +3545,21 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             }
         end)
     else
-        if firstCraftRewardLine ~= "" then
-            craftOrderInfoText = craftOrderInfoText .. "\nRewards:" .. firstCraftRewardLine
+        local moxieID = (recipeData.recipeInfo and recipeData.recipeInfo.firstCraft) and
+            CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData) or nil
+        local moxieCount = CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
+        local moxieLine = ""
+        if moxieID then
+            local currencyLink = C_CurrencyInfo.GetCurrencyLink(moxieID, moxieCount)
+            local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(moxieID, moxieCount)
+            if currencyInfo then
+                moxieLine = "\n- " ..
+                    GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
+                    " " .. (currencyLink or currencyInfo.name or "<?>") .. " x" .. moxieCount
+            end
+        end
+        if firstCraftRewardLine ~= "" or moxieLine ~= "" then
+            craftOrderInfoText = craftOrderInfoText .. "\nRewards:" .. moxieLine .. firstCraftRewardLine
         end
         row.tooltipOptions = {
             text = tooltipHeader .. recipeData.reagentData:GetTooltipText(craftQueueItem.amount,

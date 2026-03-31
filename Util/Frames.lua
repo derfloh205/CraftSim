@@ -76,6 +76,11 @@ function CraftSim.FRAME:RestoreModulePositions()
     reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
     reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+    local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
+    if patronRewardValuesFrame then
+        patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
+    end
 
     CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
     CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
