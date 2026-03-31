@@ -1921,6 +1921,28 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() return opts.optimizeFinishingReagents end,
                 function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
 
+            local FA = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
+            local finishingAlgorithmButton = optimizationButton:CreateButton(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM"))
+
+            local simpleRadio = finishingAlgorithmButton:CreateRadio(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
+                function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) ~= FA.PERMUTATION end,
+                function() opts.finishingReagentsAlgorithm = FA.SIMPLE end)
+            simpleRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
+            end)
+
+            local permutationRadio = finishingAlgorithmButton:CreateRadio(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
+                function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) == FA.PERMUTATION end,
+                function() opts.finishingReagentsAlgorithm = FA.PERMUTATION end)
+            permutationRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
+            end)
+
             optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
                 function() return opts.includeSoulboundFinishingReagents end,
