@@ -386,6 +386,11 @@ function CraftSim.LOCAL_KO:GetData()
         -- Shared OptimizationOptions Widget (공유 최적화 옵션 위젯)
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = f.bb("전문 기술 도구") .. " 최적화",
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = f.e("획득 시 귀속") .. f.bb(" 마무리 재료") .. " 포함",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "제작 대기열로 보내기",
         RECIPE_SCAN_CREATE_CRAFT_LIST = "제작 목록 만들기",

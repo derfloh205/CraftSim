@@ -299,12 +299,14 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
 
     local OPT_ID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN
     local KEYS   = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local FA     = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
     local optimizeGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, false)
     local concentrationEnabled = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ENABLE_CONCENTRATION, true)
     local optimizeSubRecipes = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
     local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, false)
     local optimizeTopProfit = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
     local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_FINISHING_REAGENTS, false)
+    local finishingAlgorithm = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
     local reagentAllocation = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION, CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
     local optimizationScanMode = reagentAllocation == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 
@@ -401,6 +403,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 optimizeFinishingReagentOptions = {
                     includeLocked = false,
                     includeSoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS, false),
+                    permutationBased = finishingAlgorithm == FA.PERMUTATION,
                     progressUpdateCallback = function(progress)
                     content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
                         " " ..

@@ -259,6 +259,11 @@ function CraftSim.LOCAL_TW:GetData()
         RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS = "Optimize Finishing Reagents",
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = "Optimize Profession Tools",
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include Soulbound Finishing Reagents",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "Autoselect Open Profession",
 
         -- Recipe Top Gear
