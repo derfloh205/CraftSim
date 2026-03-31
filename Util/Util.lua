@@ -534,6 +534,49 @@ function CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
     return vendorSellPrice or 0
 end
 
+--- Expected profit contribution per unit of patron-order Manu Moxie (copper), from Craft Queue patron options.
+---@param currencyID number
+---@return number copperPerUnit
+function CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(currencyID)
+    local values = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES")
+    if type(values) ~= "table" then
+        return 0
+    end
+    return tonumber(values[currencyID]) or 0
+end
+
+--- Manu Moxie currency for the recipe's profession (API may omit `professionInfo.profession`; fall back via skill line).
+---@param recipeData CraftSim.RecipeData
+---@return number?
+function CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+    local pd = recipeData.professionData
+    if not pd or not pd.professionInfo then
+        return nil
+    end
+    local profession = pd.professionInfo.profession
+    local mapped = profession and CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION[profession]
+    if mapped then
+        return mapped
+    end
+    local sid = pd.skillLineID
+    if not sid then
+        return nil
+    end
+    for prof, lines in pairs(CraftSim.CONST.TRADESKILLLINEIDS) do
+        if type(prof) == "number" and type(lines) == "table" then
+            local moxieID = CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION[prof]
+            if moxieID then
+                for _, lineID in pairs(lines) do
+                    if lineID == sid then
+                        return moxieID
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
 ---@param profession Enum.Profession
 function CraftSim.UTIL:IsProfessionLearned(profession)
     local learnedProfessions = { GetProfessions() };
