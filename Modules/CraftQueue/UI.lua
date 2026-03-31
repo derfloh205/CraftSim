@@ -337,7 +337,7 @@ local moxieValuesOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PAT
 
 function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
     local sizeX = 360
-    local sizeY = 450 -- one row per MOXIE_CURRENCY_IDS + intro
+    local sizeY = 470 -- one row per MOXIE_CURRENCY_IDS + intro
 
     ---@type GGUI.Frame
     CraftSim.CRAFTQ.patronRewardValuesFrame = CraftSim.GGUI.Frame({
