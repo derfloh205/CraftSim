@@ -217,7 +217,8 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			recipeData.craftListID = CraftSim.CRAFTQ.currentlyCraftedCraftListID
 		end
 
-		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation)
+		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation,
+			onCraftData.isEnchant)
 		CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
 	end
 

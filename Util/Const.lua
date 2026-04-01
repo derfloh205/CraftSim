@@ -788,6 +788,18 @@ CraftSim.CONST.BUFF_IDS = {
     HARANIR_PHIAL_OF_INGENUITY = 1239755,
 }
 
+--- Shatter-style crafting buffs: assume active for enchanting stat math (typical pre-craft shatter).
+---@type table<CraftSim.BuffID, boolean>
+CraftSim.CONST.ENCHANTING_SHATTER_BUFF_ASSUME_ACTIVE_FOR_STATS = {
+    [CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE] = true,
+    [CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT] = true,
+    [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_AIR] = true,
+    [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_FIRE] = true,
+    [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_EARTH] = true,
+    [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_FROST] = true,
+    [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_ORDER] = true,
+}
+
 CraftSim.CONST.LOCALES = {
     EN = "enUS",
     DE = "deDE",
