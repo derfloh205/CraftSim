@@ -800,12 +800,16 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "Restock Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "Offset Queue Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
+        CRAFT_LISTS_OPTIONS_ENABLE_RESTOCK_MODE = "Enable Restock Mode",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after Queue",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
             " database is updated for each recipe when queuing craft lists.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("No list selected"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("Select a list to view recipes"),
+        CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "Set Restock Max",
+        CRAFT_LISTS_RECIPE_RESTOCK_TAG = "Restock",
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "Set Recipe Restock Max",
 
         -- craft buffs
 

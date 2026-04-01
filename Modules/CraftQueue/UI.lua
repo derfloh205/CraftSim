@@ -1753,7 +1753,30 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 elseif IsMouseButtonDown("RightButton") then
                     -- show context menu for recipe
+                    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    local recipeEntry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
+                        content.selectedListID,
+                        content.selectedListIsGlobal,
+                        crafterUID,
+                        row.recipeID)
                     CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                        {
+                            type = "button",
+                            label = L("CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX"),
+                            onClick = function()
+                                CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(
+                                    recipeEntry and recipeEntry.restockMaxAmount or 1,
+                                    function(maxAmount)
+                                        CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(
+                                            content.selectedListID,
+                                            content.selectedListIsGlobal,
+                                            crafterUID,
+                                            row.recipeID,
+                                            maxAmount)
+                                        CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                                    end)
+                            end
+                        },
                         {
                             type = "button",
                             label = f.r("Remove"),
@@ -1963,6 +1986,16 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
 
             local restockingButton = rootDescription:CreateButton("Restocking")
+            restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_ENABLE_RESTOCK_MODE"),
+                function() return opts.restockModeEnabled == true end,
+                function()
+                    CraftSim.DB.CRAFT_LISTS:SetListRestockModeEnabled(
+                        content.selectedListID,
+                        content.selectedListIsGlobal,
+                        crafterUID,
+                        not (opts.restockModeEnabled == true))
+                end)
 
             local offsetConCB = restockingButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
@@ -2081,7 +2114,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             local nameColumn = row.columns[1]
             local typeColumn = row.columns[2]
 
-            nameColumn.text:SetText(listRef.name)
+            local restockTag = ""
+            if listRef.options and listRef.options.restockModeEnabled then
+                restockTag = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
+            end
+            nameColumn.text:SetText(listRef.name .. restockTag)
             typeColumn.text:SetText(isGlobal and L("CRAFT_LISTS_GLOBAL_LABEL")
                 or L("CRAFT_LISTS_CHARACTER_LABEL"))
         end)
@@ -2116,10 +2153,26 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         return
     end
 
-    content.selectedListLabel:SetText(f.bb(list.name))
+    local selectedListRestockTag = ""
+    if list.options and list.options.restockModeEnabled then
+        selectedListRestockTag = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
+    end
+    content.selectedListLabel:SetText(f.bb(list.name) .. selectedListRestockTag)
 
-    for _, recipeID in ipairs(list.recipeIDs) do
-        local id = recipeID
+    local recipeEntries = list.recipeEntries or {}
+    if #recipeEntries == 0 then
+        recipeEntries = {}
+        for _, recipeID in ipairs(list.recipeIDs or {}) do
+            tinsert(recipeEntries, {
+                recipeID = recipeID,
+                restockMaxAmount = 1,
+            })
+        end
+    end
+
+    for _, recipeEntry in ipairs(recipeEntries) do
+        local id = recipeEntry.recipeID
+        local entry = recipeEntry
         content.recipeList:Add(function(row)
             row.recipeID = id
             local nameColumn = row.columns[1]
@@ -2129,7 +2182,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local profession = C_TradeSkillUI.GetProfessionInfoByRecipeID(id).profession
             local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession] or "inv_misc_questionmark"
             local professionIconText = GUTIL:IconToText(professionIcon, 18, 18)
-            nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name)
+            local restockText = ""
+            if (list.options and list.options.restockModeEnabled) then
+                restockText = " " .. f.l("[" .. tostring(entry.restockMaxAmount or 1) .. "]")
+            end
+            nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
         end)
     end
 
@@ -2193,6 +2250,54 @@ function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal,
             local global = popupFrame.content.globalCB:GetChecked()
             popupFrame:Hide()
             if callback then callback(name, global) end
+        end,
+    }
+
+    popupFrame:Show()
+end
+
+--- Show popup to set per-recipe craft list restock max amount
+---@param initialAmount number
+---@param callback fun(maxAmount: number)
+function CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(initialAmount, callback)
+    local popupFrame = GGUI.Frame {
+        parent = UIParent,
+        anchorParent = UIParent,
+        sizeX = 300, sizeY = 100,
+        frameID = "CRAFT_LIST_RECIPE_RESTOCK_POPUP",
+        frameTable = {},
+        title = L("CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE"),
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        closeable = true,
+        moveable = true,
+    }
+
+    local amountInput = GGUI.NumericInput {
+        parent = popupFrame.content,
+        anchorParent = popupFrame.content,
+        anchorA = "TOP",
+        anchorB = "TOP",
+        offsetY = -30,
+        sizeX = 90,
+        sizeY = 25,
+        minValue = 1,
+        initialValue = tonumber(initialAmount) or 1,
+    }
+
+    popupFrame.content.confirmButton = GGUI.Button {
+        parent = popupFrame.content,
+        anchorParent = popupFrame.content,
+        anchorA = "BOTTOM",
+        anchorB = "BOTTOM",
+        offsetY = 10,
+        label = "Confirm",
+        adjustWidth = true,
+        clickCallback = function()
+            local maxAmount = tonumber(amountInput.currentValue) or 1
+            maxAmount = math.max(1, maxAmount)
+            popupFrame:Hide()
+            if callback then callback(maxAmount) end
         end,
     }
 
