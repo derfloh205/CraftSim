@@ -705,10 +705,13 @@ maior ou igual ao limite de taxa de venda configurado.
         COOLDOWNS_NEXT_HEADER = "Próxima Carga",
         COOLDOWNS_ALL_HEADER = "Cargas Completas",
         COOLDOWNS_TAB_OVERVIEW = "Visão Geral",
+        COOLDOWNS_TAB_BLACKLIST = "Blacklist",
         COOLDOWNS_TAB_OPTIONS = "Ajustes",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "Filtrar Expansão",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\nReceitas compartilhando essa Recarga:\n"),
         COOLDOWNS_RECIPE_READY = f.g("Disponível"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "Adicionar à blacklist",
+        COOLDOWNS_BLACKLIST_RESTORE = "Remover da blacklist",
 
         -- concentration module
 

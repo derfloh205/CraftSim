@@ -783,10 +783,13 @@ function CraftSim.LOCAL_CN:GetData()
         COOLDOWNS_NEXT_HEADER = "下次充能",
         COOLDOWNS_ALL_HEADER = "充能完毕",
         COOLDOWNS_TAB_OVERVIEW = "概览",
+        COOLDOWNS_TAB_BLACKLIST = "黑名单",
         COOLDOWNS_TAB_OPTIONS = "选项",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "资料片过滤器",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\n配方共享冷却：\n"),
         COOLDOWNS_RECIPE_READY = f.g("就绪"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "加入黑名单",
+        COOLDOWNS_BLACKLIST_RESTORE = "移出黑名单",
 
         -- concentration module
 

@@ -743,10 +743,13 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         COOLDOWNS_NEXT_HEADER = "Nächste Aufladung",
         COOLDOWNS_ALL_HEADER = "Aufladungen voll",
         COOLDOWNS_TAB_OVERVIEW = "Übersicht",
+        COOLDOWNS_TAB_BLACKLIST = "Blacklist",
         COOLDOWNS_TAB_OPTIONS = "Optionen",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "Erweiterungsfilter",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\nRezepte, die diese Abklingzeit teilen:\n"),
         COOLDOWNS_RECIPE_READY = f.g("Bereit"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "Zur Blacklist hinzufügen",
+        COOLDOWNS_BLACKLIST_RESTORE = "Aus Blacklist entfernen",
 
         -- Konzentrations-Modul
 
