@@ -241,6 +241,10 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                     (concentrationCosts * ingenuityChance * ingenuityRefund)
                             end
                             local queueableAmount = math.floor(currentConcentration / concentrationCosts)
+                            -- Full cost required for at least one craft; adjusted cost is only for expected count.
+                            if currentConcentration < recipeData.concentrationCost then
+                                queueableAmount = 0
+                            end
                             if queueableAmount > 0 then
                                 local offsetAmount = tonumber(options.offsetQueueAmount) or 0
                                 local totalAmount = queueableAmount + offsetAmount
