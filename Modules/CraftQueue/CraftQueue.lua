@@ -608,6 +608,10 @@ function CraftSim.CRAFTQ:QueueFavorites()
                             (concentrationCosts * ingenuityChance * ingenuityRefund)
                     end
                     local queueableAmount = math.floor(currentConcentration / concentrationCosts)
+                    -- Full cost required for at least one craft; adjusted cost is only for expected count.
+                    if currentConcentration < recipeData.concentrationCost then
+                        queueableAmount = 0
+                    end
                     if queueableAmount > 0 then
                         local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get(
                             "CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))

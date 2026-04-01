@@ -1351,6 +1351,9 @@ end
 ---@field includeSoulbound? boolean
 ---@field finally? function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
+---@field permutationBased? boolean when true, use permutation-based algorithm (all combinations)
+---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions only used when permutationBased=true
+---@field optimizeConcentration? boolean only used when permutationBased=true
 
 ---@param options CraftSim.RecipeData.OptimizeFinishingReagents.Options
 function CraftSim.RecipeData:OptimizeFinishingReagents(options)
@@ -1502,6 +1505,170 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
         end
     }:Continue()
 end
+
+--- Tries every possible combination of finishing reagents across all slots and, for each
+--- combination, optionally optimizes required reagents and/or concentration, then applies
+--- the combination that yields the best profit (or highest concentration value when crafting
+--- with concentration).
+---@async
+---@param options CraftSim.RecipeData.OptimizeFinishingReagents.Options
+function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
+    options = options or {}
+    local reagentData = self.reagentData
+    local slots = reagentData.finishingReagentSlots
+
+    local function callFinally()
+        if options.finally then options.finally() end
+    end
+
+    if #slots == 0 then
+        -- No finishing reagent slots – just run reagent and/or concentration optimisation.
+        if options.optimizeReagentOptions then
+            self:OptimizeReagents(options.optimizeReagentOptions)
+        end
+        if options.optimizeConcentration and self.concentrating and self.supportsQualities then
+            self:OptimizeConcentration { finally = callFinally }
+        else
+            callFinally()
+        end
+        return
+    end
+
+    -- Build the list of viable reagent candidates for each slot.
+    -- nil represents "leave this slot empty".
+    local slotCandidates = {}
+    for _, slot in ipairs(slots) do
+        local candidates = { nil } -- always include the "empty" option
+
+        if options.includeLocked or not slot.locked then
+            for _, reagent in ipairs(slot.possibleReagents) do
+                local isViable = false
+                if reagent:IsCurrency() then
+                    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
+                    isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
+                else
+                    local itemID = reagent.item:GetItemID()
+                    local isSoulbound = GUTIL:isItemSoulbound(itemID)
+                    if isSoulbound then
+                        if options.includeSoulbound then
+                            local crafterUID = self:GetCrafterUID()
+                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                            isViable = count and count > 0
+                        end
+                    else
+                        isViable = true
+                    end
+                end
+                if isViable then
+                    table.insert(candidates, reagent)
+                end
+            end
+        end
+
+        table.insert(slotCandidates, candidates)
+    end
+
+    -- Generate the cartesian product of all slot candidate lists.
+    local combinations = { {} }
+    for _, candidates in ipairs(slotCandidates) do
+        local newCombinations = {}
+        for _, existingCombo in ipairs(combinations) do
+            for _, candidate in ipairs(candidates) do
+                local newCombo = {}
+                for _, r in ipairs(existingCombo) do
+                    table.insert(newCombo, r)
+                end
+                table.insert(newCombo, candidate)
+                table.insert(newCombinations, newCombo)
+            end
+        end
+        combinations = newCombinations
+    end
+
+    ---@type {combo: table, averageProfit: number, concentrationValue: number}?
+    local bestResult = nil
+    local totalCombinations = #combinations
+    local currentComboIndex = 0
+
+    local function applyComboToSlots(combo)
+        for slotIndex, slot in ipairs(slots) do
+            local reagent = combo[slotIndex]
+            if reagent then
+                if reagent:IsCurrency() then
+                    slot:SetCurrencyReagent(reagent.currencyID)
+                else
+                    slot:SetReagent(reagent.item:GetItemID())
+                end
+            else
+                slot:SetReagent(nil)
+            end
+        end
+    end
+
+    GUTIL.FrameDistributor {
+        iterationTable = combinations,
+        iterationsPerFrame = 1,
+        finally = function()
+            -- Apply the best finishing reagent combination and re-run sub-optimisations
+            -- so the final state is fully optimised for that combination.
+            if bestResult then
+                applyComboToSlots(bestResult.combo)
+                self:Update()
+            end
+
+            if options.optimizeReagentOptions then
+                self:OptimizeReagents(options.optimizeReagentOptions)
+            end
+
+            if options.optimizeConcentration and self.concentrating and self.supportsQualities then
+                self:OptimizeConcentration { finally = callFinally }
+            else
+                callFinally()
+            end
+        end,
+        continue = function(fd, _, combo, _, _)
+            currentComboIndex = currentComboIndex + 1
+
+            -- Apply this finishing reagent combination.
+            applyComboToSlots(combo)
+            self:Update()
+
+            -- Optionally optimise required reagent quality allocation.
+            if options.optimizeReagentOptions then
+                self:OptimizeReagents(options.optimizeReagentOptions)
+            end
+
+            -- Optionally optimise concentration, then record the result.
+            local function recordResult()
+                local profit = self.averageProfitCached
+                local concValue = self:GetConcentrationValue()
+
+                if bestResult == nil or
+                    (self.concentrating and concValue > bestResult.concentrationValue) or
+                    (not self.concentrating and profit > bestResult.averageProfit) then
+                    bestResult = {
+                        combo = combo,
+                        averageProfit = profit,
+                        concentrationValue = concValue,
+                    }
+                end
+
+                if options.progressUpdateCallback then
+                    options.progressUpdateCallback(currentComboIndex / totalCombinations * 100)
+                end
+
+                fd:Continue()
+            end
+
+            if options.optimizeConcentration and self.concentrating and self.supportsQualities then
+                self:OptimizeConcentration { finally = recordResult }
+            else
+                recordResult()
+            end
+        end,
+    }:Continue()
+end
+
 
 --- Adjusts finishing reagents for batch crafting so that soulbound finishers are only used
 --- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
@@ -1719,10 +1886,16 @@ function CraftSim.RecipeData:Optimize(options)
     local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.Optimization")
     options = options or {}
 
+    -- When using permutation-based finishing reagent optimisation, reagent and concentration
+    -- optimisation run per-permutation inside OptimizeFinishingReagentsPermutation, so we
+    -- must skip them here to avoid running them twice.
+    local usePermutation = options.optimizeFinishingReagentsOptions and
+        options.optimizeFinishingReagentsOptions.permutationBased
+
     local optimizationTaskList = {
         options.optimizeGear and "GEAR",
-        options.optimizeReagentOptions and "REAGENTS",
-        self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
+        (not usePermutation) and options.optimizeReagentOptions and "REAGENTS",
+        (not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
         options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
         options.optimizeSubRecipesOptions and "SUB_RECIPES",
     }
@@ -1755,20 +1928,36 @@ function CraftSim.RecipeData:Optimize(options)
                     end
                 }
             elseif optimizationTask == "FINISHING_REAGENTS" then
-                print("Optimizing Finishing Reagents..")
-                print("- includeLocked: " .. tostring(options.optimizeFinishingReagentsOptions.includeLocked))
-                print("- includeSoulbound: " .. tostring(options.optimizeFinishingReagentsOptions.includeSoulbound))
-                -- For generic Optimize flows (e.g. Craft Queue favorites), never consider locked
-                -- finishing slots and always allow soulbound finishers (subject to ownership rules
-                -- inside OptimizeFinishingReagents).
-                self:OptimizeFinishingReagents {
-                    includeLocked = options.optimizeFinishingReagentsOptions.includeLocked,
-                    includeSoulbound = options.optimizeFinishingReagentsOptions.includeSoulbound,
-                    finally = function()
-                        frameDistributorTasks:Continue()
-                    end,
-                    progressUpdateCallback = options.optimizeFinishingReagentsOptions.progressUpdateCallback
-                }
+                local finOpts = options.optimizeFinishingReagentsOptions
+                print("Optimizing Finishing Reagents.. (permutation: " .. tostring(finOpts.permutationBased) .. ")")
+                print("- includeLocked: " .. tostring(finOpts.includeLocked))
+                print("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
+
+                if usePermutation then
+                    -- Permutation-based: try every combination of finishing reagents, running
+                    -- reagent and concentration optimisation for each one.
+                    self:OptimizeFinishingReagentsPermutation {
+                        includeLocked = finOpts.includeLocked,
+                        includeSoulbound = finOpts.includeSoulbound,
+                        optimizeReagentOptions = options.optimizeReagentOptions,
+                        optimizeConcentration = self.concentrating and self.supportsQualities and options.optimizeConcentration,
+                        progressUpdateCallback = finOpts.progressUpdateCallback,
+                        finally = function()
+                            frameDistributorTasks:Continue()
+                        end,
+                    }
+                else
+                    -- Simple (original) approach: finishing reagents are optimised slot-by-slot
+                    -- after reagent allocation and concentration have already run.
+                    self:OptimizeFinishingReagents {
+                        includeLocked = finOpts.includeLocked,
+                        includeSoulbound = finOpts.includeSoulbound,
+                        finally = function()
+                            frameDistributorTasks:Continue()
+                        end,
+                        progressUpdateCallback = finOpts.progressUpdateCallback
+                    }
+                end
             elseif optimizationTask == "SUB_RECIPES" then
                 self:SetSubRecipeCostsUsage(true)
                 self:OptimizeSubRecipes({

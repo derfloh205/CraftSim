@@ -15,6 +15,7 @@ CraftSim.DB = CraftSim.DB
 ---@field autoselectTopProfitQuality boolean
 ---@field optimizeFinishingReagents boolean
 ---@field includeSoulboundFinishingReagents boolean
+---@field finishingReagentsAlgorithm string one of CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
 ---@field fixedCrafterUID CrafterUID?
 ---@field restockAmount number
 ---@field offsetQueueAmount number
@@ -46,6 +47,7 @@ local function DefaultOptions()
         autoselectTopProfitQuality = true,
         optimizeFinishingReagents = false,
         includeSoulboundFinishingReagents = false,
+        finishingReagentsAlgorithm = "SIMPLE",
         fixedCrafterUID = nil,
         restockAmount = 1,
         offsetQueueAmount = 0,

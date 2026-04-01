@@ -1935,6 +1935,28 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() return opts.optimizeFinishingReagents end,
                 function() opts.optimizeFinishingReagents = not opts.optimizeFinishingReagents end)
 
+            local FA = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
+            local finishingAlgorithmButton = optimizationButton:CreateButton(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM"))
+
+            local simpleRadio = finishingAlgorithmButton:CreateRadio(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
+                function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) ~= FA.PERMUTATION end,
+                function() opts.finishingReagentsAlgorithm = FA.SIMPLE end)
+            simpleRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
+            end)
+
+            local permutationRadio = finishingAlgorithmButton:CreateRadio(
+                L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
+                function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) == FA.PERMUTATION end,
+                function() opts.finishingReagentsAlgorithm = FA.PERMUTATION end)
+            permutationRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
+            end)
+
             optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
                 function() return opts.includeSoulboundFinishingReagents end,
@@ -2603,9 +2625,11 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 local recipeData = editRecipeFrame.craftQueueItem.recipeData
                 local OPT_ID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.CRAFTQUEUE_EDIT_RECIPE
                 local KEYS   = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+                local FA     = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
                 local optimizeProfessionGear = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, true)
                 local optimizeConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, true)
                 local optimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_FINISHING_REAGENTS, true)
+                local finishingAlgorithm = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
 
                 -- Never consider locked finishing slots in Craft Queue, but ALWAYS include soulbound
                 -- when optimizing via Craft Queue.
@@ -2637,6 +2661,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     optimizeFinishingReagentsOptions = optimizeFinishingReagents and {
                         includeLocked = includeLockedFinishing,
                         includeSoulbound = includeSoulboundFinishing,
+                        permutationBased = finishingAlgorithm == FA.PERMUTATION,
                         progressUpdateCallback = function(progress)
                             optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
                         end,
@@ -2659,6 +2684,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             OPTIMIZE_CONCENTRATION               = true,
             OPTIMIZE_FINISHING_REAGENTS          = true,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = true,
+            FINISHING_REAGENTS_ALGORITHM         = true,
         },
         defaults = {
             AUTOSELECT_TOP_PROFIT_QUALITY        = true,
@@ -2666,6 +2692,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             OPTIMIZE_CONCENTRATION               = true,
             OPTIMIZE_FINISHING_REAGENTS          = true,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = false,
+            FINISHING_REAGENTS_ALGORITHM         = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM.SIMPLE,
         },
         recipeDataProvider = function()
             return editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData
