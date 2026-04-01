@@ -732,11 +732,14 @@ function CraftSim.LOCAL_FR:GetData()
         COOLDOWNS_NEXT_HEADER = "Prochaine charge",
         COOLDOWNS_ALL_HEADER = "Charges complètes",
         COOLDOWNS_TAB_OVERVIEW = "Aperçu",
+        COOLDOWNS_TAB_BLACKLIST = "Blacklist",
         COOLDOWNS_TAB_OPTIONS = "Options",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "Filtre d'extension",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb(
             "\n\nRecettes partageant ce temps de recharge:\n"),
         COOLDOWNS_RECIPE_READY = f.g("Prêt"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "Ajouter à la blacklist",
+        COOLDOWNS_BLACKLIST_RESTORE = "Retirer de la blacklist",
 
         -- concentration module
 

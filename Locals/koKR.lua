@@ -783,10 +783,13 @@ function CraftSim.LOCAL_KO:GetData()
         COOLDOWNS_NEXT_HEADER = "다음 충전",
         COOLDOWNS_ALL_HEADER = "충전 완료",
         COOLDOWNS_TAB_OVERVIEW = "개요",
+        COOLDOWNS_TAB_BLACKLIST = "블랙리스트",
         COOLDOWNS_TAB_OPTIONS = "옵션",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "확장팩 필터",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\n이 대기시간을 공유하는 제작법:\n"),
         COOLDOWNS_RECIPE_READY = f.g("준비됨"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "블랙리스트에 추가",
+        COOLDOWNS_BLACKLIST_RESTORE = "블랙리스트에서 제거",
 
         -- concentration module (집중 모듈)
         CONCENTRATION_TRACKER_TITLE = "CraftSim 집중",

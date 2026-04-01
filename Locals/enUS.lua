@@ -826,10 +826,13 @@ greater or equal the configured sale rate threshold.
         COOLDOWNS_NEXT_HEADER = "Next Charge",
         COOLDOWNS_ALL_HEADER = "Charges Full",
         COOLDOWNS_TAB_OVERVIEW = "Overview",
+        COOLDOWNS_TAB_BLACKLIST = "Blacklist",
         COOLDOWNS_TAB_OPTIONS = "Options",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "Expansion Filter",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\nRecipes sharing this Cooldown:\n"),
         COOLDOWNS_RECIPE_READY = f.g("Ready"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "Add to Blacklist",
+        COOLDOWNS_BLACKLIST_RESTORE = "Remove from blacklist",
 
         -- concentration module
 
