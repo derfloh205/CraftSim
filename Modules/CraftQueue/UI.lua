@@ -55,10 +55,13 @@ local function BuildCraftQueueResultEntries(recipeData, rewardRows)
     return entries
 end
 
---- First-craft moxie (+PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE): merge into an existing moxie row or append one (matches profit calc).
+--- First-craft moxie (+PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE): work orders only for UI rows; not part of gold profit.
 ---@param rewardItems { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }[]
 ---@param recipeData CraftSim.RecipeData
 local function ApplyFirstCraftMoxieToRewardRows(rewardItems, recipeData)
+    if not recipeData.orderData then
+        return
+    end
     if not (recipeData.recipeInfo and recipeData.recipeInfo.firstCraft) then
         return
     end
@@ -76,7 +79,7 @@ local function ApplyFirstCraftMoxieToRewardRows(rewardItems, recipeData)
     tinsert(rewardItems, { count = add, currency = moxieID, item = nil })
 end
 
---- Patron NPC listed rewards (if any) plus first-craft moxie for every queued recipe type.
+--- Patron NPC listed rewards (if any) plus first-craft moxie for work orders when applicable.
 ---@param recipeData CraftSim.RecipeData
 ---@param includeRawItemLink boolean
 ---@return { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }[]
@@ -151,7 +154,8 @@ local function ClearResultIconSlot(gIcon)
 end
 
 ---@param gIcon GGUI.Icon
-local function SetResultSlotFirstCraft(gIcon)
+---@param recipeData CraftSim.RecipeData
+local function SetResultSlotFirstCraft(gIcon, recipeData)
     ClearResultIconSlot(gIcon)
     gIcon.frame:SetNormalAtlas(CraftSim.CONST.FIRST_CRAFT_KP_ICON)
     gIcon.qualityIcon:Hide()
@@ -159,6 +163,15 @@ local function SetResultSlotFirstCraft(gIcon)
         GameTooltip:SetOwner(gIcon.frame, "ANCHOR_RIGHT")
         GameTooltip:AddLine(L("CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE"), 1, 0.82, 0)
         GameTooltip:AddLine(L("CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP"), 1, 1, 1, true)
+        local moxieID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+        if moxieID then
+            local copper = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieID) *
+                CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
+            if copper > 0 then
+                GameTooltip:AddLine(string.format(L("CRAFT_QUEUE_FIRST_CRAFT_MOXIE_GOLD_TOOLTIP"),
+                    CraftSim.UTIL:FormatMoney(copper, true, nil, true)), 0.85, 0.85, 0.85, true)
+            end
+        end
         GameTooltip:Show()
     end)
     gIcon.frame:SetScript("OnLeave", GameTooltip_Hide)
@@ -166,7 +179,8 @@ end
 
 ---@param resultColumn CraftSim.CraftQueue.CraftList.ResultColumn
 ---@param entries CraftSim.CraftQueue.ResultColumnEntry[]
-local function ApplyResultColumnEntries(resultColumn, entries)
+---@param recipeData CraftSim.RecipeData
+local function ApplyResultColumnEntries(resultColumn, entries, recipeData)
     for i = 1, CRAFT_QUEUE_RESULT_ICON_SLOTS do
         ClearResultIconSlot(resultColumn.resultIcons[i])
         resultColumn.resultIcons[i].frame:Hide()
@@ -189,7 +203,7 @@ local function ApplyResultColumnEntries(resultColumn, entries)
         elseif e.kind == "currency" then
             g:SetCurrency(e.currencyID)
         elseif e.kind == "firstcraft" then
-            SetResultSlotFirstCraft(g)
+            SetResultSlotFirstCraft(g, recipeData)
         end
     end
 end
@@ -3441,7 +3455,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     recipeColumn.text:SetText(recipeData.recipeName ..
         upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
-    ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}))
+    ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}), recipeData)
     local rewardItems = BuildCraftQueueRewardItemRows(recipeData, false)
     local rewardItemMixins = GUTIL:Filter(GUTIL:Map(rewardItems, function(r) return r.item end), function(m)
         return m ~= nil
@@ -3449,7 +3463,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     GUTIL:ContinueOnAllItemsLoaded(rewardItemMixins, function()
         local entries = BuildCraftQueueResultEntries(recipeData, rewardItems)
         PrioritizeFirstCraftMoxieInResultEntries(recipeData, entries)
-        ApplyResultColumnEntries(resultColumn, entries)
+        ApplyResultColumnEntries(resultColumn, entries, recipeData)
     end)
 
     if craftQueueItem.recipeData:IsSubRecipe() then
@@ -3535,10 +3549,19 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     local currencyLink = C_CurrencyInfo.GetCurrencyLink(reward.currency, reward.count)
                     local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(reward.currency, reward.count)
                     if currencyInfo then
-                        craftOrderInfoText = craftOrderInfoText ..
-                            "\n- " ..
+                        local line = "\n- " ..
                             GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
                             " " .. (currencyLink or currencyInfo.name or "<?>") .. " x" .. reward.count
+                        if tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, reward.currency) then
+                            local perUnit = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(reward.currency)
+                            local count = tonumber(reward.count) or 0
+                            local moxieCopper = perUnit * count
+                            if moxieCopper > 0 then
+                                line = line ..
+                                    string.format(L("CRAFT_QUEUE_MOXIE_GOLD_IN_TOOLTIP"), CraftSim.UTIL:FormatMoney(moxieCopper, true, nil, true))
+                            end
+                        end
+                        craftOrderInfoText = craftOrderInfoText .. line
                     end
                 elseif reward.item then
                     local itemLink = reward.item:GetItemLink()
@@ -3587,6 +3610,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 moxieLine = "\n- " ..
                     GUTIL:IconToText(currencyInfo.icon, 20, 20) ..
                     " " .. (currencyLink or currencyInfo.name or "<?>") .. " x" .. moxieCount
+                local moxieCopper = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieID) * moxieCount
+                if moxieCopper > 0 then
+                    moxieLine = moxieLine ..
+                        string.format(L("CRAFT_QUEUE_MOXIE_GOLD_IN_TOOLTIP"), CraftSim.UTIL:FormatMoney(moxieCopper, true))
+                end
             end
         end
         if firstCraftRewardLine ~= "" or moxieLine ~= "" then

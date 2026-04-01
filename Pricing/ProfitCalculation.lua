@@ -60,14 +60,9 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
         end
 
         -- also if npc work order add item value of rewards to the comissionprofit
+        -- Item rewards only; currency rewards (e.g. moxie) are excluded from gold profit (see craft queue tooltips).
         for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
-            if reward.currencyType then
-                if tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, reward.currencyType) then
-                    local perUnit = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(reward.currencyType)
-                    local count = tonumber(reward.count) or 0
-                    comissionProfit = comissionProfit + perUnit * count
-                end
-            else
+            if not reward.currencyType then
                 local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
                 if CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS[itemID] then
                     comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
@@ -76,16 +71,6 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
                     price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
                     comissionProfit = comissionProfit + price * reward.count
                 end
-            end
-        end
-
-        -- First craft grants 10 profession Moxie (all work order types; not always in npcOrderRewards).
-        if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
-            local moxieCurrencyID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
-            if moxieCurrencyID then
-                local perUnit = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieCurrencyID)
-                comissionProfit = comissionProfit +
-                    perUnit * CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
             end
         end
     end
@@ -112,15 +97,6 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     -- TSM Enhanced: expected deposit cost (0 when disabled or TSM not loaded)
     local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
 
-    local firstCraftMoxieBonus = 0
-    if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft and not recipeData.orderData then
-        local moxieCurrencyID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
-        if moxieCurrencyID then
-            firstCraftMoxieBonus = CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieCurrencyID) *
-                CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
-        end
-    end
-
     if not recipeData.supportsCraftingStats then
         local resultItemPrice = priceData.qualityPriceList[1] or 0
         local resultItem = recipeData.resultData.itemsByQuality[1]
@@ -131,7 +107,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         else
             resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
         end
-        local profit = resultValue - priceData.craftingCosts - expectedDeposit + firstCraftMoxieBonus
+        local profit = resultValue - priceData.craftingCosts - expectedDeposit
 
         local probabilityTable = { { chance = 1, profit = profit } }
         return profit, probabilityTable
@@ -218,7 +194,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("Probability Sum: " .. tostring(probabilitySum))
         print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
-        return expectedProfit + firstCraftMoxieBonus, probabilityTable
+        return expectedProfit, probabilityTable
     elseif not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
         -- no insp no hsv
         local resChance = professionStats.resourcefulness:GetPercent(true)
@@ -274,7 +250,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("Probability Sum: " .. tostring(probabilitySum))
         print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
-        return expectedProfit + firstCraftMoxieBonus, probabilityTable
+        return expectedProfit, probabilityTable
     elseif not recipeData.supportsResourcefulness then
         -- before having a salvage item allocated in prospecting e.g.
         print("recipe does not support anything?")
