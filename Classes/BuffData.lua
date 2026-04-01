@@ -223,7 +223,12 @@ function CraftSim.BuffData:UpdateProfessionStats()
     self.professionStats:Clear()
 
     for _, buff in pairs(self.buffs) do
-        if buff.active then
+        local countTowardStats = buff.active
+        if not countTowardStats and self.recipeData.isEnchantingRecipe and
+            CraftSim.CONST.ENCHANTING_SHATTER_BUFF_ASSUME_ACTIVE_FOR_STATS[buff.buffID] then
+            countTowardStats = true
+        end
+        if countTowardStats then
             self.professionStats:add(buff.professionStats)
         end
     end

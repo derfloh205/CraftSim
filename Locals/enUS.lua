@@ -689,6 +689,8 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "Automatic (cheapest owned)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\nRight-click to choose mote.",
+        CRAFT_QUEUE_SHATTER_REAPPLY_AFTER_LOGIN = "\n\n" ..
+            f.white("After login, cast Shatter so the provided buff is correct.\nThis is a known bug."),
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Create Auctionator Shopping List",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "Craft Queue",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = "Flash Taskbar on " ..
@@ -756,6 +758,8 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_BUTTON_ORDER = "Order",
         CRAFT_QUEUE_BUTTON_SUBMIT = "Submit",
         CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "Equip",
+        CRAFT_QUEUE_BUTTON_SHATTER = "Shatter",
+        CRAFT_QUEUE_STATUS_SHATTER_BUFF = "Shattering Essence buff not active",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "Ignore Acuity Recipes",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\nQueued Crafts: ",
