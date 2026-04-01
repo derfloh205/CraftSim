@@ -662,7 +662,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "All Requirements need to be fulfilled in order to craft a recipe",
         CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK = "Cannot craft",
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE = "First Craft",
-        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Value may be included in expected profit.",
+        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point on first craft. Displayed profit is gold only; KP max cost is for patron queue rules (you may queue if loss per KP is below your max). First-craft moxie still follows your moxie value settings.",
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "Craft Next",
         CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "Max",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",

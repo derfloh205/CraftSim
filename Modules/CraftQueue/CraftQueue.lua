@@ -360,6 +360,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
                                         end
 
+                                        --- KP max cost is gold willing to pay per point (patron filter), not profit.
+                                        --- Count recipe first-craft KP (1) with patron-listed KP rewards for that check.
+                                        local totalKpForCostCheck = knowledgePointsRewarded
+                                        if isPatronOrder and recipeInfo.firstCraft then
+                                            totalKpForCostCheck = totalKpForCostCheck + 1
+                                        end
+
                                         recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                                         recipeData:Update()
 
@@ -367,12 +374,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
 
                                         local function withinKPCost(averageProfit)
-                                            if isPatronOrder and knowledgePointsRewarded > 0 and averageProfit < 0 then
-                                                
-                                                local kpCost = math.abs(averageProfit / knowledgePointsRewarded)
-    
-                                                    print("- kpCost: " .. GUTIL:FormatMoney(kpCost, true, nil, true))
-    
+                                            if isPatronOrder and totalKpForCostCheck > 0 and averageProfit < 0 then
+                                                local kpCost = math.abs(averageProfit / totalKpForCostCheck)
+
+                                                print("- kpCost: " .. GUTIL:FormatMoney(kpCost, true, nil, true))
+
                                                 if kpCost >= maxKPCost then
                                                     return false
                                                 end
@@ -428,7 +434,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 else
                                                     local isWithinKPCost = withinKPCost(recipeData.averageProfitCached)
                                                     local isWithinMaxCost = withinMaxPatronOrderCost(recipeData.averageProfitCached)
-                                                    local isKPOrderWithinRange = knowledgePointsRewarded > 0 and isWithinKPCost
+                                                    local isKPOrderWithinRange = totalKpForCostCheck > 0 and isWithinKPCost
                                                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") and
                                                     recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
                                                         -- skip: not profitable and not a KP order within range
