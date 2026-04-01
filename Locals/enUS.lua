@@ -397,6 +397,11 @@ function CraftSim.LOCAL_EN:GetData()
         -- Shared OptimizationOptions Widget
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = "Optimize " .. f.bb("Profession Tools"),
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = f.bb("Finishing Reagents") .. " Algorithm",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\n" .. f.r("Warning: This may take significantly longer to complete."),
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "Send to Craft Queue",
         RECIPE_SCAN_CREATE_CRAFT_LIST = "Create CraftList",

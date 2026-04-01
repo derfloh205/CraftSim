@@ -386,6 +386,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             optimizeFinishingReagentsOptions = options.optimizeFinishingReagents and {
                 includeLocked = false,
                 includeSoulbound = options.includeSoulboundFinishingReagents,
+                permutationBased = (options.finishingReagentsAlgorithm or "SIMPLE") == "PERMUTATION",
                 progressUpdateCallback = function(progress)
                     if queueListsButton then
                         queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",

@@ -17,6 +17,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field OPTIMIZE_CONCENTRATION boolean?         show "Optimize Concentration" checkbox (hidden when recipe does not support qualities)
 ---@field OPTIMIZE_FINISHING_REAGENTS boolean?    show "Optimize Finishing Reagents" checkbox
 ---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean? show "Include Soulbound Finishing Reagents" sub-option (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
+---@field FINISHING_REAGENTS_ALGORITHM boolean?  show "Finishing Reagents Algorithm" radio sub-menu (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
 
 ---Default values for each option key when no stored value exists.
 ---Use CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS values as field names.
@@ -28,6 +29,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field OPTIMIZE_CONCENTRATION boolean?
 ---@field OPTIMIZE_FINISHING_REAGENTS boolean?
 ---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean?
+---@field FINISHING_REAGENTS_ALGORITHM string?     one of CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
 
 ---@class CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
 ---@field parent Frame
@@ -70,6 +72,14 @@ CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS = {
     OPTIMIZE_CONCENTRATION               = "OPTIMIZE_CONCENTRATION",
     OPTIMIZE_FINISHING_REAGENTS          = "OPTIMIZE_FINISHING_REAGENTS",
     INCLUDE_SOULBOUND_FINISHING_REAGENTS = "INCLUDE_SOULBOUND_FINISHING_REAGENTS",
+    FINISHING_REAGENTS_ALGORITHM         = "FINISHING_REAGENTS_ALGORITHM",
+}
+
+---Algorithm mode values for finishing reagent optimization.
+---@enum CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
+CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM = {
+    SIMPLE      = "SIMPLE",
+    PERMUTATION = "PERMUTATION",
 }
 
 ---@param options CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
@@ -108,6 +118,7 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
 
     local RA   = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
     local KEYS = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local FA   = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
 
     local function buildMenu(ownerRegion, rootDescription)
         local recipeData = options.recipeDataProvider and options.recipeDataProvider()
@@ -177,12 +188,35 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
                 function() saveOption(KEYS.OPTIMIZE_CONCENTRATION, not getOption(KEYS.OPTIMIZE_CONCENTRATION)) end)
         end
 
-        -- Optimize Finishing Reagents (+ optional soulbound sub-option)
+        -- Optimize Finishing Reagents (+ optional algorithm sub-menu + optional soulbound sub-option)
         if showOptions[KEYS.OPTIMIZE_FINISHING_REAGENTS] then
             rootDescription:CreateCheckbox(
                 L("RECIPE_SCAN_OPTIMIZE_FINISHING_REAGENTS"),
                 function() return getOption(KEYS.OPTIMIZE_FINISHING_REAGENTS) end,
                 function() saveOption(KEYS.OPTIMIZE_FINISHING_REAGENTS, not getOption(KEYS.OPTIMIZE_FINISHING_REAGENTS)) end)
+
+            if showOptions[KEYS.FINISHING_REAGENTS_ALGORITHM] then
+                local algorithmSub = rootDescription:CreateButton(
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM"))
+
+                local simpleRadio = algorithmSub:CreateRadio(
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
+                    function() return getOption(KEYS.FINISHING_REAGENTS_ALGORITHM) ~= FA.PERMUTATION end,
+                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE) end)
+                simpleRadio:SetTooltip(function(tooltip, _)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
+                end)
+
+                local permutationRadio = algorithmSub:CreateRadio(
+                    L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
+                    function() return getOption(KEYS.FINISHING_REAGENTS_ALGORITHM) == FA.PERMUTATION end,
+                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.PERMUTATION) end)
+                permutationRadio:SetTooltip(function(tooltip, _)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
+                end)
+            end
 
             if showOptions[KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] then
                 local includeSBCB = rootDescription:CreateCheckbox(

@@ -610,6 +610,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             OPTIMIZE_CONCENTRATION             = true,
             OPTIMIZE_FINISHING_REAGENTS        = true,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = true,
+            FINISHING_REAGENTS_ALGORITHM       = true,
         },
         defaults = {
             ENABLE_CONCENTRATION               = true,
@@ -619,6 +620,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             OPTIMIZE_CONCENTRATION             = false,
             OPTIMIZE_FINISHING_REAGENTS        = false,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = false,
+            FINISHING_REAGENTS_ALGORITHM       = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM.SIMPLE,
         },
         additionalMenu = function(ownerRegion, rootDescription)
             rootDescription:CreateCheckbox(
