@@ -635,15 +635,14 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP = "How much you value one unit of this profession's " ..
             f.bb("Moxie") ..
-            " reward. Multiplied by the reward count and added to expected work order profit.\n\nFormat: ",
+            " reward. Used only in tooltips (reward lines and first craft); expected profit stays gold-only.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_TITLE = "Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_MENU_BUTTON = "Set Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_INTRO = "Set how much you value one unit of each profession's " ..
             f.bb("Moxie") ..
             ". " ..
-            "CraftSim adds it to expected work order profit when " ..
-            f.bb("Acuity/Moxie") .. " rewards are included. " ..
-            f.bb("First craft") .. " adds " .. f.bb("10") .. " profession moxie for expected profit, valued at your setting for that profession.",
+            "Shown next to moxie in craft queue tooltips only; " ..
+            f.bb("expected profit") .. " is gold-only (tips, commission, items—no moxie).",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP = "If enabled, " ..
@@ -667,7 +666,9 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "All Requirements need to be fulfilled in order to craft a recipe",
         CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK = "Cannot craft",
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE = "First Craft",
-        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Value may be included in expected profit.",
+        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Expected profit is gold only; moxie value below is informational.",
+        CRAFT_QUEUE_FIRST_CRAFT_MOXIE_GOLD_TOOLTIP = "Also grants 10 profession moxie (Valued at %s)",
+        CRAFT_QUEUE_MOXIE_GOLD_IN_TOOLTIP = " (Valued at %s)",
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "Craft Next",
         CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "Max",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",

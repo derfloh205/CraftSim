@@ -406,18 +406,18 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			-- Force-load crafting orders on the first ProfessionFrame open after login.
 			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click).
 			-- Clicking tab 3 then immediately back to tab 1 within the same RunNextFrame
-			-- triggers the server request without any visible UI flicker.
-			if (not craftingOrdersPreloadedThisSession
-				and C_CraftingOrders.ShouldShowCraftingOrderTab()
-				and ProfessionsFrame.isCraftingOrdersTabEnabled) then
-				craftingOrdersPreloadedThisSession = true
-				RunNextFrame(function()
-					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
-						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
-					end
-				end)
-			end
+			RunNextFrame(function()
+				-- triggers the server request without any visible UI flicker.
+				if (not craftingOrdersPreloadedThisSession
+					and C_CraftingOrders.ShouldShowCraftingOrderTab()
+					and ProfessionsFrame.isCraftingOrdersTabEnabled) then
+							if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
+								craftingOrdersPreloadedThisSession = true
+								ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
+								ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
+							end
+				end
+			end)
 		end)
 
 	local function refreshAddWorkOrdersButtonDeferred()
