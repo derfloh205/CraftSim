@@ -226,7 +226,14 @@ function CraftSim.BuffData:UpdateProfessionStats()
         local countTowardStats = buff.active
         if not countTowardStats and self.recipeData.isEnchantingRecipe and
             CraftSim.CONST.ENCHANTING_SHATTER_BUFF_ASSUME_ACTIVE_FOR_STATS[buff.buffID] then
-            countTowardStats = true
+            -- For the midnight shattering essence buff, respect the craftqueue option
+            if buff.buffID == CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT then
+                if CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
+                    countTowardStats = true
+                end
+            else
+                countTowardStats = true
+            end
         end
         if countTowardStats then
             self.professionStats:add(buff.professionStats)
