@@ -52,7 +52,7 @@ local function BuildCraftQueueResultEntries(recipeData, rewardRows)
     return entries
 end
 
---- First-craft moxie (+PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE): work orders only for UI rows; not part of gold profit.
+--- First-craft moxie (+PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE): shown on work-order UI rows; profit includes it on NPC orders only when CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT is on.
 ---@param rewardItems { count?: number, item?: ItemMixin, currency?: number, rawItemLink?: string }[]
 ---@param recipeData CraftSim.RecipeData
 local function ApplyFirstCraftMoxieToRewardRows(rewardItems, recipeData)
@@ -1343,6 +1343,21 @@ function CraftSim.CRAFTQ.UI:Init()
                     end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
 
                     patronOrderOptions:CreateDivider()
+
+                    local includeMoxieProfitCB = patronOrderOptions:CreateCheckbox(
+                        L("CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX"),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT", not value)
+                        end)
+
+                    includeMoxieProfitCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L("CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP"));
+                    end);
+
                     -- 210x20 matches MenuUtil checkbox row height (custom inputs above stay 25px tall).
                     GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(menuRowFrame)
                         local function openPatronMoxieValues()
