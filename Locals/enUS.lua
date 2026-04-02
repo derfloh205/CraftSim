@@ -633,16 +633,27 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE = f.bb("Reagent Bag") .. " Value: ",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX = "Include " .. f.bb("Moxie") .. " in expected profit",
+        CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP = "When enabled, " ..
+            f.bb("NPC (patron)") ..
+            " order " ..
+            f.bb("Moxie") ..
+            " rewards and the first-craft moxie bonus are added to expected profit using your Moxie values below. When disabled, Moxie stays informational in tooltips only.",
         CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP = "How much you value one unit of this profession's " ..
             f.bb("Moxie") ..
-            " reward. Used only in tooltips (reward lines and first craft); expected profit stays gold-only.\n\nFormat: ",
+            " reward. Shown in tooltips; also used in expected profit when " ..
+            f.bb("Include Moxie in expected profit") ..
+            " is enabled.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_TITLE = "Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_MENU_BUTTON = "Set Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_INTRO = "Set how much you value one unit of each profession's " ..
             f.bb("Moxie") ..
             ". " ..
-            "Shown next to moxie in craft queue tooltips only; " ..
-            f.bb("expected profit") .. " is gold-only (tips, commission, items—no moxie).",
+            "Always shown in tooltips; " ..
+            f.bb("expected profit") ..
+            " includes Moxie at these rates when " ..
+            f.bb("Include Moxie in expected profit") ..
+            " is enabled (otherwise gold-only: tips, commission, item rewards).",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP = "If enabled, " ..
@@ -666,7 +677,11 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "All Requirements need to be fulfilled in order to craft a recipe",
         CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK = "Cannot craft",
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE = "First Craft",
-        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Expected profit is gold only; moxie value below is informational.",
+        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Moxie value below is included in expected profit only for " ..
+            f.bb("NPC (patron)") ..
+            " orders when " ..
+            f.bb("Include Moxie in expected profit") ..
+            " is enabled.",
         CRAFT_QUEUE_FIRST_CRAFT_MOXIE_GOLD_TOOLTIP = "Also grants 10 profession moxie (Valued at %s)",
         CRAFT_QUEUE_MOXIE_GOLD_IN_TOOLTIP = " (Valued at %s)",
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "Craft Next",
@@ -674,6 +689,8 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "Automatic (cheapest owned)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\nRight-click to choose mote.",
+        CRAFT_QUEUE_SHATTER_REAPPLY_AFTER_LOGIN = "\n\n" ..
+            f.white("After login, cast Shatter so the provided buff is correct.\nThis is a known bug."),
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Create Auctionator Shopping List",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "Craft Queue",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = "Flash Taskbar on " ..
@@ -741,6 +758,8 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_BUTTON_ORDER = "Order",
         CRAFT_QUEUE_BUTTON_SUBMIT = "Submit",
         CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "Equip",
+        CRAFT_QUEUE_BUTTON_SHATTER = "Shatter",
+        CRAFT_QUEUE_STATUS_SHATTER_BUFF = "Shattering Essence buff not active",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "Ignore Acuity Recipes",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\nQueued Crafts: ",

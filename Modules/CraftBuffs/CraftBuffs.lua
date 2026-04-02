@@ -711,6 +711,15 @@ function CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(recipeData)
         "Whenever you achieve a major breakthrough in experimentation\ngain +20 Ingenuity for 4 hours for all Alchemy crafts.")
 end
 
+--- Craft queue (e.g. midnight shatter step) must refresh when auras change even if no recipe is focused in the schematic.
+local function OnCraftSimTrackedPlayerBuffsChanged()
+    if CraftSim.INIT.visibleRecipeID then
+        CraftSim.MODULES:UpdateUI()
+    elseif CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE") and CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end
+end
+
 function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     if InCombatLockdown() then return end
     if unitTarget ~= "player" then return end
@@ -741,8 +750,8 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 
         self.activeBuffInstanceIds = newActiveIds
 
-        if haveActiveBuffsChanged and CraftSim.INIT.visibleRecipeID then
-            CraftSim.MODULES:UpdateUI()
+        if haveActiveBuffsChanged then
+            OnCraftSimTrackedPlayerBuffsChanged()
         end
         return
     end
@@ -781,8 +790,8 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
         end
     end
 
-    -- Trigger module update if the number of active buffs has changed and a recipe is selected
-    if haveActiveBuffsChanged and CraftSim.INIT.visibleRecipeID then
-        CraftSim.MODULES:UpdateUI()
+    -- Trigger module update when tracked buffs changed (recipe UI and/or craft queue)
+    if haveActiveBuffsChanged then
+        OnCraftSimTrackedPlayerBuffsChanged()
     end
 end
