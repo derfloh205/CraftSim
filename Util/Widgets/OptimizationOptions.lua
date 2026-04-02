@@ -17,6 +17,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field OPTIMIZE_CONCENTRATION boolean?         show "Optimize Concentration" checkbox (hidden when recipe does not support qualities)
 ---@field OPTIMIZE_FINISHING_REAGENTS boolean?    show "Optimize Finishing Reagents" checkbox
 ---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean? show "Include Soulbound Finishing Reagents" sub-option (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
+---@field ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS boolean? show "Only Highest Quality Soulbound Finishing Reagents" sub-option (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
 ---@field FINISHING_REAGENTS_ALGORITHM boolean?  show "Finishing Reagents Algorithm" radio sub-menu (only visible when OPTIMIZE_FINISHING_REAGENTS is also shown)
 
 ---Default values for each option key when no stored value exists.
@@ -29,6 +30,7 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@field OPTIMIZE_CONCENTRATION boolean?
 ---@field OPTIMIZE_FINISHING_REAGENTS boolean?
 ---@field INCLUDE_SOULBOUND_FINISHING_REAGENTS boolean?
+---@field ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS boolean?
 ---@field FINISHING_REAGENTS_ALGORITHM string?     one of CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
 
 ---@class CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions
@@ -72,6 +74,7 @@ CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS = {
     OPTIMIZE_CONCENTRATION               = "OPTIMIZE_CONCENTRATION",
     OPTIMIZE_FINISHING_REAGENTS          = "OPTIMIZE_FINISHING_REAGENTS",
     INCLUDE_SOULBOUND_FINISHING_REAGENTS = "INCLUDE_SOULBOUND_FINISHING_REAGENTS",
+    ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = "ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS",
     FINISHING_REAGENTS_ALGORITHM         = "FINISHING_REAGENTS_ALGORITHM",
 }
 
@@ -216,9 +219,38 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
                 end)
+
+                if showOptions[KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] then
+                    local includeSBCB = algorithmSub:CreateCheckbox(
+                        L("OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS"),
+                        function() return getOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS) end,
+                        function()
+                            saveOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS,
+                                not getOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS))
+                        end)
+                    includeSBCB:SetTooltip(function(tooltip, _)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "If enabled, CraftSim will suggest soulbound finishing reagents during optimization")
+                    end)
+                end
+
+                if showOptions[KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS] then
+                    local onlyHighestSBCB = algorithmSub:CreateCheckbox(
+                        L("OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS"),
+                        function() return getOption(KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS) end,
+                        function()
+                            saveOption(KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS,
+                                not getOption(KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS))
+                        end)
+                    onlyHighestSBCB:SetTooltip(function(tooltip, _)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            L("OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS_TOOLTIP"))
+                    end)
+                end
             end
 
-            if showOptions[KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] then
+            if showOptions[KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] and not showOptions[KEYS.FINISHING_REAGENTS_ALGORITHM] then
+                -- Fallback: show at root level when algorithm submenu is not shown
                 local includeSBCB = rootDescription:CreateCheckbox(
                     L("OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS"),
                     function() return getOption(KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS) end,

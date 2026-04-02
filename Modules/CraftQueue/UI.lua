@@ -2076,10 +2076,19 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
             end)
 
-            optimizationButton:CreateCheckbox(
+            finishingAlgorithmButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_INCLUDE_SOULBOUND"),
                 function() return opts.includeSoulboundFinishingReagents end,
                 function() opts.includeSoulboundFinishingReagents = not opts.includeSoulboundFinishingReagents end)
+
+            local onlyHighestSBCB = finishingAlgorithmButton:CreateCheckbox(
+                L("OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS"),
+                function() return opts.onlyHighestQualitySoulboundFinishingReagents end,
+                function() opts.onlyHighestQualitySoulboundFinishingReagents = not opts.onlyHighestQualitySoulboundFinishingReagents end)
+            onlyHighestSBCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS_TOOLTIP"))
+            end)
 
             local restockingButton = rootDescription:CreateButton("Restocking")
             restockingButton:CreateCheckbox(
@@ -2836,6 +2845,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                 -- when optimizing via Craft Queue.
                 local includeLockedFinishing = false
                 local includeSoulboundFinishing = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS, false)
+                local onlyHighestQualitySoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS, false)
                 local queueAmount = editRecipeFrame.craftQueueItem.amount or 1
 
                 local function finalizeOptimize()
@@ -2862,6 +2872,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     optimizeFinishingReagentsOptions = optimizeFinishingReagents and {
                         includeLocked = includeLockedFinishing,
                         includeSoulbound = includeSoulboundFinishing,
+                        onlyHighestQualitySoulbound = onlyHighestQualitySoulbound,
                         permutationBased = finishingAlgorithm == FA.PERMUTATION,
                         progressUpdateCallback = function(progress)
                             optimizeButton:SetText(string.format("FIN: %.0f%%", progress))
@@ -2885,6 +2896,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             OPTIMIZE_CONCENTRATION               = true,
             OPTIMIZE_FINISHING_REAGENTS          = true,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = true,
+            ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = true,
             FINISHING_REAGENTS_ALGORITHM         = true,
         },
         defaults = {
@@ -2893,6 +2905,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             OPTIMIZE_CONCENTRATION               = true,
             OPTIMIZE_FINISHING_REAGENTS          = true,
             INCLUDE_SOULBOUND_FINISHING_REAGENTS = false,
+            ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = false,
             FINISHING_REAGENTS_ALGORITHM         = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM.SIMPLE,
         },
         recipeDataProvider = function()

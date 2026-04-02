@@ -456,6 +456,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             optimizeFinishingReagentsOptions = options.optimizeFinishingReagents and {
                 includeLocked = false,
                 includeSoulbound = options.includeSoulboundFinishingReagents,
+                onlyHighestQualitySoulbound = options.onlyHighestQualitySoulboundFinishingReagents,
                 permutationBased = (options.finishingReagentsAlgorithm or "SIMPLE") == "PERMUTATION",
                 progressUpdateCallback = function(progress)
                     if queueListsButton then

@@ -23,6 +23,17 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.4.0"),
+        f.PG .. f.bb("CraftQueue"),
+        f.a .. "- Added option to enforce shatter usage for crafting",
+        f.a .. "- Fixed queue not updating after equipping gear via button",
+        f.a .. "- Added option to include Moxie value in patron orders profit",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.pg .. f.bb("Cooldowns"),
+        f.a .. "- Improved cooldown list with sorting and blacklist",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.p .. "Fixes to Finishing Reagent Optimization: Permutation based",
+        f.a .. "- Now considers not using a reagent correctly",
         newP("23.3.0"),
         f.PG .. f.bb("Finishing Reagent Optimization"),
         f.a .. "- Added an optional " .. f.e("permutation based") .. " optimization algorithm",
