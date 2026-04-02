@@ -19,28 +19,37 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 
 local DEFAULT_LIST_SCALE = 0.95
 local DEFAULT_LIST_ROW_HEIGHT = 21
-local SORT_ARROW_UP = CreateAtlasMarkup("glues-characterSelect-icon-arrowUp", 16, 16)
-local SORT_ARROW_DOWN = CreateAtlasMarkup("glues-characterSelect-icon-arrowDown", 16, 16)
-local SORT_ARROW_PLACEHOLDER = CreateAtlasMarkup("glues-characterSelect-icon-minus-disabled", 16, 16)
 
----@enum CraftSim.COOLDOWNS.SORT_MODE
-CraftSim.COOLDOWNS.UI.SORT_MODE = {
-    DEFAULT = "DEFAULT",
-    CRAFTER = "CRAFTER",
-    RECIPE = "RECIPE",
-    CHARGES = "CHARGES",
-    NEXT = "NEXT",
-    FULL = "FULL",
-}
+local COOLDOWN_LIST_SORT_CONFIG_KEY = "COOLDOWNS_COOLDOWN_LIST"
+local BLACKLIST_LIST_SORT_CONFIG_KEY = "COOLDOWNS_BLACKLIST_LIST"
 
-local SORT_MODE_TO_HEADER_INDEX = {
-    DEFAULT = 1,
-    CRAFTER = 1,
-    RECIPE = 2,
-    CHARGES = 3,
-    NEXT = 4,
-    FULL = 5,
-}
+---@param key string
+---@return table
+local function EnsureFrameListSortConfig(key)
+    local configs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_SORT_CONFIGS")
+    if not configs[key] then
+        configs[key] = {}
+    end
+    return configs[key]
+end
+
+--- GGUI calls UpdateDisplay() with no args on header clicks; merge default ordering when no column sort is active.
+---@param frameList GGUI.FrameList
+---@param defaultSortFunc fun(rowA: GGUI.FrameList.Row, rowB: GGUI.FrameList.Row): boolean
+local function WrapFrameListUpdateDisplayWithDefaultSort(frameList, defaultSortFunc)
+    local baseUpdateDisplay = GGUI.FrameList.UpdateDisplay
+    function frameList:UpdateDisplay(sortFunc)
+        if sortFunc ~= nil then
+            return baseUpdateDisplay(self, sortFunc)
+        end
+        return baseUpdateDisplay(self, function(rowA, rowB)
+            if self.activeSortFunc then
+                return self.activeSortFunc(rowA, rowB)
+            end
+            return defaultSortFunc(rowA, rowB)
+        end)
+    end
+end
 
 ---@param crafterUID CrafterUID
 ---@param serializationID string
@@ -65,36 +74,35 @@ local function GetTimeUntilNextCharge(row)
     return math.max((startTimeCurrentCharge + (cooldownData.cooldownPerCharge or 0)) - GetServerTime(), 0)
 end
 
----@param sortMode CraftSim.COOLDOWNS.SORT_MODE
----@param ascending boolean
+--- Ascending comparator for one cooldown list column (GGUI applies descending by swapping row arguments).
+---@param sortMode "CRAFTER"|"RECIPE"|"CHARGES"|"NEXT"|"FULL"
 ---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
 ---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
 ---@return boolean?
-local function CompareBySortMode(sortMode, ascending, rowA, rowB)
-    local direction = ascending and 1 or -1
-    if sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.CRAFTER then
+local function CompareCooldownColumnAsc(sortMode, rowA, rowB)
+    if sortMode == "CRAFTER" then
         if rowA.crafterUID ~= rowB.crafterUID then
-            return (rowA.crafterUID < rowB.crafterUID) == (direction > 0)
+            return rowA.crafterUID < rowB.crafterUID
         end
-    elseif sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.RECIPE then
+    elseif sortMode == "RECIPE" then
         local a = rowA.sortRecipeName or ""
         local b = rowB.sortRecipeName or ""
         if a ~= b then
-            return (a < b) == (direction > 0)
+            return a < b
         end
-    elseif sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.CHARGES then
+    elseif sortMode == "CHARGES" then
         if rowA.currentCharges ~= rowB.currentCharges then
-            return (rowA.currentCharges > rowB.currentCharges) == (direction > 0)
+            return rowA.currentCharges > rowB.currentCharges
         end
-    elseif sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.NEXT then
+    elseif sortMode == "NEXT" then
         local a = rowA.nextChargeRemaining or math.huge
         local b = rowB.nextChargeRemaining or math.huge
         if a ~= b then
-            return (a < b) == (direction > 0)
+            return a < b
         end
-    elseif sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.FULL then
+    elseif sortMode == "FULL" then
         if rowA.allchargesFullTimestamp ~= rowB.allchargesFullTimestamp then
-            return (rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp) == (direction > 0)
+            return rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp
         end
     end
     return nil
@@ -251,106 +259,64 @@ function CraftSim.COOLDOWNS.UI:Init()
     GGUI.BlizzardTabSystem { overviewTab, cooldownOptionsTab }
 end
 
----@param mode CraftSim.COOLDOWNS.SORT_MODE
-function CraftSim.COOLDOWNS.UI:SetSortMode(mode)
-    local currentMode = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE")
-    local ascending = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE_ASCENDING")
-    if currentMode == mode then
-        ascending = not ascending
-    else
-        ascending = true
-    end
-    CraftSim.DB.OPTIONS:Save("COOLDOWNS_SORT_MODE", mode)
-    CraftSim.DB.OPTIONS:Save("COOLDOWNS_SORT_MODE_ASCENDING", ascending)
-    self:UpdateDisplay()
-end
-
-function CraftSim.COOLDOWNS.UI:UpdateSortHeaderLabels()
-    local cooldownList = CraftSim.COOLDOWNS.frame and CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
-    if not cooldownList then
-        return
-    end
-    local sortMode = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE")
-    local ascending = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE_ASCENDING")
-    local activeHeaderIndex = SORT_MODE_TO_HEADER_INDEX[sortMode] or 1
-    for index, headerColumn in ipairs(cooldownList.headerColumns) do
-        local baseLabel = cooldownList.columnOptions[index].baseLabel or cooldownList.columnOptions[index].label
-        local indicator = " " .. SORT_ARROW_PLACEHOLDER
-        if index == activeHeaderIndex then
-            indicator = ascending and (" " .. SORT_ARROW_UP) or (" " .. SORT_ARROW_DOWN)
-        end
-        headerColumn.text:SetText(baseLabel .. indicator)
-    end
-end
-
-function CraftSim.COOLDOWNS.UI:SetupSortHeaderHoverEffects()
-    local cooldownList = CraftSim.COOLDOWNS.frame and CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
-    if not cooldownList then
-        return
-    end
-
-    for index, headerColumn in ipairs(cooldownList.headerColumns) do
-        if index <= 5 and not headerColumn._cooldownSortHoverSetup then
-            headerColumn._cooldownSortHoverSetup = true
-            headerColumn.text.frame:SetScale(1)
-            headerColumn.text.frame:SetTextColor(1, 1, 1, 1)
-
-            headerColumn:HookScript("OnEnter", function()
-                headerColumn.text.frame:SetScale(1.04)
-                headerColumn.text.frame:SetTextColor(1, 0.95, 0.75, 1)
-            end)
-
-            headerColumn:HookScript("OnLeave", function()
-                headerColumn.text.frame:SetScale(1)
-                headerColumn.text.frame:SetTextColor(1, 1, 1, 1)
-            end)
-        end
-    end
-end
-
 function CraftSim.COOLDOWNS.UI:CreateCooldownColumnOptions(includeActionColumn)
     ---@type GGUI.FrameList.ColumnOption[]
     local columnOptions = {
         {
             label = L("COOLDOWNS_CRAFTER_HEADER"),
-            baseLabel = L("COOLDOWNS_CRAFTER_HEADER"),
             width = 140,
-            onClickCallback = function()
-                CraftSim.COOLDOWNS.UI:SetSortMode(CraftSim.COOLDOWNS.UI.SORT_MODE.CRAFTER)
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("CRAFTER", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
             end,
         },
         {
             label = L("COOLDOWNS_RECIPE_HEADER"),
-            baseLabel = L("COOLDOWNS_RECIPE_HEADER"),
             width = 185,
-            onClickCallback = function()
-                CraftSim.COOLDOWNS.UI:SetSortMode(CraftSim.COOLDOWNS.UI.SORT_MODE.RECIPE)
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("RECIPE", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
             end,
         },
         {
             label = L("COOLDOWNS_CHARGES_HEADER"),
-            baseLabel = L("COOLDOWNS_CHARGES_HEADER"),
             width = 80,
             justifyOptions = { type = "H", align = "LEFT" },
-            onClickCallback = function()
-                CraftSim.COOLDOWNS.UI:SetSortMode(CraftSim.COOLDOWNS.UI.SORT_MODE.CHARGES)
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("CHARGES", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
             end,
         },
         {
             label = L("COOLDOWNS_NEXT_HEADER"),
-            baseLabel = L("COOLDOWNS_NEXT_HEADER"),
             width = 100,
             justifyOptions = { type = "H", align = "LEFT" },
-            onClickCallback = function()
-                CraftSim.COOLDOWNS.UI:SetSortMode(CraftSim.COOLDOWNS.UI.SORT_MODE.NEXT)
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("NEXT", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
             end,
         },
         {
             label = L("COOLDOWNS_ALL_HEADER"),
-            baseLabel = L("COOLDOWNS_ALL_HEADER"),
             width = 128,
-            onClickCallback = function()
-                CraftSim.COOLDOWNS.UI:SetSortMode(CraftSim.COOLDOWNS.UI.SORT_MODE.FULL)
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("FULL", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
             end,
         },
     }
@@ -543,6 +509,7 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 198,
+        savedVariablesTableSortConfig = EnsureFrameListSortConfig(COOLDOWN_LIST_SORT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -564,10 +531,11 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
         end,
     }
 
-    self:SetupSortHeaderHoverEffects()
+    WrapFrameListUpdateDisplayWithDefaultSort(content.cooldownList, function(rowA, rowB)
+        return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+    end)
 
     content:HookScript("OnShow", function()
-        CraftSim.COOLDOWNS.UI:UpdateSortHeaderLabels()
         CraftSim.COOLDOWNS:StartTimerUpdate()
     end)
     content:HookScript("OnHide", function()
@@ -586,6 +554,7 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 120,
+        savedVariablesTableSortConfig = EnsureFrameListSortConfig(BLACKLIST_LIST_SORT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -594,10 +563,27 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
             {
                 label = L("COOLDOWNS_CRAFTER_HEADER"),
                 width = 180,
+                sortFunc = function(rowA, rowB)
+                    if rowA.crafterUID ~= rowB.crafterUID then
+                        return rowA.crafterUID < rowB.crafterUID
+                    end
+                    return CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+                end,
             },
             {
                 label = L("COOLDOWNS_RECIPE_HEADER"),
                 width = 210,
+                sortFunc = function(rowA, rowB)
+                    local a = rowA.sortRecipeName or rowA.columns[2].text:GetText() or ""
+                    local b = rowB.sortRecipeName or rowB.columns[2].text:GetText() or ""
+                    if a ~= b then
+                        return a < b
+                    end
+                    if rowA.crafterUID ~= rowB.crafterUID then
+                        return rowA.crafterUID < rowB.crafterUID
+                    end
+                    return false
+                end,
             },
             {
                 label = L("COOLDOWNS_CHARGES_HEADER"),
@@ -657,6 +643,10 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
             end
         end,
     }
+
+    WrapFrameListUpdateDisplayWithDefaultSort(content.blacklistList, function(rowA, rowB)
+        return CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+    end)
 end
 
 ---@return table<string, boolean>
@@ -715,7 +705,6 @@ end
 function CraftSim.COOLDOWNS.UI:UpdateDisplay()
     CraftSim.COOLDOWNS.UI:UpdateList()
     CraftSim.COOLDOWNS.UI:UpdateTimers()
-    CraftSim.COOLDOWNS.UI:UpdateSortHeaderLabels()
 end
 
 ---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
@@ -740,25 +729,16 @@ function CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
     return rowA.crafterUID < rowB.crafterUID
 end
 
----@param rowA CraftSim.COOLDOWNS.CooldownList.Row
----@param rowB CraftSim.COOLDOWNS.CooldownList.Row
+---@param rowA GGUI.FrameList.Row
+---@param rowB GGUI.FrameList.Row
 ---@return boolean
-function CraftSim.COOLDOWNS.UI:SortCooldownRows(rowA, rowB)
-    local sortMode = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE") or CraftSim.COOLDOWNS.UI.SORT_MODE.DEFAULT
-    local ascending = CraftSim.DB.OPTIONS:Get("COOLDOWNS_SORT_MODE_ASCENDING")
-    if ascending == nil then
-        ascending = true
+function CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+    if rowA.crafterUID ~= rowB.crafterUID then
+        return rowA.crafterUID < rowB.crafterUID
     end
-
-    if sortMode == CraftSim.COOLDOWNS.UI.SORT_MODE.DEFAULT then
-        return self:SortCooldownRowsDefault(rowA, rowB)
-    end
-
-    local customResult = CompareBySortMode(sortMode, ascending, rowA, rowB)
-    if customResult ~= nil then
-        return customResult
-    end
-    return self:SortCooldownRowsDefault(rowA, rowB)
+    local a = rowA.sortRecipeName or rowA.columns[2].text:GetText() or ""
+    local b = rowB.sortRecipeName or rowB.columns[2].text:GetText() or ""
+    return a < b
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateList()
@@ -803,9 +783,11 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                         end
                         row.columns[1].text:SetText(professionIcon .. f.class(select(1, strsplit("-", crafterUID), rowClass)))
                         if cooldownData.sharedCD then
-                            row.columns[2].text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
+                            row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD])
+                            row.columns[2].text:SetText(row.sortRecipeName)
                         else
-                            row.columns[2].text:SetText((recipeInfo and recipeInfo.name) or serializationID)
+                            row.sortRecipeName = (recipeInfo and recipeInfo.name) or serializationID
+                            row.columns[2].text:SetText(row.sortRecipeName)
                         end
                         row:UpdateTimers()
                     else
@@ -817,17 +799,8 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
         end
     end
 
-    cooldownList:UpdateDisplay(function(rowA, rowB)
-        return CraftSim.COOLDOWNS.UI:SortCooldownRows(rowA, rowB)
-    end)
-    blacklistList:UpdateDisplay(function(rowA, rowB)
-        if rowA.crafterUID ~= rowB.crafterUID then
-            return rowA.crafterUID < rowB.crafterUID
-        end
-        local aRecipe = rowA.columns[2].text:GetText() or ""
-        local bRecipe = rowB.columns[2].text:GetText() or ""
-        return aRecipe < bRecipe
-    end)
+    cooldownList:UpdateDisplay()
+    blacklistList:UpdateDisplay()
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateTimers()
