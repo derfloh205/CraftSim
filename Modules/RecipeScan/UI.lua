@@ -662,10 +662,8 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     table.sort(sortedCategories, function(a, b) return a.name < b.name end)
 
                     if #sortedCategories > 0 then
-                        local categorySubmenu = expansionEntry:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"))
-
-                        -- "Enable All" button
-                        categorySubmenu:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
+                        -- "Enable All" button directly on the expansion entry submenu
+                        expansionEntry:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
                             local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
                             cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
                             cats[row.crafterProfessionUID][expID] = {}
@@ -673,7 +671,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
                         for _, category in ipairs(sortedCategories) do
                             local catID = category.id
-                            categorySubmenu:CreateCheckbox(
+                            expansionEntry:CreateCheckbox(
                                 category.name,
                                 function()
                                     local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
