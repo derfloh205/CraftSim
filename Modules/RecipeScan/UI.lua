@@ -576,13 +576,14 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
                 if row.crafterProfessionUID == playerCrafterProfessionUID then
                     -- Currently open profession: use WoW API to get live category list
-                    local categoryIDs = C_TradeSkillUI.GetCategories()
-                    if categoryIDs then
-                        for _, categoryID in ipairs(categoryIDs) do
-                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(categoryID)
+                    -- GetCategories() returns the number of categories; GetCategoryInfo(i) takes a 1-based index
+                    local numCategories = C_TradeSkillUI.GetCategories()
+                    if numCategories and numCategories > 0 then
+                        for i = 1, numCategories do
+                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(i)
                             if categoryInfo and categoryInfo.name then
                                 table.insert(categories, {
-                                    id = categoryID,
+                                    id = categoryInfo.categoryID,
                                     name = categoryInfo.name,
                                 })
                             end
