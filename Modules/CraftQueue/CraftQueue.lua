@@ -47,6 +47,9 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
+--- Saved in DB as CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID for "cheapest owned" mode
+CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
+
 --- used to cache data for auctionator quick buy macro
 CraftSim.CRAFTQ.quickBuyCache = {
     ---@type CraftSim.CRAFTQ.QB_STATUS
@@ -63,6 +66,83 @@ CraftSim.CRAFTQ.quickBuyCache = {
     ---@type number?
     pendingItemCount = nil,
 }
+
+---@param recipeData CraftSim.RecipeData
+---@return ItemMixin?
+function CraftSim.CRAFTQ:ApplyMidnightEnchantShatterSalvageSelection(recipeData)
+    local slot = recipeData.reagentData.salvageReagentSlot
+    local savedID = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID)
+    if savedID == nil then
+        return slot:SetCheapestItem()
+    end
+    if savedID == self.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED then
+        return slot:SetCheapestOwnedItem()
+    end
+    local found = GUTIL:Find(slot.possibleItems, function(item)
+        return item:GetItemID() == savedID
+    end)
+    if found then
+        slot:SetItem(savedID)
+        return slot.activeItem
+    end
+    CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID, nil)
+    return slot:SetCheapestItem()
+end
+
+---@param crafterData CraftSim.CrafterData
+---@return CraftSim.RecipeData?
+function CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(crafterData)
+    local rd = CraftSim.RecipeData({
+        recipeID = CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER,
+        crafterData = crafterData,
+    })
+    if not rd or not rd.learned then
+        return nil
+    end
+    self:ApplyMidnightEnchantShatterSalvageSelection(rd)
+    rd:Update()
+    return rd
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
+    local optKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID
+    MenuUtil.CreateContextMenu(UIParent, function(_, rootDescription)
+        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC"), function()
+            return CraftSim.DB.OPTIONS:Get(optKey) == nil
+        end, function()
+            CraftSim.DB.OPTIONS:Save(optKey, nil)
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end)
+        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED"), function()
+            return CraftSim.DB.OPTIONS:Get(optKey) == CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED
+        end, function()
+            CraftSim.DB.OPTIONS:Save(optKey, CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED)
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end)
+        for _, item in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
+            local itemID = item:GetItemID()
+            local itemName, itemLink = C_Item.GetItemInfo(itemID)
+            local displayText = itemLink or itemName or ("#" .. tostring(itemID))
+            local moteRadio = rootDescription:CreateRadio(displayText, function()
+                return CraftSim.DB.OPTIONS:Get(optKey) == itemID
+            end, function()
+                CraftSim.DB.OPTIONS:Save(optKey, itemID)
+                CraftSim.CRAFTQ.UI:UpdateDisplay()
+            end)
+            moteRadio:SetTooltip(function(tooltip, _)
+                if tooltip.SetItemByID then
+                    tooltip:SetItemByID(itemID)
+                else
+                    local _, il = C_Item.GetItemInfo(itemID)
+                    if il and tooltip.SetHyperlink then
+                        tooltip:SetHyperlink(il)
+                    end
+                end
+            end)
+        end
+    end)
+end
 
 local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
@@ -772,10 +852,12 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number
 ---@param enchantItemTargetOrRecipeLevel ItemLocationMixin|number?
-function CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, amount, enchantItemTargetOrRecipeLevel)
+---@param isEnchantCraft boolean? true only for CraftEnchant; salvage uses a reagent item location, not vellum
+function CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, amount, enchantItemTargetOrRecipeLevel, isEnchantCraft)
     -- find the current queue item and set it to currentlyCraftedQueueItem
-    -- if an enchant was crafted that was not on a vellum, ignore
-    if enchantItemTargetOrRecipeLevel and type(enchantItemTargetOrRecipeLevel) ~= "number" and enchantItemTargetOrRecipeLevel:IsValid() then
+    -- if an enchant was crafted that was not on a vellum, ignore (CraftSalvage passes the mote slot — never clear for that)
+    if isEnchantCraft and enchantItemTargetOrRecipeLevel and type(enchantItemTargetOrRecipeLevel) ~= "number" and
+        enchantItemTargetOrRecipeLevel:IsValid() then
         if C_Item.GetItemID(enchantItemTargetOrRecipeLevel) ~= CraftSim.CONST.ENCHANTING_VELLUM_ID then
             CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
             return
@@ -944,7 +1026,6 @@ end
 
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
-    print("onCraftResult")
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end

@@ -637,6 +637,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "자동 (최저가)",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "자동 (보유 중인 가장 저렴한 재료)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\n우클릭하여 티끌 선택.",
+        CRAFT_QUEUE_SHATTER_REAPPLY_AFTER_LOGIN = "\n\n" ..
+            f.white("접속 후 분쇄를 시전하면 표시되는 버프가 올바르게 맞춰집니다.\n알려진 버그입니다."),
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Auctionator 쇼핑 목록 생성",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "제작 대기열",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = f.bb("제작 대기열") .. " 완료 시 작업표시줄 깜빡임",
@@ -704,6 +706,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_BUTTON_ORDER = "주문",
         CRAFT_QUEUE_BUTTON_SUBMIT = "제출",
         CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "착용",
+        CRAFT_QUEUE_BUTTON_SHATTER = "분쇄",
+        CRAFT_QUEUE_STATUS_SHATTER_BUFF = "비취의 정수 버프 비활성",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "장인의 기미 제작법 무시",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             f.bb("장인의 기미") .. "가 소모되는 첫 제작 아이템을 대기열에 추가하지 않습니다.",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\n예약된 제작: ",
@@ -787,10 +791,13 @@ function CraftSim.LOCAL_KO:GetData()
         COOLDOWNS_NEXT_HEADER = "다음 충전",
         COOLDOWNS_ALL_HEADER = "충전 완료",
         COOLDOWNS_TAB_OVERVIEW = "개요",
+        COOLDOWNS_TAB_BLACKLIST = "블랙리스트",
         COOLDOWNS_TAB_OPTIONS = "옵션",
         COOLDOWNS_EXPANSION_FILTER_BUTTON = "확장팩 필터",
         COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP = f.bb("\n\n이 대기시간을 공유하는 제작법:\n"),
         COOLDOWNS_RECIPE_READY = f.g("준비됨"),
+        COOLDOWNS_ADD_TO_BLACKLIST = "블랙리스트에 추가",
+        COOLDOWNS_BLACKLIST_RESTORE = "블랙리스트에서 제거",
 
         -- concentration module (집중 모듈)
         CONCENTRATION_TRACKER_TITLE = "CraftSim 집중",

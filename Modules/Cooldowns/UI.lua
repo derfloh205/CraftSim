@@ -17,6 +17,97 @@ local f = GUTIL:GetFormatter()
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 
+local DEFAULT_LIST_SCALE = 0.95
+local DEFAULT_LIST_ROW_HEIGHT = 21
+
+local COOLDOWN_LIST_SORT_CONFIG_KEY = "COOLDOWNS_COOLDOWN_LIST"
+local BLACKLIST_LIST_SORT_CONFIG_KEY = "COOLDOWNS_BLACKLIST_LIST"
+
+---@param key string
+---@return table
+local function EnsureFrameListSortConfig(key)
+    local configs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_SORT_CONFIGS")
+    if not configs[key] then
+        configs[key] = {}
+    end
+    return configs[key]
+end
+
+--- GGUI calls UpdateDisplay() with no args on header clicks; merge default ordering when no column sort is active.
+---@param frameList GGUI.FrameList
+---@param defaultSortFunc fun(rowA: GGUI.FrameList.Row, rowB: GGUI.FrameList.Row): boolean
+local function WrapFrameListUpdateDisplayWithDefaultSort(frameList, defaultSortFunc)
+    local baseUpdateDisplay = GGUI.FrameList.UpdateDisplay
+    function frameList:UpdateDisplay(sortFunc)
+        if sortFunc ~= nil then
+            return baseUpdateDisplay(self, sortFunc)
+        end
+        return baseUpdateDisplay(self, function(rowA, rowB)
+            if self.activeSortFunc then
+                return self.activeSortFunc(rowA, rowB)
+            end
+            return defaultSortFunc(rowA, rowB)
+        end)
+    end
+end
+
+---@param crafterUID CrafterUID
+---@param serializationID string
+---@return string
+local function CreateBlacklistKey(crafterUID, serializationID)
+    return tostring(crafterUID) .. "::" .. tostring(serializationID)
+end
+
+---@param row CraftSim.COOLDOWNS.CooldownList.Row
+---@return number
+local function GetTimeUntilNextCharge(row)
+    local cooldownData = row.cooldownData
+    if not cooldownData then
+        return math.huge
+    end
+    local currentCharges = cooldownData:GetCurrentCharges() or 0
+    local maxCharges = cooldownData.maxCharges or 0
+    if maxCharges == 0 or currentCharges >= maxCharges then
+        return 0
+    end
+    local startTimeCurrentCharge = cooldownData:GetStartTimeCurrentCharge() or 0
+    return math.max((startTimeCurrentCharge + (cooldownData.cooldownPerCharge or 0)) - GetServerTime(), 0)
+end
+
+--- Ascending comparator for one cooldown list column (GGUI applies descending by swapping row arguments).
+---@param sortMode "CRAFTER"|"RECIPE"|"CHARGES"|"NEXT"|"FULL"
+---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
+---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
+---@return boolean?
+local function CompareCooldownColumnAsc(sortMode, rowA, rowB)
+    if sortMode == "CRAFTER" then
+        if rowA.crafterUID ~= rowB.crafterUID then
+            return rowA.crafterUID < rowB.crafterUID
+        end
+    elseif sortMode == "RECIPE" then
+        local a = rowA.sortRecipeName or ""
+        local b = rowB.sortRecipeName or ""
+        if a ~= b then
+            return a < b
+        end
+    elseif sortMode == "CHARGES" then
+        if rowA.currentCharges ~= rowB.currentCharges then
+            return rowA.currentCharges > rowB.currentCharges
+        end
+    elseif sortMode == "NEXT" then
+        local a = rowA.nextChargeRemaining or math.huge
+        local b = rowB.nextChargeRemaining or math.huge
+        if a ~= b then
+            return a < b
+        end
+    elseif sortMode == "FULL" then
+        if rowA.allchargesFullTimestamp ~= rowB.allchargesFullTimestamp then
+            return rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp
+        end
+    end
+    return nil
+end
+
 --- When the matching profession is open, replace stale saved cooldown with live C_TradeSkillUI data.
 ---@param crafterUID CrafterUID
 ---@param recipeID RecipeID
@@ -85,7 +176,7 @@ end
 
 function CraftSim.COOLDOWNS.UI:Init()
     local sizeX = 680
-    local sizeY = 220
+    local sizeY = 265
     local offsetX = 0
     local offsetY = 0
 
@@ -168,96 +259,281 @@ function CraftSim.COOLDOWNS.UI:Init()
     GGUI.BlizzardTabSystem { overviewTab, cooldownOptionsTab }
 end
 
+function CraftSim.COOLDOWNS.UI:CreateCooldownColumnOptions(includeActionColumn)
+    ---@type GGUI.FrameList.ColumnOption[]
+    local columnOptions = {
+        {
+            label = L("COOLDOWNS_CRAFTER_HEADER"),
+            width = 140,
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("CRAFTER", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+            end,
+        },
+        {
+            label = L("COOLDOWNS_RECIPE_HEADER"),
+            width = 185,
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("RECIPE", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+            end,
+        },
+        {
+            label = L("COOLDOWNS_CHARGES_HEADER"),
+            width = 80,
+            justifyOptions = { type = "H", align = "LEFT" },
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("CHARGES", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+            end,
+        },
+        {
+            label = L("COOLDOWNS_NEXT_HEADER"),
+            width = 100,
+            justifyOptions = { type = "H", align = "LEFT" },
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("NEXT", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+            end,
+        },
+        {
+            label = L("COOLDOWNS_ALL_HEADER"),
+            width = 128,
+            sortFunc = function(rowA, rowB)
+                local cmp = CompareCooldownColumnAsc("FULL", rowA, rowB)
+                if cmp ~= nil then
+                    return cmp
+                end
+                return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+            end,
+        },
+    }
+    if includeActionColumn then
+        tinsert(columnOptions, {
+            label = "",
+            width = 30,
+            justifyOptions = { type = "H", align = "CENTER" },
+        })
+    end
+    return columnOptions
+end
+
+---@param columns Frame[]
+---@param row CraftSim.COOLDOWNS.CooldownList.Row
+---@param isBlacklistRow boolean
+function CraftSim.COOLDOWNS.UI:CooldownRowConstructor(columns, row, isBlacklistRow)
+    row.cooldownData = nil
+    row.allchargesFullTimestamp = 0
+    row.currentCharges = 0
+    row.nextChargeRemaining = math.huge
+    row.sortRecipeName = ""
+
+    local crafterColumn = columns[1]
+    local recipeColumn = columns[2]
+    local chargesColumn = columns[3]
+    local nextColumn = columns[4]
+    local allColumn = columns[5]
+    local actionColumn = columns[6]
+
+    crafterColumn.text = GGUI.Text {
+        parent = crafterColumn,
+        anchorParent = crafterColumn,
+        justifyOptions = { type = "H", align = "LEFT" },
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        scale = 0.95,
+    }
+    recipeColumn.text = GGUI.Text {
+        parent = recipeColumn,
+        anchorParent = recipeColumn,
+        justifyOptions = { type = "H", align = "LEFT" },
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        fixedWidth = 185,
+        scale = 0.95,
+    }
+    chargesColumn.text = GGUI.Text {
+        parent = chargesColumn,
+        anchorParent = chargesColumn,
+        justifyOptions = { type = "H", align = "LEFT" },
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        fixedWidth = 80,
+    }
+    chargesColumn.SetCharges = function(_, current, max)
+        current = math.min(current or 0, max or 0)
+        if current == max and max > 0 then
+            chargesColumn.text:SetText(string.format("%s/%s", f.g(current), f.g(max)))
+        elseif max > 0 then
+            chargesColumn.text:SetText(string.format("%s/%s", f.l(current), f.l(max)))
+        else
+            chargesColumn.text:SetText("-/-")
+        end
+    end
+    nextColumn.text = GGUI.Text {
+        parent = nextColumn,
+        anchorParent = nextColumn,
+        fixedWidth = 100,
+        justifyOptions = { type = "H", align = "LEFT" },
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+    }
+    allColumn.text = GGUI.Text {
+        parent = allColumn,
+        anchorParent = allColumn,
+        justifyOptions = { type = "H", align = "LEFT" },
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+    }
+
+    if isBlacklistRow and actionColumn then
+        actionColumn.restoreButton = GGUI.Button {
+            parent = actionColumn,
+            anchorParent = actionColumn,
+            sizeX = 18,
+            sizeY = 18,
+            label = "X",
+            clickCallback = function()
+                CraftSim.COOLDOWNS.UI:RemoveFromBlacklist(row.blacklistKey)
+                CraftSim.COOLDOWNS.UI:UpdateDisplay()
+            end,
+            tooltipOptions = {
+                text = L("COOLDOWNS_BLACKLIST_RESTORE"),
+                owner = actionColumn,
+                anchor = "ANCHOR_CURSOR",
+            }
+        }
+    end
+end
+
+---@param row CraftSim.COOLDOWNS.CooldownList.Row
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param serializationID string
+---@param cooldownData CraftSim.CooldownData
+---@param professionInfo ProfessionInfo
+---@param recipeInfo SkillLineAbilityInfo?
+function CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID, cooldownData, professionInfo, recipeInfo)
+    row.crafterUID = crafterUID
+    row.recipeID = recipeID
+    row.serializationID = serializationID
+    row.blacklistKey = CreateBlacklistKey(crafterUID, serializationID)
+    row.cooldownData = cooldownData
+    row.isCurrentCharacter = crafterUID == CraftSim.UTIL:GetPlayerCrafterUID()
+    local columns = row.columns
+    local crafterColumn = columns[1]
+    local recipeColumn = columns[2]
+    local chargesColumn = columns[3]
+    local nextColumn = columns[4]
+    local allColumn = columns[5]
+
+    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+    local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
+    local tooltipText = f.class(crafterUID, crafterClass)
+
+    local professionIcon = ""
+    if professionInfo and professionInfo.profession then
+        professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession]
+        professionIcon = GUTIL:IconToText(professionIcon, 20, 20) .. " "
+    end
+
+    crafterColumn.text:SetText(professionIcon .. crafterName)
+
+    if cooldownData.sharedCD then
+        row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]) or tostring(serializationID)
+        recipeColumn.text:SetText(row.sortRecipeName)
+        local recipeListText = ""
+        for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
+            local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
+                C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+            if sharedRecipeIDInfo then
+                recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name
+            end
+        end
+        if #recipeListText > 0 then
+            tooltipText = tooltipText .. L("COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP") .. f.white(recipeListText)
+        end
+    else
+        row.sortRecipeName = (recipeInfo and recipeInfo.name) or tostring(serializationID)
+        recipeColumn.text:SetText(row.sortRecipeName)
+    end
+
+    row.tooltipOptions = {
+        text = tooltipText,
+        owner = row.frame,
+        anchor = "ANCHOR_CURSOR",
+    }
+
+    row.UpdateTimers = function(self)
+        self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID, self.recipeID, self.cooldownData)
+        local rowCooldownData = self.cooldownData
+        local currentCharges = rowCooldownData:GetCurrentCharges() or 0
+        local maxCharges = rowCooldownData.maxCharges or 0
+        chargesColumn:SetCharges(currentCharges, maxCharges)
+        local allFullTS, ready = rowCooldownData:GetAllChargesFullTimestamp()
+        local cdReady = ready or currentCharges >= maxCharges
+        nextColumn.text:SetText(cdReady and f.grey("-") or f.bb(rowCooldownData:GetFormattedTimerNextCharge()))
+        self.allchargesFullTimestamp = allFullTS or math.huge
+        self.currentCharges = currentCharges
+        self.nextChargeRemaining = GetTimeUntilNextCharge(self)
+        if cdReady then
+            allColumn.text:SetText(L("COOLDOWNS_RECIPE_READY"))
+        else
+            allColumn.text:SetText(f.g(rowCooldownData:GetAllChargesFullDateFormatted()))
+        end
+    end
+
+    row:UpdateTimers()
+end
+
 ---@param overviewTab CraftSim.COOLDOWNS.UI.OVERVIEW_TAB
 function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
     local content = overviewTab.content
 
     content.cooldownList = GGUI.FrameList {
-        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -30, offsetX = 20,
-        showBorder = true, sizeY = 147, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
-        columnOptions = {
-            {
-                label = L("COOLDOWNS_CRAFTER_HEADER"),
-                width = 150,
-            },
-            {
-                label = L("COOLDOWNS_RECIPE_HEADER"),
-                width = 160,
-            },
-            {
-                label = L("COOLDOWNS_CHARGES_HEADER"),
-                width = 70,
-                justifyOptions = { type = "H", align = "CENTER" }
-            },
-            {
-                label = L("COOLDOWNS_NEXT_HEADER"),
-                width = 120,
-                justifyOptions = { type = "H", align = "CENTER" }
-            },
-            {
-                label = L("COOLDOWNS_ALL_HEADER"),
-                width = 120,
-            },
-        },
-        rowConstructor = function(columns, row)
-            ---@class CraftSim.COOLDOWNS.CooldownList.Row : GGUI.FrameList.Row
-            row = row
-            ---@type CraftSim.CooldownData
-            row.cooldownData = nil
-            row.allchargesFullTimestamp = 0
-            ---@class CraftSim.COOLDOWNS.CooldownList.CrafterColumn : Frame
-            local crafterColumn = columns[1]
-            ---@class CraftSim.COOLDOWNS.CooldownList.RecipeColumn : Frame
-            local recipeColumn = columns[2]
-            ---@class CraftSim.COOLDOWNS.CooldownList.ChargesColumn : Frame
-            local chargesColumn = columns[3]
-            ---@class CraftSim.COOLDOWNS.CooldownList.NextColumn : Frame
-            local nextColumn = columns[4]
-            ---@class CraftSim.COOLDOWNS.CooldownList.AllColumn : Frame
-            local allColumn = columns[5]
-
-            crafterColumn.text = GGUI.Text {
-                parent = crafterColumn, anchorParent = crafterColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT", scale = 0.9
-            }
-            recipeColumn.text = GGUI.Text {
-                parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT", fixedWidth = 180, scale = 0.9
-            }
-            chargesColumn.slash = GGUI.Text {
-                parent = chargesColumn, anchorParent = chargesColumn, text = "/"
-            }
-            chargesColumn.current = GGUI.Text {
-                parent = chargesColumn, anchorParent = chargesColumn.slash.frame, justifyOptions = { type = "H", align = "RIGHT" },
-                anchorA = "RIGHT", anchorB = "LEFT",
-            }
-            chargesColumn.max = GGUI.Text {
-                parent = chargesColumn, anchorParent = chargesColumn.slash.frame, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "RIGHT",
-            }
-            chargesColumn.SetCharges = function(self, current, max)
-                current = math.min(current, max)
-                if current == max and max > 0 then
-                    chargesColumn.current:SetText(f.g(current))
-                    chargesColumn.max:SetText(f.g(max))
-                elseif max > 0 then
-                    chargesColumn.current:SetText(f.l(current))
-                    chargesColumn.max:SetText(f.l(max))
-                else
-                    chargesColumn.current:SetText("-")
-                    chargesColumn.max:SetText("-")
+        parent = content,
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -34, offsetX = 17 } },
+        scale = DEFAULT_LIST_SCALE,
+        showBorder = true,
+        rowHeight = DEFAULT_LIST_ROW_HEIGHT,
+        sizeY = 198,
+        savedVariablesTableSortConfig = EnsureFrameListSortConfig(COOLDOWN_LIST_SORT_CONFIG_KEY),
+        selectionOptions = {
+            noSelectionColor = true,
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            selectionCallback = function(row)
+                if IsMouseButtonDown("RightButton") then
+                    CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(_, rootDescription)
+                        rootDescription:CreateTitle(row.sortRecipeName)
+                        rootDescription:CreateButton(L("COOLDOWNS_ADD_TO_BLACKLIST"), function()
+                            CraftSim.COOLDOWNS.UI:AddToBlacklist(row.blacklistKey)
+                            CraftSim.COOLDOWNS.UI:UpdateDisplay()
+                        end)
+                    end)
                 end
-            end
-            nextColumn.text = GGUI.Text {
-                parent = nextColumn, anchorParent = nextColumn, fixedWidth = 120,
-            }
-            allColumn.text = GGUI.Text {
-                parent = allColumn, anchorParent = allColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT",
-            }
-        end
-
+            end,
+        },
+        columnOptions = self:CreateCooldownColumnOptions(false),
+        rowConstructor = function(columns, row)
+            CraftSim.COOLDOWNS.UI:CooldownRowConstructor(columns, row, false)
+        end,
     }
+
+    WrapFrameListUpdateDisplayWithDefaultSort(content.cooldownList, function(rowA, rowB)
+        return CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+    end)
 
     content:HookScript("OnShow", function()
         CraftSim.COOLDOWNS:StartTimerUpdate()
@@ -265,6 +541,129 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
     content:HookScript("OnHide", function()
         CraftSim.COOLDOWNS:StopTimerUpdate()
     end)
+end
+
+---@param content CraftSim.COOLDOWNS.UI.COOLDOWN_OPTIONS_TAB.CONTENT
+function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
+    content.blacklistList = GGUI.FrameList {
+        parent = content,
+        anchorPoints = {
+            { anchorParent = content.expansionSelector.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -30, offsetX = 0 }
+        },
+        scale = 0.9,
+        showBorder = true,
+        rowHeight = DEFAULT_LIST_ROW_HEIGHT,
+        sizeY = 120,
+        savedVariablesTableSortConfig = EnsureFrameListSortConfig(BLACKLIST_LIST_SORT_CONFIG_KEY),
+        selectionOptions = {
+            noSelectionColor = true,
+            hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+        },
+        columnOptions = {
+            {
+                label = L("COOLDOWNS_CRAFTER_HEADER"),
+                width = 180,
+                sortFunc = function(rowA, rowB)
+                    if rowA.crafterUID ~= rowB.crafterUID then
+                        return rowA.crafterUID < rowB.crafterUID
+                    end
+                    return CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+                end,
+            },
+            {
+                label = L("COOLDOWNS_RECIPE_HEADER"),
+                width = 210,
+                sortFunc = function(rowA, rowB)
+                    local a = rowA.sortRecipeName or rowA.columns[2].text:GetText() or ""
+                    local b = rowB.sortRecipeName or rowB.columns[2].text:GetText() or ""
+                    if a ~= b then
+                        return a < b
+                    end
+                    if rowA.crafterUID ~= rowB.crafterUID then
+                        return rowA.crafterUID < rowB.crafterUID
+                    end
+                    return false
+                end,
+            },
+            {
+                label = L("COOLDOWNS_CHARGES_HEADER"),
+                width = 90,
+                justifyOptions = { type = "H", align = "LEFT" },
+            },
+            {
+                label = "",
+                width = 30,
+                justifyOptions = { type = "H", align = "CENTER" },
+            },
+        },
+        rowConstructor = function(columns, row)
+            row.cooldownData = nil
+            local crafterColumn = columns[1]
+            local recipeColumn = columns[2]
+            local chargesColumn = columns[3]
+            local actionColumn = columns[4]
+
+            crafterColumn.text = GGUI.Text {
+                parent = crafterColumn, anchorParent = crafterColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT", scale = 0.9
+            }
+            recipeColumn.text = GGUI.Text {
+                parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT", fixedWidth = 210, scale = 0.9
+            }
+            chargesColumn.text = GGUI.Text {
+                parent = chargesColumn, anchorParent = chargesColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT",
+                fixedWidth = 90,
+            }
+
+            actionColumn.restoreButton = GGUI.Button {
+                parent = actionColumn,
+                anchorParent = actionColumn,
+                sizeX = 18,
+                sizeY = 18,
+                label = "X",
+                clickCallback = function()
+                    CraftSim.COOLDOWNS.UI:RemoveFromBlacklist(row.blacklistKey)
+                    CraftSim.COOLDOWNS.UI:UpdateDisplay()
+                end,
+                tooltipOptions = {
+                    text = L("COOLDOWNS_BLACKLIST_RESTORE"),
+                    owner = actionColumn,
+                    anchor = "ANCHOR_CURSOR",
+                }
+            }
+
+            row.UpdateTimers = function(self)
+                self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID, self.recipeID, self.cooldownData)
+                local cooldownData = self.cooldownData
+                local currentCharges = cooldownData:GetCurrentCharges() or 0
+                local maxCharges = cooldownData.maxCharges or 0
+                chargesColumn.text:SetText(string.format("%s/%s", currentCharges, maxCharges))
+            end
+        end,
+    }
+
+    WrapFrameListUpdateDisplayWithDefaultSort(content.blacklistList, function(rowA, rowB)
+        return CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+    end)
+end
+
+---@return table<string, boolean>
+function CraftSim.COOLDOWNS.UI:GetBlacklist()
+    return CraftSim.DB.OPTIONS:Get("COOLDOWNS_BLACKLIST")
+end
+
+---@param blacklistKey string
+function CraftSim.COOLDOWNS.UI:AddToBlacklist(blacklistKey)
+    local blacklist = self:GetBlacklist()
+    blacklist[blacklistKey] = true
+end
+
+---@param blacklistKey string
+function CraftSim.COOLDOWNS.UI:RemoveFromBlacklist(blacklistKey)
+    local blacklist = self:GetBlacklist()
+    blacklist[blacklistKey] = nil
 end
 
 ---@param cooldownOptionsTab CraftSim.COOLDOWNS.UI.COOLDOWN_OPTIONS_TAB
@@ -299,6 +698,8 @@ function CraftSim.COOLDOWNS.UI:InitializeCooldownOptionsTab(cooldownOptionsTab)
             CraftSim.COOLDOWNS.UI:UpdateDisplay()
         end
     }
+
+    self:InitializeBlacklistListInOptions(content)
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateDisplay()
@@ -306,13 +707,50 @@ function CraftSim.COOLDOWNS.UI:UpdateDisplay()
     CraftSim.COOLDOWNS.UI:UpdateTimers()
 end
 
+---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
+---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
+---@return boolean
+function CraftSim.COOLDOWNS.UI:SortCooldownRowsDefault(rowA, rowB)
+    if rowA.isCurrentCharacter ~= rowB.isCurrentCharacter then
+        return rowA.isCurrentCharacter
+    end
+    if rowA.currentCharges ~= rowB.currentCharges then
+        return rowA.currentCharges > rowB.currentCharges
+    end
+    if rowA.nextChargeRemaining ~= rowB.nextChargeRemaining then
+        return rowA.nextChargeRemaining < rowB.nextChargeRemaining
+    end
+    if rowA.allchargesFullTimestamp ~= rowB.allchargesFullTimestamp then
+        return rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp
+    end
+    if rowA.sortRecipeName ~= rowB.sortRecipeName then
+        return rowA.sortRecipeName < rowB.sortRecipeName
+    end
+    return rowA.crafterUID < rowB.crafterUID
+end
+
+---@param rowA GGUI.FrameList.Row
+---@param rowB GGUI.FrameList.Row
+---@return boolean
+function CraftSim.COOLDOWNS.UI:SortBlacklistRowsDefault(rowA, rowB)
+    if rowA.crafterUID ~= rowB.crafterUID then
+        return rowA.crafterUID < rowB.crafterUID
+    end
+    local a = rowA.sortRecipeName or rowA.columns[2].text:GetText() or ""
+    local b = rowB.sortRecipeName or rowB.columns[2].text:GetText() or ""
+    return a < b
+end
+
 function CraftSim.COOLDOWNS.UI:UpdateList()
     local cooldownList = CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
+    local blacklistList = CraftSim.COOLDOWNS.frame.content.cooldownOptionsTab.content.blacklistList
 
     cooldownList:Remove()
+    blacklistList:Remove()
 
     local crafterCooldownData = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
     local includedExpansionIDs = CraftSim.COOLDOWNS:GetIncludedExpansions()
+    local blacklist = self:GetBlacklist()
 
     for crafterUID, recipeCooldowns in pairs(crafterCooldownData) do
         for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
@@ -322,104 +760,57 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
             local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
                 C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
 
-            local skillLineID = professionInfo.professionID
+            local skillLineID = professionInfo and professionInfo.professionID
             local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
 
             local expansionIncluded = tContains(includedExpansionIDs, expansionID)
 
             if expansionIncluded then
-                cooldownList:Add(
-                ---@param row CraftSim.COOLDOWNS.CooldownList.Row
-                    function(row)
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or C_TradeSkillUI.GetRecipeInfo(recipeID)
+                local blacklistKey = CreateBlacklistKey(crafterUID, serializationID)
+                local targetList = blacklist[blacklistKey] and blacklistList or cooldownList
+                targetList:Add(function(row)
+                    if targetList == blacklistList then
                         row.crafterUID = crafterUID
                         row.recipeID = recipeID
+                        row.serializationID = serializationID
+                        row.blacklistKey = blacklistKey
                         row.cooldownData = cooldownData
-                        local columns = row.columns
-                        local crafterColumn = columns[1] --[[@as CraftSim.COOLDOWNS.CooldownList.CrafterColumn]]
-                        local recipeColumn = columns[2] --[[@as CraftSim.COOLDOWNS.CooldownList.RecipeColumn]]
-                        local chargesColumn = columns[3] --[[@as CraftSim.COOLDOWNS.CooldownList.ChargesColumn]]
-                        local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
-                        local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
-
-                        local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-                        local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
-                        local tooltipText = f.class(crafterUID, crafterClass)
-
-
+                        local rowClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
                         local professionIcon = ""
-                        if professionInfo.profession then
-                            professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession]
-                            professionIcon = GUTIL:IconToText(professionIcon, 20, 20) .. " "
+                        if professionInfo and professionInfo.profession then
+                            professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession], 16, 16) .. " "
                         end
-
-                        crafterColumn.text:SetText(professionIcon .. crafterName)
-
-                        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
-                            C_TradeSkillUI.GetRecipeInfo(recipeID)
-
-
+                        row.columns[1].text:SetText(professionIcon .. f.class(select(1, strsplit("-", crafterUID), rowClass)))
                         if cooldownData.sharedCD then
-                            recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS
-                                [cooldownData.sharedCD]))
-                            local recipeListText = ""
-                            for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
-                                local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
-                                    C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
-
-                                if sharedRecipeIDInfo then
-                                    recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name
-                                end
-                            end
-                            if #recipeListText > 0 then
-                                tooltipText = tooltipText ..
-                                    L("COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP") .. f.white(recipeListText)
-                            end
+                            row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD])
+                            row.columns[2].text:SetText(row.sortRecipeName)
                         else
-                            recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
+                            row.sortRecipeName = (recipeInfo and recipeInfo.name) or serializationID
+                            row.columns[2].text:SetText(row.sortRecipeName)
                         end
-
-                        row.tooltipOptions = {
-                            text = tooltipText,
-                            owner = row.frame,
-                            anchor = "ANCHOR_CURSOR",
-                        }
-
-                        row.UpdateTimers = function(self)
-                            print("Updating Timers for " .. tostring(recipeInfo.name))
-                            self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID,
-                                self.recipeID, self.cooldownData)
-                            local cooldownData = self.cooldownData
-                            chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
-                            local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
-                            local cdReady = ready or cooldownData:GetCurrentCharges() >= cooldownData.maxCharges
-                            nextColumn.text:SetText(cdReady and f.grey("-") or
-                                f.bb(cooldownData:GetFormattedTimerNextCharge()))
-                            row.allchargesFullTimestamp = allFullTS
-                            if cdReady then
-                                allColumn.text:SetText(L("COOLDOWNS_RECIPE_READY"))
-                            else
-                                allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
-                            end
-                        end
-
                         row:UpdateTimers()
-                    end)
+                    else
+                        CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID, cooldownData,
+                            professionInfo, recipeInfo)
+                    end
+                end)
             end
         end
     end
 
-    cooldownList:UpdateDisplay(
-    ---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
-    ---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
-        function(rowA, rowB)
-            return rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp
-        end)
+    cooldownList:UpdateDisplay()
+    blacklistList:UpdateDisplay()
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateTimers()
     local cooldownList = CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
+    local blacklistList = CraftSim.COOLDOWNS.frame.content.cooldownOptionsTab.content.blacklistList
 
     for _, activeRow in pairs(cooldownList.activeRows) do
+        activeRow:UpdateTimers()
+    end
+    for _, activeRow in pairs(blacklistList.activeRows) do
         activeRow:UpdateTimers()
     end
 end
