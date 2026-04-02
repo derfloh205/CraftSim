@@ -227,7 +227,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_ITEM_HEADER"),
                     width = 40,
-                    justifyOptions = { type = "H", align = "CENTER" }
+                    justifyOptions = { type = "H", align = "CENTER" },
+                    resizable = true,
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_AH_PRICE_HEADER"),
@@ -243,15 +244,18 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_OVERRIDE_HEADER"),
                     width = 110,
+                    resizable = true,
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_CRAFTING_HEADER"),
                     width = 110,
+                    resizable = true,
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_USED_SOURCE"),
                     width = 80,
-                    justifyOptions = { type = "H", align = "CENTER" }
+                    justifyOptions = { type = "H", align = "CENTER" },
+                    resizable = true,
                 },
             },
             rowConstructor = function(columns)
