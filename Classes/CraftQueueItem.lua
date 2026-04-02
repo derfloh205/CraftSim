@@ -69,7 +69,8 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     local rd = self.recipeData
     if self.isCrafter and self.correctProfessionOpen and
         rd.professionData.professionInfo.profession == Enum.Profession.Enchanting and
-        rd.expansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
+        rd.expansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT and
+        CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
         rd.buffData:Update()
         local buffActive = rd.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
         local needShatter = not buffActive
