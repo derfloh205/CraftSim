@@ -606,6 +606,23 @@ function CraftSim.CRAFTQ.UI:Init()
                     GameTooltip_AddInstructionLine(tooltip,
                         L("CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP"));
                 end);
+
+                local midnightShatterForceCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF)
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF)
+                        CraftSim.DB.OPTIONS:Save(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF, not value)
+                    end)
+
+                midnightShatterForceCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP"));
+                end);
             end
         }
 
@@ -3060,7 +3077,8 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     -- if the current profession is midnight enchanting add shatter (only when recipe is learned)
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local midnightEnchantingID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Enchanting][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
-    if skillLineID == midnightEnchantingID then
+    if skillLineID == midnightEnchantingID and
+        CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
         local recipeData = CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(CraftSim.UTIL:GetPlayerCrafterData())
         if recipeData then
             local shatterHint = L("CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT")
