@@ -1349,6 +1349,7 @@ end
 ---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field includeLocked? boolean
 ---@field includeSoulbound? boolean
+---@field onlyHighestQualitySoulbound? boolean when true, only the highest qualityID soulbound reagent(s) available per slot are considered (requires includeSoulbound=true)
 ---@field finally? function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 ---@field permutationBased? boolean when true, use permutation-based algorithm (all combinations)
@@ -1405,6 +1406,27 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
             end
 
             local possibleReagents = slot.possibleReagents
+
+            -- Pre-compute the maximum qualityID among owned soulbound reagents for this slot.
+            -- Used when onlyHighestQualitySoulbound is enabled.
+            local maxOwnedSoulboundQuality = 0
+            if options.includeSoulbound and options.onlyHighestQualitySoulbound then
+                local crafterUID = self:GetCrafterUID()
+                for _, r in ipairs(possibleReagents) do
+                    if not r:IsCurrency() and r.item then
+                        local rItemID = r.item:GetItemID()
+                        if GUTIL:isItemSoulbound(rItemID) then
+                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, rItemID, true)
+                            if count and count > 0 then
+                                local qID = r.qualityID or 0
+                                if qID > maxOwnedSoulboundQuality then
+                                    maxOwnedSoulboundQuality = qID
+                                end
+                            end
+                        end
+                    end
+                end
+            end
 
             -- set base
             local slotSimulationResults = { {
@@ -1483,6 +1505,14 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                                 frameDistributor2:Continue()
                                 return
                             end
+                            -- If onlyHighestQualitySoulbound is set, skip lower-quality soulbound reagents
+                            if options.onlyHighestQualitySoulbound and maxOwnedSoulboundQuality > 0 then
+                                local qID = finishingReagent.qualityID or 0
+                                if qID < maxOwnedSoulboundQuality then
+                                    frameDistributor2:Continue()
+                                    return
+                                end
+                            end
                         end
 
                         slot:SetReagent(itemID)
@@ -1536,11 +1566,32 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
 
     -- Build the list of viable reagent candidates for each slot.
     -- false represents "leave this slot empty" (nil cannot be stored in Lua tables).
+    local crafterUID = self:GetCrafterUID()
     local slotCandidates = {}
     for _, slot in ipairs(slots) do
         local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
 
         if options.includeLocked or not slot.locked then
+            -- When onlyHighestQualitySoulbound is set, pre-compute the max qualityID among
+            -- soulbound reagents in this slot that the player owns.
+            local maxOwnedSoulboundQuality = 0
+            if options.includeSoulbound and options.onlyHighestQualitySoulbound then
+                for _, reagent in ipairs(slot.possibleReagents) do
+                    if not reagent:IsCurrency() and reagent.item then
+                        local rItemID = reagent.item:GetItemID()
+                        if GUTIL:isItemSoulbound(rItemID) then
+                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, rItemID, true)
+                            if count and count > 0 then
+                                local qID = reagent.qualityID or 0
+                                if qID > maxOwnedSoulboundQuality then
+                                    maxOwnedSoulboundQuality = qID
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
             for _, reagent in ipairs(slot.possibleReagents) do
                 local isViable = false
                 if reagent:IsCurrency() then
@@ -1551,9 +1602,15 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
                     local isSoulbound = GUTIL:isItemSoulbound(itemID)
                     if isSoulbound then
                         if options.includeSoulbound then
-                            local crafterUID = self:GetCrafterUID()
                             local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
                             isViable = count and count > 0
+                            -- If onlyHighestQualitySoulbound is set, skip lower-quality soulbound reagents
+                            if isViable and options.onlyHighestQualitySoulbound and maxOwnedSoulboundQuality > 0 then
+                                local qID = reagent.qualityID or 0
+                                if qID < maxOwnedSoulboundQuality then
+                                    isViable = false
+                                end
+                            end
                         end
                     else
                         isViable = true
@@ -1932,6 +1989,7 @@ function CraftSim.RecipeData:Optimize(options)
                 print("Optimizing Finishing Reagents.. (permutation: " .. tostring(finOpts.permutationBased) .. ")")
                 print("- includeLocked: " .. tostring(finOpts.includeLocked))
                 print("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
+                print("- onlyHighestQualitySoulbound: " .. tostring(finOpts.onlyHighestQualitySoulbound))
 
                 if usePermutation then
                     -- Permutation-based: try every combination of finishing reagents, running
@@ -1939,6 +1997,7 @@ function CraftSim.RecipeData:Optimize(options)
                     self:OptimizeFinishingReagentsPermutation {
                         includeLocked = finOpts.includeLocked,
                         includeSoulbound = finOpts.includeSoulbound,
+                        onlyHighestQualitySoulbound = finOpts.onlyHighestQualitySoulbound,
                         optimizeReagentOptions = options.optimizeReagentOptions,
                         optimizeConcentration = self.concentrating and self.supportsQualities and options.optimizeConcentration,
                         progressUpdateCallback = finOpts.progressUpdateCallback,
@@ -1952,6 +2011,7 @@ function CraftSim.RecipeData:Optimize(options)
                     self:OptimizeFinishingReagents {
                         includeLocked = finOpts.includeLocked,
                         includeSoulbound = finOpts.includeSoulbound,
+                        onlyHighestQualitySoulbound = finOpts.onlyHighestQualitySoulbound,
                         finally = function()
                             frameDistributorTasks:Continue()
                         end,
