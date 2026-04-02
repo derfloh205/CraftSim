@@ -551,7 +551,7 @@ function CraftSim.UTIL:GetVendorSellPriceByItemID(itemID)
     return vendorSellPrice or 0
 end
 
---- Reference copper per unit for patron-order Manu Moxie (Craft Queue options); tooltips only, not added to profit.
+--- Reference copper per unit for patron-order Manu Moxie (Craft Queue options). Tooltips always; also commission profit when CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT is enabled.
 ---@param currencyID number
 ---@return number copperPerUnit
 function CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(currencyID)

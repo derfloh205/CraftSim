@@ -212,6 +212,14 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
     self.reagentCombinationID = self.reagentCombinationID ..
         ":" .. tostring(self.concentrating) .. ":" .. tostring(self.isWorkOrder)
 
+    if self.isWorkOrder then
+        self.workOrderPatronMoxieCurrencyID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+        self.workOrderFirstCraftForMoxie = recipeData.recipeInfo and recipeData.recipeInfo.firstCraft or false
+    else
+        self.workOrderPatronMoxieCurrencyID = nil
+        self.workOrderFirstCraftForMoxie = false
+    end
+
     self.profit = self:CalculateCraftProfit()
 end
 
@@ -224,14 +232,26 @@ function CraftSim.CraftResult:CalculateCraftProfit()
 
         -- check for npcOrderRewards
         if self.orderData.npcOrderRewards then
+            local includeMoxieInProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT")
             for _, orderRewardInfo in ipairs(self.orderData.npcOrderRewards) do
-                --- the other possible reward info would be currencyType but here not relevant for the price just need nil check
-                if orderRewardInfo.itemLink then
+                if orderRewardInfo.currencyType then
+                    if includeMoxieInProfit and tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, orderRewardInfo.currencyType) then
+                        local count = tonumber(orderRewardInfo.count) or 0
+                        orderCommission = orderCommission +
+                            CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(orderRewardInfo.currencyType) * count
+                    end
+                elseif orderRewardInfo.itemLink then
                     local itemID = GUTIL:GetItemIDByLink(orderRewardInfo.itemLink)
                     local sellPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID) * CraftSim.CONST.AUCTION_HOUSE_CUT
                     orderCommission = orderCommission + sellPrice
                 end
             end
+        end
+        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT") and self.workOrderFirstCraftForMoxie and
+            self.workOrderPatronMoxieCurrencyID and self.orderData.orderType == Enum.CraftingOrderType.Npc then
+            orderCommission = orderCommission +
+                CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(self.workOrderPatronMoxieCurrencyID) *
+                CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
         end
     end
 
