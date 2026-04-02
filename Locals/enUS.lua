@@ -397,6 +397,8 @@ function CraftSim.LOCAL_EN:GetData()
         -- Shared OptimizationOptions Widget
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = "Optimize " .. f.bb("Profession Tools"),
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = "Only " .. f.g("Highest Quality") .. f.e(" Soulbound") .. f.bb(" Finishing Reagents"),
+        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS_TOOLTIP = "When enabled, for each finishing reagent slot only the highest quality soulbound reagent you own is considered.\n\nFor example, if you have both a " .. f.e("Multicraft Matrix") .. " and a " .. f.e("Multicraft Manifold") .. " in your bags, only the Manifold will be used.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = f.bb("Finishing Reagents") .. " Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
