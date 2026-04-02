@@ -566,6 +566,135 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_GEAR", not value)
                     end)
 
+                rootDescription:CreateDivider()
+
+                -- Expansion filter: only show expansions the crafter has learned
+                local includeExpansions = rootDescription:CreateButton(L("RECIPE_SCAN_EXPANSION_FILTER_BUTTON"))
+                local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
+
+                -- Determine which expansions the crafter has recipes for
+                local learnedExpansionIDs = {}
+                local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
+                if row.crafterProfessionUID == playerCrafterProfessionUID then
+                    -- Currently open profession: use professionID from the open trade skill
+                    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+                    if skillLineID then
+                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+                        learnedExpansionIDs[expansionID] = true
+                    end
+                end
+                -- Also scan cached recipes for all expansions (covers alt and currently open)
+                local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
+                for _, recipeID in ipairs(cachedRecipeIDs) do
+                    local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
+                    if profInfo and profInfo.professionID then
+                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
+                        learnedExpansionIDs[expansionID] = true
+                    end
+                end
+
+                -- Collect categories per expansion from cached recipe data
+                local categoriesByExpansion = {}
+                for _, recipeID in ipairs(cachedRecipeIDs) do
+                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
+                    local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
+                    if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 and profInfo and profInfo.professionID then
+                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
+                        categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
+                        if not categoriesByExpansion[expansionID][recipeInfo.categoryID] then
+                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+                            local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
+                                and categoryInfo.name or tostring(recipeInfo.categoryID)
+                            categoriesByExpansion[expansionID][recipeInfo.categoryID] = categoryName
+                        end
+                    end
+                end
+                -- For the currently open profession also pull categories from live API
+                if row.crafterProfessionUID == playerCrafterProfessionUID then
+                    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+                    local expansionID = skillLineID and CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID) or nil
+                    if expansionID then
+                        local numCategories = C_TradeSkillUI.GetCategories()
+                        if numCategories and numCategories > 0 then
+                            for i = 1, numCategories do
+                                local categoryInfo = C_TradeSkillUI.GetCategoryInfo(i)
+                                if categoryInfo and categoryInfo.name and categoryInfo.categoryID ~= 0 then
+                                    categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
+                                    categoriesByExpansion[expansionID][categoryInfo.categoryID] =
+                                        categoriesByExpansion[expansionID][categoryInfo.categoryID] or categoryInfo.name
+                                end
+                            end
+                        end
+                    end
+                end
+
+                -- Sort expansion IDs newest first (only learned ones)
+                local sortedExpansionIDs = {}
+                for expansionID in pairs(learnedExpansionIDs) do
+                    table.insert(sortedExpansionIDs, expansionID)
+                end
+                table.sort(sortedExpansionIDs, function(a, b) return a > b end)
+
+                for _, expansionID in ipairs(sortedExpansionIDs) do
+                    local expID = expansionID
+                    local expName = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expID])
+                    local expansionSubmenu = includeExpansions:CreateButton(expName)
+
+                    -- Expansion enable/disable checkbox
+                    expansionSubmenu:CreateCheckbox(
+                        expName,
+                        function()
+                            return includedExpansions[expID] ~= false
+                        end,
+                        function()
+                            local current = includedExpansions[expID]
+                            includedExpansions[expID] = (current == false) and nil or false
+                        end
+                    )
+
+                    -- Category filter sub-submenu for this expansion
+                    local categories = categoriesByExpansion[expID] or {}
+                    local sortedCategories = {}
+                    for catID, catName in pairs(categories) do
+                        table.insert(sortedCategories, { id = catID, name = catName })
+                    end
+                    table.sort(sortedCategories, function(a, b) return a.name < b.name end)
+
+                    if #sortedCategories > 0 then
+                        local categorySubmenu = expansionSubmenu:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"))
+
+                        -- "Enable All" button
+                        categorySubmenu:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
+                            local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                            cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
+                            cats[row.crafterProfessionUID][expID] = {}
+                        end)
+
+                        for _, category in ipairs(sortedCategories) do
+                            local catID = category.id
+                            categorySubmenu:CreateCheckbox(
+                                category.name,
+                                function()
+                                    local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                                    local expCats = (cats[row.crafterProfessionUID] or {})[expID] or {}
+                                    return expCats[catID] ~= false
+                                end,
+                                function()
+                                    local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                                    cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
+                                    cats[row.crafterProfessionUID][expID] = cats[row.crafterProfessionUID][expID] or {}
+                                    local current = cats[row.crafterProfessionUID][expID][catID]
+                                    if current == false then
+                                        cats[row.crafterProfessionUID][expID][catID] = nil
+                                    else
+                                        cats[row.crafterProfessionUID][expID][catID] = false
+                                    end
+                                end
+                            )
+                        end
+                    end
+                end
+
         end,
     }
 
@@ -665,94 +794,6 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         end,
     }
 
-    content.categoryFilterLabel = GGUI.Text {
-        parent = content,
-        anchorParent = content.scanButton.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        offsetY = -5,
-        text = L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"),
-        justifyOptions = { type = "H", align = "LEFT" },
-    }
-
-    content.categoryFilterButton = CraftSim.WIDGETS.OptionsButton {
-        parent = content,
-        isFilter = true,
-        anchorPoints = { { anchorParent = content.categoryFilterLabel.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
-        menuUtilCallback = function(ownerRegion, rootDescription)
-            -- Collect categories for this profession row
-            local categories = {}
-            local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
-            if row.crafterProfessionUID == playerCrafterProfessionUID then
-                -- Currently open profession: use WoW API to get live category list
-                -- GetCategories() returns the number of categories; GetCategoryInfo(i) takes a 1-based index
-                local numCategories = C_TradeSkillUI.GetCategories()
-                if numCategories and numCategories > 0 then
-                    for i = 1, numCategories do
-                        local categoryInfo = C_TradeSkillUI.GetCategoryInfo(i)
-                        if categoryInfo and categoryInfo.name then
-                            table.insert(categories, {
-                                id = categoryInfo.categoryID,
-                                name = categoryInfo.name,
-                            })
-                        end
-                    end
-                end
-            else
-                -- Alt profession: derive categories from cached recipe data
-                local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
-                local seenCategories = {}
-                for _, recipeID in ipairs(cachedRecipeIDs) do
-                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
-                    if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0
-                        and not seenCategories[recipeInfo.categoryID] then
-                        seenCategories[recipeInfo.categoryID] = true
-                        -- Try to get the category name from client cache even if profession is not open
-                        local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-                        local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
-                            and categoryInfo.name or tostring(recipeInfo.categoryID)
-                        table.insert(categories, {
-                            id = recipeInfo.categoryID,
-                            name = categoryName,
-                        })
-                    end
-                end
-            end
-
-            table.sort(categories, function(a, b) return a.name < b.name end)
-
-            -- "Enable All" button to reset the category filter for this profession
-            rootDescription:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
-                local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                cats[row.crafterProfessionUID] = {}
-            end)
-
-            for _, category in ipairs(categories) do
-                local catID = category.id
-                rootDescription:CreateCheckbox(
-                    category.name,
-                    function()
-                        local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                        local profCats = cats[row.crafterProfessionUID] or {}
-                        -- nil or true = enabled (default), false = disabled
-                        return profCats[catID] ~= false
-                    end,
-                    function()
-                        local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                        cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
-                        local current = cats[row.crafterProfessionUID][catID]
-                        -- nil/true -> false (disable), false -> nil (re-enable to default)
-                        if current == false then
-                            cats[row.crafterProfessionUID][catID] = nil
-                        else
-                            cats[row.crafterProfessionUID][catID] = false
-                        end
-                    end
-                )
-            end
-        end,
-    }
-
     content.cancelScanButton = GGUI.Button({
         parent = content,
         anchorParent = content.scanButton.frame,
@@ -825,13 +866,13 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
     ---@type GGUI.FrameList
     content.resultList = GGUI.FrameList({
         parent = content,
-        anchorParent = content.categoryFilterButton.frame,
+        anchorParent = content.scanButton.frame,
         anchorA = "TOP",
         anchorB = "BOTTOM",
         showBorder = true,
         sizeY = 280,
         offsetX = 15,
-        offsetY = -5,
+        offsetY = -25,
         columnOptions = columnOptions,
         selectionOptions = {
             hoverRGBA = { 1, 1, 1, 0.1 },

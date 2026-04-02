@@ -184,14 +184,25 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         return false
     end
 
-    -- Category filter: per-profession category toggles (default: all categories enabled)
+    -- Expansion filter: check if the expansion for this recipe is enabled
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(professionInfo.professionID)
+    local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
+    local expansionEnabled = includedExpansions[expansionID] ~= false
+
+    if not expansionEnabled then
+        printF("Expansion filtered: Exclude (expansionID: " .. tostring(expansionID) .. ")")
+        return false
+    end
+
+    -- Category filter: per-profession per-expansion category toggles (default: all categories enabled)
     local filteredCategories = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
     local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, professionInfo.profession)
-    local professionCategoryFilter = filteredCategories and filteredCategories[crafterProfessionUID] or nil
+    local expansionCategoryFilter = filteredCategories and filteredCategories[crafterProfessionUID]
+        and filteredCategories[crafterProfessionUID][expansionID] or nil
 
     local categoryIncluded = true
-    if professionCategoryFilter and recipeInfo.categoryID then
-        if professionCategoryFilter[recipeInfo.categoryID] == false then
+    if expansionCategoryFilter and recipeInfo.categoryID then
+        if expansionCategoryFilter[recipeInfo.categoryID] == false then
             printF("Category filtered: Exclude (categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
             categoryIncluded = false
         end
@@ -251,7 +262,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
             return false
         end
     end
-    printF("Category filtered or non-craftable: Exclude (categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
+    printF("Expansion/Category filtered or non-craftable: Exclude (expansionID: " .. tostring(expansionID) .. ", categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
     return false
 end
 
