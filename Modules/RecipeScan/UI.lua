@@ -609,19 +609,21 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         end
                     end
                 end
-                -- For the currently open profession also pull categories from live API
+                -- For the currently open profession also pull categories from live recipe list
                 if row.crafterProfessionUID == playerCrafterProfessionUID then
                     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
                     local expansionID = skillLineID and CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID) or nil
                     if expansionID then
-                        local numCategories = C_TradeSkillUI.GetCategories()
-                        if numCategories and numCategories > 0 then
-                            for i = 1, numCategories do
-                                local categoryInfo = C_TradeSkillUI.GetCategoryInfo(i)
-                                if categoryInfo and categoryInfo.name and categoryInfo.categoryID ~= 0 then
-                                    categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
-                                    categoriesByExpansion[expansionID][categoryInfo.categoryID] =
-                                        categoriesByExpansion[expansionID][categoryInfo.categoryID] or categoryInfo.name
+                        local allRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
+                        for _, recipeID in ipairs(allRecipeIDs) do
+                            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+                            if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 then
+                                categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
+                                if not categoriesByExpansion[expansionID][recipeInfo.categoryID] then
+                                    local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+                                    local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
+                                        and categoryInfo.name or tostring(recipeInfo.categoryID)
+                                    categoriesByExpansion[expansionID][recipeInfo.categoryID] = categoryName
                                 end
                             end
                         end
@@ -638,10 +640,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 for _, expansionID in ipairs(sortedExpansionIDs) do
                     local expID = expansionID
                     local expName = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expID])
-                    local expansionSubmenu = includeExpansions:CreateButton(expName)
 
-                    -- Expansion enable/disable checkbox
-                    expansionSubmenu:CreateCheckbox(
+                    -- Expansion entry is a checkbox (enable/disable expansion) that also opens a submenu
+                    local expansionEntry = includeExpansions:CreateCheckbox(
                         expName,
                         function()
                             return includedExpansions[expID] ~= false
@@ -661,7 +662,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     table.sort(sortedCategories, function(a, b) return a.name < b.name end)
 
                     if #sortedCategories > 0 then
-                        local categorySubmenu = expansionSubmenu:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"))
+                        local categorySubmenu = expansionEntry:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"))
 
                         -- "Enable All" button
                         categorySubmenu:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
