@@ -60,9 +60,15 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
         end
 
         -- also if npc work order add item value of rewards to the comissionprofit
-        -- Item rewards only; currency rewards (e.g. moxie) are excluded from gold profit (see craft queue tooltips).
+        local includeMoxieInProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT")
         for _, reward in ipairs(recipeData.orderData.npcOrderRewards or {}) do
-            if not reward.currencyType then
+            if reward.currencyType then
+                if includeMoxieInProfit and tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, reward.currencyType) then
+                    local count = tonumber(reward.count) or 0
+                    comissionProfit = comissionProfit +
+                        CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(reward.currencyType) * count
+                end
+            else
                 local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
                 if CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS[itemID] then
                     comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
@@ -71,6 +77,16 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
                     price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
                     comissionProfit = comissionProfit + price * reward.count
                 end
+            end
+        end
+        -- First-craft moxie in profit: NPC (patron) orders only; personal/guild/public have no consortium moxie line.
+        if includeMoxieInProfit and recipeData.recipeInfo and recipeData.recipeInfo.firstCraft and
+            recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
+            local moxieID = CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
+            if moxieID then
+                comissionProfit = comissionProfit +
+                    CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(moxieID) *
+                    CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE
             end
         end
     end
