@@ -232,6 +232,9 @@ function CraftSim.ProfessionGearSet:Equip()
         end
 
         CraftSim.TOPGEAR.IsEquipping = false
+        RunNextFrame(function()
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end)
     end)
 end
 
