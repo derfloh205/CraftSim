@@ -609,21 +609,27 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         end
                     end
                 end
-                -- For the currently open profession also pull categories from live recipe list
+                -- For the currently open profession also pull categories from live recipe list.
+                -- Derive each category's expansion from its own skillLineID (via GetCategoryInfo) so
+                -- that recipes from other expansions visible in an "All" filtered view are not
+                -- incorrectly bucketed under the currently-active child skillline's expansion.
                 if row.crafterProfessionUID == playerCrafterProfessionUID then
-                    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-                    local expansionID = skillLineID and CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID) or nil
-                    if expansionID then
-                        local allRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
-                        for _, recipeID in ipairs(allRecipeIDs) do
-                            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-                            if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 then
-                                categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
-                                if not categoriesByExpansion[expansionID][recipeInfo.categoryID] then
-                                    local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-                                    local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
-                                        and categoryInfo.name or tostring(recipeInfo.categoryID)
-                                    categoriesByExpansion[expansionID][recipeInfo.categoryID] = categoryName
+                    local allRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
+                    for _, recipeID in ipairs(allRecipeIDs) do
+                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+                        if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 then
+                            local catID = recipeInfo.categoryID
+                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(catID)
+                            if categoryInfo then
+                                local catSkillLineID = categoryInfo.skillLineID
+                                local catExpansionID = catSkillLineID and CraftSim.UTIL:GetExpansionIDBySkillLineID(catSkillLineID) or nil
+                                if catExpansionID and learnedExpansionIDs[catExpansionID] then
+                                    categoriesByExpansion[catExpansionID] = categoriesByExpansion[catExpansionID] or {}
+                                    if not categoriesByExpansion[catExpansionID][catID] then
+                                        local categoryName = (categoryInfo.name and categoryInfo.name ~= "")
+                                            and categoryInfo.name or tostring(catID)
+                                        categoriesByExpansion[catExpansionID][catID] = categoryName
+                                    end
                                 end
                             end
                         end
