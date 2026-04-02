@@ -523,18 +523,6 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         end
     })
 
-    local expansionItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
-        function(expansionID)
-            ---@type GGUI.CheckboxSelector.CheckboxItem
-            local item = {
-                name = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expansionID]),
-                savedVariableProperty = expansionID,
-            }
-            return item
-        end), function(a, b)
-        return a.savedVariableProperty > b.savedVariableProperty
-    end)
-
     content.scanFiltersButton = CraftSim.WIDGETS.OptionsButton {
         parent = content,
         isFilter = true,
@@ -580,18 +568,78 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
                 rootDescription:CreateDivider()
 
-                local includeExpansions = rootDescription:CreateButton(L("RECIPE_SCAN_EXPANSION_FILTER_BUTTON"))
-                local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
+                -- Category filter: dynamically load categories for this profession
+                local categoryFilterButton = rootDescription:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_BUTTON"))
 
-                for _, expansionItem in ipairs(expansionItems) do
-                    includeExpansions:CreateCheckbox(
-                        expansionItem.name,
+                -- Collect categories for this profession row
+                local categories = {}
+                local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
+                if row.crafterProfessionUID == playerCrafterProfessionUID then
+                    -- Currently open profession: use WoW API to get live category list
+                    local categoryIDs = C_TradeSkillUI.GetCategories()
+                    if categoryIDs then
+                        for _, categoryID in ipairs(categoryIDs) do
+                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(categoryID)
+                            if categoryInfo and categoryInfo.name then
+                                table.insert(categories, {
+                                    id = categoryID,
+                                    name = categoryInfo.name,
+                                })
+                            end
+                        end
+                    end
+                else
+                    -- Alt profession: derive categories from cached recipe data
+                    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
+                    local seenCategories = {}
+                    for _, recipeID in ipairs(cachedRecipeIDs) do
+                        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
+                        if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0
+                            and not seenCategories[recipeInfo.categoryID] then
+                            seenCategories[recipeInfo.categoryID] = true
+                            -- Try to get the category name from client cache even if profession is not open
+                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+                            local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
+                                and categoryInfo.name or tostring(recipeInfo.categoryID)
+                            table.insert(categories, {
+                                id = recipeInfo.categoryID,
+                                name = categoryName,
+                            })
+                        end
+                    end
+                end
+
+                table.sort(categories, function(a, b) return a.name < b.name end)
+
+                local filteredCategories = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                filteredCategories[row.crafterProfessionUID] = filteredCategories[row.crafterProfessionUID] or {}
+
+                -- "Enable All" button to reset the category filter for this profession
+                categoryFilterButton:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
+                    local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                    cats[row.crafterProfessionUID] = {}
+                end)
+
+                for _, category in ipairs(categories) do
+                    local catID = category.id
+                    categoryFilterButton:CreateCheckbox(
+                        category.name,
                         function()
-                            return includedExpansions[expansionItem.savedVariableProperty]
+                            local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                            local profCats = cats[row.crafterProfessionUID] or {}
+                            -- nil or true = enabled (default), false = disabled
+                            return profCats[catID] ~= false
                         end,
                         function()
-                            includedExpansions[expansionItem.savedVariableProperty] = not includedExpansions
-                                [expansionItem.savedVariableProperty]
+                            local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                            cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
+                            local current = cats[row.crafterProfessionUID][catID]
+                            -- nil/true -> false (disable), false -> nil (re-enable to default)
+                            if current == false then
+                                cats[row.crafterProfessionUID][catID] = nil
+                            else
+                                cats[row.crafterProfessionUID][catID] = false
+                            end
                         end
                     )
                 end

@@ -358,6 +358,8 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST = "Concentration Cost",
         RECIPE_SCAN_SORT_MODE_CRAFTING_COST = "Crafting Cost",
         RECIPE_SCAN_EXPANSION_FILTER_BUTTON = "Expansion Filter",
+        RECIPE_SCAN_CATEGORY_FILTER_BUTTON = "Category Filter",
+        RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL = "Enable All",
         RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON = "Alt Professions",
         RECIPE_SCAN_SCAN_ALL_BUTTON_READY = "Scan Professions",
         RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING = "Scanning...",

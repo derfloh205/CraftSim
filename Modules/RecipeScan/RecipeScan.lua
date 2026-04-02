@@ -184,19 +184,20 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         return false
     end
 
-    local includedExpansions = {}
-    for expansionID, included in pairs(CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")) do
-        if included then
-            table.insert(includedExpansions, expansionID)
+    -- Category filter: per-profession category toggles (default: all categories enabled)
+    local filteredCategories = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+    local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, professionInfo.profession)
+    local professionCategoryFilter = filteredCategories and filteredCategories[crafterProfessionUID] or nil
+
+    local categoryIncluded = true
+    if professionCategoryFilter and recipeInfo.categoryID then
+        if professionCategoryFilter[recipeInfo.categoryID] == false then
+            printF("Category filtered: Exclude (categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
+            categoryIncluded = false
         end
     end
 
-    local recipeExpansionIncluded = GUTIL:Some(includedExpansions, function(expansionID)
-        local skillLineID = CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][expansionID]
-        return professionInfo.professionID == skillLineID
-    end)
-
-    if recipeExpansionIncluded and recipeInfo.isEnchantingRecipe then
+    if categoryIncluded and recipeInfo.isEnchantingRecipe then
         local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeInfo.recipeID, {}, nil, false)
         if not baseOperationInfo then return false end
         -- except if its a tinker with no output
@@ -218,7 +219,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         end)
         return false
     end
-    if recipeExpansionIncluded then
+    if categoryIncluded then
         if recipeInfo and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
@@ -250,7 +251,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
             return false
         end
     end
-    printF("Is not expansion: Exclude (ExpacID: " .. tostring(expansionID) .. ")")
+    printF("Category filtered or non-craftable: Exclude (categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
     return false
 end
 
