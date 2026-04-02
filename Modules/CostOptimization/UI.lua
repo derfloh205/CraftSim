@@ -240,6 +240,11 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                         return priceA > priceB
                     end,
                     resizable = true,
+                    resizeCallback = function(ahPriceColumn, newWidth)
+                        local text = ahPriceColumn.text --[[@as GGUI.Text]]
+                        -- adjust the price text width inside the column when the column is resized
+                        text:SetWidth(newWidth - 10) --[[@as GGUI.Text]]
+                    end
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_OVERRIDE_HEADER"),
@@ -284,7 +289,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                     anchorA = "LEFT",
                     anchorB = "LEFT",
                     justifyOptions = { type = "H", align = "LEFT" },
-                    text = CraftSim.UTIL:FormatMoney(123456789)
+                    text = CraftSim.UTIL:FormatMoney(123456789),
+                    fixedWidth = 110,
                 })
                 overrideColumn.text = GGUI.Text({
                     parent = overrideColumn,
