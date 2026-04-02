@@ -154,6 +154,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             offsetY = -100,
             sizeY = 150,
             showBorder = true,
+            savedVariablesTableSortConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_SORT_CONFIGS")["COST_OPTIMIZATION_REAGENT_LIST"],
             offsetX = -10,
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -231,6 +232,12 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_AH_PRICE_HEADER"),
                     width = 110,
+                    sortFunc = function(rowA, rowB)
+                        local priceA = rowA.price
+                        local priceB = rowB.price
+
+                        return priceA > priceB
+                    end
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_OVERRIDE_HEADER"),
@@ -550,6 +557,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
             local priceInfo = reagentPriceInfo.priceInfo
             ahColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceInfo.ahPrice))
 
+            row.price = price
             row.item = reagentItemMixin
             row.recipeID = recipeData.recipeID
 
