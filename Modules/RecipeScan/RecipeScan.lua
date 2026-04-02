@@ -415,6 +415,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 optimizeFinishingReagentOptions = {
                     includeLocked = false,
                     includeSoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS, false),
+                    onlyHighestQualitySoulbound = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS, false),
                     permutationBased = finishingAlgorithm == FA.PERMUTATION,
                     progressUpdateCallback = function(progress)
                     content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
