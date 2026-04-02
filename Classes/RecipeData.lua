@@ -1535,10 +1535,10 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
     end
 
     -- Build the list of viable reagent candidates for each slot.
-    -- nil represents "leave this slot empty".
+    -- false represents "leave this slot empty" (nil cannot be stored in Lua tables).
     local slotCandidates = {}
     for _, slot in ipairs(slots) do
-        local candidates = { nil } -- always include the "empty" option
+        local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
 
         if options.includeLocked or not slot.locked then
             for _, reagent in ipairs(slot.possibleReagents) do
