@@ -154,7 +154,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             offsetY = -100,
             sizeY = 150,
             showBorder = true,
-            savedVariablesTableSortConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_SORT_CONFIGS")["COST_OPTIMIZATION_REAGENT_LIST"],
+            savedVariablesTableLayoutConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")["COST_OPTIMIZATION_REAGENT_LIST"],
             offsetX = -10,
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
