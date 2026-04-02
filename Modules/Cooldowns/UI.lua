@@ -20,13 +20,13 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
 local DEFAULT_LIST_SCALE = 0.95
 local DEFAULT_LIST_ROW_HEIGHT = 21
 
-local COOLDOWN_LIST_SORT_CONFIG_KEY = "COOLDOWNS_COOLDOWN_LIST"
-local BLACKLIST_LIST_SORT_CONFIG_KEY = "COOLDOWNS_BLACKLIST_LIST"
+local COOLDOWN_LIST_LAYOUT_CONFIG_KEY = "COOLDOWNS_COOLDOWN_LIST"
+local BLACKLIST_LIST_LAYOUT_CONFIG_KEY = "COOLDOWNS_BLACKLIST_LIST"
 
 ---@param key string
 ---@return table
-local function EnsureFrameListSortConfig(key)
-    local configs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_SORT_CONFIGS")
+local function EnsureFrameListLayoutConfig(key)
+    local configs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
     if not configs[key] then
         configs[key] = {}
     end
@@ -509,7 +509,7 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 198,
-        savedVariablesTableSortConfig = EnsureFrameListSortConfig(COOLDOWN_LIST_SORT_CONFIG_KEY),
+        savedVariablesTableLayoutConfig = EnsureFrameListLayoutConfig(COOLDOWN_LIST_LAYOUT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -554,7 +554,7 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 120,
-        savedVariablesTableSortConfig = EnsureFrameListSortConfig(BLACKLIST_LIST_SORT_CONFIG_KEY),
+        savedVariablesTableLayoutConfig = EnsureFrameListLayoutConfig(BLACKLIST_LIST_LAYOUT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
