@@ -491,16 +491,28 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                 "CRAFTQUEUE_WORK_ORDERS_ALLOW_CONCENTRATION")
                                             local forceConcentration = CraftSim.DB.OPTIONS:Get(
                                                 "CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
+                                            local qualityWithoutConcentration = recipeData.resultData.expectedQuality
                                             local queueAble = false
                                             if recipeData.resultData.expectedQuality >= order.minQuality then
                                                 queueAble = true
                                             end
 
-                                            if (forceConcentration or allowConcentration) and
+                                            if (forceConcentration or allowConcentration) and order.minQuality and
                                                 recipeData.resultData.expectedQualityConcentration == order.minQuality then
                                                 recipeData.concentrating = true
                                                 recipeData:Update()
                                                 queueAble = true
+                                                if qualityWithoutConcentration < order.minQuality then
+                                                    local concentrationData = recipeData.concentrationData
+                                                    local currentAmount = concentrationData and
+                                                        concentrationData:GetCurrentAmount() or 0
+                                                    if recipeData.concentrationCost <= 0 or
+                                                        currentAmount < recipeData.concentrationCost then
+                                                        queueAble = false
+                                                        recipeData.concentrating = false
+                                                        recipeData:Update()
+                                                    end
+                                                end
                                             end
 
                                             if queueAble then
