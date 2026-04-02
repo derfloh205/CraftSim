@@ -237,7 +237,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                         local priceB = rowB.price
 
                         return priceA > priceB
-                    end
+                    end,
+                    resizable = true,
                 },
                 {
                     label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_OVERRIDE_HEADER"),
