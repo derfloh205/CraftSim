@@ -64,6 +64,20 @@ function CraftSim.OptionalReagent:IsCurrency()
     return self.currencyID ~= nil
 end
 
+--- Returns the sum of all profession stat values contributed by this reagent.
+--- Used to compare soulbound reagents of the same slot to find the highest-value one,
+--- which is more reliable than comparing qualityID (different reagent items can share
+--- the same qualityID while providing different stat amounts).
+---@return number
+function CraftSim.OptionalReagent:GetTotalStatValue()
+    if not self.professionStats then return 0 end
+    local total = 0
+    for _, stat in ipairs(self.professionStats:GetStatList()) do
+        total = total + (stat.value or 0)
+    end
+    return total
+end
+
 function CraftSim.OptionalReagent:Debug()
     if self:IsCurrency() then
         return { "Currency:" .. tostring(self.currencyID) .. " (" .. tostring(self.name) .. ")" }
