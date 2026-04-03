@@ -1861,7 +1861,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                             label = L("CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX"),
                             onClick = function()
                                 CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(
-                                    recipeEntry and recipeEntry.restockMaxAmount or 1,
+                                    recipeEntry and recipeEntry.restockMaxAmount or 0,
                                     function(maxAmount)
                                         CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(
                                             content.selectedListID,
@@ -2091,16 +2091,19 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             end)
 
             local restockingButton = rootDescription:CreateButton("Restocking")
-            restockingButton:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_ENABLE_RESTOCK_MODE"),
-                function() return opts.restockModeEnabled == true end,
+
+            local subtractStockListCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL"),
                 function()
-                    CraftSim.DB.CRAFT_LISTS:SetListRestockModeEnabled(
-                        content.selectedListID,
-                        content.selectedListIsGlobal,
-                        crafterUID,
-                        not (opts.restockModeEnabled == true))
+                    return CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED)
+                end,
+                function()
+                    local key = CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED
+                    CraftSim.DB.OPTIONS:Save(key, not CraftSim.DB.OPTIONS:Get(key))
                 end)
+            subtractStockListCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP"))
+            end)
 
             local offsetConCB = restockingButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
@@ -2219,11 +2222,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             local nameColumn = row.columns[1]
             local typeColumn = row.columns[2]
 
-            local restockTag = ""
-            if listRef.options and listRef.options.restockModeEnabled then
-                restockTag = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
-            end
-            nameColumn.text:SetText(listRef.name .. restockTag)
+            nameColumn.text:SetText(listRef.name)
             typeColumn.text:SetText(isGlobal and L("CRAFT_LISTS_GLOBAL_LABEL")
                 or L("CRAFT_LISTS_CHARACTER_LABEL"))
         end)
@@ -2258,11 +2257,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         return
     end
 
-    local selectedListRestockTag = ""
-    if list.options and list.options.restockModeEnabled then
-        selectedListRestockTag = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
-    end
-    content.selectedListLabel:SetText(f.bb(list.name) .. selectedListRestockTag)
+    content.selectedListLabel:SetText(f.bb(list.name))
 
     local recipeEntries = list.recipeEntries or {}
     if #recipeEntries == 0 then
@@ -2270,7 +2265,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         for _, recipeID in ipairs(list.recipeIDs or {}) do
             tinsert(recipeEntries, {
                 recipeID = recipeID,
-                restockMaxAmount = 1,
+                restockMaxAmount = 0,
             })
         end
     end
@@ -2288,8 +2283,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession] or "inv_misc_questionmark"
             local professionIconText = GUTIL:IconToText(professionIcon, 18, 18)
             local restockText = ""
-            if (list.options and list.options.restockModeEnabled) then
-                restockText = " " .. f.l("[" .. tostring(entry.restockMaxAmount or 1) .. "]")
+            local target = math.max(0, tonumber(entry.restockMaxAmount) or 0)
+            if target > 0 then
+                restockText = " " .. f.l("[" .. tostring(target) .. "]")
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
         end)
@@ -2368,7 +2364,7 @@ function CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(initialAmount, callb
     local popupFrame = GGUI.Frame {
         parent = UIParent,
         anchorParent = UIParent,
-        sizeX = 300, sizeY = 100,
+        sizeX = 320, sizeY = 118,
         frameID = "CRAFT_LIST_RECIPE_RESTOCK_POPUP",
         frameTable = {},
         title = L("CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE"),
@@ -2386,8 +2382,19 @@ function CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(initialAmount, callb
         offsetY = -30,
         sizeX = 90,
         sizeY = 25,
-        minValue = 1,
-        initialValue = tonumber(initialAmount) or 1,
+        minValue = 0,
+        initialValue = math.max(0, tonumber(initialAmount) or 0),
+    }
+
+    GGUI.Text {
+        parent = popupFrame.content,
+        anchorParent = amountInput.textInput.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetY = -4,
+        text = L("CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT"),
+        scale = 0.85,
+        justifyOptions = { type = "H", align = "CENTER" },
     }
 
     popupFrame.content.confirmButton = GGUI.Button {
@@ -2399,8 +2406,7 @@ function CraftSim.CRAFTQ.UI:ShowCraftListRecipeRestockPopup(initialAmount, callb
         label = "Confirm",
         adjustWidth = true,
         clickCallback = function()
-            local maxAmount = tonumber(amountInput.currentValue) or 1
-            maxAmount = math.max(1, maxAmount)
+            local maxAmount = math.max(0, tonumber(amountInput.currentValue) or 0)
             popupFrame:Hide()
             if callback then callback(maxAmount) end
         end,
@@ -3334,6 +3340,7 @@ function CraftSim.CRAFTQ.UI:UpdateDisplay()
     CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
+    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
@@ -3635,7 +3642,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
     end
+    local craftListRestockText = ""
+    if craftQueueItem.fromCraftListRestock then
+        craftListRestockText = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
+    end
     recipeColumn.text:SetText(recipeData.recipeName ..
+        craftListRestockText ..
         upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
     ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}), recipeData)

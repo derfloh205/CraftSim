@@ -22,7 +22,7 @@ local function GetRecipeEntries(list)
     for _, recipeID in ipairs(list.recipeIDs or {}) do
         tinsert(entries, {
             recipeID = recipeID,
-            restockMaxAmount = 1,
+            restockMaxAmount = 0,
         })
     end
     return entries
@@ -215,7 +215,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
-    ---@type { recipeData: CraftSim.RecipeData, maxQueueAmount: number? }[]
+    ---@type { recipeData: CraftSim.RecipeData, maxQueueAmount: number?, fromCraftListRestock: boolean? }[]
     local optimizedRecipes = {}
 
     local queueListsButton = CraftSim.CRAFTQ.frame and
@@ -281,6 +281,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                         recipeData = recipeData,
                                         amount = totalAmount,
                                         splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                                        fromCraftListRestock = optimizedData.fromCraftListRestock == true,
                                     }
 
                                     -- Update last crafting cost DB if option is enabled
@@ -305,10 +306,12 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     ---@param recipeEntry CraftSim.CraftListRecipeEntry
     ---@return number queueAmount
     ---@return { target: number, owned: number, queue: number }? restockDebug
+    ---@return boolean fromCraftListRestock
     local function getQueueAmount(recipeData, recipeEntry)
         local offsetAmount = tonumber(options.offsetQueueAmount) or 0
         local totalAmount = 1 + offsetAmount
         local restockDebug = nil
+        local fromCraftListRestock = false
 
         -- Use TSM restock expression if enabled and available
         if options.useTSMRestockExpression and TSM_API
@@ -325,13 +328,21 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             end
         end
 
-        if options.restockModeEnabled and recipeEntry and recipeData.resultData and recipeData.resultData.expectedItem then
+        local target = math.max(0, tonumber(recipeEntry and recipeEntry.restockMaxAmount) or 0)
+        if target > 0 and recipeEntry and recipeData.resultData and recipeData.resultData.expectedItem then
             local itemID = recipeData.resultData.expectedItem:GetItemID()
             if itemID then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false) or 0
-                local target = tonumber(recipeEntry.restockMaxAmount) or 1
-                totalAmount = math.max(0, target - owned)
-                restockDebug = { target = target, owned = owned, queue = totalAmount }
+                fromCraftListRestock = true
+                local subtractOwned = CraftSim.DB.OPTIONS:Get(
+                    CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED)
+                if subtractOwned then
+                    local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false) or 0
+                    totalAmount = math.max(0, target - owned)
+                    restockDebug = { target = target, owned = owned, queue = totalAmount }
+                else
+                    totalAmount = target
+                    restockDebug = { target = target, owned = 0, queue = totalAmount }
+                end
             end
         end
 
@@ -343,7 +354,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         if restockDebug then
             restockDebug.queue = totalAmount
         end
-        return totalAmount, restockDebug
+        return totalAmount, restockDebug, fromCraftListRestock
     end
 
     ---@param frameDistributor GUTIL.FrameDistributor
@@ -469,7 +480,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end,
             } or nil,
             finally = function()
-                local queueAmount, restockDebug = getQueueAmount(recipeData, recipeEntry)
+                local queueAmount, restockDebug, fromCraftListRestock = getQueueAmount(recipeData, recipeEntry)
                 if restockDebug then
                     local recipeName = recipeData.recipeName or ("RecipeID " .. tostring(recipeData.recipeID))
                     print(string.format(
@@ -480,13 +491,18 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                         restockDebug.queue), false, false, 1)
                 end
                 if options.enableConcentration and options.smartConcentrationQueuing then
-                    tinsert(optimizedRecipes, { recipeData = recipeData, maxQueueAmount = queueAmount })
+                    tinsert(optimizedRecipes, {
+                        recipeData = recipeData,
+                        maxQueueAmount = queueAmount,
+                        fromCraftListRestock = fromCraftListRestock,
+                    })
                 else
                     if queueAmount > 0 then
                         CraftSim.CRAFTQ:AddRecipe {
                             recipeData = recipeData,
                             amount = queueAmount,
                             splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                            fromCraftListRestock = fromCraftListRestock == true,
                         }
                         CraftSim.CRAFTQ.UI:UpdateDisplay()
 

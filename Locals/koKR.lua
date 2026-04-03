@@ -766,13 +766,15 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "재입고 수량: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "대기열 수량 오프셋: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "예약된 제작 횟수에 항상 지정된 수량을 더합니다.",
-        CRAFT_LISTS_OPTIONS_ENABLE_RESTOCK_MODE = "재입고 모드 활성화",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "제작 목록 재입고: 가방·은행·전쟁 금고 보유량 차감",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP = "켜면 재입고 목표에서 이미 보유한 수량을 뺀 만큼만 대기열에 넣습니다.\n\n끄면 보유 여부와 관계없이 목표 수량만큼 대기열에 넣습니다.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "대기열 추가 후 자동으로 쇼핑 리스트 생성",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("선택된 목록 없음"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("제작법을 보려면 목록을 선택하세요."),
-        CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "재입고 최대값 설정",
+        CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "재입고 목표 설정…",
         CRAFT_LISTS_RECIPE_RESTOCK_TAG = "재입고",
-        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "제작법 재입고 최대값 설정",
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "재입고 목표 (0 = 사용 안 함)",
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("0이면 이 제작법은 재입고로 처리하지 않습니다."),
 
         -- craft buffs (제작 버프)
         CRAFT_BUFFS_TITLE = "CraftSim 제작 버프",

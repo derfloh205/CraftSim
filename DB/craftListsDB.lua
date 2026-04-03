@@ -24,7 +24,7 @@ CraftSim.DB = CraftSim.DB
 ---@field enableUnlearned boolean if false, skip recipes the crafter has not learned
 ---@field useTSMRestockExpression boolean if true, use per-list TSM restock expression to determine restock amount
 ---@field tsmRestockExpression string TSM expression for restock quantity (per-list)
----@field restockModeEnabled boolean if true, apply per-recipe restock max amounts while queueing
+---@field restockModeEnabled boolean legacy; no longer used — per-recipe restock uses restockMaxAmount > 0
 
 ---@class CraftSim.CraftList
 ---@field id number unique incrementing ID
@@ -36,7 +36,7 @@ CraftSim.DB = CraftSim.DB
 
 ---@class CraftSim.CraftListRecipeEntry
 ---@field recipeID RecipeID
----@field restockMaxAmount number
+---@field restockMaxAmount number target stock when > 0 (restock); 0 = use normal queue amount (TSM / 1 + offset)
 
 ---@class CraftSim.DB.CRAFT_LISTS : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_LISTS = CraftSim.DB:RegisterRepository("CraftListsDB")
@@ -74,7 +74,7 @@ CraftSim.DB.CRAFT_LISTS.DefaultOptions = DefaultOptions
 local function CreateDefaultRecipeEntry(recipeID)
     return {
         recipeID = recipeID,
-        restockMaxAmount = 1,
+        restockMaxAmount = 0,
     }
 end
 
@@ -86,17 +86,6 @@ local function NormalizeListRecipes(list)
     list.recipeIDs = list.recipeIDs or {}
     list.options = list.options or DefaultOptions()
 
-    if list.options.restockModeEnabled == nil then
-        local enableFromLegacyEntries = false
-        for _, entry in ipairs(list.recipeEntries) do
-            if entry.restockEnabled == true then
-                enableFromLegacyEntries = true
-                break
-            end
-        end
-        list.options.restockModeEnabled = enableFromLegacyEntries
-    end
-
     if #list.recipeEntries == 0 and #list.recipeIDs > 0 then
         for _, recipeID in ipairs(list.recipeIDs) do
             if not GUTIL:Find(list.recipeEntries, function(entry) return entry.recipeID == recipeID end) then
@@ -107,10 +96,7 @@ local function NormalizeListRecipes(list)
 
     local normalizedRecipeIDs = {}
     for _, entry in ipairs(list.recipeEntries) do
-        entry.restockMaxAmount = tonumber(entry.restockMaxAmount) or 1
-        if entry.restockMaxAmount < 1 then
-            entry.restockMaxAmount = 1
-        end
+        entry.restockMaxAmount = math.max(0, tonumber(entry.restockMaxAmount) or 0)
         if not tContains(normalizedRecipeIDs, entry.recipeID) then
             tinsert(normalizedRecipeIDs, entry.recipeID)
         end
@@ -133,6 +119,7 @@ function CraftSim.DB.CRAFT_LISTS:Init()
         }
     end
     self.db = CraftSimDB.craftListsDB
+    CraftSimDB.craftListsDB.version = CraftSimDB.craftListsDB.version or 0
     CraftSimDB.craftListsDB.nextListID = CraftSimDB.craftListsDB.nextListID or 1
     CraftSimDB.craftListsDB.globalLists = CraftSimDB.craftListsDB.globalLists or {}
     CraftSimDB.craftListsDB.characterLists = CraftSimDB.craftListsDB.characterLists or {}
@@ -315,7 +302,7 @@ function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, isGlobal, crafterUI
         entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
         if not entry then return end
     end
-    entry.restockMaxAmount = math.max(1, tonumber(restockMaxAmount) or 1)
+    entry.restockMaxAmount = math.max(0, tonumber(restockMaxAmount) or 0)
     NormalizeListRecipes(list)
 end
 
