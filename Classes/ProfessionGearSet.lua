@@ -24,6 +24,10 @@ function CraftSim.ProfessionGearSet:new(recipeData)
 end
 
 function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
+    -- Always refresh: GetProfessionSlots can be empty/stale until the Professions Crafting (recipes) tab
+    -- has been shown at least once this session; cached values from :new() would then read wrong slots.
+    self.professionGearSlots = self.professionID and C_TradeSkillUI.GetProfessionSlots(self.professionID) or {}
+
     local crafterUID = self.recipeData:GetCrafterUID()
 
     if self.recipeData:IsCrafter() then
@@ -224,7 +228,7 @@ function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
     CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
     C_Timer.After(1, function()
-        for index, professionGear in ipairs(self:GetProfessionGearList()) do
+        for _, professionGear in ipairs(self:GetProfessionGearList()) do
             if professionGear.item then
                 CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
@@ -233,7 +237,9 @@ function CraftSim.ProfessionGearSet:Equip()
 
         CraftSim.TOPGEAR.IsEquipping = false
         RunNextFrame(function()
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            if CraftSim.CRAFTQ and CraftSim.CRAFTQ.UI then
+                CraftSim.CRAFTQ.UI:UpdateDisplay()
+            end
         end)
     end)
 end
