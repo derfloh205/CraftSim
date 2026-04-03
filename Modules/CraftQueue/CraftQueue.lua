@@ -581,6 +581,7 @@ end
 ---@class CraftSim.CRAFTQ.AddRecipe.Options : CraftSim.CraftQueueItem.Options
 ---@field splitSoulboundFinishingReagent? boolean when true, split the queue entry into a soulbound-finisher version and a non-soulbound version based on how many of the soulbound finishing reagent the crafter owns
 ---@field fromCraftListRestock? boolean
+---@field craftListBracketCount? number
 
 ---@param options CraftSim.CRAFTQ.AddRecipe.Options
 function CraftSim.CRAFTQ:AddRecipe(options)
@@ -613,6 +614,7 @@ function CraftSim.CRAFTQ:AddRecipe(options)
                     recipeData = recipeData,
                     amount = soulboundAmount,
                     fromCraftListRestock = options.fromCraftListRestock == true,
+                    craftListBracketCount = options.craftListBracketCount,
                 })
             end
 
@@ -633,6 +635,7 @@ function CraftSim.CRAFTQ:AddRecipe(options)
                     recipeData = recipeDataCopy,
                     amount = nonSoulboundAmount,
                     fromCraftListRestock = options.fromCraftListRestock == true,
+                    craftListBracketCount = options.craftListBracketCount,
                 })
             end
 
@@ -645,6 +648,7 @@ function CraftSim.CRAFTQ:AddRecipe(options)
         recipeData = recipeData,
         amount = amount,
         fromCraftListRestock = options.fromCraftListRestock == true,
+        craftListBracketCount = options.craftListBracketCount,
     })
 
     finalizeAdd()

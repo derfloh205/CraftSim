@@ -215,7 +215,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
-    ---@type { recipeData: CraftSim.RecipeData, maxQueueAmount: number?, fromCraftListRestock: boolean? }[]
+    ---@type { recipeData: CraftSim.RecipeData, maxQueueAmount: number?, fromCraftListRestock: boolean?, craftListBracketCount: number? }[]
     local optimizedRecipes = {}
 
     local queueListsButton = CraftSim.CRAFTQ.frame and
@@ -277,11 +277,16 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                                 end
 
                                 if totalAmount > 0 then
+                                    local bracketCount = optimizedData.craftListBracketCount
+                                    if bracketCount and not optimizedData.fromCraftListRestock then
+                                        bracketCount = math.min(bracketCount, totalAmount)
+                                    end
                                     CraftSim.CRAFTQ:AddRecipe {
                                         recipeData = recipeData,
                                         amount = totalAmount,
                                         splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
                                         fromCraftListRestock = optimizedData.fromCraftListRestock == true,
+                                        craftListBracketCount = bracketCount,
                                     }
 
                                     -- Update last crafting cost DB if option is enabled
@@ -307,11 +312,13 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     ---@return number queueAmount
     ---@return { target: number, owned: number, queue: number }? restockDebug
     ---@return boolean fromCraftListRestock
+    ---@return number? craftListBracketCount shown as `[n]` on queue rows (restock target or TSM-derived amount), like craft list tab
     local function getQueueAmount(recipeData, recipeEntry)
         local offsetAmount = tonumber(options.offsetQueueAmount) or 0
         local totalAmount = 1 + offsetAmount
         local restockDebug = nil
         local fromCraftListRestock = false
+        local tsmSetAmount = false
 
         -- Use TSM restock expression if enabled and available
         if options.useTSMRestockExpression and TSM_API
@@ -324,6 +331,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                         options.tsmRestockExpression or "1",
                         tsmItemString) or 0
                     totalAmount = tsmAmount + offsetAmount
+                    tsmSetAmount = true
                 end
             end
         end
@@ -354,7 +362,15 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         if restockDebug then
             restockDebug.queue = totalAmount
         end
-        return totalAmount, restockDebug, fromCraftListRestock
+
+        local craftListBracketCount = nil
+        if fromCraftListRestock and target > 0 then
+            craftListBracketCount = target
+        elseif tsmSetAmount and totalAmount > 0 then
+            craftListBracketCount = totalAmount
+        end
+
+        return totalAmount, restockDebug, fromCraftListRestock, craftListBracketCount
     end
 
     ---@param frameDistributor GUTIL.FrameDistributor
@@ -480,7 +496,8 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end,
             } or nil,
             finally = function()
-                local queueAmount, restockDebug, fromCraftListRestock = getQueueAmount(recipeData, recipeEntry)
+                local queueAmount, restockDebug, fromCraftListRestock, craftListBracketCount =
+                    getQueueAmount(recipeData, recipeEntry)
                 if restockDebug then
                     local recipeName = recipeData.recipeName or ("RecipeID " .. tostring(recipeData.recipeID))
                     print(string.format(
@@ -495,6 +512,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                         recipeData = recipeData,
                         maxQueueAmount = queueAmount,
                         fromCraftListRestock = fromCraftListRestock,
+                        craftListBracketCount = craftListBracketCount,
                     })
                 else
                     if queueAmount > 0 then
@@ -503,6 +521,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                             amount = queueAmount,
                             splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
                             fromCraftListRestock = fromCraftListRestock == true,
+                            craftListBracketCount = craftListBracketCount,
                         }
                         CraftSim.CRAFTQ.UI:UpdateDisplay()
 

@@ -3642,12 +3642,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
     end
-    local craftListRestockText = ""
-    if craftQueueItem.fromCraftListRestock then
-        craftListRestockText = " " .. f.l("[" .. L("CRAFT_LISTS_RECIPE_RESTOCK_TAG") .. "]")
+    local craftListBracketText = ""
+    local bracketCount = craftQueueItem.craftListBracketCount
+    if bracketCount and bracketCount > 0 then
+        craftListBracketText = " " .. f.l("[" .. tostring(bracketCount) .. "]")
     end
     recipeColumn.text:SetText(recipeData.recipeName ..
-        craftListRestockText ..
+        craftListBracketText ..
         upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
     ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}), recipeData)
