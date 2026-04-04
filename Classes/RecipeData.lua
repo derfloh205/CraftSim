@@ -1407,25 +1407,42 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
 
             local possibleReagents = slot.possibleReagents
 
-            -- Pre-compute the maximum stat value among owned soulbound reagents for this slot.
-            -- Used when onlyHighestQualitySoulbound is enabled.
-            local maxOwnedSoulboundValue = 0
             if options.includeSoulbound and options.onlyHighestQualitySoulbound then
-                local crafterUID = self:GetCrafterUID()
-                for _, r in ipairs(possibleReagents) do
-                    if not r:IsCurrency() and r.item then
-                        local rItemID = r.item:GetItemID()
-                        if GUTIL:isItemSoulbound(rItemID) then
-                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, rItemID, true)
-                            if count and count > 0 then
-                                local statValue = r:GetTotalStatValue()
-                                if statValue > maxOwnedSoulboundValue then
-                                    maxOwnedSoulboundValue = statValue
-                                end
+                -- fetch highest soulbounds per stat
+                local reagentStatMap = {}
+                for _, reagent in ipairs(possibleReagents) do
+                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                            local currentBest = reagentStatMap[stat.name]
+                            local statValue = stat.value
+                            if not currentBest or statValue > currentBest.value then
+                                reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
                             end
                         end
                     end
                 end
+
+                -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
+                local filteredReagents = {}
+                for _, reagent in ipairs(possibleReagents) do
+                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                        local isHighest = false
+                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                            local bestForStat = reagentStatMap[stat.name]
+                            if bestForStat and bestForStat.reagent == reagent then
+                                isHighest = true
+                                break
+                            end
+                        end
+                        if isHighest then
+                            table.insert(filteredReagents, reagent)
+                        end
+                    else
+                        table.insert(filteredReagents, reagent)
+                    end
+                end
+
+                possibleReagents = filteredReagents
             end
 
             -- set base
@@ -1505,14 +1522,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                                 frameDistributor2:Continue()
                                 return
                             end
-                            -- If onlyHighestQualitySoulbound is set, skip lower-value soulbound reagents
-                            if options.onlyHighestQualitySoulbound and maxOwnedSoulboundValue > 0 then
-                                local statValue = finishingReagent:GetTotalStatValue()
-                                if statValue < maxOwnedSoulboundValue then
-                                    frameDistributor2:Continue()
-                                    return
-                                end
-                            end
                         end
 
                         slot:SetReagent(itemID)
@@ -1574,25 +1583,47 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
         if options.includeLocked or not slot.locked then
             -- When onlyHighestQualitySoulbound is set, pre-compute the max stat value among
             -- soulbound reagents in this slot that the player owns.
-            local maxOwnedSoulboundValue = 0
+
+            local possibleReagents = slot.possibleReagents
             if options.includeSoulbound and options.onlyHighestQualitySoulbound then
-                for _, reagent in ipairs(slot.possibleReagents) do
-                    if not reagent:IsCurrency() and reagent.item then
-                        local rItemID = reagent.item:GetItemID()
-                        if GUTIL:isItemSoulbound(rItemID) then
-                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, rItemID, true)
-                            if count and count > 0 then
-                                local statValue = reagent:GetTotalStatValue()
-                                if statValue > maxOwnedSoulboundValue then
-                                    maxOwnedSoulboundValue = statValue
-                                end
+                -- fetch highest soulbounds per stat
+                local reagentStatMap = {}
+                for _, reagent in ipairs(possibleReagents) do
+                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                            local currentBest = reagentStatMap[stat.name]
+                            local statValue = stat.value
+                            if not currentBest or statValue > currentBest.value then
+                                reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
                             end
                         end
                     end
                 end
+
+                -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
+                local filteredReagents = {}
+                for _, reagent in ipairs(possibleReagents) do
+                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                        local isHighest = false
+                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                            local bestForStat = reagentStatMap[stat.name]
+                            if bestForStat and bestForStat.reagent == reagent then
+                                isHighest = true
+                                break
+                            end
+                        end
+                        if isHighest then
+                            table.insert(filteredReagents, reagent)
+                        end
+                    else
+                        table.insert(filteredReagents, reagent)
+                    end
+                end
+
+                possibleReagents = filteredReagents
             end
 
-            for _, reagent in ipairs(slot.possibleReagents) do
+            for _, reagent in ipairs(possibleReagents) do
                 local isViable = false
                 if reagent:IsCurrency() then
                     local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
@@ -1604,13 +1635,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
                         if options.includeSoulbound then
                             local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
                             isViable = count and count > 0
-                            -- If onlyHighestQualitySoulbound is set, skip lower-value soulbound reagents
-                            if isViable and options.onlyHighestQualitySoulbound and maxOwnedSoulboundValue > 0 then
-                                local statValue = reagent:GetTotalStatValue()
-                                if statValue < maxOwnedSoulboundValue then
-                                    isViable = false
-                                end
-                            end
                         end
                     else
                         isViable = true
