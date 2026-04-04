@@ -248,7 +248,7 @@ function CraftSim.OPTIONS:Init()
     }
 
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
-    supportedPriceSources:SetPoint("TOP", coinMoneyFormatDB.frame, "BOTTOM", 0, -25)
+    supportedPriceSources:SetPoint("TOP", 0, -210)
     supportedPriceSources:SetText(L("OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES") ..
         "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 
