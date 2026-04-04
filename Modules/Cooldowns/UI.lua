@@ -108,24 +108,14 @@ local function CompareCooldownColumnAsc(sortMode, rowA, rowB)
     return nil
 end
 
---- When the matching profession is open, replace stale saved cooldown with live C_TradeSkillUI data.
+--- For the logged-in crafter, replace stale saved cooldown with live data when the API reports a CD recipe.
+--- (Do not require the recipe's profession tab to be open — GetRecipeCooldown is still authoritative for learned recipes.)
 ---@param crafterUID CrafterUID
 ---@param recipeID RecipeID
 ---@param cooldownData CraftSim.CooldownData
 ---@return CraftSim.CooldownData
 local function TryRefreshCooldownDataFromTradeSkillUI(crafterUID, recipeID, cooldownData)
     if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
-        return cooldownData
-    end
-    if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
-        return cooldownData
-    end
-    local openProf = CraftSim.UTIL:GetProfessionsFrameProfession()
-    if not openProf then
-        return cooldownData
-    end
-    local pinfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
-    if not pinfo or pinfo.profession ~= openProf then
         return cooldownData
     end
     local live = CraftSim.CooldownData(recipeID)
@@ -137,21 +127,16 @@ local function TryRefreshCooldownDataFromTradeSkillUI(crafterUID, recipeID, cool
 end
 
 function CraftSim.COOLDOWNS.UI:OnTradeSkillItemCrafted()
-    if not CraftSim.COOLDOWNS.frame or not CraftSim.COOLDOWNS.frame:IsVisible() then
-        return
-    end
     CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
-    CraftSim.COOLDOWNS.UI:UpdateTimers()
+    if CraftSim.COOLDOWNS.frame and CraftSim.COOLDOWNS.frame:IsVisible() then
+        CraftSim.COOLDOWNS.UI:UpdateTimers()
+    end
 end
 
---- Writes live cooldown state for the open profession so the list and saved data match after a craft.
+--- Writes live cooldown state for learned recipes so saved data matches after a craft (all professions, not only the open tab).
 function CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
     local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
     if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
-        return
-    end
-    local openProf = CraftSim.UTIL:GetProfessionsFrameProfession()
-    if not openProf then
         return
     end
     local allCooldowns = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
@@ -162,14 +147,11 @@ function CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
     for _, cooldownDataSerialized in pairs(recipeCooldowns) do
         local cd = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
         local recipeID = cd.recipeID
-        local pinfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
-        if pinfo and pinfo.profession == openProf then
-            local live = CraftSim.CooldownData(recipeID)
-            live:Update()
-            local rInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-            if live.isCooldownRecipe and rInfo and rInfo.learned then
-                live:Save(playerUID)
-            end
+        local live = CraftSim.CooldownData(recipeID)
+        live:Update()
+        local rInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+        if live.isCooldownRecipe and rInfo and rInfo.learned then
+            live:Save(playerUID)
         end
     end
 end

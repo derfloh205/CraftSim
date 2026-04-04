@@ -310,9 +310,3 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_13_14_Remove_CraftQueue_Work_Orders_Typ
     --- option removal
         CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
 end
-
-function CraftSim.DB.OPTIONS.MIGRATION:M_14_15_Clear_Recipe_Scan_Filtered_Categories()
-    CraftSimDB.optionsDB.data["RECIPESCAN_FILTERED_CATEGORIES"] = nil
-end
-
-
