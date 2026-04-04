@@ -734,7 +734,10 @@ function CraftSim.CRAFTQ:QueueFavorites()
 
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
-        if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+        local gatheringJournalCraft = recipeInfo and recipeInfo.isGatheringRecipe and
+            CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeID)
+        if not recipeInfo or recipeInfo.isDummyRecipe or
+            (recipeInfo.isGatheringRecipe and not gatheringJournalCraft) or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
             frameDistributor:Continue()
             return
         end

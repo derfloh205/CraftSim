@@ -170,6 +170,29 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
+--- Blizzard sets isGatheringRecipe on many gathering-profession journal rows. True world gathering usually has
+--- no schematic reagents; real crafts (Skinning lures, or future Herbalism/Mining journal crafts) do.
+--- Call only when recipeInfo.isGatheringRecipe is already true (or you intentionally want this check).
+---@param recipeID RecipeID
+---@return boolean
+function CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeID)
+    local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, false)
+    if not schematic or not schematic.reagentSlotSchematics then
+        return false
+    end
+    for _, slot in pairs(schematic.reagentSlotSchematics) do
+        if slot.reagents and #slot.reagents > 0 then
+            if slot.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
+                return true
+            end
+            if slot.reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL and slot.required then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 ---@return CraftSim.EXPORT_MODE
 function CraftSim.UTIL:GetExportModeByVisibility()
     return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or

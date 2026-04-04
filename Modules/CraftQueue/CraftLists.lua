@@ -280,20 +280,27 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     ---@param frameDistributor GUTIL.FrameDistributor
     ---@param recipeID RecipeID
     local function processRecipe(frameDistributor, recipeID)
-        -- Try Cache
-        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
-        if not recipeInfo and CraftSim.UTIL:GetPlayerCrafterUID() == crafterUID then
-            -- fallback to global recipe info if crafter-specific info is not available for the current player
+        --- Prefer live API for the logged-in character so flags like isGatheringRecipe stay current (craft lists
+        --- otherwise keep the first cached snapshot, which breaks gathering-profession journal crafts).
+        local recipeInfo
+        if CraftSim.UTIL:GetPlayerCrafterUID() == crafterUID then
             recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
             if recipeInfo then
                 CraftSim.DB.CRAFTER:SaveRecipeInfo(crafterUID, recipeID, recipeInfo)
-            else
-                frameDistributor:Continue()
-                return
             end
         end
+        if not recipeInfo then
+            recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
+        end
+        if not recipeInfo then
+            frameDistributor:Continue()
+            return
+        end
 
-        if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
+        local gatheringJournalCraft = recipeInfo and recipeInfo.isGatheringRecipe and
+            CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeID)
+        if not recipeInfo or recipeInfo.isDummyRecipe or
+            (recipeInfo.isGatheringRecipe and not gatheringJournalCraft)
             or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
             if not recipeInfo then
                 print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)

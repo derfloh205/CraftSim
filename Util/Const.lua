@@ -973,12 +973,14 @@ CraftSim.CONST.PROFESSION_ICONS = {
 
 }
 
+--- Professions that are gathering-only for CraftSim (normal world gathering, not journal crafts).
+--- Skinning is omitted so the profession is not blanket-blocked; journal rows still use
+--- isGatheringRecipe plus CraftSim.UTIL:IsSchematicCraftWithRequiredReagents where needed.
 ---@type table<Enum.Profession, boolean>
 CraftSim.CONST.GATHERING_PROFESSIONS = {
     [Enum.Profession.Herbalism] = true,
     [Enum.Profession.Mining] = true,
     [Enum.Profession.Fishing] = true,
-    [Enum.Profession.Skinning] = true,
 }
 
 ---@enum CraftSim.SHARED_PROFESSION_COOLDOWNS

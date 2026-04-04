@@ -1915,7 +1915,10 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 return
             end
             local recipeInfo = recipeData.recipeInfo
-            if recipeInfo and (recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
+            local gatheringJournalCraft = recipeInfo and recipeInfo.isGatheringRecipe and
+                CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeData.recipeID)
+            if recipeInfo and (recipeInfo.isDummyRecipe or
+                (recipeInfo.isGatheringRecipe and not gatheringJournalCraft)
                 or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe) then
                 CraftSim.DEBUG:SystemPrint(f.r("This recipe type cannot be added to a Craft List!"))
                 return
@@ -2228,11 +2231,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
         content.recipeList:Add(function(row)
             row.recipeID = id
             local nameColumn = row.columns[1]
-            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id) or CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, id)
             local name = (recipeInfo and recipeInfo.name) or (f.grey("Unknown Recipe (ID: " .. tostring(id) .. ")"))
             local icon = (recipeInfo and recipeInfo.icon) and GUTIL:IconToText(recipeInfo.icon, 18, 18) or "<i>"
-            local profession = C_TradeSkillUI.GetProfessionInfoByRecipeID(id).profession
-            local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession] or "inv_misc_questionmark"
+            local pinfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(id)
+                or CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, id)
+            local profession = pinfo and pinfo.profession
+            local professionIcon = (profession and CraftSim.CONST.PROFESSION_ICONS[profession]) or "inv_misc_questionmark"
             local professionIconText = GUTIL:IconToText(professionIcon, 18, 18)
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name)
         end)

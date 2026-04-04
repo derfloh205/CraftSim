@@ -22,8 +22,10 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type CraftSim.NodeData[]
     self.nodeData = {}
 
-    self.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
+    local baseGathering = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
+    self.isGatheringProfession = baseGathering and
+        not CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeData.recipeID)
 
     if recipeData.isOldWorldRecipe or not recipeData:IsCrafter() or self.isGatheringProfession then
         return
@@ -178,8 +180,10 @@ function CraftSim.SpecializationData:Deserialize(nodeRanks, recipeData)
     local specializationData = CraftSim.SpecializationData()
     specializationData.isImplemented = recipeData:IsSpecializationInfoImplemented()
     specializationData.recipeData = recipeData
-    specializationData.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
+    local baseGathering = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
+    specializationData.isGatheringProfession = baseGathering and
+        not CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeData.recipeID)
     specializationData.professionStats = CraftSim.ProfessionStats()
     specializationData.maxProfessionStats = CraftSim.ProfessionStats()
     specializationData.nodeData = {}

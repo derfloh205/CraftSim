@@ -63,7 +63,8 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         for _, itemLink in pairs(itemLinks) do
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
-    elseif recipeData.supportsQualities and not recipeData.isSalvageRecipe and not recipeData.recipeInfo.isGatheringRecipe then
+    elseif recipeData.supportsQualities and not recipeData.isSalvageRecipe and
+        (not recipeData.recipeInfo.isGatheringRecipe or CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeData.recipeID)) then
         print("fetching quality ids itemids:", false, true)
         local itemIDs = C_TradeSkillUI.GetRecipeQualityItemIDs(recipeData.recipeID)
         for _, itemID in pairs(itemIDs or {}) do

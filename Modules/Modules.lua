@@ -195,8 +195,10 @@ function CraftSim.MODULES:UpdateUI()
 
 	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
 
-	if not recipeInfo or recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
-		-- hide all modules
+	local gatheringJournalCraft = recipeInfo and recipeInfo.isGatheringRecipe and
+		CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeInfo.recipeID)
+	if not recipeInfo or recipeInfo.isDummyRecipe or (recipeInfo.isGatheringRecipe and not gatheringJournalCraft) then
+		-- hide all modules (gathering-profession journal crafts keep isGatheringRecipe but have schematic reagents)
 		CraftSim.MODULES:Hide(true, true)
 		return
 	end

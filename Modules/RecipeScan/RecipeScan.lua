@@ -219,7 +219,9 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         return false
     end
     if recipeExpansionIncluded then
-        if recipeInfo and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
+        local notGatheringOrJournalCraft = recipeInfo and (not recipeInfo.isGatheringRecipe or
+            CraftSim.UTIL:IsSchematicCraftWithRequiredReagents(recipeInfo.recipeID))
+        if recipeInfo and notGatheringOrJournalCraft and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
                 local isSoulbound = GUTIL:isItemSoulbound(GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
