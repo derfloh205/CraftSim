@@ -526,7 +526,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
     content.scanFiltersButton = CraftSim.WIDGETS.OptionsButton {
         parent = content,
         isFilter = true,
-        anchorPoints = { { anchorParent = content.scanButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        anchorPoints = { { anchorParent = content.scanButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5, offsetY = -2 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
                 rootDescription:CreateCheckbox(
                     L("RECIPE_SCAN_ONLY_FAVORITES"),
@@ -705,7 +705,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
     content.scanOptionsButton = CraftSim.WIDGETS.OptimizationOptions {
         parent = content,
-        anchorPoints = { { anchorParent = content.scanFiltersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
+        anchorPoints = { { anchorParent = content.scanFiltersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5, offsetY = 1.5 } },
         optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN,
         showOptions = {
             ENABLE_CONCENTRATION               = true,

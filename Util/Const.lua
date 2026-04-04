@@ -948,7 +948,6 @@ CraftSim.CONST.BUTTON_TEXTURE_OPTIONS = {
         disabled = CraftSim.CONST.ATLAS_TEXTURES.FILTER_NORMAL,
         highlight = CraftSim.CONST.ATLAS_TEXTURES.FILTER_NORMAL,
         pushed = CraftSim.CONST.ATLAS_TEXTURES.FILTER_PUSHED,
-        isAtlas = true
     },
 }
 

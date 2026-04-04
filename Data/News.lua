@@ -23,6 +23,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.5.0"),
+        f.PG .. f.bb("RecipeScan"),
+        f.a .. "- Added " .. f.g("Category") .. " based filters",
+        f.a .. "- Selectable in the respective Expansion Filter context menu",
+        f.pg .. f.bb("Finishing Reagent Optimization"),
+        f.a .. "- Added option to only use the highest valued reagents",
+        f.a .. "  when soulbound finishing reagents are included",
         newP("23.4.0"),
         f.PG .. f.bb("CraftQueue"),
         f.a .. "- Added option to enforce shatter usage for crafting",
