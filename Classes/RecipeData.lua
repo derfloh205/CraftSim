@@ -2463,13 +2463,17 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
     local cooldownData
 
-    -- the C_TradeSkillUI.GetRecipeCooldown api only works if the actual profession is open
-    if self:IsCrafter() and self:IsProfessionOpen() then
+    -- Prefer live C_TradeSkillUI.GetRecipeCooldown whenever this recipe belongs to the logged-in crafter.
+    -- The API is most reliable with the matching profession open, but we still call Update() first so we
+    -- do not skip it when another profession tab is visible (the old IsProfessionOpen gate left
+    -- isCooldownRecipe false with no DB row, so queue/scan logic misclassified cooldown recipes).
+    if self:IsCrafter() then
         cooldownData = CraftSim.CooldownData(self.recipeID)
         cooldownData:Update()
 
-        -- cache only learned recipes from current expac that can be on cooldown
-        if cooldownData.isCooldownRecipe and self.recipeInfo.learned then -- and not self.isOldWorldRecipe then
+        if not cooldownData.isCooldownRecipe and CraftSim.DB.CRAFTER:IsRecipeCooldownRecipe(crafterUID, self.recipeID) then
+            cooldownData = CraftSim.CooldownData:DeserializeForCrafter(crafterUID, self.recipeID)
+        elseif cooldownData.isCooldownRecipe and self.recipeInfo.learned then -- and not self.isOldWorldRecipe then
             cooldownData:Save(crafterUID)
         end
     else

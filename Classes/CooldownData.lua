@@ -45,7 +45,7 @@ function CraftSim.CooldownData:Update()
     end
 
     print("Update Recipe Cooldown: " .. tostring(self.recipeID))
-    self.currentCharges = currentCharges
+    self.currentCharges = tonumber(currentCharges) or 0
     self.maxCharges = maxCharges or 0
 
     -- daily cooldowns will be treated as cooldown recipes with 1 charge and a cooldown of 24h per charge
@@ -63,11 +63,17 @@ function CraftSim.CooldownData:Update()
         end
     else
         print("not IsDayCooldown")
-        self.cooldownPerCharge = C_Spell.GetSpellCharges(self.recipeID).cooldownDuration
-        if self.currentCharges < self.maxCharges then
+        local spellCharges = C_Spell.GetSpellCharges(self.recipeID)
+        self.cooldownPerCharge = (spellCharges and spellCharges.cooldownDuration) or 0
+        local apiCharges = tonumber(currentCharges) or 0
+        if apiCharges < self.maxCharges and self.cooldownPerCharge > 0 then
             local elapsedTimeSinceCooldownStart = (self.cooldownPerCharge - currentCooldown)
             self.startTimeCurrentCharge = GetServerTime() - elapsedTimeSinceCooldownStart
-            self.startTime = math.max(self.startTimeCurrentCharge - (currentCharges) * self.cooldownPerCharge, 0)
+            self.startTime = math.max(self.startTimeCurrentCharge - apiCharges * self.cooldownPerCharge, 0)
+        elseif self.maxCharges > 0 and self.cooldownPerCharge > 0 then
+            -- At max charges: anchor startTime so charge/timer math does not use a stale partial-charge baseline.
+            self.startTime = GetServerTime() - self.cooldownPerCharge * self.maxCharges
+            self.startTimeCurrentCharge = self.startTime
         end
     end
 end
@@ -118,10 +124,22 @@ end
 
 function CraftSim.CooldownData:GetCurrentCharges()
     if self.maxCharges > 0 then
-        local currentTime = GetServerTime()
-        local diffTotal = currentTime - self.startTime
-        local currentCharges = math.floor(diffTotal / self.cooldownPerCharge)
-        return math.min(currentCharges, self.maxCharges)
+        -- Prefer live API (avoids stale startTime when at full charges or after Deserialize).
+        local _, _, apiCharges, apiMax = C_TradeSkillUI.GetRecipeCooldown(self.recipeID)
+        if apiCharges ~= nil and apiMax ~= nil and apiMax > 0 then
+            return math.min(math.max(apiCharges, 0), apiMax)
+        end
+        if self.cooldownPerCharge and self.cooldownPerCharge > 0 then
+            local currentTime = GetServerTime()
+            local diffTotal = currentTime - (self.startTime or 0)
+            local interpolated = math.floor(diffTotal / self.cooldownPerCharge)
+            return math.min(math.max(interpolated, 0), self.maxCharges)
+        end
+        local snap = tonumber(self.currentCharges)
+        if snap ~= nil then
+            return math.min(math.max(snap, 0), self.maxCharges)
+        end
+        return 0
     end
 end
 
