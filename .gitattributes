@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+# Binary assets: do not line-normalize
+*.ttf binary
+*.tga binary
+*.blp binary
