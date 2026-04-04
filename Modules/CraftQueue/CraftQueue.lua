@@ -798,16 +798,16 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 end,
             },
             finally = function()
-                local smartCon = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING")
-                local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
-                local totalAmount = 1 + (offsetAmount or 0)
-
-                -- Same as craft lists: smart pool only handles recipes that spend concentration; others never
-                -- reached AddRecipe in finalizeProfessionProcess (concentrationCost > 0 loop only).
-                if smartCon and recipeData.concentrating and (recipeData.concentrationCost or 0) > 0 then
+                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING") then
                     tinsert(optimizedRecipes, recipeData)
-                elseif not smartCon or not recipeData.concentrating or (recipeData.concentrationCost or 0) <= 0 then
+                else
+                    local offsetAmount = tonumber(CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"))
+                    local totalAmount = 1 + offsetAmount
+
+                    -- Batch-aware adjustment: only keep soulbound finishers when we have enough
+                    -- for all planned crafts of this favorite.
                     recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
+
                     CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
                     CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end

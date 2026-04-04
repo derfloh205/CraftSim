@@ -96,15 +96,17 @@ function CraftSim.CRAFT_LISTS:ApplySmartQueueing()
     ---@type table<string, {items: CraftSim.CraftQueueItem[], perCraft: number, owned: number}>
     local soulboundGroups = {}
     for _, cqi in ipairs(craftQueue.craftQueueItems) do
-        local sbItemID, perCraft = cqi.recipeData:GetSoulboundFinishingReagentInfo()
-        if sbItemID then
-            local crafterUID = cqi.recipeData:GetCrafterUID()
-            local key = crafterUID .. ":" .. cqi.recipeData.recipeID .. ":" .. sbItemID
-            if not soulboundGroups[key] then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, sbItemID, true) or 0
-                soulboundGroups[key] = { items = {}, perCraft = perCraft or 1, owned = owned }
+        if not cqi.recipeData:IsWorkOrder() then
+            local sbItemID, perCraft = cqi.recipeData:GetSoulboundFinishingReagentInfo()
+            if sbItemID then
+                local crafterUID = cqi.recipeData:GetCrafterUID()
+                local key = crafterUID .. ":" .. cqi.recipeData.recipeID .. ":" .. sbItemID
+                if not soulboundGroups[key] then
+                    local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, sbItemID, true) or 0
+                    soulboundGroups[key] = { items = {}, perCraft = perCraft or 1, owned = owned }
+                end
+                tinsert(soulboundGroups[key].items, cqi)
             end
-            tinsert(soulboundGroups[key].items, cqi)
         end
     end
 
