@@ -89,10 +89,20 @@ function CraftSim.OPTIONS:Init()
         },
     }
 
+    local TooltipTab = GGUI.BlizzardTab {
+        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
+        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
+        anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
+        buttonOptions = {
+            label = L("OPTIONS_TOOLTIP_TAB"),
+            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = CraftingTab.button, anchorA = "LEFT", anchorB = "RIGHT",
+        },
+    }
+
     if TSMTab then
-        GGUI.BlizzardTabSystem({ GeneralTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab })
+        GGUI.BlizzardTabSystem({ GeneralTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab, TooltipTab })
     else
-        GGUI.BlizzardTabSystem({ GeneralTab, ModulesTab, ProfitCalculationTab, CraftingTab })
+        GGUI.BlizzardTabSystem({ GeneralTab, ModulesTab, ProfitCalculationTab, CraftingTab, TooltipTab })
     end
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
@@ -238,9 +248,40 @@ function CraftSim.OPTIONS:Init()
     }
 
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
-    supportedPriceSources:SetPoint("TOP", 0, -210)
+    supportedPriceSources:SetPoint("TOP", coinMoneyFormatDB.frame, "BOTTOM", 0, -25)
     supportedPriceSources:SetText(L("OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES") ..
         "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
+
+    local registeredCraftersTooltipCheckbox = GGUI.Checkbox {
+        parent = TooltipTab.content, anchorParent = TooltipTab.content,
+        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
+        label = " " .. L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS"),
+        tooltip = L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP"),
+        initialValue = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP, checked)
+        end
+    }
+
+    GGUI.NumericInput {
+        parent = TooltipTab.content, anchorParent = registeredCraftersTooltipCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -15, offsetX = -30,
+        label = L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX"),
+        sizeX = 85, sizeY = 10,
+        initialValue = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX),
+        allowDecimals = false, minValue = 1, maxValue = 50,
+        onNumberValidCallback = function(numberInput)
+            local value = tonumber(numberInput.currentValue)
+            if value then
+                CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX, value)
+            end
+        end, borderAdjustHeight = 0.7, borderWidth = 30,
+        labelOptions = {
+            text = L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL"),
+            parent = TooltipTab.content, anchorA = "LEFT", anchorB = "RIGHT",
+            offsetX = 5,
+        },
+    }
 
     local enableGarbageCollectWhenCraftingCB = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = CraftingTab.content,
