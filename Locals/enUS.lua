@@ -456,7 +456,7 @@ function CraftSim.LOCAL_EN:GetData()
         TOP_GEAR_SIM_MODES_CRAFTING_SPEED = "Top Crafting Speed",
 
         -- Options
-        OPTIONS_TITLE = "CraftSim Options",
+        OPTIONS_TITLE = "CraftSim",
         OPTIONS_GENERAL_TAB = "General",
         OPTIONS_GENERAL_PRICE_SOURCE = "Price Source",
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "Current Price Source: ",
@@ -472,6 +472,10 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_MODULES_TAB = "Modules",
         OPTIONS_PROFIT_CALCULATION_TAB = "Profit Calculation",
         OPTIONS_CRAFTING_TAB = "Crafting",
+        OPTIONS_TSM_TAB = "TSM",
+        OPTIONS_TSM_SECTION_TOOLTIP = "TradeSkillMaster price strings and CraftSim TSM-enhanced options.",
+        OPTIONS_TSM_EXPRESSIONS_HEADER = "Price & restock expressions",
+        OPTIONS_TSM_ENHANCED_HEADER = "TSM Enhanced",
         OPTIONS_TSM_RESET = "Reset Default",
         OPTIONS_TSM_INVALID_EXPRESSION = "Expression Invalid",
         OPTIONS_TSM_VALID_EXPRESSION = "Expression Valid",
@@ -503,6 +507,14 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " Minimap Button",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX = "Use Coin Textures: ",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "Use coin icons to format money",
+        OPTIONS_SETTINGS_COIN_TEXTURES_LABEL = "Use coin textures for money",
+        OPTIONS_TOOLTIP_TAB = "Tooltip",
+        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "Show registered crafters on item tooltips",
+        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP =
+        "When enabled, item tooltips list CraftSim characters who have this recipe cached (and any with last crafting cost data for that item).",
+        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX = "Max crafters shown",
+        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL =
+        "Additional crafters are summarized with a count after the listed names.",
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "Craft Queue",
