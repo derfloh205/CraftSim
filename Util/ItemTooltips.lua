@@ -60,7 +60,6 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
                 tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"), crafterText)
             end
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED"), f.grey(timeText))
-            tooltip:Show()
         end
     end)
 end
