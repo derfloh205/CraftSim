@@ -655,8 +655,12 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         end,
                         function()
                             local current = includedExpansions[expID]
-                            includedExpansions[expID] = (current == false) and nil or false
+                            if current == false then
+                                includedExpansions[expID] = nil
+                            else
+                                includedExpansions[expID] = false
                         end
+                    end
                     )
 
                     -- Category filter sub-submenu for this expansion
