@@ -23,6 +23,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("23.5.2"),
+        f.p .. "Hotfix Recipe Scan Category Filter",
+        collab("https://github.com/chris-merritt"),
         newP("23.5.1"),
         f.p .. "Fixed to Recipe Scan Filters",
         collab("https://github.com/chris-merritt"),
