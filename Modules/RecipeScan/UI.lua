@@ -639,7 +639,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 -- Sort expansion IDs newest first (only learned ones)
                 local sortedExpansionIDs = {}
                 for expansionID in pairs(learnedExpansionIDs) do
-                    table.insert(sortedExpansionIDs, expansionID)
+                    if type(expansionID) == "number" then
+                        table.insert(sortedExpansionIDs, expansionID)
+                    end
                 end
                 table.sort(sortedExpansionIDs, function(a, b) return a > b end)
 
