@@ -24,6 +24,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("23.5.2"),
+        f.PG .. f.bb("Tooltips"),
+        f.a .. "- New Tooltip Options to display crafter characters",
+        f.a .. "  on Item Tooltips",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         f.p .. "Hotfix Recipe Scan Category Filter",
         collab("https://github.com/chris-merritt"),
         newP("23.5.1"),
