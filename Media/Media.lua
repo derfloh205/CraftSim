@@ -33,6 +33,8 @@ CraftSim.MEDIA.IMAGES = {
     PAYPAL = { file = "paypal.blp", dimensions = { x = 64, y = 64 } },
     EDIT_PEN = { file = "edit.blp", dimensions = { x = 25, y = 25 } },
     PIN = { file = "pin.tga", dimensions = { x = 32, y = 32 } },
+    FILTER_BUTTON_NORMAL = { file = "FilterButtonNormal.tga", dimensions = { x = 71, y = 87 } },
+    FILTER_BUTTON_PRESSED = { file = "FilterButtonPressed.tga", dimensions = { x = 71, y = 87 } },
 }
 
 function CraftSim.MEDIA:GetImagePath(image)

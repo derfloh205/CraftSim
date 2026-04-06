@@ -358,6 +358,8 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST = "Concentration Cost",
         RECIPE_SCAN_SORT_MODE_CRAFTING_COST = "Crafting Cost",
         RECIPE_SCAN_EXPANSION_FILTER_BUTTON = "Expansion Filter",
+        RECIPE_SCAN_CATEGORY_FILTER_BUTTON = "Category Filter",
+        RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL = "Enable All",
         RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON = "Alt Professions",
         RECIPE_SCAN_SCAN_ALL_BUTTON_READY = "Scan Professions",
         RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING = "Scanning...",
@@ -501,6 +503,13 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " Minimap Button",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX = "Use Coin Textures: ",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "Use coin icons to format money",
+        OPTIONS_TOOLTIP_TAB = "Tooltip",
+        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "Show registered crafters on item tooltips",
+        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP =
+        "When enabled, item tooltips list CraftSim characters who have this recipe cached (and any with last crafting cost data for that item).",
+        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX = "Max crafters shown",
+        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL =
+        "Additional crafters are summarized with a count after the listed names.",
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "Craft Queue",
@@ -910,6 +919,8 @@ greater or equal the configured sale rate threshold.
         LAST_CRAFTING_COST_TOOLTIP_LABEL = f.white("Last Average Crafting Costs:"),
         LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.white("Crafter:"),
         LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.white("Updated:"),
+        REGISTERED_CRAFTERS_ITEM_TOOLTIP_LABEL = f.white("Registered crafters:"),
+        REGISTERED_CRAFTERS_ITEM_TOOLTIP_MORE = "+%d more",
 
         -- columns
         SOURCE_COLUMN_AH = "AH",

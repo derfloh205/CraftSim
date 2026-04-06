@@ -310,5 +310,3 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_13_14_Remove_CraftQueue_Work_Orders_Typ
     --- option removal
         CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
 end
-
-

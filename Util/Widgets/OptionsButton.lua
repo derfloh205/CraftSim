@@ -25,9 +25,14 @@ function CraftSim.WIDGETS.OptionsButton:new(options)
         anchorPoints = options.anchorPoints,
         cleanTemplate = true,
         tooltipOptions = options.tooltipOptions,
-        buttonTextureOptions = options.isFilter and CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.FILTER or CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
-        sizeX = 20,
-        sizeY = 20,
+        buttonTextureOptions = options.isFilter and {
+            normal = CraftSim.MEDIA:GetImagePath(CraftSim.MEDIA.IMAGES.FILTER_BUTTON_NORMAL),
+            disabled = CraftSim.MEDIA:GetImagePath(CraftSim.MEDIA.IMAGES.FILTER_BUTTON_NORMAL),
+            highlight = CraftSim.MEDIA:GetImagePath(CraftSim.MEDIA.IMAGES.FILTER_BUTTON_NORMAL),
+            pushed = CraftSim.MEDIA:GetImagePath(CraftSim.MEDIA.IMAGES.FILTER_BUTTON_PRESSED),
+        } or CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+        sizeX = options.isFilter and 14 or 20,
+        sizeY = options.isFilter and 14 or 20,
         clickCallback = function(button, mouseButton)
             if type(menuConfig) == "function" then
                 CraftSim.WIDGETS.ContextMenu.Open(UIParent, menuConfig)
