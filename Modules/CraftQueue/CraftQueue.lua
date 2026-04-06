@@ -23,13 +23,10 @@ local QB_STATUS = {
     PURCHASE_AWAIT = "PURCHASE_AWAIT",
 }
 
-
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
-    "COMMODITY_PURCHASE_FAILED",
-    "AUCTION_HOUSE_THROTTLED_SYSTEM_READY",
-    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED",
-    "BAG_UPDATE_DELAYED" })
+    "COMMODITY_PURCHASE_FAILED", "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED",
+    "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -39,7 +36,8 @@ CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
 
 --- used to check if CraftSim was the one calling the C_TradeSkillUI.CraftRecipe api function
 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
--- if craftqueue craftlisted recipe was crafted via queue, need to remember for auto decrement and recognition
+
+--- if craftqueue craftlisted recipe was crafted via queue, need to remember for auto decrement and recognition
 ---@type number | nil
 CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 
@@ -66,6 +64,63 @@ CraftSim.CRAFTQ.quickBuyCache = {
     ---@type number?
     pendingItemCount = nil,
 }
+
+local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
+local printFC = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.FirstCrafts")
+
+--- Fonction pour vérifier si un item est craftable
+---@param itemID number
+---@return boolean, number? recipeID
+local function IsItemCraftable(itemID)
+    local recipes = C_TradeSkillUI.GetAllRecipeIDs()
+    for _, recipeID in ipairs(recipes) do
+        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+        if recipeInfo and recipeInfo.itemIDCreated == itemID then
+            return true, recipeID
+        end
+    end
+    return false
+end
+
+--- Fonction récursive pour ajouter les précrafts à la file
+---@param itemID number
+---@param quantity number
+---@param queue table
+---@param shoppingList table
+---@param processedRecipes table?
+local function AddPrecraftsToQueue(itemID, quantity, queue, shoppingList, processedRecipes)
+    processedRecipes = processedRecipes or {}
+    local isCraftable, recipeID = IsItemCraftable(itemID)
+    if isCraftable and not processedRecipes[recipeID] then
+        processedRecipes[recipeID] = true
+        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+        if recipeInfo then
+            local precraftRecipeData = CraftSim.RecipeData({ recipeID = recipeID })
+            precraftRecipeData:SetCheapestQualityReagentsMax()
+            precraftRecipeData:Update()
+            table.insert(queue, { recipeData = precraftRecipeData, amount = quantity })
+            -- Récupérer les réactifs de cette recette
+            local reagents = C_TradeSkillUI.GetRecipeReagentInfo(recipeID)
+            for _, reagent in ipairs(reagents) do
+                AddPrecraftsToQueue(reagent.itemID, reagent.quantity * quantity, queue, shoppingList, processedRecipes)
+            end
+        end
+    else
+        -- Ajouter à la liste d'achat si non craftable ou déjà traité
+        local found = false
+        for _, entry in ipairs(shoppingList) do
+            if entry.itemID == itemID then
+                entry.quantity = entry.quantity + quantity
+                found = true
+                break
+            end
+        end
+        if not found then
+            table.insert(shoppingList, { itemID = itemID, quantity = quantity })
+        end
+    end
+end
 
 ---@param recipeData CraftSim.RecipeData
 ---@return ItemMixin?
@@ -143,11 +198,6 @@ function CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
         end
     end)
 end
-
-local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
-local printFC = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.FirstCrafts")
-
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem
@@ -452,7 +502,6 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                         print("- Knowledge Points Rewarded: " .. tostring(knowledgePointsRewarded))
 
-
                                         local function withinKPCost(averageProfit)
                                             if isPatronOrder and totalKpForCostCheck > 0 and averageProfit < 0 then
                                                 local kpCost = math.abs(averageProfit / totalKpForCostCheck)
@@ -479,7 +528,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             return true
                                         end
 
-                                        local function queueRecipe() 
+                                        local function queueRecipe()
                                             local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
                                             if isAlreadyQueued then
                                                 print("Work order is already queued, skipping")
@@ -632,10 +681,23 @@ function CraftSim.CRAFTQ:AddRecipe(options)
         end
     end
 
-    CraftSim.CRAFTQ.craftQueue:AddRecipe({
-        recipeData = recipeData,
-        amount = amount,
-    })
+    -- Ajout de la détection des précrafts
+    local queue = {}
+    local shoppingList = {}
+    for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
+        if not reagent:IsOrderReagentIn(recipeData) then
+            local itemID = reagent.items[1].item:GetItemID()
+            AddPrecraftsToQueue(itemID, reagent.quantity * amount, queue, shoppingList, {})
+        end
+    end
+
+    -- Ajouter la recette finale à la fin de la file
+    table.insert(queue, { recipeData = recipeData, amount = amount })
+
+    -- Ajouter les recettes à la file d'attente
+    for _, entry in ipairs(queue) do
+        CraftSim.CRAFTQ.craftQueue:AddRecipe(entry)
+    end
 
     finalizeAdd()
 end
@@ -1334,7 +1396,6 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     local function status(value)
         return qbCache.status == value
     end
-
 
     ---@param value CraftSim.CRAFTQ.QB_STATUS
     local function set(value)
