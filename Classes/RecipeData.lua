@@ -375,7 +375,7 @@ function CraftSim.RecipeData:new(options)
     -- print("- isCrafter: " .. tostring(isCrafter))
     -- print("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
     CraftSim.DEBUG:StartProfiling("- RD: Cache Data")
-    if isCrafter and IsProfessionOpen then
+    if isCrafter and IsProfessionOpen and self.learned then
         -- print("- Caching Recipe!")
         CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, self.professionData.professionInfo.profession, self.recipeID)
 
