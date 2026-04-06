@@ -80,6 +80,34 @@ function CraftSim.DB.ITEM_RECIPE:Add(recipeID, qualityID, itemID, crafterUID)
     CraftSimDB.itemRecipeDB.data[itemID] = itemRecipeData
 end
 
+--- Drop a crafter from an item only when this DB row is for the given recipe (avoids touching other recipes’ outputs).
+---@param itemID ItemID
+---@param recipeID RecipeID
+---@param crafterUID CrafterUID
+function CraftSim.DB.ITEM_RECIPE:RemoveCrafterIfRecipeMatches(itemID, recipeID, crafterUID)
+    local itemRecipeData = CraftSimDB.itemRecipeDB.data[itemID]
+    if not itemRecipeData or itemRecipeData.recipeID ~= recipeID then
+        return
+    end
+    local crafters = itemRecipeData.crafters
+    local wasSubCrafter = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(recipeID) == crafterUID
+    for i = #crafters, 1, -1 do
+        if crafters[i] == crafterUID then
+            tremove(crafters, i)
+        end
+    end
+    if wasSubCrafter then
+        if #crafters > 0 then
+            CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(recipeID, crafters[1])
+        else
+            CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(recipeID, nil)
+        end
+    end
+    if #crafters == 0 then
+        CraftSimDB.itemRecipeDB.data[itemID] = nil
+    end
+end
+
 --- Migrations
 
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
