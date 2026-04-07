@@ -790,10 +790,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_MENU_INGENUITY_IGNORE = f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION = f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP = "Autoremove a crafted recipe when remaining concentration does not allow further crafts.",
-        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for " ..
-            CraftSim.GUTIL:ColorizeText("Midnight", CraftSim.GUTIL.COLORS.EPIC) .. " Enchanting",
+        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for Enchanting",
         CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
-            f.bb("Shattering Essence") .. " buff to be active before crafting Midnight Enchanting recipes.\n\n" ..
+            f.bb("Shattering Essence") .. " buff to be active before crafting Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
         CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for " ..

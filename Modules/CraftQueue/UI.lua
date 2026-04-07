@@ -699,38 +699,27 @@ function CraftSim.CRAFTQ.UI:Init()
                         L("CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP"));
                 end);
 
-                local midnightShatterForceCB = rootDescription:CreateCheckbox(
+                local shatterForceCB = rootDescription:CreateCheckbox(
                     L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF"),
                     function()
                         return CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF)
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) or
+                            CraftSim.DB.OPTIONS:Get(
+                                CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF)
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) or
+                            CraftSim.DB.OPTIONS:Get(
+                                CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
                         CraftSim.DB.OPTIONS:Save(
                             CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF, not value)
-                    end)
-
-                midnightShatterForceCB:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP"));
-                end);
-
-                local twwShatterForceCB = rootDescription:CreateCheckbox(
-                    L("CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
                         CraftSim.DB.OPTIONS:Save(
                             CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF, not value)
                     end)
 
-                twwShatterForceCB:SetTooltip(function(tooltip, elementDescription)
+                shatterForceCB:SetTooltip(function(tooltip, elementDescription)
                     GameTooltip_AddInstructionLine(tooltip,
-                        L("CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP"));
+                        L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP"));
                 end);
 
             end
@@ -3126,18 +3115,6 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local buttonOptions = CraftSim.CRAFTQ.queueRecipeButtonOptions
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
     local buttonOptionsWO = CraftSim.CRAFTQ.queueRecipeButtonOptionsWO
-
-    if not button or not buttonOptions or not buttonWO or not buttonOptionsWO then
-        return
-    end
-
-    if not recipeData or not recipeData.professionData or not recipeData.professionData.professionInfo then
-        button:SetVisible(false)
-        buttonOptions:SetVisible(false)
-        buttonWO:SetVisible(false)
-        buttonOptionsWO:SetVisible(false)
-        return
-    end
 
     local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
