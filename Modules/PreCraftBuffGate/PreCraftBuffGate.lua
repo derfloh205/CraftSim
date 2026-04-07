@@ -429,8 +429,9 @@ end
 ---@return CraftSim.PreCraftBuffGateDefinition?
 function PCBG:GetQuickBarGateForSkillLine(skillLineID)
     for _, gate in ipairs(gates) do
+        local quickBarAllowed = gate.salvagedMoteOptionKey or CraftSim.DB.OPTIONS:Get(gate.optionForceBuffKey)
         if (gate.implementsCraftQueuePrerequisite or gate.quickBarEnabled) and gate.skillLineID == skillLineID and
-            CraftSim.DB.OPTIONS:Get(gate.optionForceBuffKey) then
+            quickBarAllowed then
             return gate
         end
     end
