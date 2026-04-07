@@ -28,16 +28,22 @@ function CraftSim.CraftQueueItem:new(options)
     self.gearEquipped = false
     self.correctProfessionOpen = false
     --- Pre-craft buff gate (e.g. Midnight / TWW Shattering Essence): cast this before Craft.
-    ---@type CraftSim.PreCraftBuffGateId?
-    self.preCraftBuffGateId = nil
-    self.needsPreCraftBuffStep = false
-    self.canCastPreCraftBuff = false
-    --- Post-login recast required (buff may still read as active client-side).
-    self.preCraftBuffDueToLoginStale = false
-    --- Gate buff not on the player.
-    self.preCraftBuffDueToMissingBuff = false
-    ---@type CraftSim.RecipeData?
-    self.preCraftBuffRecipeData = nil
+    ---@class CraftSim.CraftQueueItem.PcbgData
+    ---@field gateId CraftSim.PreCraftBuffGateId?
+    ---@field needsStep boolean
+    ---@field canCast boolean
+    ---@field dueToLoginStale boolean
+    ---@field dueToMissingBuff boolean
+    ---@field recipeData CraftSim.RecipeData?
+    ---@type CraftSim.CraftQueueItem.PcbgData
+    self.pcbgData = {
+        gateId = nil,
+        needsStep = false,
+        canCast = false,
+        dueToLoginStale = false,
+        dueToMissingBuff = false,
+        recipeData = nil,
+    }
     self.craftAbleAmount = 0
     self.notOnCooldown = true
     self.isCrafter = false
@@ -65,19 +71,19 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
 
-    self.preCraftBuffGateId = nil
-    self.needsPreCraftBuffStep = false
-    self.canCastPreCraftBuff = false
-    self.preCraftBuffDueToLoginStale = false
-    self.preCraftBuffDueToMissingBuff = false
-    self.preCraftBuffRecipeData = nil
+    self.pcbgData.gateId = nil
+    self.pcbgData.needsStep = false
+    self.pcbgData.canCast = false
+    self.pcbgData.dueToLoginStale = false
+    self.pcbgData.dueToMissingBuff = false
+    self.pcbgData.recipeData = nil
 
     -- Pre-craft buff gates: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
     -- C_TradeSkillUI.GetProfessionChildSkillLineID().
     CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(self)
 
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
-        self.isCrafter and self.learned and not self.needsPreCraftBuffStep
+        self.isCrafter and self.learned and not self.pcbgData.needsStep
     CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 

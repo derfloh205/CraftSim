@@ -160,6 +160,12 @@ function PCBG:ScheduleQueueDisplayRefreshForDelayedCraftingState()
     C_Timer.After(1.5, function()
         if self._refreshGen == gen then
             self.awaitingBuffApply = false
+        end
+    end)
+    GUTIL:WaitFor(function()
+        return self._refreshGen == gen and not self.awaitingBuffApply
+    end, function()
+        if self._refreshGen == gen then
             CraftSim.CRAFTQ.UI:UpdateDisplay()
         end
     end)
@@ -389,12 +395,14 @@ end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function PCBG:ApplyGatesToCraftQueueItem(craftQueueItem)
-    craftQueueItem.preCraftBuffGateId = nil
-    craftQueueItem.needsPreCraftBuffStep = false
-    craftQueueItem.canCastPreCraftBuff = false
-    craftQueueItem.preCraftBuffDueToLoginStale = false
-    craftQueueItem.preCraftBuffDueToMissingBuff = false
-    craftQueueItem.preCraftBuffRecipeData = nil
+    craftQueueItem.pcbgData = {
+        gateId = nil,
+        needsStep = false,
+        canCast = false,
+        dueToLoginStale = false,
+        dueToMissingBuff = false,
+        recipeData = nil,
+    }
 
     local rd = craftQueueItem.recipeData
     if not craftQueueItem.isCrafter or not craftQueueItem.correctProfessionOpen then
@@ -411,12 +419,14 @@ function PCBG:ApplyGatesToCraftQueueItem(craftQueueItem)
                 if needStep then
                     local prep = prepareRecipeForGate(rd.crafterData, gate)
                     if prep then
-                        craftQueueItem.preCraftBuffGateId = gate.id
-                        craftQueueItem.needsPreCraftBuffStep = true
-                        craftQueueItem.preCraftBuffDueToLoginStale = staleEffective and buffActive
-                        craftQueueItem.preCraftBuffDueToMissingBuff = not buffActive
-                        craftQueueItem.preCraftBuffRecipeData = prep
-                        craftQueueItem.canCastPreCraftBuff = select(1, prep:CanCraft(1))
+                        craftQueueItem.pcbgData = {
+                            gateId = gate.id,
+                            needsStep = true,
+                            canCast = select(1, prep:CanCraft(1)),
+                            dueToLoginStale = staleEffective and buffActive,
+                            dueToMissingBuff = not buffActive,
+                            recipeData = prep,
+                        }
                         return
                     end
                 end

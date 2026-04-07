@@ -30,8 +30,8 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@return string
 local function CraftQueueMidnightShatterReasonTooltipExtra(craftQueueItem)
-    return CraftQueueMidnightShatterReasonTooltipFromFlags(craftQueueItem.preCraftBuffDueToLoginStale,
-        craftQueueItem.preCraftBuffDueToMissingBuff)
+    return CraftQueueMidnightShatterReasonTooltipFromFlags(craftQueueItem.pcbgData.dueToLoginStale,
+        craftQueueItem.pcbgData.dueToMissingBuff)
 end
 
 ---@param loginStale boolean
@@ -51,8 +51,34 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@return string
 local function CraftQueueMidnightShatterStatusText(craftQueueItem)
-    return MidnightShatterStatusTextFromFlags(craftQueueItem.preCraftBuffDueToLoginStale,
-        craftQueueItem.preCraftBuffDueToMissingBuff)
+    return MidnightShatterStatusTextFromFlags(craftQueueItem.pcbgData.dueToLoginStale,
+        craftQueueItem.pcbgData.dueToMissingBuff)
+end
+
+---@param gateId CraftSim.PreCraftBuffGateId
+---@param crafterData CraftSim.CrafterData
+---@param fallbackRecipeData CraftSim.RecipeData?
+local function TriggerPreCraftGateAction(gateId, crafterData, fallbackRecipeData)
+    local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(crafterData, gateId)
+    if fresh and fresh:CanCraft(1) then
+        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+        fresh:Craft(1)
+        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+        CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+        return
+    end
+    local rd = fresh or fallbackRecipeData
+    if not rd then
+        return
+    end
+    local salvageSlot = rd.reagentData and rd.reagentData.salvageReagentSlot
+    local activeReagentSlot = salvageSlot and salvageSlot.activeItem
+    if activeReagentSlot then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " .. activeReagentSlot:GetItemLink()))
+    else
+        CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = rd, amount = 1 })
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -378,13 +404,13 @@ end
 ---@param statusColumnTooltip string
 local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData, statusColumnTooltip)
     local craftBtn = craftButtonColumn.craftButton
-    local shatterRD = craftQueueItem.preCraftBuffRecipeData
-    local gateId = craftQueueItem.preCraftBuffGateId
+    local shatterRD = craftQueueItem.pcbgData.recipeData
+    local gateId = craftQueueItem.pcbgData.gateId
     local gate = gateId and CraftSim.PRE_CRAFT_BUFF_GATE:GetGate(gateId) or nil
     if not shatterRD or not gateId then
         return
     end
-    craftBtn.frame:SetAlpha(craftQueueItem.canCastPreCraftBuff and 1 or 0.5)
+    craftBtn.frame:SetAlpha(craftQueueItem.pcbgData.canCast and 1 or 0.5)
     craftBtn:SetEnabled(true)
     craftBtn:SetText((gate and gate.salvagedMoteOptionKey) and L("CRAFT_QUEUE_BUTTON_SHATTER") or "")
     craftBtn.clickCallback = function(_, mouseButton)
@@ -395,16 +421,7 @@ local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueI
         if mouseButton ~= "LeftButton" then
             return
         end
-        local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(recipeData.crafterData, gateId)
-        if fresh and select(1, fresh:CanCraft(1)) then
-            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-            fresh:Craft(1)
-            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
-            CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
-        elseif fresh then
-            CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = fresh, amount = 1 })
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
-        end
+        TriggerPreCraftGateAction(gateId, recipeData.crafterData, shatterRD)
     end
     SetCraftQueueCraftButtonRowStatusTooltip(craftBtn, craftQueueItem.allowedToCraft, statusColumnTooltip,
         recipeData.professionGearSet)
@@ -425,7 +442,7 @@ local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueI
     end
     if activeReagent then
         activeReagent:ContinueOnItemLoad(function()
-            local tip = FormatMidnightShatterTooltipAppend(shatterRD, craftQueueItem.canCastPreCraftBuff,
+            local tip = FormatMidnightShatterTooltipAppend(shatterRD, craftQueueItem.pcbgData.canCast,
                 shatterReasonExtra, shatterHint, activeReagent)
             appendShatterTooltipExtra(tip)
         end)
@@ -3338,18 +3355,7 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                     if mouseButton ~= "LeftButton" then
                         return
                     end
-                    local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(
-                        CraftSim.UTIL:GetPlayerCrafterData(), gate.id)
-                    if fresh and fresh:CanCraft(1) then
-                        fresh:Craft()
-                        CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
-                    else
-                        local rd = fresh or recipeData
-                        local activeReagentSlot = rd.reagentData.salvageReagentSlot.activeItem
-                        if activeReagentSlot then
-                            CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " .. activeReagentSlot:GetItemLink()))
-                        end
-                    end
+                    TriggerPreCraftGateAction(gate.id, CraftSim.UTIL:GetPlayerCrafterData(), recipeData)
                 end
             end)
         end
@@ -3946,7 +3952,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
         statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession")
     end
-    if craftQueueItem.needsPreCraftBuffStep then
+    if craftQueueItem.pcbgData.needsStep then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
         statusColumnTooltip = statusColumnTooltip .. f.r(nL .. CraftQueueMidnightShatterStatusText(craftQueueItem))
     end
@@ -3981,7 +3987,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonColumn.craftButton.clickCallback = function()
                         recipeData.professionGearSet:Equip()
                     end
-                elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
+                elseif craftQueueItem.pcbgData.needsStep and craftQueueItem.pcbgData.recipeData then
                     SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData,
                         statusColumnTooltip)
                 elseif craftQueueItem.allowedToCraft then
@@ -4020,7 +4026,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton.clickCallback = function()
                 recipeData.professionGearSet:Equip()
             end
-        elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
+        elseif craftQueueItem.pcbgData.needsStep and craftQueueItem.pcbgData.recipeData then
             SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData, statusColumnTooltip)
         else
             craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
@@ -4040,7 +4046,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftBtn = craftButtonColumn.craftButton
     if craftBtn.frame:GetText() == L("CRAFT_QUEUE_BUTTON_SUBMIT") then
         craftBtn.tooltipOptions = nil
-    elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
+    elseif craftQueueItem.pcbgData.needsStep and craftQueueItem.pcbgData.recipeData then
         -- tooltip set in SetCraftQueueRowShatterCraftButton
     else
         SetCraftQueueCraftButtonRowStatusTooltip(craftBtn, craftQueueItem.allowedToCraft,
