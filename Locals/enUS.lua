@@ -795,6 +795,15 @@ greater or equal the configured sale rate threshold.
             f.bb("Shattering Essence") .. " buff to be active before crafting Midnight Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for " .. f.e("The War Within") .. " Enchanting",
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
+            f.bb("Shattering Essence") .. " buff to be active before crafting TWW Enchanting recipes.\n\n" ..
+            "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
+            "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("Force ") .. f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will assume " ..
+            f.bb("Everburning Ignition") .. " is active during stat optimization when the buff is not detected on the player.\n\n" ..
+            "This does not add a Shatter-style prerequisite row to the craft queue.",
         CRAFT_QUEUE_HELP = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
             f.bb("Right Click") .. " .. Open Recipe Options\n" ..
             f.bb("Middle Click") .. " .. Remove Recipe from Queue",

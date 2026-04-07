@@ -30,8 +30,8 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@return string
 local function CraftQueueMidnightShatterReasonTooltipExtra(craftQueueItem)
-    return CraftQueueMidnightShatterReasonTooltipFromFlags(craftQueueItem.midnightShatterDueToLoginStale,
-        craftQueueItem.midnightShatterDueToMissingBuff)
+    return CraftQueueMidnightShatterReasonTooltipFromFlags(craftQueueItem.preCraftBuffDueToLoginStale,
+        craftQueueItem.preCraftBuffDueToMissingBuff)
 end
 
 ---@param loginStale boolean
@@ -51,8 +51,19 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@return string
 local function CraftQueueMidnightShatterStatusText(craftQueueItem)
-    return MidnightShatterStatusTextFromFlags(craftQueueItem.midnightShatterDueToLoginStale,
-        craftQueueItem.midnightShatterDueToMissingBuff)
+    return MidnightShatterStatusTextFromFlags(craftQueueItem.preCraftBuffDueToLoginStale,
+        craftQueueItem.preCraftBuffDueToMissingBuff)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param gateId CraftSim.PreCraftBuffGateId
+local function ShowPreCraftBuffSalvageMoteMenu(recipeData, gateId)
+    local PCBG = CraftSim.PRE_CRAFT_BUFF_GATE
+    if gateId == CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER then
+        PCBG:ShowMidnightEnchantShatterMoteMenu(recipeData)
+    elseif gateId == CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.TWW_ENCHANT_SHATTER then
+        PCBG:ShowTwwEnchantShatterMoteMenu(recipeData)
+    end
 end
 
 --- Single result icon and NPC reward inline icons use the same size
@@ -342,18 +353,18 @@ local function SetCraftQueueCraftButtonRowStatusTooltip(craftButton, allowedToCr
 end
 
 ---@param shatterRD CraftSim.RecipeData
----@param canCastMidnightShatter boolean
+---@param canCastShatter boolean
 ---@param shatterReasonExtra string
 ---@param shatterHint string
 ---@param activeReagent ItemMixin
 ---@return string
-local function FormatMidnightShatterTooltipAppend(shatterRD, canCastMidnightShatter, shatterReasonExtra, shatterHint,
+local function FormatMidnightShatterTooltipAppend(shatterRD, canCastShatter, shatterReasonExtra, shatterHint,
     activeReagent)
     local ownedCount = C_Item.GetItemCount(activeReagent:GetItemID(), true, false, true, true)
     local ownedCountText = " (" .. tostring(ownedCount) .. ")"
     local moteWithIcon = GUTIL:IconToText(activeReagent:GetItemIcon(), 15, 15) .. " " ..
         activeReagent:GetItemLink() .. ownedCountText
-    if canCastMidnightShatter then
+    if canCastShatter then
         return f.bb(L("CRAFT_QUEUE_BUTTON_SHATTER") .. " " .. moteWithIcon) .. "\nCosts: " ..
             CraftSim.UTIL:FormatMoney(shatterRD.priceData.craftingCosts, true) .. shatterReasonExtra .. shatterHint
     end
@@ -367,22 +378,23 @@ end
 ---@param statusColumnTooltip string
 local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData, statusColumnTooltip)
     local craftBtn = craftButtonColumn.craftButton
-    local shatterRD = craftQueueItem.midnightShatterRecipeData
-    if not shatterRD then
+    local shatterRD = craftQueueItem.preCraftBuffRecipeData
+    local gateId = craftQueueItem.preCraftBuffGateId
+    if not shatterRD or not gateId then
         return
     end
-    craftBtn.frame:SetAlpha(craftQueueItem.canCastMidnightShatter and 1 or 0.5)
+    craftBtn.frame:SetAlpha(craftQueueItem.canCastPreCraftBuff and 1 or 0.5)
     craftBtn:SetEnabled(true)
     craftBtn:SetText(L("CRAFT_QUEUE_BUTTON_SHATTER"))
     craftBtn.clickCallback = function(_, mouseButton)
         if mouseButton == "RightButton" then
-            CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(shatterRD)
+            ShowPreCraftBuffSalvageMoteMenu(shatterRD, gateId)
             return
         end
         if mouseButton ~= "LeftButton" then
             return
         end
-        local fresh = CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(recipeData.crafterData)
+        local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(recipeData.crafterData, gateId)
         if fresh and select(1, fresh:CanCraft(1)) then
             CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
             fresh:Craft(1)
@@ -409,7 +421,7 @@ local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueI
     end
     if activeReagent then
         activeReagent:ContinueOnItemLoad(function()
-            local tip = FormatMidnightShatterTooltipAppend(shatterRD, craftQueueItem.canCastMidnightShatter,
+            local tip = FormatMidnightShatterTooltipAppend(shatterRD, craftQueueItem.canCastPreCraftBuff,
                 shatterReasonExtra, shatterHint, activeReagent)
             appendShatterTooltipExtra(tip)
         end)
@@ -681,6 +693,40 @@ function CraftSim.CRAFTQ.UI:Init()
                 midnightShatterForceCB:SetTooltip(function(tooltip, elementDescription)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP"));
+                end);
+
+                local twwShatterForceCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF)
+                        CraftSim.DB.OPTIONS:Save(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_FORCE_BUFF, not value)
+                    end)
+
+                twwShatterForceCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP"));
+                end);
+
+                local everburningForceCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF)
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF)
+                        CraftSim.DB.OPTIONS:Save(
+                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF, not value)
+                    end)
+
+                everburningForceCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP"));
                 end);
             end
         }
@@ -3146,12 +3192,12 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         end)
     end
 
-    -- if the current profession is midnight enchanting add shatter (only when recipe is learned)
+    -- If current profession skill line has an enabled pre-craft buff gate, add Shatter to the quick bar.
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-    local midnightEnchantingID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Enchanting][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
-    if skillLineID == midnightEnchantingID and
-        CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
-        local recipeData = CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(CraftSim.UTIL:GetPlayerCrafterData())
+    local gate = CraftSim.PRE_CRAFT_BUFF_GATE:GetQuickBarGateForSkillLine(skillLineID)
+    if gate and gate.castRecipeID then
+        local recipeData = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(CraftSim.UTIL:GetPlayerCrafterData(),
+            gate.id)
         if recipeData then
             local shatterHint = L("CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT")
             buttonList:Add(function(row)
@@ -3168,8 +3214,8 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                 }
 
                 recipeData:Update()
-                local buffActive = recipeData.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
-                local staleEffective = CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective()
+                local buffActive = recipeData.buffData:IsBuffActive(gate.buffID)
+                local staleEffective = CraftSim.PRE_CRAFT_BUFF_GATE:IsStaleEffective(gate.id)
                 local buffOkForQueue = buffActive and not staleEffective
                 local loginStaleForFlags = staleEffective and buffActive
                 local missingBuffForFlags = not buffActive
@@ -3216,17 +3262,20 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
 
                 recipeCraftButton.clickCallback = function(_, mouseButton)
                     if mouseButton == "RightButton" then
-                        CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
+                        ShowPreCraftBuffSalvageMoteMenu(recipeData, gate.id)
                         return
                     end
                     if mouseButton ~= "LeftButton" then
                         return
                     end
-                    if recipeData:CanCraft(1) then
-                        recipeData:Craft()
+                    local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(
+                        CraftSim.UTIL:GetPlayerCrafterData(), gate.id)
+                    if fresh and fresh:CanCraft(1) then
+                        fresh:Craft()
                         CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
                     else
-                        local activeReagentSlot = recipeData.reagentData.salvageReagentSlot.activeItem
+                        local rd = fresh or recipeData
+                        local activeReagentSlot = rd.reagentData.salvageReagentSlot.activeItem
                         if activeReagentSlot then
                             CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " .. activeReagentSlot:GetItemLink()))
                         end
@@ -3827,7 +3876,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
         statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession")
     end
-    if craftQueueItem.needsMidnightShatterStep then
+    if craftQueueItem.needsPreCraftBuffStep then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
         statusColumnTooltip = statusColumnTooltip .. f.r(nL .. CraftQueueMidnightShatterStatusText(craftQueueItem))
     end
@@ -3862,7 +3911,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonColumn.craftButton.clickCallback = function()
                         recipeData.professionGearSet:Equip()
                     end
-                elseif craftQueueItem.needsMidnightShatterStep and craftQueueItem.midnightShatterRecipeData then
+                elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
                     SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData,
                         statusColumnTooltip)
                 elseif craftQueueItem.allowedToCraft then
@@ -3901,7 +3950,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton.clickCallback = function()
                 recipeData.professionGearSet:Equip()
             end
-        elseif craftQueueItem.needsMidnightShatterStep and craftQueueItem.midnightShatterRecipeData then
+        elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
             SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData, statusColumnTooltip)
         else
             craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
@@ -3921,7 +3970,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftBtn = craftButtonColumn.craftButton
     if craftBtn.frame:GetText() == L("CRAFT_QUEUE_BUTTON_SUBMIT") then
         craftBtn.tooltipOptions = nil
-    elseif craftQueueItem.needsMidnightShatterStep and craftQueueItem.midnightShatterRecipeData then
+    elseif craftQueueItem.needsPreCraftBuffStep and craftQueueItem.preCraftBuffRecipeData then
         -- tooltip set in SetCraftQueueRowShatterCraftButton
     else
         SetCraftQueueCraftButtonRowStatusTooltip(craftBtn, craftQueueItem.allowedToCraft,
