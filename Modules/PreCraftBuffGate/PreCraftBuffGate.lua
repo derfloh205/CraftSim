@@ -156,19 +156,34 @@ function PCBG:ScheduleQueueDisplayRefreshForDelayedCraftingState()
     self.awaitingBuffApply = true
     self._refreshGen = (self._refreshGen or 0) + 1
     local gen = self._refreshGen
+    local startTime = GetTimePreciseSec()
     CraftSim.CRAFTQ.UI:UpdateDisplay()
-    C_Timer.After(1.5, function()
-        if self._refreshGen == gen then
-            self.awaitingBuffApply = false
-        end
-    end)
+
     GUTIL:WaitFor(function()
-        return self._refreshGen == gen and not self.awaitingBuffApply
+        if self._refreshGen ~= gen then
+            return true
+        end
+
+        local elapsed = GetTimePreciseSec() - startTime
+        if elapsed >= 1.5 then
+            return true
+        end
+
+        for _, gate in ipairs(gates) do
+            if gate.buffID and CraftSim.DB.OPTIONS:Get(gate.optionForceBuffKey) then
+                if C_UnitAuras.GetPlayerAuraBySpellID(gate.buffID) then
+                    return true
+                end
+            end
+        end
+
+        return false
     end, function()
         if self._refreshGen == gen then
+            self.awaitingBuffApply = false
             CraftSim.CRAFTQ.UI:UpdateDisplay()
         end
-    end)
+    end, 0.05, 2)
 end
 
 ---@return boolean
