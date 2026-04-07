@@ -235,6 +235,10 @@ function CraftSim.ProfessionGearSet:Equip()
         RunNextFrame(function()
             CraftSim.CRAFTQ.UI:UpdateDisplay()
         end)
+        -- Equipped state can lag a tick behind EquipPendingItem; second pass keeps the queue row / Craft Next in sync.
+        C_Timer.After(0.25, function()
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end)
     end)
 end
 
