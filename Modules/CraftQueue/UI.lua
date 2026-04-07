@@ -380,14 +380,15 @@ local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueI
     local craftBtn = craftButtonColumn.craftButton
     local shatterRD = craftQueueItem.preCraftBuffRecipeData
     local gateId = craftQueueItem.preCraftBuffGateId
+    local gate = gateId and CraftSim.PRE_CRAFT_BUFF_GATE:GetGate(gateId) or nil
     if not shatterRD or not gateId then
         return
     end
     craftBtn.frame:SetAlpha(craftQueueItem.canCastPreCraftBuff and 1 or 0.5)
     craftBtn:SetEnabled(true)
-    craftBtn:SetText(L("CRAFT_QUEUE_BUTTON_SHATTER"))
+    craftBtn:SetText((gate and gate.salvagedMoteOptionKey) and L("CRAFT_QUEUE_BUTTON_SHATTER") or "")
     craftBtn.clickCallback = function(_, mouseButton)
-        if mouseButton == "RightButton" then
+        if mouseButton == "RightButton" and gate and gate.salvagedMoteOptionKey then
             ShowPreCraftBuffSalvageMoteMenu(shatterRD, gateId)
             return
         end
@@ -401,15 +402,18 @@ local function SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueI
             CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
             CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
         elseif fresh then
-            local activeReagentSlot = fresh.reagentData.salvageReagentSlot.activeItem
-            if activeReagentSlot then
-                CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " ..
-                    activeReagentSlot:GetItemLink()))
-            end
+            CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = fresh, amount = 1 })
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
         end
     end
     SetCraftQueueCraftButtonRowStatusTooltip(craftBtn, craftQueueItem.allowedToCraft, statusColumnTooltip,
         recipeData.professionGearSet)
+    if not (gate and gate.salvagedMoteOptionKey) then
+        if craftBtn.tooltipOptions and craftBtn.tooltipOptions.text then
+            craftBtn.tooltipOptions.text = craftBtn.tooltipOptions.text .. "\n\n" .. f.bb("Craft Everburning Ignition")
+        end
+        return
+    end
     local shatterHint = L("CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT")
     recipeData.buffData:Update()
     local shatterReasonExtra = CraftQueueMidnightShatterReasonTooltipExtra(craftQueueItem)
@@ -712,22 +716,6 @@ function CraftSim.CRAFTQ.UI:Init()
                         L("CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP"));
                 end);
 
-                local everburningForceCB = rootDescription:CreateCheckbox(
-                    L("CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF)
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF)
-                        CraftSim.DB.OPTIONS:Save(
-                            CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF, not value)
-                    end)
-
-                everburningForceCB:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        L("CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP"));
-                end);
             end
         }
 
@@ -3122,6 +3110,18 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
     local buttonOptionsWO = CraftSim.CRAFTQ.queueRecipeButtonOptionsWO
 
+    if not button or not buttonOptions or not buttonWO or not buttonOptionsWO then
+        return
+    end
+
+    if not recipeData or not recipeData.professionData or not recipeData.professionData.professionInfo then
+        button:SetVisible(false)
+        buttonOptions:SetVisible(false)
+        buttonWO:SetVisible(false)
+        buttonOptionsWO:SetVisible(false)
+        return
+    end
+
     local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
         not C_TradeSkillUI.IsTradeSkillLinked() and not C_TradeSkillUI.IsNPCCrafting() and
@@ -3199,6 +3199,76 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         local recipeData = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(CraftSim.UTIL:GetPlayerCrafterData(),
             gate.id)
         if recipeData then
+            if not gate.salvagedMoteOptionKey then
+                local useItemID = gate.quickBarUseItemID
+                local resultItem = recipeData.resultData and recipeData.resultData.expectedItem
+                if not useItemID and resultItem then
+                    useItemID = resultItem:GetItemID()
+                end
+                local useItem = useItemID and Item:CreateFromItemID(useItemID) or nil
+                local itemCount = useItemID and C_Item.GetItemCount(useItemID, true, false, true, true) or 0
+                buttonList:Add(function(row)
+                    local recipeCraftButton = row.columns[1].recipeCraftButton --[[@as GGUI.Button]]
+                    local macroButton = row.columns[1].macroButton --[[@as GGUI.Button]]
+                    local useAvailable = useItemID and itemCount > 0
+                    if useAvailable then
+                        macroButton:Show()
+                        recipeCraftButton:Hide()
+                        macroButton:SetMacroText("/use item:" .. tostring(useItemID))
+                        local texture = useItem and useItem:GetItemIcon() or recipeData.recipeIcon
+                        macroButton:SetTexture {
+                            normal = texture,
+                            pushed = texture,
+                            highlight = texture,
+                            highlightBlendmode = "ADD",
+                        }
+                        macroButton:SetText(f.white("x" .. tostring(itemCount)))
+                        macroButton:SetBorder(true, { 0, 1, 0, 0.8 })
+                        if useItem then
+                            useItem:ContinueOnItemLoad(function()
+                                macroButton.tooltipOptions = {
+                                    anchor = "ANCHOR_CURSOR_RIGHT",
+                                    text = f.bb("Use ") .. (useItem:GetItemLink() or "Everburning Ignition"),
+                                }
+                            end)
+                        end
+                    else
+                        macroButton:Hide()
+                        recipeCraftButton:Show()
+                        recipeCraftButton:SetTexture {
+                            normal = recipeData.recipeIcon,
+                            pushed = recipeData.recipeIcon,
+                            highlight = recipeData.recipeIcon,
+                            highlightBlendmode = "ADD",
+                        }
+                        recipeCraftButton:SetText("")
+                        local canCraftNow = recipeData:CanCraft(1)
+                        recipeCraftButton:SetBorder(true, canCraftNow and { 0, 1, 0, 0.8 } or { 1, 0, 0, 0.8 })
+                        recipeCraftButton.tooltipOptions = {
+                            anchor = "ANCHOR_CURSOR_RIGHT",
+                            textWrap = true,
+                            text = canCraftNow and f.bb("Craft Everburning Ignition")
+                                or f.bb("Queue Everburning Ignition") .. "\n\n" .. f.white("Missing reagents for immediate cast."),
+                        }
+                        recipeCraftButton.clickCallback = function(_, mouseButton)
+                            if mouseButton ~= "LeftButton" then
+                                return
+                            end
+                            local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(
+                                CraftSim.UTIL:GetPlayerCrafterData(), gate.id)
+                            if fresh and fresh:CanCraft(1) then
+                                fresh:Craft()
+                                CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+                            elseif fresh then
+                                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = fresh, amount = 1 })
+                                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                            end
+                        end
+                    end
+                end)
+                buttonList:UpdateDisplay()
+                return
+            end
             local shatterHint = L("CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT")
             buttonList:Add(function(row)
                 local recipeCraftButton = row.columns[1].recipeCraftButton --[[@as GGUI.Button]]

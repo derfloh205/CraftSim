@@ -1223,8 +1223,10 @@ CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA = {
 
 CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS = {
     MIDNIGHT_ENCHANTING_SHATTER = 1235731,
-    --- TWW Khaz Algar enchanting Gleaming Shatter (salvage). Spell/recipe id from game data.
-    TWW_ENCHANTING_SHATTER = 470726,
+    --- TWW Khaz Algar enchanting Shatter Essence (salvage).
+    TWW_ENCHANTING_SHATTER = 445466,
+    --- TWW Blacksmithing Everburning Ignition craft.
+    TWW_EVERBURNING_IGNITION = 453727,
 }
 
 ---@enum CraftSim.PRE_CRAFT_BUFF_GATE_ID

@@ -5,6 +5,7 @@ local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local tinsert = tinsert or table.insert
+local prepareRecipeForGate
 
 ---@class CraftSim.PRE_CRAFT_BUFF_GATE
 CraftSim.PRE_CRAFT_BUFF_GATE = {}
@@ -27,6 +28,8 @@ local PCBG = CraftSim.PRE_CRAFT_BUFF_GATE
 ---@field trackLoginStale? boolean When false, stats forcing ignores stale (e.g. Everburning placeholder).
 ---@field salvagedMoteOptionKey? CraftSim.GENERAL_OPTIONS Midnight / TWW mote picker option key.
 ---@field implementsCraftQueuePrerequisite? boolean default true when castRecipeID set
+---@field quickBarEnabled? boolean Show gate action in quick access bar.
+---@field quickBarUseItemID? number Optional item to use directly before falling back to craft.
 
 PCBG.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
 
@@ -364,7 +367,7 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@param gate CraftSim.PreCraftBuffGateDefinition
 ---@return CraftSim.RecipeData?
-local function prepareRecipeForGate(crafterData, gate)
+prepareRecipeForGate = function(crafterData, gate)
     if gate.id == CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER then
         return PCBG:PrepareMidnightEnchantShatterRecipeData(crafterData)
     end
@@ -426,7 +429,7 @@ end
 ---@return CraftSim.PreCraftBuffGateDefinition?
 function PCBG:GetQuickBarGateForSkillLine(skillLineID)
     for _, gate in ipairs(gates) do
-        if gate.implementsCraftQueuePrerequisite and gate.skillLineID == skillLineID and
+        if (gate.implementsCraftQueuePrerequisite or gate.quickBarEnabled) and gate.skillLineID == skillLineID and
             CraftSim.DB.OPTIONS:Get(gate.optionForceBuffKey) then
             return gate
         end
@@ -467,15 +470,22 @@ local function registerBuiltinGates()
         salvagedMoteOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_TWW_ENCHANT_SHATTER_MOTE_ITEMID,
     }
 
+    --[[ Disabled for now (can be re-enabled later as a full gate):
     PCBG:RegisterGate {
         id = CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.TWW_BLACKSMITH_EVERBURNING,
         profession = Enum.Profession.Blacksmithing,
         expansionID = CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN,
         buffID = CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION,
         optionForceBuffKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_EVERBURNING_IGNITION_FORCE_BUFF,
+        skillLineID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Blacksmithing]
+            [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN],
+        castRecipeID = CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.TWW_EVERBURNING_IGNITION,
+        quickBarEnabled = false,
+        quickBarUseItemID = 224765, -- Everburning Ignition item
         trackLoginStale = false,
         implementsCraftQueuePrerequisite = false,
     }
+    ]]
 end
 
 registerBuiltinGates()
