@@ -27,6 +27,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.crafterDB")
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
 ---@field concentrationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.ConcentrationData.Serialized>>
 ---@field favoriteRecipes table<Enum.Profession, RecipeID[]>
+---@field midnightShatterStaleAfterLogin boolean? CraftSim requires Midnight Shatter after a real login until cast; survives /reload
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -40,6 +41,20 @@ function CraftSim.DB.CRAFTER:Init()
     self.db = CraftSimDB.crafterDB
 
     CraftSimDB.crafterDB.data = CraftSimDB.crafterDB.data or {}
+end
+
+---@param crafterUID CrafterUID
+---@return boolean
+function CraftSim.DB.CRAFTER:GetMidnightShatterStaleAfterLogin(crafterUID)
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID]
+    return crafterData and crafterData.midnightShatterStaleAfterLogin == true
+end
+
+---@param crafterUID CrafterUID
+---@param stale boolean
+function CraftSim.DB.CRAFTER:SetMidnightShatterStaleAfterLogin(crafterUID, stale)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].midnightShatterStaleAfterLogin = not not stale
 end
 
 ---@param crafterUID CrafterUID

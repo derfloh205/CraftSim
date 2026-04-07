@@ -228,7 +228,8 @@ function CraftSim.BuffData:UpdateProfessionStats()
             CraftSim.CONST.ENCHANTING_SHATTER_BUFF_ASSUME_ACTIVE_FOR_STATS[buff.buffID] then
             -- For the midnight shattering essence buff, respect the craftqueue option
             if buff.buffID == CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT then
-                if CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
+                if CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) and
+                    not CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective() then
                     countTowardStats = true
                 end
             else

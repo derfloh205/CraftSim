@@ -30,6 +30,10 @@ function CraftSim.CraftQueueItem:new(options)
     --- Midnight enchanting: show queue Shatter step before Craft when essence buff is down
     self.needsMidnightShatterStep = false
     self.canCastMidnightShatter = false
+    --- Post-login reshatter required (buff may still read as active client-side).
+    self.midnightShatterDueToLoginStale = false
+    --- Shattering Essence not on the player.
+    self.midnightShatterDueToMissingBuff = false
     ---@type CraftSim.RecipeData?
     self.midnightShatterRecipeData = nil
     self.craftAbleAmount = 0
@@ -61,6 +65,8 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
 
     self.needsMidnightShatterStep = false
     self.canCastMidnightShatter = false
+    self.midnightShatterDueToLoginStale = false
+    self.midnightShatterDueToMissingBuff = false
     self.midnightShatterRecipeData = nil
 
     -- Midnight shatter: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
@@ -73,11 +79,16 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
         CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
         rd.buffData:Update()
         local buffActive = rd.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
-        local needShatter = not buffActive
+        --- Aura can linger after login with wrong stats until you shatter again (/reload is unchanged).
+        local staleEffective = CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective()
+        local needShatter = (not buffActive) or staleEffective
         if needShatter then
             local shatterRD = CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(rd.crafterData)
             if shatterRD then
                 self.needsMidnightShatterStep = true
+                --- Only surface "after login" when the aura is still present (reshatter to fix stats); if the buff is gone it's just missing buff.
+                self.midnightShatterDueToLoginStale = staleEffective and buffActive
+                self.midnightShatterDueToMissingBuff = not buffActive
                 self.midnightShatterRecipeData = shatterRD
                 self.canCastMidnightShatter = select(1, shatterRD:CanCraft(1))
             end

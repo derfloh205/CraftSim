@@ -7,6 +7,8 @@ CraftSim.LOCAL_KO = {}
 function CraftSim.LOCAL_KO:GetData()
     local f = CraftSim.GUTIL:GetFormatter()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
+    local shatter_post_login_tooltip = "\n\n" ..
+        f.white("접속 후 분쇄를 시전하면 표시되는 버프가 올바르게 맞춰집니다.\n알려진 버그입니다.")
     return {
         -- REQUIRED:
         STAT_MULTICRAFT = "복수 제작",
@@ -637,8 +639,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "자동 (최저가)",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "자동 (보유 중인 가장 저렴한 재료)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\n우클릭하여 티끌 선택.",
-        CRAFT_QUEUE_SHATTER_REAPPLY_AFTER_LOGIN = "\n\n" ..
-            f.white("접속 후 분쇄를 시전하면 표시되는 버프가 올바르게 맞춰집니다.\n알려진 버그입니다."),
+        CRAFT_QUEUE_SHATTER_TOOLTIP_AFTER_LOGIN = shatter_post_login_tooltip,
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Auctionator 쇼핑 목록 생성",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "제작 대기열",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = f.bb("제작 대기열") .. " 완료 시 작업표시줄 깜빡임",

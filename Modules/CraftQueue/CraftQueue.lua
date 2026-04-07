@@ -27,9 +27,8 @@ local QB_STATUS = {
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
-    "AUCTION_HOUSE_THROTTLED_SYSTEM_READY",
-    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED",
-    "BAG_UPDATE_DELAYED" })
+    "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
+    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -49,6 +48,100 @@ CraftSim.CRAFTQ.itemCountCache = nil
 
 --- Saved in DB as CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID for "cheapest owned" mode
 CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
+
+--- Synced from CrafterDB on PLAYER_ENTERING_WORLD so /reload keeps post-login shatter until you cast Shatter.
+CraftSim.CRAFTQ.midnightShatterStaleAfterLogin = false
+
+--- True briefly after shatter/salvage so UNIT_AURA can refresh the queue once the client applies Shattering Essence.
+CraftSim.CRAFTQ.awaitingMidnightShatterBuffApply = false
+
+---@type number?
+CraftSim.CRAFTQ._shatterRefreshGen = nil
+
+---@type number?
+CraftSim.CRAFTQ._shatterAuraDebounceGen = nil
+
+--- Shattering Essence often appears a few frames after TRADE_SKILL_ITEM_CRAFTED_RESULT; refresh until buff state matches.
+function CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+    self.awaitingMidnightShatterBuffApply = true
+    self._shatterRefreshGen = (self._shatterRefreshGen or 0) + 1
+    local gen = self._shatterRefreshGen
+    C_Timer.After(1.5, function()
+        if self._shatterRefreshGen == gen then
+            self.awaitingMidnightShatterBuffApply = false
+        end
+    end)
+
+    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    C_Timer.After(0.12, function()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end)
+    C_Timer.After(0.35, function()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end)
+    C_Timer.After(0.65, function()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
+    end)
+end
+
+function CraftSim.CRAFTQ:ClearMidnightShatterStaleAfterLoginPersisted()
+    self.midnightShatterStaleAfterLogin = false
+    CraftSim.DB.CRAFTER:SetMidnightShatterStaleAfterLogin(CraftSim.UTIL:GetPlayerCrafterUID(), false)
+end
+
+--- Persisted stale flag applies only to characters with Enchanting; avoids affecting other classes while keeping /reload sync for enchanters.
+---@return boolean
+function CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective()
+    if not CraftSim.UTIL:IsProfessionLearned(Enum.Profession.Enchanting) then
+        return false
+    end
+    return self.midnightShatterStaleAfterLogin
+end
+
+---@param unitTarget string
+function CraftSim.CRAFTQ:UNIT_AURA(unitTarget)
+    if unitTarget ~= "player" then
+        return
+    end
+    local qf = self.frame
+    if not qf or not qf:IsVisible() then
+        return
+    end
+    if not CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
+        return
+    end
+    local hasItems = self.craftQueue and #self.craftQueue.craftQueueItems > 0
+    if not hasItems and not self.awaitingMidnightShatterBuffApply then
+        local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+        local midnightEnchantingID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Enchanting][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
+        if skillLineID ~= midnightEnchantingID then
+            return
+        end
+    end
+    --- Buff gain, loss, or duration refresh must update the shatter step and quick bar; do not only refresh while awaiting a craft result.
+    self._shatterAuraDebounceGen = (self._shatterAuraDebounceGen or 0) + 1
+    local gen = self._shatterAuraDebounceGen
+    C_Timer.After(0.1, function()
+        if gen == self._shatterAuraDebounceGen then
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end
+    end)
+end
+
+--- Midnight shatter can finish without TRADE_SKILL tracking (buff was already present — only duration refreshes). Cast success clears post-login stale.
+---@param unitTarget string
+---@param castGUID WOWGUID
+---@param spellID number
+function CraftSim.CRAFTQ:UNIT_SPELLCAST_SUCCEEDED(unitTarget, castGUID, spellID)
+    if unitTarget ~= "player" then
+        return
+    end
+    if spellID ~= CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER then
+        return
+    end
+    CraftSim.CRAFTQ:ClearMidnightShatterStaleAfterLoginPersisted()
+    CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+end
 
 --- used to cache data for auctionator quick buy macro
 CraftSim.CRAFTQ.quickBuyCache = {
