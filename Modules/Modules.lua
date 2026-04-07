@@ -115,7 +115,8 @@ end
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
-    if not recipeInfo then
+	-- research recipes have additional properties like abilityVerb
+    if not recipeInfo or recipeInfo.abilityVerb then
         return nil
     end
 
