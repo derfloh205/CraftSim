@@ -395,6 +395,18 @@ end
 ---@param orderData CraftingOrderInfo
 ---@return table safeOrderData
 local function CopyOrderData(orderData)
+    -- Convert secret numbers (money values) to regular Lua numbers to prevent taint
+    -- propagation to Blizzard's shared order tables used by the patron orders list UI.
+    local npcOrderRewards = {}
+    if orderData.npcOrderRewards then
+        for i, reward in ipairs(orderData.npcOrderRewards) do
+            npcOrderRewards[i] = {
+                itemLink = tonumber(reward.itemLink) or 0,
+                count = tonumber(reward.count) or 0,
+                currencyID = tonumber(reward.currencyType),
+            }
+        end
+    end
     return {
         orderID = orderData.orderID,
         spellID = orderData.spellID,
@@ -404,12 +416,10 @@ local function CopyOrderData(orderData)
         customerNotes = orderData.customerNotes,
         minQuality = orderData.minQuality,
         reagents = orderData.reagents,
-        npcOrderRewards = orderData.npcOrderRewards,
+        npcOrderRewards = npcOrderRewards,
         isFulfillable = orderData.isFulfillable,
         reagentState = orderData.reagentState,
         outputItemHyperlink = orderData.outputItemHyperlink,
-        -- Convert secret numbers (money values) to regular Lua numbers to prevent taint
-        -- propagation to Blizzard's shared order tables used by the patron orders list UI.
         tipAmount = tonumber(orderData.tipAmount) or 0,
         consortiumCut = tonumber(orderData.consortiumCut) or 0,
     }
