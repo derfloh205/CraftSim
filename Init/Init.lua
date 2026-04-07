@@ -52,11 +52,7 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	end
 
 	local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-	CraftSim.CRAFTQ.midnightShatterStaleAfterLogin = CraftSim.DB.CRAFTER:GetMidnightShatterStaleAfterLogin(crafterUID)
-	if initialLogin and not isReloadingUI and CraftSim.UTIL:IsProfessionLearned(Enum.Profession.Enchanting) then
-		CraftSim.DB.CRAFTER:SetMidnightShatterStaleAfterLogin(crafterUID, true)
-		CraftSim.CRAFTQ.midnightShatterStaleAfterLogin = true
-	end
+	CraftSim.PRE_CRAFT_BUFF_GATE:OnPlayerEnteringWorld(initialLogin, isReloadingUI)
 
 	-- load craft queue
 	CraftSim.CRAFTQ:InitializeCraftQueue()

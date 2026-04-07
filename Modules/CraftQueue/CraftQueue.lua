@@ -46,101 +46,33 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
---- Saved in DB as CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID for "cheapest owned" mode
+--- Saved in DB for "cheapest owned" mote mode (midnight / TWW shatter); same sentinel as PreCraftBuffGate.
 CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
-
---- Synced from CrafterDB on PLAYER_ENTERING_WORLD so /reload keeps post-login shatter until you cast Shatter.
-CraftSim.CRAFTQ.midnightShatterStaleAfterLogin = false
-
---- True briefly after shatter/salvage so UNIT_AURA can refresh the queue once the client applies Shattering Essence.
-CraftSim.CRAFTQ.awaitingMidnightShatterBuffApply = false
-
----@type number?
-CraftSim.CRAFTQ._shatterRefreshGen = nil
-
----@type number?
-CraftSim.CRAFTQ._shatterAuraDebounceGen = nil
 
 --- Shattering Essence often appears a few frames after TRADE_SKILL_ITEM_CRAFTED_RESULT; refresh until buff state matches.
 function CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
-    self.awaitingMidnightShatterBuffApply = true
-    self._shatterRefreshGen = (self._shatterRefreshGen or 0) + 1
-    local gen = self._shatterRefreshGen
-    C_Timer.After(1.5, function()
-        if self._shatterRefreshGen == gen then
-            self.awaitingMidnightShatterBuffApply = false
-        end
-    end)
-
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
-    C_Timer.After(0.12, function()
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
-    end)
-    C_Timer.After(0.35, function()
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
-    end)
-    C_Timer.After(0.65, function()
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
-    end)
+    CraftSim.PRE_CRAFT_BUFF_GATE:ScheduleQueueDisplayRefreshForDelayedCraftingState()
 end
 
 function CraftSim.CRAFTQ:ClearMidnightShatterStaleAfterLoginPersisted()
-    self.midnightShatterStaleAfterLogin = false
-    CraftSim.DB.CRAFTER:SetMidnightShatterStaleAfterLogin(CraftSim.UTIL:GetPlayerCrafterUID(), false)
+    CraftSim.PRE_CRAFT_BUFF_GATE:ClearMidnightShatterStaleAfterLoginPersisted()
 end
 
---- Persisted stale flag applies only to characters with Enchanting; avoids affecting other classes while keeping /reload sync for enchanters.
 ---@return boolean
 function CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective()
-    if not CraftSim.UTIL:IsProfessionLearned(Enum.Profession.Enchanting) then
-        return false
-    end
-    return self.midnightShatterStaleAfterLogin
+    return CraftSim.PRE_CRAFT_BUFF_GATE:IsMidnightShatterStaleAfterLoginEffective()
 end
 
 ---@param unitTarget string
 function CraftSim.CRAFTQ:UNIT_AURA(unitTarget)
-    if unitTarget ~= "player" then
-        return
-    end
-    local qf = self.frame
-    if not qf or not qf:IsVisible() then
-        return
-    end
-    if not CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
-        return
-    end
-    local hasItems = self.craftQueue and #self.craftQueue.craftQueueItems > 0
-    if not hasItems and not self.awaitingMidnightShatterBuffApply then
-        local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-        local midnightEnchantingID = CraftSim.CONST.TRADESKILLLINEIDS[Enum.Profession.Enchanting][CraftSim.CONST.EXPANSION_IDS.MIDNIGHT]
-        if skillLineID ~= midnightEnchantingID then
-            return
-        end
-    end
-    --- Buff gain, loss, or duration refresh must update the shatter step and quick bar; do not only refresh while awaiting a craft result.
-    self._shatterAuraDebounceGen = (self._shatterAuraDebounceGen or 0) + 1
-    local gen = self._shatterAuraDebounceGen
-    C_Timer.After(0.1, function()
-        if gen == self._shatterAuraDebounceGen then
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
-        end
-    end)
+    CraftSim.PRE_CRAFT_BUFF_GATE:UNIT_AURA(unitTarget)
 end
 
---- Midnight shatter can finish without TRADE_SKILL tracking (buff was already present — only duration refreshes). Cast success clears post-login stale.
 ---@param unitTarget string
 ---@param castGUID WOWGUID
 ---@param spellID number
 function CraftSim.CRAFTQ:UNIT_SPELLCAST_SUCCEEDED(unitTarget, castGUID, spellID)
-    if unitTarget ~= "player" then
-        return
-    end
-    if spellID ~= CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER then
-        return
-    end
-    CraftSim.CRAFTQ:ClearMidnightShatterStaleAfterLoginPersisted()
-    CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+    CraftSim.PRE_CRAFT_BUFF_GATE:UNIT_SPELLCAST_SUCCEEDED(unitTarget, castGUID, spellID)
 end
 
 --- used to cache data for auctionator quick buy macro
@@ -163,78 +95,19 @@ CraftSim.CRAFTQ.quickBuyCache = {
 ---@param recipeData CraftSim.RecipeData
 ---@return ItemMixin?
 function CraftSim.CRAFTQ:ApplyMidnightEnchantShatterSalvageSelection(recipeData)
-    local slot = recipeData.reagentData.salvageReagentSlot
-    local savedID = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID)
-    if savedID == nil then
-        return slot:SetCheapestItem()
-    end
-    if savedID == self.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED then
-        return slot:SetCheapestOwnedItem()
-    end
-    local found = GUTIL:Find(slot.possibleItems, function(item)
-        return item:GetItemID() == savedID
-    end)
-    if found then
-        slot:SetItem(savedID)
-        return slot.activeItem
-    end
-    CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID, nil)
-    return slot:SetCheapestItem()
+    return CraftSim.PRE_CRAFT_BUFF_GATE:ApplySalvageSelectionFromOption(recipeData,
+        CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID)
 end
 
 ---@param crafterData CraftSim.CrafterData
 ---@return CraftSim.RecipeData?
 function CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(crafterData)
-    local rd = CraftSim.RecipeData({
-        recipeID = CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER,
-        crafterData = crafterData,
-    })
-    if not rd or not rd.learned then
-        return nil
-    end
-    self:ApplyMidnightEnchantShatterSalvageSelection(rd)
-    rd:Update()
-    return rd
+    return CraftSim.PRE_CRAFT_BUFF_GATE:PrepareMidnightEnchantShatterRecipeData(crafterData)
 end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
-    local optKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID
-    MenuUtil.CreateContextMenu(UIParent, function(_, rootDescription)
-        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC"), function()
-            return CraftSim.DB.OPTIONS:Get(optKey) == nil
-        end, function()
-            CraftSim.DB.OPTIONS:Save(optKey, nil)
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
-        end)
-        rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED"), function()
-            return CraftSim.DB.OPTIONS:Get(optKey) == CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED
-        end, function()
-            CraftSim.DB.OPTIONS:Save(optKey, CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED)
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
-        end)
-        for _, item in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
-            local itemID = item:GetItemID()
-            local itemName, itemLink = C_Item.GetItemInfo(itemID)
-            local displayText = itemLink or itemName or ("#" .. tostring(itemID))
-            local moteRadio = rootDescription:CreateRadio(displayText, function()
-                return CraftSim.DB.OPTIONS:Get(optKey) == itemID
-            end, function()
-                CraftSim.DB.OPTIONS:Save(optKey, itemID)
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
-            end)
-            moteRadio:SetTooltip(function(tooltip, _)
-                if tooltip.SetItemByID then
-                    tooltip:SetItemByID(itemID)
-                else
-                    local _, il = C_Item.GetItemInfo(itemID)
-                    if il and tooltip.SetHyperlink then
-                        tooltip:SetHyperlink(il)
-                    end
-                end
-            end)
-        end
-    end)
+    CraftSim.PRE_CRAFT_BUFF_GATE:ShowMidnightEnchantShatterMoteMenu(recipeData)
 end
 
 local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
