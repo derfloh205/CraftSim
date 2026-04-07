@@ -27,7 +27,8 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.crafterDB")
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
 ---@field concentrationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.ConcentrationData.Serialized>>
 ---@field favoriteRecipes table<Enum.Profession, RecipeID[]>
----@field midnightShatterStaleAfterLogin boolean? CraftSim requires Midnight Shatter after a real login until cast; survives /reload
+---@field midnightShatterStaleAfterLogin boolean? legacy; migrated to preCraftBuffStale["midnight_enchant_shatter"]
+---@field preCraftBuffStale table<string, boolean>? pre-craft buff gate ids -> post-login stale until cast
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -43,18 +44,53 @@ function CraftSim.DB.CRAFTER:Init()
     CraftSimDB.crafterDB.data = CraftSimDB.crafterDB.data or {}
 end
 
+--- Migrates legacy midnightShatterStaleAfterLogin into preCraftBuffStale once per crafter row.
 ---@param crafterUID CrafterUID
----@return boolean
-function CraftSim.DB.CRAFTER:GetMidnightShatterStaleAfterLogin(crafterUID)
+local function MigrateLegacyMidnightShatterStale(crafterUID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     local crafterData = CraftSimDB.crafterDB.data[crafterUID]
-    return crafterData and crafterData.midnightShatterStaleAfterLogin == true
+    if crafterData.midnightShatterStaleAfterLogin == nil then
+        return
+    end
+    crafterData.preCraftBuffStale = crafterData.preCraftBuffStale or {}
+    local gateId = CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER
+    if crafterData.midnightShatterStaleAfterLogin == true then
+        crafterData.preCraftBuffStale[gateId] = true
+    end
+    crafterData.midnightShatterStaleAfterLogin = nil
 end
 
 ---@param crafterUID CrafterUID
+---@param gateId string
+---@return boolean
+function CraftSim.DB.CRAFTER:GetPreCraftBuffStaleAfterLogin(crafterUID, gateId)
+    MigrateLegacyMidnightShatterStale(crafterUID)
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID]
+    return crafterData and crafterData.preCraftBuffStale and crafterData.preCraftBuffStale[gateId] == true
+end
+
+---@param crafterUID CrafterUID
+---@param gateId string
+---@param stale boolean
+function CraftSim.DB.CRAFTER:SetPreCraftBuffStaleAfterLogin(crafterUID, gateId, stale)
+    MigrateLegacyMidnightShatterStale(crafterUID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale = CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale or {}
+    CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale[gateId] = not not stale
+end
+
+---@deprecated use GetPreCraftBuffStaleAfterLogin with CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER
+---@param crafterUID CrafterUID
+---@return boolean
+function CraftSim.DB.CRAFTER:GetMidnightShatterStaleAfterLogin(crafterUID)
+    return self:GetPreCraftBuffStaleAfterLogin(crafterUID, CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER)
+end
+
+---@deprecated use SetPreCraftBuffStaleAfterLogin
+---@param crafterUID CrafterUID
 ---@param stale boolean
 function CraftSim.DB.CRAFTER:SetMidnightShatterStaleAfterLogin(crafterUID, stale)
-    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    CraftSimDB.crafterDB.data[crafterUID].midnightShatterStaleAfterLogin = not not stale
+    self:SetPreCraftBuffStaleAfterLogin(crafterUID, CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER, stale)
 end
 
 ---@param crafterUID CrafterUID
