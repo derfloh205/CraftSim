@@ -17,7 +17,7 @@
 ## Notes-zhCN: 根据您的专业统计数据和其他工具计算平均利润
 ## Notes-zhTW: 根據您的專業技能統計資料和其他工具計算平均利潤
 ## Author: genju
-## Version: 23.5.2
+## Version: 24.0.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -79,7 +79,6 @@ Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
 
 Modules/CraftQueue/CraftQueue.lua
-Modules/PreCraftBuffGate/PreCraftBuffGate.lua
 Modules/CraftQueue/CraftLists.lua
 Modules/CraftQueue/UI.lua
 
@@ -94,6 +93,9 @@ Modules/Statistics/UI.lua
 
 Modules/CraftLog/CraftLog.lua
 Modules/CraftLog/UI.lua
+
+Modules/PriceOverride/PriceOverride.lua
+Modules/PriceOverride/UI.lua
 
 Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/UI.lua
@@ -119,8 +121,11 @@ Modules/TopGear/UI.lua
 Modules/RecipeScan/RecipeScan.lua
 Modules/RecipeScan/UI.lua
 
-Modules/Pricing/Pricing.lua
-Modules/Pricing/UI.lua
+Modules/PriceDetails/PriceDetails.lua
+Modules/PriceDetails/UI.lua
+
+Modules/CostOptimization/CostOptimization.lua
+Modules/CostOptimization/UI.lua
 
 Modules/Supporters/Supporters.lua
 Modules/Supporters/UI.lua
