@@ -24,10 +24,6 @@ function CraftSim.ProfessionGearSet:new(recipeData)
 end
 
 function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
-    -- Always refresh: GetProfessionSlots can be empty/stale until the Professions Crafting (recipes) tab
-    -- has been shown at least once this session; cached values from :new() would then read wrong slots.
-    self.professionGearSlots = self.professionID and C_TradeSkillUI.GetProfessionSlots(self.professionID) or {}
-
     local crafterUID = self.recipeData:GetCrafterUID()
 
     if self.recipeData:IsCrafter() then
@@ -226,21 +222,82 @@ end
 
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
-    CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
-    C_Timer.After(1, function()
-        for _, professionGear in ipairs(self:GetProfessionGearList()) do
-            if professionGear.item then
-                CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
+
+    -- Load currently equipped gear to compare against the target
+    local equippedSet = CraftSim.ProfessionGearSet(self.recipeData)
+    equippedSet:LoadCurrentEquippedSet()
+
+    -- Tool slot: only equip if different, or unequip if target has none
+    if self.tool.item then
+        if not (equippedSet.tool.item and equippedSet.tool:Equals(self.tool)) then
+            CraftSim.GUTIL:EquipItemByLink(self.tool.item:GetItemLink())
+            EquipPendingItem(0)
+        end
+    elseif equippedSet.tool.item then
+        PickupInventoryItem(self.professionGearSlots[1])
+        PutItemInBackpack()
+    end
+
+    if self.isCooking then
+        -- Cooking only has one accessory slot (gear2)
+        if self.gear2.item then
+            if not (equippedSet.gear2.item and equippedSet.gear2:Equals(self.gear2)) then
+                CraftSim.GUTIL:EquipItemByLink(self.gear2.item:GetItemLink())
+                EquipPendingItem(0)
+            end
+        elseif equippedSet.gear2.item then
+            PickupInventoryItem(self.professionGearSlots[2])
+            PutItemInBackpack()
+        end
+    else
+        -- Non-cooking has two accessory slots; equip only what is not already equipped
+        if self.gear1.item then
+            local alreadyEquipped = (equippedSet.gear1.item and equippedSet.gear1:Equals(self.gear1)) or
+                (equippedSet.gear2.item and equippedSet.gear2:Equals(self.gear1))
+            if not alreadyEquipped then
+                CraftSim.GUTIL:EquipItemByLink(self.gear1.item:GetItemLink())
+                EquipPendingItem(0)
+            end
+        end
+        if self.gear2.item then
+            local alreadyEquipped = (equippedSet.gear1.item and equippedSet.gear1:Equals(self.gear2)) or
+                (equippedSet.gear2.item and equippedSet.gear2:Equals(self.gear2))
+            if not alreadyEquipped then
+                CraftSim.GUTIL:EquipItemByLink(self.gear2.item:GetItemLink())
                 EquipPendingItem(0)
             end
         end
 
-        CraftSim.TOPGEAR.IsEquipping = false
-        RunNextFrame(function()
-            if CraftSim.CRAFTQ and CraftSim.CRAFTQ.UI then
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+        -- When target has fewer accessories than currently equipped, unequip the extras.
+        -- After the equip calls above, any slot whose item is not in the target set must be emptied.
+        if not self.gear1.item or not self.gear2.item then
+            local function isLinkInTarget(itemLink)
+                if not itemLink then return true end
+                local normalized = itemLink:gsub("Player.-:", "")
+                if self.gear1.item and self.gear1.item:GetItemLink():gsub("Player.-:", "") == normalized then
+                    return true
+                end
+                if self.gear2.item and self.gear2.item:GetItemLink():gsub("Player.-:", "") == normalized then
+                    return true
+                end
+                return false
             end
-        end)
+            local slot2Link = GetInventoryItemLink("player", self.professionGearSlots[2])
+            if not isLinkInTarget(slot2Link) then
+                PickupInventoryItem(self.professionGearSlots[2])
+                PutItemInBackpack()
+            end
+            local slot3Link = GetInventoryItemLink("player", self.professionGearSlots[3])
+            if not isLinkInTarget(slot3Link) then
+                PickupInventoryItem(self.professionGearSlots[3])
+                PutItemInBackpack()
+            end
+        end
+    end
+
+    CraftSim.TOPGEAR.IsEquipping = false
+    RunNextFrame(function()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
     end)
 end
 

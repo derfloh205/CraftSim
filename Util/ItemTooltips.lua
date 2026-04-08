@@ -181,7 +181,5 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
                 registeredUIDs,
                 CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX)))
         end
-
-        tooltip:Show()
     end)
 end

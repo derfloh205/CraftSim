@@ -5,6 +5,8 @@ import shutil
 
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse", "CurrencyTypes", "CurrencyCategory"]
 
+CRAFTING_CURRENCY_FLAG = 35913922
+
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/OptionalReagentData.lua", "../../Data/OptionalReagentData.lua")
     shutil.copy(f"_Result/{buildVersion}/OptionalCurrencyReagentData.lua", "../../Data/OptionalCurrencyReagentData.lua")
@@ -34,7 +36,7 @@ def map(buildVersion):
     optionalReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "18"}})
     finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
     sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11"}})
-    currencyReagents = wagoTools.searchTable(CurrencyTypes, {"conditions": {"CategoryID": "268", "Flags_0": "2359490"}}) # 268 is Midnight Season 1 and Flags_0 differentiates from non-crafting currencies (i.e. Coffer Keys & Shards and Spark residue)
+    currencyReagents = wagoTools.searchTable(CurrencyTypes, {"conditions": {"CategoryID": "268", "Flags_0": str(CRAFTING_CURRENCY_FLAG)}}) # 268 is Midnight Season 1 and Flags_0 differentiates from non-crafting currencies (i.e. Coffer Keys & Shards and Spark residue)
     #sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11", "CraftingQualityID": "0"}})
     # Filter to recieve spark reagents only
     #sparkReagents = [sparkReagent for sparkReagent in sparkReagents if int(sparkReagent["ModifiedCraftingReagentItemID"]) > 0]
