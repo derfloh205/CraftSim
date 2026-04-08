@@ -387,47 +387,9 @@ function CraftSim.RecipeData:new(options)
     end
 end
 
---- Creates a safe copy of CraftingOrderInfo to avoid tainting Blizzard's shared order tables.
---- tipAmount and consortiumCut are "secret numbers" in WoW that become tainted when read from
---- insecure addon code. By copying them via tonumber() into a new table, we ensure CraftSim
---- works with its own data and does not taint the original Blizzard order objects that the
---- patron orders list UI (and its money tooltips) rely on.
----@param orderData CraftingOrderInfo
----@return table safeOrderData
-local function CopyOrderData(orderData)
-    -- Convert secret numbers (money values) to regular Lua numbers to prevent taint
-    -- propagation to Blizzard's shared order tables used by the patron orders list UI.
-    local npcOrderRewards = {}
-    if orderData.npcOrderRewards then
-        for i, reward in ipairs(orderData.npcOrderRewards) do
-            npcOrderRewards[i] = {
-                itemLink = tonumber(reward.itemLink) or 0,
-                count = tonumber(reward.count) or 0,
-                currencyID = tonumber(reward.currencyType),
-            }
-        end
-    end
-    return {
-        orderID = orderData.orderID,
-        spellID = orderData.spellID,
-        isRecraft = orderData.isRecraft,
-        orderType = orderData.orderType,
-        customerName = orderData.customerName,
-        customerNotes = orderData.customerNotes,
-        minQuality = orderData.minQuality,
-        reagents = orderData.reagents,
-        npcOrderRewards = npcOrderRewards,
-        isFulfillable = orderData.isFulfillable,
-        reagentState = orderData.reagentState,
-        outputItemHyperlink = orderData.outputItemHyperlink,
-        tipAmount = tonumber(orderData.tipAmount) or 0,
-        consortiumCut = tonumber(orderData.consortiumCut) or 0,
-    }
-end
-
 ---@param orderData CraftingOrderInfo
 function CraftSim.RecipeData:SetOrder(orderData)
-    self.orderData = CopyOrderData(orderData)
+    self.orderData = GUTIL:CopyTableDeep(orderData or {}) -- avoid taint
     self.isRecraft = self.orderData.isRecraft
     self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
         self.orderData.orderID, self.concentrating)
