@@ -12,6 +12,22 @@ CraftSim.CRAFT_LISTS = {}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
 
+---@param list CraftSim.CraftList
+---@return CraftSim.CraftListRecipeEntry[]
+local function GetRecipeEntries(list)
+    if list.recipeEntries and #list.recipeEntries > 0 then
+        return list.recipeEntries
+    end
+    local entries = {}
+    for _, recipeID in ipairs(list.recipeIDs or {}) do
+        tinsert(entries, {
+            recipeID = recipeID,
+            restockMaxAmount = 0,
+        })
+    end
+    return entries
+end
+
 --- Returns a sort-priority comparator for smart cooldown / soulbound triage.
 --- Concentrating recipes always outrank non-concentrating ones.
 --- Among concentrating items, sort by concentration value (from GetConcentrationValue()).
@@ -191,7 +207,8 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
-    if not list or not list.recipeIDs or #list.recipeIDs == 0 then
+    local recipeEntries = list and GetRecipeEntries(list) or {}
+    if not list or #recipeEntries == 0 then
         if finally then finally() end
         return
     end
@@ -200,7 +217,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
-    ---@type CraftSim.RecipeData[]
+    ---@type { recipeData: CraftSim.RecipeData, maxQueueAmount: number?, fromCraftListRestock: boolean?, craftListBracketCount: number? }[]
     local optimizedRecipes = {}
 
     local queueListsButton = CraftSim.CRAFTQ.frame and
@@ -215,25 +232,27 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             local crafterUIDProfessionMap = {}
 
             -- need to map per crafter and per skillline id cause they are all individual concentration currencies
-            for _, recipeData in ipairs(optimizedRecipes) do
+            for _, optimizedData in ipairs(optimizedRecipes) do
+                local recipeData = optimizedData.recipeData
                 if recipeData.concentrating and recipeData.concentrationCost > 0 then
                     local professionSkillLineID = recipeData.professionData.skillLineID
                     local crafterUID = recipeData:GetCrafterUID()
                     crafterUIDProfessionMap[crafterUID] = crafterUIDProfessionMap[crafterUID] or {}
                     crafterUIDProfessionMap[crafterUID][professionSkillLineID] = crafterUIDProfessionMap[crafterUID][professionSkillLineID] or {}
-                    tinsert(crafterUIDProfessionMap[crafterUID][professionSkillLineID], recipeData)
+                    tinsert(crafterUIDProfessionMap[crafterUID][professionSkillLineID], optimizedData)
                 end
             end
 
             for crafterUID, professionMap in pairs(crafterUIDProfessionMap) do
-                for professionSkillLineID, recipeDataList in pairs(professionMap) do
-                    local concentrationData = recipeDataList[1].concentrationData
-                    table.sort(recipeDataList,
-                        function(recipeDataA, recipeDataB)
-                            return recipeDataA:GetConcentrationValue() > recipeDataB:GetConcentrationValue()
+                for professionSkillLineID, optimizedDataList in pairs(professionMap) do
+                    local concentrationData = optimizedDataList[1].recipeData.concentrationData
+                    table.sort(optimizedDataList,
+                        function(dataA, dataB)
+                            return dataA.recipeData:GetConcentrationValue() > dataB.recipeData:GetConcentrationValue()
                         end)
                     local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
-                    for _, recipeData in ipairs(recipeDataList) do
+                    for _, optimizedData in ipairs(optimizedDataList) do
+                        local recipeData = optimizedData.recipeData
                         if recipeData.concentrationCost > 0 then
                             local concentrationCosts = recipeData.concentrationCost
                             if options.offsetConcentrationCraftAmount then
@@ -250,21 +269,32 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                             if queueableAmount > 0 then
                                 local offsetAmount = tonumber(options.offsetQueueAmount) or 0
                                 local totalAmount = queueableAmount + offsetAmount
+                                if optimizedData.maxQueueAmount then
+                                    totalAmount = math.min(totalAmount, optimizedData.maxQueueAmount)
+                                end
 
                                 -- if its a cd recipe, always queue current charge amount at maximum
                                 if recipeData.cooldownData.isCooldownRecipe then
                                     totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
                                 end
 
-                                CraftSim.CRAFTQ:AddRecipe {
-                                    recipeData = recipeData,
-                                    amount = totalAmount,
-                                    splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
-                                }
+                                if totalAmount > 0 then
+                                    local bracketCount = optimizedData.craftListBracketCount
+                                    if bracketCount and not optimizedData.fromCraftListRestock then
+                                        bracketCount = math.min(bracketCount, totalAmount)
+                                    end
+                                    CraftSim.CRAFTQ:AddRecipe {
+                                        recipeData = recipeData,
+                                        amount = totalAmount,
+                                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                                        fromCraftListRestock = optimizedData.fromCraftListRestock == true,
+                                        craftListBracketCount = bracketCount,
+                                    }
 
-                                -- Update last crafting cost DB if option is enabled
-                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                                    CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                                    -- Update last crafting cost DB if option is enabled
+                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                                    end
                                 end
 
                                 currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
@@ -279,9 +309,76 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         end
     end
 
+    ---@param recipeData CraftSim.RecipeData
+    ---@param recipeEntry CraftSim.CraftListRecipeEntry
+    ---@return number queueAmount
+    ---@return { target: number, owned: number, queue: number }? restockDebug
+    ---@return boolean fromCraftListRestock
+    ---@return number? craftListBracketCount shown as `[n]` on queue rows (restock target or TSM-derived amount), like craft list tab
+    local function getQueueAmount(recipeData, recipeEntry)
+        local offsetAmount = tonumber(options.offsetQueueAmount) or 0
+        local totalAmount = 1 + offsetAmount
+        local restockDebug = nil
+        local fromCraftListRestock = false
+        local tsmSetAmount = false
+
+        -- Use TSM restock expression if enabled and available
+        if options.useTSMRestockExpression and TSM_API
+            and recipeData.resultData and recipeData.resultData.expectedItem then
+            local itemLink = recipeData.resultData.expectedItem:GetItemLink()
+            if itemLink then
+                local tsmItemString = TSM_API.ToItemString(itemLink)
+                if tsmItemString then
+                    local tsmAmount = TSM_API.GetCustomPriceValue(
+                        options.tsmRestockExpression or "1",
+                        tsmItemString) or 0
+                    totalAmount = tsmAmount + offsetAmount
+                    tsmSetAmount = true
+                end
+            end
+        end
+
+        local target = math.max(0, tonumber(recipeEntry and recipeEntry.restockMaxAmount) or 0)
+        if target > 0 and recipeEntry and recipeData.resultData and recipeData.resultData.expectedItem then
+            local itemID = recipeData.resultData.expectedItem:GetItemID()
+            if itemID then
+                fromCraftListRestock = true
+                local subtractOwned = CraftSim.DB.OPTIONS:Get(
+                    CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED)
+                if subtractOwned then
+                    local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false) or 0
+                    totalAmount = math.max(0, target - owned)
+                    restockDebug = { target = target, owned = owned, queue = totalAmount }
+                else
+                    totalAmount = target
+                    restockDebug = { target = target, owned = 0, queue = totalAmount }
+                end
+            end
+        end
+
+        -- if its a cd recipe, always queue maximum based on charges
+        if recipeData.cooldownData.isCooldownRecipe then
+            totalAmount = math.min(totalAmount, recipeData.cooldownData:GetCurrentCharges())
+        end
+
+        if restockDebug then
+            restockDebug.queue = totalAmount
+        end
+
+        local craftListBracketCount = nil
+        if fromCraftListRestock and target > 0 then
+            craftListBracketCount = target
+        elseif tsmSetAmount and totalAmount > 0 then
+            craftListBracketCount = totalAmount
+        end
+
+        return totalAmount, restockDebug, fromCraftListRestock, craftListBracketCount
+    end
+
     ---@param frameDistributor GUTIL.FrameDistributor
-    ---@param recipeID RecipeID
-    local function processRecipe(frameDistributor, recipeID)
+    ---@param recipeEntry CraftSim.CraftListRecipeEntry
+    local function processRecipe(frameDistributor, recipeEntry)
+        local recipeID = recipeEntry.recipeID
         -- Try Cache
         local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
         if not recipeInfo and CraftSim.UTIL:GetPlayerCrafterUID() == crafterUID then
@@ -401,41 +498,39 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end,
             } or nil,
             finally = function()
+                local queueAmount, restockDebug, fromCraftListRestock, craftListBracketCount =
+                    getQueueAmount(recipeData, recipeEntry)
+                if restockDebug then
+                    local recipeName = recipeData.recipeName or ("RecipeID " .. tostring(recipeData.recipeID))
+                    print(string.format(
+                        "Craft List Restock - %s: Target %d, Owned %d, Queueing %d",
+                        recipeName,
+                        restockDebug.target,
+                        restockDebug.owned,
+                        restockDebug.queue), false, false, 1)
+                end
                 if options.enableConcentration and options.smartConcentrationQueuing then
-                    tinsert(optimizedRecipes, recipeData)
-                else
-                    local offsetAmount = tonumber(options.offsetQueueAmount) or 0
-                    local totalAmount = 1 + offsetAmount
-
-                    -- Use TSM restock expression if enabled and available
-                    if options.useTSMRestockExpression and TSM_API
-                        and recipeData.resultData and recipeData.resultData.expectedItem then
-                        local itemLink = recipeData.resultData.expectedItem:GetItemLink()
-                        if itemLink then
-                            local tsmItemString = TSM_API.ToItemString(itemLink)
-                            if tsmItemString then
-                                local tsmAmount = TSM_API.GetCustomPriceValue(
-                                    options.tsmRestockExpression or "1",
-                                    tsmItemString) or 0
-                                totalAmount = tsmAmount + offsetAmount
-                            end
-                        end
-                    end
-
-                    -- if its a cd recipe, always queue maximum based on charges
-                    if recipeData.cooldownData.isCooldownRecipe then
-                        totalAmount = recipeData.cooldownData:GetCurrentCharges()
-                    end
-                    CraftSim.CRAFTQ:AddRecipe {
+                    tinsert(optimizedRecipes, {
                         recipeData = recipeData,
-                        amount = totalAmount,
-                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
-                    }
-                    CraftSim.CRAFTQ.UI:UpdateDisplay()
+                        maxQueueAmount = queueAmount,
+                        fromCraftListRestock = fromCraftListRestock,
+                        craftListBracketCount = craftListBracketCount,
+                    })
+                else
+                    if queueAmount > 0 then
+                        CraftSim.CRAFTQ:AddRecipe {
+                            recipeData = recipeData,
+                            amount = queueAmount,
+                            splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                            fromCraftListRestock = fromCraftListRestock == true,
+                            craftListBracketCount = craftListBracketCount,
+                        }
+                        CraftSim.CRAFTQ.UI:UpdateDisplay()
 
-                    -- Update last crafting cost DB if option is enabled
-                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                        -- Update last crafting cost DB if option is enabled
+                        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                            CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
+                        end
                     end
                 end
                 frameDistributor:Continue()
@@ -444,15 +539,15 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     end
 
     GUTIL.FrameDistributor {
-        iterationTable = list.recipeIDs,
+        iterationTable = recipeEntries,
         iterationsPerFrame = 1,
         maxIterations = 1000,
         finally = function()
             finalizeList()
             if finally then finally() end
         end,
-        continue = function(frameDistributor, _, recipeID)
-            processRecipe(frameDistributor, recipeID)
+        continue = function(frameDistributor, _, recipeEntry)
+            processRecipe(frameDistributor, recipeEntry)
         end,
     }:Continue()
 end

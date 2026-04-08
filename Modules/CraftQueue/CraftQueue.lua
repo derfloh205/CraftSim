@@ -550,6 +550,8 @@ end
 
 ---@class CraftSim.CRAFTQ.AddRecipe.Options : CraftSim.CraftQueueItem.Options
 ---@field splitSoulboundFinishingReagent? boolean when true, split the queue entry into a soulbound-finisher version and a non-soulbound version based on how many of the soulbound finishing reagent the crafter owns
+---@field fromCraftListRestock? boolean
+---@field craftListBracketCount? number
 
 ---@param options CraftSim.CRAFTQ.AddRecipe.Options
 function CraftSim.CRAFTQ:AddRecipe(options)
@@ -578,7 +580,12 @@ function CraftSim.CRAFTQ:AddRecipe(options)
             local nonSoulboundAmount = amount - soulboundAmount
 
             if soulboundAmount > 0 then
-                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = soulboundAmount })
+                CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                    recipeData = recipeData,
+                    amount = soulboundAmount,
+                    fromCraftListRestock = options.fromCraftListRestock == true,
+                    craftListBracketCount = options.craftListBracketCount,
+                })
             end
 
             if nonSoulboundAmount > 0 then
@@ -594,7 +601,12 @@ function CraftSim.CRAFTQ:AddRecipe(options)
                     end
                 end
                 recipeDataCopy:Update()
-                CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeDataCopy, amount = nonSoulboundAmount })
+                CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                    recipeData = recipeDataCopy,
+                    amount = nonSoulboundAmount,
+                    fromCraftListRestock = options.fromCraftListRestock == true,
+                    craftListBracketCount = options.craftListBracketCount,
+                })
             end
 
             finalizeAdd()
@@ -605,6 +617,8 @@ function CraftSim.CRAFTQ:AddRecipe(options)
     CraftSim.CRAFTQ.craftQueue:AddRecipe({
         recipeData = recipeData,
         amount = amount,
+        fromCraftListRestock = options.fromCraftListRestock == true,
+        craftListBracketCount = options.craftListBracketCount,
     })
 
     finalizeAdd()
@@ -1003,6 +1017,10 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     local qFrame = CraftSim.CRAFTQ.frame
     if qFrame and qFrame:IsVisible() then
         CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+        -- Equip / unequip updates inventory after a delay; refresh queue gear state unless mid Equip() sequence.
+        if not CraftSim.TOPGEAR.IsEquipping then
+            CraftSim.CRAFTQ.UI:UpdateDisplay()
+        end
     end
 end
 

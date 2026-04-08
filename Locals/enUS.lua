@@ -853,15 +853,18 @@ greater or equal the configured sale rate threshold.
             f.bb("Shattering Essence") .. " buff to be active before crafting Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
-        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for " ..
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("Force ") ..
+            f.bb("Shattering Essence") .. " buff for " ..
             CraftSim.GUTIL:ColorizeText("The War Within", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Enchanting",
         CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
             f.bb("Shattering Essence") .. " buff to be active before crafting TWW Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
-        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("Force ") .. f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("Force ") ..
+        f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
         CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will assume " ..
-            f.bb("Everburning Ignition") .. " is active during stat optimization when the buff is not detected on the player.\n\n" ..
+            f.bb("Everburning Ignition") ..
+            " is active during stat optimization when the buff is not detected on the player.\n\n" ..
             "This does not add a Shatter-style prerequisite row to the craft queue.",
         CRAFT_QUEUE_HELP = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
             f.bb("Right Click") .. " .. Open Recipe Options\n" ..
@@ -913,12 +916,19 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "Restock Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "Offset Queue Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
+        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after Queue",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
             " database is updated for each recipe when queuing craft lists.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("No list selected"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("Select a list to view recipes"),
+        CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "Restock: ",
+        CRAFT_LISTS_RECIPE_RESTOCK_TAG = "Restock",
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "Restock target (0 = off)",
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("0 disables restock for this recipe."),
 
         -- craft buffs
 
