@@ -517,6 +517,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                             if queueAble then
                                                 if isPublicOrder then
+                                                    if order.isFulfillable == false then
+                                                        distributor:Continue()
+                                                        return
+                                                    end
                                                     if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") or recipeData.averageProfitCached > 0 then
                                                         tinsert(publicOrderCandidates, {
                                                             recipeData = recipeData,
