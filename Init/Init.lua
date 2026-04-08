@@ -51,6 +51,9 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 		CraftSim.DB.MULTICRAFT_PRELOAD:ClearAll()
 	end
 
+	local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+	CraftSim.PRE_CRAFT_BUFF_GATE:OnPlayerEnteringWorld(initialLogin, isReloadingUI)
+
 	-- load craft queue
 	CraftSim.CRAFTQ:InitializeCraftQueue()
 end
@@ -328,17 +331,15 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.AVERAGEPROFIT.UI:Init()
 		CraftSim.EXPLANATIONS.UI:Init()
 		CraftSim.TOPGEAR.UI:Init()
-		CraftSim.PRICE_DETAILS.UI:Init()
 		CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 		CraftSim.SPECIALIZATION_INFO.UI:Init()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
 		CraftSim.SIMULATION_MODE.UI:Init()
-		CraftSim.PRICE_OVERRIDE.UI:Init()
 		CraftSim.RECIPE_SCAN.UI:Init()
 		CraftSim.CRAFT_LOG.UI:Init()
 		CraftSim.STATISTICS.UI:Init()
 		CraftSim.CUSTOMER_HISTORY.UI:Init()
-		CraftSim.COST_OPTIMIZATION.UI:Init()
+		CraftSim.PRICING.UI:Init()
 		CraftSim.SUPPORTERS.UI:Init()
 		CraftSim.CRAFTQ.UI:Init()
 		CraftSim.CRAFT_BUFFS.UI:Init()
@@ -410,13 +411,13 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			RunNextFrame(function()
 				-- triggers the server request without any visible UI flicker.
 				if (not craftingOrdersPreloadedThisSession
-					and C_CraftingOrders.ShouldShowCraftingOrderTab()
-					and ProfessionsFrame.isCraftingOrdersTabEnabled) then
-							if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-								craftingOrdersPreloadedThisSession = true
-								ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
-								ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
-							end
+						and C_CraftingOrders.ShouldShowCraftingOrderTab()
+						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
+					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
+						craftingOrdersPreloadedThisSession = true
+						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
+						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
+					end
 				end
 			end)
 		end)
