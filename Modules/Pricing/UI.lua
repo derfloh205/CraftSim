@@ -18,7 +18,7 @@ local f = CraftSim.GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
 function CraftSim.PRICING.UI:Init()
-    local sizeX = 700
+    local sizeX = 600
     local sizeY = 280
     local offsetX = -5
     local offsetY = -120
@@ -81,7 +81,7 @@ function CraftSim.PRICING.UI:Init()
             anchorA = "TOP",
             anchorB = "BOTTOM",
             offsetX = -30,
-            offsetY = -15,
+            offsetY = -10,
             text = L("PRICING_CRAFTING_COSTS"),
         })
         content.craftingCostsValue = GGUI.Text({
@@ -108,11 +108,12 @@ function CraftSim.PRICING.UI:Init()
         content.reagentList = GGUI.FrameList({
             parent = content,
             anchorParent = content,
-            anchorA = "TOPLEFT",
-            anchorB = "TOPLEFT",
-            offsetY = -55,
+            anchorA = "BOTTOMLEFT",
+            anchorB = "BOTTOMLEFT",
+            offsetY = 5,
             offsetX = 5,
             sizeY = 190,
+            rowHeight = 20,
             showBorder = true,
             savedVariablesTableLayoutConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
                 ["PRICING_REAGENT_LIST"],
@@ -221,9 +222,9 @@ function CraftSim.PRICING.UI:Init()
                 itemColumn.itemIcon = GGUI.Icon({
                     parent = itemColumn,
                     anchorParent = itemColumn,
-                    sizeX = 25,
-                    sizeY = 25,
-                    qualityIconScale = 1.4
+                    sizeX = 20,
+                    sizeY = 20,
+                    qualityIconScale = 1.3
                 })
 
                 priceColumn.text = GGUI.Text({
@@ -234,13 +235,15 @@ function CraftSim.PRICING.UI:Init()
                     justifyOptions = { type = "H", align = "LEFT" },
                     text = CraftSim.UTIL:FormatMoney(123456789),
                     fixedWidth = 110,
+                    scale = 0.9,
                 })
 
                 sourceColumn.text = GGUI.Text({
                     parent = sourceColumn,
                     anchorParent = sourceColumn,
                     text = CraftSim.GUTIL:ColorizeText(
-                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN)
+                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN),
+                    scale = 0.9,
                 })
                 function sourceColumn:SetAH()
                     sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
@@ -267,7 +270,7 @@ function CraftSim.PRICING.UI:Init()
             anchorParent = content.reagentList.frame,
             anchorA = "TOPLEFT",
             anchorB = "TOPRIGHT",
-            offsetX = 5,
+            offsetX = 20,
             sizeY = 190,
             showBorder = true,
             selectionOptions = {
@@ -350,11 +353,11 @@ function CraftSim.PRICING.UI:Init()
                 },
                 {
                     label = L("PRICE_DETAILS_PRICE_ITEM"),
-                    width = 110,
+                    width = 90,
                 },
                 {
                     label = L("PRICING_AVG_CRAFTING_COST"),
-                    width = 130,
+                    width = 90,
                 },
             },
             rowConstructor = function(columns)
@@ -364,29 +367,31 @@ function CraftSim.PRICING.UI:Init()
                 local avgCostColumn = columns[4]
 
                 invColumn.text = GGUI.Text({
-                    parent = invColumn, anchorParent = invColumn
+                    parent = invColumn, anchorParent = invColumn, scale = 0.9,
                 })
 
                 itemColumn.icon = GGUI.Icon({
                     parent = itemColumn,
                     anchorParent = itemColumn,
-                    sizeX = 25,
-                    sizeY = 25,
-                    qualityIconScale = 1.4
+                    sizeX = 20,
+                    sizeY = 20,
+                    qualityIconScale = 1.3
                 })
 
                 priceColumn.text = GGUI.Text({
                     parent = priceColumn,
                     anchorParent = priceColumn,
                     justifyOptions = { type = "H", align = "LEFT" },
-                    fixedWidth = priceColumn:GetWidth()
+                    fixedWidth = priceColumn:GetWidth(),
+                    scale = 0.9,
                 })
 
                 avgCostColumn.text = GGUI.Text({
                     parent = avgCostColumn,
                     anchorParent = avgCostColumn,
                     justifyOptions = { type = "H", align = "LEFT" },
-                    fixedWidth = avgCostColumn:GetWidth()
+                    fixedWidth = avgCostColumn:GetWidth(),
+                    scale = 0.9,
                 })
             end
         })

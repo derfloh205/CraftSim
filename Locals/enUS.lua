@@ -260,7 +260,7 @@ function CraftSim.LOCAL_EN:GetData()
         PRICING_ITEM_HEADER = "Item",
         COST_OPTIMIZATION_PRICE_HEADER = "Price",
         COST_OPTIMIZATION_USED_SOURCE = "Source",
-        PRICING_AVG_CRAFTING_COST = "Avg Crafting Cost",
+        PRICING_AVG_CRAFTING_COST = "Ø Craft Cost",
         COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP = "If enabled " ..
             f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") ..
             " of your character and your alts\nif they are able to craft that item.\n\n" ..
