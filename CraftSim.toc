@@ -120,8 +120,8 @@ Modules/RecipeScan/UI.lua
 Modules/PriceDetails/PriceDetails.lua
 Modules/PriceDetails/UI.lua
 
-Modules/CostOptimization/CostOptimization.lua
-Modules/CostOptimization/UI.lua
+Modules/Pricing/Pricing.lua
+Modules/Pricing/UI.lua
 
 Modules/Supporters/Supporters.lua
 Modules/Supporters/UI.lua
