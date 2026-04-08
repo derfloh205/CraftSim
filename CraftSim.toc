@@ -118,9 +118,6 @@ Modules/TopGear/UI.lua
 Modules/RecipeScan/RecipeScan.lua
 Modules/RecipeScan/UI.lua
 
-Modules/PriceDetails/PriceDetails.lua
-Modules/PriceDetails/UI.lua
-
 Modules/Pricing/Pricing.lua
 Modules/Pricing/UI.lua
 
