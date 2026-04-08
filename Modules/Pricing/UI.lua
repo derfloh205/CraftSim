@@ -92,12 +92,24 @@ function CraftSim.PRICING.UI:Init()
             justifyOptions = { type = "H", align = "LEFT" }
         })
 
+        content.optionsButton = CraftSim.WIDGETS.OptionsButton {
+            parent = content,
+            anchorPoints = {
+                { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 }
+            },
+            menu = function(ownerRegion, rootDescription)
+                rootDescription:CreateButton(f.r(L("PRICING_DELETE_ALL_OVERRIDES")), function()
+                    CraftSim.DB.PRICE_OVERRIDE:ClearAll()
+                    CraftSim.MODULES:UpdateUI()
+                end)
+            end
+        }
         GGUI.HelpIcon({
             parent = content,
             anchorParent = frame.title.frame,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            offsetX = 5,
+            offsetX = 20,
             text = L("PRICING_EXPLANATION")
         })
 
