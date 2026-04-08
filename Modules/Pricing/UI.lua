@@ -598,7 +598,9 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                     ((priceOverride and f.l(" (OR)")) or ""))
 
                 local avgCraftingCost = priceData.averageCraftingCosts
-                avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(avgCraftingCost))
+                local averageYield = resultData.expectedYieldPerCraft
+                local avgCraftingCostPerItem = avgCraftingCost / averageYield
+                avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(avgCraftingCostPerItem))
 
                 local itemCount = C_Item.GetItemCount(itemLink, true, false, true) or 0
                 local ahCount = CraftSim.PRICE_SOURCE:GetAuctionAmount(itemLink) or 0
@@ -613,7 +615,7 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 row.recipeID = recipeData.recipeID
                 row.qualityID = qualityID
                 row.price = price
-                row.avgCraftingCost = avgCraftingCost
+                row.avgCraftingCost = avgCraftingCostPerItem
                 row.invCount = itemCount
                 row.ahCount = ahCount
 
@@ -624,7 +626,7 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                         f.l(" (" .. L("SOURCE_COLUMN_OVERRIDE") .. ")")
                 end
                 tooltipText = tooltipText .. "\n" ..
-                    f.white(L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCost))
+                    f.white(L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCostPerItem))
 
                 row.tooltipOptions = {
                     anchor = "ANCHOR_CURSOR",

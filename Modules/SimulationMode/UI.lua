@@ -136,20 +136,21 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
     local function createSimulationModeFrames(schematicForm, workOrder)
         local frames = {}
-        -- CHECK BUTTON
-        local clickCallback = function(self)
-            print("sim mode click callback")
-            CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
-            local bestQBox = schematicForm.AllocateBestQualityCheckbox
-            if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
-                bestQBox:Click()
-            end
-            if CraftSim.SIMULATION_MODE.isActive then
-                CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
-            end
+        local clickCallback =
+        ---@param self GGUI.Checkbox
+            function(self)
+                print("sim mode click callback")
+                CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
+                local bestQBox = schematicForm.AllocateBestQualityCheckbox
+                if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
+                    bestQBox:Click()
+                end
+                if CraftSim.SIMULATION_MODE.isActive then
+                    CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
+                end
 
-            CraftSim.MODULES:UpdateUI()
-        end
+                CraftSim.MODULES:UpdateUI()
+            end
 
         frames.toggleButton = GGUI.Checkbox {
             parent = schematicForm,
@@ -160,7 +161,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             offsetY = 40,
             label = L("SIMULATION_MODE_LABEL"),
             tooltip = L("SIMULATION_MODE_TOOLTIP"),
-            onClickCallback = clickCallback,
+            clickCallback = clickCallback,
         }
 
         frames.toggleButton:Hide()
