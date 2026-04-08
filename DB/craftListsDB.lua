@@ -389,21 +389,25 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
 
             if #allRecipeIDs > 0 then
                 local listName = crafterUID .. " Favorites"
-                CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or {}
+                CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or
+                {}
                 local options = DefaultOptions()
                 if CraftSimDB.optionsDB and CraftSimDB.optionsDB.data then
                     local od = CraftSimDB.optionsDB.data
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] ~= nil then
-                        options.smartConcentrationQueuing = od["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
+                        options.smartConcentrationQueuing = od
+                        ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"] ~= nil then
-                        options.offsetConcentrationCraftAmount = od["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"]
+                        options.offsetConcentrationCraftAmount = od
+                        ["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"]
                     end
                     if od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"] ~= nil then
                         options.offsetQueueAmount = tonumber(od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"]) or 0
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"] ~= nil then
-                        options.includeSoulboundFinishingReagents = od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
+                        options.includeSoulboundFinishingReagents = od
+                        ["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
                     end
                 end
                 local newID = NextID()
@@ -420,7 +424,8 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                     options = options,
                 }
                 -- Mark "Character Favorites" as selected for queue for this character
-                CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue[crafterUID] or {}
+                CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue
+                [crafterUID] or {}
                 CraftSimDB.craftListsDB.selectedForQueue[crafterUID][newID] = true
             end
         end
