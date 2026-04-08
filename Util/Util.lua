@@ -538,7 +538,7 @@ end
 function CraftSim.UTIL:IsGreyItem(itemID)
     local rarity = select(3, C_Item.GetItemInfo(itemID))
     if rarity == nil then
-        return false -- item data not yet cached; treat as non-grey (safe fallback)
+        return false   -- item data not yet cached; treat as non-grey (safe fallback)
     end
     return rarity == 0 -- Enum.ItemQuality.Poor = 0
 end
@@ -616,8 +616,8 @@ end
 ---@return number? enchantID
 function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)
     if not itemLink or not itemLink:find("|Hitem:") then return nil end
-    
-    local parts = {strsplit(":", itemLink)}    
+
+    local parts = { strsplit(":", itemLink) }
     return tonumber(parts[4])
 end
 
@@ -649,4 +649,14 @@ function CraftSim.UTIL:DecodeTable(string)
         return nil
     end
     return deserializedTable
+end
+
+---@param key string
+---@return table layoutConfig
+function CraftSim.UTIL:GetFrameListLayoutConfig(key)
+    local layoutConfigs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
+
+    layoutConfigs[key] = layoutConfigs[key] or {}
+
+    return layoutConfigs[key]
 end

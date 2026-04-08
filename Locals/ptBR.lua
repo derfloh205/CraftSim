@@ -233,8 +233,8 @@ function CraftSim.LOCAL_PT:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Cálculo Básico de Lucro",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "Otimização de Custo do CraftSim",
-        COST_OPTIMIZATION_EXPLANATION =
+        PRICING_TITLE = "Otimização de Custo do CraftSim",
+        PRICING_EXPLANATION =
             "Aqui você tem uma visão geral de todos os valores possíveis dos reagentes utilizados.\nA " ..
             f.bb("'Fonte Utilizada'") ..
             " coluna indica quais dos valores é utilizado.\n\n" ..
@@ -247,10 +247,8 @@ function CraftSim.LOCAL_PT:GetData()
             f.l("OR") ..
             " sempre será usado se definido. " ..
             f.bb("Custos de Criação") .. " só será usado se menor que " .. f.g("AH"),
-        COST_OPTIMIZATION_CRAFTING_COSTS = "Custos de Criação: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "Item",
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "Preço na AH",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Personalizar",
+        PRICING_CRAFTING_COSTS = "Custos de Criação: ",
+        PRICING_ITEM_HEADER = "Item",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Criação",
         COST_OPTIMIZATION_USED_SOURCE = "Fonte Utilizada",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Custos dos Reagentes",
@@ -270,12 +268,12 @@ function CraftSim.LOCAL_PT:GetData()
             f.l("CraftSim") ..
             " desconsiderará os requisitos de recarga receitas ao calcular reagentes criados por si próprio",
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "Selecione Criador de Receitas",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Arremate da AH: ",
-        COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\nPersonalizar",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nCriando ",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- Custo Estimado por Item: ",
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST = f.gold("Custo de Concentração: "),
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION = "Concentração: ",
+        PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Arremate da AH: ",
+        PRICING_REAGENT_LIST_OVERRIDE = "\n\nPersonalizar",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nCriando ",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- Custo Estimado por Item: ",
+        PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("Custo de Concentração: "),
+        PRICING_REAGENT_LIST_CONCENTRATION = "Concentração: ",
 
         -- Statistics Frame
         STATISTICS_TITLE = "Estatísticas do CraftSim",
@@ -405,9 +403,11 @@ function CraftSim.LOCAL_PT:GetData()
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include Soulbound Finishing Reagents",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP =
+        "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP =
+        "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "Autoselect Open Profession",
 
         -- Recipe Top Gear

@@ -19,7 +19,6 @@ CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UI")
 
 function CraftSim.SIMULATION_MODE.UI:Init()
-
     local x, y = ProfessionsFrame.CraftingPage.SchematicForm:GetSize()
     local woX, woY = ProfessionsFrame.OrdersPage.OrderView.OrderDetails:GetSize()
     local sizeOffsetX = 135
@@ -31,7 +30,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorA = "BOTTOMLEFT",
         anchorB = "BOTTOMLEFT",
-        sizeX = x - sizeOffsetX, sizeY = y - sizeOffsetY,
+        sizeX = x - sizeOffsetX,
+        sizeY = y - sizeOffsetY,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -45,7 +45,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
         anchorA = "BOTTOMLEFT",
         anchorB = "BOTTOMLEFT",
-        sizeX = woX, sizeY = woY - sizeOffsetY,
+        sizeX = woX,
+        sizeY = woY - sizeOffsetY,
         offsetY = offsetY,
         frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE_WO,
         title = L("SIMULATION_MODE_LABEL"),
@@ -149,14 +150,20 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
             CraftSim.MODULES:UpdateUI()
         end
-        frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            " " .. CraftSim.LOCAL:GetText("SIMULATION_MODE_LABEL"),
-            CraftSim.LOCAL:GetText("SIMULATION_MODE_TOOLTIP"), false, clickCallback,
-            schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
+
+        frames.toggleButton = GGUI.Checkbox {
+            parent = schematicForm,
+            anchorParent = schematicForm.Details,
+            anchorA = "BOTTOM",
+            anchorB = "TOP",
+            offsetX = -65,
+            offsetY = 40,
+            label = L("SIMULATION_MODE_LABEL"),
+            tooltip = L("SIMULATION_MODE_TOOLTIP"),
+            onClickCallback = clickCallback,
+        }
 
         frames.toggleButton:Hide()
-
-
 
 
         -- DETAILS FRAME
@@ -541,7 +548,8 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
 
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
-    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
+        CraftSim.SIMULATION_MODE.frame
 
     local optionalReagentItemSelectors = frame.optionalReagentItemSelectors --[[@as GGUI.ItemSelector[] ]]
 
@@ -570,7 +578,8 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
 
         if optionalReagentSlot.activeReagent then
             if optionalReagentSlot.activeReagent:IsCurrency() then
-                currentSelector:SetSelectedCurrency(optionalReagentSlot.activeReagent.currencyID, optionalReagentSlot.activeReagent.qualityID)
+                currentSelector:SetSelectedCurrency(optionalReagentSlot.activeReagent.currencyID,
+                    optionalReagentSlot.activeReagent.qualityID)
             else
                 currentSelector:SetSelectedItem(optionalReagentSlot.activeReagent.item)
             end
@@ -595,13 +604,15 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
     if not CraftSim.SIMULATION_MODE.isActive then
-         CraftSim.SIMULATION_MODE.frame:Hide()
-         CraftSim.SIMULATION_MODE.frameWO:Hide()
-         return
+        CraftSim.SIMULATION_MODE.frame:Hide()
+        CraftSim.SIMULATION_MODE.frameWO:Hide()
+        return
     end
 
-    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
-    local otherFrame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frame or CraftSim.SIMULATION_MODE.frameWO
+    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
+        CraftSim.SIMULATION_MODE.frame
+    local otherFrame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frame or
+        CraftSim.SIMULATION_MODE.frameWO
     frame:Show()
     otherFrame:Hide()
 

@@ -23,16 +23,6 @@ local DEFAULT_LIST_ROW_HEIGHT = 21
 local COOLDOWN_LIST_LAYOUT_CONFIG_KEY = "COOLDOWNS_COOLDOWN_LIST"
 local BLACKLIST_LIST_LAYOUT_CONFIG_KEY = "COOLDOWNS_BLACKLIST_LIST"
 
----@param key string
----@return table
-local function EnsureFrameListLayoutConfig(key)
-    local configs = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
-    if not configs[key] then
-        configs[key] = {}
-    end
-    return configs[key]
-end
-
 --- GGUI calls UpdateDisplay() with no args on header clicks; merge default ordering when no column sort is active.
 ---@param frameList GGUI.FrameList
 ---@param defaultSortFunc fun(rowA: GGUI.FrameList.Row, rowB: GGUI.FrameList.Row): boolean
@@ -407,7 +397,8 @@ end
 ---@param cooldownData CraftSim.CooldownData
 ---@param professionInfo ProfessionInfo
 ---@param recipeInfo SkillLineAbilityInfo?
-function CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID, cooldownData, professionInfo, recipeInfo)
+function CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID, cooldownData,
+                                                   professionInfo, recipeInfo)
     row.crafterUID = crafterUID
     row.recipeID = recipeID
     row.serializationID = serializationID
@@ -434,7 +425,8 @@ function CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, se
     crafterColumn.text:SetText(professionIcon .. crafterName)
 
     if cooldownData.sharedCD then
-        row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]) or tostring(serializationID)
+        row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]) or
+            tostring(serializationID)
         recipeColumn.text:SetText(row.sortRecipeName)
         local recipeListText = ""
         for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
@@ -491,7 +483,7 @@ function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 198,
-        savedVariablesTableLayoutConfig = EnsureFrameListLayoutConfig(COOLDOWN_LIST_LAYOUT_CONFIG_KEY),
+        savedVariablesTableLayoutConfig = CraftSim.UTIL:GetFrameListLayoutConfig(COOLDOWN_LIST_LAYOUT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -536,7 +528,7 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
         showBorder = true,
         rowHeight = DEFAULT_LIST_ROW_HEIGHT,
         sizeY = 120,
-        savedVariablesTableLayoutConfig = EnsureFrameListLayoutConfig(BLACKLIST_LIST_LAYOUT_CONFIG_KEY),
+        savedVariablesTableLayoutConfig = CraftSim.UTIL:GetFrameListLayoutConfig(BLACKLIST_LIST_LAYOUT_CONFIG_KEY),
         selectionOptions = {
             noSelectionColor = true,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -617,7 +609,8 @@ function CraftSim.COOLDOWNS.UI:InitializeBlacklistListInOptions(content)
             }
 
             row.UpdateTimers = function(self)
-                self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID, self.recipeID, self.cooldownData)
+                self.cooldownData = TryRefreshCooldownDataFromTradeSkillUI(self.crafterUID, self.recipeID,
+                    self.cooldownData)
                 local cooldownData = self.cooldownData
                 local currentCharges = cooldownData:GetCurrentCharges() or 0
                 local maxCharges = cooldownData.maxCharges or 0
@@ -748,7 +741,8 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
             local expansionIncluded = tContains(includedExpansionIDs, expansionID)
 
             if expansionIncluded then
-                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or C_TradeSkillUI.GetRecipeInfo(recipeID)
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
+                    C_TradeSkillUI.GetRecipeInfo(recipeID)
                 local blacklistKey = CreateBlacklistKey(crafterUID, serializationID)
                 local targetList = blacklist[blacklistKey] and blacklistList or cooldownList
                 targetList:Add(function(row)
@@ -761,9 +755,11 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                         local rowClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
                         local professionIcon = ""
                         if professionInfo and professionInfo.profession then
-                            professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession], 16, 16) .. " "
+                            professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession],
+                                16, 16) .. " "
                         end
-                        row.columns[1].text:SetText(professionIcon .. f.class(select(1, strsplit("-", crafterUID), rowClass)))
+                        row.columns[1].text:SetText(professionIcon ..
+                            f.class(select(1, strsplit("-", crafterUID), rowClass)))
                         if cooldownData.sharedCD then
                             row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD])
                             row.columns[2].text:SetText(row.sortRecipeName)
@@ -773,7 +769,8 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                         end
                         row:UpdateTimers()
                     else
-                        CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID, cooldownData,
+                        CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, serializationID,
+                            cooldownData,
                             professionInfo, recipeInfo)
                     end
                 end)

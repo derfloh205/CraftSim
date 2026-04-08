@@ -36,11 +36,6 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
 end
 
 function CraftSim.FRAME:RestoreModulePositions()
-    local recipeScanFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
-    local customerHistoryFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-    local priceOverrideFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-    local priceOverrideFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
     local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
     local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
@@ -61,18 +56,14 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
-    priceOverrideFrame:RestoreSavedConfig(ProfessionsFrame)
-    priceOverrideFrameWO:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
     topgearFrame:RestoreSavedConfig(ProfessionsFrame)
     topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.PRICE_DETAILS.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.PRICE_DETAILS.frameWO:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.COST_OPTIMIZATION.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.COST_OPTIMIZATION.frameWO:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
     reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
     reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
@@ -126,80 +117,6 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
     end
 
     return craftSimText
-end
-
---> in GGUI.ScrollingMessageFrame
----@deprecated
-function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, maxLines,
-                                                    sizeX, sizeY)
-    local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, parent)
-    scrollingFrame:SetSize(sizeX, sizeY)
-    scrollingFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
-    scrollingFrame:SetFontObject(GameFontHighlight)
-    if maxLines then
-        scrollingFrame:SetMaxLines(maxLines)
-    end
-    scrollingFrame:SetFading(false) -- make optional
-    scrollingFrame:SetJustifyH("LEFT")
-    scrollingFrame:EnableMouseWheel(true)
-
-    scrollingFrame:SetScript("OnMouseWheel", function(self, delta)
-        if delta > 0 then
-            scrollingFrame:ScrollUp()
-        elseif delta < 0 then
-            scrollingFrame:ScrollDown()
-        end
-    end)
-
-    return scrollingFrame
-end
-
---> in GGUI.Checkbox
----@deprecated
-function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent,
-                                                     anchorParent, anchorA, anchorB, offsetX, offsetY)
-    local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
-    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
-    checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    checkBox.Text:SetText(label)
-    checkBox.tooltip = description
-    -- there already is an existing OnClick script that plays a sound, hook it
-    checkBox:SetChecked(false)
-    checkBox:HookScript("OnClick", function()
-        clickCallback(checkBox) -- "self"
-    end)
-
-    if initialValue then
-        checkBox:Click()
-    end
-
-    return checkBox
-end
-
---> in GGUI.HelpIcon
----@deprecated
-function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
-    local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    helpButton.tooltipText = text
-    helpButton:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    helpButton:SetText("?")
-    helpButton:SetSize(helpButton:GetTextWidth() + 15, 15)
-
-    helpButton.SetTooltipText = function(newText)
-        helpButton.tooltipText = newText
-    end
-
-    helpButton:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(helpButton, "ANCHOR_RIGHT")
-        GameTooltip:ClearLines()
-        GameTooltip:SetText(self.tooltipText)
-        GameTooltip:Show()
-    end)
-    helpButton:SetScript("OnLeave", function(self)
-        GameTooltip:Hide()
-    end)
-
-    return helpButton
 end
 
 function CraftSim.FRAME:InitOneTimeNoteFrame()
@@ -260,23 +177,6 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     frame:Hide()
 end
 
----> GGUI
----@deprecated
-function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetRIGHT, offsetBOTTOM)
-    local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
-    scrollFrame.scrollChild = CreateFrame("frame")
-    local scrollChild = scrollFrame.scrollChild
-    scrollFrame:SetSize(parent:GetWidth(), parent:GetHeight())
-    scrollFrame:SetPoint("TOP", parent, "TOP", 0, offsetTOP)
-    scrollFrame:SetPoint("LEFT", parent, "LEFT", offsetLEFT, 0)
-    scrollFrame:SetPoint("RIGHT", parent, "RIGHT", offsetRIGHT, 0)
-    scrollFrame:SetPoint("BOTTOM", parent, "BOTTOM", 0, offsetBOTTOM)
-    scrollFrame:SetScrollChild(scrollFrame.scrollChild)
-    scrollChild:SetWidth(scrollFrame:GetWidth())
-    scrollChild:SetHeight(1)
-    return scrollFrame, scrollChild
-end
-
 --> in GGUI.TextInput
 ---@deprecated
 function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
@@ -292,49 +192,6 @@ function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB
     if onTextChangedCallback then
         numericInput:SetScript("OnTextChanged", onTextChangedCallback)
     end
-
-    return numericInput
-end
-
---> in GGUI.NumericInput
----@deprecated
-function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
-                                           initialValue, allowNegative, onTextChangedCallback)
-    local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
-    numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    numericInput:SetSize(sizeX, sizeY)
-    numericInput:SetAutoFocus(false) -- dont automatically focus
-    numericInput:SetFontObject("ChatFontNormal")
-    numericInput:SetText(initialValue)
-    numericInput:SetScript("OnEscapePressed", function() numericInput:ClearFocus() end)
-    numericInput:SetScript("OnEnterPressed", function() numericInput:ClearFocus() end)
-    numericInput:SetScript("OnTextChanged", onTextChangedCallback)
-
-    -- blizzard's NumericInputSpinnerTemplate is ugly and not configurable enough, so I make my own duh!
-
-    local buttonWidth = 5
-    local buttonHeight = sizeY / 2 - 1
-    local buttonOffsetX = 0
-    local buttonOffsetY = -1
-    numericInput.plusButton = CreateFrame("Button", nil, numericInput, "UIPanelButtonTemplate")
-    numericInput.plusButton:SetPoint("TOPLEFT", numericInput, "TOPRIGHT", buttonOffsetX, buttonOffsetY)
-    numericInput.plusButton:SetText("+")
-    numericInput.plusButton:SetSize(numericInput.plusButton:GetTextWidth() + buttonWidth, buttonHeight) -- make it smol
-    numericInput.plusButton:SetScript("OnClick", function(self)
-        local currentValue = CraftSim.UTIL:ValidateNumberInput(numericInput, allowNegative)
-        numericInput:SetText(currentValue + 1)
-        onTextChangedCallback(numericInput, true) -- is the input "self" now? .. yes it is :D
-    end)
-
-    numericInput.minusButton = CreateFrame("Button", nil, numericInput, "UIPanelButtonTemplate")
-    numericInput.minusButton:SetPoint("TOP", numericInput.plusButton, "BOTTOM", 0, 0)
-    numericInput.minusButton:SetText("-")
-    numericInput.minusButton:SetSize(numericInput.minusButton:GetTextWidth() + buttonWidth, buttonHeight) -- make it smol
-    numericInput.minusButton:SetScript("OnClick", function(self)
-        local currentValue = CraftSim.UTIL:ValidateNumberInput(numericInput, allowNegative)
-        numericInput:SetText(currentValue - 1)
-        onTextChangedCallback(numericInput, true) -- is the input "self" now? .. yes it is :D
-    end)
 
     return numericInput
 end

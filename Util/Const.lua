@@ -106,7 +106,7 @@ CraftSim.CONST.FRAMES = {
     CRAFTING_DETAILS_WO = "CRAFTING_DETAILS_WO",
     SPEC_SIM_WO = "SPEC_SIM_WO",
     SPEC_INFO_WO = "SPEC_INFO_WO",
-    COST_OPTIMIZATION = "COST_OPTIMIZATION",
+    PRICING = "PRICING",
     COST_OPTIMIZATION_WO = "COST_OPTIMIZATION_WO",
     POPUP = "POPUP",
     SUPPORTERS = "SUPPORTERS",
@@ -315,7 +315,7 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     MODULE_RECIPE_SCAN = "MODULE_RECIPE_SCAN",
     MODULE_CRAFT_LOG = "MODULE_CRAFT_LOG",
     MODULE_CUSTOMER_HISTORY = "MODULE_CUSTOMER_HISTORY",
-    MODULE_COST_OPTIMIZATION = "MODULE_COST_OPTIMIZATION",
+    MODULE_PRICING = "MODULE_PRICING",
     MODULE_CRAFT_QUEUE = "MODULE_CRAFT_QUEUE",
     MODULE_CRAFT_BUFFS = "MODULE_CRAFT_BUFFS",
     MODULE_COOLDOWNS = "MODULE_COOLDOWNS",
@@ -420,8 +420,10 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT",
     CRAFTQUEUE_AUTO_SHOW = "CRAFTQUEUE_AUTO_SHOW",
     CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = "CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST",
-    CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND = "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
-    CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND = "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+    CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND =
+    "CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
+    CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND =
+    "CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND",
     CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID = "CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID",
     CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF = "CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF",
     --- The War Within enchanting Shattering Essence (craft-queue prerequisite; optional salvage ID).
@@ -462,9 +464,9 @@ CraftSim.CONST.GENERAL_OPTIONS = {
 ---IDs used to identify individual OptimizationOptions button instances in the DB.
 ---@enum CraftSim.OPTIMIZATION_OPTIONS_IDS
 CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS = {
-    RECIPESCAN_SCAN         = "RECIPESCAN_SCAN",
-    CRAFTQUEUE_ADD_RECIPE   = "CRAFTQUEUE_ADD_RECIPE",
-    CRAFTQUEUE_EDIT_RECIPE  = "CRAFTQUEUE_EDIT_RECIPE",
+    RECIPESCAN_SCAN        = "RECIPESCAN_SCAN",
+    CRAFTQUEUE_ADD_RECIPE  = "CRAFTQUEUE_ADD_RECIPE",
+    CRAFTQUEUE_EDIT_RECIPE = "CRAFTQUEUE_EDIT_RECIPE",
 }
 
 ---@type table<CraftSim.GENERAL_OPTIONS, any>
@@ -486,7 +488,8 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     [CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP] = true,
     [CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX] = 10,
     [CraftSim.CONST.GENERAL_OPTIONS.FRAME_LIST_LAYOUT_CONFIGS] = {
-        ["COST_OPTIMIZATION_REAGENT_LIST"] = { columnIndex = 2, ascending = true },
+        ["PRICING_REAGENT_LIST"] = {},
+        ["PRICING_RESULT_ITEMS_LIST"] = {},
         ["COOLDOWNS_COOLDOWN_LIST"] = {},
         ["COOLDOWNS_BLACKLIST_LIST"] = {},
     },
@@ -513,7 +516,7 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_RECIPE_SCAN] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_LOG] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_CUSTOMER_HISTORY] = false,
-    [CraftSim.CONST.GENERAL_OPTIONS.MODULE_COST_OPTIMIZATION] = false,
+    [CraftSim.CONST.GENERAL_OPTIONS.MODULE_PRICING] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_QUEUE] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_BUFFS] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.MODULE_COOLDOWNS] = false,
@@ -1185,38 +1188,38 @@ CraftSim.CONST.PATRON_ORDER_FIRST_CRAFT_EXTRA_MOXIE = 10
 CraftSim.CONST.SOULBOUND_UPCRAFT_REAGENTS_DATA = {
     {
         upcraftItemID = 247724, -- Multicraft Manifold
-        preItemID = 247719, -- Multicraft Matrix
+        preItemID = 247719,     -- Multicraft Matrix
         requiredQuantity = 5,
-    }, 
+    },
     -- Resourceful Routing
     {
         upcraftItemID = 247726, -- Resourceful Routing
-        preItemID = 247725, -- Resourceful Rebar
+        preItemID = 247725,     -- Resourceful Rebar
         requiredQuantity = 5,
-    }, 
+    },
     -- Ingenious Identity
     {
         upcraftItemID = 247788, -- Ingenious Identity
-        preItemID = 260630, -- Ingenious Identifier
+        preItemID = 260630,     -- Ingenious Identifier
         requiredQuantity = 5,
     },
     --- Artisan's Ledger
     {
         upcraftItemID = 246448, -- Artisan's Ledger
-        preItemID = 246447, -- Apprentices Scribbles
+        preItemID = 246447,     -- Apprentices Scribbles
         requiredQuantity = 5,
     },
     --- Mentors Helpful Handiwork
     {
         upcraftItemID = 246449, -- Mentors Helpful Handiwork
-        preItemID = 246448, -- Artisan's Ledger
+        preItemID = 246448,     -- Artisan's Ledger
         requiredQuantity = 5,
 
     },
     --- Artisans Consortium Goldstar
     {
         upcraftItemID = 246450, -- Artisans Consortium Goldstar
-        preItemID = 246449, -- Mentors Helpful Handiwork
+        preItemID = 246449,     -- Mentors Helpful Handiwork
         requiredQuantity = 5,
     },
 }

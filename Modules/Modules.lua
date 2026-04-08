@@ -19,9 +19,6 @@ CraftSim.MODULES.recipeData = nil
 ---@param keepCraftQ boolean?
 function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
 	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
 	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
@@ -54,18 +51,14 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	CraftSim.CRAFT_LOG.advFrame:Hide()
 	CraftSim.CONCENTRATION_TRACKER.frame:Hide()
 	customerHistoryFrame:Hide()
-	priceOverrideFrame:Hide()
-	priceOverrideFrameWO:Hide()
 	specInfoFrame:Hide()
 	specInfoFrameWO:Hide()
 	averageProfitFrame:Hide()
 	averageProfitFrameWO:Hide()
 	topgearFrame:Hide()
 	topgearFrameWO:Hide()
-	CraftSim.PRICE_DETAILS.frame:Hide()
-	CraftSim.PRICE_DETAILS.frameWO:Hide()
-	CraftSim.COST_OPTIMIZATION.frame:Hide()
-	CraftSim.COST_OPTIMIZATION.frameWO:Hide()
+	CraftSim.PRICING.frame:Hide()
+	CraftSim.PRICING.frameWO:Hide()
 	reagentOptimizationFrame:Hide()
 	reagentOptimizationFrameWO:Hide()
 	-- hide sim mode toggle button
@@ -114,43 +107,43 @@ end
 
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
 	-- research recipes have additional properties like abilityVerb
-    if not recipeInfo or recipeInfo.abilityVerb then
-        return nil
-    end
+	if not recipeInfo or recipeInfo.abilityVerb then
+		return nil
+	end
 
-    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
-    if not schematicForm then
-        print("CraftSim MODULES: No SchematicForm Visible")
-        return nil
-    end
+	local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+	if not schematicForm then
+		print("CraftSim MODULES: No SchematicForm Visible")
+		return nil
+	end
 
-    local currentTransaction = schematicForm:GetTransaction()
-    if not currentTransaction then
-        print("CraftSim MODULES: SchematicForm without transaction!")
-        return nil
-    end
+	local currentTransaction = schematicForm:GetTransaction()
+	if not currentTransaction then
+		print("CraftSim MODULES: SchematicForm without transaction!")
+		return nil
+	end
 
-    local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil
-    local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
+	local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil
+	local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
 
-    local recipeData = CraftSim.RecipeData({
-        recipeID = recipeInfo.recipeID,
-        orderData = isWorkOrder and ProfessionsFrame.OrdersPage.OrderView.order,
-        isRecraft = isRecraft,
-    })
+	local recipeData = CraftSim.RecipeData({
+		recipeID = recipeInfo.recipeID,
+		orderData = isWorkOrder and ProfessionsFrame.OrdersPage.OrderView.order,
+		isRecraft = isRecraft,
+	})
 
-    if recipeData then
-        -- Set Reagents based on visibleFrame and load equipped profession gear set
-        recipeData:SetAllReagentsBySchematicForm()
-        recipeData:SetConcentrationBySchematicForm()
-        recipeData:SetEquippedProfessionGearSet()
+	if recipeData then
+		-- Set Reagents based on visibleFrame and load equipped profession gear set
+		recipeData:SetAllReagentsBySchematicForm()
+		recipeData:SetConcentrationBySchematicForm()
+		recipeData:SetEquippedProfessionGearSet()
 
-        return recipeData
-    end
+		return recipeData
+	end
 
-    return nil
+	return nil
 end
 
 --- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
@@ -159,9 +152,6 @@ function CraftSim.MODULES:UpdateUI()
 		return
 	end
 
-	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
 	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
 	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
@@ -185,7 +175,7 @@ function CraftSim.MODULES:UpdateUI()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-        print("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
+		print("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
 		CraftSim.MODULES:Hide()
 		return
 	end
@@ -212,23 +202,12 @@ function CraftSim.MODULES:UpdateUI()
 		CraftSim.MODULES.recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	end
 
-    local recipeData = CraftSim.MODULES.recipeData
+	local recipeData = CraftSim.MODULES.recipeData
 
-    if not recipeData then
-        print("No recipe data found for visible recipe!")
-        CraftSim.MODULES:Hide(true, true) 
-        return 
-    end
-
-	-- subrecipe optimization
-	recipeData:SetSubRecipeCostsUsage(CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"))
-	if recipeData.subRecipeCostsEnabled then
-		CraftSim.DEBUG:StartProfiling("OptimizeSubRecipes")
-		recipeData:OptimizeSubRecipes({
-			optimizeGear = true, -- TODO: Option to toggle, maybe general, maybe per sub recipe?
-			optimizeReagents = true,
-		})
-		CraftSim.DEBUG:StopProfiling("OptimizeSubRecipes")
+	if not recipeData then
+		print("No recipe data found for visible recipe!")
+		CraftSim.MODULES:Hide(true, true)
+		return
 	end
 
 	local showReagentOptimization = false
@@ -238,8 +217,6 @@ function CraftSim.MODULES:UpdateUI()
 	local showSpecInfo = false
 
 	-- always on modules
-	local showCostOverview = true
-	local showPriceOverride = true
 	local showCraftResults = true
 	local showRecipeScan = true
 	local showCustomerHistory = true
@@ -267,13 +244,11 @@ function CraftSim.MODULES:UpdateUI()
 	showReagentOptimization = showReagentOptimization and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_OPTIMIZATION")
 	showAverageProfit = showAverageProfit and CraftSim.DB.OPTIONS:Get("MODULE_AVERAGE_PROFIT")
 	showTopGear = showTopGear and CraftSim.DB.OPTIONS:Get("MODULE_TOP_GEAR")
-	showCostOverview = showCostOverview and CraftSim.DB.OPTIONS:Get("MODULE_COST_OVERVIEW")
 	showSpecInfo = showSpecInfo and CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
-	showPriceOverride = showPriceOverride and CraftSim.DB.OPTIONS:Get("MODULE_PRICE_OVERRIDE")
 	showRecipeScan = showRecipeScan and CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN")
 	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG")
 	showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
-	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_COST_OPTIMIZATION")
+	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_PRICING")
 	showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
 	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
@@ -314,12 +289,12 @@ function CraftSim.MODULES:UpdateUI()
 	end
 
 	-- Cost Optimization Module
-	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frame,
+	CraftSim.FRAME:ToggleFrame(CraftSim.PRICING.frame,
 		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frameWO,
+	CraftSim.FRAME:ToggleFrame(CraftSim.PRICING.frameWO,
 		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showCostOptimization then
-		CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
+		CraftSim.PRICING:UpdateDisplay(recipeData)
 	end
 
 	if recipeData and showCraftResults then
@@ -343,25 +318,6 @@ function CraftSim.MODULES:UpdateUI()
 	CraftSim.STATISTICS.UI:SetVisible(showStatistics, exportMode)
 	if recipeData and showStatistics then
 		CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
-	end
-
-	-- Price Details Module
-	CraftSim.FRAME:ToggleFrame(CraftSim.PRICE_DETAILS.frame,
-		showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(CraftSim.PRICE_DETAILS.frameWO,
-		showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showCostOverview then
-		CraftSim.PRICE_DETAILS:UpdateDisplay(recipeData, exportMode)
-	end
-
-
-	-- Price Override Module
-	CraftSim.FRAME:ToggleFrame(priceOverrideFrame,
-		showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO,
-		showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showPriceOverride then
-		CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
 	end
 
 	-- Reagent Optimization Module
@@ -417,4 +373,3 @@ function CraftSim.MODULES:UpdateUI()
 
 	CraftSim.INIT.lastRecipeID = CraftSim.INIT.visibleRecipeID
 end
-
