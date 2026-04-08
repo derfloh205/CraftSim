@@ -250,8 +250,8 @@ function CraftSim.LOCAL_DE:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Grundlegende Gewinnberechnung",
 
         -- Kostendetailsfenster
-        COST_OPTIMIZATION_TITLE = "CraftSim Kostenoptimierung",
-        COST_OPTIMIZATION_EXPLANATION =
+        PRICING_TITLE = "CraftSim Kostenoptimierung",
+        PRICING_EXPLANATION =
             "Hier kannst du eine Übersicht über alle möglichen Preise der verwendeten Reagenzien sehen.\nDie " ..
             f.bb("'Verwendete Quelle'") ..
             " Spalte zeigt an, welche der Preise verwendet wird.\n\n" ..
@@ -264,11 +264,9 @@ function CraftSim.LOCAL_DE:GetData()
             f.l("ODER") ..
             " wird immer verwendet, wenn gesetzt. " ..
             f.bb("Herstellungskosten") .. " werden nur verwendet, wenn sie niedriger sind als " .. f.g("AH"),
-        COST_OPTIMIZATION_CRAFTING_COSTS = "Herstellungskosten: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "Item",
+        PRICING_CRAFTING_COSTS = "Herstellungskosten: ",
+        PRICING_ITEM_HEADER = "Item",
 
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "AH-Preis",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Überschreibung",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Herstellung",
         COST_OPTIMIZATION_USED_SOURCE = "Verwendete Quelle",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Reagenzienkosten",
@@ -290,13 +288,13 @@ function CraftSim.LOCAL_DE:GetData()
             f.l("CraftSim") .. " die Abklingzeiten von Rezepten bei der Berechnung selbst hergestellter Reagenzien.",
 
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "Rezepthersteller auswählen",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Auktions Sofortkauf: ",
-        COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\nÜberschreiben",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nHerstellung",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM =
+        PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Auktions Sofortkauf: ",
+        PRICING_REAGENT_LIST_OVERRIDE = "\n\nÜberschreiben",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nHerstellung",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM =
         "\n- Erwartete Kosten pro Gegenstand: ",
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST = f.gold("Kosten der Konzentration: "),
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION = "Konzentration: ",
+        PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("Kosten der Konzentration: "),
+        PRICING_REAGENT_LIST_CONCENTRATION = "Konzentration: ",
 
         -- Statistikfenster
         STATISTICS_TITLE = "CraftSim Statistiken",
@@ -430,9 +428,11 @@ function CraftSim.LOCAL_DE:GetData()
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include Soulbound Finishing Reagents",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP =
+        "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP =
+        "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "Autoselect Open Profession",
 
 

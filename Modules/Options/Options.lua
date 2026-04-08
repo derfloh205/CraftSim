@@ -84,7 +84,8 @@ function CraftSim.OPTIONS:Init()
         local supportedTooltip = L("OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES") ..
             "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n")
         local defaultSource = CraftSim.PRICE_API.name or priceAddons[1]
-        local ddSetting = Settings.RegisterProxySetting(mainCategory, "CraftSimOpt_PRICE_SOURCE", Settings.VarType.String,
+        local ddSetting = Settings.RegisterProxySetting(mainCategory, "CraftSimOpt_PRICE_SOURCE", Settings.VarType
+            .String,
             L("OPTIONS_GENERAL_PRICE_SOURCE"), defaultSource,
             function()
                 return CraftSim.PRICE_API.name
@@ -103,7 +104,7 @@ function CraftSim.OPTIONS:Init()
         Settings.CreateDropdown(mainCategory, ddSetting, priceDropdownOptions, supportedTooltip)
     elseif #priceAddons == 1 then
         Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
-            L("OPTIONS_GENERAL_CURRENT_PRICE_SOURCE") .. ": " .. tostring(CraftSim.PRICE_API.name), nil))
+            L("OPTIONS_GENERAL_CURRENT_PRICE_SOURCE") .. " " .. tostring(CraftSim.PRICE_API.name), nil))
     else
         Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
             L("OPTIONS_GENERAL_NO_PRICE_SOURCE"), nil))
@@ -116,7 +117,8 @@ function CraftSim.OPTIONS:Init()
         L("OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP"))
     proxyBool("CraftSimOpt_SHOW_NEWS", GO.SHOW_NEWS, L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX"),
         L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP"))
-    proxyBool("CraftSimOpt_MINIMAP_BUTTON_HIDE", GO.MINIMAP_BUTTON_HIDE, L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX"),
+    proxyBool("CraftSimOpt_MINIMAP_BUTTON_HIDE", GO.MINIMAP_BUTTON_HIDE,
+        L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX"),
         L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP"), function(v)
             if v then
                 CraftSim.LibIcon:Hide("CraftSim")
@@ -162,7 +164,8 @@ function CraftSim.OPTIONS:Init()
     -- TSM (embedded panel; `CraftSimOptionsInitTSMPanel` runs from template OnLoad)
     if select(2, C_AddOns.IsAddOnLoaded("TradeSkillMaster")) then
         regSection(L("OPTIONS_TSM_TAB"), L("OPTIONS_TSM_SECTION_TOOLTIP"))
-        Settings.RegisterInitializer(mainCategory, Settings.CreatePanelInitializer("CraftSimSettingsTsmPanelTemplate", {}))
+        Settings.RegisterInitializer(mainCategory,
+            Settings.CreatePanelInitializer("CraftSimSettingsTsmPanelTemplate", {}))
     end
 
     Settings.RegisterAddOnCategory(mainCategory)

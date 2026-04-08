@@ -235,8 +235,8 @@ function CraftSim.LOCAL_FR:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Calcul du profit basique",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "Optimisation des coûts CraftSim",
-        COST_OPTIMIZATION_EXPLANATION =
+        PRICING_TITLE = "Optimisation des coûts CraftSim",
+        PRICING_EXPLANATION =
             "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
@@ -248,10 +248,8 @@ function CraftSim.LOCAL_FR:GetData()
             " .. Expected Costs from crafting it yourself\n" ..
             f.l("OR") ..
             " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
-        COST_OPTIMIZATION_CRAFTING_COSTS = "Coût de craft: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "Objet",
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "Prix HV",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Remplacement",
+        PRICING_CRAFTING_COSTS = "Coût de craft: ",
+        PRICING_ITEM_HEADER = "Objet",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Artisanat",
         COST_OPTIMIZATION_USED_SOURCE = "Source Utilisée",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Coûts des Matériaux",
@@ -271,13 +269,13 @@ function CraftSim.LOCAL_FR:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP = "If enabled, " ..
             f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted reagents",
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "Sélectionner l'artisan de la recette",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Achat immédiat: ",
-        COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\nRemplacement",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nArtisanat ",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM =
+        PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Achat immédiat: ",
+        PRICING_REAGENT_LIST_OVERRIDE = "\n\nRemplacement",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nArtisanat ",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM =
         "\n- Coûts Prévisionnels Par Article: ",
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST = f.gold("Coût Concentration: "),
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION = "Concentration : ",
+        PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("Coût Concentration: "),
+        PRICING_REAGENT_LIST_CONCENTRATION = "Concentration : ",
 
         -- Statistics Frame
         STATISTICS_TITLE = "Statistiques CraftSim",
@@ -407,9 +405,11 @@ function CraftSim.LOCAL_FR:GetData()
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include Soulbound Finishing Reagents",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP =
+        "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP =
+        "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "Autoselect Open Profession",
 
         -- Recipe Top Gear
@@ -458,10 +458,12 @@ function CraftSim.LOCAL_FR:GetData()
         OPTIONS_TSM_INVALID_EXPRESSION = "Expression Invalide",
         OPTIONS_TSM_VALID_EXPRESSION = "Expression Valide",
         OPTIONS_TSM_DEPOSIT_ENABLED_LABEL = "Activer le coût de dépôt estimé",
-        OPTIONS_TSM_DEPOSIT_ENABLED_TOOLTIP = "Soustrait le coût de dépôt HV estimé du calcul de profit.\nUtilise les données de prix TSM pour estimer le dépôt lors de la mise en vente.",
+        OPTIONS_TSM_DEPOSIT_ENABLED_TOOLTIP =
+        "Soustrait le coût de dépôt HV estimé du calcul de profit.\nUtilise les données de prix TSM pour estimer le dépôt lors de la mise en vente.",
         OPTIONS_TSM_DEPOSIT_EXPRESSION_LABEL = "Expression TSM pour le dépôt",
         OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL = "Restock intelligent (soustraire l'inventaire)",
-        OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP = "Lors de l'envoi des recettes dans la file d'artisanat, soustrait les objets\ndéjà possédés (sacs, banque, alts, banque de guilde) du nombre à restock.",
+        OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP =
+        "Lors de l'envoi des recettes dans la file d'artisanat, soustrait les objets\ndéjà possédés (sacs, banque, alts, banque de guilde) du nombre à restock.",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_ALTS_LABEL = "Inclure les personnages alternatifs",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_WARBANK_LABEL = "Inclure la banque de guilde",
         OPTIONS_MODULES_REAGENT_OPTIMIZATION = "Module Optimisation Matériaux",
@@ -612,15 +614,20 @@ function CraftSim.LOCAL_FR:GetData()
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Commandes personnelles",
         CRAFT_QUEUE_GUILD_ORDERS_ALTS_ONLY_CHECKBOX = f.r("Seulement ") .. "les rerolls",
         CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_CHECKBOX = f.r("Forcer ") .. f.gold("Concentration"),
-        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP = "Forcer l'utilisation de la concentration pour toutes les commandes de clients si possible",
+        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP =
+        "Forcer l'utilisation de la concentration pour toutes les commandes de clients si possible",
         CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_CHECKBOX = "Inclure les recettes avec " .. f.e("Étincelle"),
-        CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_TOOLTIP = "Inclure les commandes nécessitant une Étincelle comme matériau",
+        CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_TOOLTIP =
+        "Inclure les commandes nécessitant une Étincelle comme matériau",
         CRAFT_QUEUE_PATRON_ORDERS_ACUITY_CHECKBOX = "Inclure les récompenses " .. f.bb("Acuité/Aplomb"),
         CRAFT_QUEUE_PATRON_ORDERS_ACUITY_TOOLTIP = "Inclure les commandes avec des récompenses d'Acuité/Aplomb",
         CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_CHECKBOX = "Inclure les récompenses " .. f.bb("Rune d'augmentation"),
-        CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_TOOLTIP = "Inclure les commandes avec des récompenses de Rune d'augmentation",
-        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX = "Inclure les récompenses " .. f.bb("Points de connaissance"),
-        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP = "Inclure les commandes avec des récompenses de Points de connaissance",
+        CRAFT_QUEUE_PATRON_ORDERS_POWER_RUNE_TOOLTIP =
+        "Inclure les commandes avec des récompenses de Rune d'augmentation",
+        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX = "Inclure les récompenses " ..
+            f.bb("Points de connaissance"),
+        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP =
+        "Inclure les commandes avec des récompenses de Points de connaissance",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Tout effacer",
         CRAFT_QUEUE_RESTOCK_FAVORITES_BUTTON_LABEL = "Ajouter favoris",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Mauvaise profession",
