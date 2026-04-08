@@ -189,13 +189,18 @@ function CraftSim.PRICING.UI:Init()
                     width = 40,
                     justifyOptions = { type = "H", align = "CENTER" },
                     resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        local qA = rowA.qualityID or 0
+                        local qB = rowB.qualityID or 0
+                        return qA > qB
+                    end,
                 },
                 {
                     label = L("COST_OPTIMIZATION_PRICE_HEADER"),
                     width = 110,
                     sortFunc = function(rowA, rowB)
-                        local priceA = rowA.price
-                        local priceB = rowB.price
+                        local priceA = rowA.price or 0
+                        local priceB = rowB.price or 0
                         return priceA > priceB
                     end,
                     resizable = true,
@@ -209,6 +214,13 @@ function CraftSim.PRICING.UI:Init()
                     width = 80,
                     justifyOptions = { type = "H", align = "CENTER" },
                     resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        -- OR (isOverride) > AH
+                        local isOverrideA = rowA.isOverride or false
+                        local isOverrideB = rowB.isOverride or false
+                        if isOverrideA == isOverrideB then return false end
+                        return isOverrideA
+                    end,
                 },
             },
             rowConstructor = function(columns)
@@ -345,19 +357,43 @@ function CraftSim.PRICING.UI:Init()
                     label = L("PRICE_DETAILS_INV_AH"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" },
+                    resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        local sumA = (rowA.invCount or 0) + (rowA.ahCount or 0)
+                        local sumB = (rowB.invCount or 0) + (rowB.ahCount or 0)
+                        return sumA > sumB
+                    end,
                 },
                 {
                     label = L("PRICE_DETAILS_ITEM"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" },
+                    resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        local qA = rowA.qualityID or 0
+                        local qB = rowB.qualityID or 0
+                        return qA > qB
+                    end,
                 },
                 {
                     label = L("PRICE_DETAILS_PRICE_ITEM"),
                     width = 90,
+                    resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        local priceA = rowA.price or 0
+                        local priceB = rowB.price or 0
+                        return priceA > priceB
+                    end,
                 },
                 {
                     label = L("PRICING_AVG_CRAFTING_COST"),
                     width = 90,
+                    resizable = true,
+                    sortFunc = function(rowA, rowB)
+                        local costA = rowA.avgCraftingCost or 0
+                        local costB = rowB.avgCraftingCost or 0
+                        return costA > costB
+                    end,
                 },
             },
             rowConstructor = function(columns)
@@ -472,11 +508,16 @@ function CraftSim.PRICING:UpdateDisplay(recipeData)
             row.price = price
             row.item = reagentItemMixin
             row.recipeID = recipeData.recipeID
+            row.qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID) or 0
+            row.isOverride = priceInfo.isOverride or false
 
             -- Show used price in the price column
             priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price))
 
-            -- Build tooltip with original AH price info
+            -- Build tooltip with item link as header, then original AH price info
+            local itemLink = reagentItemMixin:GetItemLink() or reagentItemMixin:GetItemName() or ""
+            tooltip = itemLink .. "\n"
+
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip ..
                     L("PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
@@ -490,7 +531,7 @@ function CraftSim.PRICING:UpdateDisplay(recipeData)
             if priceInfo.isOverride then
                 tooltip = tooltip ..
                     L("PRICING_REAGENT_LIST_OVERRIDE") ..
-                    CraftSim.UTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
+                    CraftSim.UTIL:FormatMoney(price) .. "\n"
                 sourceColumn:SetOverride()
             elseif priceInfo.isAHPrice then
                 sourceColumn:SetAH()
@@ -537,20 +578,41 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price) ..
                     ((priceOverride and CraftSim.GUTIL:ColorizeText(" (OR)", CraftSim.GUTIL.COLORS.LEGENDARY)) or ""))
 
-                avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceData.averageCraftingCosts))
+                local avgCraftingCost = priceData.averageCraftingCosts
+                avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(avgCraftingCost))
 
-                local itemCount = C_Item.GetItemCount(itemLink, true, false, true)
-                local ahCount = CraftSim.PRICE_SOURCE:GetAuctionAmount(itemLink)
+                local itemCount = C_Item.GetItemCount(itemLink, true, false, true) or 0
+                local ahCount = CraftSim.PRICE_SOURCE:GetAuctionAmount(itemLink) or 0
 
-                if ahCount then
-                    invColumn.text:SetText((itemCount or 0) .. "/" .. ahCount)
+                if ahCount > 0 then
+                    invColumn.text:SetText(itemCount .. "/" .. ahCount)
                 else
-                    invColumn.text:SetText(itemCount or 0)
+                    invColumn.text:SetText(itemCount)
                 end
 
                 row.item = resultItem
                 row.recipeID = recipeData.recipeID
                 row.qualityID = qualityID
+                row.price = price
+                row.avgCraftingCost = avgCraftingCost
+                row.invCount = itemCount
+                row.ahCount = ahCount
+
+                local tooltipText = (itemLink or "") .. "\n" ..
+                    L("PRICE_DETAILS_PRICE_ITEM") .. ": " .. CraftSim.UTIL:FormatMoney(price)
+                if priceOverride then
+                    tooltipText = tooltipText ..
+                        CraftSim.GUTIL:ColorizeText(" (" .. L("SOURCE_COLUMN_OVERRIDE") .. ")",
+                            CraftSim.GUTIL.COLORS.LEGENDARY)
+                end
+                tooltipText = tooltipText .. "\n" ..
+                    L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCost)
+
+                row.tooltipOptions = {
+                    anchor = "ANCHOR_CURSOR",
+                    owner = row.frame,
+                    text = tooltipText,
+                }
             end)
         end
 
