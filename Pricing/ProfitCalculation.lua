@@ -75,7 +75,7 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
                 else
                     local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
                     price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
-                    comissionProfit = comissionProfit + price * reward.count
+                    comissionProfit = comissionProfit + price * tonumber(reward.count or 0)
                 end
             end
         end
