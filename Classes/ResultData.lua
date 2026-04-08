@@ -86,12 +86,20 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         end
     end
 
-    if not recipeData.isGear then
-        local crafterUID = recipeData:GetCrafterUID()
-        -- if not gear update -> itemRecipeDB
+    local crafterUID = recipeData:GetCrafterUID()
+    if recipeData.learned then
         for qualityID, item in ipairs(self.itemsByQuality) do
             local itemID = item:GetItemID()
-            CraftSim.DB.ITEM_RECIPE:Add(recipeData.recipeID, qualityID, itemID, crafterUID)
+            if itemID then
+                CraftSim.DB.ITEM_RECIPE:Add(recipeData.recipeID, qualityID, itemID, crafterUID)
+            end
+        end
+    else
+        for _, item in ipairs(self.itemsByQuality) do
+            local itemID = item:GetItemID()
+            if itemID then
+                CraftSim.DB.ITEM_RECIPE:RemoveCrafterIfRecipeMatches(itemID, recipeData.recipeID, crafterUID)
+            end
         end
     end
 end

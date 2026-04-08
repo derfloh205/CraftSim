@@ -918,6 +918,8 @@ greater or equal the configured sale rate threshold.
         LAST_CRAFTING_COST_TOOLTIP_LABEL = f.white("Last Average Crafting Costs:"),
         LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.white("Crafter:"),
         LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.white("Updated:"),
+        REGISTERED_CRAFTERS_ITEM_TOOLTIP_LABEL = f.white("Registered crafters:"),
+        REGISTERED_CRAFTERS_ITEM_TOOLTIP_MORE = "+%d more",
 
         -- columns
         SOURCE_COLUMN_AH = "AH",

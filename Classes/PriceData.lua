@@ -141,18 +141,20 @@ function CraftSim.PriceData:Update()
                 end
             end
         else
-            local itemID = reagent.items[1].item:GetItemID()
-            local reagentPriceInfo = self.reagentPriceInfos[itemID]
+            local itemID = reagent.items[1] and reagent.items[1].item:GetItemID()
+            if itemID then
+                local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
-            local reagentCosts = reagentPriceInfo.itemPrice * reagent.requiredQuantity
+                local reagentCosts = reagentPriceInfo.itemPrice * reagent.requiredQuantity
 
-            self.craftingCosts = self.craftingCosts + reagentCosts
-            self.craftingCostsFixed = self.craftingCostsFixed + reagentCosts -- always max
+                self.craftingCosts = self.craftingCosts + reagentCosts
+                self.craftingCostsFixed = self.craftingCostsFixed + reagentCosts -- always max
 
-            if not isOrderReagent then
-                self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
-                if reagentPriceInfo.priceInfo.isExpectedCost then
-                    tinsert(self.selfCraftedReagents, itemID)
+                if not isOrderReagent then
+                    self.craftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents + reagentCosts
+                    if reagentPriceInfo.priceInfo.isExpectedCost then
+                        tinsert(self.selfCraftedReagents, itemID)
+                    end
                 end
             end
         end
