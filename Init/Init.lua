@@ -333,7 +333,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.SPECIALIZATION_INFO.UI:Init()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
 		CraftSim.SIMULATION_MODE.UI:Init()
-		CraftSim.PRICE_OVERRIDE.UI:Init()
 		CraftSim.RECIPE_SCAN.UI:Init()
 		CraftSim.CRAFT_LOG.UI:Init()
 		CraftSim.STATISTICS.UI:Init()
@@ -410,13 +409,13 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			RunNextFrame(function()
 				-- triggers the server request without any visible UI flicker.
 				if (not craftingOrdersPreloadedThisSession
-					and C_CraftingOrders.ShouldShowCraftingOrderTab()
-					and ProfessionsFrame.isCraftingOrdersTabEnabled) then
-							if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-								craftingOrdersPreloadedThisSession = true
-								ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
-								ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
-							end
+						and C_CraftingOrders.ShouldShowCraftingOrderTab()
+						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
+					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
+						craftingOrdersPreloadedThisSession = true
+						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
+						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
+					end
 				end
 			end)
 		end)

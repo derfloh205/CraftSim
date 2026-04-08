@@ -169,22 +169,28 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
-    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant",
-        ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25,
-        CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
-        function()
-            CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT",
-                tonumber(CraftSimOptionsInputResourcefulnessConstant:GetText()))
-        end)
-
-    CraftSim.FRAME:CreateText(
-        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
-        ProfitCalculationTab.content, customResourcefulnessConstantInput, "LEFT", "RIGHT", 5, 0)
-
-    CraftSim.FRAME:CreateHelpIcon(
-        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION"),
-        ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
-
+    GGUI.NumericInput {
+        parent = ProfitCalculationTab.content, anchorParent = skillBreakpointsCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -15, offsetX = -30,
+        label = L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
+        sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"), allowDecimals = true, minValue = 0,
+        onNumberValidCallback = function(numberInput)
+            local value = tonumber(numberInput.currentValue)
+            if value then
+                CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT", value)
+            end
+        end, borderAdjustHeight = 0.7, borderWidth = 30,
+        labelOptions = {
+            text = L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
+            parent = ProfitCalculationTab.content, anchorA = "LEFT", anchorB = "RIGHT",
+            offsetX = 5,
+        },
+        tooltipOptions = {
+            text = L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION"),
+            parent = ProfitCalculationTab.content, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+            anchor = "ANCHOR_CURSOR_RIGHT",
+        }
+    }
 
     local percentProfitCheckbox = GGUI.Checkbox {
         label = " " .. L("OPTIONS_GENERAL_SHOW_PROFIT"),
