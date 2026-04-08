@@ -185,8 +185,8 @@ function CraftSim.LOCAL_IT:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Basi del calcolo del Profitto",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "Dettaglio Costi di CraftSim",
-        COST_OPTIMIZATION_EXPLANATION =
+        PRICING_TITLE = "Dettaglio Costi di CraftSim",
+        PRICING_EXPLANATION =
             "In questa sezione puoi vedere una panoramica di tutti i possibili prezzi dei materiali utilizzati.\nLa colonna " ..
             f.bb("'Sorgente'") ..
             " indica quale dei prezzi è utilizzato.\n\n" ..
@@ -199,9 +199,8 @@ function CraftSim.LOCAL_IT:GetData()
             f.l("OR") ..
             " verrà sempre preferito se è stato impostato. " ..
             f.bb("Dati Salvati") .. " saranno utilizzati solo se inferiori a " .. f.g("AH"),
-        COST_OPTIMIZATION_CRAFTING_COSTS = "Costi di creazione: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "Oggetto",
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "Prezzo AH",
+        PRICING_CRAFTING_COSTS = "Costi di creazione: ",
+        PRICING_ITEM_HEADER = "Oggetto",
         COST_OPTIMIZATION_OVERRIDE_HEADER = "Prezzo Personalizzato",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Dati Salvati",
         COST_OPTIMIZATION_USED_SOURCE = "Sorgente",

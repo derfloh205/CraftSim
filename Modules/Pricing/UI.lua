@@ -1,22 +1,23 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.COST_OPTIMIZATION
-CraftSim.COST_OPTIMIZATION = CraftSim.COST_OPTIMIZATION
+---@class CraftSim.PRICING
+CraftSim.PRICING = CraftSim.PRICING
 
----@class CraftSim.COST_OPTIMIZATION.UI
-CraftSim.COST_OPTIMIZATION.UI = {}
+---@class CraftSim.PRICING.UI
+CraftSim.PRICING.UI = {}
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-CraftSim.COST_OPTIMIZATION.frame = nil
-CraftSim.COST_OPTIMIZATION.frameWO = nil
+CraftSim.PRICING.frame = nil
+CraftSim.PRICING.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CostOptimization.UI")
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.Pricing.UI")
 local f = CraftSim.GUTIL:GetFormatter()
+local L = CraftSim.UTIL:GetLocalizer()
 
-function CraftSim.COST_OPTIMIZATION.UI:Init()
+function CraftSim.PRICING.UI:Init()
     local sizeX = 700
     local sizeY = 280
     local offsetX = -5
@@ -24,7 +25,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
-    CraftSim.COST_OPTIMIZATION.frame = GGUI.Frame({
+    CraftSim.PRICING.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
@@ -33,20 +34,20 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         sizeY = sizeY,
         offsetY = offsetY,
         offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION,
-        title = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_TITLE"),
+        frameID = CraftSim.CONST.FRAMES.PRICING,
+        title = L("PRICING_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COST_OPTIMIZATION"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICING"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
-    CraftSim.COST_OPTIMIZATION.frameWO = GGUI.Frame({
+    CraftSim.PRICING.frameWO = GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
@@ -56,14 +57,14 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
-        title = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_TITLE") .. " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
+        title = L("PRICING_TITLE") .. " " ..
+            CraftSim.GUTIL:ColorizeText(L("SOURCE_COLUMN_WO"),
                 CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COST_OPTIMIZATION"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICING"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -81,7 +82,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             anchorB = "BOTTOM",
             offsetX = -30,
             offsetY = -15,
-            text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_CRAFTING_COSTS"),
+            text = L("PRICING_CRAFTING_COSTS"),
         })
         content.craftingCostsValue = GGUI.Text({
             parent = content,
@@ -98,7 +99,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 5,
-            text = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_EXPLANATION")
+            text = L("PRICING_EXPLANATION")
         })
 
         ---@type GGUI.CurrencyInput
@@ -113,7 +114,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             offsetX = 5,
             sizeY = 190,
             showBorder = true,
-            savedVariablesTableLayoutConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")["COST_OPTIMIZATION_REAGENT_LIST"],
+            savedVariablesTableLayoutConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
+                ["PRICING_REAGENT_LIST"],
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
                 noSelectionColor = true,
@@ -182,13 +184,13 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             },
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_ITEM_HEADER"),
+                    label = L("PRICING_ITEM_HEADER"),
                     width = 40,
                     justifyOptions = { type = "H", align = "CENTER" },
                     resizable = true,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_PRICE_HEADER"),
+                    label = L("COST_OPTIMIZATION_PRICE_HEADER"),
                     width = 110,
                     sortFunc = function(rowA, rowB)
                         local priceA = rowA.price
@@ -202,7 +204,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                     end
                 },
                 {
-                    label = CraftSim.LOCAL:GetText("COST_OPTIMIZATION_USED_SOURCE"),
+                    label = L("COST_OPTIMIZATION_USED_SOURCE"),
                     width = 80,
                     justifyOptions = { type = "H", align = "CENTER" },
                     resizable = true,
@@ -238,16 +240,16 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                     parent = sourceColumn,
                     anchorParent = sourceColumn,
                     text = CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN)
+                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN)
                 })
                 function sourceColumn:SetAH()
                     sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN))
+                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN))
                 end
 
                 function sourceColumn:SetOverride()
                     sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        CraftSim.LOCAL:GetText("SOURCE_COLUMN_OVERRIDE"),
+                        L("SOURCE_COLUMN_OVERRIDE"),
                         CraftSim.GUTIL.COLORS.LEGENDARY))
                 end
 
@@ -337,21 +339,21 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
             },
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_INV_AH"),
+                    label = L("PRICE_DETAILS_INV_AH"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_ITEM"),
+                    label = L("PRICE_DETAILS_ITEM"),
                     width = 60,
                     justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label = CraftSim.LOCAL:GetText("PRICE_DETAILS_PRICE_ITEM"),
+                    label = L("PRICE_DETAILS_PRICE_ITEM"),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText("PRICING_AVG_CRAFTING_COST"),
+                    label = L("PRICING_AVG_CRAFTING_COST"),
                     width = 130,
                 },
             },
@@ -393,18 +395,18 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         frame:Hide()
     end
 
-    createContent(CraftSim.COST_OPTIMIZATION.frame)
-    createContent(CraftSim.COST_OPTIMIZATION.frameWO)
+    createContent(CraftSim.PRICING.frame)
+    createContent(CraftSim.PRICING.frameWO)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
+function CraftSim.PRICING:UpdateDisplay(recipeData)
     local costOptimizationFrame = nil
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costOptimizationFrame = CraftSim.COST_OPTIMIZATION.frameWO
+        costOptimizationFrame = CraftSim.PRICING.frameWO
     else
-        costOptimizationFrame = CraftSim.COST_OPTIMIZATION.frame
+        costOptimizationFrame = CraftSim.PRICING.frame
     end
 
     print("Pricing - Reagent List Update", false, true)
@@ -472,17 +474,17 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
             -- Build tooltip with original AH price info
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
+                    L("PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
                     f.grey("-")
             else
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
+                    L("PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT") ..
                     CraftSim.UTIL:FormatMoney(priceInfo.ahPrice)
             end
 
             if priceInfo.isOverride then
                 tooltip = tooltip ..
-                    CraftSim.LOCAL:GetText("COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE") ..
+                    L("PRICING_REAGENT_LIST_OVERRIDE") ..
                     CraftSim.UTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
                 sourceColumn:SetOverride()
             elseif priceInfo.isAHPrice then
@@ -500,12 +502,12 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData)
     end
 
     reagentList:UpdateDisplay()
-    CraftSim.COST_OPTIMIZATION.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
+    CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
 end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param costOptimizationFrame GGUI.Frame
-function CraftSim.COST_OPTIMIZATION.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
+function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
     local resultItemsList = costOptimizationFrame.content.resultItemsList --[[@as GGUI.FrameList]]
     resultItemsList:Remove()
 
@@ -550,4 +552,3 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateResultItemsList(recipeData, costOpt
         resultItemsList:UpdateDisplay()
     end)
 end
-

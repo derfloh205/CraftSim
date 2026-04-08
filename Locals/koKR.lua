@@ -65,18 +65,23 @@ function CraftSim.LOCAL_KO:GetData()
         STAT_POTION_EXPERIMENTATION = "물약 실험 돌파",
 
         -- Profit Breakdown Tooltips
-        RESOURCEFULNESS_EXPLANATION_TOOLTIP =         "지혜는 각 재료에 대해 개별적으로 발동하며, 해당 재료 수량의 약 30%를 절약합니다.\n\n표시되는 평균값은 모든 재료 조합과 그 확률을 계산한 평균 절약 수치입니다.\n(모든 재료가 동시에 절약될 확률은 매우 낮지만, 발생 시 매우 많은 재료를 아낄 수 있습니다)\n\n평균 총 절약 재료 비용은 각 조합의 확률을 가중치로 둔 절약 비용의 합계입니다.",
+        RESOURCEFULNESS_EXPLANATION_TOOLTIP =
+        "지혜는 각 재료에 대해 개별적으로 발동하며, 해당 재료 수량의 약 30%를 절약합니다.\n\n표시되는 평균값은 모든 재료 조합과 그 확률을 계산한 평균 절약 수치입니다.\n(모든 재료가 동시에 절약될 확률은 매우 낮지만, 발생 시 매우 많은 재료를 아낄 수 있습니다)\n\n평균 총 절약 재료 비용은 각 조합의 확률을 가중치로 둔 절약 비용의 합계입니다.",
 
-        RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP =         "제작 난이도는 각 품질 단계에 도달하기 위한 숙련도 기준점을 결정합니다.\n\n5단계 품질 레시피의 경우, 숙련도가 난이도의 20%, 50%, 80%, 100%일 때 품질이 변합니다.\n3단계 품질 레시피는 50%와 100%가 기준점입니다.",
-        MULTICRAFT_EXPLANATION_TOOLTIP =         "복수 제작은 레시피로 제작 시 평소보다 더 많은 아이템을 제작할 확률을 부여합니다.\n\n추가 생성량은 보통 기본 생산량(y)의 1배에서 2.5배 사이입니다.",
-        REAGENTSKILL_EXPLANATION_TOOLTIP =         "재료의 품질은 기본 제작 난이도의 최대 40%까지 보너스 숙련도를 제공할 수 있습니다.\n\n모든 1성 재료: 보너스 0%\n모든 2성 재료: 보너스 20%\n모든 3성 재료: 보너스 40%\n\n숙련도는 각 품질별 재료 수량과 품질 가중치, 그리고 각 재료 아이템 고유의 가중치 값을 통해 계산됩니다.\n\n단, 재제작의 경우 다릅니다. 재제작 시 재료가 올릴 수 있는 최대 품질은 아이템이 원래 제작되었을 때 사용된 재료의 품질에 영향을 받습니다.\n정확한 공식은 공개되어 있지 않으나, CraftSim은 내부적으로 모든 3성 재료를 사용했을 때 도달 가능한 숙련도와 비교하여 최대 숙련도 상승치를 계산합니다.",
-        REAGENTFACTOR_EXPLANATION_TOOLTIP =         "일반적으로 재료가 기여할 수 있는 최대 숙련도는 기본 제작 난이도의 40%입니다.\n\n하지만 재제작의 경우, 이전 제작 기록과 당시 사용된 재료 품질에 따라 이 수치가 달라질 수 있습니다.",
+        RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP =
+        "제작 난이도는 각 품질 단계에 도달하기 위한 숙련도 기준점을 결정합니다.\n\n5단계 품질 레시피의 경우, 숙련도가 난이도의 20%, 50%, 80%, 100%일 때 품질이 변합니다.\n3단계 품질 레시피는 50%와 100%가 기준점입니다.",
+        MULTICRAFT_EXPLANATION_TOOLTIP =
+        "복수 제작은 레시피로 제작 시 평소보다 더 많은 아이템을 제작할 확률을 부여합니다.\n\n추가 생성량은 보통 기본 생산량(y)의 1배에서 2.5배 사이입니다.",
+        REAGENTSKILL_EXPLANATION_TOOLTIP =
+        "재료의 품질은 기본 제작 난이도의 최대 40%까지 보너스 숙련도를 제공할 수 있습니다.\n\n모든 1성 재료: 보너스 0%\n모든 2성 재료: 보너스 20%\n모든 3성 재료: 보너스 40%\n\n숙련도는 각 품질별 재료 수량과 품질 가중치, 그리고 각 재료 아이템 고유의 가중치 값을 통해 계산됩니다.\n\n단, 재제작의 경우 다릅니다. 재제작 시 재료가 올릴 수 있는 최대 품질은 아이템이 원래 제작되었을 때 사용된 재료의 품질에 영향을 받습니다.\n정확한 공식은 공개되어 있지 않으나, CraftSim은 내부적으로 모든 3성 재료를 사용했을 때 도달 가능한 숙련도와 비교하여 최대 숙련도 상승치를 계산합니다.",
+        REAGENTFACTOR_EXPLANATION_TOOLTIP =
+        "일반적으로 재료가 기여할 수 있는 최대 숙련도는 기본 제작 난이도의 40%입니다.\n\n하지만 재제작의 경우, 이전 제작 기록과 당시 사용된 재료 품질에 따라 이 수치가 달라질 수 있습니다.",
 
         -- Simulation Mode
         SIMULATION_MODE_NONE = "없음",
         SIMULATION_MODE_LABEL = "시뮬레이션 모드",
         SIMULATION_MODE_TITLE = "CraftSim 시뮬레이션 모드",
-        SIMULATION_MODE_TOOLTIP =         "CraftSim의 시뮬레이션 모드를 사용하면 제한 없이 레시피를 테스트해 볼 수 있습니다.",
+        SIMULATION_MODE_TOOLTIP = "CraftSim의 시뮬레이션 모드를 사용하면 제한 없이 레시피를 테스트해 볼 수 있습니다.",
         SIMULATION_MODE_OPTIONAL = "선택 재료 #",
         SIMULATION_MODE_FINISHING = "마무리 재료 #",
         SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP = "모든 재료 품질 최대화: ",
@@ -94,7 +99,7 @@ function CraftSim.LOCAL_KO:GetData()
         RESOURCEFULNESS_LABEL = "지혜: ",
         RESOURCEFULNESS_BONUS_LABEL = "지혜 아이템 보너스: ",
         INGENUITY_LABEL = "독창성: ",
-        INGENUITY_EXPLANATION_TOOLTIP =         "독창성은 집중을 사용하여 제작할 때 사용한 집중의 일부를 돌려받을 확률을 부여합니다.",
+        INGENUITY_EXPLANATION_TOOLTIP = "독창성은 집중을 사용하여 제작할 때 사용한 집중의 일부를 돌려받을 확률을 부여합니다.",
         CONCENTRATION_LABEL = "집중: ",
         REAGENT_QUALITY_BONUS_LABEL = "재료 품질 보너스: ",
         REAGENT_QUALITY_MAXIMUM_LABEL = "재료 품질 최대 %: ",
@@ -105,7 +110,8 @@ function CraftSim.LOCAL_KO:GetData()
         MULTICRAFT_BONUS_LABEL = "복수 제작 아이템 보너스: ",
 
         -- Statistics (통계)
-        STATISTICS_CDF_EXPLANATION = "이 수치는 누적 분포 함수(CDF)의 'abramowitz and stegun' 근사치(1985)를 사용하여 계산되었습니다.\n\n제작 횟수가 1회일 때 수치가 항상 50% 부근인 것을 알 수 있는데,\n이는 대부분의 경우 0이 평균 수익에 가깝기 때문입니다.\n그리고 누적 분포 함수에서 평균값을 얻을 확률은 항상 50%입니다.\n\n하지만 변화율은 제작법마다 크게 다를 수 있습니다.\n손해보다 이익을 볼 확률이 더 높다면 수치는 꾸준히 상승할 것이며,\n그 반대의 경우도 마찬가지입니다.",
+        STATISTICS_CDF_EXPLANATION =
+        "이 수치는 누적 분포 함수(CDF)의 'abramowitz and stegun' 근사치(1985)를 사용하여 계산되었습니다.\n\n제작 횟수가 1회일 때 수치가 항상 50% 부근인 것을 알 수 있는데,\n이는 대부분의 경우 0이 평균 수익에 가깝기 때문입니다.\n그리고 누적 분포 함수에서 평균값을 얻을 확률은 항상 50%입니다.\n\n하지만 변화율은 제작법마다 크게 다를 수 있습니다.\n손해보다 이익을 볼 확률이 더 높다면 수치는 꾸준히 상승할 것이며,\n그 반대의 경우도 마찬가지입니다.",
 
         EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION = f.r("경고: ") .. " 수학 주의!\n\n" ..
             "무언가를 제작할 때, 여러분의 제작 능력치에 따라 결과물에 대한 다양한 확률을 갖게 됩니다.\n" ..
@@ -138,7 +144,7 @@ function CraftSim.LOCAL_KO:GetData()
             "만약 우리가 " ..
             f.bb("30% 확률의 사례 A") .. "에서 수익이 " ..
             CraftSim.UTIL:FormatMoney(-100 * 10000, true) .. "이고,\n" ..
-            f.bb("70% 확률의 사례 B") .. "에서 수익이 " .. 
+            f.bb("70% 확률의 사례 B") .. "에서 수익이 " ..
             CraftSim.UTIL:FormatMoney(300 * 10000, true) .. "라면, 예상 수익은 다음과 같습니다.\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
             "결과는 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "가 됩니다.\n" ..
@@ -148,7 +154,8 @@ function CraftSim.LOCAL_KO:GetData()
         -- Popups
         POPUP_NO_PRICE_SOURCE_SYSTEM = "지원되는 가격 출처가 없습니다!",
         POPUP_NO_PRICE_SOURCE_TITLE = "CraftSim 가격 출처 경고",
-        POPUP_NO_PRICE_SOURCE_WARNING =         "가격 출처를 찾을 수 없습니다!\n\nCraftSim의 이익 계산 기능을 사용하려면\n다음 가격 출처 애드온 중 하나를\n반드시 설치해야 합니다:\n\n\n",
+        POPUP_NO_PRICE_SOURCE_WARNING =
+        "가격 출처를 찾을 수 없습니다!\n\nCraftSim의 이익 계산 기능을 사용하려면\n다음 가격 출처 애드온 중 하나를\n반드시 설치해야 합니다:\n\n\n",
         POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS = "이 경고를 다시 표시하지 않음",
         POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT = "확인",
 
@@ -163,12 +170,12 @@ function CraftSim.LOCAL_KO:GetData()
         REAGENTS_ASSIGN = "할당",
         REAGENTS_MAXIMUM_QUALITY = "최대 품질: ",
         REAGENTS_AVERAGE_PROFIT_LABEL = "평균 Ø 이익: ",
-        REAGENTS_AVERAGE_PROFIT_TOOLTIP =             f.bb("제작당 평균 이익") .. " ( " .. f.l("현재 재료 배분") .. " 시)",
+        REAGENTS_AVERAGE_PROFIT_TOOLTIP = f.bb("제작당 평균 이익") .. " ( " .. f.l("현재 재료 배분") .. " 시)",
         REAGENTS_OPTIMIZE_BEST_ASSIGNED = "최적 재료 할당됨",
         REAGENTS_CONCENTRATION_LABEL = "집중: ",
         REAGENTS_OPTIMIZE_INFO = "숫자 위에서 Shift + 클릭 시 아이템 링크를 채팅창에 입력",
         ADVANCED_OPTIMIZATION_BUTTON = "고급 최적화",
-        REAGENTS_OPTIMIZE_TOOLTIP =             "(수정 시 초기화)\n" .. 
+        REAGENTS_OPTIMIZE_TOOLTIP = "(수정 시 초기화)\n" ..
             f.gold("집중 가치") .. " 및 " .. f.bb("마무리 재료") .. " 최적화 활성화",
 
         -- Specialization Info Frame
@@ -204,11 +211,11 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1 = "이익: ",
         CRAFT_LOG_SAVED_REAGENTS = "절약된 재료",
         CRAFT_LOG_DISABLE_CHECKBOX = f.r("비활성화") .. " 제작 기록",
-        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP =             "비활성화 시 제작 중 기록을 중단하며 " ..f.g("성능이 향상") .. "될 수 있습니다.",
+        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP = "비활성화 시 제작 중 기록을 중단하며 " .. f.g("성능이 향상") .. "될 수 있습니다.",
         CRAFT_LOG_REAGENT_DETAILS_TAB = "재료 상세",
         CRAFT_LOG_RESULT_ANALYSIS_TAB = "결과 분석",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL = "결과 분포",
-        CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP =         "제작된 아이템 결과의 상대적 분포입니다.\n(복수 제작 수량 제외)",
+        CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP = "제작된 아이템 결과의 상대적 분포입니다.\n(복수 제작 수량 제외)",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT = "복수 제작",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS = "지혜",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION = "생산량 분포",
@@ -224,8 +231,8 @@ function CraftSim.LOCAL_KO:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "기본 이익 계산",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "CraftSim 비용 최적화",
-        COST_OPTIMIZATION_EXPLANATION =             "사용된 재료에 대해 가능한 모든 가격 개요를 확인할 수 있습니다.\n" ..
+        PRICING_TITLE = "CraftSim 비용 최적화",
+        PRICING_EXPLANATION = "사용된 재료에 대해 가능한 모든 가격 개요를 확인할 수 있습니다.\n" ..
             f.bb("'사용된 출처'") ..
             " 열은 현재 어떤 가격이 계산에 사용되고 있는지 나타냅니다.\n\n" ..
             f.g("AH") ..
@@ -238,9 +245,8 @@ function CraftSim.LOCAL_KO:GetData()
             " 값이 설정되어 있으면 항상 우선적으로 사용됩니다. " ..
             f.bb("제작 비용") .. "은 " .. f.g("AH") .. " 가격보다 낮을 때만 사용됩니다.\n\n" ..
             "임의의 재료를 " .. f.bb("우클릭") .. "하여 가격을 원하는 값으로 직접 설정할 수 있습니다.",
-        COST_OPTIMIZATION_CRAFTING_COSTS = "제작 비용: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "아이템",
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "경매장 가격",
+        PRICING_CRAFTING_COSTS = "제작 비용: ",
+        PRICING_ITEM_HEADER = "아이템",
         COST_OPTIMIZATION_OVERRIDE_HEADER = "직접 설정",
         COST_OPTIMIZATION_CRAFTING_HEADER = "제작",
         COST_OPTIMIZATION_USED_SOURCE = "사용된 출처",
@@ -248,7 +254,7 @@ function CraftSim.LOCAL_KO:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB = "하위 레시피 옵션",
         COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION = "하위 레시피 최적화 " ..
             f.bb("(실험적 기능)"),
-        COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP = 
+        COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP =
             f.l("CraftSim") .. "이 현재 캐릭터와 부캐릭터가 해당 아이템을 제작할 수 있는 경우,\n해당 캐릭터들의 " .. f.g("최적화된 제작 비용") ..
             "을 고려합니다.\n\n" ..
             f.r("추가 계산량이 많아 성능이 다소 저하될 수 있습니다."),
@@ -260,12 +266,12 @@ function CraftSim.LOCAL_KO:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP = "활성화 시, " ..
             f.l("CraftSim") .. "은 직접 제작 재료를 계산할 때 레시피의 재사용 대기시간 제한을 무시합니다.",
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "레시피 제작자 선택",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "경매장 즉시 구매가가: ",
-        COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\n직접 설정됨",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\n제작 중 ",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- 아이템당 예상 비용: ",
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST = f.gold("집중 비용: "),
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION = "집중: ",
+        PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "경매장 즉시 구매가가: ",
+        PRICING_REAGENT_LIST_OVERRIDE = "\n\n직접 설정됨",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\n제작 중 ",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- 아이템당 예상 비용: ",
+        PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("집중 비용: "),
+        PRICING_REAGENT_LIST_CONCENTRATION = "집중: ",
 
         -- Statistics Frame
         STATISTICS_TITLE = "CraftSim 통계",
@@ -282,7 +288,7 @@ function CraftSim.LOCAL_KO:GetData()
         STATISTICS_PROBABILITY_TABLE_TAB = "확률표",
         STATISTICS_CONCENTRATION_TAB = "집중",
         STATISTICS_CONCENTRATION_CURVE_GRAPH = "집중 비용 곡선",
-        STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP =             "해당 레시피에 대한 플레이어 숙련도별 집중 비용\n" ..
+        STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP = "해당 레시피에 대한 플레이어 숙련도별 집중 비용\n" ..
             f.bb("X축: ") .. " 플레이어 숙련도\n" ..
             f.bb("Y축: ") .. " 집중 비용",
 
@@ -301,7 +307,7 @@ function CraftSim.LOCAL_KO:GetData()
         PRICE_OVERRIDE_FINISHING_REAGENTS = "마무리 재료",
         PRICE_OVERRIDE_RESULT_ITEMS = "결과 아이템",
         PRICE_OVERRIDE_ACTIVE_OVERRIDES = "활성화된 직접 설정",
-        PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP =         "'(결과물)' -> 해당 아이템이 레시피의 결과물일 때만 가격 설정을 고려합니다.",
+        PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP = "'(결과물)' -> 해당 아이템이 레시피의 결과물일 때만 가격 설정을 고려합니다.",
         PRICE_OVERRIDE_CLEAR_ALL = "모두 삭제",
         PRICE_OVERRIDE_SAVE = "저장",
         PRICE_OVERRIDE_SAVED = "저장됨",
@@ -315,14 +321,15 @@ function CraftSim.LOCAL_KO:GetData()
         RECIPE_SCAN_SCAN_CANCEL = "취소",
         RECIPE_SCAN_SCANNING = "스캔 중",
         RECIPE_SCAN_INCLUDE_NOT_LEARNED = "미습득 레시피 포함",
-        RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP =         "배우지 않은 레시피도 레시피 스캔 결과에 포함합니다.",
+        RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP = "배우지 않은 레시피도 레시피 스캔 결과에 포함합니다.",
         RECIPE_SCAN_INCLUDE_SOULBOUND = "귀속 아이템 포함",
-        RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP =         "획득 시 귀속되는 레시피 결과물을 스캔에 포함합니다.\n\n해당 레시피의 제작 아이템에 대해 '가격 직접 설정' 모듈에서\n예상 수수료 등을 미리 설정해두는 것을 권장합니다.",
+        RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP =
+        "획득 시 귀속되는 레시피 결과물을 스캔에 포함합니다.\n\n해당 레시피의 제작 아이템에 대해 '가격 직접 설정' 모듈에서\n예상 수수료 등을 미리 설정해두는 것을 권장합니다.",
         RECIPE_SCAN_INCLUDE_GEAR = "장비 포함",
         RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP = "모든 형태의 장비 제작 레시피를 스캔에 포함합니다.",
         RECIPE_SCAN_OPTIMIZE_TOOLS = "기술 도구 최적화",
-        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP =         "각 레시피별로 이익을 최대화할 수 있는 전문 기술 도구 조합을 최적화합니다.\n\n",
-        RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING =         "소지품에 도구가 많을 경우 스캔 중 성능이 저하될 수 있습니다.",
+        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP = "각 레시피별로 이익을 최대화할 수 있는 전문 기술 도구 조합을 최적화합니다.\n\n",
+        RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING = "소지품에 도구가 많을 경우 스캔 중 성능이 저하될 수 있습니다.",
         RECIPE_SCAN_CRAFTER_HEADER = "제작자",
         RECIPE_SCAN_RECIPE_HEADER = "레시피",
         RECIPE_SCAN_LEARNED_HEADER = "습득 여부",
@@ -333,7 +340,7 @@ function CraftSim.LOCAL_KO:GetData()
         RECIPE_SCAN_TOP_GEAR_HEADER = "최적 도구",
         RECIPE_SCAN_INV_AH_HEADER = "보유/경매장",
         RECIPE_SCAN_SORT_BY_MARGIN = "이익률 기준 정렬",
-        RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =         "제작 비용 대비 이익률(%)을 기준으로 목록을 정렬합니다.\n(새로 스캔해야 적용됨)",
+        RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP = "제작 비용 대비 이익률(%)을 기준으로 목록을 정렬합니다.\n(새로 스캔해야 적용됨)",
         RECIPE_SCAN_USE_INSIGHT_CHECKBOX = "가능한 경우 " .. f.bb("통찰") .. " 사용",
         RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP = "선택 재료를 사용할 수 있는 레시피에\n" ..
             f.bb("빛나는 통찰") .. " 또는 " .. f.bb("하급 빛나는 통찰") .. "을 적용하여 계산합니다.",
@@ -356,7 +363,7 @@ function CraftSim.LOCAL_KO:GetData()
         RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP = f.g("활성화: ") ..
             "활성화되어 스캔된 모든 전문 기술의 결과를 가져옵니다.\n\n" ..
             f.r("비활성화: ") .. "현재 선택된 전문 기술의 결과만 가져옵니다.",
-        RECIPE_SCAN_CACHED_RECIPES_TOOLTIP =             "캐릭터로 레시피를 열거나 스캔할 때마다 " ..
+        RECIPE_SCAN_CACHED_RECIPES_TOOLTIP = "캐릭터로 레시피를 열거나 스캔할 때마다 " ..
             f.l("CraftSim") ..
             "이 이를 기억합니다.\n\n" .. f.l("CraftSim") .. "이 기억하는 부캐릭터의 레시피만 " .. f.bb("레시피 스캔") .. "으로 스캔할 수 있습니다.\n\n" ..
             "실제로 스캔되는 레시피의 양은 " .. f.e("레시피 스캔 옵션") .. " 설정에 따릅니다.",
@@ -388,9 +395,11 @@ function CraftSim.LOCAL_KO:GetData()
         OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = f.e("획득 시 귀속") .. f.bb(" 마무리 재료") .. " 포함",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = "Finishing Reagents Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP =
+        "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP =
+        "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\nWarning: This may take significantly longer to complete.",
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "제작 대기열로 보내기",
         RECIPE_SCAN_CREATE_CRAFT_LIST = "제작 목록 만들기",
@@ -417,7 +426,7 @@ function CraftSim.LOCAL_KO:GetData()
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim 최적 도구",
         TOP_GEAR_AUTOMATIC = "자동 업데이트",
-        TOP_GEAR_AUTOMATIC_TOOLTIP =         "레시피가 업데이트될 때마다 선택한 모드에 맞춰 최적 도구를 자동으로 시뮬레이션합니다.\n\n이 기능을 끄면 성능이 향상될 수 있습니다.",
+        TOP_GEAR_AUTOMATIC_TOOLTIP = "레시피가 업데이트될 때마다 선택한 모드에 맞춰 최적 도구를 자동으로 시뮬레이션합니다.\n\n이 기능을 끄면 성능이 향상될 수 있습니다.",
         TOP_GEAR_SIMULATE = "최적 도구 시뮬레이션",
         TOP_GEAR_EQUIP = "착용",
         TOP_GEAR_SIMULATE_QUALITY = "품질: ",
@@ -442,13 +451,14 @@ function CraftSim.LOCAL_KO:GetData()
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "현재 가격 출처: ",
         OPTIONS_GENERAL_NO_PRICE_SOURCE = "지원되는 가격 출처 애드온이 로드되지 않았습니다!",
         OPTIONS_GENERAL_SHOW_PROFIT = "이익 백분율 표시",
-        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP =         "골드 값 옆에 제작 비용 대비 이익의 백분율을 표시합니다.",
+        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP = "골드 값 옆에 제작 비용 대비 이익의 백분율을 표시합니다.",
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE = "마지막 레시피 기억",
-        OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP =         "제작 창을 열 때 마지막으로 선택했던 레시피를 다시 엽니다.",
+        OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP = "제작 창을 열 때 마지막으로 선택했던 레시피를 다시 엽니다.",
         OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES = "지원되는 가격 출처:",
         OPTIONS_PERFORMANCE_RAM = "제작 중 RAM 정리 활성화",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "제작 횟수",
-        OPTIONS_PERFORMANCE_RAM_TOOLTIP =         "활성화 시, 지정된 제작 횟수마다 사용하지 않는 데이터를 정리하여 RAM 점유율 상승을 방지합니다.\n메모리 누수는 타 애드온에 의해서도 발생할 수 있으며, 이 정리는 WoW 전체의 RAM 사용량에 영향을 줍니다.",
+        OPTIONS_PERFORMANCE_RAM_TOOLTIP =
+        "활성화 시, 지정된 제작 횟수마다 사용하지 않는 데이터를 정리하여 RAM 점유율 상승을 방지합니다.\n메모리 누수는 타 애드온에 의해서도 발생할 수 있으며, 이 정리는 WoW 전체의 RAM 사용량에 영향을 줍니다.",
         OPTIONS_MODULES_TAB = "모듈",
         OPTIONS_PROFIT_CALCULATION_TAB = "이익 계산",
         OPTIONS_CRAFTING_TAB = "제작",
@@ -470,11 +480,13 @@ function CraftSim.LOCAL_KO:GetData()
         OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE = "고객당 최대 메시지 기록 수",
         OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT = "고객당 최대 이력 항목 수",
         OPTIONS_PROFIT_CALCULATION_OFFSET = "숙련도 기준점에 1 추가",
-        OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP =         "재료 조합 제안 시 정확한 요구 숙련도가 아닌, 기준점 + 1 숙련도 도달을 목표로 합니다.",
+        OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP = "재료 조합 제안 시 정확한 요구 숙련도가 아닌, 기준점 + 1 숙련도 도달을 목표로 합니다.",
         OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT = "복수 제작 상수",
-        OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION =         "기본값: 2.5\n\n베타 및 용군단 초기 데이터에 따르면 복수 제작으로 얻는 최대 추가 수량은 1+C*y입니다. (y=기본 생산량, C=2.5)\n원하는 경우 이 값을 수정할 수 있습니다.",
+        OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION =
+        "기본값: 2.5\n\n베타 및 용군단 초기 데이터에 따르면 복수 제작으로 얻는 최대 추가 수량은 1+C*y입니다. (y=기본 생산량, C=2.5)\n원하는 경우 이 값을 수정할 수 있습니다.",
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT = "지혜 상수",
-        OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =         "기본값: 0.3\n\n데이터에 따르면 지혜 발동 시 평균적으로 필요 수량의 약 30%를 절약합니다.\n원하는 경우 이 값을 수정할 수 있습니다.",
+        OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =
+        "기본값: 0.3\n\n데이터에 따르면 지혜 발동 시 평균적으로 필요 수량의 약 30%를 절약합니다.\n원하는 경우 이 값을 수정할 수 있습니다.",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX = f.bb("새 소식") .. " 팝업 표시",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP = "게임 접속 시 " ..
             f.l("CraftSim") .. " 업데이트 정보가 담긴 " .. f.bb("새 소식") .. " 팝업을 표시합니다.",
@@ -485,40 +497,40 @@ function CraftSim.LOCAL_KO:GetData()
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "제작 대기열",
-        CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP =         "레시피를 대기열에 추가하고 한곳에서 모두 제작하세요!",
+        CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP = "레시피를 대기열에 추가하고 한곳에서 모두 제작하세요!",
         CONTROL_PANEL_MODULES_TOP_GEAR_LABEL = "최적 도구",
-        CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP =         "선택한 모드에 따라 사용 가능한 최적의 전문 기술 장비 조합을 보여줍니다.",
+        CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP = "선택한 모드에 따라 사용 가능한 최적의 전문 기술 장비 조합을 보여줍니다.",
         CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL = "가격 상세",
-        CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP =         "결과물의 품질별 판매가와 이익 개요를 보여줍니다.",
+        CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP = "결과물의 품질별 판매가와 이익 개요를 보여줍니다.",
         CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL = "평균 이익",
-        CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP =         "전문 기술 능력치와 이익 가중치를 바탕으로 한 평균 이익(포인트당 골드 가치)을 보여줍니다.",
+        CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP = "전문 기술 능력치와 이익 가중치를 바탕으로 한 평균 이익(포인트당 골드 가치)을 보여줍니다.",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL = "재료 최적화",
-        CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP =         "특정 품질 단계에 도달하기 위한 가장 저렴한 재료 조합을 제안합니다.",
+        CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP = "특정 품질 단계에 도달하기 위한 가장 저렴한 재료 조합을 제안합니다.",
         CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL = "가격 직접 설정",
-        CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP =         "모든 레시피 또는 특정 레시피에 대해 재료 및 결과물의 가격을 직접 설정합니다.",
+        CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP = "모든 레시피 또는 특정 레시피에 대해 재료 및 결과물의 가격을 직접 설정합니다.",
         CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL = "전문화 정보",
-        CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP =         "전문 기술 전문화가 이 레시피에 어떤 영향을 주는지 보여주고, 구성을 시뮬레이션해볼 수 있습니다.",
+        CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP = "전문 기술 전문화가 이 레시피에 어떤 영향을 주는지 보여주고, 구성을 시뮬레이션해볼 수 있습니다.",
         CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL = "제작 기록",
-        CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP =         "제작 로그와 제작 통계를 보여줍니다.",
+        CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP = "제작 로그와 제작 통계를 보여줍니다.",
         CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL = "비용 최적화",
-        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP =         "제작 비용에 대한 상세 정보를 보여주고 비용 최적화를 돕는 모듈입니다.",
+        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP = "제작 비용에 대한 상세 정보를 보여주고 비용 최적화를 돕는 모듈입니다.",
         CONTROL_PANEL_MODULES_STATISTICS_LABEL = "통계",
-        CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP =         "현재 열린 레시피의 상세한 결과 통계를 보여주는 모듈입니다.",
+        CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP = "현재 열린 레시피의 상세한 결과 통계를 보여주는 모듈입니다.",
         CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL = "레시피 스캔",
-        CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP =         "다양한 옵션을 바탕으로 레시피 목록을 스캔하는 모듈입니다.",
+        CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP = "다양한 옵션을 바탕으로 레시피 목록을 스캔하는 모듈입니다.",
         CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL = "고객 기록",
-        CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP =         "고객과의 대화, 제작 아이템, 수수료 등의 이력을 제공하는 모듈입니다.",
+        CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP = "고객과의 대화, 제작 아이템, 수수료 등의 이력을 제공하는 모듈입니다.",
         CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL = "제작 버프",
-        CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP =         "현재 활성화되었거나 누락된 제작 관련 버프를 보여줍니다.",
+        CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP = "현재 활성화되었거나 누락된 제작 관련 버프를 보여줍니다.",
         CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL = "계산 설명",
-        CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP =             f.l(" CraftSim") .. "의 각종 계산 방식을 설명해주는 모듈입니다.",
+        CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP = f.l(" CraftSim") .. "의 각종 계산 방식을 설명해주는 모듈입니다.",
         CONTROL_PANEL_RESET_FRAMES = "창 위치 초기화",
         CONTROL_PANEL_OPTIONS = "옵션",
         CONTROL_PANEL_NEWS = "새 소식",
         CONTROL_PANEL_EXPORTS = "내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "내보내는 중",
-        CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =         "내부 전쟁 확장팩에서 내보낼 레시피를 찾을 수 없습니다.",
+        CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND = "내부 전쟁 확장팩에서 내보낼 레시피를 찾을 수 없습니다.",
         CONTROL_PANEL_FORGEFINDER_EXPORT = f.l("ForgeFinder") .. " 내보내기",
         CONTROL_PANEL_FORGEFINDER_EXPORTING = "내보내는 중",
         CONTROL_PANEL_EXPORT_EXPLANATION = f.l("wowforgefinder.com") ..
@@ -547,10 +559,11 @@ function CraftSim.LOCAL_KO:GetData()
         CUSTOMER_HISTORY_DELETE_BUTTON = "고객 삭제",
         CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL = "귓속말..",
         CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL = "수수료 0골드 고객 삭제",
-        CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP =         "총 수수료가 0인 모든 고객 데이터를\n정말로 삭제하시겠습니까?",
-        CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP =         "%s의 모든 데이터를\n정말로 삭제하시겠습니까?",
+        CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP = "총 수수료가 0인 모든 고객 데이터를\n정말로 삭제하시겠습니까?",
+        CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP = "%s의 모든 데이터를\n정말로 삭제하시겠습니까?",
         CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL = "자동 삭제 주기 (일)",
-        CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP =         "설정된 일수 경과 후 로그인 시, 지정된 수수료 미만의 고객을 자동으로 삭제합니다.\n0으로 설정하면 자동으로 삭제하지 않습니다.",
+        CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP =
+        "설정된 일수 경과 후 로그인 시, 지정된 수수료 미만의 고객을 자동으로 삭제합니다.\n0으로 설정하면 자동으로 삭제하지 않습니다.",
         CUSTOMER_HISTORY_CUSTOMER_HEADER = "고객",
         CUSTOMER_HISTORY_TOTAL_TIP_HEADER = "총 수수료",
         CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER = "날짜",
@@ -589,7 +602,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL = "첫 제작 추가",
         CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL = "제작 주문 추가",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_CHECKBOX = f.gold("집중") .. " 허용",
-        CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP =             "최소 품질에 도달할 수 없는 경우, 가능한 경우 " .. f.l("집중") .. "을 사용합니다.",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP = "최소 품질에 도달할 수 없는 경우, 가능한 경우 " ..
+            f.l("집중") .. "을 사용합니다.",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "이익 발생 시만",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "예상 이익이 양수인 제작 주문만 대기열에 추가합니다.",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "제작 주문 유형",
@@ -621,7 +635,8 @@ function CraftSim.LOCAL_KO:GetData()
             f.g("집중 가치가 가장 높은") ..
             " 레시피를 판별한 뒤, 제작 가능한 최대 수량만큼 대기열에 추가합니다.",
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT = f.gold("집중") .. f.bb(" 대기열 수량 오프셋"),
-        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP = "활성화 시, " .. f.bb("독창성") .. "에 따른 예상 제작 수량만큼 집중 제작을 대기열에 추가합니다.",
+        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP = "활성화 시, " ..
+            f.bb("독창성") .. "에 따른 예상 제작 수량만큼 집중 제작을 대기열에 추가합니다.",
         CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS = f.bb("현재 주 전문 기술") .. " 추가",
         CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP = "활성화 시, 현재 캐릭터의 두 주 전문 기술을 동시에 처리합니다.",
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL = "대기열 수량 오프셋: ",
@@ -631,7 +646,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "재사용 대기 중",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER = "제작자 틀림",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER = "상태",
-        CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "레시피를 제작하기 위해 모든 요구 사항이 충족되어야 합니다.",
+        CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP = "레시피를 제작하기 위해 모든 요구 사항이 충족되어야 합니다.",
         CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "다음 제작",
         CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "최대",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "자동 (최저가)",
@@ -642,25 +657,25 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Auctionator 쇼핑 목록 생성",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "제작 대기열",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = f.bb("제작 대기열") .. " 완료 시 작업표시줄 깜빡임",
-        CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP = 
-            "WoW 게임 창이 최소화되어 있을 때 " .. f.bb("제작 대기열") .. 
+        CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP =
+            "WoW 게임 창이 최소화되어 있을 때 " .. f.bb("제작 대기열") ..
             "에서 제작이 완료되면, " .. f.l(" CraftSim") .. "이 작업표시줄의 WoW 아이콘을 깜빡여 알립니다.",
         CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL = "재입고 옵션",
-        CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP =             "제작법 스캔(Recipe Scan)에서 가져올 때의 재입고 동작을 설정합니다.",
+        CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP = "제작법 스캔(Recipe Scan)에서 가져올 때의 재입고 동작을 설정합니다.",
         CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL = "수익 임계값:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL = "판매율 임계값:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP = string.format(
             [[
 %s가 로드되어 있을 때만 사용 가능합니다!
 
-아이템의 선택된 품질 중 %s 품질의 판매율이 
+아이템의 선택된 품질 중 %s 품질의 판매율이
 설정한 판매율 임계값보다 크거나 같은지 확인합니다.
 ]], f.bb("TSM"), f.bb("어느 하나라도")),
         CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL = string.format(
             [[
 %s가 로드되어 있을 때만 사용 가능합니다!
 
-아이템의 모든 품질 중 %s 품질의 판매율이 
+아이템의 모든 품질 중 %s 품질의 판매율이
 설정한 판매율 임계값보다 크거나 같은지 확인합니다.
 ]], f.bb("TSM"), f.bb("어느 하나라도")),
         CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL = "재입고 수량:",
@@ -669,7 +684,7 @@ function CraftSim.LOCAL_KO:GetData()
             "입니다.\n\n재입고 시 소지품 및 은행에 보유 중인 해당 품질 아이템의 수량이 재입고 수량에서 차감됩니다.",
         CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL = "활성화:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL = "일반 옵션 (모든 제작법)",
-        CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP =             "이 옵션을 끄면 위의 일반 옵션에 따라 제작법이 재입고됩니다.",
+        CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP = "이 옵션을 끄면 위의 일반 옵션에 따라 제작법이 재입고됩니다.",
         CRAFT_QUEUE_TOTAL_PROFIT_LABEL = "총 평균 수익:",
         CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL = "총 제작 비용:",
         CRAFT_QUEUE_EDIT_RECIPE_TITLE = "제작법 편집",
@@ -709,7 +724,7 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_BUTTON_SHATTER = "분쇄",
         CRAFT_QUEUE_STATUS_SHATTER_BUFF = "비취의 정수 버프 비활성",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "장인의 기미 제작법 무시",
-        CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             f.bb("장인의 기미") .. "가 소모되는 첫 제작 아이템을 대기열에 추가하지 않습니다.",
+        CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP = f.bb("장인의 기미") .. "가 소모되는 첫 제작 아이템을 대기열에 추가하지 않습니다.",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\n예약된 제작: ",
         CRAFT_QUEUE_ORDER_CUSTOMER = "\n\n주문 고객: ",
         CRAFT_QUEUE_ORDER_MINIMUM_QUALITY = "\n최소 품질: ",
@@ -745,7 +760,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_CREATE_POPUP_TITLE = "제작 목록 만들기",
         CRAFT_LISTS_EXPORT_POPUP_TITLE = "제작 목록 내보내기",
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "제작 목록 가져오기",
-        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. f.gold(" 집중 활성화"),
+        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
+            f.gold(" 집중 활성화"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = f.gold("집중") .. " 최적화",
         CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("스마트 ") .. f.gold("집중") .. f.bb(" 대기열 추가"),
         CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP = "포인트당 집중 효율이 가장 높은 순서대로 제작법을 대기열에 추가하여 사용 가능한 집중력을 모두 소모합니다.",
@@ -761,7 +777,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY = "목표 품질",
         CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED = f.r("배우지 않은") .. " 제작법 활성화",
         CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK = f.bb("TSM") .. " 재입고 공식 사용",
-        CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "공식:",        CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "현재 캐릭터로 제작",
+        CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "공식:",
+        CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "현재 캐릭터로 제작",
         CRAFT_LISTS_OPTIONS_FIXED_CRAFTER = "고정 제작자: ",
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "재입고 수량: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "대기열 수량 오프셋: ",

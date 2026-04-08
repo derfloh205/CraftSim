@@ -83,7 +83,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
 
             addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
-                "MODULE_COST_OPTIMIZATION",
+                "MODULE_PRICING",
                 L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(

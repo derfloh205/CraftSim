@@ -65,18 +65,24 @@ function CraftSim.LOCAL_EN:GetData()
         STAT_POTION_EXPERIMENTATION = "Potion Breakthrough",
 
         -- Profit Breakdown Tooltips
-        RESOURCEFULNESS_EXPLANATION_TOOLTIP =         "Resourcefulness procs for every reagent individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All reagents proccing at once is very unlikely but saves a lot)\n\nThe average total saved reagent costs is the sum of the saved reagent costs of all combinations weighted against their chance.",
+        RESOURCEFULNESS_EXPLANATION_TOOLTIP =
+        "Resourcefulness procs for every reagent individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All reagents proccing at once is very unlikely but saves a lot)\n\nThe average total saved reagent costs is the sum of the saved reagent costs of all combinations weighted against their chance.",
 
-        RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP =         "Recipe difficulty determines where the breakpoints of the different qualities are.\n\nFor recipes with five qualities they are at 20%, 50%, 80% and 100% recipe difficulty as skill.\nFor recipes with three qualities they are at 50% and 100%",
-        MULTICRAFT_EXPLANATION_TOOLTIP =         "Multicraft gives you a chance of crafting more items than you would usually produce with a recipe.\n\nThe additional amount is usually between 1 and 2.5y\nwhere y = the usual amount 1 craft yields.",
-        REAGENTSKILL_EXPLANATION_TOOLTIP =         "The quality of your reagents can give you a maximum of 40% of the base recipe difficulty as bonus skill.\n\nAll Q1 Reagents: 0% Bonus\nAll Q2 Reagents: 20% Bonus\nAll Q3 Reagents: 40% Bonus\n\nThe skill is calculated by the amount of reagents of each quality weighted against their quality\nand a specific weight value that is unique to each individual crafting reagent item with quality\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of reagents the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
-        REAGENTFACTOR_EXPLANATION_TOOLTIP =         "The maximum the reagents can contribute to a recipe is most of the time 40% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of reagents that were used.",
+        RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP =
+        "Recipe difficulty determines where the breakpoints of the different qualities are.\n\nFor recipes with five qualities they are at 20%, 50%, 80% and 100% recipe difficulty as skill.\nFor recipes with three qualities they are at 50% and 100%",
+        MULTICRAFT_EXPLANATION_TOOLTIP =
+        "Multicraft gives you a chance of crafting more items than you would usually produce with a recipe.\n\nThe additional amount is usually between 1 and 2.5y\nwhere y = the usual amount 1 craft yields.",
+        REAGENTSKILL_EXPLANATION_TOOLTIP =
+        "The quality of your reagents can give you a maximum of 40% of the base recipe difficulty as bonus skill.\n\nAll Q1 Reagents: 0% Bonus\nAll Q2 Reagents: 20% Bonus\nAll Q3 Reagents: 40% Bonus\n\nThe skill is calculated by the amount of reagents of each quality weighted against their quality\nand a specific weight value that is unique to each individual crafting reagent item with quality\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of reagents the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
+        REAGENTFACTOR_EXPLANATION_TOOLTIP =
+        "The maximum the reagents can contribute to a recipe is most of the time 40% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of reagents that were used.",
 
         -- Simulation Mode
         SIMULATION_MODE_NONE = "None",
         SIMULATION_MODE_LABEL = "Simulation Mode",
         SIMULATION_MODE_TITLE = "CraftSim Simulation Mode",
-        SIMULATION_MODE_TOOLTIP =         "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
+        SIMULATION_MODE_TOOLTIP =
+        "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
         SIMULATION_MODE_OPTIONAL = "Optional #",
         SIMULATION_MODE_FINISHING = "Finishing #",
         SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP = "Max All Reagents of Quality ",
@@ -94,7 +100,8 @@ function CraftSim.LOCAL_EN:GetData()
         RESOURCEFULNESS_LABEL = "Resourcefulness: ",
         RESOURCEFULNESS_BONUS_LABEL = "Resourcefulness Item Bonus: ",
         INGENUITY_LABEL = "Ingenuity: ",
-        INGENUITY_EXPLANATION_TOOLTIP =         "Ingenuity gives you a chance to receive a partial refund of concentration spent when crafting with concentration.",
+        INGENUITY_EXPLANATION_TOOLTIP =
+        "Ingenuity gives you a chance to receive a partial refund of concentration spent when crafting with concentration.",
         CONCENTRATION_LABEL = "Concentration: ",
         REAGENT_QUALITY_BONUS_LABEL = "Reagent Quality Bonus: ",
         REAGENT_QUALITY_MAXIMUM_LABEL = "Reagent Quality Maximum %: ",
@@ -105,8 +112,9 @@ function CraftSim.LOCAL_EN:GetData()
         MULTICRAFT_BONUS_LABEL = "Multicraft Item Bonus: ",
 
         -- Statistics
-        STATISTICS_CDF_EXPLANATION =         "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
-        EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION =             f.r("Warning: ") .. " Math ahead!\n\n" ..
+        STATISTICS_CDF_EXPLANATION =
+        "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
+        EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION = f.r("Warning: ") .. " Math ahead!\n\n" ..
             "When you craft something you have different chances for different outcomes based on your crafting stats.\n" ..
             "And in statistics this is called a " .. f.l("Probability Distribution.\n") ..
             "However, you will notice that the different chances of your procs do not sum up to one\n" ..
@@ -157,7 +165,8 @@ function CraftSim.LOCAL_EN:GetData()
         -- Popups
         POPUP_NO_PRICE_SOURCE_SYSTEM = "No Supported Price Source Available!",
         POPUP_NO_PRICE_SOURCE_TITLE = "CraftSim Price Source Warning",
-        POPUP_NO_PRICE_SOURCE_WARNING =         "No price source found!\n\nYou need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
+        POPUP_NO_PRICE_SOURCE_WARNING =
+        "No price source found!\n\nYou need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
         POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS = "Do not show warning again",
         POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT = "OK",
 
@@ -172,12 +181,13 @@ function CraftSim.LOCAL_EN:GetData()
         REAGENTS_ASSIGN = "Assign",
         REAGENTS_MAXIMUM_QUALITY = "Maximum Quality: ",
         REAGENTS_AVERAGE_PROFIT_LABEL = "Average Ø Profit: ",
-        REAGENTS_AVERAGE_PROFIT_TOOLTIP =             f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
+        REAGENTS_AVERAGE_PROFIT_TOOLTIP = f.bb("The Average Profit per Craft") ..
+            " when using " .. f.l("this reagent allocation"),
         REAGENTS_OPTIMIZE_BEST_ASSIGNED = "Best Reagents Assigned",
         REAGENTS_CONCENTRATION_LABEL = "Concentration: ",
         REAGENTS_OPTIMIZE_INFO = "Shift + LMB on numbers to put the item link in chat",
         ADVANCED_OPTIMIZATION_BUTTON = "Advanced Optimization",
-        REAGENTS_OPTIMIZE_TOOLTIP =             "(Resets on Edit)\nEnables " ..
+        REAGENTS_OPTIMIZE_TOOLTIP = "(Resets on Edit)\nEnables " ..
             f.gold("Concentration Value") .. " and " .. f.bb("Finishing Reagent ") .. " Optimization",
 
         -- Specialization Info Frame
@@ -213,12 +223,13 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_LOG_CALCULATION_COMPARISON_NUM_CRAFTS_PREFIX1 = "Profit: ",
         CRAFT_LOG_SAVED_REAGENTS = "Saved Reagents",
         CRAFT_LOG_DISABLE_CHECKBOX = f.r("Disable") .. " Craft Logs",
-        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP =             "Enabling this stops the recording of any crafts when crafting and may " ..
+        CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP = "Enabling this stops the recording of any crafts when crafting and may " ..
             f.g("increase performance"),
         CRAFT_LOG_REAGENT_DETAILS_TAB = "Reagent Details",
         CRAFT_LOG_RESULT_ANALYSIS_TAB = "Result Analysis",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_LABEL = "Result Distribution",
-        CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP =         "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
+        CRAFT_LOG_RESULT_ANALYSIS_TAB_DISTRIBUTION_HELP =
+        "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_MULTICRAFT = "Multicraft",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_RESOURCEFULNESS = "Resourcefulness",
         CRAFT_LOG_RESULT_ANALYSIS_TAB_YIELD_DDISTRIBUTION = "Yield Distribution",
@@ -234,8 +245,8 @@ function CraftSim.LOCAL_EN:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Basic Profit Calculation",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "CraftSim Pricing",
-        COST_OPTIMIZATION_EXPLANATION =             "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
+        PRICING_TITLE = "CraftSim Pricing",
+        PRICING_EXPLANATION = "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
             f.g("AH") ..
@@ -245,8 +256,8 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("OR") ..
             " will always be used if set.\n\n" ..
             f.bb("Right Click") .. " on any reagent or result item to override its price by a custom value",
-        COST_OPTIMIZATION_CRAFTING_COSTS = "Crafting Costs: ",
-        COST_OPTIMIZATION_ITEM_HEADER = "Item",
+        PRICING_CRAFTING_COSTS = "Crafting Costs: ",
+        PRICING_ITEM_HEADER = "Item",
         COST_OPTIMIZATION_PRICE_HEADER = "Price",
         COST_OPTIMIZATION_USED_SOURCE = "Source",
         PRICING_AVG_CRAFTING_COST = "Avg Crafting Cost",
@@ -262,12 +273,12 @@ function CraftSim.LOCAL_EN:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP = "If enabled, " ..
             f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted reagents",
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "Select Recipe Crafter",
-        COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Auction Buyout: ",
-        COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE = "\n\nOverride",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nCrafting ",
-        COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- Expected Costs Per Item: ",
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST = f.gold("Concentration Cost: "),
-        COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION = "Concentration: ",
+        PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Auction Buyout: ",
+        PRICING_REAGENT_LIST_OVERRIDE = "\n\nOverride",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nCrafting ",
+        PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- Expected Costs Per Item: ",
+        PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("Concentration Cost: "),
+        PRICING_REAGENT_LIST_CONCENTRATION = "Concentration: ",
 
         -- Statistics Frame
         STATISTICS_TITLE = "CraftSim Statistics",
@@ -284,7 +295,7 @@ function CraftSim.LOCAL_EN:GetData()
         STATISTICS_PROBABILITY_TABLE_TAB = "Probability Table",
         STATISTICS_CONCENTRATION_TAB = "Concentration",
         STATISTICS_CONCENTRATION_CURVE_GRAPH = "Concentration Cost Curve",
-        STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP =             "Concentration Cost based on Player Skill for given Recipe\n" ..
+        STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP = "Concentration Cost based on Player Skill for given Recipe\n" ..
             f.bb("X Axis: ") .. " Player Skill\n" ..
             f.bb("Y Axis: ") .. " Concentration Cost",
 
@@ -303,7 +314,8 @@ function CraftSim.LOCAL_EN:GetData()
         PRICE_OVERRIDE_FINISHING_REAGENTS = "Finishing Reagents",
         PRICE_OVERRIDE_RESULT_ITEMS = "Result Items",
         PRICE_OVERRIDE_ACTIVE_OVERRIDES = "Active Overrides",
-        PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP =         "'(as result)' -> price override only considered when item is a result of a recipe",
+        PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP =
+        "'(as result)' -> price override only considered when item is a result of a recipe",
         PRICE_OVERRIDE_CLEAR_ALL = "Clear All",
         PRICE_OVERRIDE_SAVE = "Save",
         PRICE_OVERRIDE_SAVED = "Saved",
@@ -317,14 +329,16 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_SCAN_CANCEL = "Cancel",
         RECIPE_SCAN_SCANNING = "Scanning",
         RECIPE_SCAN_INCLUDE_NOT_LEARNED = "Include not learned",
-        RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP =         "Include recipes you do not have learned in the recipe scan",
+        RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP = "Include recipes you do not have learned in the recipe scan",
         RECIPE_SCAN_INCLUDE_SOULBOUND = "Include Soulbound",
-        RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP =         "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items",
+        RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP =
+        "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items",
         RECIPE_SCAN_INCLUDE_GEAR = "Include Gear",
         RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP = "Include all form of gear recipes in the recipe scan",
         RECIPE_SCAN_OPTIMIZE_TOOLS = "Optimize Profession Tools",
-        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP =         "For each recipe optimize your profession tools for profit\n\n",
-        RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING =         "Might lower performance during scanning\nif you have a lot of tools in your inventory",
+        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP = "For each recipe optimize your profession tools for profit\n\n",
+        RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING =
+        "Might lower performance during scanning\nif you have a lot of tools in your inventory",
         RECIPE_SCAN_CRAFTER_HEADER = "Crafter",
         RECIPE_SCAN_RECIPE_HEADER = "Recipe",
         RECIPE_SCAN_LEARNED_HEADER = "Learned",
@@ -335,7 +349,8 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_TOP_GEAR_HEADER = "Top Gear",
         RECIPE_SCAN_INV_AH_HEADER = "Inv/AH",
         RECIPE_SCAN_SORT_BY_MARGIN = "Sort by Profit %",
-        RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =         "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
+        RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =
+        "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
         RECIPE_SCAN_USE_INSIGHT_CHECKBOX = "Use " .. f.bb("Insight") .. " if possible",
         RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP = "Use " ..
             f.bb("Illustrious Insight") ..
@@ -361,7 +376,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP = f.g("True: ") ..
             "Import Scan Results from all enabled and scanned professions\n\n" ..
             f.r("False: ") .. "Import Scan Results only from currently selected profession",
-        RECIPE_SCAN_CACHED_RECIPES_TOOLTIP =             "Whenever you open or scan a recipe on a character, " ..
+        RECIPE_SCAN_CACHED_RECIPES_TOOLTIP = "Whenever you open or scan a recipe on a character, " ..
             f.l("CraftSim") ..
             " remembers it.\n\nOnly recipes from your alts that " ..
             f.l("CraftSim") .. " can remember will be scanned with " .. f.bb("RecipeScan\n\n") ..
@@ -390,14 +405,22 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Shared OptimizationOptions Widget
         OPTIMIZATION_OPTIONS_OPTIMIZE_PROFESSION_TOOLS = "Optimize " .. f.bb("Profession Tools"),
-        OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include " .. f.e("Soulbound") .. f.bb(" Finishing Reagents"),
-        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = "Only " .. f.g("Highest Quality") .. f.e(" Soulbound") .. f.bb(" Finishing Reagents"),
-        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS_TOOLTIP = "When enabled, for each finishing reagent slot only the highest quality soulbound reagent you own is considered.\n\nFor example, if you have both a " .. f.e("Multicraft Matrix") .. " and a " .. f.e("Multicraft Manifold") .. " in your bags, only the Manifold will be used.",
+        OPTIMIZATION_OPTIONS_INCLUDE_SOULBOUND_FINISHING_REAGENTS = "Include " ..
+            f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = "Only " ..
+            f.g("Highest Quality") .. f.e(" Soulbound") .. f.bb(" Finishing Reagents"),
+        OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS_TOOLTIP =
+            "When enabled, for each finishing reagent slot only the highest quality soulbound reagent you own is considered.\n\nFor example, if you have both a " ..
+            f.e("Multicraft Matrix") ..
+            " and a " .. f.e("Multicraft Manifold") .. " in your bags, only the Manifold will be used.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_ALGORITHM = f.bb("Finishing Reagents") .. " Algorithm",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE = "Simple",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP = "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP =
+        "Optimizes reagent allocation first, then concentration, then selects the best finishing reagent for each slot individually.",
         OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION = "Permutation Based",
-        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP = "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\n" .. f.r("Warning: This may take significantly longer to complete."),
+        OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP =
+            "Tries all possible finishing reagent combinations and for each individually optimizes reagents (if enabled) and concentration (if enabled), then selects the most profitable combination.\n\n" ..
+            f.r("Warning: This may take significantly longer to complete."),
 
         RECIPE_SCAN_SEND_TO_CRAFT_QUEUE = "Send to Craft Queue",
         RECIPE_SCAN_CREATE_CRAFT_LIST = "Create CraftList",
@@ -429,7 +452,8 @@ function CraftSim.LOCAL_EN:GetData()
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim Top Gear",
         TOP_GEAR_AUTOMATIC = "Automatic",
-        TOP_GEAR_AUTOMATIC_TOOLTIP =         "Automatically simulate Top Gear for your selected mode whenever a recipe updates.\n\nTurning this off may increase performance.",
+        TOP_GEAR_AUTOMATIC_TOOLTIP =
+        "Automatically simulate Top Gear for your selected mode whenever a recipe updates.\n\nTurning this off may increase performance.",
         TOP_GEAR_SIMULATE = "Simulate Top Gear",
         TOP_GEAR_EQUIP = "Equip",
         TOP_GEAR_SIMULATE_QUALITY = "Quality: ",
@@ -454,13 +478,14 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "Current Price Source: ",
         OPTIONS_GENERAL_NO_PRICE_SOURCE = "No Supported Price Source Addon loaded!",
         OPTIONS_GENERAL_SHOW_PROFIT = "Show Profit Percentage",
-        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP =         "Show the percentage of profit to crafting costs besides the gold value",
+        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP = "Show the percentage of profit to crafting costs besides the gold value",
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE = "Remember Last Recipe",
-        OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP =         "Reopen last selected recipe when opening the crafting window",
+        OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP = "Reopen last selected recipe when opening the crafting window",
         OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES = "Supported Price Sources:",
         OPTIONS_PERFORMANCE_RAM = "Enable RAM cleanup while crafting",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "Crafts",
-        OPTIONS_PERFORMANCE_RAM_TOOLTIP =         "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
+        OPTIONS_PERFORMANCE_RAM_TOOLTIP =
+        "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
         OPTIONS_MODULES_TAB = "Modules",
         OPTIONS_PROFIT_CALCULATION_TAB = "Profit Calculation",
         OPTIONS_CRAFTING_TAB = "Crafting",
@@ -468,10 +493,12 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_TSM_INVALID_EXPRESSION = "Expression Invalid",
         OPTIONS_TSM_VALID_EXPRESSION = "Expression Valid",
         OPTIONS_TSM_DEPOSIT_ENABLED_LABEL = "Enable Expected Deposit Cost",
-        OPTIONS_TSM_DEPOSIT_ENABLED_TOOLTIP = "Subtract the expected AH deposit cost from profit calculations.\nUses TSM price data to estimate the deposit you will pay when listing.",
+        OPTIONS_TSM_DEPOSIT_ENABLED_TOOLTIP =
+        "Subtract the expected AH deposit cost from profit calculations.\nUses TSM price data to estimate the deposit you will pay when listing.",
         OPTIONS_TSM_DEPOSIT_EXPRESSION_LABEL = "TSM Deposit Expression",
         OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL = "Smart Restock (subtract inventory)",
-        OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP = "When sending recipes to the Craft Queue, subtract items you already own\n(bags, bank, alts, warbank) from the restock amount.",
+        OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP =
+        "When sending recipes to the Craft Queue, subtract items you already own\n(bags, bank, alts, warbank) from the restock amount.",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_ALTS_LABEL = "Include alt characters",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_WARBANK_LABEL = "Include warbank",
         OPTIONS_MODULES_REAGENT_OPTIMIZATION = "Reagent Optimizing Module",
@@ -482,11 +509,14 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE = "Customer History max messages per client",
         OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT = "Max history entries per client",
         OPTIONS_PROFIT_CALCULATION_OFFSET = "Offset Skill Breakpoints by 1",
-        OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP =         "The reagent combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
+        OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP =
+        "The reagent combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
         OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT = "Multicraft Constant",
-        OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION =         "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
+        OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION =
+        "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT = "Resourcefulness Constant",
-        OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =         "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
+        OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =
+        "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX = "Show " .. f.bb("News") .. " Popup",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP = "Show the " ..
             f.bb("News") .. " Popup for new " .. f.l("CraftSim") .. " Update Information when logging into the game",
@@ -505,40 +535,49 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "Craft Queue",
-        CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP =         "Queue your recipes and craft them all on one place!",
+        CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP = "Queue your recipes and craft them all on one place!",
         CONTROL_PANEL_MODULES_TOP_GEAR_LABEL = "Top Gear",
-        CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP =         "Shows the best available profession gear combination based on the selected mode",
+        CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP =
+        "Shows the best available profession gear combination based on the selected mode",
         CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL = "Price Details",
-        CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP =         "Shows a sell price and profit overview by resulting item quality",
+        CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP = "Shows a sell price and profit overview by resulting item quality",
         CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL = "Average Profit",
-        CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP =         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
+        CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP =
+        "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL = "Reagent Optimization",
-        CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP =         "Suggests the cheapest reagents to reach the specific quality thresholds.",
+        CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP =
+        "Suggests the cheapest reagents to reach the specific quality thresholds.",
         CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL = "Price Overrides",
-        CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP =         "Override prices of any reagents, and craft results for all recipes or for one recipe specifically.",
+        CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP =
+        "Override prices of any reagents, and craft results for all recipes or for one recipe specifically.",
         CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL = "Specialization Info",
-        CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP =         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
+        CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP =
+        "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
         CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL = "Craft Log",
-        CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP =         "Show a crafting log and statistics about your crafts!",
+        CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP = "Show a crafting log and statistics about your crafts!",
         CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL = "Pricing",
-        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP =         "Module that shows reagent pricing details and craft result overview",
+        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP =
+        "Module that shows reagent pricing details and craft result overview",
         CONTROL_PANEL_MODULES_STATISTICS_LABEL = "Statistics",
-        CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP =         "Module that shows detailed outcome statistics for the currently open recipe",
+        CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP =
+        "Module that shows detailed outcome statistics for the currently open recipe",
         CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL = "Recipe Scan",
-        CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP =         "Module that scans your recipe list based on various options",
+        CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP = "Module that scans your recipe list based on various options",
         CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL = "Customer History",
-        CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP =         "Module that provides a history of conversations with customers, crafted items and commissions",
+        CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP =
+        "Module that provides a history of conversations with customers, crafted items and commissions",
         CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL = "Craft Buffs",
-        CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP =         "Module that shows you your active and missing Craft Buffs",
+        CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP = "Module that shows you your active and missing Craft Buffs",
         CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL = "Explanations",
-        CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP =             "Module that shows you various explanations of how" .. f.l(" CraftSim") .. " calculates things",
+        CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP = "Module that shows you various explanations of how" ..
+            f.l(" CraftSim") .. " calculates things",
         CONTROL_PANEL_RESET_FRAMES = "Reset Frame Positions",
         CONTROL_PANEL_OPTIONS = "Options",
         CONTROL_PANEL_NEWS = "News",
         CONTROL_PANEL_EXPORTS = "Exports",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exporting",
-        CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =         "No recipe to export for The War Within expansion",
+        CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND = "No recipe to export for The War Within expansion",
         CONTROL_PANEL_FORGEFINDER_EXPORT = f.l("ForgeFinder") .. " Export",
         CONTROL_PANEL_FORGEFINDER_EXPORTING = "Exporting",
         CONTROL_PANEL_EXPORT_EXPLANATION = f.l("wowforgefinder.com") ..
@@ -567,10 +606,12 @@ function CraftSim.LOCAL_EN:GetData()
         CUSTOMER_HISTORY_DELETE_BUTTON = "Remove customer",
         CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL = "Whisper..",
         CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL = "Remove 0 Tip Customers",
-        CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP =         "Are you sure you want to delete all data\nfrom customers with 0 total tip?",
-        CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP =         "Are you sure you want to delete\nall data for %s?",
+        CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP =
+        "Are you sure you want to delete all data\nfrom customers with 0 total tip?",
+        CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP = "Are you sure you want to delete\nall data for %s?",
         CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL = "Auto Remove Interval (Days)",
-        CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP =         "CraftSim will automatically remove all customers below the configured tip when you login after X days of the last deletion.\nIf set to 0, CraftSim will never delete automatically.",
+        CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP =
+        "CraftSim will automatically remove all customers below the configured tip when you login after X days of the last deletion.\nIf set to 0, CraftSim will never delete automatically.",
         CUSTOMER_HISTORY_CUSTOMER_HEADER = "Customer",
         CUSTOMER_HISTORY_TOTAL_TIP_HEADER = "Total Tip",
         CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER = "Date",
@@ -609,7 +650,8 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL = "Queue First Crafts",
         CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL = "Queue Work Orders",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_CHECKBOX = "Allow " .. f.gold("Concentration"),
-        CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP =             "If minimum quality cannot be reached, use " .. f.l("Concentration") .. " if possible",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP = "If minimum quality cannot be reached, use " ..
+            f.l("Concentration") .. " if possible",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "Only Profitable",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "Only queue work orders with expected positive profit",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "Work Order Type",
@@ -618,10 +660,13 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Personal Orders",
         CRAFT_QUEUE_PUBLIC_ORDERS_BUTTON = "Public Orders",
         CRAFT_QUEUE_PUBLIC_ORDERS_MAX_COUNT = f.b("Public Order") .. " Max Count: ",
-        CRAFT_QUEUE_PUBLIC_ORDERS_MAX_COUNT_TOOLTIP = "Maximum number of public orders to queue, sorted by highest profit.\n\nSet to " .. f.bb("0") .. " to use your available claim slots.",
+        CRAFT_QUEUE_PUBLIC_ORDERS_MAX_COUNT_TOOLTIP =
+            "Maximum number of public orders to queue, sorted by highest profit.\n\nSet to " ..
+            f.bb("0") .. " to use your available claim slots.",
         CRAFT_QUEUE_GUILD_ORDERS_ALTS_ONLY_CHECKBOX = f.r("Only ") .. "Alt Characters",
         CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_CHECKBOX = f.r("Force ") .. f.gold("Concentration"),
-        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP = "Force the use of concentration for all patron orders if possible",
+        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP =
+        "Force the use of concentration for all patron orders if possible",
         CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_CHECKBOX = "Include " .. f.e("Spark") .. " Recipes",
         CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_TOOLTIP = "Include Orders that use a Spark as Reagent",
         CRAFT_QUEUE_PATRON_ORDERS_ACUITY_CHECKBOX = "Include " .. f.bb("Acuity/Moxie") .. " Rewards",
@@ -631,11 +676,13 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_CHECKBOX = "Include " .. f.bb("Knowledge Point") .. " Rewards",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP = "Include Orders with Knowledge Point Rewards",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST = f.bb("Knowledge Point") .. " Max Cost: ",
-        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP =
+        "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST = f.bb("Patron Order") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE = f.bb("Reagent Bag") .. " Value: ",
-        CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " .. f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " ..
+            f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX = "Include " .. f.bb("Moxie") .. " in expected profit",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP = "When enabled, " ..
             f.bb("NPC (patron)") ..
@@ -658,18 +705,24 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("Include Moxie in expected profit") ..
             " is enabled (otherwise gold-only: tips, commission, item rewards).",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
-        CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+        CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") ..
+            f.gold("Concentration") .. f.bb(" Queueing"),
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP = "If enabled, " ..
             f.l("CraftSim") ..
             " first determines the " ..
             f.g("best valued concentration") ..
             " recipe. Then queues it for the maximum craftable amount.",
-        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT = "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
-        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP = "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " .. f.bb("Ingenuity"),
+        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT = "Offset " ..
+            f.gold("Concentration") .. f.bb(" Queue Amount"),
+        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT_TOOLTIP =
+            "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
+            f.bb("Ingenuity"),
         CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS = "Queue " .. f.bb("Current Main Professions"),
-        CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP = "If enabled, CraftSim will process both main professions of the current character at once",
+        CRAFT_QUEUE_RESTOCK_FAVORITES_QUEUE_MAIN_PROFESSIONS_TOOLTIP =
+        "If enabled, CraftSim will process both main professions of the current character at once",
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL = "Offset Queue Amount: ",
-        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
+        CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP =
+        "Always add given amount to the number of queued crafts",
         CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = "Automatically create a Shopping List after Scan",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
@@ -677,10 +730,11 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_COOLDOWN_CHARGES_TOOLTIP = "Cooldown charges: %d / %d",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER = "Wrong Crafter",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER = "Status",
-        CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP =         "All Requirements need to be fulfilled in order to craft a recipe",
+        CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP = "All Requirements need to be fulfilled in order to craft a recipe",
         CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK = "Cannot craft",
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE = "First Craft",
-        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP = "Awards one profession Knowledge Point the first time you craft this recipe. Moxie value below is included in expected profit only for " ..
+        CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP =
+            "Awards one profession Knowledge Point the first time you craft this recipe. Moxie value below is included in expected profit only for " ..
             f.bb("NPC (patron)") ..
             " orders when " ..
             f.bb("Include Moxie in expected profit") ..
@@ -698,10 +752,11 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "Craft Queue",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = "Flash Taskbar on " ..
             f.bb("CraftQueue") .. " craft finished",
-        CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP =             "When your WoW Game is minimized and a recipe has finished crafting in the " .. f.bb("CraftQueue") ..
+        CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP =
+            "When your WoW Game is minimized and a recipe has finished crafting in the " .. f.bb("CraftQueue") ..
             "," .. f.l(" CraftSim") .. " will flash your Taskbar WoW Icon",
         CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL = "Restock Options",
-        CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP =         "Configure the restock behaviour when importing from Recipe Scan",
+        CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP = "Configure the restock behaviour when importing from Recipe Scan",
         CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL = "Profit Threshold:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL = "Sale Rate Threshold:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP = string.format(
@@ -724,7 +779,8 @@ greater or equal the configured sale rate threshold.
             " that will be queued for that recipe.\n\nThe amount of items you have in your inventory and bank of the checked qualities will be subtracted from the restock amount upon restocking",
         CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL = "Enable:",
         CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL = "General Options (All Recipes)",
-        CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP =         "If this is toggled off, the recipe will be restocked based on the general options above",
+        CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP =
+        "If this is toggled off, the recipe will be restocked based on the general options above",
         CRAFT_QUEUE_TOTAL_PROFIT_LABEL = "Total Ø Profit:",
         CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL = "Total Crafting Costs:",
         CRAFT_QUEUE_EDIT_RECIPE_TITLE = "Edit Recipe",
@@ -764,19 +820,23 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_BUTTON_SHATTER = "Shatter",
         CRAFT_QUEUE_STATUS_SHATTER_BUFF = "Shattering Essence buff not active",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "Ignore Acuity Recipes",
-        CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =             "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+        CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP = "Do not queue first crafts that use " ..
+            f.bb("Artisan's Acuity") .. " for crafting",
         CRAFT_QUEUE_AMOUNT_TOOLTIP = "\n\nQueued Crafts: ",
         CRAFT_QUEUE_ORDER_CUSTOMER = "\n\nOrder Customer: ",
         CRAFT_QUEUE_ORDER_MINIMUM_QUALITY = "\nMinimum Quality: ",
         CRAFT_QUEUE_ORDER_REWARDS = "\nRewards:",
-        CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST = "If enabled, CraftSim will automatically create a shopping list after scanning.",
+        CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST =
+        "If enabled, CraftSim will automatically create a shopping list after scanning.",
         CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL = "Ignore " .. f.e("Spark") .. " Recipes",
         CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP = "Ignore recipes that require a spark reagent",
         CRAFT_QUEUE_MENU_AUTO_SHOW = f.g("Automatically Open ") .. "when a recipe is queued",
         CRAFT_QUEUE_MENU_INGENUITY_IGNORE = f.r("Ignore ") .. "Queue Amount Reduction on " .. f.gold("Ingenuity Procs"),
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION = f.r("Remove ") .. "on full " .. f.gold("Concentration") .. " used",
-        CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP = "Autoremove a crafted recipe when remaining concentration does not allow further crafts.",
-        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for Midnight Enchanting",
+        CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP =
+        "Autoremove a crafted recipe when remaining concentration does not allow further crafts.",
+        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("Force ") ..
+            f.bb("Shattering Essence") .. " buff for Midnight Enchanting",
         CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
             f.bb("Shattering Essence") .. " buff to be active before crafting Midnight Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
@@ -805,12 +865,16 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_CREATE_POPUP_TITLE = "Create Craft List",
         CRAFT_LISTS_EXPORT_POPUP_TITLE = "Export Craft List",
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "Import Craft List",
-        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. f.gold(" Enable Concentration"),
+        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
+            f.gold(" Enable Concentration"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize " .. f.gold("Concentration"),
         CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP = "Queue recipes in order of most concentration value per point, spending all available concentration",
+        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP =
+        "Queue recipes in order of most concentration value per point, spending all available concentration",
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
-        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP = "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " .. f.bb("Ingenuity"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP =
+            "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
+            f.bb("Ingenuity"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "Optimize Profession Tools",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "Autoselect Top Profit Quality",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "Optimize Finishing Reagents",
