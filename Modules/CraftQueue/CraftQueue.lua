@@ -517,6 +517,12 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                             if queueAble then
                                                 if isPublicOrder then
+                                                    local craftAtLeastOnce = recipeData.reagentData:GetCraftableAmount(
+                                                        recipeData:GetCrafterUID())
+                                                    if order.isFulfillable == false or craftAtLeastOnce < 1 then
+                                                        distributor:Continue()
+                                                        return
+                                                    end
                                                     if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") or recipeData.averageProfitCached > 0 then
                                                         tinsert(publicOrderCandidates, {
                                                             recipeData = recipeData,
