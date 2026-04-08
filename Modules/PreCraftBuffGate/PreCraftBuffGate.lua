@@ -5,7 +5,6 @@ local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local tinsert = tinsert or table.insert
-local prepareRecipeForGate
 
 ---@class CraftSim.PRE_CRAFT_BUFF_GATE
 CraftSim.PRE_CRAFT_BUFF_GATE = {}
@@ -374,21 +373,11 @@ function PCBG:ShouldAssumeBuffActiveForProfessionStats(recipeData, buffID)
     return false
 end
 
----@param crafterData CraftSim.CrafterData
----@param gateId CraftSim.PreCraftBuffGateId
----@return CraftSim.RecipeData?
-function PCBG:PrepareCastRecipeDataForGate(crafterData, gateId)
-    local gate = self:GetGate(gateId)
-    if not gate then
-        return nil
-    end
-    return prepareRecipeForGate(crafterData, gate)
-end
-
+--- Module-local helper for gate cast recipe setup (not exposed on CraftSim.PRE_CRAFT_BUFF_GATE).
 ---@param crafterData CraftSim.CrafterData
 ---@param gate CraftSim.PreCraftBuffGateDefinition
 ---@return CraftSim.RecipeData?
-prepareRecipeForGate = function(crafterData, gate)
+local function prepareRecipeForGate(crafterData, gate)
     if gate.id == CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER then
         return PCBG:PrepareMidnightEnchantShatterRecipeData(crafterData)
     end
@@ -406,6 +395,17 @@ prepareRecipeForGate = function(crafterData, gate)
         end
     end
     return nil
+end
+
+---@param crafterData CraftSim.CrafterData
+---@param gateId CraftSim.PreCraftBuffGateId
+---@return CraftSim.RecipeData?
+function PCBG:PrepareCastRecipeDataForGate(crafterData, gateId)
+    local gate = self:GetGate(gateId)
+    if not gate then
+        return nil
+    end
+    return prepareRecipeForGate(crafterData, gate)
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
