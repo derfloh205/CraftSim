@@ -155,7 +155,8 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
         end
 
         local showLastCost = cost and cost > 0
-        local registeredUIDs = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP)
+        local registeredUIDs = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS
+            .SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP)
             and GetRegisteredCrafterUIDsForItem(itemID, itemLink)
             or {}
         local showRegistered = #registeredUIDs > 0
@@ -171,7 +172,8 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             local timeText = FormatTimestamp(timestamp)
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL"), costText)
             if crafterUID then
-                tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"), ColorizeCrafterByUID(crafterUID, crafterUID))
+                tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"),
+                    ColorizeCrafterByUID(crafterUID, crafterUID))
             end
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED"), f.grey(timeText))
         end
