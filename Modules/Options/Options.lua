@@ -4,330 +4,183 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-local f = GUTIL:GetFormatter()
-
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.OPTIONS
 CraftSim.OPTIONS = {}
 
 CraftSim.OPTIONS.lastOpenRecipeID = {}
+
+--- Blizzard Settings: one vertical list under AddOns (native checkboxes / sliders / dropdown).
+--- TSM block uses `CraftSimSettingsTsmPanelTemplate` (`CraftSimOptionsTsm.xml`) via `CreatePanelInitializer`.
 function CraftSim.OPTIONS:Init()
-    ---@class CraftSim.OPTIONS.Panel : Frame
-    CraftSim.OPTIONS.optionsPanel = CreateFrame("Frame", "CraftSimOptionsPanel")
+    CraftSim.OPTIONS.optionsPanel = nil
 
-    CraftSim.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
-    end)
-    CraftSim.OPTIONS.optionsPanel.name = "CraftSim"
-    local title = CraftSim.OPTIONS.optionsPanel:CreateFontString('optionsTitle', 'OVERLAY', 'GameFontNormal')
-    title:SetPoint("TOP", 0, 0)
-    title:SetText(L("OPTIONS_TITLE"))
+    local GO = CraftSim.CONST.GENERAL_OPTIONS
+    local DEF = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS
+    local mainCategory = Settings.RegisterVerticalLayoutCategory(L("OPTIONS_TITLE"))
+    CraftSim.OPTIONS.category = mainCategory
 
-    local contentPanelsOffsetY = -70
-    local tabContentSizeX = 650
-    local tabContentSizeY = 500
-
-    ---@class CraftSim.Options.ContentFrame : GGUI.Frame
-    CraftSim.OPTIONS.optionsPanel.contentFrame = GGUI.Frame {
-        parent = CraftSim.OPTIONS.optionsPanel,
-        anchorParent = CraftSim.OPTIONS.optionsPanel,
-        offsetY = -50,
-        sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOP", anchorB = "TOP",
-        backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME
-    }
-
-    local GeneralTab = GGUI.BlizzardTab {
-        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOP", anchorB = "TOP", initialTab = true, top = true,
-        buttonOptions = {
-            label = L("OPTIONS_GENERAL_TAB"),
-            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        },
-    }
-    local TSMTab
-    if select(2, C_AddOns.IsAddOnLoaded("TradeSkillMaster")) then
-        TSMTab = GGUI.BlizzardTab {
-            parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-            offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-            anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
-            buttonOptions = {
-                label = "TSM",
-                parent = CraftSim.OPTIONS.optionsPanel, anchorParent = GeneralTab.button, anchorA = "LEFT", anchorB = "RIGHT",
-            },
-        }
-        self:InitTSMTab(TSMTab)
-    end
-    local ModulesTab = GGUI.BlizzardTab {
-        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
-        buttonOptions = {
-            label = L("OPTIONS_MODULES_TAB"),
-            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = (TSMTab and TSMTab.button) or GeneralTab.button, anchorA = "LEFT", anchorB = "RIGHT",
-        },
-    }
-
-    local ProfitCalculationTab = GGUI.BlizzardTab {
-        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
-        buttonOptions = {
-            label = L("OPTIONS_PROFIT_CALCULATION_TAB"),
-            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = ModulesTab.button, anchorA = "LEFT", anchorB = "RIGHT",
-        },
-    }
-
-    local CraftingTab = GGUI.BlizzardTab {
-        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
-        buttonOptions = {
-            label = L("OPTIONS_CRAFTING_TAB"),
-            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = ProfitCalculationTab.button, anchorA = "LEFT", anchorB = "RIGHT",
-        },
-    }
-
-    local TooltipTab = GGUI.BlizzardTab {
-        parent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame, anchorParent = CraftSim.OPTIONS.optionsPanel.contentFrame.frame,
-        offsetY = contentPanelsOffsetY, sizeX = tabContentSizeX, sizeY = tabContentSizeY,
-        anchorA = "TOPLEFT", anchorB = "TOPLEFT", top = true,
-        buttonOptions = {
-            label = L("OPTIONS_TOOLTIP_TAB"),
-            parent = CraftSim.OPTIONS.optionsPanel, anchorParent = CraftingTab.button, anchorA = "LEFT", anchorB = "RIGHT",
-        },
-    }
-
-    if TSMTab then
-        GGUI.BlizzardTabSystem({ GeneralTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab, TooltipTab })
-    else
-        GGUI.BlizzardTabSystem({ GeneralTab, ModulesTab, ProfitCalculationTab, CraftingTab, TooltipTab })
+    local function regSection(title, tooltip)
+        Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(title, tooltip))
     end
 
-    local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
-    if #priceSourceAddons > 1 then
-        local priceSourceAddonsDropdownData = {}
-        for _, priceSourceName in pairs(priceSourceAddons) do
-            table.insert(priceSourceAddonsDropdownData, {
-                label = priceSourceName,
-                value = priceSourceName,
-            })
+    ---@param varId string Unique Settings variable id
+    ---@param optKey CraftSim.GENERAL_OPTIONS
+    ---@param onChanged? fun(value: boolean)
+    local function proxyBool(varId, optKey, label, tooltip, onChanged)
+        local def = DEF[optKey]
+        local s = Settings.RegisterProxySetting(mainCategory, varId, Settings.VarType.Boolean, label, def,
+            function()
+                return CraftSim.DB.OPTIONS:Get(optKey)
+            end,
+            function(v)
+                CraftSim.DB.OPTIONS:Save(optKey, v)
+            end)
+        if onChanged then
+            s:SetValueChangedCallback(function(_, v)
+                onChanged(v)
+            end)
         end
-        CraftSim.OPTIONS.priceSourceDropdown = GGUI.Dropdown({
-            parent = GeneralTab.content,
-            anchorParent = GeneralTab.content,
-            label = L("OPTIONS_GENERAL_PRICE_SOURCE"),
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetY = -50,
-            width = 200,
-            initialData = priceSourceAddonsDropdownData,
-            initialValue = CraftSim.PRICE_API.name,
-            initialLabel = CraftSim.PRICE_API.name,
-            clickCallback = function(_, _, newPriceSource)
-                CraftSim.PRICE_APIS:SwitchAPIByAddonName(newPriceSource)
-                CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE, newPriceSource)
+        Settings.CreateCheckbox(mainCategory, s, tooltip)
+    end
+
+    ---@param varId string
+    ---@param optKey CraftSim.GENERAL_OPTIONS
+    ---@param valueRoundDecimals number? Rounds DB + slider value; `SetLabelFormatter(Right, fn)` formats the live label
+    --- (see `CreateMinimalSliderFormatter`: passing a function is the custom formatter path).
+    local function proxySlider(varId, optKey, label, tooltip, minV, maxV, step, valueRoundDecimals)
+        local def = DEF[optKey]
+        local defOut = valueRoundDecimals and GUTIL:Round(def, valueRoundDecimals) or def
+        local s = Settings.RegisterProxySetting(mainCategory, varId, Settings.VarType.Number, label, defOut,
+            function()
+                local v = CraftSim.DB.OPTIONS:Get(optKey)
+                return valueRoundDecimals and GUTIL:Round(v, valueRoundDecimals) or v
+            end,
+            function(v)
+                local out = valueRoundDecimals and GUTIL:Round(v, valueRoundDecimals) or v
+                CraftSim.DB.OPTIONS:Save(optKey, out)
+            end)
+        local opts = Settings.CreateSliderOptions(minV, maxV, step)
+        if valueRoundDecimals ~= nil then
+            opts:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(v)
+                local r = GUTIL:Round(v, valueRoundDecimals)
+                if valueRoundDecimals <= 0 then
+                    return string.format("%d", r)
+                end
+                return string.format("%." .. tostring(valueRoundDecimals) .. "f", r)
+            end)
+        else
+            opts:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
+        end
+        Settings.CreateSlider(mainCategory, s, opts, tooltip)
+    end
+
+    -- General
+    regSection(L("OPTIONS_GENERAL_TAB"), nil)
+
+    local priceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
+    if #priceAddons > 1 then
+        local supportedTooltip = L("OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES") ..
+            "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n")
+        local defaultSource = CraftSim.PRICE_API.name or priceAddons[1]
+        local ddSetting = Settings.RegisterProxySetting(mainCategory, "CraftSimOpt_PRICE_SOURCE", Settings.VarType.String,
+            L("OPTIONS_GENERAL_PRICE_SOURCE"), defaultSource,
+            function()
+                return CraftSim.PRICE_API.name
+            end,
+            function(v)
+                CraftSim.PRICE_APIS:SwitchAPIByAddonName(v)
+                CraftSim.DB.OPTIONS:Save(GO.PRICE_SOURCE, v)
+            end)
+        local function priceDropdownOptions()
+            local t = {}
+            for _, n in ipairs(priceAddons) do
+                t[#t + 1] = { controlType = Settings.ControlType.Radio, label = n, text = n, value = n }
             end
-        })
-    elseif #priceSourceAddons == 1 then
-        local info = GeneralTab.content:CreateFontString('info', 'OVERLAY', 'GameFontNormal')
-        info:SetPoint("TOP", 0, -50)
-        info:SetText(L("OPTIONS_GENERAL_CURRENT_PRICE_SOURCE") ..
-            " " .. tostring(CraftSim.PRICE_API.name))
+            return t
+        end
+        Settings.CreateDropdown(mainCategory, ddSetting, priceDropdownOptions, supportedTooltip)
+    elseif #priceAddons == 1 then
+        Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
+            L("OPTIONS_GENERAL_CURRENT_PRICE_SOURCE") .. ": " .. tostring(CraftSim.PRICE_API.name), nil))
     else
-        local warning = GeneralTab.content:CreateFontString('warning', 'OVERLAY', 'GameFontNormal')
-        warning:SetPoint("TOP", 0, -50)
-        warning:SetText(L("OPTIONS_GENERAL_NO_PRICE_SOURCE"))
+        Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
+            L("OPTIONS_GENERAL_NO_PRICE_SOURCE"), nil))
     end
 
-
-    GGUI.NumericInput {
-        parent = ModulesTab.content, anchorParent = ModulesTab.content,
-        anchorA = "TOP", anchorB = "TOP", label = L("OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"),
-        offsetX = -30,
-        offsetY = -20, sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"), allowDecimals = false, minValue = 1,
-        onNumberValidCallback = function(numberInput)
-            local value = tonumber(numberInput.currentValue)
-            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT", value)
-        end, borderAdjustHeight = 0.7, borderWidth = 30,
-        labelOptions = {
-            text = L("OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE"),
-            parent = ModulesTab.content, anchorA = "LEFT", anchorB = "RIGHT",
-            offsetX = 5,
-        },
-    }
-
-    local skillBreakpointsCheckbox = GGUI.Checkbox {
-        parent = ProfitCalculationTab.content, anchorParent = ProfitCalculationTab.content,
-        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
-        initialValue = CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"),
-        label = L("OPTIONS_PROFIT_CALCULATION_OFFSET"),
-        tooltip = L("OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("QUALITY_BREAKPOINT_OFFSET", checked)
-        end
-    }
-
-    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant",
-        ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25,
-        CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
-        function()
-            CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT",
-                tonumber(CraftSimOptionsInputResourcefulnessConstant:GetText()))
-        end)
-
-    CraftSim.FRAME:CreateText(
-        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
-        ProfitCalculationTab.content, customResourcefulnessConstantInput, "LEFT", "RIGHT", 5, 0)
-
-    CraftSim.FRAME:CreateHelpIcon(
-        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION"),
-        ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
-
-
-    local percentProfitCheckbox = GGUI.Checkbox {
-        label = " " .. L("OPTIONS_GENERAL_SHOW_PROFIT"),
-        tooltip = L("OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE"),
-        parent = GeneralTab.content, anchorParent = GeneralTab.content,
-        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -90,
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("SHOW_PROFIT_PERCENTAGE", checked)
-        end
-    }
-
-    local openLastRecipeCheckbox = GGUI.Checkbox {
-        label = " " .. L("OPTIONS_GENERAL_REMEMBER_LAST_RECIPE"),
-        tooltip = L("OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE"),
-        parent = GeneralTab.content, anchorParent = percentProfitCheckbox.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("OPEN_LAST_RECIPE", checked)
-        end
-    }
-
-    local showNewsCheckbox = GGUI.Checkbox {
-        label = " " .. L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX"),
-        tooltip = L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("SHOW_NEWS"),
-        parent = GeneralTab.content, anchorParent = openLastRecipeCheckbox.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("SHOW_NEWS", checked)
-        end
-    }
-
-    local hideMinimapButtonCheckbox = GGUI.Checkbox {
-        label = " " .. L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX"),
-        tooltip = L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("MINIMAP_BUTTON_HIDE"),
-        parent = GeneralTab.content, anchorParent = showNewsCheckbox.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("MINIMAP_BUTTON_HIDE", checked)
-
-            if checked then
+    proxyBool("CraftSimOpt_SHOW_PROFIT_PERCENTAGE", GO.SHOW_PROFIT_PERCENTAGE,
+        L("OPTIONS_GENERAL_SHOW_PROFIT"),
+        L("OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP"))
+    proxyBool("CraftSimOpt_OPEN_LAST_RECIPE", GO.OPEN_LAST_RECIPE, L("OPTIONS_GENERAL_REMEMBER_LAST_RECIPE"),
+        L("OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP"))
+    proxyBool("CraftSimOpt_SHOW_NEWS", GO.SHOW_NEWS, L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX"),
+        L("OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP"))
+    proxyBool("CraftSimOpt_MINIMAP_BUTTON_HIDE", GO.MINIMAP_BUTTON_HIDE, L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX"),
+        L("OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP"), function(v)
+            if v then
                 CraftSim.LibIcon:Hide("CraftSim")
             else
                 CraftSim.LibIcon:Show("CraftSim")
             end
-        end
-    }
-
-    local coinMoneyFormatDB = GGUI.Checkbox {
-        label = " " .. L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX") .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
-        tooltip = L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
-        parent = GeneralTab.content, anchorParent = hideMinimapButtonCheckbox.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("MONEY_FORMAT_USE_TEXTURES", checked)
-        end
-    }
-
-    local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
-    supportedPriceSources:SetPoint("TOP", 0, -210)
-    supportedPriceSources:SetText(L("OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES") ..
-        "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
-
-    local registeredCraftersTooltipCheckbox = GGUI.Checkbox {
-        parent = TooltipTab.content, anchorParent = TooltipTab.content,
-        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
-        label = " " .. L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS"),
-        tooltip = L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP"),
-        initialValue = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP, checked)
-        end
-    }
-
-    GGUI.NumericInput {
-        parent = TooltipTab.content, anchorParent = registeredCraftersTooltipCheckbox.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -15, offsetX = -30,
-        label = L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX"),
-        sizeX = 85, sizeY = 10,
-        initialValue = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX),
-        allowDecimals = false, minValue = 1, maxValue = 50,
-        onNumberValidCallback = function(numberInput)
-            local value = tonumber(numberInput.currentValue)
-            if value then
-                CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX, value)
-            end
-        end, borderAdjustHeight = 0.7, borderWidth = 30,
-        labelOptions = {
-            text = L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL"),
-            parent = TooltipTab.content, anchorA = "LEFT", anchorB = "RIGHT",
-            offsetX = 5,
-        },
-    }
-
-    local enableGarbageCollectWhenCraftingCB = GGUI.Checkbox {
-        parent = CraftingTab.content, anchorParent = CraftingTab.content,
-        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
-        label = L("OPTIONS_PERFORMANCE_RAM"),
-        tooltip = L("OPTIONS_PERFORMANCE_RAM_TOOLTIP"),
-        initialValue = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_ENABLED", checked)
-        end
-    }
-
-    local garbageCollectCraftsInput = CraftSim.FRAME:CreateInput("CraftSimGarbageCollectCraftsInput", CraftingTab
-        .content, enableGarbageCollectWhenCraftingCB.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
-        CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_CRAFTS"),
-        function()
-            local number = CraftSim.UTIL:ValidateNumberInput(CraftSimGarbageCollectCraftsInput, false)
-            CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_CRAFTS", number)
         end)
+    proxyBool("CraftSimOpt_MONEY_FORMAT_USE_TEXTURES", GO.MONEY_FORMAT_USE_TEXTURES,
+        L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX") .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP"))
 
-    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT",
-        "RIGHT", 5, 0)
+    -- Modules
+    regSection(L("OPTIONS_MODULES_TAB"), nil)
+    proxySlider("CraftSimOpt_CUSTOMER_HISTORY_MAX", GO.CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT,
+        L("OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"),
+        L("OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE"), 1, 1000, 1, 0)
 
-    CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
-        parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetX = 0, offsetY = -50,
-        initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED"),
-        label = L("CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL"),
-        tooltip = L("CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED", checked)
-        end
-    }
+    -- Profit calculation
+    regSection(L("OPTIONS_PROFIT_CALCULATION_TAB"), nil)
+    proxyBool("CraftSimOpt_QUALITY_BREAKPOINT_OFFSET", GO.QUALITY_BREAKPOINT_OFFSET,
+        L("OPTIONS_PROFIT_CALCULATION_OFFSET"), L("OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP"))
+    --- Step 0.01 with 2-decimal rounding matches tick math (avoids 0.600003-style float labels).
+    proxySlider("CraftSimOpt_RESOURCEFULNESS", GO.PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT,
+        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
+        L("OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION"), 0, 1.0, 0.1, 1)
 
-    CraftSim.OPTIONS.category = Settings.RegisterCanvasLayoutCategory(self.optionsPanel, self.optionsPanel.name)
-    --CraftSim.OPTIONS.category.ID = self.optionsPanel.name
-    Settings.RegisterAddOnCategory(CraftSim.OPTIONS.category)
+    -- Crafting
+    regSection(L("OPTIONS_CRAFTING_TAB"), nil)
+    proxyBool("CraftSimOpt_CRAFTING_GC_ENABLED", GO.CRAFTING_GARBAGE_COLLECTION_ENABLED, L("OPTIONS_PERFORMANCE_RAM"),
+        L("OPTIONS_PERFORMANCE_RAM_TOOLTIP"))
+    proxySlider("CraftSimOpt_CRAFTING_GC_CRAFTS", GO.CRAFTING_GARBAGE_COLLECTION_CRAFTS,
+        L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), L("OPTIONS_PERFORMANCE_RAM_TOOLTIP"), 0, 2000, 100, 0)
+    proxyBool("CraftSimOpt_FLASH_TASKBAR", GO.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED,
+        L("CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL"), L("CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP"))
+
+    -- Tooltip
+    regSection(L("OPTIONS_TOOLTIP_TAB"), nil)
+    proxyBool("CraftSimOpt_SHOW_REGISTERED_CRAFTERS", GO.SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP,
+        L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS"), L("OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP"))
+    proxySlider("CraftSimOpt_REGISTERED_CRAFTERS_MAX", GO.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX,
+        L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX"), L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL"), 1, 50, 1, 0)
+
+    -- TSM (embedded panel; `CraftSimOptionsInitTSMPanel` runs from template OnLoad)
+    if select(2, C_AddOns.IsAddOnLoaded("TradeSkillMaster")) then
+        regSection(L("OPTIONS_TSM_TAB"), L("OPTIONS_TSM_SECTION_TOOLTIP"))
+        Settings.RegisterInitializer(mainCategory, Settings.CreatePanelInitializer("CraftSimSettingsTsmPanelTemplate", {}))
+    end
+
+    Settings.RegisterAddOnCategory(mainCategory)
 end
 
-function CraftSim.OPTIONS:InitTSMTab(TSMTab)
+function CraftSim.OPTIONS:InitTSMPanelFromTemplate(parent)
     local expressionSizeX = 300
     local expressionSizeY = 25
+    --- Inset matches Settings list padding so rows are not clipped on the left.
+    local insetX = 28
 
-    local tsmReagentsPriceExpression = CreateFrame("EditBox", nil, TSMTab.content,
+    local tsmExpressionTitleReagents = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    tsmExpressionTitleReagents:SetPoint("TOPLEFT", parent, "TOPLEFT", insetX, -10)
+    tsmExpressionTitleReagents:SetText("TSM Crafting Reagents Price Expression")
+
+    local tsmReagentsPriceExpression = CreateFrame("EditBox", nil, parent,
         "InputBoxTemplate")
-    tsmReagentsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, 0)
+    tsmReagentsPriceExpression:SetPoint("TOPLEFT", tsmExpressionTitleReagents, "BOTTOMLEFT", 0, -6)
     tsmReagentsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmReagentsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmReagentsPriceExpression:SetFontObject("ChatFontNormal")
@@ -348,13 +201,13 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     end)
 
-    GGUI.Button({
-        parent = TSMTab.content,
+    local resetReagentsBtn = GGUI.Button({
+        parent = parent,
         anchorParent = tsmReagentsPriceExpression,
-        anchorA = "RIGHT",
-        anchorB = "LEFT",
-        offsetX = -10,
-        offsetY = 1,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 10,
+        offsetY = 0,
         sizeX = 15,
         sizeY = 20,
         adjustWidth = true,
@@ -364,19 +217,19 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     })
 
-    local tsmExpressionTitleReagents = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleReagents:SetPoint("BOTTOMLEFT", tsmReagentsPriceExpression, "TOPLEFT", 0, 2)
-    tsmExpressionTitleReagents:SetText("TSM Crafting Reagents Price Expression")
-
-    local validationInfoReagents = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoReagents', 'OVERLAY',
+    local validationInfoReagents = parent:CreateFontString('CraftSimTSMStringValidationInfoReagents', 'OVERLAY',
         'GameFontNormal')
-    validationInfoReagents:SetPoint("LEFT", tsmReagentsPriceExpression, "RIGHT", 5, 0)
+    validationInfoReagents:SetPoint("LEFT", resetReagentsBtn.frame, "RIGHT", 10, 0)
     validationInfoReagents:SetText(CraftSim.GUTIL:ColorizeText(
         L("OPTIONS_TSM_VALID_EXPRESSION"), CraftSim.GUTIL.COLORS.GREEN))
 
-    local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content,
+    local tsmExpressionTitleItems = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    tsmExpressionTitleItems:SetPoint("TOPLEFT", tsmReagentsPriceExpression, "BOTTOMLEFT", 0, -28)
+    tsmExpressionTitleItems:SetText("TSM Crafted Items Price Expression")
+
+    local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", parent,
         "InputBoxTemplate")
-    tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -55)
+    tsmItemsPriceExpression:SetPoint("TOPLEFT", tsmExpressionTitleItems, "BOTTOMLEFT", 0, -6)
     tsmItemsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmItemsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmItemsPriceExpression:SetFontObject("ChatFontNormal")
@@ -397,13 +250,13 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     end)
 
-    GGUI.Button({
-        parent = TSMTab.content,
+    local resetItemsBtn = GGUI.Button({
+        parent = parent,
         anchorParent = tsmItemsPriceExpression,
-        anchorA = "RIGHT",
-        anchorB = "LEFT",
-        offsetX = -10,
-        offsetY = 1,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 10,
+        offsetY = 0,
         sizeX = 15,
         sizeY = 20,
         adjustWidth = true,
@@ -413,20 +266,19 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     })
 
-    local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT", 0, 2)
-    tsmExpressionTitleItems:SetText("TSM Crafted Items Price Expression")
-
-    local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY',
+    local validationInfoItems = parent:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY',
         'GameFontNormal')
-    validationInfoItems:SetPoint("LEFT", tsmItemsPriceExpression, "RIGHT", 5, 0)
+    validationInfoItems:SetPoint("LEFT", resetItemsBtn.frame, "RIGHT", 10, 0)
     validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
         L("OPTIONS_TSM_VALID_EXPRESSION"), CraftSim.GUTIL.COLORS.GREEN))
 
-    -- Custom source for restock quantity
-    local tsmRestockExpression = CreateFrame("EditBox", "CraftSimTSMRestockExpressionItems", TSMTab.content,
+    local tsmExpressionTitleRestockItems = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    tsmExpressionTitleRestockItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "BOTTOMLEFT", 0, -28)
+    tsmExpressionTitleRestockItems:SetText("TSM Crafted Items Restock Qty Expression")
+
+    local tsmRestockExpression = CreateFrame("EditBox", "CraftSimTSMRestockExpressionItems", parent,
         "InputBoxTemplate")
-    tsmRestockExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -110)
+    tsmRestockExpression:SetPoint("TOPLEFT", tsmExpressionTitleRestockItems, "BOTTOMLEFT", 0, -6)
     tsmRestockExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmRestockExpression:SetAutoFocus(false) -- dont automatically focus
     tsmRestockExpression:SetFontObject("ChatFontNormal")
@@ -447,13 +299,13 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     end)
 
-    local tsmRestockDefaultButton = GGUI.Button({
-        parent = TSMTab.content,
+    local resetRestockBtn = GGUI.Button({
+        parent = parent,
         anchorParent = tsmRestockExpression,
-        anchorA = "RIGHT",
-        anchorB = "LEFT",
-        offsetX = -10,
-        offsetY = 1,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 10,
+        offsetY = 0,
         sizeX = 15,
         sizeY = 20,
         adjustWidth = true,
@@ -463,14 +315,10 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     })
 
-    local tsmExpressionTitleRestockItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleRestockItems:SetPoint("BOTTOMLEFT", tsmRestockExpression, "TOPLEFT", 0, 2)
-    tsmExpressionTitleRestockItems:SetText("TSM Crafted Items Restock Qty Expression")
-
-    local validationInfoRestockItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoRestockItems',
+    local validationInfoRestockItems = parent:CreateFontString('CraftSimTSMStringValidationInfoRestockItems',
         'OVERLAY',
         'GameFontNormal')
-    validationInfoRestockItems:SetPoint("LEFT", tsmRestockExpression, "RIGHT", 5, 0)
+    validationInfoRestockItems:SetPoint("LEFT", resetRestockBtn.frame, "RIGHT", 10, 0)
     validationInfoRestockItems:SetText(CraftSim.GUTIL:ColorizeText(
         L("OPTIONS_TSM_VALID_EXPRESSION"), CraftSim.GUTIL.COLORS.GREEN))
 
@@ -478,12 +326,13 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     -- TSM Enhanced: Deposit Cost Settings
     -- =========================================================================
 
-    local sectionHeaderDeposit = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
-    sectionHeaderDeposit:SetPoint("TOPLEFT", tsmRestockExpression, "BOTTOMLEFT", 0, -15)
-    sectionHeaderDeposit:SetText(CraftSim.GUTIL:ColorizeText("TSM Enhanced", CraftSim.GUTIL.COLORS.LEGENDARY))
+    local sectionHeaderDeposit = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    sectionHeaderDeposit:SetPoint("TOPLEFT", tsmRestockExpression, "BOTTOMLEFT", 0, -20)
+    sectionHeaderDeposit:SetText(CraftSim.GUTIL:ColorizeText(L("OPTIONS_TSM_ENHANCED_HEADER"),
+        CraftSim.GUTIL.COLORS.LEGENDARY))
 
     local depositEnabledCheckbox = GGUI.Checkbox {
-        parent = TSMTab.content, anchorParent = sectionHeaderDeposit,
+        parent = parent, anchorParent = sectionHeaderDeposit,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -10,
         initialValue = CraftSim.DB.OPTIONS:Get("TSM_DEPOSIT_ENABLED"),
         label = " " .. L("OPTIONS_TSM_DEPOSIT_ENABLED_LABEL"),
@@ -493,11 +342,11 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     }
 
-    local depositExpressionTitle = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    local depositExpressionTitle = parent:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     depositExpressionTitle:SetPoint("TOPLEFT", depositEnabledCheckbox.frame, "BOTTOMLEFT", 0, -5)
     depositExpressionTitle:SetText(L("OPTIONS_TSM_DEPOSIT_EXPRESSION_LABEL"))
 
-    local tsmDepositExpression = CreateFrame("EditBox", "CraftSimTSMDepositExpression", TSMTab.content,
+    local tsmDepositExpression = CreateFrame("EditBox", "CraftSimTSMDepositExpression", parent,
         "InputBoxTemplate")
     tsmDepositExpression:SetPoint("TOPLEFT", depositExpressionTitle, "BOTTOMLEFT", 0, -5)
     tsmDepositExpression:SetSize(expressionSizeX, expressionSizeY)
@@ -521,13 +370,13 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     end)
 
-    GGUI.Button({
-        parent = TSMTab.content,
+    local resetDepositBtn = GGUI.Button({
+        parent = parent,
         anchorParent = tsmDepositExpression,
-        anchorA = "RIGHT",
-        anchorB = "LEFT",
-        offsetX = -10,
-        offsetY = 1,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 10,
+        offsetY = 0,
         sizeX = 15,
         sizeY = 20,
         adjustWidth = true,
@@ -538,9 +387,9 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     })
 
-    local validationInfoDeposit = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoDeposit', 'OVERLAY',
+    local validationInfoDeposit = parent:CreateFontString('CraftSimTSMStringValidationInfoDeposit', 'OVERLAY',
         'GameFontNormal')
-    validationInfoDeposit:SetPoint("LEFT", tsmDepositExpression, "RIGHT", 5, 0)
+    validationInfoDeposit:SetPoint("LEFT", resetDepositBtn.frame, "RIGHT", 10, 0)
     validationInfoDeposit:SetText(CraftSim.GUTIL:ColorizeText(
         L("OPTIONS_TSM_VALID_EXPRESSION"), CraftSim.GUTIL.COLORS.GREEN))
 
@@ -549,7 +398,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     -- =========================================================================
 
     local smartRestockCheckbox = GGUI.Checkbox {
-        parent = TSMTab.content, anchorParent = tsmDepositExpression,
+        parent = parent, anchorParent = tsmDepositExpression,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -8,
         initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_ENABLED"),
         label = " " .. L("OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL"),
@@ -560,7 +409,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     }
 
     local includeAltsCheckbox = GGUI.Checkbox {
-        parent = TSMTab.content, anchorParent = smartRestockCheckbox.frame,
+        parent = parent, anchorParent = smartRestockCheckbox.frame,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 20, offsetY = -5,
         initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS"),
         label = " " .. L("OPTIONS_TSM_SMART_RESTOCK_INCLUDE_ALTS_LABEL"),
@@ -570,7 +419,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     }
 
     GGUI.Checkbox {
-        parent = TSMTab.content, anchorParent = includeAltsCheckbox.frame,
+        parent = parent, anchorParent = includeAltsCheckbox.frame,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -5,
         initialValue = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK"),
         label = " " .. L("OPTIONS_TSM_SMART_RESTOCK_INCLUDE_WARBANK_LABEL"),
@@ -578,4 +427,9 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
             CraftSim.DB.OPTIONS:Save("TSM_SMART_RESTOCK_INCLUDE_WARBANK", checked)
         end
     }
+end
+
+--- Global for `CraftSimOptionsTsm.xml` OnLoad; closes over this file's `CraftSim` table.
+function CraftSimOptionsInitTSMPanel(frame)
+    CraftSim.OPTIONS:InitTSMPanelFromTemplate(frame)
 end

@@ -104,6 +104,7 @@ Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/UI.lua
 
 Modules/Options/Options.lua
+Modules/Options/CraftSimOptionsTsm.xml
 
 Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/UI.lua
