@@ -18,7 +18,7 @@ local f = CraftSim.GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
 function CraftSim.PRICING.UI:Init()
-    local sizeX = 600
+    local sizeX = 620
     local sizeY = 280
     local offsetX = -5
     local offsetY = -120
@@ -58,8 +58,7 @@ function CraftSim.PRICING.UI:Init()
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
         title = L("PRICING_TITLE") .. " " ..
-            CraftSim.GUTIL:ColorizeText(L("SOURCE_COLUMN_WO"),
-                CraftSim.GUTIL.COLORS.GREY),
+            f.grey(L("SOURCE_COLUMN_WO")),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -105,6 +104,8 @@ function CraftSim.PRICING.UI:Init()
         ---@type GGUI.CurrencyInput
         content.contextMenuOverridePriceInput = nil
 
+        local listHeaderScale = 0.9
+
         content.reagentList = GGUI.FrameList({
             parent = content,
             anchorParent = content,
@@ -115,8 +116,7 @@ function CraftSim.PRICING.UI:Init()
             sizeY = 190,
             rowHeight = 20,
             showBorder = true,
-            savedVariablesTableLayoutConfig = CraftSim.DB.OPTIONS:Get("FRAME_LIST_LAYOUT_CONFIGS")
-                ["PRICING_REAGENT_LIST"],
+            savedVariablesTableLayoutConfig = CraftSim.UTIL:GetFrameListLayoutConfig("PRICING_REAGENT_LIST"),
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
                 noSelectionColor = true,
@@ -186,7 +186,7 @@ function CraftSim.PRICING.UI:Init()
             columnOptions = {
                 {
                     label = L("PRICING_ITEM_HEADER"),
-                    width = 40,
+                    width = 60,
                     justifyOptions = { type = "H", align = "CENTER" },
                     resizable = true,
                     sortFunc = function(rowA, rowB)
@@ -194,6 +194,8 @@ function CraftSim.PRICING.UI:Init()
                         local qB = rowB.qualityID or 0
                         return qA > qB
                     end,
+                    headerScale = listHeaderScale,
+                    customSortArrowOffsetX = 5,
                 },
                 {
                     label = L("COST_OPTIMIZATION_PRICE_HEADER"),
@@ -207,7 +209,8 @@ function CraftSim.PRICING.UI:Init()
                     resizeCallback = function(priceColumn, newWidth)
                         local text = priceColumn.text --[[@as GGUI.Text]]
                         text:SetWidth(newWidth - 10)
-                    end
+                    end,
+                    headerScale = listHeaderScale,
                 },
                 {
                     label = L("COST_OPTIMIZATION_USED_SOURCE"),
@@ -221,6 +224,7 @@ function CraftSim.PRICING.UI:Init()
                         if isOverrideA == isOverrideB then return false end
                         return isOverrideA
                     end,
+                    headerScale = listHeaderScale,
                 },
             },
             rowConstructor = function(columns)
@@ -253,23 +257,19 @@ function CraftSim.PRICING.UI:Init()
                 sourceColumn.text = GGUI.Text({
                     parent = sourceColumn,
                     anchorParent = sourceColumn,
-                    text = CraftSim.GUTIL:ColorizeText(
-                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN),
+                    text = f.g(L("SOURCE_COLUMN_AH")),
                     scale = 0.9,
                 })
                 function sourceColumn:SetAH()
-                    sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        L("SOURCE_COLUMN_AH"), CraftSim.GUTIL.COLORS.GREEN))
+                    sourceColumn.text:SetText(f.g(L("SOURCE_COLUMN_AH")))
                 end
 
                 function sourceColumn:SetOverride()
-                    sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
-                        L("SOURCE_COLUMN_OVERRIDE"),
-                        CraftSim.GUTIL.COLORS.LEGENDARY))
+                    sourceColumn.text:SetText(f.l(L("SOURCE_COLUMN_OVERRIDE")))
                 end
 
                 function sourceColumn:SetUnknown()
-                    sourceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.RED))
+                    sourceColumn.text:SetText(f.r("-"))
                 end
             end
         })
@@ -285,6 +285,7 @@ function CraftSim.PRICING.UI:Init()
             offsetX = 20,
             sizeY = 190,
             showBorder = true,
+            savedVariablesTableLayoutConfig = CraftSim.UTIL:GetFrameListLayoutConfig("PRICING_RESULT_ITEMS_LIST"),
             selectionOptions = {
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
                 noSelectionColor = true,
@@ -363,6 +364,8 @@ function CraftSim.PRICING.UI:Init()
                         local sumB = (rowB.invCount or 0) + (rowB.ahCount or 0)
                         return sumA > sumB
                     end,
+                    headerScale = listHeaderScale,
+                    customSortArrowOffsetX = 5,
                 },
                 {
                     label = L("PRICE_DETAILS_ITEM"),
@@ -374,6 +377,7 @@ function CraftSim.PRICING.UI:Init()
                         local qB = rowB.qualityID or 0
                         return qA > qB
                     end,
+                    headerScale = listHeaderScale,
                 },
                 {
                     label = L("PRICE_DETAILS_PRICE_ITEM"),
@@ -384,6 +388,7 @@ function CraftSim.PRICING.UI:Init()
                         local priceB = rowB.price or 0
                         return priceA > priceB
                     end,
+                    headerScale = listHeaderScale,
                 },
                 {
                     label = L("PRICING_AVG_CRAFTING_COST"),
@@ -394,6 +399,8 @@ function CraftSim.PRICING.UI:Init()
                         local costB = rowB.avgCraftingCost or 0
                         return costA > costB
                     end,
+                    headerScale = listHeaderScale,
+                    customSortArrowOffsetX = 2,
                 },
             },
             rowConstructor = function(columns)
@@ -531,7 +538,7 @@ function CraftSim.PRICING:UpdateDisplay(recipeData)
             if priceInfo.isOverride then
                 tooltip = tooltip ..
                     L("PRICING_REAGENT_LIST_OVERRIDE") ..
-                    CraftSim.UTIL:FormatMoney(price) .. "\n"
+                    CraftSim.UTIL:FormatMoney(price)
                 sourceColumn:SetOverride()
             elseif priceInfo.isAHPrice then
                 sourceColumn:SetAH()
@@ -576,7 +583,7 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 local price = priceOverride or CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink)
 
                 priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price) ..
-                    ((priceOverride and CraftSim.GUTIL:ColorizeText(" (OR)", CraftSim.GUTIL.COLORS.LEGENDARY)) or ""))
+                    ((priceOverride and f.l(" (OR)")) or ""))
 
                 local avgCraftingCost = priceData.averageCraftingCosts
                 avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(avgCraftingCost))
@@ -599,14 +606,13 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 row.ahCount = ahCount
 
                 local tooltipText = (itemLink or "") .. "\n" ..
-                    L("PRICE_DETAILS_PRICE_ITEM") .. ": " .. CraftSim.UTIL:FormatMoney(price)
+                    f.white(L("PRICE_DETAILS_PRICE_ITEM") .. ": " .. CraftSim.UTIL:FormatMoney(price))
                 if priceOverride then
                     tooltipText = tooltipText ..
-                        CraftSim.GUTIL:ColorizeText(" (" .. L("SOURCE_COLUMN_OVERRIDE") .. ")",
-                            CraftSim.GUTIL.COLORS.LEGENDARY)
+                        f.l(" (" .. L("SOURCE_COLUMN_OVERRIDE") .. ")")
                 end
                 tooltipText = tooltipText .. "\n" ..
-                    L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCost)
+                    f.white(L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCost))
 
                 row.tooltipOptions = {
                     anchor = "ANCHOR_CURSOR",
