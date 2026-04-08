@@ -445,7 +445,7 @@ function CraftSim.LOCAL_KO:GetData()
         TOP_GEAR_SIM_MODES_CRAFTING_SPEED = "최고 제작 속도",
 
         -- Options
-        OPTIONS_TITLE = "CraftSim 옵션",
+        OPTIONS_TITLE = "CraftSim",
         OPTIONS_GENERAL_TAB = "일반",
         OPTIONS_GENERAL_PRICE_SOURCE = "가격 출처",
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "현재 가격 출처: ",

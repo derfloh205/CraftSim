@@ -434,7 +434,7 @@ function CraftSim.LOCAL_PT:GetData()
         TOP_GEAR_SIM_MODES_CRAFTING_SPEED = "Melhor Velocidade de Criação",
 
         -- Options
-        OPTIONS_TITLE = "Opções CraftSim",
+        OPTIONS_TITLE = "CraftSim",
         OPTIONS_GENERAL_TAB = "Geral",
         OPTIONS_GENERAL_PRICE_SOURCE = "Fonte de Preço",
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "Fonte Atual de Preços: ",

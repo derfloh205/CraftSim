@@ -289,7 +289,7 @@ function CraftSim.LOCAL_TW:GetData()
         TOP_GEAR_SIM_MODES_CRAFTING_SPEED = "最佳製造速度",
 
         -- Options
-        OPTIONS_TITLE = "專業製造模擬器",
+        OPTIONS_TITLE = "CraftSim",
         OPTIONS_GENERAL_TAB = "一般",
         OPTIONS_GENERAL_PRICE_SOURCE = "價格來源",
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "當前價格來源: ",

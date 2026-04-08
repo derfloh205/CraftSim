@@ -375,7 +375,7 @@ function CraftSim.LOCAL_RU:GetData()
         TOP_GEAR_SIM_MODES_CRAFTING_SPEED = "Высшая скорость изготовления",
 
         -- Options
-        OPTIONS_TITLE = "Параметры CraftSim",
+        OPTIONS_TITLE = "CraftSim",
         OPTIONS_GENERAL_TAB = "Общие",
         OPTIONS_GENERAL_PRICE_SOURCE = "Источник цен",
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "Текущий источник цен: ",
