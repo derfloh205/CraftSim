@@ -517,9 +517,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                             if queueAble then
                                                 if isPublicOrder then
-                                                    local craftAtLeastOnce = recipeData.reagentData:GetCraftableAmount(
-                                                        recipeData:GetCrafterUID())
-                                                    if order.isFulfillable == false or craftAtLeastOnce < 1 then
+                                                    if order.isFulfillable == false then
                                                         distributor:Continue()
                                                         return
                                                     end
