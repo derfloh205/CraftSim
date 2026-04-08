@@ -144,7 +144,6 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                                     sizeX = 100, sizeY = 25, offsetX = 5,
                                     anchorA = "RIGHT", anchorB = "RIGHT",
                                     borderAdjustWidth = 0.95,
-                                    debug = true,
                                     initialValue = currentOverridePrice,
                                     tooltipOptions = {
                                         owner = frame,
@@ -300,7 +299,6 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                                     sizeX = 100, sizeY = 25, offsetX = 5,
                                     anchorA = "RIGHT", anchorB = "RIGHT",
                                     borderAdjustWidth = 0.95,
-                                    debug = true,
                                     initialValue = currentOverridePrice,
                                     tooltipOptions = {
                                         owner = frame,
