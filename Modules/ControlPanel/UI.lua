@@ -82,14 +82,9 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"))
 
             addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL"),
-                "MODULE_COST_OVERVIEW",
-                L("CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL"),
-                "MODULE_PRICE_OVERRIDE",
-                L("CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP"))
+                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
+                "MODULE_COST_OPTIMIZATION",
+                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
@@ -110,11 +105,6 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
                 "MODULE_CRAFT_LOG",
                 L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
-                "MODULE_COST_OPTIMIZATION",
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),

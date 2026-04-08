@@ -234,7 +234,7 @@ function CraftSim.LOCAL_EN:GetData()
         EXPLANATIONS_BASIC_PROFIT_TAB = "Basic Profit Calculation",
 
         -- Cost Details Frame
-        COST_OPTIMIZATION_TITLE = "CraftSim Cost Optimization",
+        COST_OPTIMIZATION_TITLE = "CraftSim Pricing",
         COST_OPTIMIZATION_EXPLANATION =             "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
@@ -242,22 +242,14 @@ function CraftSim.LOCAL_EN:GetData()
             " .. Auction House Price\n" ..
             f.l("OR") ..
             " .. Price Override\n" ..
-            f.bb("Any Name") ..
-            " .. Expected Costs from crafting it yourself\n" ..
             f.l("OR") ..
-            " will always be used if set. " ..
-            f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH") .. "\n\n" ..
-            f.bb("Right Click") .. " on any reagent to override its price by a custom value",
+            " will always be used if set.\n\n" ..
+            f.bb("Right Click") .. " on any reagent or result item to override its price by a custom value",
         COST_OPTIMIZATION_CRAFTING_COSTS = "Crafting Costs: ",
         COST_OPTIMIZATION_ITEM_HEADER = "Item",
-        COST_OPTIMIZATION_AH_PRICE_HEADER = "AH Price",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Override",
-        COST_OPTIMIZATION_CRAFTING_HEADER = "Crafting",
-        COST_OPTIMIZATION_USED_SOURCE = "Used Source",
-        COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Reagent Costs",
-        COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB = "Sub Recipe Options",
-        COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION = "Sub Recipe Optimization " ..
-            f.bb("(experimental)"),
+        COST_OPTIMIZATION_PRICE_HEADER = "Price",
+        COST_OPTIMIZATION_USED_SOURCE = "Source",
+        PRICING_AVG_CRAFTING_COST = "Avg Crafting Cost",
         COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP = "If enabled " ..
             f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") ..
             " of your character and your alts\nif they are able to craft that item.\n\n" ..
@@ -528,8 +520,8 @@ function CraftSim.LOCAL_EN:GetData()
         CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP =         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
         CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL = "Craft Log",
         CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP =         "Show a crafting log and statistics about your crafts!",
-        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL = "Cost Optimization",
-        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP =         "Module that shows detailed information about and helps with optimizing crafting costs",
+        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL = "Pricing",
+        CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP =         "Module that shows reagent pricing details and craft result overview",
         CONTROL_PANEL_MODULES_STATISTICS_LABEL = "Statistics",
         CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP =         "Module that shows detailed outcome statistics for the currently open recipe",
         CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL = "Recipe Scan",
