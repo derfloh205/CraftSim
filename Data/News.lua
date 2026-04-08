@@ -36,6 +36,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         f.PG .. f.bb("Profession Gear"),
         f.a .. "- Equip process improved",
+        f.pg .. f.g("New Slash Commands Added"),
+        f.a .. "- Type " .. f.bb("/craftsim help") .. " to view",
         f.p .. "Taint Issue Fixes",
         f.p .. "Condition guards added regarding research recipes",
         f.p .. "Specialization Data Update for Engineering Build 12.0.1.66838",

@@ -528,6 +528,45 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			C_UI.Reload()
 		elseif command == "quickbuy" then
 			CraftSim.CRAFTQ:AuctionatorQuickBuy()
+		elseif command == "craftqueue" then
+			if rest == "craftnext" then
+				CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
+			elseif rest == "queuelists" then
+				CraftSim.CRAFT_LISTS:QueueSelectedLists()
+			elseif rest == "queuefirstcrafts" then
+				CraftSim.CRAFTQ:QueueFirstCrafts()
+			elseif rest == "queueworkorders" then
+				CraftSim.CRAFTQ:QueueWorkOrders()
+			elseif rest == "clear" then
+				CraftSim.CRAFTQ:ClearAll()
+			elseif rest == "createshoppinglist" then
+				CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+			end
+		elseif command == "help" then
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" news") .. " - Show the latest patch notes")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" debug") .. " - Open the debug window")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" export recipeids") ..
+				" - Export all recipeIDs of the current expansion in a CSV format in a copy box")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" export") .. " - Export the currently visible recipe data as JSON in a copy box")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.r(" resetdb") .. " - Reset the addon's database and reload the UI")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" craftqueue ") .. "[command] - Various commands to interact with the craft queue:")
+			CraftSim.DEBUG:SystemPrint(
+				f.bb("    craftnext") .. " - Craft next recipe")
+			CraftSim.DEBUG:SystemPrint(f.bb("    queuelists") .. " - Queue all selected craft lists in the craft queue")
+			CraftSim.DEBUG:SystemPrint(
+				f.bb("    queuefirstcrafts") .. " - Queue the first crafts of the last open profession")
+			CraftSim.DEBUG:SystemPrint(
+				f.bb("    queueworkorders") .. " - Queue work orders for open profession")
+			CraftSim.DEBUG:SystemPrint(f.bb("    clear") .. " - Clear all crafts from the craft queue")
+			CraftSim.DEBUG:SystemPrint(
+				f.bb("    createshoppinglist") .. " - Create an Auctionator shopping list")
 		else
 			-- open options if any other command or no command is given
 			Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())

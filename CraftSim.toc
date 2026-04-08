@@ -75,6 +75,8 @@ Modules/Modules.lua
 
 Modules/ItemCount/ItemCount.lua
 
+Modules/PreCraftBuffGate/PreCraftBuffGate.lua
+
 Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
 
@@ -94,8 +96,8 @@ Modules/Statistics/UI.lua
 Modules/CraftLog/CraftLog.lua
 Modules/CraftLog/UI.lua
 
-Modules/PriceOverride/PriceOverride.lua
-Modules/PriceOverride/UI.lua
+Modules/Pricing/Pricing.lua
+Modules/Pricing/UI.lua
 
 Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/UI.lua
@@ -120,12 +122,6 @@ Modules/TopGear/UI.lua
 
 Modules/RecipeScan/RecipeScan.lua
 Modules/RecipeScan/UI.lua
-
-Modules/PriceDetails/PriceDetails.lua
-Modules/PriceDetails/UI.lua
-
-Modules/CostOptimization/CostOptimization.lua
-Modules/CostOptimization/UI.lua
 
 Modules/Supporters/Supporters.lua
 Modules/Supporters/UI.lua
