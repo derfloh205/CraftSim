@@ -51,6 +51,9 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 		CraftSim.DB.MULTICRAFT_PRELOAD:ClearAll()
 	end
 
+	local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+	CraftSim.PRE_CRAFT_BUFF_GATE:OnPlayerEnteringWorld(initialLogin, isReloadingUI)
+
 	-- load craft queue
 	CraftSim.CRAFTQ:InitializeCraftQueue()
 end

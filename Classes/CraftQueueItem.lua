@@ -27,11 +27,23 @@ function CraftSim.CraftQueueItem:new(options)
     self.canCraftOnce = false
     self.gearEquipped = false
     self.correctProfessionOpen = false
-    --- Midnight enchanting: show queue Shatter step before Craft when essence buff is down
-    self.needsMidnightShatterStep = false
-    self.canCastMidnightShatter = false
-    ---@type CraftSim.RecipeData?
-    self.midnightShatterRecipeData = nil
+    --- Pre-craft buff gate (e.g. Midnight / TWW Shattering Essence): cast this before Craft.
+    ---@class CraftSim.CraftQueueItem.PcbgData
+    ---@field gateId CraftSim.PreCraftBuffGateId?
+    ---@field needsStep boolean
+    ---@field canCast boolean
+    ---@field dueToLoginStale boolean
+    ---@field dueToMissingBuff boolean
+    ---@field recipeData CraftSim.RecipeData?
+    ---@type CraftSim.CraftQueueItem.PcbgData
+    self.pcbgData = {
+        gateId = nil,
+        needsStep = false,
+        canCast = false,
+        dueToLoginStale = false,
+        dueToMissingBuff = false,
+        recipeData = nil,
+    }
     self.craftAbleAmount = 0
     self.notOnCooldown = true
     self.isCrafter = false
@@ -59,33 +71,19 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
 
-    self.needsMidnightShatterStep = false
-    self.canCastMidnightShatter = false
-    self.midnightShatterRecipeData = nil
+    self.pcbgData.gateId = nil
+    self.pcbgData.needsStep = false
+    self.pcbgData.canCast = false
+    self.pcbgData.dueToLoginStale = false
+    self.pcbgData.dueToMissingBuff = false
+    self.pcbgData.recipeData = nil
 
-    -- Midnight shatter: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
-    -- C_TradeSkillUI.GetProfessionChildSkillLineID() — that reflects the open profession tab and skips rows
-    -- when another enchanting expansion is selected.
-    local rd = self.recipeData
-    if self.isCrafter and self.correctProfessionOpen and
-        rd.professionData.professionInfo.profession == Enum.Profession.Enchanting and
-        rd.expansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT and
-        CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_FORCE_BUFF) then
-        rd.buffData:Update()
-        local buffActive = rd.buffData:IsBuffActive(CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE_MIDNIGHT)
-        local needShatter = not buffActive
-        if needShatter then
-            local shatterRD = CraftSim.CRAFTQ:PrepareMidnightEnchantShatterRecipeData(rd.crafterData)
-            if shatterRD then
-                self.needsMidnightShatterStep = true
-                self.midnightShatterRecipeData = shatterRD
-                self.canCastMidnightShatter = select(1, shatterRD:CanCraft(1))
-            end
-        end
-    end
+    -- Pre-craft buff gates: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
+    -- C_TradeSkillUI.GetProfessionChildSkillLineID().
+    CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(self)
 
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
-        self.isCrafter and self.learned and not self.needsMidnightShatterStep
+        self.isCrafter and self.learned and not self.pcbgData.needsStep
     CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 

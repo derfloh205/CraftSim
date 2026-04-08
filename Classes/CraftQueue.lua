@@ -429,9 +429,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
+    CraftSim.PRE_CRAFT_BUFF_GATE:ClearStaleIfCraftedRecipeMatches(recipeData.recipeID)
+
     local craftQueueItem = self:FindRecipe(recipeData)
 
-    if not craftQueueItem then return end
+    if not craftQueueItem then
+        -- Salvage crafts (e.g. Midnight Shatter) are not queued; the row is the enchant. Buff often applies after this event.
+        if recipeData.isSalvageRecipe then
+            CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+        end
+        return
+    end
 
     -- if found only recognize as same crafted if concentration status and more is the same
 

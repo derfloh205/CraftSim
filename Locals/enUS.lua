@@ -7,6 +7,8 @@ CraftSim.LOCAL_EN = {}
 function CraftSim.LOCAL_EN:GetData()
     local f = CraftSim.GUTIL:GetFormatter()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
+    local shatter_post_login_tooltip = "\n\n" ..
+        f.white("Cast Shatter once after login so CraftSim matches your buff.")
     return {
         -- REQUIRED:
         STAT_MULTICRAFT = "Multicraft",
@@ -752,8 +754,6 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC = "Automatic (cheapest)",
         CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED = "Automatic (cheapest owned)",
         CRAFT_QUEUE_SHATTER_RIGHT_CLICK_HINT = "\nRight-click to choose mote.",
-        CRAFT_QUEUE_SHATTER_REAPPLY_AFTER_LOGIN = "\n\n" ..
-            f.white("After login, cast Shatter so the provided buff is correct.\nThis is a known bug."),
         CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "Create Auctionator Shopping List",
         CRAFT_QUEUE_QUEUE_TAB_LABEL = "Craft Queue",
         CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL = "Flash Taskbar on " ..
@@ -825,6 +825,12 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_BUTTON_EQUIP_TOOLS = "Equip",
         CRAFT_QUEUE_BUTTON_SHATTER = "Shatter",
         CRAFT_QUEUE_STATUS_SHATTER_BUFF = "Shattering Essence buff not active",
+        CRAFT_QUEUE_STATUS_SHATTER_AFTER_LOGIN = "Reshatter required after login",
+        CRAFT_QUEUE_SHATTER_TOOLTIP_AFTER_LOGIN = shatter_post_login_tooltip,
+        CRAFT_QUEUE_SHATTER_TOOLTIP_MISSING_BUFF = "\n\n" ..
+            f.white("Cast Shatter to apply Shattering Essence."),
+        CRAFT_QUEUE_SHATTER_TOOLTIP_STALE_AND_MISSING = "\n\n" ..
+            f.white("Shattering Essence inactive. Cast Shatter to apply it and sync post-login stats."),
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "Ignore Acuity Recipes",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP = "Do not queue first crafts that use " ..
             f.bb("Artisan's Acuity") .. " for crafting",
@@ -844,9 +850,19 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("Force ") ..
             f.bb("Shattering Essence") .. " buff for Midnight Enchanting",
         CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
-            f.bb("Shattering Essence") .. " buff to be active before crafting Midnight Enchanting recipes.\n\n" ..
+            f.bb("Shattering Essence") .. " buff to be active before crafting Enchanting recipes.\n\n" ..
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("Force ") .. f.bb("Shattering Essence") .. " buff for " ..
+            CraftSim.GUTIL:ColorizeText("The War Within", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Enchanting",
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will require the " ..
+            f.bb("Shattering Essence") .. " buff to be active before crafting TWW Enchanting recipes.\n\n" ..
+            "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
+            "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("Force ") .. f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will assume " ..
+            f.bb("Everburning Ignition") .. " is active during stat optimization when the buff is not detected on the player.\n\n" ..
+            "This does not add a Shatter-style prerequisite row to the craft queue.",
         CRAFT_QUEUE_HELP = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
             f.bb("Right Click") .. " .. Open Recipe Options\n" ..
             f.bb("Middle Click") .. " .. Remove Recipe from Queue",
