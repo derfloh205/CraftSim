@@ -250,7 +250,6 @@ function CraftSim.LOCAL_FR:GetData()
             " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
         PRICING_CRAFTING_COSTS = "Coût de craft: ",
         PRICING_ITEM_HEADER = "Objet",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Remplacement",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Artisanat",
         COST_OPTIMIZATION_USED_SOURCE = "Source Utilisée",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Coûts des Matériaux",

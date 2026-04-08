@@ -170,7 +170,6 @@ function CraftSim.LOCAL_TW:GetData()
             " .. 製作者的製作資料預估成本\n\n" .. f.l("或") .. " 已設定則會優先使用。 " .. f.bb("製造資料") .. " 僅在低於 " .. f.g("拍賣場") .. " 時才會使用。",
         PRICING_CRAFTING_COSTS = "製造成本: ",
         PRICING_ITEM_HEADER = "物品",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "重訂價格",
         COST_OPTIMIZATION_CRAFTING_HEADER = "製造資料",
         COST_OPTIMIZATION_USED_SOURCE = "使用來源",
 

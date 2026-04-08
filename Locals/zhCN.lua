@@ -253,7 +253,6 @@ function CraftSim.LOCAL_CN:GetData()
             f.bb("右键点击") .. " 任何材料，以自定义值覆盖其价格",
         PRICING_CRAFTING_COSTS = "制造成本：",
         PRICING_ITEM_HEADER = "物品",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "重订价格",
         COST_OPTIMIZATION_CRAFTING_HEADER = "制造数据",
         COST_OPTIMIZATION_USED_SOURCE = "使用来源",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "材料成本",

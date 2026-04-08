@@ -267,7 +267,6 @@ function CraftSim.LOCAL_DE:GetData()
         PRICING_CRAFTING_COSTS = "Herstellungskosten: ",
         PRICING_ITEM_HEADER = "Item",
 
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Überschreibung",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Herstellung",
         COST_OPTIMIZATION_USED_SOURCE = "Verwendete Quelle",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Reagenzienkosten",

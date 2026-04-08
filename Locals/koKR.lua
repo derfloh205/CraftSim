@@ -247,7 +247,6 @@ function CraftSim.LOCAL_KO:GetData()
             "임의의 재료를 " .. f.bb("우클릭") .. "하여 가격을 원하는 값으로 직접 설정할 수 있습니다.",
         PRICING_CRAFTING_COSTS = "제작 비용: ",
         PRICING_ITEM_HEADER = "아이템",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "직접 설정",
         COST_OPTIMIZATION_CRAFTING_HEADER = "제작",
         COST_OPTIMIZATION_USED_SOURCE = "사용된 출처",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "재료 비용",

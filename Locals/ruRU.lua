@@ -227,7 +227,6 @@ function CraftSim.LOCAL_RU:GetData()
             f.bb("Стоимость изготовления") .. " будет использоваться, только если ниже " .. f.g("AH"),
         PRICING_CRAFTING_COSTS = "Стоимость изготовления: ",
         PRICING_ITEM_HEADER = "Предмет",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Переопределение",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Изготовление",
         COST_OPTIMIZATION_USED_SOURCE = "Использованный источник",
 

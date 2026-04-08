@@ -201,7 +201,6 @@ function CraftSim.LOCAL_IT:GetData()
             f.bb("Dati Salvati") .. " saranno utilizzati solo se inferiori a " .. f.g("AH"),
         PRICING_CRAFTING_COSTS = "Costi di creazione: ",
         PRICING_ITEM_HEADER = "Oggetto",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Prezzo Personalizzato",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Dati Salvati",
         COST_OPTIMIZATION_USED_SOURCE = "Sorgente",
 

@@ -249,7 +249,6 @@ function CraftSim.LOCAL_PT:GetData()
             f.bb("Custos de Criação") .. " só será usado se menor que " .. f.g("AH"),
         PRICING_CRAFTING_COSTS = "Custos de Criação: ",
         PRICING_ITEM_HEADER = "Item",
-        COST_OPTIMIZATION_OVERRIDE_HEADER = "Personalizar",
         COST_OPTIMIZATION_CRAFTING_HEADER = "Criação",
         COST_OPTIMIZATION_USED_SOURCE = "Fonte Utilizada",
         COST_OPTIMIZATION_REAGENT_COSTS_TAB = "Custos dos Reagentes",
