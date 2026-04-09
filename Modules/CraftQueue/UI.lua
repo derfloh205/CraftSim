@@ -3255,10 +3255,10 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                 local items = { reagentItem, upcraftItem }
 
                 GUTIL:ContinueOnAllItemsLoaded(items, function()
-                    local reagentItemLink = reagentItem:GetItemLink()
-                    local upcraftItemLink = upcraftItem:GetItemLink()
+                    local reagentItemLink = reagentItem:GetItemLink() or "Unknown Item"
+                    local upcraftItemLink = upcraftItem:GetItemLink() or "Unknown Item"
                     local missingDiff = 5 - itemCountPre
-                    local missingText = itemCountPre >= 5 and "" or
+                    local missingText = missingDiff <= 0 and "" or
                         f.r("\nMissing " .. missingDiff .. "x " .. reagentItemLink)
                     macroButton.tooltipOptions = {
                         anchor = "ANCHOR_CURSOR_RIGHT",
