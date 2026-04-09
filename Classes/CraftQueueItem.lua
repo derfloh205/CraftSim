@@ -12,8 +12,6 @@ local print = CraftSim.DEBUG:RegisterDebugID("Classes.CraftQueue.CraftQueueItem"
 ---@class CraftSim.CraftQueueItem.Options
 ---@field recipeData CraftSim.RecipeData
 ---@field amount? number
----@field fromCraftListRestock? boolean true when quantity came from a craft list restock target
----@field craftListBracketCount? number optional `[n]` next to recipe name (craft list tab style)
 
 ---@param options CraftSim.CraftQueueItem.Options
 function CraftSim.CraftQueueItem:new(options)
@@ -22,8 +20,6 @@ function CraftSim.CraftQueueItem:new(options)
     self.recipeData = options.recipeData
     ---@type number
     self.amount = options.amount or 1
-    self.fromCraftListRestock = options.fromCraftListRestock == true
-    self.craftListBracketCount = tonumber(options.craftListBracketCount)
     self.concentrating = self.recipeData.concentrating
 
     -- canCraft caches
@@ -106,8 +102,6 @@ end
 ---@field serializedSubRecipeData CraftSim.CraftQueueItem.Serialized[]
 ---@field parentRecipeInfo CraftSim.RecipeData.ParentRecipeInfo[]
 ---@field orderData CraftingOrderInfo?
----@field fromCraftListRestock? boolean
----@field craftListBracketCount? number
 
 function CraftSim.CraftQueueItem:Serialize()
     ---@param recipeData CraftSim.RecipeData
@@ -141,12 +135,6 @@ function CraftSim.CraftQueueItem:Serialize()
     local serializedCraftQueueItem = serializeCraftQueueRecipeData(self.recipeData)
     serializedCraftQueueItem.amount = self.amount
     serializedCraftQueueItem.concentrating = self.concentrating
-    if self.fromCraftListRestock then
-        serializedCraftQueueItem.fromCraftListRestock = true
-    end
-    if self.craftListBracketCount and self.craftListBracketCount > 0 then
-        serializedCraftQueueItem.craftListBracketCount = self.craftListBracketCount
-    end
 
     return serializedCraftQueueItem
 end
@@ -224,8 +212,6 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
         return CraftSim.CraftQueueItem({
             recipeData = recipeData,
             amount = serializedData.amount,
-            fromCraftListRestock = serializedData.fromCraftListRestock == true,
-            craftListBracketCount = tonumber(serializedData.craftListBracketCount),
         })
     end
     -- if necessary recipeData could not be loaded from cache or is not fully cached return nil

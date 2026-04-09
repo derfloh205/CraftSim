@@ -24,7 +24,8 @@ CraftSim.DB = CraftSim.DB
 ---@field enableUnlearned boolean if false, skip recipes the crafter has not learned
 ---@field useTSMRestockExpression boolean if true, use per-list TSM restock expression to determine restock amount
 ---@field tsmRestockExpression string TSM expression for restock quantity (per-list)
----@field restockModeEnabled boolean legacy; no longer used — per-recipe restock uses restockMaxAmount > 0
+---@field subtractInventory boolean if true, subtract inventory from restock amount
+
 
 ---@class CraftSim.CraftList
 ---@field id number unique incrementing ID
@@ -63,7 +64,7 @@ local function DefaultOptions()
         enableUnlearned = false,
         useTSMRestockExpression = false,
         tsmRestockExpression = "1",
-        restockModeEnabled = false,
+        subtractInventory = false,
     }
 end
 
@@ -196,16 +197,15 @@ function CraftSim.DB.CRAFT_LISTS:CreateList(name, isGlobal, crafterUID)
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
-function CraftSim.DB.CRAFT_LISTS:DeleteList(id, isGlobal, crafterUID)
-    if isGlobal then
+function CraftSim.DB.CRAFT_LISTS:DeleteList(id, crafterUID)
+    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    if CraftSimDB.craftListsDB.globalLists[id] then
         CraftSimDB.craftListsDB.globalLists[id] = nil
         for _, selected in pairs(CraftSimDB.craftListsDB.selectedForQueue) do
             selected[id] = nil
         end
     else
-        crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
         if CraftSimDB.craftListsDB.characterLists[crafterUID] then
             CraftSimDB.craftListsDB.characterLists[crafterUID][id] = nil
         end
@@ -217,28 +217,22 @@ end
 
 ---@param id number
 ---@param newName string
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
-function CraftSim.DB.CRAFT_LISTS:RenameList(id, newName, isGlobal, crafterUID)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:RenameList(id, newName, crafterUID)
+    local list = self:GetList(id, crafterUID)
     if list then
         list.name = newName
     end
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@return CraftSim.CraftList?
-function CraftSim.DB.CRAFT_LISTS:GetList(id, isGlobal, crafterUID)
-    local list
-    if isGlobal then
-        list = CraftSimDB.craftListsDB.globalLists[id]
-    else
-        crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-        if CraftSimDB.craftListsDB.characterLists[crafterUID] then
-            list = CraftSimDB.craftListsDB.characterLists[crafterUID][id]
-        end
+function CraftSim.DB.CRAFT_LISTS:GetList(id, crafterUID)
+    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    local list = CraftSimDB.craftListsDB.globalLists[id]
+    if not list and CraftSimDB.craftListsDB.characterLists[crafterUID] then
+        list = CraftSimDB.craftListsDB.characterLists[crafterUID][id]
     end
     if list then
         NormalizeListRecipes(list)
@@ -247,11 +241,10 @@ function CraftSim.DB.CRAFT_LISTS:GetList(id, isGlobal, crafterUID)
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, isGlobal, crafterUID, recipeID)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, crafterUID, recipeID)
+    local list = self:GetList(id, crafterUID)
     if not list then return end
     if not GUTIL:Find(list.recipeEntries, function(entry) return entry.recipeID == recipeID end) then
         tinsert(list.recipeEntries, CreateDefaultRecipeEntry(recipeID))
@@ -260,11 +253,10 @@ function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, isGlobal, crafterUID, recipeID)
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, isGlobal, crafterUID, recipeID)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, crafterUID, recipeID)
+    local list = self:GetList(id, crafterUID)
     if not list then return end
     local _, entryIndex = GUTIL:Find(list.recipeEntries, function(entry) return entry.recipeID == recipeID end)
     if entryIndex then
@@ -277,28 +269,26 @@ function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, isGlobal, crafterUID, recipeID
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
 ---@return CraftSim.CraftListRecipeEntry?
-function CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(id, isGlobal, crafterUID, recipeID)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(id, crafterUID, recipeID)
+    local list = self:GetList(id, crafterUID)
     if not list then return nil end
     local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
     return entry
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
 ---@param restockMaxAmount number
-function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, isGlobal, crafterUID, recipeID, restockMaxAmount)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, crafterUID, recipeID, restockMaxAmount)
+    local list = self:GetList(id, crafterUID)
     if not list then return end
     local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
     if not entry then
-        self:AddRecipe(id, isGlobal, crafterUID, recipeID)
+        self:AddRecipe(id, crafterUID, recipeID)
         entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
         if not entry then return end
     end
@@ -307,34 +297,20 @@ function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, isGlobal, crafterUI
 end
 
 ---@param id number
----@param isGlobal boolean
----@param crafterUID? CrafterUID
----@param enabled boolean
-function CraftSim.DB.CRAFT_LISTS:SetListRestockModeEnabled(id, isGlobal, crafterUID, enabled)
-    local list = self:GetList(id, isGlobal, crafterUID)
-    if not list then return end
-    list.options = list.options or DefaultOptions()
-    -- Intentionally only toggle list-level mode; keep per-recipe restockMaxAmount untouched.
-    list.options.restockModeEnabled = enabled == true
-end
-
----@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@param options CraftSim.CraftList.Options
-function CraftSim.DB.CRAFT_LISTS:SaveOptions(id, isGlobal, crafterUID, options)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:SaveOptions(id, crafterUID, options)
+    local list = self:GetList(id, crafterUID)
     if list then
         list.options = options
     end
 end
 
 ---@param id number
----@param isGlobal boolean
 ---@param crafterUID? CrafterUID
 ---@return string exportString
-function CraftSim.DB.CRAFT_LISTS:ExportList(id, isGlobal, crafterUID)
-    local list = self:GetList(id, isGlobal, crafterUID)
+function CraftSim.DB.CRAFT_LISTS:ExportList(id, crafterUID)
+    local list = self:GetList(id, crafterUID)
     if not list then return "" end
     NormalizeListRecipes(list)
     local encoded = CraftSim.UTIL:EncodeTable(list)
@@ -390,24 +366,24 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
             if #allRecipeIDs > 0 then
                 local listName = crafterUID .. " Favorites"
                 CraftSimDB.craftListsDB.characterLists[crafterUID] = CraftSimDB.craftListsDB.characterLists[crafterUID] or
-                {}
+                    {}
                 local options = DefaultOptions()
                 if CraftSimDB.optionsDB and CraftSimDB.optionsDB.data then
                     local od = CraftSimDB.optionsDB.data
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] ~= nil then
                         options.smartConcentrationQueuing = od
-                        ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
+                            ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"] ~= nil then
                         options.offsetConcentrationCraftAmount = od
-                        ["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"]
+                            ["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"]
                     end
                     if od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"] ~= nil then
                         options.offsetQueueAmount = tonumber(od["CRAFTQUEUE_QUEUE_FAVORITES_OFFSET_QUEUE_AMOUNT"]) or 0
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"] ~= nil then
                         options.includeSoulboundFinishingReagents = od
-                        ["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
+                            ["CRAFTQUEUE_RESTOCK_FAVORITES_FINISHING_REAGENTS_INCLUDE_SOULBOUND"]
                     end
                 end
                 local newID = NextID()
@@ -425,7 +401,7 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                 }
                 -- Mark "Character Favorites" as selected for queue for this character
                 CraftSimDB.craftListsDB.selectedForQueue[crafterUID] = CraftSimDB.craftListsDB.selectedForQueue
-                [crafterUID] or {}
+                    [crafterUID] or {}
                 CraftSimDB.craftListsDB.selectedForQueue[crafterUID][newID] = true
             end
         end
