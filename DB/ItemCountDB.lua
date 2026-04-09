@@ -166,9 +166,9 @@ end
 function CraftSim.DB.ITEM_COUNT.MIGRATION:M_3_4_Add_QualityID_to_keys()
     -- Keys changed from plain itemID numbers to "itemID:qualityID" composite strings.
     -- Migrate existing data by appending ":1" to every key (all existing data was quality 1).
-    -- Note: this migration only executes once because the DB version gate (version == 3)
-    -- prevents re-running. The ':' presence check below is just a safety guard within
-    -- the migration logic itself to avoid double-suffixing if data is unexpectedly mixed.
+    -- The DB migration framework (DB.lua) gates each migration on repository.db.version,
+    -- so this function only runs once (when version == 3) and then version is set to 4.
+    -- The ':' presence check below is a defensive guard within the migration logic itself.
     local data = CraftSimDB.itemCountDB.data
     if not data then return end
 

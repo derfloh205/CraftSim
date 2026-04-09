@@ -81,8 +81,9 @@ function CraftSim.ITEM_COUNT:UpdateGearItemCountsByItemID(itemID)
     local inventoryByQuality = {}
     local bankByQuality = {}
 
-    -- Scan all bags from Backpack (0) through CharacterBankTab_6 + 6 (character bags,
-    -- character bank tabs, and warband/account bank tabs)
+    -- Scan all bags from Backpack (0) through CharacterBankTab_6 + 6.
+    -- CharacterBankTab_6 + 6 is the same range used by UpdateItemCountForCharacter to cover
+    -- character bags, character bank tabs, and the 6 warband/account bank tabs that follow.
     for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 + 6 do
         local isBank = bag > Enum.BagIndex.ReagentBag
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
