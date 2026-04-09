@@ -100,6 +100,8 @@ function CraftSim.DISENCHANT.UI:Init()
         anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 5, offsetY = -55,
         savedVariablesTableLayoutConfig = CraftSim.UTIL:GetFrameListLayoutConfig("DISENCHANT_ITEM_LIST"),
         selectionOptions = {
+            hoverRGBA = { 0, 1, 0, 0.1 },
+
             selectionCallback = function(row, userInput, alreadySelected)
                 if userInput and IsMouseButtonDown("MiddleButton") then
                     local itemLink = row.item:GetItemLink()
@@ -215,6 +217,7 @@ function CraftSim.DISENCHANT.UI:UpdateUI()
             end)
         end
 
+        content.itemList.selectedRow = nil
         content.itemList:UpdateDisplay()
         content.itemList:SelectRow(1)
 
