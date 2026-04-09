@@ -2104,6 +2104,11 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 function() return opts.enableUnlearned end,
                 function() opts.enableUnlearned = not opts.enableUnlearned end)
 
+            rootDescription:CreateCheckbox(
+                L("CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX"),
+                function() return opts.onlyProfitable end,
+                function() opts.onlyProfitable = not opts.onlyProfitable end)
+
             local optimizationButton = rootDescription:CreateButton("Optimization")
 
             -- Reagent Allocation submenu

@@ -312,9 +312,9 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             recipeMaxQueueAmount = charges
         end
 
-        -- if no other max is set, the max we want to queue is the cd charges
+        -- if no other max is set, the max we want to queue is the cd charges or if no cd the offsetamount if its greater than 0, otherwise just queue 1
         if not options.useTSMRestockExpression and not (recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0) then
-            return recipeMaxQueueAmount
+            return recipeMaxQueueAmount or (offsetAmount > 0 and offsetAmount) or 1
         end
 
         -- adapt by TSM restock expression if enabled and available, otherwise use restockmaxamount if set
@@ -478,7 +478,14 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end,
             } or nil,
             finally = function()
+                if options.onlyProfitable and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
+                    print("Skipping non-profitable recipe: " .. recipeData.recipeName)
+                    frameDistributor:Continue()
+                    return
+                end
+
                 local queueAmount = getQueueAmount(recipeData, recipeEntry)
+                print("queueAmount for recipe " .. recipeData.recipeName .. ": " .. (queueAmount or "nil"))
                 if options.enableConcentration and options.smartConcentrationQueuing then
                     tinsert(optimizedRecipes, {
                         recipeData = recipeData,

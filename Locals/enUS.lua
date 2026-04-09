@@ -660,7 +660,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_CHECKBOX = "Allow " .. f.gold("Concentration"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP = "If minimum quality cannot be reached, use " ..
             f.l("Concentration") .. " if possible",
-        CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "Only Profitable",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "Only " .. f.g("Profitable"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "Only queue work orders with expected positive profit",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "Work Order Type",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "Patron Orders",
@@ -861,7 +861,7 @@ greater or equal the configured sale rate threshold.
             "The Shatter button will be shown in the button sequence and the buff will be assumed active during optimization.\n\n" ..
             "When disabled, the Shatter step is skipped entirely and the buff is not factored into optimization.",
         CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("Force ") ..
-        f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
+            f.bb("Everburning Ignition") .. " buff for TWW Blacksmithing stats",
         CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "When enabled, CraftSim will assume " ..
             f.bb("Everburning Ignition") ..
             " is active during stat optimization when the buff is not detected on the player.\n\n" ..
