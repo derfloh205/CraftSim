@@ -37,22 +37,12 @@ function CraftSim.CraftQueue:AddRecipe(options)
 
     if craftQueueItem then
         craftQueueItem.amount = craftQueueItem.amount + amount
-        if options.fromCraftListRestock then
-            craftQueueItem.fromCraftListRestock = true
-        end
-        local bc = tonumber(options.craftListBracketCount)
-        if bc and bc > 0 and not craftQueueItem.craftListBracketCount then
-            craftQueueItem.craftListBracketCount = bc
-        end
-
         -- Check if I have parent recipes that the already queued recipe does not have and merge if yes
         craftQueueItem.recipeData:AddParentRecipeInfosFrom(recipeData)
     else
         craftQueueItem = CraftSim.CraftQueueItem({
             recipeData = recipeData:Copy(),
             amount = amount,
-            fromCraftListRestock = options.fromCraftListRestock == true,
-            craftListBracketCount = tonumber(options.craftListBracketCount),
         })
         -- create a new queue item
         table.insert(self.craftQueueItems, craftQueueItem)
@@ -86,8 +76,6 @@ function CraftSim.CraftQueue:AddRecipe(options)
                 end
             end
         end
-
-        -- TODO: optional reagents
     end
 
     return craftQueueItem
