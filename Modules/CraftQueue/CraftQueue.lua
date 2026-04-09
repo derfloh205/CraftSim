@@ -1033,7 +1033,12 @@ end
 ---@param crafterUID CrafterUID
 ---@param itemID number
 ---@param excludeWarbank? boolean
-function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbank)
+---@param qualityID? number For gear items pass the specific quality to count (default: nil = all qualities via itemID)
+function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbank, qualityID)
+    -- For quality-specific gear lookups bypass the non-quality-aware itemID cache
+    if qualityID then
+        return CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank, qualityID)
+    end
     local itemCount = (CraftSim.CRAFTQ.itemCountCache and CraftSim.CRAFTQ.itemCountCache[itemID]) or nil
     if not itemCount then
         itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank)

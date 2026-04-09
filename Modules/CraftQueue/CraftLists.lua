@@ -344,7 +344,10 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         if options.subtractInventory then
             local itemID = recipeData.resultData.expectedItem:GetItemID()
             if itemID then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false) or 0
+                -- For gear items all qualities share the same itemID; only count the target quality.
+                -- For non-gear items each quality has its own itemID so no qualityID filter is needed.
+                local qualityID = recipeData.isGear and recipeData.resultData.expectedQuality or nil
+                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false, qualityID) or 0
                 queueAmount = math.max(0, queueAmount - owned)
             end
         end

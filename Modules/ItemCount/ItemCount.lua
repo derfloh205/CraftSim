@@ -11,10 +11,11 @@ CraftSim.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BA
 ---@param crafterUID string
 ---@param itemID ItemInfo
 ---@param excludeWarbank? boolean
+---@param qualityID? number For gear items pass the specific quality to count (default: 1)
 ---@return number count
 ---@return ItemID? alternativeItemID
 ---@return number? alternativeCount
-function CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank)
+function CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank, qualityID)
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     crafterUID = crafterUID or playerCrafterUID
     local isPlayer = crafterUID == playerCrafterUID
@@ -23,11 +24,16 @@ function CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank)
 
     if isPlayer then
         -- always from api and then save
-        self:UpdateAllCountsForItemID(itemID)
+        if qualityID then
+            -- Gear item: scan bag slots to get quality-specific counts
+            self:UpdateGearItemCountsByItemID(itemID)
+        else
+            self:UpdateAllCountsForItemID(itemID)
+        end
 
         local altCount = nil
         -- if player then return inclusive accountBankCount
-        local itemCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, not excludeWarbank)
+        local itemCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, not excludeWarbank, qualityID)
         if alternativeItemID then
             self:UpdateAllCountsForItemID(alternativeItemID)
             altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID, true, not excludeWarbank)
@@ -36,7 +42,7 @@ function CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank)
     end
 
     -- for alts do not include accountBank
-    local count = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, false)
+    local count = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, false, qualityID)
     local altCount = nil
     if alternativeItemID then
         altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID, true, false)
@@ -57,6 +63,49 @@ function CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
     local accountBankCount = math.max(0, C_Item.GetItemCount(itemID, false, false, false, true) - inventoryCount)
 
     CraftSim.DB.ITEM_COUNT:UpdateItemCounts(crafterUID, itemID, inventoryCount, bankCount, accountBankCount)
+end
+
+--- Scans all bag and bank slots for a gear item and records counts per quality.
+--- Gear items share the same itemID across qualities; quality is extracted from each slot's itemLink.
+---@param itemID ItemID
+function CraftSim.ITEM_COUNT:UpdateGearItemCountsByItemID(itemID)
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+
+    -- Reset quality counts 1-5 so stale values don't accumulate
+    for qualityID = 1, 5 do
+        CraftSim.DB.ITEM_COUNT:SaveInventoryCount(crafterUID, itemID, 0, qualityID)
+        CraftSim.DB.ITEM_COUNT:SaveBankCount(crafterUID, itemID, 0, qualityID)
+        CraftSim.DB.ITEM_COUNT:SaveAccountBankCount(itemID, 0, qualityID)
+    end
+
+    local inventoryByQuality = {}
+    local bankByQuality = {}
+
+    -- Scan all bags from Backpack (0) through CharacterBankTab_6 + 6 (character bags,
+    -- character bank tabs, and warband/account bank tabs)
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 + 6 do
+        local isBank = bag > Enum.BagIndex.ReagentBag
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local slotItemID = C_Container.GetContainerItemID(bag, slot)
+            if slotItemID == itemID then
+                local itemLink = C_Container.GetContainerItemLink(bag, slot)
+                local qualityID = (itemLink and GUTIL:GetQualityIDFromLink(itemLink)) or 1
+                if isBank then
+                    bankByQuality[qualityID] = (bankByQuality[qualityID] or 0) + 1
+                else
+                    inventoryByQuality[qualityID] = (inventoryByQuality[qualityID] or 0) + 1
+                end
+            end
+        end
+    end
+
+    -- Persist the scanned counts
+    for qualityID, count in pairs(inventoryByQuality) do
+        CraftSim.DB.ITEM_COUNT:SaveInventoryCount(crafterUID, itemID, count, qualityID)
+    end
+    for qualityID, count in pairs(bankByQuality) do
+        CraftSim.DB.ITEM_COUNT:SaveBankCount(crafterUID, itemID, count, qualityID)
+    end
 end
 
 function CraftSim.ITEM_COUNT:BAG_UPDATE_DELAYED()
