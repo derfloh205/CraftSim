@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("25.0.0"),
+        f.PG .. f.g("New Disenchant Module"),
+        f.a .. "- Basic disenchanting helper to mass disenchant",
+        f.a .. "- Works with items in inventory, bank and warbank",
+        f.a .. "- Use " .. f.l("/craftsim disenchant") .. " to open",
         newP("24.0.2"),
         f.p .. "Fixed lua error in craftqueue",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),

@@ -559,6 +559,8 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
 				f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" disenchant") .. " - Open the disenchanting helper")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
 				f.bb(" craftqueue ") .. "[command] - Various commands to interact with the craft queue:")
 			CraftSim.DEBUG:SystemPrint(
 				f.bb("    craftnext") .. " - Craft next recipe")
