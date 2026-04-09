@@ -345,6 +345,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.CRAFT_BUFFS.UI:Init()
 		CraftSim.COOLDOWNS.UI:Init()
 		CraftSim.CONCENTRATION_TRACKER.UI:Init()
+		CraftSim.DISENCHANT.UI:Init()
 
 		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()
@@ -542,6 +543,8 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			elseif rest == "createshoppinglist" then
 				CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
 			end
+		elseif command == "disenchant" then
+			CraftSim.DISENCHANT.UI:ShowAndLoad()
 		elseif command == "help" then
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" news") .. " - Show the latest patch notes")
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..

@@ -1008,5 +1008,13 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_AH = "AH",
         SOURCE_COLUMN_OVERRIDE = "OR",
         SOURCE_COLUMN_WO = "WO",
+
+        -- disenchant
+        DISENCHANT_TITLE = "CraftSim Disenchanting",
+        DISENCHANT_BUTTON = "Disenchant Next",
+        DISENCHANT_OPTIONS_MIN_ILVL = "Minimum Item Level: ",
+        DISENCHANT_INFO_TOOLTIP = f.bb("MMB") ..
+            f.white(" .. Blacklist Item for Session\n") ..
+            f.bb("Shift + MMB") .. f.white(" .. Blacklist Item Permanently"),
     }
 end

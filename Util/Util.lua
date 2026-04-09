@@ -660,3 +660,13 @@ function CraftSim.UTIL:GetFrameListLayoutConfig(key)
 
     return layoutConfigs[key]
 end
+
+function CraftSim.UTIL:DisenchantWarbankItem(itemID)
+    if not C_SpellBook.ContainsAnyDisenchantSpell() then return end
+
+    local itemLocation = GUTIL:GetItemLocationFromItemID(itemID)
+    if not itemLocation then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "ItemID not found in bags or equipped: " .. itemID)
+        return
+    end
+end
