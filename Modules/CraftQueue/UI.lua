@@ -1750,7 +1750,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                             onClick = function()
                                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                                 local exportString = CraftSim.DB.CRAFT_LISTS:ExportList(
-                                    row.listID, row.isGlobal, crafterUID)
+                                    row.listID, crafterUID)
                                 if exportString == "" then return end
                                 CraftSim.UTIL:ShowTextCopyBox(exportString)
                             end
@@ -1762,7 +1762,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                             onClick = function()
                                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                                 local currentList = CraftSim.DB.CRAFT_LISTS:GetList(
-                                    row.listID, row.isGlobal, crafterUID)
+                                    row.listID, crafterUID)
                                 CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(
                                     L("CRAFT_LISTS_RENAME_POPUP_TITLE"),
                                     currentList and currentList.name or "",
@@ -1770,7 +1770,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                     function(name, isGlobal)
                                         if name and name ~= "" then
                                             CraftSim.DB.CRAFT_LISTS:RenameList(
-                                                row.listID, name, row.isGlobal, crafterUID)
+                                                row.listID, name, crafterUID)
                                             CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
                                         end
                                     end, true)
@@ -1783,7 +1783,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                 if not content.selectedListID then return end
                                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                                 CraftSim.DB.CRAFT_LISTS:DeleteList(
-                                    row.listID, row.isGlobal, crafterUID)
+                                    row.listID, crafterUID)
                                 content.selectedListID = nil
                                 content.selectedListIsGlobal = false
                                 CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
@@ -1799,7 +1799,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 elseif IsMouseButtonDown("MiddleButton") then
                     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                     CraftSim.DB.CRAFT_LISTS:DeleteList(
-                        row.listID, row.isGlobal, crafterUID)
+                        row.listID, crafterUID)
                     content.selectedListID = nil
                     content.selectedListIsGlobal = false
                     CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
@@ -1914,7 +1914,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                     crafterUID)
                                 for profession, recipeIDList in pairs(favoriteRecipes) do
                                     for _, recipeID in ipairs(recipeIDList) do
-                                        CraftSim.DB.CRAFT_LISTS:AddRecipe(newList.id, false, crafterUID, recipeID)
+                                        CraftSim.DB.CRAFT_LISTS:AddRecipe(newList.id, crafterUID, recipeID)
                                     end
                                 end
                             end
@@ -1945,7 +1945,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                     CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
                         content.selectedListID,
-                        content.selectedListIsGlobal,
                         crafterUID,
                         row.recipeID)
                     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
@@ -1954,7 +1953,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                     local recipeEntry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
                         content.selectedListID,
-                        content.selectedListIsGlobal,
                         crafterUID,
                         row.recipeID)
                     CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
@@ -1984,7 +1982,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                                 local maxAmount = input.currentValue
                                                 CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(
                                                     content.selectedListID,
-                                                    content.selectedListIsGlobal,
                                                     crafterUID,
                                                     row.recipeID,
                                                     maxAmount)
@@ -2003,7 +2000,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                 local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
                                 CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
                                     content.selectedListID,
-                                    content.selectedListIsGlobal,
                                     crafterUID,
                                     row.recipeID)
                                 CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
@@ -2069,7 +2065,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             CraftSim.DB.CRAFT_LISTS:AddRecipe(
                 content.selectedListID,
-                content.selectedListIsGlobal,
                 crafterUID,
                 recipeData.recipeID)
             CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
@@ -2091,7 +2086,6 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             local list = CraftSim.DB.CRAFT_LISTS:GetList(
                 content.selectedListID,
-                content.selectedListIsGlobal,
                 crafterUID)
             if not list then return end
 
@@ -2223,11 +2217,10 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local subtractStockListCB = restockingButton:CreateCheckbox(
                 L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL"),
                 function()
-                    return CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED)
+                    return opts.subtractInventory
                 end,
                 function()
-                    local key = CraftSim.CONST.GENERAL_OPTIONS.CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED
-                    CraftSim.DB.OPTIONS:Save(key, not CraftSim.DB.OPTIONS:Get(key))
+                    opts.subtractInventory = not opts.subtractInventory
                 end)
             subtractStockListCB:SetTooltip(function(tooltip, _)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP"))
@@ -2378,7 +2371,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     local list = CraftSim.DB.CRAFT_LISTS:GetList(
         content.selectedListID,
-        content.selectedListIsGlobal,
         crafterUID)
 
     if not list then
@@ -3800,13 +3792,18 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         firstCraftText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15),
             f.bb("1KP"))
     end
-    local craftListBracketText = ""
-    local bracketCount = craftQueueItem.craftListBracketCount
-    if bracketCount and bracketCount > 0 then
-        craftListBracketText = " " .. f.l("[" .. tostring(bracketCount) .. "]")
+    local recipeRestockMaxText = ""
+    local recipeEntry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(recipeData.craftListID, recipeData:GetCrafterUID(),
+        recipeData.recipeID)
+    if recipeEntry then
+        local recipeRestockMax = recipeEntry.restockMaxAmount
+        if recipeRestockMax and recipeRestockMax > 0 then
+            recipeRestockMaxText = " " .. f.l("[" .. tostring(recipeRestockMax) .. "]")
+        end
     end
+
     recipeColumn.text:SetText(recipeData.recipeName ..
-        craftListBracketText ..
+        recipeRestockMaxText ..
         upCraftText .. CraftSim.UTIL:GetRecipeCooldownChargesInlineSuffix(recipeData) .. firstCraftText)
 
     ApplyResultColumnEntries(resultColumn, BuildCraftQueueResultEntries(recipeData, {}), recipeData)

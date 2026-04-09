@@ -255,110 +255,110 @@ function CraftSim.RECIPE_SCAN.UI:InitRecipeScanTab(recipeScanTab)
     content.sendToCraftQueueOptionsButton = CraftSim.WIDGETS.OptionsButton {
         parent = content, anchorPoints = { { anchorParent = content.sendToCraftQueueButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
-                rootDescription:CreateCheckbox(
-                    L("RECIPE_SCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST", not value)
-                        content.sendToCraftQueueButton:SetText(GetSendButtonLabel())
-                        content.sendToCraftQueueButton:SetStatusList {
-                            {
-                                statusID = "Ready",
-                                label = GetSendButtonLabel(),
-                                enabled = true,
-                            }
+            rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_CREATE_CRAFT_LIST", not value)
+                    content.sendToCraftQueueButton:SetText(GetSendButtonLabel())
+                    content.sendToCraftQueueButton:SetStatusList {
+                        {
+                            statusID = "Ready",
+                            label = GetSendButtonLabel(),
+                            enabled = true,
                         }
-                        content.sendToCraftQueueButton:SetStatus("Ready")
+                    }
+                    content.sendToCraftQueueButton:SetStatus("Ready")
+                end)
+
+            rootDescription:CreateDivider()
+
+            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                frame.label = GGUI.Text {
+                    parent = frame,
+                    anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                    text = L("RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD"),
+                    justifyOptions = { type = "H", align = "LEFT" },
+                }
+                frame.input = GGUI.NumericInput {
+                    parent = frame, anchorParent = frame,
+                    sizeX = 30, sizeY = 25, offsetX = 5,
+                    anchorA = "RIGHT", anchorB = "RIGHT",
+                    initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
+                    borderAdjustWidth = 1.32,
+                    allowDecimals = true,
+                    onNumberValidCallback = function(input)
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD",
+                            tonumber(input.currentValue))
+                    end,
+                }
+            end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_PROFIT_MARGIN_INPUT")
+
+            GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                frame.label = GGUI.Text {
+                    parent = frame,
+                    anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                    text = L("RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT"),
+                    justifyOptions = { type = "H", align = "LEFT" },
+                }
+                frame.input = GGUI.NumericInput {
+                    parent = frame, anchorParent = frame,
+                    sizeX = 30, sizeY = 25, offsetX = 5,
+                    anchorA = "RIGHT", anchorB = "RIGHT",
+                    initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
+                    borderAdjustWidth = 1.32,
+                    minValue = 0,
+                    onNumberValidCallback = function(input)
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
+                            tonumber(input.currentValue))
+                    end,
+                }
+            end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_DEFAULT_QUEUE_AMOUNT_INPUT")
+
+            if TSM_API then
+                local tsmOptions = rootDescription:CreateButton(f.bb("TSM"))
+
+                local tsmExpressionCB = tsmOptions:CreateCheckbox(
+                    L("RECIPE_SCAN_USE_TSM_RESTOCK"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
+                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION",
+                            not value)
                     end)
+                tsmExpressionCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        "If enabled, restock amount will be determined by configured " ..
+                        f.bb("TSM Expression") .. " (Options)");
+                end);
 
-                rootDescription:CreateDivider()
-
-                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmOptions, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
                         anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = L("RECIPE_SCAN_PROFIT_MARGIN_THRESHOLD"),
+                        text = L("RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD"),
                         justifyOptions = { type = "H", align = "LEFT" },
                     }
                     frame.input = GGUI.NumericInput {
                         parent = frame, anchorParent = frame,
                         sizeX = 30, sizeY = 25, offsetX = 5,
                         anchorA = "RIGHT", anchorB = "RIGHT",
-                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD"),
+                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"),
                         borderAdjustWidth = 1.32,
                         allowDecimals = true,
-                        onNumberValidCallback = function(input)
-                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD",
-                                tonumber(input.currentValue))
-                        end,
-                    }
-                end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_PROFIT_MARGIN_INPUT")
-
-                GUTIL:CreateReuseableMenuUtilContextMenuFrame(rootDescription, function(frame)
-                    frame.label = GGUI.Text {
-                        parent = frame,
-                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                        text = L("RECIPE_SCAN_DEFAULT_QUEUE_AMOUNT"),
-                        justifyOptions = { type = "H", align = "LEFT" },
-                    }
-                    frame.input = GGUI.NumericInput {
-                        parent = frame, anchorParent = frame,
-                        sizeX = 30, sizeY = 25, offsetX = 5,
-                        anchorA = "RIGHT", anchorB = "RIGHT",
-                        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT"),
-                        borderAdjustWidth = 1.32,
+                        maxValue = 1,
                         minValue = 0,
                         onNumberValidCallback = function(input)
-                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_DEFAULT_QUEUE_AMOUNT",
+                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD",
                                 tonumber(input.currentValue))
                         end,
                     }
-                end, 200, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_DEFAULT_QUEUE_AMOUNT_INPUT")
-
-                if TSM_API then
-                    local tsmOptions = rootDescription:CreateButton(f.bb("TSM"))
-
-                    local tsmExpressionCB = tsmOptions:CreateCheckbox(
-                        L("RECIPE_SCAN_USE_TSM_RESTOCK"),
-                        function()
-                            return CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
-                        end, function()
-                            local value = CraftSim.DB.OPTIONS:Get(
-                                "RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION")
-                            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_USE_TSM_RESTOCK_EXPRESSION",
-                                not value)
-                        end)
-                    tsmExpressionCB:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            "If enabled, restock amount will be determined by configured " ..
-                            f.bb("TSM Expression") .. " (Options)");
-                    end);
-
-                    GUTIL:CreateReuseableMenuUtilContextMenuFrame(tsmOptions, function(frame)
-                        frame.label = GGUI.Text {
-                            parent = frame,
-                            anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
-                            text = L("RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD"),
-                            justifyOptions = { type = "H", align = "LEFT" },
-                        }
-                        frame.input = GGUI.NumericInput {
-                            parent = frame, anchorParent = frame,
-                            sizeX = 30, sizeY = 25, offsetX = 5,
-                            anchorA = "RIGHT", anchorB = "RIGHT",
-                            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD"),
-                            borderAdjustWidth = 1.32,
-                            allowDecimals = true,
-                            maxValue = 1,
-                            minValue = 0,
-                            onNumberValidCallback = function(input)
-                                CraftSim.DB.OPTIONS:Save("RECIPESCAN_SEND_TO_CRAFTQUEUE_TSM_SALERATE_THRESHOLD",
-                                    tonumber(input.currentValue))
-                            end,
-                        }
-                    end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_TSM_SALERATE_INPUT")
-                end
+                end, 150, 25, "RECIPE_SCAN_SEND_TO_CRAFT_QUEUE_TSM_SALERATE_INPUT")
+            end
         end,
     }
 
@@ -528,184 +528,184 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         isFilter = true,
         anchorPoints = { { anchorParent = content.scanButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5, offsetY = -2 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
-                rootDescription:CreateCheckbox(
-                    L("RECIPE_SCAN_ONLY_FAVORITES"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_ONLY_FAVORITES", not value)
-                    end)
+            rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_ONLY_FAVORITES"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_ONLY_FAVORITES", not value)
+                end)
 
-                rootDescription:CreateDivider()
+            rootDescription:CreateDivider()
 
-                rootDescription:CreateCheckbox(
-                    L("RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_SOULBOUND", not value)
-                    end)
+            rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_SOULBOUND", not value)
+                end)
 
-                rootDescription:CreateCheckbox(
-                    L("RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_NOT_LEARNED", not value)
-                    end)
+            rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_NOT_LEARNED", not value)
+                end)
 
-                rootDescription:CreateCheckbox(
-                    L("RECIPE_SCAN_INCLUDE_GEAR_LABEL"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
-                    end, function()
-                        local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
-                        CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_GEAR", not value)
-                    end)
+            rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_INCLUDE_GEAR_LABEL"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
+                end, function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_INCLUDE_GEAR", not value)
+                end)
 
-                rootDescription:CreateDivider()
+            rootDescription:CreateDivider()
 
-                -- Expansion filter: only show expansions the crafter has learned
-                local includeExpansions = rootDescription:CreateButton(L("RECIPE_SCAN_EXPANSION_FILTER_BUTTON"))
-                local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
+            -- Expansion filter: only show expansions the crafter has learned
+            local includeExpansions = rootDescription:CreateButton(L("RECIPE_SCAN_EXPANSION_FILTER_BUTTON"))
+            local includedExpansions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")
 
-                -- Determine which expansions the crafter has recipes for
-                local learnedExpansionIDs = {}
-                local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
-                if row.crafterProfessionUID == playerCrafterProfessionUID then
-                    -- Currently open profession: use professionID from the open trade skill
-                    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-                    if skillLineID then
-                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
-                        learnedExpansionIDs[expansionID] = true
+            -- Determine which expansions the crafter has recipes for
+            local learnedExpansionIDs = {}
+            local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
+            if row.crafterProfessionUID == playerCrafterProfessionUID then
+                -- Currently open profession: use professionID from the open trade skill
+                local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+                if skillLineID then
+                    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+                    learnedExpansionIDs[expansionID] = true
+                end
+            end
+            -- Also scan cached recipes for all expansions (covers alt and currently open)
+            local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
+            for _, recipeID in ipairs(cachedRecipeIDs) do
+                local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
+                if profInfo and profInfo.professionID then
+                    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
+                    learnedExpansionIDs[expansionID] = true
+                end
+            end
+
+            -- Collect categories per expansion from cached recipe data
+            local categoriesByExpansion = {}
+            for _, recipeID in ipairs(cachedRecipeIDs) do
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
+                local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
+                if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 and profInfo and profInfo.professionID then
+                    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
+                    categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
+                    if not categoriesByExpansion[expansionID][recipeInfo.categoryID] then
+                        local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+                        local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
+                            and categoryInfo.name or tostring(recipeInfo.categoryID)
+                        categoriesByExpansion[expansionID][recipeInfo.categoryID] = categoryName
                     end
                 end
-                -- Also scan cached recipes for all expansions (covers alt and currently open)
-                local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession) or {}
-                for _, recipeID in ipairs(cachedRecipeIDs) do
-                    local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
-                    if profInfo and profInfo.professionID then
-                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
-                        learnedExpansionIDs[expansionID] = true
-                    end
-                end
-
-                -- Collect categories per expansion from cached recipe data
-                local categoriesByExpansion = {}
-                for _, recipeID in ipairs(cachedRecipeIDs) do
-                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
-                    local profInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(row.crafterUID, recipeID)
-                    if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 and profInfo and profInfo.professionID then
-                        local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(profInfo.professionID)
-                        categoriesByExpansion[expansionID] = categoriesByExpansion[expansionID] or {}
-                        if not categoriesByExpansion[expansionID][recipeInfo.categoryID] then
-                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-                            local categoryName = (categoryInfo and categoryInfo.name and categoryInfo.name ~= "")
-                                and categoryInfo.name or tostring(recipeInfo.categoryID)
-                            categoriesByExpansion[expansionID][recipeInfo.categoryID] = categoryName
-                        end
-                    end
-                end
-                -- For the currently open profession also pull categories from live recipe list.
-                -- Derive each category's expansion from its own skillLineID (via GetCategoryInfo) so
-                -- that recipes from other expansions visible in an "All" filtered view are not
-                -- incorrectly bucketed under the currently-active child skillline's expansion.
-                if row.crafterProfessionUID == playerCrafterProfessionUID then
-                    local allRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
-                    for _, recipeID in ipairs(allRecipeIDs) do
-                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-                        if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 then
-                            local catID = recipeInfo.categoryID
-                            local categoryInfo = C_TradeSkillUI.GetCategoryInfo(catID)
-                            if categoryInfo then
-                                local catSkillLineID = categoryInfo.skillLineID
-                                local catExpansionID = catSkillLineID and CraftSim.UTIL:GetExpansionIDBySkillLineID(catSkillLineID) or nil
-                                if catExpansionID and learnedExpansionIDs[catExpansionID] then
-                                    categoriesByExpansion[catExpansionID] = categoriesByExpansion[catExpansionID] or {}
-                                    if not categoriesByExpansion[catExpansionID][catID] then
-                                        local categoryName = (categoryInfo.name and categoryInfo.name ~= "")
-                                            and categoryInfo.name or tostring(catID)
-                                        categoriesByExpansion[catExpansionID][catID] = categoryName
-                                    end
+            end
+            -- For the currently open profession also pull categories from live recipe list.
+            -- Derive each category's expansion from its own skillLineID (via GetCategoryInfo) so
+            -- that recipes from other expansions visible in an "All" filtered view are not
+            -- incorrectly bucketed under the currently-active child skillline's expansion.
+            if row.crafterProfessionUID == playerCrafterProfessionUID then
+                local allRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
+                for _, recipeID in ipairs(allRecipeIDs) do
+                    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+                    if recipeInfo and recipeInfo.categoryID and recipeInfo.categoryID ~= 0 then
+                        local catID = recipeInfo.categoryID
+                        local categoryInfo = C_TradeSkillUI.GetCategoryInfo(catID)
+                        if categoryInfo then
+                            local catSkillLineID = categoryInfo.skillLineID
+                            local catExpansionID = catSkillLineID and
+                                CraftSim.UTIL:GetExpansionIDBySkillLineID(catSkillLineID) or nil
+                            if catExpansionID and learnedExpansionIDs[catExpansionID] then
+                                categoriesByExpansion[catExpansionID] = categoriesByExpansion[catExpansionID] or {}
+                                if not categoriesByExpansion[catExpansionID][catID] then
+                                    local categoryName = (categoryInfo.name and categoryInfo.name ~= "")
+                                        and categoryInfo.name or tostring(catID)
+                                    categoriesByExpansion[catExpansionID][catID] = categoryName
                                 end
                             end
                         end
                     end
                 end
+            end
 
-                -- Sort expansion IDs newest first (only learned ones)
-                local sortedExpansionIDs = {}
-                for expansionID in pairs(learnedExpansionIDs) do
-                    if type(expansionID) == "number" then
-                        table.insert(sortedExpansionIDs, expansionID)
-                    end
+            -- Sort expansion IDs newest first (only learned ones)
+            local sortedExpansionIDs = {}
+            for expansionID in pairs(learnedExpansionIDs) do
+                if type(expansionID) == "number" then
+                    table.insert(sortedExpansionIDs, expansionID)
                 end
-                table.sort(sortedExpansionIDs, function(a, b) return a > b end)
+            end
+            table.sort(sortedExpansionIDs, function(a, b) return a > b end)
 
-                for _, expansionID in ipairs(sortedExpansionIDs) do
-                    local expID = expansionID
-                    local expName = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expID])
+            for _, expansionID in ipairs(sortedExpansionIDs) do
+                local expID = expansionID
+                local expName = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expID])
 
-                    -- Expansion entry is a checkbox (enable/disable expansion) that also opens a submenu
-                    local expansionEntry = includeExpansions:CreateCheckbox(
-                        expName,
-                        function()
-                            return includedExpansions[expID] ~= false
-                        end,
-                        function()
-                            local current = includedExpansions[expID]
-                            if current == false then
-                                includedExpansions[expID] = nil
-                            else
-                                includedExpansions[expID] = false
+                -- Expansion entry is a checkbox (enable/disable expansion) that also opens a submenu
+                local expansionEntry = includeExpansions:CreateCheckbox(
+                    expName,
+                    function()
+                        return includedExpansions[expID] ~= false
+                    end,
+                    function()
+                        local current = includedExpansions[expID]
+                        if current == false then
+                            includedExpansions[expID] = nil
+                        else
+                            includedExpansions[expID] = false
                         end
                     end
-                    )
+                )
 
-                    -- Category filter sub-submenu for this expansion
-                    local categories = categoriesByExpansion[expID] or {}
-                    local sortedCategories = {}
-                    for catID, catName in pairs(categories) do
-                        table.insert(sortedCategories, { id = catID, name = catName })
-                    end
-                    table.sort(sortedCategories, function(a, b) return a.name < b.name end)
+                -- Category filter sub-submenu for this expansion
+                local categories = categoriesByExpansion[expID] or {}
+                local sortedCategories = {}
+                for catID, catName in pairs(categories) do
+                    table.insert(sortedCategories, { id = catID, name = catName })
+                end
+                table.sort(sortedCategories, function(a, b) return a.name < b.name end)
 
-                    if #sortedCategories > 0 then
-                        -- "Enable All" button directly on the expansion entry submenu
-                        expansionEntry:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
-                            local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                            cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
-                            cats[row.crafterProfessionUID][expID] = {}
-                        end)
+                if #sortedCategories > 0 then
+                    -- "Enable All" button directly on the expansion entry submenu
+                    expansionEntry:CreateButton(L("RECIPE_SCAN_CATEGORY_FILTER_ENABLE_ALL"), function()
+                        local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                        cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
+                        cats[row.crafterProfessionUID][expID] = {}
+                    end)
 
-                        for _, category in ipairs(sortedCategories) do
-                            local catID = category.id
-                            expansionEntry:CreateCheckbox(
-                                category.name,
-                                function()
-                                    local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                                    local expCats = (cats[row.crafterProfessionUID] or {})[expID] or {}
-                                    return expCats[catID] ~= false
-                                end,
-                                function()
-                                    local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-                                    cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
-                                    cats[row.crafterProfessionUID][expID] = cats[row.crafterProfessionUID][expID] or {}
-                                    local current = cats[row.crafterProfessionUID][expID][catID]
-                                    if current == false then
-                                        cats[row.crafterProfessionUID][expID][catID] = nil
-                                    else
-                                        cats[row.crafterProfessionUID][expID][catID] = false
-                                    end
+                    for _, category in ipairs(sortedCategories) do
+                        local catID = category.id
+                        expansionEntry:CreateCheckbox(
+                            category.name,
+                            function()
+                                local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                                local expCats = (cats[row.crafterProfessionUID] or {})[expID] or {}
+                                return expCats[catID] ~= false
+                            end,
+                            function()
+                                local cats = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
+                                cats[row.crafterProfessionUID] = cats[row.crafterProfessionUID] or {}
+                                cats[row.crafterProfessionUID][expID] = cats[row.crafterProfessionUID][expID] or {}
+                                local current = cats[row.crafterProfessionUID][expID][catID]
+                                if current == false then
+                                    cats[row.crafterProfessionUID][expID][catID] = nil
+                                else
+                                    cats[row.crafterProfessionUID][expID][catID] = false
                                 end
-                            )
-                        end
+                            end
+                        )
                     end
                 end
-
+            end
         end,
     }
 
@@ -714,26 +714,26 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         anchorPoints = { { anchorParent = content.scanFiltersButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5, offsetY = 1.5 } },
         optimizationOptionsID = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN,
         showOptions = {
-            ENABLE_CONCENTRATION               = true,
-            REAGENT_ALLOCATION                 = true,
-            AUTOSELECT_TOP_PROFIT_QUALITY      = true,
-            OPTIMIZE_PROFESSION_TOOLS          = true,
-            OPTIMIZE_CONCENTRATION             = true,
-            OPTIMIZE_FINISHING_REAGENTS        = true,
-            INCLUDE_SOULBOUND_FINISHING_REAGENTS = true,
+            ENABLE_CONCENTRATION                              = true,
+            REAGENT_ALLOCATION                                = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY                     = true,
+            OPTIMIZE_PROFESSION_TOOLS                         = true,
+            OPTIMIZE_CONCENTRATION                            = true,
+            OPTIMIZE_FINISHING_REAGENTS                       = true,
+            INCLUDE_SOULBOUND_FINISHING_REAGENTS              = true,
             ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = true,
-            FINISHING_REAGENTS_ALGORITHM       = true,
+            FINISHING_REAGENTS_ALGORITHM                      = true,
         },
         defaults = {
-            ENABLE_CONCENTRATION               = true,
-            REAGENT_ALLOCATION                 = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE,
-            AUTOSELECT_TOP_PROFIT_QUALITY      = false,
-            OPTIMIZE_PROFESSION_TOOLS          = false,
-            OPTIMIZE_CONCENTRATION             = false,
-            OPTIMIZE_FINISHING_REAGENTS        = false,
-            INCLUDE_SOULBOUND_FINISHING_REAGENTS = false,
+            ENABLE_CONCENTRATION                              = true,
+            REAGENT_ALLOCATION                                = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE,
+            AUTOSELECT_TOP_PROFIT_QUALITY                     = false,
+            OPTIMIZE_PROFESSION_TOOLS                         = false,
+            OPTIMIZE_CONCENTRATION                            = false,
+            OPTIMIZE_FINISHING_REAGENTS                       = false,
+            INCLUDE_SOULBOUND_FINISHING_REAGENTS              = false,
             ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS = false,
-            FINISHING_REAGENTS_ALGORITHM       = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM.SIMPLE,
+            FINISHING_REAGENTS_ALGORITHM                      = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM.SIMPLE,
         },
         additionalMenu = function(ownerRegion, rootDescription)
             rootDescription:CreateCheckbox(
@@ -934,7 +934,8 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                             if #allLists > 0 then
                                 rootDescription:CreateDivider()
                                 local addSubmenu = rootDescription:CreateButton(L("RECIPE_SCAN_ADD_TO_CRAFT_LIST"))
-                                local removeSubmenu = rootDescription:CreateButton(L("RECIPE_SCAN_REMOVE_FROM_CRAFT_LIST"))
+                                local removeSubmenu = rootDescription:CreateButton(L(
+                                    "RECIPE_SCAN_REMOVE_FROM_CRAFT_LIST"))
                                 local hasAdd = false
                                 local hasRemove = false
                                 for _, list in ipairs(allLists) do
@@ -943,14 +944,14 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                                         hasRemove = true
                                         removeSubmenu:CreateButton(listRef.name, function()
                                             CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                                                listRef.id, listRef.isGlobal, ctxCrafterUID, recipeData.recipeID)
+                                                listRef.id, ctxCrafterUID, recipeData.recipeID)
                                             CraftSim.RECIPE_SCAN.UI:RefreshResultRow(row, recipeData)
                                         end)
                                     else
                                         hasAdd = true
                                         addSubmenu:CreateButton(listRef.name, function()
                                             CraftSim.DB.CRAFT_LISTS:AddRecipe(
-                                                listRef.id, listRef.isGlobal, ctxCrafterUID, recipeData.recipeID)
+                                                listRef.id, ctxCrafterUID, recipeData.recipeID)
                                             CraftSim.RECIPE_SCAN.UI:RefreshResultRow(row, recipeData)
                                         end)
                                     end
@@ -1282,7 +1283,8 @@ function CraftSim.RECIPE_SCAN.UI:RefreshResultRow(resultRow, recipeData)
 
     local firstCraftInfoText = ""
     if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
-        firstCraftInfoText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
+        firstCraftInfoText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15),
+            f.bb("1KP"))
     end
 
     recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText .. firstCraftInfoText)
@@ -1316,7 +1318,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.recipeData = recipeData
 
             local enableConcentration = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(
-                    CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN, CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION, true) and
+                    CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN,
+                    CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION, true) and
                 recipeData.supportsQualities
 
             local recipeRarity = ITEM_QUALITY_COLORS[0] -- default white
@@ -1328,7 +1331,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             local firstCraftInfoText = ""
             if recipeData.recipeInfo and recipeData.recipeInfo.firstCraft then
-                firstCraftInfoText = string.format(" %s %s", CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
+                firstCraftInfoText = string.format(" %s %s",
+                    CreateAtlasMarkup(CraftSim.CONST.FIRST_CRAFT_KP_ICON, 15, 15), f.bb("1KP"))
             end
 
             local isFavorite = CraftSim.DB.CRAFTER:IsFavorite(recipeData.recipeID, recipeData:GetCrafterUID(),

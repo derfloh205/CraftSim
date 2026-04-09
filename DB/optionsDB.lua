@@ -308,3 +308,7 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_13_14_Remove_CraftQueue_Work_Orders_Typ
     --- option removal
     CraftSimDB.optionsDB.data["CRAFTQUEUE_WORK_ORDERS_ORDER_TYPE"] = nil
 end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_14_15_Remove_unused_global_craftlists_option()
+    CraftSimDB.optionsDB.data["CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED"] = nil
+end
