@@ -297,7 +297,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
     ---@param recipeData CraftSim.RecipeData
     ---@param recipeEntry CraftSim.CraftListRecipeEntry
     ---@return number? queueAmount
-    local function getQueueAmount(recipeData, recipeEntry)
+    local function getMaxQueueAmount(recipeData, recipeEntry)
         local offsetAmount = tonumber(options.offsetQueueAmount) or 0
         local queueAmount
         local recipeMaxQueueAmount
@@ -314,7 +314,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         -- if no other max is set, the max we want to queue is the cd charges or if no cd the offsetamount if its greater than 0, otherwise just queue 1
         if not options.useTSMRestockExpression and not (recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0) then
-            return recipeMaxQueueAmount or (offsetAmount > 0 and offsetAmount) or 1
+            return recipeMaxQueueAmount
         end
 
         -- adapt by TSM restock expression if enabled and available, otherwise use restockmaxamount if set
@@ -484,26 +484,24 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                     return
                 end
 
-                local queueAmount = getQueueAmount(recipeData, recipeEntry)
-                print("queueAmount for recipe " .. recipeData.recipeName .. ": " .. (queueAmount or "nil"))
+                local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
+                print("queueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
                 if options.enableConcentration and options.smartConcentrationQueuing then
                     tinsert(optimizedRecipes, {
                         recipeData = recipeData,
-                        maxQueueAmount = queueAmount,
+                        maxQueueAmount = maxQueueAmount,
                     })
                 else
-                    if queueAmount and queueAmount > 0 then
-                        CraftSim.CRAFTQ:AddRecipe {
-                            recipeData = recipeData,
-                            amount = queueAmount,
-                            splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
-                        }
-                        CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    CraftSim.CRAFTQ:AddRecipe {
+                        recipeData = recipeData,
+                        amount = maxQueueAmount, -- if its nil it will default to 1
+                        splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
+                    }
+                    CraftSim.CRAFTQ.UI:UpdateDisplay()
 
-                        -- Update last crafting cost DB if option is enabled
-                        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                            CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
-                        end
+                    -- Update last crafting cost DB if option is enabled
+                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                        CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
                     end
                 end
                 frameDistributor:Continue()

@@ -22,7 +22,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
-        newP("24.0.1"),
+        newP("24.0.2"),
         f.p .. "Fixed lua error in craftqueue",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         f.p .. "Fixed queue amount issues when queueing craft lists",
