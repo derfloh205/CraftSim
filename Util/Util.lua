@@ -714,8 +714,8 @@ end
 ---@param itemInfo number | string itemID or itemLink
 function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
     -- check if warbank open
-    local bankOpen = BankFrame.TabSystem:IsTabEnabled(1)
-    local warbankOpen = BankFrame.TabSystem:IsTabEnabled(2)
+    local bankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Character
+    local warbankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Account
     if not bankOpen and not warbankOpen then
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No bank open")
         return
@@ -779,11 +779,11 @@ function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
                 local freeSlot = freeBankSlots[key]
 
                 -- inframe check if bank is still open
-                if warbankOpen and not BankFrame.TabSystem:IsTabEnabled(2) then
+                if warbankOpen and BankFrame:GetActiveBankType() ~= Enum.BankType.Account then
                     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Warbank closed, stopping move")
                     frameDistributor:Break()
                     return
-                elseif bankOpen and not BankFrame.TabSystem:IsTabEnabled(1) then
+                elseif bankOpen and BankFrame:GetActiveBankType() ~= Enum.BankType.Character then
                     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Bank closed, stopping move")
                     frameDistributor:Break()
                     return
@@ -808,8 +808,8 @@ end
 ---@param itemInfo number | string itemID or itemLink
 function CraftSim.UTIL:MoveItemIntoInventory(itemInfo)
     -- check if warbank open
-    local bankOpen = BankFrame.TabSystem:IsTabEnabled(1)
-    local warbankOpen = BankFrame.TabSystem:IsTabEnabled(2)
+    local bankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Character
+    local warbankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Account
     if not bankOpen and not warbankOpen then
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No bank open")
         return
@@ -874,11 +874,11 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo)
                 local freeSlot = freeInventorySlots[key]
 
                 -- inframe check if bank is still open
-                if warbankOpen and not BankFrame.TabSystem:IsTabEnabled(2) then
+                if warbankOpen and BankFrame:GetActiveBankType() ~= Enum.BankType.Account then
                     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Warbank closed, stopping move")
                     frameDistributor:Break()
                     return
-                elseif bankOpen and not BankFrame.TabSystem:IsTabEnabled(1) then
+                elseif bankOpen and BankFrame:GetActiveBankType() ~= Enum.BankType.Character then
                     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Bank closed, stopping move")
                     frameDistributor:Break()
                     return

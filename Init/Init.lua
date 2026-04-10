@@ -490,6 +490,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 	SLASH_CRAFTSIM2 = "/crafts"
 	SLASH_CRAFTSIM3 = "/simcc"
 	SLASH_CRAFTSIM4 = "/cs"
+	SLASH_CRAFTSIM5 = "/csim"
 	SlashCmdList["CRAFTSIM"] = function(input)
 		if not input then
 			return
