@@ -8,7 +8,6 @@ CraftSim.SLASH = {}
 
 ---@type table<string, fun(self: CraftSim.SLASH, args:table)>
 CraftSim.SLASH.commands = {}
-CraftSim.SLASH.commandDescriptions = {}
 
 function CraftSim.SLASH:Init()
     SLASH_CRAFTSIM1 = "/craftsim"
@@ -115,11 +114,11 @@ function CraftSim.SLASH:CMD_disenchant()
 end
 
 function CraftSim.SLASH:CMD_put(args)
-    CraftSim.UTIL:MoveItemIntoBank(args[1])
+    CraftSim.UTIL:MoveItemIntoBank(args[1], tonumber(args[2]))
 end
 
 function CraftSim.SLASH:CMD_get(args)
-    CraftSim.UTIL:MoveItemIntoInventory(args[1])
+    CraftSim.UTIL:MoveItemIntoInventory(args[1], tonumber(args[2]))
 end
 
 function CraftSim.SLASH:CMD_help()

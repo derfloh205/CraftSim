@@ -712,7 +712,8 @@ function CraftSim.UTIL:GetFreeInventorySlots()
 end
 
 ---@param itemInfo number | string itemID or itemLink
-function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
+---@param maxCount number? maximum number of items to move, defaults to all found items
+function CraftSim.UTIL:MoveItemIntoBank(itemInfo, maxCount)
     -- check if warbank open
     local bankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Character
     local warbankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Account
@@ -760,7 +761,7 @@ function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
 
         -- start moving items to free slots
 
-        local itemMoveCount = math.min(#items, #freeBankSlots)
+        local itemMoveCount = math.min(#items, #freeBankSlots, maxCount or math.huge)
 
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") ..
             "Moving " .. itemMoveCount .. " items to " .. (warbankOpen and "warbank" or "bank"))
@@ -806,7 +807,8 @@ function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
 end
 
 ---@param itemInfo number | string itemID or itemLink
-function CraftSim.UTIL:MoveItemIntoInventory(itemInfo)
+---@param maxCount number? maximum number of items to move, defaults to all found items
+function CraftSim.UTIL:MoveItemIntoInventory(itemInfo, maxCount)
     -- check if warbank open
     local bankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Character
     local warbankOpen = BankFrame:GetActiveBankType() == Enum.BankType.Account
@@ -857,7 +859,7 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo)
 
         -- start moving items to free slots
 
-        local itemMoveCount = math.min(#items, #freeInventorySlots)
+        local itemMoveCount = math.min(#items, #freeInventorySlots, maxCount or math.huge)
 
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Moving " .. itemMoveCount .. " items to bags")
         -- it works within 1 frame.. but split it a bit just in case
