@@ -670,3 +670,232 @@ function CraftSim.UTIL:DisenchantWarbankItem(itemID)
         return
     end
 end
+
+---@param isWarbank boolean
+---@return ItemLocationMixin[]
+function CraftSim.UTIL:GetFreeBankSlots(isWarbank)
+    local startBagID = isWarbank and Enum.BagIndex.AccountBankTab_1 or Enum.BagIndex.CharacterBankTab_1
+    local endBagID = isWarbank and Enum.BagIndex.AccountBankTab_5 or Enum.BagIndex.CharacterBankTab_6
+
+    local freeSlots = {}
+
+    for bag = startBagID, endBagID do
+        local numSlots = C_Container.GetContainerNumSlots(bag)
+        for slot = 1, numSlots do
+            local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
+            if not C_Container.GetContainerItemInfo(bag, slot) then
+                table.insert(freeSlots, itemLocation)
+            end
+        end
+    end
+
+    return freeSlots
+end
+
+---@return ItemLocationMixin[]
+function CraftSim.UTIL:GetFreeInventorySlots()
+    local startBagID = Enum.BagIndex.Backpack
+    local endBagID = Enum.BagIndex.Bag_4
+
+    local freeSlots = {}
+    for bag = startBagID, endBagID do
+        local numSlots = C_Container.GetContainerNumSlots(bag)
+        for slot = 1, numSlots do
+            local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
+            if not C_Container.GetContainerItemInfo(bag, slot) then
+                table.insert(freeSlots, itemLocation)
+            end
+        end
+    end
+
+    return freeSlots
+end
+
+---@param itemInfo number | string itemID or itemLink
+function CraftSim.UTIL:MoveItemIntoBank(itemInfo)
+    -- check if warbank open
+    local bankOpen = BankFrame.TabSystem:IsTabEnabled(1)
+    local warbankOpen = BankFrame.TabSystem:IsTabEnabled(2)
+    if not bankOpen and not warbankOpen then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No bank open")
+        return
+    end
+
+    -- fetch items based on itemInfo from inventory
+    ---@type ItemMixin[]
+    local items = {}
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.Bag_4 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
+            if itemLocation:IsValid() then
+                local item = Item:CreateFromItemLocation(itemLocation)
+                if item then
+                    table.insert(items, item)
+                end
+            end
+        end
+    end
+
+    GUTIL:ContinueOnAllItemsLoaded(items, function()
+        local items = GUTIL:Filter(items, function(item)
+            local itemID = item:GetItemID()
+            local itemLink = item:GetItemLink()
+            local itemName = item:GetItemName()
+
+            -- 1) check if link matches 2) check if itemID matches 3) check if name contains given string for partial name search
+            return itemLink == itemInfo or itemID == tonumber(itemInfo) or
+                string.find(itemName, itemInfo, 1, true) ~= nil
+        end)
+
+        if #items == 0 then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Item not found in bags: " .. tostring(itemInfo))
+            return
+        end
+
+        local freeBankSlots = self:GetFreeBankSlots(warbankOpen)
+        if #freeBankSlots == 0 then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No free bank slots available")
+            return
+        end
+
+        -- start moving items to free slots
+
+        local itemMoveCount = math.min(#items, #freeBankSlots)
+
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") ..
+            "Moving " .. itemMoveCount .. " items to " .. (warbankOpen and "warbank" or "bank"))
+
+        -- it works within 1 frame.. but split it a bit just in case
+
+        GUTIL.FrameDistributor {
+            iterationTable = items,
+            iterationsPerFrame = CraftSim.DB.OPTIONS:Get("BANKING_MAX_ITEMS_PER_FRAME"),
+            maxIterations = itemMoveCount,
+            finally = function()
+                CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Finished moving items")
+            end,
+            continue = function(frameDistributor, key, _, _, _)
+                local item = items[key]
+                local freeSlot = freeBankSlots[key]
+
+                -- inframe check if bank is still open
+                if warbankOpen and not BankFrame.TabSystem:IsTabEnabled(2) then
+                    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Warbank closed, stopping move")
+                    frameDistributor:Break()
+                    return
+                elseif bankOpen and not BankFrame.TabSystem:IsTabEnabled(1) then
+                    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Bank closed, stopping move")
+                    frameDistributor:Break()
+                    return
+                end
+
+                local bag, slot = item:GetItemLocation():GetBagAndSlot()
+
+                ClearCursor()
+
+                C_Container.PickupContainerItem(bag, slot)
+                if GetCursorInfo() == "item" then
+                    C_Container.PickupContainerItem(freeSlot:GetBagAndSlot())
+                end
+                ClearCursor()
+
+                frameDistributor:Continue()
+            end
+        }:Continue()
+    end)
+end
+
+---@param itemInfo number | string itemID or itemLink
+function CraftSim.UTIL:MoveItemIntoInventory(itemInfo)
+    -- check if warbank open
+    local bankOpen = BankFrame.TabSystem:IsTabEnabled(1)
+    local warbankOpen = BankFrame.TabSystem:IsTabEnabled(2)
+    if not bankOpen and not warbankOpen then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No bank open")
+        return
+    end
+
+    -- fetch items based on itemInfo from bank
+    local bagStart = warbankOpen and Enum.BagIndex.AccountBankTab_1 or Enum.BagIndex.CharacterBankTab_1
+    local bagEnd = warbankOpen and Enum.BagIndex.AccountBankTab_5 or Enum.BagIndex.CharacterBankTab_6
+    ---@type ItemMixin[]
+    local items = {}
+    for bag = bagStart, bagEnd do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
+            if itemLocation:IsValid() then
+                local item = Item:CreateFromItemLocation(itemLocation)
+                if item then
+                    table.insert(items, item)
+                end
+            end
+        end
+    end
+
+    GUTIL:ContinueOnAllItemsLoaded(items, function()
+        local items = GUTIL:Filter(items, function(item)
+            local itemID = item:GetItemID()
+            local itemLink = item:GetItemLink()
+            local itemName = item:GetItemName()
+
+            -- 1) check if link matches 2) check if itemID matches 3) check if name contains given string for partial name search
+            return itemLink == itemInfo or itemID == tonumber(itemInfo) or
+                string.find(itemName, itemInfo, 1, true) ~= nil
+        end)
+
+        if #items == 0 then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Item not found in bags: " .. tostring(itemInfo))
+            return
+        end
+
+
+        local freeInventorySlots = self:GetFreeInventorySlots()
+        if #freeInventorySlots == 0 then
+            CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "No free inventory slots available")
+            return
+        end
+
+        -- start moving items to free slots
+
+        local itemMoveCount = math.min(#items, #freeInventorySlots)
+
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Moving " .. itemMoveCount .. " items to bags")
+        -- it works within 1 frame.. but split it a bit just in case
+
+        GUTIL.FrameDistributor {
+            iterationTable = items,
+            iterationsPerFrame = CraftSim.DB.OPTIONS:Get("BANKING_MAX_ITEMS_PER_FRAME"),
+            maxIterations = itemMoveCount,
+            finally = function()
+                CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Finished moving items")
+            end,
+            continue = function(frameDistributor, key, _, _, _)
+                local item = items[key]
+                local freeSlot = freeInventorySlots[key]
+
+                -- inframe check if bank is still open
+                if warbankOpen and not BankFrame.TabSystem:IsTabEnabled(2) then
+                    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Warbank closed, stopping move")
+                    frameDistributor:Break()
+                    return
+                elseif bankOpen and not BankFrame.TabSystem:IsTabEnabled(1) then
+                    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. "Bank closed, stopping move")
+                    frameDistributor:Break()
+                    return
+                end
+
+                local bag, slot = item:GetItemLocation():GetBagAndSlot()
+
+                ClearCursor()
+
+                C_Container.PickupContainerItem(bag, slot)
+                if GetCursorInfo() == "item" then
+                    C_Container.PickupContainerItem(freeSlot:GetBagAndSlot())
+                end
+                ClearCursor()
+
+                frameDistributor:Continue()
+            end
+        }:Continue()
+    end)
+end

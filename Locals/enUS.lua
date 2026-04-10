@@ -1016,5 +1016,11 @@ greater or equal the configured sale rate threshold.
         DISENCHANT_INFO_TOOLTIP = f.bb("MMB") ..
             f.white(" .. Blacklist Item for Session\n") ..
             f.bb("Shift + MMB") .. f.white(" .. Blacklist Item Permanently"),
+
+        -- banking
+        OPTIONS_BANKING_TAB = "Banking",
+        OPTIONS_BANKING_MAX_ITEMS_PER_FRAME = "Maximum Items per Frame: ",
+        OPTIONS_BANKING_MAX_ITEMS_PER_FRAME_TOOLTIP =
+        "Set the maximum number of items moved per frame when using the put and get commands",
     }
 end

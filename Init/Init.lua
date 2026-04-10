@@ -489,15 +489,14 @@ function CraftSim.INIT:PLAYER_LOGIN()
 	SLASH_CRAFTSIM1 = "/craftsim"
 	SLASH_CRAFTSIM2 = "/crafts"
 	SLASH_CRAFTSIM3 = "/simcc"
+	SLASH_CRAFTSIM4 = "/cs"
 	SlashCmdList["CRAFTSIM"] = function(input)
-		input = SecureCmdOptionParse(input)
 		if not input then
 			return
 		end
 
-		local command, rest = input:match("^(%S*)%s*(.-)$")
-		command = command and command:lower()
-		rest = (rest and rest ~= "") and rest:trim() or nil
+		-- parse arguments from input, consider itemlinks and quotes
+		local command, arguments = GUTIL:ParseSlashCommandInput(input)
 
 		if command == "pricedebug" then
 			local priceDebug = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG)
@@ -515,7 +514,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		elseif command == "debug" then
 			CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
 		elseif command == "export" then
-			if rest == "recipeids" then
+			if arguments[1] == "recipeids" then
 				local recipeIDs = CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
 				CraftSim.UTIL:ShowTextCopyBox(recipeIDs)
 			elseif CraftSim.MODULES.recipeData then
@@ -530,21 +529,25 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		elseif command == "quickbuy" then
 			CraftSim.CRAFTQ:AuctionatorQuickBuy()
 		elseif command == "craftqueue" then
-			if rest == "craftnext" then
+			if arguments[1] == "craftnext" then
 				CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
-			elseif rest == "queuelists" then
+			elseif arguments[1] == "queuelists" then
 				CraftSim.CRAFT_LISTS:QueueSelectedLists()
-			elseif rest == "queuefirstcrafts" then
+			elseif arguments[1] == "queuefirstcrafts" then
 				CraftSim.CRAFTQ:QueueFirstCrafts()
-			elseif rest == "queueworkorders" then
+			elseif arguments[1] == "queueworkorders" then
 				CraftSim.CRAFTQ:QueueWorkOrders()
-			elseif rest == "clear" then
+			elseif arguments[1] == "clear" then
 				CraftSim.CRAFTQ:ClearAll()
-			elseif rest == "createshoppinglist" then
+			elseif arguments[1] == "createshoppinglist" then
 				CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
 			end
 		elseif command == "disenchant" then
 			CraftSim.DISENCHANT.UI:ShowAndLoad()
+		elseif command == "put" then
+			CraftSim.UTIL:MoveItemIntoBank(arguments[1])
+		elseif command == "get" then
+			CraftSim.UTIL:MoveItemIntoInventory(arguments[1])
 		elseif command == "help" then
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" news") .. " - Show the latest patch notes")
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
@@ -560,6 +563,11 @@ function CraftSim.INIT:PLAYER_LOGIN()
 				f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
 				f.bb(" disenchant") .. " - Open the disenchanting helper")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" put <[itemlink]|itemID|searchTerm>") .. " - Move an item into the bank or warbank, if open")
+			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+				f.bb(" get <[itemlink]|itemID|searchTerm>") ..
+				" - Move an item from the bank or warbank into the inventory, if open")
 			CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
 				f.bb(" craftqueue ") .. "[command] - Various commands to interact with the craft queue:")
 			CraftSim.DEBUG:SystemPrint(
