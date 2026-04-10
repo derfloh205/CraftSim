@@ -121,7 +121,7 @@ end
 function CraftSim.DEBUG:StopProfiling(label)
     local startTime = CraftSim.DEBUG.profilings[label]
     if not startTime then
-         CraftSim.DEBUG:print("Util Profiling Label not found on Stop: " .. tostring(label))
+        CraftSim.DEBUG:print("Util Profiling Label not found on Stop: " .. tostring(label))
         return 0
     end
     local time = debugprofilestop()

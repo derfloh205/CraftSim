@@ -66,6 +66,7 @@ Util/API.lua
 Util/ItemTooltips.lua
 
 Init/Init.lua
+Init/Slash.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua

@@ -263,7 +263,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         end
     end
     printF("Expansion/Category filtered or non-craftable: Exclude (expansionID: " ..
-    tostring(expansionID) .. ", categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
+        tostring(expansionID) .. ", categoryID: " .. tostring(recipeInfo.categoryID) .. ")")
     return false
 end
 
@@ -378,7 +378,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                         if tsmSaleRateThreshold > 0 then
                             local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem
-                            :GetItemLink())
+                                :GetItemLink())
                             if resultSaleRate < tsmSaleRateThreshold then
                                 printS("Recipe filtered by TSM sale rate: " .. tostring(recipeInfo.recipeID))
                                 frameDistributor:Continue()
@@ -511,7 +511,7 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     local professionInfoAtCall = C_TradeSkillUI.GetBaseProfessionInfo()
     local professionUIDAtCall = professionInfoAtCall and
         CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall
-        .profession) or ""
+            .profession) or ""
 
     local function update()
         local professionChanged = CraftSim.RECIPE_SCAN.lastOpenProfessionUID ~= nil and
