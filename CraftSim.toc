@@ -81,6 +81,9 @@ Modules/PreCraftBuffGate/PreCraftBuffGate.lua
 Modules/Disenchant/Disenchant.lua
 Modules/Disenchant/UI.lua
 
+Modules/Salvaging/Salvaging.lua
+Modules/Salvaging/UI.lua
+
 Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
 
@@ -156,6 +159,7 @@ Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
 Data/News.lua
+Data/MillingShuffleData.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua
 Data/SpecializationData/Dragonflight/Blacksmithing.lua

@@ -1017,6 +1017,29 @@ greater or equal the configured sale rate threshold.
             f.white(" .. Blacklist Item for Session\n") ..
             f.bb("Shift + MMB") .. f.white(" .. Blacklist Item Permanently"),
 
+        -- salvaging (milling / future prospecting)
+        SALVAGING_TITLE = "CraftSim Salvaging",
+        SALVAGING_TAB_MILLING = "Milling",
+        SALVAGING_TAB_PROSPECTING = "Prospecting",
+        SALVAGING_MILLING_HELP =
+        "Midnight milling yields are from Data/MillingShuffleData.lua (pigment count min/max per 10 herbs; value and profit columns show min, average, and max from that range). Skill changes quality, not quantity. Prices use CraftSim's price source.",
+        SALVAGING_REFRESH = "Refresh",
+        SALVAGING_SECTION_R2_R1 = "R2 herbs → R1 pigments",
+        SALVAGING_SECTION_R1_R1 = "R1 herbs → R1 pigments",
+        SALVAGING_SECTION_R2_R2 = "R2 herbs → R2 pigments",
+        SALVAGING_COLUMN_HERB = "Herb",
+        SALVAGING_COLUMN_PIGMENT = "Pigment",
+        SALVAGING_COLUMN_COST = "Cost",
+        SALVAGING_COLUMN_VALUE_MIN = "Value min",
+        SALVAGING_COLUMN_VALUE_AVG = "Value avg",
+        SALVAGING_COLUMN_VALUE_MAX = "Value max",
+        SALVAGING_COLUMN_PROFIT_MIN = "Profit min",
+        SALVAGING_COLUMN_PROFIT_AVG = "Profit avg",
+        SALVAGING_COLUMN_PROFIT_MAX = "Profit max",
+        SALVAGING_COLUMN_PROFIT_PCT = "% avg",
+        SALVAGING_MILLING_EMPTY = "No rows — edit Data/MillingShuffleData.lua",
+        SALVAGING_PROSPECTING_SOON = "Prospecting: coming soon.",
+
         -- banking
         OPTIONS_BANKING_TAB = "Banking",
         OPTIONS_BANKING_MAX_ITEMS_PER_FRAME = "Maximum Items per Frame: ",

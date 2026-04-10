@@ -346,6 +346,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.COOLDOWNS.UI:Init()
 		CraftSim.CONCENTRATION_TRACKER.UI:Init()
 		CraftSim.DISENCHANT.UI:Init()
+		CraftSim.SALVAGING.UI:Init()
 
 		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()

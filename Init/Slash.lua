@@ -113,6 +113,14 @@ function CraftSim.SLASH:CMD_disenchant()
     CraftSim.DISENCHANT.UI:ShowAndLoad()
 end
 
+function CraftSim.SLASH:CMD_milling()
+    CraftSim.SALVAGING.UI:ShowAndLoad()
+end
+
+function CraftSim.SLASH:CMD_salvaging()
+    CraftSim.SALVAGING.UI:ShowAndLoad()
+end
+
 function CraftSim.SLASH:CMD_put(args)
     CraftSim.UTIL:MoveItemIntoBank(args[1], tonumber(args[2]))
 end
@@ -136,6 +144,8 @@ function CraftSim.SLASH:CMD_help()
         f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
         f.bb(" disenchant") .. " - Open the disenchanting helper")
+    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+        f.bb(" milling") .. " / " .. f.bb("salvaging") .. " - Open the salvaging helper (milling)")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
         f.bb(" put <[itemlink]|itemID|searchTerm>") .. " - Move an item into the bank or warbank, if open")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
