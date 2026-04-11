@@ -1200,7 +1200,9 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
         local crafterColumn = columns[2] --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.CRAFTER_COLUMN]]
 
         local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-        local crafterName, crafterRealm = strsplit("-", crafterUID)
+        local crafterName, crafterRealm = CraftSim.UTIL:SplitCrafterUID(crafterUID)
+        crafterName = crafterName or crafterUID
+        crafterRealm = crafterRealm or ""
         local coloredCrafterName = f.class(crafterName, crafterClass)
         local professionIconSize = 20
         local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[row.profession], professionIconSize,

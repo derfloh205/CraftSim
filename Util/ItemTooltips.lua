@@ -9,66 +9,6 @@ CraftSim.ITEM_TOOLTIPS = {}
 
 local tooltipHooked = false
 
---- Player name cannot contain '-'; realm may. Returns nil if not a "Name-Realm" UID.
----@param crafterUID CrafterUID
----@return string? name
----@return string? realm
-local function ParseCrafterNameRealm(crafterUID)
-    local pos = string.find(crafterUID, "-", 1, true)
-    if not pos or pos < 2 then
-        return nil
-    end
-    local name = string.sub(crafterUID, 1, pos - 1)
-    local realm = string.sub(crafterUID, pos + 1)
-    if realm == "" then
-        return nil
-    end
-    return name, realm
-end
-
---- How many times each character name appears (case-insensitive), for "Name-Realm" UIDs only.
----@param crafterUIDs CrafterUID[]
----@return table<string, number> lowerNameToCount
-local function CountCrafterNames(crafterUIDs)
-    ---@type table<string, number>
-    local counts = {}
-    for _, uid in ipairs(crafterUIDs) do
-        local name = ParseCrafterNameRealm(uid)
-        if name then
-            local key = string.lower(name)
-            counts[key] = (counts[key] or 0) + 1
-        end
-    end
-    return counts
-end
-
---- Name only if unique in the list; "Name-Realm" (full realm) when the same name appears on multiple characters.
----@param crafterUID CrafterUID
----@param nameCounts table<string, number>
----@return string
-local function CrafterUIDToDisplayForList(crafterUID, nameCounts)
-    local name, realm = ParseCrafterNameRealm(crafterUID)
-    if not name or not realm then
-        return crafterUID
-    end
-    local key = string.lower(name)
-    if (nameCounts[key] or 0) <= 1 then
-        return name
-    end
-    return name .. "-" .. realm
-end
-
----@param crafterUID CrafterUID
----@param displayText string
----@return string
-local function ColorizeCrafterByUID(crafterUID, displayText)
-    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-    if crafterClass then
-        return C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(displayText)
-    end
-    return f.grey(displayText)
-end
-
 --- Format a unix timestamp as a human-readable date+time string
 ---@param timestamp number
 ---@return string
@@ -165,6 +105,17 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             return
         end
 
+        ---@type CrafterUID[]
+        local uidsForDupCheck
+        if #registeredUIDs > 0 then
+            uidsForDupCheck = registeredUIDs
+        elseif crafterUID then
+            uidsForDupCheck = { crafterUID }
+        else
+            uidsForDupCheck = {}
+        end
+        local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(uidsForDupCheck)
+
         tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_HEADER"))
 
         if showLastCost then
@@ -172,8 +123,9 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             local timeText = FormatTimestamp(timestamp)
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL"), costText)
             if crafterUID then
+                local crafterDisplay = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
                 tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"),
-                    ColorizeCrafterByUID(crafterUID, crafterUID))
+                    CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, crafterDisplay))
             end
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_UPDATED"), f.grey(timeText))
         end
