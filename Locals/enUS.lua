@@ -257,7 +257,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_INFO_AVG_MULTICRAFT_ITEMS_LABEL = "Ø MC Extra Items: ",
         RECIPE_INFO_AVG_RESOURCEFULNESS_SAVED_LABEL = "Ø Res Saved: ",
         RECIPE_INFO_CONCENTRATION_PROFIT_LABEL = "Conc. Profit: ",
-        RECIPE_INFO_CONCENTRATION_COST_LABEL = "Conc. Cost: ",
+        RECIPE_INFO_CONCENTRATION_COST_LABEL = "Conc. Base Cost: ",
         -- Recipe Info context menu option labels
         RECIPE_INFO_OPTION_CRAFTING_COST = "Crafting Cost",
         RECIPE_INFO_OPTION_CRAFTING_COST_TOOLTIP = "Show the total crafting cost for one craft",
@@ -280,9 +280,9 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_INFO_OPTION_CONCENTRATION_PROFIT = "Avg Profit (with Concentration)",
         RECIPE_INFO_OPTION_CONCENTRATION_PROFIT_TOOLTIP =
         "Show the average profit per craft when using Concentration",
-        RECIPE_INFO_OPTION_CONCENTRATION_COST = "Avg Concentration Cost",
+        RECIPE_INFO_OPTION_CONCENTRATION_COST = "Concentration Cost",
         RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP =
-        "Show the Concentration point cost for one craft",
+        "Show the base Concentration point cost for one craft",
 
         -- Cost Details Frame
         PRICING_TITLE = "CraftSim Pricing",

@@ -378,7 +378,7 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     if CraftSim.DB.OPTIONS:Get("RECIPE_INFO_SHOW_CONCENTRATION_COST") and recipeData.concentrationCost > 0 then
         addToList(L("RECIPE_INFO_CONCENTRATION_COST_LABEL"),
             f.white(tostring(recipeData.concentrationCost)),
-            f.white(f.bb("Concentration cost") .. " for one craft (before " .. f.l("Ingenuity") .. " reduction)"))
+            f.white(f.bb("Base Concentration cost") .. " for one craft (not accounting for " .. f.l("Ingenuity") .. " refund)"))
     end
 
     profitList:UpdateDisplay()
