@@ -293,21 +293,21 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
             f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
     end
 
-    if opts.MULTICRAFT_WEIGHT and statWeights and recipeData.supportsMulticraft then
+    if opts.MULTICRAFT_WEIGHT and statWeights and statWeights.multicraftWeight and recipeData.supportsMulticraft then
         addTextRow(
             L("MULTICRAFT_LABEL"),
             CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight),
             f.white("Profit increase " .. f.l("per point ") .. f.bb("Multicraft")))
     end
 
-    if opts.RESOURCEFULNESS_WEIGHT and statWeights and recipeData.supportsResourcefulness then
+    if opts.RESOURCEFULNESS_WEIGHT and statWeights and statWeights.resourcefulnessWeight and recipeData.supportsResourcefulness then
         addTextRow(
             L("RESOURCEFULNESS_LABEL"),
             CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight),
             f.white("Profit increase " .. f.l("per point ") .. f.bb("Resourcefulness")))
     end
 
-    if opts.CONCENTRATION_WEIGHT and statWeights and recipeData.supportsQualities and recipeData.concentrationCost > 0 then
+    if opts.CONCENTRATION_WEIGHT and statWeights and statWeights.concentrationWeight and recipeData.supportsQualities and recipeData.concentrationCost > 0 then
         addTextRow(
             L("CONCENTRATION_LABEL"),
             CraftSim.UTIL:FormatMoney(statWeights.concentrationWeight),
@@ -327,7 +327,7 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
             L("RECIPE_INFO_AVG_CRAFTING_COST_LABEL"),
             CraftSim.UTIL:FormatMoney(recipeData.priceData.averageCraftingCosts, true),
             f.white(f.bb("Average") .. " crafting cost per craft considering " ..
-                f.l("Resourcefulness")))
+                f.l("Resourcefulness") .. " and " .. f.l("Multicraft")))
     end
 
     if opts.RESULT_ICONS then
