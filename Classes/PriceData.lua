@@ -240,7 +240,7 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
         for _, possibleSalveReagent in ipairs(self.recipeData.reagentData.salvageReagentSlot.possibleItems or {}) do
             local itemID = possibleSalveReagent:GetItemID()
             local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
-                useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
+                useSubRecipes)
             self.reagentPriceInfos[itemID] = {
                 itemPrice = itemPrice,
                 priceInfo = priceInfo,
@@ -252,7 +252,7 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
         for _, reagentItem in ipairs(reagent.items) do
             local itemID = reagentItem.item:GetItemID()
             local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
-                useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
+                useSubRecipes)
             self.reagentPriceInfos[itemID] = {
                 itemPrice = itemPrice,
                 priceInfo = priceInfo,
@@ -271,7 +271,7 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
         if not optionalReagent:IsCurrency() then
             local itemID = optionalReagent.item:GetItemID()
             local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
-                useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
+                useSubRecipes)
             self.reagentPriceInfos[itemID] = {
                 itemPrice = itemPrice,
                 priceInfo = priceInfo,

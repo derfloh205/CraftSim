@@ -2708,7 +2708,10 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                                 :IsMinimumQualityReachable(data
                                     .qualityID)
 
-                            if concentrationOnly then
+                            if concentrationOnly and not CraftSim.DB.OPTIONS:Get(
+                                "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION") then
+                                reagentQualityReachable = false
+                            elseif concentrationOnly then
                                 recipeData.concentrating = true
                                 recipeData:Update()
                                 -- post update concentration flag in pri info in sub recipes of this item quality

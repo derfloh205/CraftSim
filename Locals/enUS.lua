@@ -1008,6 +1008,7 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_AH = "AH",
         SOURCE_COLUMN_OVERRIDE = "OR",
         SOURCE_COLUMN_WO = "WO",
+        SOURCE_COLUMN_CRAFT = "SC",
 
         -- disenchant
         DISENCHANT_TITLE = "CraftSim Disenchanting",
