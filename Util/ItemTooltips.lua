@@ -60,13 +60,13 @@ end
 ---@return string
 local function FormatRegisteredCraftersList(crafterUIDs, maxShown)
     maxShown = math.max(1, math.min(50, math.floor(tonumber(maxShown) or 5)))
-    local nameCounts = CountCrafterNames(crafterUIDs)
+    local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(crafterUIDs)
     local limit = math.min(#crafterUIDs, maxShown)
     local parts = {}
     for i = 1, limit do
         local uid = crafterUIDs[i]
-        local display = CrafterUIDToDisplayForList(uid, nameCounts)
-        tinsert(parts, ColorizeCrafterByUID(uid, display))
+        local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(uid, nameCounts)
+        tinsert(parts, CraftSim.UTIL:ColorizeCrafterNameByUID(uid, display))
     end
     local text = table.concat(parts, ", ")
     local more = #crafterUIDs - limit
