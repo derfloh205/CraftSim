@@ -258,12 +258,24 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_INFO_AVG_RESOURCEFULNESS_SAVED_LABEL = "Ø Res Saved: ",
         RECIPE_INFO_CONCENTRATION_PROFIT_LABEL = "Conc. Profit: ",
         RECIPE_INFO_CONCENTRATION_COST_LABEL = "Conc. Base Cost: ",
-        -- Recipe Info context menu option labels
+        -- Recipe Info context menu option labels (stat-weight rows, default on)
+        RECIPE_INFO_OPTION_AVG_PROFIT = "Avg Profit",
+        RECIPE_INFO_OPTION_AVG_PROFIT_TOOLTIP = "Show the average profit per craft based on your profession stats",
+        RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT = "Multicraft Weight",
+        RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT_TOOLTIP =
+        "Show the profit increase per point of Multicraft",
+        RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT = "Resourcefulness Weight",
+        RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT_TOOLTIP =
+        "Show the profit increase per point of Resourcefulness",
+        RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT = "Concentration Weight",
+        RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT_TOOLTIP =
+        "Show the profit per point of Concentration, accounting for Ingenuity refund",
+        -- Recipe Info context menu option labels (extra rows, default off)
         RECIPE_INFO_OPTION_CRAFTING_COST = "Crafting Cost",
         RECIPE_INFO_OPTION_CRAFTING_COST_TOOLTIP = "Show the total crafting cost for one craft",
         RECIPE_INFO_OPTION_AVG_CRAFTING_COST = "Avg Crafting Cost",
         RECIPE_INFO_OPTION_AVG_CRAFTING_COST_TOOLTIP =
-        "Show the average crafting cost per craft considering Resourcefulness and Multicraft",
+        "Show the average crafting cost per craft considering Resourcefulness",
         RECIPE_INFO_OPTION_RESULT_ICONS = "Result Item Icons",
         RECIPE_INFO_OPTION_RESULT_ICONS_TOOLTIP = "Show icons for each possible result item quality",
         RECIPE_INFO_OPTION_KNOWLEDGE_POINTS = "Knowledge Points",
