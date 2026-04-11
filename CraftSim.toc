@@ -115,8 +115,8 @@ Modules/Options/CraftSimOptionsTsm.xml
 Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/UI.lua
 
-Modules/AverageProfit/AverageProfit.lua
-Modules/AverageProfit/UI.lua
+Modules/RecipeInfo/RecipeInfo.lua
+Modules/RecipeInfo/UI.lua
 
 Modules/ReagentOptimization/ReagentOptimization.lua
 Modules/ReagentOptimization/UI.lua
