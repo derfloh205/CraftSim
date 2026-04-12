@@ -152,6 +152,9 @@ function PCBG:OnCastSucceededPlayer(spellID)
 end
 
 function PCBG:ScheduleQueueDisplayRefreshForDelayedCraftingState()
+    if not CraftSim.CRAFTQ.frame or not CraftSim.CRAFTQ.frame:IsVisible() then
+        return
+    end
     self.awaitingBuffApply = true
     self._refreshGen = (self._refreshGen or 0) + 1
     local gen = self._refreshGen
