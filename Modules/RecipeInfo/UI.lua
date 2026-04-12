@@ -1,60 +1,60 @@
 ---@class CraftSim
-local CraftSim = select(2, ...)
+local CraftSim           = select(2, ...)
 
-local GGUI = CraftSim.GGUI
-local GUTIL = CraftSim.GUTIL
+local GGUI               = CraftSim.GGUI
+local GUTIL              = CraftSim.GUTIL
 
-local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local f                  = GUTIL:GetFormatter()
+local L                  = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.RECIPE_INFO
-CraftSim.RECIPE_INFO = CraftSim.RECIPE_INFO
+CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 
 ---@class CraftSim.RECIPE_INFO.UI
-CraftSim.RECIPE_INFO.UI = {}
+CraftSim.RECIPE_INFO.UI  = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeInfo.UI")
+local print              = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeInfo.UI")
 
 local NAME_COLUMN_WIDTH  = 130
 local VALUE_COLUMN_WIDTH = 180
 local ROW_HEIGHT         = 20
-local LIST_TOP_OFFSET    = -30  -- list starts this many px below the content top (covers the title bar)
-local FRAME_BOTTOM_PAD   = 10   -- extra space kept at the bottom of the parent frame
+local LIST_TOP_OFFSET    = -30 -- list starts this many px below the content top (covers the title bar)
+local FRAME_BOTTOM_PAD   = 10  -- extra space kept at the bottom of the parent frame
 local MAX_RESULT_ICONS   = 5
-local ICON_SIZE          = 16   -- fits inside ROW_HEIGHT = 20
+local ICON_SIZE          = 16  -- fits inside ROW_HEIGHT = 20
 
 local function createContent(frame)
     local moneyColumnWidth = VALUE_COLUMN_WIDTH
 
     frame.content.profitList = GGUI.FrameList {
-        parent           = frame.content,
-        anchorParent     = frame.content,
-        anchorA          = "TOP",
-        anchorB          = "TOP",
-        offsetY          = LIST_TOP_OFFSET,
-        scale            = 0.95,
-        rowHeight        = ROW_HEIGHT,
-        columnOptions    = {
+        parent                   = frame.content,
+        anchorParent             = frame.content,
+        anchorA                  = "TOP",
+        anchorB                  = "TOP",
+        offsetY                  = LIST_TOP_OFFSET,
+        scale                    = 0.95,
+        rowHeight                = ROW_HEIGHT,
+        columnOptions            = {
             { width = NAME_COLUMN_WIDTH },
-            { width = moneyColumnWidth  },
+            { width = moneyColumnWidth },
         },
-        hideScrollbar    = true,
-        autoAdjustHeight = true,
+        hideScrollbar            = true,
+        autoAdjustHeight         = true,
         autoAdjustHeightCallback = function(newListHeight)
             -- resize the parent GGUI frame so it wraps the list snugly
             local totalHeight = math.abs(LIST_TOP_OFFSET) + newListHeight + FRAME_BOTTOM_PAD
             frame.frame:SetHeight(totalHeight)
             frame.content:SetHeight(totalHeight)
         end,
-        selectionOptions = {
+        selectionOptions         = {
             noSelectionColor = true,
             hoverRGBA        = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
         },
-        rowConstructor   = function(columns, row)
+        rowConstructor           = function(columns, row)
             local nameColumn  = columns[1]
             local valueColumn = columns[2]
 
-            nameColumn.text = GGUI.Text {
+            nameColumn.text   = GGUI.Text {
                 parent         = nameColumn,
                 anchorParent   = nameColumn,
                 anchorA        = "RIGHT",
@@ -63,7 +63,7 @@ local function createContent(frame)
             }
 
             -- text element for money / plain-text value rows
-            valueColumn.text = GGUI.Text {
+            valueColumn.text  = GGUI.Text {
                 parent         = valueColumn,
                 anchorParent   = valueColumn,
                 anchorA        = "LEFT",
@@ -75,13 +75,13 @@ local function createContent(frame)
             -- icon slots for the result-icons row (hidden by default)
             for i = 1, MAX_RESULT_ICONS do
                 valueColumn["icon" .. i] = GGUI.Icon {
-                    parent       = valueColumn,
-                    anchorParent = valueColumn,
-                    anchorA      = "LEFT",
-                    anchorB      = "LEFT",
-                    offsetX      = (i - 1) * (ICON_SIZE + 3),
-                    sizeX        = ICON_SIZE,
-                    sizeY        = ICON_SIZE,
+                    parent           = valueColumn,
+                    anchorParent     = valueColumn,
+                    anchorA          = "LEFT",
+                    anchorB          = "LEFT",
+                    offsetX          = (i - 1) * (ICON_SIZE + 3),
+                    sizeX            = ICON_SIZE,
+                    sizeY            = ICON_SIZE,
                     qualityIconScale = 1.3,
                 }
                 valueColumn["icon" .. i]:Hide()
@@ -90,15 +90,15 @@ local function createContent(frame)
     }
 
     frame.content.priceOverrideWarning = GGUI.Texture {
-        atlas         = "Ping_Chat_Warning",
-        sizeX         = 25,
-        sizeY         = 25,
-        parent        = frame.content,
-        anchorParent  = frame.content,
-        anchorA       = "TOPLEFT",
-        anchorB       = "TOPLEFT",
-        offsetX       = 15,
-        offsetY       = -8,
+        atlas          = "Ping_Chat_Warning",
+        sizeX          = 25,
+        sizeY          = 25,
+        parent         = frame.content,
+        anchorParent   = frame.content,
+        anchorA        = "TOPLEFT",
+        anchorB        = "TOPLEFT",
+        offsetX        = 15,
+        offsetY        = -8,
         tooltipOptions = {
             anchor = "ANCHOR_CURSOR_RIGHT",
             text   = f.l("Price Overrides Active"),
@@ -106,11 +106,11 @@ local function createContent(frame)
     }
 
     frame.content.optionsButton = CraftSim.WIDGETS.OptionsButton {
-        parent       = frame.content,
-        anchorPoints = {
+        parent           = frame.content,
+        anchorPoints     = {
             { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 },
         },
-        tooltipOptions = {
+        tooltipOptions   = {
             anchor = "ANCHOR_CURSOR_RIGHT",
             text   = L("RECIPE_INFO_OPTIONS_TOOLTIP"),
         },
@@ -138,20 +138,32 @@ local function createContent(frame)
             end
 
             -- Default-on rows (stat weights)
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_PROFIT"),             "AVG_PROFIT",             L("RECIPE_INFO_OPTION_AVG_PROFIT_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT"),      "MULTICRAFT_WEIGHT",      L("RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT"), "RESOURCEFULNESS_WEIGHT", L("RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT"),   "CONCENTRATION_WEIGHT",   L("RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_PROFIT"), "AVG_PROFIT",
+                L("RECIPE_INFO_OPTION_AVG_PROFIT_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT"), "MULTICRAFT_WEIGHT",
+                L("RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT"), "RESOURCEFULNESS_WEIGHT",
+                L("RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT"), "CONCENTRATION_WEIGHT",
+                L("RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT_TOOLTIP"))
             -- Extra rows (default off)
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_CRAFTING_COST"),               "CRAFTING_COST",               L("RECIPE_INFO_OPTION_CRAFTING_COST_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_CRAFTING_COST"),           "AVG_CRAFTING_COST",           L("RECIPE_INFO_OPTION_AVG_CRAFTING_COST_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_RESULT_ICONS"),                "RESULT_ICONS",                L("RECIPE_INFO_OPTION_RESULT_ICONS_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_KNOWLEDGE_POINTS"),            "KNOWLEDGE_POINTS",            L("RECIPE_INFO_OPTION_KNOWLEDGE_POINTS_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_YIELD"),                   "AVG_YIELD",                   L("RECIPE_INFO_OPTION_AVG_YIELD_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS"),        "AVG_MULTICRAFT_ITEMS",        L("RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED"),   "AVG_RESOURCEFULNESS_SAVED",   L("RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_PROFIT"),        "CONCENTRATION_PROFIT",        L("RECIPE_INFO_OPTION_CONCENTRATION_PROFIT_TOOLTIP"))
-            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_COST"),          "CONCENTRATION_COST",          L("RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_CRAFTING_COST"), "CRAFTING_COST",
+                L("RECIPE_INFO_OPTION_CRAFTING_COST_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_CRAFTING_COST"), "AVG_CRAFTING_COST",
+                L("RECIPE_INFO_OPTION_AVG_CRAFTING_COST_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_RESULT_ICONS"), "RESULT_ICONS",
+                L("RECIPE_INFO_OPTION_RESULT_ICONS_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_KNOWLEDGE_POINTS"), "KNOWLEDGE_POINTS",
+                L("RECIPE_INFO_OPTION_KNOWLEDGE_POINTS_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_YIELD"), "AVG_YIELD", L("RECIPE_INFO_OPTION_AVG_YIELD_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS"), "AVG_MULTICRAFT_ITEMS",
+                L("RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED"), "AVG_RESOURCEFULNESS_SAVED",
+                L("RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_PROFIT"), "CONCENTRATION_PROFIT",
+                L("RECIPE_INFO_OPTION_CONCENTRATION_PROFIT_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_COST"), "CONCENTRATION_COST",
+                L("RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP"))
         end,
     }
 
@@ -159,57 +171,57 @@ local function createContent(frame)
 end
 
 function CraftSim.RECIPE_INFO.UI:Init()
-    local sizeX   = 320
-    local sizeY   = 120
-    local offsetX = -10
-    local offsetY = 30
+    local sizeX                  = 320
+    local sizeY                  = 105
+    local offsetX                = -10
+    local offsetY                = 30
 
-    CraftSim.RECIPE_INFO.frame = GGUI.Frame({
-        parent           = ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent     = ProfessionsFrame,
-        anchorA          = "BOTTOMRIGHT",
-        anchorB          = "BOTTOMRIGHT",
-        sizeX            = sizeX,
-        sizeY            = sizeY,
-        offsetX          = offsetX,
-        offsetY          = offsetY,
-        frameID          = CraftSim.CONST.FRAMES.AVERAGE_PROFIT,
-        title            = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE"),
-        collapseable     = true,
-        closeable        = true,
-        moveable         = true,
-        backdropOptions  = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback  = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
-        frameTable       = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata      = CraftSim.CONST.MODULES_FRAME_STRATA,
+    CraftSim.RECIPE_INFO.frame   = GGUI.Frame({
+        parent             = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent       = ProfessionsFrame,
+        anchorA            = "BOTTOMRIGHT",
+        anchorB            = "BOTTOMRIGHT",
+        sizeX              = sizeX,
+        sizeY              = sizeY,
+        offsetX            = offsetX,
+        offsetY            = offsetY,
+        frameID            = CraftSim.CONST.FRAMES.AVERAGE_PROFIT,
+        title              = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE"),
+        collapseable       = true,
+        closeable          = true,
+        moveable           = true,
+        backdropOptions    = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback    = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
+        frameTable         = CraftSim.INIT.FRAMES,
+        frameConfigTable   = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata        = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
-        frameLevel       = CraftSim.UTIL:NextFrameLevel(),
+        frameLevel         = CraftSim.UTIL:NextFrameLevel(),
     })
 
     CraftSim.RECIPE_INFO.frameWO = GGUI.Frame({
-        parent           = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        anchorParent     = ProfessionsFrame,
-        anchorA          = "BOTTOMRIGHT",
-        anchorB          = "BOTTOMRIGHT",
-        sizeX            = sizeX,
-        sizeY            = sizeY,
-        offsetX          = offsetX,
-        offsetY          = offsetY,
-        frameID          = CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO,
-        title            = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE") ..
+        parent             = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
+        anchorParent       = ProfessionsFrame,
+        anchorA            = "BOTTOMRIGHT",
+        anchorB            = "BOTTOMRIGHT",
+        sizeX              = sizeX,
+        sizeY              = sizeY,
+        offsetX            = offsetX,
+        offsetY            = offsetY,
+        frameID            = CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO,
+        title              = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE") ..
             " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"), GUTIL.COLORS.GREY),
-        collapseable     = true,
-        closeable        = true,
-        moveable         = true,
-        backdropOptions  = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback  = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
-        frameTable       = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata      = CraftSim.CONST.MODULES_FRAME_STRATA,
+        collapseable       = true,
+        closeable          = true,
+        moveable           = true,
+        backdropOptions    = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback    = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
+        frameTable         = CraftSim.INIT.FRAMES,
+        frameConfigTable   = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata        = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
-        frameLevel       = CraftSim.UTIL:NextFrameLevel(),
-        raiseOnClick     = true,
+        frameLevel         = CraftSim.UTIL:NextFrameLevel(),
+        raiseOnClick       = true,
     })
 
     createContent(CraftSim.RECIPE_INFO.frame)
@@ -219,10 +231,10 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param statWeights CraftSim.Statweights
 function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
-    local recipeInfoFrame     = self:GetFrameByExportMode()
-    local opts                = CraftSim.RECIPE_INFO:GetDisplayOptions()
-    local showProfitPct       = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
-    local craftingCosts       = recipeData.priceData.craftingCosts
+    local recipeInfoFrame      = self:GetFrameByExportMode()
+    local opts                 = CraftSim.RECIPE_INFO:GetDisplayOptions()
+    local showProfitPct        = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
+    local craftingCosts        = recipeData.priceData.craftingCosts
 
     local priceOverrideWarning = recipeInfoFrame.content.priceOverrideWarning --[[@as GGUI.Texture]]
     priceOverrideWarning:SetVisible(recipeData.priceData:PriceOverridesActive())
