@@ -304,6 +304,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
 end
 
 local specNodeTooltipHooked = false
+
 function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
     if specNodeTooltipHooked then return end
     specNodeTooltipHooked = true
@@ -317,11 +318,19 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
         local label = CraftSim.LOCAL:GetText("SPECIALIZATION_INFO_TOOLTIP_LABEL")
         local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
         if next(crafterUIDRankMap) then
+            ---@type CrafterUID[]
+            local orderedUIDs = {}
+            for crafterUID in pairs(crafterUIDRankMap) do
+                tinsert(orderedUIDs, crafterUID)
+            end
+            table.sort(orderedUIDs)
+            local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(orderedUIDs)
+
             GameTooltip:AddLine("\n" .. f.white(label) .. "\n")
-            for crafterUID, rank in pairs(crafterUIDRankMap) do
-                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-                local crafterNameColored = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterUID)
-                GameTooltip:AddLine(crafterNameColored .. ": " .. rank)
+            for _, crafterUID in ipairs(orderedUIDs) do
+                local rank = crafterUIDRankMap[crafterUID]
+                local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
+                GameTooltip:AddLine(CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, display) .. ": " .. rank)
             end
 
             GameTooltip:Show()

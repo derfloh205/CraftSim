@@ -563,7 +563,13 @@ function CraftSim.CRAFTQ:AddRecipe(options)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     local recipeData = options.recipeData
-    local amount = options.amount or 1
+    local amount = options.amount
+    if amount == nil then
+        amount = 1
+    end
+    if amount <= 0 then
+        return
+    end
 
     local function finalizeAdd()
         CraftSim.CRAFTQ.UI:UpdateQueueDisplay()

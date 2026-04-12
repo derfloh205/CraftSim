@@ -413,7 +413,7 @@ function CraftSim.COOLDOWNS.UI:PopulateCooldownRow(row, crafterUID, recipeID, se
     local allColumn = columns[5]
 
     local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-    local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
+    local crafterName = f.class(select(1, CraftSim.UTIL:SplitCrafterUID(crafterUID)) or crafterUID, crafterClass)
     local tooltipText = f.class(crafterUID, crafterClass)
 
     local professionIcon = ""
@@ -759,7 +759,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                                 16, 16) .. " "
                         end
                         row.columns[1].text:SetText(professionIcon ..
-                            f.class(select(1, strsplit("-", crafterUID), rowClass)))
+                            f.class(select(1, CraftSim.UTIL:SplitCrafterUID(crafterUID)) or crafterUID, rowClass))
                         if cooldownData.sharedCD then
                             row.sortRecipeName = L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD])
                             row.columns[2].text:SetText(row.sortRecipeName)

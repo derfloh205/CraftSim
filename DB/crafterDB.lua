@@ -198,21 +198,69 @@ function CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, recipeData)
     return nil
 end
 
+--- Write all CraftSim-mapped base nodes for this profession from C_Traits into the crafter DB.
+--- Recipe-scoped Serialize() only covered nodes tied to the open recipe; tooltips and alts need the full tree.
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@param professionID Enum.Profession
+---@param configID number
+function CraftSim.DB.CRAFTER:SaveProfessionSpecializationFromTraitAPI(crafterUID, expansionID, professionID, configID)
+    if not configID or configID == 0 then
+        return
+    end
+    local expansionSpecData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not expansionSpecData then
+        return
+    end
+    local professionSpecData = expansionSpecData[professionID]
+    if not professionSpecData or not professionSpecData.nodeData then
+        return
+    end
+
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID] = crafterData
+    crafterData.specializationData = crafterData.specializationData or {}
+    crafterData.specializationData[expansionID] = crafterData.specializationData[expansionID] or {}
+    local existing = crafterData.specializationData[expansionID][professionID] or {}
+
+    for _, raw in pairs(professionSpecData.nodeData) do
+        if raw.maxRank and raw.maxRank > 1 and raw.nodeID then
+            local nodeInfo = C_Traits.GetNodeInfo(configID, raw.nodeID)
+            local rank = -1
+            if nodeInfo and nodeInfo.activeRank then
+                rank = nodeInfo.activeRank - 1
+            end
+            existing[raw.nodeID] = rank
+        end
+    end
+
+    crafterData.specializationData[expansionID][professionID] = existing
+end
+
 ---@param crafterUID CrafterUID
 ---@param specializationData CraftSim.SpecializationData
 function CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
+    local recipeData = specializationData.recipeData
+    local expansionID = recipeData.professionData.expansionID
+    local professionID = recipeData.professionData.professionInfo.profession
+    local configID = recipeData.professionData.configID
+
+    if expansionID and professionID and configID then
+        self:SaveProfessionSpecializationFromTraitAPI(crafterUID, expansionID, professionID, configID)
+        return
+    end
+
+    if not expansionID or not professionID then
+        return
+    end
+
     local crafterData = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID] = crafterData
     crafterData.specializationData = crafterData.specializationData or {}
 
-    local expansionID = specializationData.recipeData.professionData.expansionID
-    local professionID = specializationData.recipeData.professionData.professionInfo.profession
-
     crafterData.specializationData[expansionID] = crafterData.specializationData[expansionID] or {}
     local existing = crafterData.specializationData[expansionID][professionID] or {}
 
-    -- Merge this recipe's node ranks into the profession-level store.
-    -- Different recipes share the same spec tree so ranks are consistent.
     local serialized = specializationData:Serialize()
     for nodeID, rank in pairs(serialized) do
         existing[nodeID] = rank
