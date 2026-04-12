@@ -297,10 +297,74 @@ function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
     return crafterData.name .. "-" .. crafterData.realm
 end
 
+--- Player name cannot contain '-'; realm may contain hyphens. Split on the first '-' only.
+---@param crafterUID CrafterUID
+---@return string? name
+---@return string? realm
+function CraftSim.UTIL:SplitCrafterUID(crafterUID)
+    if not crafterUID or crafterUID == "" then
+        return nil, nil
+    end
+    local pos = string.find(crafterUID, "-", 1, true)
+    if not pos or pos < 2 then
+        return nil, nil
+    end
+    local name = string.sub(crafterUID, 1, pos - 1)
+    local realm = string.sub(crafterUID, pos + 1)
+    if realm == "" then
+        return nil, nil
+    end
+    return name, realm
+end
+
+--- How many times each character name appears (case-insensitive), for Name-Realm UIDs only.
+---@param crafterUIDs CrafterUID[]
+---@return table<string, number> lowerNameToCount
+function CraftSim.UTIL:CountCrafterNamesByUIDList(crafterUIDs)
+    ---@type table<string, number>
+    local counts = {}
+    for _, uid in ipairs(crafterUIDs) do
+        local name = select(1, self:SplitCrafterUID(uid))
+        if name then
+            local key = string.lower(name)
+            counts[key] = (counts[key] or 0) + 1
+        end
+    end
+    return counts
+end
+
+--- Name only if unique in the peer list; Name-Realm when the same name appears on multiple characters.
+---@param crafterUID CrafterUID
+---@param nameCounts table<string, number> from CountCrafterNamesByUIDList
+---@return string
+function CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
+    local name, realm = self:SplitCrafterUID(crafterUID)
+    if not name or not realm then
+        return crafterUID
+    end
+    local key = string.lower(name)
+    if (nameCounts[key] or 0) <= 1 then
+        return name
+    end
+    return name .. "-" .. realm
+end
+
+--- Class-colored display text, or grey if class is unknown.
+---@param crafterUID CrafterUID
+---@param displayText string
+---@return string
+function CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, displayText)
+    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+    if crafterClass then
+        return C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(displayText)
+    end
+    return f.grey(displayText)
+end
+
 ---@param crafterUID CrafterUID
 ---@return CraftSim.CrafterData? crafterData nil if not fully cached
 function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
-    local name, realm = strsplit("-", crafterUID)
+    local name, realm = CraftSim.UTIL:SplitCrafterUID(crafterUID)
     local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
 
     if name and realm and crafterClass then
