@@ -293,25 +293,34 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
             f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
     end
 
-    if opts.MULTICRAFT_WEIGHT and statWeights and statWeights.multicraftWeight and recipeData.supportsMulticraft then
-        addTextRow(
-            L("MULTICRAFT_LABEL"),
-            CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight),
-            f.white("Profit increase " .. f.l("per point ") .. f.bb("Multicraft")))
+    if opts.MULTICRAFT_WEIGHT and statWeights and recipeData.supportsMulticraft then
+        local formatted = CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight)
+        if formatted ~= "" then
+            addTextRow(
+                L("MULTICRAFT_LABEL"),
+                formatted,
+                f.white("Profit increase " .. f.l("per point ") .. f.bb("Multicraft")))
+        end
     end
 
-    if opts.RESOURCEFULNESS_WEIGHT and statWeights and statWeights.resourcefulnessWeight and recipeData.supportsResourcefulness then
-        addTextRow(
-            L("RESOURCEFULNESS_LABEL"),
-            CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight),
-            f.white("Profit increase " .. f.l("per point ") .. f.bb("Resourcefulness")))
+    if opts.RESOURCEFULNESS_WEIGHT and statWeights and recipeData.supportsResourcefulness then
+        local formatted = CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight)
+        if formatted ~= "" then
+            addTextRow(
+                L("RESOURCEFULNESS_LABEL"),
+                formatted,
+                f.white("Profit increase " .. f.l("per point ") .. f.bb("Resourcefulness")))
+        end
     end
 
-    if opts.CONCENTRATION_WEIGHT and statWeights and statWeights.concentrationWeight and recipeData.supportsQualities and recipeData.concentrationCost > 0 then
-        addTextRow(
-            L("CONCENTRATION_LABEL"),
-            CraftSim.UTIL:FormatMoney(statWeights.concentrationWeight),
-            f.white("Profit " .. f.l("per point ") .. f.bb("Concentration") .. " considering " .. f.bb("Ingenuity")))
+    if opts.CONCENTRATION_WEIGHT and statWeights and recipeData.supportsQualities and recipeData.concentrationCost > 0 then
+        local formatted = CraftSim.UTIL:FormatMoney(statWeights.concentrationWeight)
+        if formatted ~= "" then
+            addTextRow(
+                L("CONCENTRATION_LABEL"),
+                formatted,
+                f.white("Profit " .. f.l("per point ") .. f.bb("Concentration") .. " considering " .. f.bb("Ingenuity")))
+        end
     end
 
     -- ── Extra rows (default off) ─────────────────────────────────────────────
