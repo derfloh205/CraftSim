@@ -50,8 +50,15 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		if statName == craftingspeed then
 			self.craftingspeed:SetValueByPercent(statInfo.ratingPct / 100)
 		elseif statName == multicraft then
-			self.multicraft.value = statInfo.bonusStatValue
-			recipeData.supportsMulticraft = true
+			local pct = statInfo.ratingPct
+			local hasYield = pct ~= nil and pct > 0
+			if not hasYield and pct == nil and (statInfo.bonusStatValue or 0) > 0 then
+				hasYield = true
+			end
+			if hasYield then
+				self.multicraft.value = statInfo.bonusStatValue
+				recipeData.supportsMulticraft = true
+			end
 		elseif statName == resourcefulness then
 			self.resourcefulness.value = statInfo.bonusStatValue
 			recipeData.supportsResourcefulness = true
