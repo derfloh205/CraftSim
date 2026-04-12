@@ -260,6 +260,8 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("Right Click") .. " on any reagent or result item to override its price by a custom value",
         PRICING_CRAFTING_COSTS = "Crafting Costs: ",
         PRICING_ITEM_HEADER = "Item",
+        PRICING_CALCULATE_SUB_RECIPE_COSTS = "Calculate Sub-Recipe Costs",
+        PRICING_AUTO_SUB_RECIPE_COSTS = "Auto Sub-Recipe Costs",
         PRICING_DELETE_ALL_OVERRIDES = "Delete All Overrides",
         COST_OPTIMIZATION_PRICE_HEADER = "Price",
         COST_OPTIMIZATION_USED_SOURCE = "Source",

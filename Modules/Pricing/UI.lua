@@ -102,168 +102,24 @@ function CraftSim.PRICING.UI:Init()
                     CraftSim.DB.PRICE_OVERRIDE:ClearAll()
                     CraftSim.MODULES:UpdateUI()
                 end)
-                rootDescription:CreateButton(f.bb("Calculate Sub-Recipe Costs"), function()
+                rootDescription:CreateButton(f.bb(L("PRICING_CALCULATE_SUB_RECIPE_COSTS")), function()
                     local recipeData = CraftSim.MODULES.recipeData
                     if not recipeData then return end
-
-                    local costDB = CraftSim.DB.ITEM_OPTIMIZED_COSTS.db.data
-
-                    -- Register any of the given itemIDs that are missing from ITEM_RECIPE by
-                    -- scanning every crafter's cached recipe list.
-                    -- GetRecipeQualityItemIDs works from WoW's static cache (no open profession needed).
-                    local function discoverMissingItems(itemIDs)
-                        local missing = {}
-                        for _, itemID in ipairs(itemIDs) do
-                            if itemID and not CraftSim.DB.ITEM_RECIPE:Get(itemID) then
-                                missing[itemID] = true
-                            end
-                        end
-                        if not next(missing) then return end
-                        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data or {}) do
-                            if not next(missing) then break end
-                            local crafterDBEntry = CraftSimDB.crafterDB.data[crafterUID]
-                            for _, recipeIDs in pairs(crafterDBEntry.cachedRecipeIDs or {}) do
-                                if not next(missing) then break end
-                                for _, recipeID in ipairs(recipeIDs) do
-                                    if not next(missing) then break end
-                                    local qualityItemIDs = C_TradeSkillUI.GetRecipeQualityItemIDs(recipeID)
-                                    if qualityItemIDs then
-                                        for qualityID, itemID in ipairs(qualityItemIDs) do
-                                            if missing[itemID] then
-                                                CraftSim.DB.ITEM_RECIPE:Add(recipeID, qualityID, itemID, crafterUID)
-                                                missing[itemID] = nil
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-
-                    -- Recursively optimize sub-recipes bottom-up:
-                    --   deepest sub-recipes are computed first, then their costs propagate
-                    --   upward so each parent recipe prices its reagents using self-craft costs.
-                    --
-                    -- Each quality tier of a reagent slot gets its own RecipeData and its own
-                    -- OptimizeReagents({maxQuality = q}) call, so rank-1 uses cheap inputs and
-                    -- rank-2 uses expensive inputs — they are never conflated.
-                    --
-                    -- callStack is the list of recipeIDs on the current call path; used to
-                    -- break circular dependencies (e.g. recipe A whose sub-recipe is recipe A).
-                    local function optimizeSubRecipesPerTier(parentRD, callStack, depth)
-                        if depth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
-                            return
-                        end
-
-                        for _, reagent in ipairs(parentRD.reagentData.requiredReagents) do
-                            if reagent.hasQuality then
-                                -- Collect slot itemIDs and fill any missing ITEM_RECIPE entries
-                                local slotItemIDs = {}
-                                for _, reagentItem in ipairs(reagent.items) do
-                                    local itemID = reagentItem.item:GetItemID()
-                                    if itemID then tinsert(slotItemIDs, itemID) end
-                                end
-                                discoverMissingItems(slotItemIDs)
-
-                                -- Find the recipe that produces this slot's items
-                                local slotRecipeID, slotCrafterUID
-                                for _, itemID in ipairs(slotItemIDs) do
-                                    local info = CraftSim.DB.ITEM_RECIPE:Get(itemID)
-                                    if info then
-                                        slotRecipeID = info.recipeID
-                                        slotCrafterUID = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(slotRecipeID)
-                                        break
-                                    end
-                                end
-
-                                if slotRecipeID and slotCrafterUID then
-                                    -- Skip if this recipe is already in the current call path (cycle)
-                                    local isCycle = false
-                                    for _, ancestorID in ipairs(callStack) do
-                                        if ancestorID == slotRecipeID then
-                                            isCycle = true
-                                            break
-                                        end
-                                    end
-
-                                    if not isCycle then
-                                        local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(slotCrafterUID)
-                                        if crafterData then
-                                            -- Register any sibling quality tiers not yet in ITEM_RECIPE
-                                            for q, reagentItem in ipairs(reagent.items) do
-                                                local itemID = reagentItem.item:GetItemID()
-                                                if itemID and not CraftSim.DB.ITEM_RECIPE:Get(itemID) then
-                                                    CraftSim.DB.ITEM_RECIPE:Add(slotRecipeID, q, itemID, slotCrafterUID)
-                                                end
-                                            end
-
-                                            tinsert(callStack, slotRecipeID)
-
-                                            for q, reagentItem in ipairs(reagent.items) do
-                                                local itemID = reagentItem.item:GetItemID()
-                                                if itemID then
-                                                    local subRD = CraftSim.RecipeData({
-                                                        recipeID    = slotRecipeID,
-                                                        crafterData = crafterData,
-                                                    })
-
-                                                    -- Recurse: compute sub-sub-recipe costs first
-                                                    optimizeSubRecipesPerTier(subRD, callStack, depth + 1)
-
-                                                    -- Enable sub-recipe prices and sync so that
-                                                    -- OptimizeReagentAllocation uses them when
-                                                    -- choosing the cheapest reagent combination.
-                                                    subRD:SetSubRecipeCostsUsage(true)
-                                                    subRD:Update()
-
-                                                    -- Optimize targeting exactly this quality tier
-                                                    subRD:OptimizeReagents({ maxQuality = q, highestProfit = false })
-
-                                                    -- Check reachability; respect concentration option
-                                                    local reachable, concentrationOnly =
-                                                        subRD.resultData:IsMinimumQualityReachable(q)
-                                                    local allowConcentration = CraftSim.DB.OPTIONS:Get(
-                                                        "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION")
-                                                    if concentrationOnly and not allowConcentration then
-                                                        reachable = false
-                                                    end
-
-                                                    if reachable then
-                                                        local expectedCostsPerItem =
-                                                            subRD.priceData.expectedCostsPerItem or 0
-                                                        local concentrationAvailable = subRD.concentrationCost > 0
-                                                        local concentration = concentrationAvailable and
-                                                            concentrationOnly
-
-                                                        -- Write only this tier's cost — never overwrite siblings
-                                                        costDB[itemID] = costDB[itemID] or {}
-                                                        costDB[itemID][slotCrafterUID] = {
-                                                            crafter               = slotCrafterUID,
-                                                            qualityID             = q,
-                                                            expectedCostsPerItem  = expectedCostsPerItem,
-                                                            expectedYieldPerCraft = subRD.resultData.expectedYieldPerCraft,
-                                                            concentration         = concentration,
-                                                            concentrationCost     = subRD.concentrationCost,
-                                                            profession            = subRD.professionData.professionInfo.profession,
-                                                        }
-                                                    end
-                                                end
-                                            end
-
-                                            table.remove(callStack)
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-
-                    optimizeSubRecipesPerTier(recipeData, {}, 0)
-
+                    CraftSim.PRICING.UI:RunSubRecipeOptimization(recipeData)
                     recipeData:SetSubRecipeCostsUsage(true)
                     recipeData.priceData:Update()
                     CraftSim.PRICING:UpdateDisplay(recipeData)
                 end)
+                rootDescription:CreateCheckbox(
+                    L("PRICING_AUTO_SUB_RECIPE_COSTS"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("PRICING_AUTO_SUB_RECIPE_COSTS")
+                    end,
+                    function()
+                        CraftSim.DB.OPTIONS:Save("PRICING_AUTO_SUB_RECIPE_COSTS",
+                            not CraftSim.DB.OPTIONS:Get("PRICING_AUTO_SUB_RECIPE_COSTS"))
+                    end
+                )
             end
         }
         GGUI.HelpIcon({
@@ -625,8 +481,142 @@ function CraftSim.PRICING.UI:Init()
     createContent(CraftSim.PRICING.frameWO)
 end
 
+--- Recursively compute per-quality-tier sub-recipe costs for recipeData and
+--- write them into ITEM_OPTIMIZED_COSTS. Called by both the manual button and
+--- the auto-recalc path in UpdateDisplay.
+---@param recipeData CraftSim.RecipeData
+function CraftSim.PRICING.UI:RunSubRecipeOptimization(recipeData)
+    local costDB = CraftSim.DB.ITEM_OPTIMIZED_COSTS.db.data
+
+    local function discoverMissingItems(itemIDs)
+        local missing = {}
+        for _, itemID in ipairs(itemIDs) do
+            if itemID and not CraftSim.DB.ITEM_RECIPE:Get(itemID) then
+                missing[itemID] = true
+            end
+        end
+        if not next(missing) then return end
+        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data or {}) do
+            if not next(missing) then break end
+            local crafterDBEntry = CraftSimDB.crafterDB.data[crafterUID]
+            for _, recipeIDs in pairs(crafterDBEntry.cachedRecipeIDs or {}) do
+                if not next(missing) then break end
+                for _, recipeID in ipairs(recipeIDs) do
+                    if not next(missing) then break end
+                    local qualityItemIDs = C_TradeSkillUI.GetRecipeQualityItemIDs(recipeID)
+                    if qualityItemIDs then
+                        for qualityID, itemID in ipairs(qualityItemIDs) do
+                            if missing[itemID] then
+                                CraftSim.DB.ITEM_RECIPE:Add(recipeID, qualityID, itemID, crafterUID)
+                                missing[itemID] = nil
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    local function optimizeSubRecipesPerTier(parentRD, callStack, depth)
+        if depth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
+            return
+        end
+
+        for _, reagent in ipairs(parentRD.reagentData.requiredReagents) do
+            if reagent.hasQuality then
+                local slotItemIDs = {}
+                for _, reagentItem in ipairs(reagent.items) do
+                    local itemID = reagentItem.item:GetItemID()
+                    if itemID then tinsert(slotItemIDs, itemID) end
+                end
+                discoverMissingItems(slotItemIDs)
+
+                local slotRecipeID, slotCrafterUID
+                for _, itemID in ipairs(slotItemIDs) do
+                    local info = CraftSim.DB.ITEM_RECIPE:Get(itemID)
+                    if info then
+                        slotRecipeID = info.recipeID
+                        slotCrafterUID = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(slotRecipeID)
+                        break
+                    end
+                end
+
+                if slotRecipeID and slotCrafterUID then
+                    local isCycle = false
+                    for _, ancestorID in ipairs(callStack) do
+                        if ancestorID == slotRecipeID then isCycle = true; break end
+                    end
+
+                    if not isCycle then
+                        local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(slotCrafterUID)
+                        if crafterData then
+                            for q, reagentItem in ipairs(reagent.items) do
+                                local itemID = reagentItem.item:GetItemID()
+                                if itemID and not CraftSim.DB.ITEM_RECIPE:Get(itemID) then
+                                    CraftSim.DB.ITEM_RECIPE:Add(slotRecipeID, q, itemID, slotCrafterUID)
+                                end
+                            end
+
+                            tinsert(callStack, slotRecipeID)
+
+                            for q, reagentItem in ipairs(reagent.items) do
+                                local itemID = reagentItem.item:GetItemID()
+                                if itemID then
+                                    local subRD = CraftSim.RecipeData({
+                                        recipeID    = slotRecipeID,
+                                        crafterData = crafterData,
+                                    })
+                                    optimizeSubRecipesPerTier(subRD, callStack, depth + 1)
+                                    subRD:SetSubRecipeCostsUsage(true)
+                                    subRD:Update()
+                                    subRD:OptimizeReagents({ maxQuality = q, highestProfit = false })
+
+                                    local reachable, concentrationOnly =
+                                        subRD.resultData:IsMinimumQualityReachable(q)
+                                    local allowConcentration = CraftSim.DB.OPTIONS:Get(
+                                        "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION")
+                                    if concentrationOnly and not allowConcentration then
+                                        reachable = false
+                                    end
+
+                                    if reachable then
+                                        local expectedCostsPerItem =
+                                            subRD.priceData.expectedCostsPerItem or 0
+                                        local concentrationAvailable = subRD.concentrationCost > 0
+                                        local concentration = concentrationAvailable and concentrationOnly
+                                        costDB[itemID] = costDB[itemID] or {}
+                                        costDB[itemID][slotCrafterUID] = {
+                                            crafter               = slotCrafterUID,
+                                            qualityID             = q,
+                                            expectedCostsPerItem  = expectedCostsPerItem,
+                                            expectedYieldPerCraft = subRD.resultData.expectedYieldPerCraft,
+                                            concentration         = concentration,
+                                            concentrationCost     = subRD.concentrationCost,
+                                            profession            = subRD.professionData.professionInfo.profession,
+                                        }
+                                    end
+                                end
+                            end
+
+                            table.remove(callStack)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    optimizeSubRecipesPerTier(recipeData, {}, 0)
+end
+
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PRICING:UpdateDisplay(recipeData)
+    if CraftSim.DB.OPTIONS:Get("PRICING_AUTO_SUB_RECIPE_COSTS") then
+        CraftSim.PRICING.UI:RunSubRecipeOptimization(recipeData)
+        recipeData:SetSubRecipeCostsUsage(true)
+        recipeData.priceData:Update()
+    end
+
     local costOptimizationFrame = nil
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
