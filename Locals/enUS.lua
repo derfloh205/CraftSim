@@ -246,6 +246,56 @@ function CraftSim.LOCAL_EN:GetData()
         STAT_WEIGHTS_PROFIT_CRAFT = "Ø Profit / Craft: ",
         EXPLANATIONS_BASIC_PROFIT_TAB = "Basic Profit Calculation",
 
+        -- Recipe Info Frame
+        RECIPE_INFO_TITLE = "CraftSim Recipe Info",
+        RECIPE_INFO_OPTIONS_TOOLTIP = "Toggle displayed data",
+        RECIPE_INFO_RESULT_ITEMS_LABEL = "Result Items: ",
+        RECIPE_INFO_CRAFTING_COST_LABEL = "Crafting Cost: ",
+        RECIPE_INFO_AVG_CRAFTING_COST_LABEL = "Ø Craft Cost: ",
+        RECIPE_INFO_KNOWLEDGE_POINTS_LABEL = "Knowledge Points: ",
+        RECIPE_INFO_AVG_YIELD_LABEL = "Ø Yield: ",
+        RECIPE_INFO_AVG_MULTICRAFT_ITEMS_LABEL = "Ø MC Extra Items: ",
+        RECIPE_INFO_AVG_RESOURCEFULNESS_SAVED_LABEL = "Ø Res Saved: ",
+        RECIPE_INFO_CONCENTRATION_PROFIT_LABEL = "Conc. Profit: ",
+        RECIPE_INFO_CONCENTRATION_COST_LABEL = "Conc. Base Cost: ",
+        -- Recipe Info context menu option labels (stat-weight rows, default on)
+        RECIPE_INFO_OPTION_AVG_PROFIT = "Avg Profit",
+        RECIPE_INFO_OPTION_AVG_PROFIT_TOOLTIP = "Show the average profit per craft based on your profession stats",
+        RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT = "Multicraft Weight",
+        RECIPE_INFO_OPTION_MULTICRAFT_WEIGHT_TOOLTIP =
+        "Show the profit increase per point of Multicraft",
+        RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT = "Resourcefulness Weight",
+        RECIPE_INFO_OPTION_RESOURCEFULNESS_WEIGHT_TOOLTIP =
+        "Show the profit increase per point of Resourcefulness",
+        RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT = "Concentration Weight",
+        RECIPE_INFO_OPTION_CONCENTRATION_WEIGHT_TOOLTIP =
+        "Show the profit per point of Concentration, accounting for Ingenuity refund",
+        -- Recipe Info context menu option labels (extra rows, default off)
+        RECIPE_INFO_OPTION_CRAFTING_COST = "Crafting Cost",
+        RECIPE_INFO_OPTION_CRAFTING_COST_TOOLTIP = "Show the total crafting cost for one craft",
+        RECIPE_INFO_OPTION_AVG_CRAFTING_COST = "Avg Crafting Cost",
+        RECIPE_INFO_OPTION_AVG_CRAFTING_COST_TOOLTIP =
+        "Show the average crafting cost per craft considering Resourcefulness",
+        RECIPE_INFO_OPTION_RESULT_ICONS = "Result Item Icons",
+        RECIPE_INFO_OPTION_RESULT_ICONS_TOOLTIP = "Show icons for each possible result item quality",
+        RECIPE_INFO_OPTION_KNOWLEDGE_POINTS = "Knowledge Points",
+        RECIPE_INFO_OPTION_KNOWLEDGE_POINTS_TOOLTIP =
+        "Show allocated vs maximum knowledge points for nodes affecting this recipe",
+        RECIPE_INFO_OPTION_AVG_YIELD = "Avg Yield",
+        RECIPE_INFO_OPTION_AVG_YIELD_TOOLTIP = "Show the average item yield per craft considering Multicraft",
+        RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS = "Avg Multicraft Extra Items",
+        RECIPE_INFO_OPTION_AVG_MULTICRAFT_ITEMS_TOOLTIP =
+        "Show the average number of extra items gained per craft from Multicraft procs",
+        RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED = "Avg Saved Costs (Resourcefulness)",
+        RECIPE_INFO_OPTION_AVG_RESOURCEFULNESS_SAVED_TOOLTIP =
+        "Show the average reagent costs saved per craft from Resourcefulness procs",
+        RECIPE_INFO_OPTION_CONCENTRATION_PROFIT = "Avg Profit (with Concentration)",
+        RECIPE_INFO_OPTION_CONCENTRATION_PROFIT_TOOLTIP =
+        "Show the average profit per craft when using Concentration",
+        RECIPE_INFO_OPTION_CONCENTRATION_COST = "Concentration Cost",
+        RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP =
+        "Show the base Concentration point cost for one craft",
+
         -- Cost Details Frame
         PRICING_TITLE = "CraftSim Pricing",
         PRICING_EXPLANATION = "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
@@ -552,6 +602,9 @@ function CraftSim.LOCAL_EN:GetData()
         CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL = "Average Profit",
         CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP =
         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
+        CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL = "Recipe Info",
+        CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP =
+        "Shows recipe data including average profit, stat weights, and customizable additional information via the context menu.",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL = "Reagent Optimization",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP =
         "Suggests the cheapest reagents to reach the specific quality thresholds.",

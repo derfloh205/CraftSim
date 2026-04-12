@@ -333,7 +333,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.PRICE_API:InitPriceSource()
 
 
-		CraftSim.AVERAGEPROFIT.UI:Init()
+		CraftSim.RECIPE_INFO.UI:Init()
 		CraftSim.EXPLANATIONS.UI:Init()
 		CraftSim.TOPGEAR.UI:Init()
 		CraftSim.REAGENT_OPTIMIZATION.UI:Init()
