@@ -22,6 +22,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("25.1.0"),
+        f.PG .. f.bb("Average Profit -> Recipe Info"),
+        f.a .. "- Module renamed",
+        f.a .. "- Now provides the option to toggle multiple different",
+        f.a .. "  info rows for a quick overview of your most important data",
+        f.p .. "Profession stats handling updated",
+        f.p .. "Internal code optimizations",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("25.0.0"),
         f.PG .. f.g("New Disenchant Module"),
         f.a .. "- Basic disenchanting helper to mass disenchant",
