@@ -18,11 +18,17 @@ function CraftSim.CraftQueue:new()
 end
 
 ---@param options CraftSim.CraftQueueItem.Options
----@return CraftSim.CraftQueueItem
+---@return CraftSim.CraftQueueItem?
 function CraftSim.CraftQueue:AddRecipe(options)
     options = options or {}
     local recipeData = options.recipeData
-    local amount = options.amount or 1
+    local amount = options.amount
+    if amount == nil then
+        amount = 1
+    end
+    if amount <= 0 then
+        return nil
+    end
 
     print("Adding Recipe to Queue: " .. recipeData.recipeName .. " x" .. amount, true)
     print("concentrating: " .. tostring(recipeData.concentrating))
