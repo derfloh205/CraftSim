@@ -14,7 +14,12 @@ local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.INIT : Frame
-CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD", "TRADE_SKILL_FAVORITES_CHANGED" }
+CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
+	"ADDON_LOADED",
+	"PLAYER_LOGIN",
+	"PLAYER_ENTERING_WORLD",
+	"TRADE_SKILL_FAVORITES_CHANGED",
+}
 
 CraftSim.INIT.FRAMES = {}
 
