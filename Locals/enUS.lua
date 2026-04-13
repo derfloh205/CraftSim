@@ -501,6 +501,12 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
             " database is updated for each scanned recipe.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
+        RECIPE_SCAN_ONLY_CRAFTLISTS_BUTTON = "Only Craft Lists",
+        RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP = "When enabled, all other filters are ignored and only the selected craft lists are scanned using their respective optimization options.",
+        RECIPE_SCAN_CRAFTLISTS_SELECT_TITLE = "Select Craft Lists to Scan:",
+        RECIPE_SCAN_CRAFTLISTS_NO_LISTS = f.grey("No Craft Lists created yet"),
+        CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER = f.bb("Options") .. ":",
+        CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER = f.bb("Restock Options") .. ":",
 
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim Top Gear",
