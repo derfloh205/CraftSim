@@ -130,7 +130,9 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     -- Build inverse map: baseNodeID -> {recipeIDs}
     ---@type table<number, table<RecipeID, boolean>>
     local nodeToRecipes = {}
+    local recipeMappingCount = 0
     for recipeID, perkIDs in pairs(recipeMapping) do
+        recipeMappingCount = recipeMappingCount + 1
         for _, perkID in ipairs(perkIDs) do
             local perkEntry = nodeDataMap[perkID]
             if perkEntry then
@@ -150,6 +152,9 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
         end
     end
 
+    print("FullScan: profession=" .. tostring(profession) .. " expansion=" .. tostring(expansionID))
+    print("FullScan: recipeMapping=" .. recipeMappingCount .. " entries, nodeToRecipes=" .. GUTIL:Count(nodeToRecipes) .. " base nodes, baseNodes=" .. GUTIL:Count(baseNodes))
+
     -- Get cached recipe IDs for this profession
     local crafterUID = recipeData:GetCrafterUID()
     local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession) or {}
@@ -167,6 +172,9 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
     -- configID can be 0 (truthy in Lua but invalid for C_Traits) when tree hasn't loaded yet
     if configID == 0 then configID = nil end
+
+    print("FullScan: configID=" .. tostring(configID) .. " skillLineID=" .. tostring(recipeData.professionData.skillLineID))
+    print("FullScan: cachedRecipeIDs=" .. GUTIL:Count(cachedRecipeSet) .. " recipes")
 
     local total = GUTIL:Count(baseNodes)
     local progress = 0
@@ -188,22 +196,50 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
 
         if currentRank < baseNodeEntry.maxRank then
             local affectedRecipeIDs = nodeToRecipes[baseNodeID]
+
+            -- Debug: log first 3 nodes in detail
+            if progress <= 3 then
+                local affectedCount = affectedRecipeIDs and GUTIL:Count(affectedRecipeIDs) or 0
+                print("FullScan node #" .. progress .. ": id=" .. baseNodeID ..
+                    " rank=" .. currentRank .. "/" .. baseNodeEntry.maxRank ..
+                    " affectedRecipes=" .. affectedCount ..
+                    " nodeInfo=" .. tostring(nodeInfo ~= nil))
+            end
+
             if affectedRecipeIDs then
                 local totalDelta = 0
                 local recipeImpacts = {}
+                local recipesTried = 0
+                local recipesSkipped = 0
+                local recipesErrored = 0
 
                 for recipeID in pairs(affectedRecipeIDs) do
                     -- Only consider recipes the player actually knows
                     if cachedRecipeSet[recipeID] then
+                        recipesTried = recipesTried + 1
                         local ok, delta, impact = pcall(self.CalculateRecipeNodeDelta, self, recipeID, recipeData,
                             baseNodeID, currentRank)
-                        if ok and delta and delta ~= 0 then
+                        if not ok then
+                            recipesErrored = recipesErrored + 1
+                            if recipesErrored <= 2 then
+                                print("FullScan ERROR for recipe " .. recipeID .. " node " .. baseNodeID .. ": " .. tostring(delta))
+                            end
+                        elseif delta and delta ~= 0 then
                             totalDelta = totalDelta + delta
                             if impact then
                                 tinsert(recipeImpacts, impact)
                             end
                         end
+                    else
+                        recipesSkipped = recipesSkipped + 1
                     end
+                end
+
+                -- Debug: log recipe processing stats for first 3 nodes
+                if progress <= 3 then
+                    print("FullScan node #" .. progress .. " recipes: tried=" .. recipesTried ..
+                        " skipped=" .. recipesSkipped .. " errored=" .. recipesErrored ..
+                        " totalDelta=" .. string.format("%.2f", totalDelta))
                 end
 
                 -- Include node even if totalDelta is 0; shows investable nodes with neutral ROI
@@ -240,6 +276,12 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     -- Cache results
     self:CacheFullScanResults(crafterUID, results, profession, expansionID)
 
+    local nonZeroCount = 0
+    for _, r in ipairs(results) do
+        if r.roiPerPoint ~= 0 then nonZeroCount = nonZeroCount + 1 end
+    end
+    print("FullScan DONE: " .. #results .. " total results, " .. nonZeroCount .. " with non-zero ROI")
+
     CraftSim.DEBUG:StopProfiling("KnowledgeROI.FullProfessionScan")
     return results
 end
@@ -254,16 +296,25 @@ end
 function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipeData, targetNodeID, currentRank)
     -- Create recipe data for this recipe
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-    if not recipeInfo then return 0, nil end
+    if not recipeInfo then
+        print("  Delta: recipeID=" .. recipeID .. " -> NO recipeInfo")
+        return 0, nil
+    end
     if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then return 0, nil end
 
     local ok, simRecipe = pcall(CraftSim.RecipeData, {
         recipeID = recipeID,
         crafterData = contextRecipeData.crafterData,
     })
-    if not ok or not simRecipe then return 0, nil end
+    if not ok or not simRecipe then
+        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> RecipeData creation failed: " .. tostring(simRecipe))
+        return 0, nil
+    end
     if not simRecipe.supportsCraftingStats then return 0, nil end
-    if not simRecipe.specializationData then return 0, nil end
+    if not simRecipe.specializationData then
+        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> NO specializationData")
+        return 0, nil
+    end
 
     -- Base profit
     local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
@@ -272,14 +323,20 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
     local found = false
     for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
         if nodeData.nodeID == targetNodeID then
-            if nodeData.rank >= nodeData.maxRank then return 0, nil end
+            if nodeData.rank >= nodeData.maxRank then
+                print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> already at maxRank " .. nodeData.rank)
+                return 0, nil
+            end
             nodeData.rank = nodeData.rank + 1
             nodeData:Update()
             found = true
             break
         end
     end
-    if not found then return 0, nil end
+    if not found then
+        print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> node NOT FOUND in recipe specData (" .. #simRecipe.specializationData.nodeData .. " nodes)")
+        return 0, nil
+    end
 
     simRecipe.specializationData:UpdateProfessionStats()
     simRecipe:Update()
