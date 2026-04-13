@@ -2454,6 +2454,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
             local name = (recipeInfo and recipeInfo.name) or (f.grey("Unknown Recipe (ID: " .. tostring(id) .. ")"))
             local icon = (recipeInfo and recipeInfo.icon) and GUTIL:IconToText(recipeInfo.icon, 18, 18) or "<i>"
+            local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(id, {})
             local profession = C_TradeSkillUI.GetProfessionInfoByRecipeID(id).profession
             local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession] or "inv_misc_questionmark"
             local professionIconText = GUTIL:IconToText(professionIcon, 18, 18)
@@ -2463,6 +2464,24 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 restockText = " " .. f.l("[" .. tostring(target) .. "]")
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
+
+            row.frame.craftListTooltipName = name
+            row.frame.craftListTooltipRecipeID = id
+            row.frame.craftListTooltipHyperlink = outputItemData and outputItemData.hyperlink or nil
+            if not row.frame.craftListTooltipHooksInstalled then
+                row.frame:HookScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
+                    if self.craftListTooltipHyperlink then
+                        GameTooltip:SetHyperlink(self.craftListTooltipHyperlink)
+                    else
+                        GameTooltip:AddLine(self.craftListTooltipName or "Unknown Recipe", 1, 1, 1)
+                        GameTooltip:AddLine("Recipe ID: " .. tostring(self.craftListTooltipRecipeID), 0.8, 0.8, 0.8)
+                    end
+                    GameTooltip:Show()
+                end)
+                row.frame:HookScript("OnLeave", GameTooltip_Hide)
+                row.frame.craftListTooltipHooksInstalled = true
+            end
         end)
     end
 
