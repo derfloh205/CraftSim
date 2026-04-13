@@ -405,6 +405,12 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			CraftSim.DEBUG:StopProfiling("Update Customer History")
 			CraftSim.CRAFTQ.UI:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
+
+			-- Knowledge ROI: deferred unspent points notification
+			C_Timer.After(1.5, function()
+				CraftSim.KNOWLEDGE_ROI:CheckAndNotifyUnspentPoints()
+			end)
+
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()
 					local professionInfo = ProfessionsFrame:GetProfessionInfo()

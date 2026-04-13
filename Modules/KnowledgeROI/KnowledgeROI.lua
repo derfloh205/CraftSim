@@ -391,6 +391,100 @@ function CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
 end
 
 
+--- Track whether we already notified this session (per profession)
+---@type table<Enum.Profession, boolean>
+CraftSim.KNOWLEDGE_ROI.notifiedThisSession = {}
+
+--- Check for unspent knowledge points and notify the player once per session per profession.
+--- Called from ProfessionsFrame OnShow hook.
+function CraftSim.KNOWLEDGE_ROI:CheckAndNotifyUnspentPoints()
+    if not CraftSim.DB.OPTIONS:Get("MODULE_KNOWLEDGE_ROI") then return end
+
+    local recipeData = CraftSim.MODULES.recipeData
+    if not recipeData then return end
+    if not recipeData.specializationData or not recipeData.supportsCraftingStats then return end
+
+    local profession = recipeData.professionData.professionInfo.profession
+    if not profession or self.notifiedThisSession[profession] then return end
+
+    local availPts, currencyName = self:GetAvailableKnowledgePoints(recipeData)
+    if availPts <= 0 then return end
+
+    self.notifiedThisSession[profession] = true
+
+    local profName = recipeData.professionData.professionInfo.professionName or "Profession"
+    local GUTIL = CraftSim.GUTIL
+    local f = GUTIL:GetFormatter()
+
+    -- Check for saved weekly plan with recommendation
+    local crafterUID = recipeData:GetCrafterUID()
+    local plan = CraftSim.DB.KNOWLEDGE_ROI:GetWeeklyPlan(crafterUID, profession)
+    local bestHint = ""
+    if plan and plan.topNodeName then
+        bestHint = " — Best: " .. plan.topNodeName
+    end
+
+    CraftSim.DEBUG:SystemPrint(
+        f.l("CraftSim Knowledge ROI: ") ..
+        f.bb(profName) .. ": " ..
+        GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) ..
+        " unspent knowledge point" .. (availPts > 1 and "s" or "") ..
+        bestHint ..
+        " — Open " .. f.l("Knowledge ROI") .. " panel to optimize!"
+    )
+end
+
+
+--- Saves the optimal path as a weekly plan in the DB.
+---@param recipeData CraftSim.RecipeData
+---@param path CraftSim.KnowledgeROI.PathStep[]
+---@param availablePoints number
+function CraftSim.KNOWLEDGE_ROI:SaveWeeklyPlan(recipeData, path, availablePoints)
+    local crafterUID = recipeData:GetCrafterUID()
+    local profession = recipeData.professionData.professionInfo.profession
+    if not crafterUID or not profession then return end
+
+    local totalGain = 0
+    local topNodeName = nil
+    if #path > 0 then
+        totalGain = path[#path].cumulativeROI or 0
+        topNodeName = path[1].nodeName
+    end
+
+    ---@type CraftSim.KnowledgeROI.WeeklyPlan
+    local plan = {
+        path = path,
+        availablePoints = availablePoints,
+        totalGain = totalGain,
+        profession = profession,
+        savedAt = time(),
+        topNodeName = topNodeName,
+    }
+
+    CraftSim.DB.KNOWLEDGE_ROI:SaveWeeklyPlan(crafterUID, profession, plan)
+end
+
+
+--- Returns the saved weekly plan for the current crafter/profession, if fresh enough.
+--- Plans older than 3 days are considered stale and ignored.
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.KnowledgeROI.WeeklyPlan?
+function CraftSim.KNOWLEDGE_ROI:GetSavedWeeklyPlan(recipeData)
+    local crafterUID = recipeData:GetCrafterUID()
+    local profession = recipeData.professionData.professionInfo.profession
+    if not crafterUID or not profession then return nil end
+
+    local plan = CraftSim.DB.KNOWLEDGE_ROI:GetWeeklyPlan(crafterUID, profession)
+    if not plan then return nil end
+
+    -- Stale check: 3 days
+    local age = time() - (plan.savedAt or 0)
+    if age > 3 * 24 * 60 * 60 then return nil end
+
+    return plan
+end
+
+
 --- Greedy algorithm: given N available knowledge points, compute the optimal
 --- sequence of node investments that maximizes cumulative profit.
 ---
