@@ -300,7 +300,10 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
         print("  Delta: recipeID=" .. recipeID .. " -> NO recipeInfo")
         return 0, nil
     end
-    if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then return 0, nil end
+    if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
+        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> gathering/dummy")
+        return 0, nil
+    end
 
     local ok, simRecipe = pcall(CraftSim.RecipeData, {
         recipeID = recipeID,
@@ -310,7 +313,10 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
         print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> RecipeData creation failed: " .. tostring(simRecipe))
         return 0, nil
     end
-    if not simRecipe.supportsCraftingStats then return 0, nil end
+    if not simRecipe.supportsCraftingStats then
+        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> no craftingStats support")
+        return 0, nil
+    end
     if not simRecipe.specializationData then
         print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> NO specializationData")
         return 0, nil
@@ -343,6 +349,11 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
     local delta = newProfit - baseProfit
+
+    -- Debug: log actual profit values for first few calls
+    print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") node=" .. targetNodeID ..
+        " base=" .. string.format("%.2f", baseProfit) .. " new=" .. string.format("%.2f", newProfit) ..
+        " delta=" .. string.format("%.2f", delta))
 
     ---@type CraftSim.KnowledgeROIRecipeImpact
     local impact = {
