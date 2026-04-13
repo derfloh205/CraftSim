@@ -119,13 +119,41 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             end,
         })
 
+        frame.content.weeklyPlanButton = GGUI.Button({
+            parent = frame.content,
+            anchorPoints = { {
+                anchorParent = frame.content,
+                anchorA = "TOPRIGHT",
+                anchorB = "TOPRIGHT",
+                offsetX = -195,
+                offsetY = -26,
+            } },
+            label = "Weekly",
+            sizeX = 70,
+            sizeY = 22,
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_ROI.UI:StartWeeklyPlan()
+            end,
+        })
+
+        frame.content.summaryText = GGUI.Text({
+            parent = frame.content,
+            anchorParent = frame.content,
+            anchorA = "BOTTOMLEFT",
+            anchorB = "BOTTOMLEFT",
+            justifyOptions = { type = 'H', align = "LEFT" },
+            offsetX = 15,
+            offsetY = 8,
+            scale = 0.9,
+        })
+
         frame.content.nodeList = GGUI.FrameList({
             parent = frame.content,
             anchorParent = frame.content,
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
             hideScrollbar = false,
-            sizeY = 295,
+            sizeY = 275,
             selectionOptions = {
                 noSelectionColor = true,
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
@@ -232,6 +260,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
 
     if not recipeData.specializationData or not recipeData.supportsCraftingStats then
         content.modeText:SetText(f.l("No specialization data available"))
+        content.summaryText:SetText("")
         content.nodeList:UpdateDisplay()
         return
     end
@@ -239,6 +268,27 @@ function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
     local availPts = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
     local ptsText = availPts > 0 and (" — " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts") or ""
     content.modeText:SetText(f.l("Single Recipe ROI") .. ptsText)
+
+    -- Show saved weekly plan summary if available
+    local plan = CraftSim.KNOWLEDGE_ROI:GetSavedWeeklyPlan(recipeData)
+    if plan and plan.totalGain > 0 and plan.topNodeName then
+        local age = time() - (plan.savedAt or 0)
+        local ageText = ""
+        if age < 3600 then
+            ageText = math.floor(age / 60) .. "m ago"
+        elseif age < 86400 then
+            ageText = math.floor(age / 3600) .. "h ago"
+        else
+            ageText = math.floor(age / 86400) .. "d ago"
+        end
+        content.summaryText:SetText(
+            GUTIL:ColorizeText("★ ", GUTIL.COLORS.LEGENDARY) ..
+            "Plan: " .. CraftSim.UTIL:FormatMoney(plan.totalGain, true) ..
+            " from " .. plan.availablePoints .. " pts" ..
+            "  " .. GUTIL:ColorizeText("(" .. ageText .. ")", GUTIL.COLORS.GREY))
+    else
+        content.summaryText:SetText("")
+    end
 
     CraftSim.DEBUG:StartProfiling("KnowledgeROI.SingleRecipe")
     local results = CraftSim.KNOWLEDGE_ROI:CalculateForRecipe(recipeData)
@@ -437,6 +487,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartOptimizePath()
     ---@type CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
     local content = frame.content
     content.modeText:SetText(f.l("Preparing scan..."))
+    content.summaryText:SetText("")
     content.nodeList:Remove()
     content.nodeList:UpdateDisplay()
 
@@ -463,6 +514,74 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartOptimizePath()
         headerText = headerText .. ")"
         content.modeText:SetText(headerText)
 
+        -- Save as weekly plan
+        CraftSim.KNOWLEDGE_ROI:SaveWeeklyPlan(recipeData, path, availablePoints)
+
+        -- Show summary
+        if #path > 0 then
+            local totalGain = path[#path].cumulativeROI or 0
+            content.summaryText:SetText(
+                GUTIL:ColorizeText("★ ", GUTIL.COLORS.LEGENDARY) ..
+                "Total gain: " .. CraftSim.UTIL:FormatMoney(totalGain, true) ..
+                " from " .. #path .. " pts")
+        end
+
         self:PopulateNodeList(content, path)
     end)
+end
+
+
+--- Start the Weekly Plan: load saved plan instantly, or run Optimize if stale/missing.
+function CraftSim.KNOWLEDGE_ROI.UI:StartWeeklyPlan()
+    local recipeData = CraftSim.MODULES.recipeData
+    if not recipeData then
+        print("No recipe data available for weekly plan")
+        return
+    end
+
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME
+    local frame
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    else
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    end
+
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
+    local content = frame.content
+
+    -- Try loading saved plan
+    local plan = CraftSim.KNOWLEDGE_ROI:GetSavedWeeklyPlan(recipeData)
+    if plan and plan.path and #plan.path > 0 then
+        local availPts = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
+
+        local age = time() - (plan.savedAt or 0)
+        local ageText
+        if age < 3600 then
+            ageText = math.floor(age / 60) .. "m ago"
+        elseif age < 86400 then
+            ageText = math.floor(age / 3600) .. "h ago"
+        else
+            ageText = math.floor(age / 86400) .. "d ago"
+        end
+
+        local headerText = f.l("Weekly Plan") .. " (" .. #plan.path .. " steps"
+        if availPts > 0 then
+            headerText = headerText .. ", " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts now"
+        end
+        headerText = headerText .. ")"
+        content.modeText:SetText(headerText)
+
+        content.summaryText:SetText(
+            GUTIL:ColorizeText("★ ", GUTIL.COLORS.LEGENDARY) ..
+            "Plan: " .. CraftSim.UTIL:FormatMoney(plan.totalGain, true) ..
+            " from " .. plan.availablePoints .. " pts" ..
+            "  " .. GUTIL:ColorizeText("(saved " .. ageText .. ")", GUTIL.COLORS.GREY))
+
+        self:PopulateNodeList(content, plan.path)
+    else
+        -- No saved plan — run Optimize
+        self:StartOptimizePath()
+    end
 end

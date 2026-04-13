@@ -104,3 +104,29 @@ end
 function CraftSim.DB.KNOWLEDGE_ROI:ClearForCrafter(crafterUID)
     CraftSimDB.knowledgeROIDB.data[crafterUID] = nil
 end
+
+--- Weekly Plan persistence ---
+
+---@class CraftSim.KnowledgeROI.WeeklyPlan
+---@field path CraftSim.KnowledgeROI.PathStep[]
+---@field availablePoints number points available when plan was created
+---@field totalGain number cumulative ROI of the full path
+---@field profession Enum.Profession
+---@field savedAt number time() timestamp
+---@field topNodeName string? name of the best node for chat display
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param plan CraftSim.KnowledgeROI.WeeklyPlan
+function CraftSim.DB.KNOWLEDGE_ROI:SaveWeeklyPlan(crafterUID, profession, plan)
+    CraftSimDB.knowledgeROIDB.data[crafterUID] = CraftSimDB.knowledgeROIDB.data[crafterUID] or {}
+    CraftSimDB.knowledgeROIDB.data[crafterUID]["__weeklyPlan_" .. profession] = plan
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.KnowledgeROI.WeeklyPlan?
+function CraftSim.DB.KNOWLEDGE_ROI:GetWeeklyPlan(crafterUID, profession)
+    if not CraftSimDB.knowledgeROIDB.data[crafterUID] then return nil end
+    return CraftSimDB.knowledgeROIDB.data[crafterUID]["__weeklyPlan_" .. profession]
+end
