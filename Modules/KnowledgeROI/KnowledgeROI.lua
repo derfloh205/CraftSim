@@ -65,14 +65,42 @@ function CraftSim.KNOWLEDGE_ROI:SimulateNodeRankIncrease(recipeData, nodeIndex, 
     local simNodeData = simRecipeData.specializationData.nodeData[nodeIndex]
     if not simNodeData then return nil end
 
+    -- Capture stats BEFORE rank bump
+    local oldStats = simNodeData.professionStats:Copy()
+
     -- Bump rank by 1
     simNodeData.rank = simNodeData.rank + 1
     simNodeData:Update()
 
-    -- Recalculate SpecializationData profession stats
-    simRecipeData.specializationData:UpdateProfessionStats()
-    -- Recalculate recipe stats and profit
-    simRecipeData:Update()
+    -- Apply the stat DELTA directly to recipe professionStats.
+    -- We cannot use simRecipeData:Update() because RecipeData:UpdateProfessionStats()
+    -- rebuilds stats from baseProfessionStats (API frozen at current ranks) and only
+    -- adds specData:GetExtraValues(). The spec base stat contribution (skill, multicraft
+    -- value, etc.) is baked into baseProfessionStats, so bumping a node has no effect.
+    local newStats = simNodeData.professionStats
+    simRecipeData.professionStats.skill:addValue(newStats.skill.value - oldStats.skill.value)
+    simRecipeData.professionStats.multicraft:addValue(newStats.multicraft.value - oldStats.multicraft.value)
+    simRecipeData.professionStats.resourcefulness:addValue(newStats.resourcefulness.value - oldStats.resourcefulness.value)
+    simRecipeData.professionStats.ingenuity:addValue(newStats.ingenuity.value - oldStats.ingenuity.value)
+    simRecipeData.professionStats.craftingspeed:addValue(newStats.craftingspeed.value - oldStats.craftingspeed.value)
+
+    -- Apply extraValues delta
+    local oldResExtra = oldStats.resourcefulness:GetExtraValue()
+    local newResExtra = newStats.resourcefulness:GetExtraValue()
+    if newResExtra ~= oldResExtra then
+        simRecipeData.professionStats.resourcefulness:SetExtraValue(
+            simRecipeData.professionStats.resourcefulness:GetExtraValue() + (newResExtra - oldResExtra))
+    end
+    local oldIngExtra = oldStats.ingenuity:GetExtraValue()
+    local newIngExtra = newStats.ingenuity:GetExtraValue()
+    if newIngExtra ~= oldIngExtra then
+        simRecipeData.professionStats.ingenuity:SetExtraValue(
+            simRecipeData.professionStats.ingenuity:GetExtraValue() + (newIngExtra - oldIngExtra))
+    end
+
+    -- Recalculate result and price with modified stats (do NOT call simRecipeData:Update())
+    simRecipeData.resultData:Update()
+    simRecipeData.priceData:Update()
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipeData)
 
     local profitDelta = newProfit - baseProfit
@@ -325,33 +353,75 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
     -- Base profit
     local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
-    -- Find the target node in this recipe's spec data and bump its rank
-    local found = false
+    -- Find the target node in this recipe's spec data and bump its rank.
+    -- Key insight: RecipeData:UpdateProfessionStats() fetches spec contribution
+    -- from baseProfessionStats (Blizzard API, frozen at current ranks) and only
+    -- adds specData:GetExtraValues() (percentages). So bumping a node's rank and
+    -- calling recipe:Update() has NO effect on the recipe's professionStats.
+    -- Instead, we must manually apply the stat DELTA from the rank increase.
+    local targetNode = nil
     for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
         if nodeData.nodeID == targetNodeID then
-            if nodeData.rank >= nodeData.maxRank then
-                print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> already at maxRank " .. nodeData.rank)
-                return 0, nil
-            end
-            nodeData.rank = nodeData.rank + 1
-            nodeData:Update()
-            found = true
+            targetNode = nodeData
             break
         end
     end
-    if not found then
+    if not targetNode then
         print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> node NOT FOUND in recipe specData (" .. #simRecipe.specializationData.nodeData .. " nodes)")
         return 0, nil
     end
+    if targetNode.rank >= targetNode.maxRank then
+        print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> already at maxRank " .. targetNode.rank)
+        return 0, nil
+    end
 
-    simRecipe.specializationData:UpdateProfessionStats()
-    simRecipe:Update()
+    -- Capture stats BEFORE rank bump
+    local oldStats = targetNode.professionStats:Copy()
+
+    -- Bump rank and recalculate node stats
+    targetNode.rank = targetNode.rank + 1
+    targetNode:Update()
+
+    -- Calculate stat delta from the +1 rank
+    local newStats = targetNode.professionStats
+    local dSkill = newStats.skill.value - oldStats.skill.value
+    local dMulticraft = newStats.multicraft.value - oldStats.multicraft.value
+    local dResourcefulness = newStats.resourcefulness.value - oldStats.resourcefulness.value
+    local dIngenuity = newStats.ingenuity.value - oldStats.ingenuity.value
+    local dCraftingSpeed = newStats.craftingspeed.value - oldStats.craftingspeed.value
+
+    -- Apply stat delta directly to the recipe's professionStats
+    -- (bypassing UpdateProfessionStats which would reset from API baseProfessionStats)
+    simRecipe.professionStats.skill:addValue(dSkill)
+    simRecipe.professionStats.multicraft:addValue(dMulticraft)
+    simRecipe.professionStats.resourcefulness:addValue(dResourcefulness)
+    simRecipe.professionStats.ingenuity:addValue(dIngenuity)
+    simRecipe.professionStats.craftingspeed:addValue(dCraftingSpeed)
+
+    -- Also apply extraValues delta (resourcefulness extra items factor, ingenuity concentration factor)
+    local oldResExtra = oldStats.resourcefulness:GetExtraValue()
+    local newResExtra = newStats.resourcefulness:GetExtraValue()
+    if newResExtra ~= oldResExtra then
+        simRecipe.professionStats.resourcefulness:SetExtraValue(
+            simRecipe.professionStats.resourcefulness:GetExtraValue() + (newResExtra - oldResExtra))
+    end
+    local oldIngExtra = oldStats.ingenuity:GetExtraValue()
+    local newIngExtra = newStats.ingenuity:GetExtraValue()
+    if newIngExtra ~= oldIngExtra then
+        simRecipe.professionStats.ingenuity:SetExtraValue(
+            simRecipe.professionStats.ingenuity:GetExtraValue() + (newIngExtra - oldIngExtra))
+    end
+
+    -- Recalculate result data and prices with the modified stats (do NOT call simRecipe:Update())
+    simRecipe.resultData:Update()
+    simRecipe.priceData:Update()
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
     local delta = newProfit - baseProfit
 
-    -- Debug: log actual profit values for first few calls
+    -- Debug: log actual profit values
     print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") node=" .. targetNodeID ..
+        " dSkill=" .. string.format("%.1f", dSkill) ..
         " base=" .. string.format("%.2f", baseProfit) .. " new=" .. string.format("%.2f", newProfit) ..
         " delta=" .. string.format("%.2f", delta))
 
@@ -763,35 +833,79 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDeltaAtVirtualRank(recipeID, 
     if not ok or not simRecipe then return 0 end
     if not simRecipe.supportsCraftingStats or not simRecipe.specializationData then return 0 end
 
-    -- Find target node and set to virtual current rank
-    local found = false
+    -- Find target node and set to virtual current rank, then compute delta
+    -- Same stat-delta approach as CalculateRecipeNodeDelta: we cannot use
+    -- simRecipe:Update() because baseProfessionStats already includes current
+    -- spec contribution from the API. We must apply the incremental delta manually.
+    local targetNode = nil
     for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
         if nodeData.nodeID == targetNodeID then
-            if virtualCurrentRank >= nodeData.maxRank then return 0 end
-            nodeData.rank = virtualCurrentRank
-            nodeData:Update()
-            found = true
+            targetNode = nodeData
             break
         end
     end
-    if not found then return 0 end
+    if not targetNode then return 0 end
+    if virtualCurrentRank >= targetNode.maxRank then return 0 end
 
-    -- Profit at virtual current rank
-    simRecipe.specializationData:UpdateProfessionStats()
-    simRecipe:Update()
+    -- First: set node to virtual rank and apply delta from (actual rank → virtual rank)
+    local actualRankStats = targetNode.professionStats:Copy()
+
+    targetNode.rank = virtualCurrentRank
+    targetNode:Update()
+    local virtualRankStats = targetNode.professionStats:Copy()
+
+    -- Apply delta (actual → virtual) to get professionStats at virtual rank
+    simRecipe.professionStats.skill:addValue(virtualRankStats.skill.value - actualRankStats.skill.value)
+    simRecipe.professionStats.multicraft:addValue(virtualRankStats.multicraft.value - actualRankStats.multicraft.value)
+    simRecipe.professionStats.resourcefulness:addValue(virtualRankStats.resourcefulness.value - actualRankStats.resourcefulness.value)
+    simRecipe.professionStats.ingenuity:addValue(virtualRankStats.ingenuity.value - actualRankStats.ingenuity.value)
+    simRecipe.professionStats.craftingspeed:addValue(virtualRankStats.craftingspeed.value - actualRankStats.craftingspeed.value)
+
+    local oldResExtra = actualRankStats.resourcefulness:GetExtraValue()
+    local vResExtra = virtualRankStats.resourcefulness:GetExtraValue()
+    if vResExtra ~= oldResExtra then
+        simRecipe.professionStats.resourcefulness:SetExtraValue(
+            simRecipe.professionStats.resourcefulness:GetExtraValue() + (vResExtra - oldResExtra))
+    end
+    local oldIngExtra = actualRankStats.ingenuity:GetExtraValue()
+    local vIngExtra = virtualRankStats.ingenuity:GetExtraValue()
+    if vIngExtra ~= oldIngExtra then
+        simRecipe.professionStats.ingenuity:SetExtraValue(
+            simRecipe.professionStats.ingenuity:GetExtraValue() + (vIngExtra - oldIngExtra))
+    end
+
+    -- Get base profit at virtual rank
+    simRecipe.resultData:Update()
+    simRecipe.priceData:Update()
     local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
-    -- Bump to virtualCurrentRank + 1 on the same RecipeData instance
-    for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
-        if nodeData.nodeID == targetNodeID then
-            nodeData.rank = virtualCurrentRank + 1
-            nodeData:Update()
-            break
-        end
+    -- Now bump to virtualCurrentRank + 1 and apply the incremental delta
+    local preStats = targetNode.professionStats:Copy()
+    targetNode.rank = virtualCurrentRank + 1
+    targetNode:Update()
+    local postStats = targetNode.professionStats
+
+    simRecipe.professionStats.skill:addValue(postStats.skill.value - preStats.skill.value)
+    simRecipe.professionStats.multicraft:addValue(postStats.multicraft.value - preStats.multicraft.value)
+    simRecipe.professionStats.resourcefulness:addValue(postStats.resourcefulness.value - preStats.resourcefulness.value)
+    simRecipe.professionStats.ingenuity:addValue(postStats.ingenuity.value - preStats.ingenuity.value)
+    simRecipe.professionStats.craftingspeed:addValue(postStats.craftingspeed.value - preStats.craftingspeed.value)
+
+    local preResExtra = preStats.resourcefulness:GetExtraValue()
+    local postResExtra = postStats.resourcefulness:GetExtraValue()
+    if postResExtra ~= preResExtra then
+        simRecipe.professionStats.resourcefulness:SetExtraValue(
+            simRecipe.professionStats.resourcefulness:GetExtraValue() + (postResExtra - preResExtra))
+    end
+    local preIngExtra = preStats.ingenuity:GetExtraValue()
+    local postIngExtra = postStats.ingenuity:GetExtraValue()
+    if postIngExtra ~= preIngExtra then
+        simRecipe.professionStats.ingenuity:SetExtraValue(
+            simRecipe.professionStats.ingenuity:GetExtraValue() + (postIngExtra - preIngExtra))
     end
 
-    simRecipe.specializationData:UpdateProfessionStats()
-    simRecipe:Update()
+    simRecipe.resultData:Update()
+    simRecipe.priceData:Update()
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
     return newProfit - baseProfit

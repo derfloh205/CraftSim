@@ -13,7 +13,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.KnowledgeROI.UI")
 
 function CraftSim.KNOWLEDGE_ROI.UI:Init()
     local sizeX = 370
-    local sizeY = 430
+    local sizeY = 460
     local offsetX = 260
     local offsetY = 200
 
@@ -92,7 +92,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -15,
-                offsetY = -55,
+                offsetY = -50,
             } },
             label = "Full Scan",
             sizeX = 85,
@@ -109,7 +109,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -105,
-                offsetY = -55,
+                offsetY = -50,
             } },
             label = "Optimize",
             sizeX = 85,
@@ -126,7 +126,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -195,
-                offsetY = -55,
+                offsetY = -50,
             } },
             label = "Weekly",
             sizeX = 70,
@@ -153,14 +153,14 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
             hideScrollbar = false,
-            sizeY = 300,
+            sizeY = 310,
             selectionOptions = {
                 noSelectionColor = true,
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
             },
             rowHeight = 28,
             offsetX = 10,
-            offsetY = -83,
+            offsetY = -100,
             scale = 1,
             columnOptions = {
                 {
