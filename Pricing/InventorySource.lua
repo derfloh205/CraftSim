@@ -30,6 +30,7 @@ function CraftSim.INVENTORY_API:InitInventorySource()
 end
 
 function CraftSim.INVENTORY_APIS:SwitchAPIByAddonName(addonName)
+    -- Note: CraftSimSYNDICATOR is defined in this file; CraftSimTSM is a global defined in PriceAPIs.lua (loaded first)
     if addonName == CraftSimSYNDICATOR.name then
         CraftSim.INVENTORY_API = CraftSimSYNDICATOR
     elseif addonName == CraftSimTSM.name then

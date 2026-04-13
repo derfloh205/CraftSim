@@ -341,6 +341,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         queueAmount = recipeMaxQueueAmount
 
         -- reduce queue amount by current inventory if option is set
+        -- (this subtracts the number of RESULT items already owned, not reagents)
         if options.subtractInventory then
             local itemID = recipeData.resultData.expectedItem:GetItemID()
             if itemID then
