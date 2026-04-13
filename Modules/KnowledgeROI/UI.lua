@@ -121,18 +121,18 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
 
         frame.content.nodeList = GGUI.FrameList({
             parent = frame.content,
-            anchorParent = frame.content.modeText.frame,
+            anchorParent = frame.content,
             anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
+            anchorB = "TOPLEFT",
             hideScrollbar = false,
-            sizeY = 310,
+            sizeY = 295,
             selectionOptions = {
                 noSelectionColor = true,
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
             },
             rowHeight = 28,
-            offsetX = -5,
-            offsetY = -5,
+            offsetX = 10,
+            offsetY = -55,
             scale = 1,
             columnOptions = {
                 {
@@ -266,10 +266,10 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
             if result.step then
                 nameCol.text:SetText(GUTIL:ColorizeText("#" .. result.step, GUTIL.COLORS.WHITE) ..
                     " " .. (result.nodeName or ""))
-                rankCol.text:SetText(result.rankBefore .. "→" .. result.rankAfter .. "/" .. result.maxRank)
+                rankCol.text:SetText(math.max(0, result.rankBefore) .. "→" .. math.max(0, result.rankAfter) .. "/" .. result.maxRank)
             else
                 nameCol.text:SetText(result.nodeName or ("Node " .. result.nodeID))
-                local rankText = tostring(result.currentRank) .. "/" .. tostring(result.maxRank)
+                local rankText = tostring(math.max(0, result.currentRank)) .. "/" .. tostring(result.maxRank)
                 rankCol.text:SetText(rankText)
             end
 
@@ -308,13 +308,13 @@ function CraftSim.KNOWLEDGE_ROI.UI:BuildRowTooltip(result)
     if result.step then
         -- Optimal Path roadmap step
         tinsert(lines, f.bb("Step #" .. result.step .. ": " .. (result.nodeName or "")))
-        tinsert(lines, "Rank: " .. result.rankBefore .. " → " .. result.rankAfter .. " / " .. result.maxRank)
+        tinsert(lines, "Rank: " .. math.max(0, result.rankBefore) .. " → " .. math.max(0, result.rankAfter) .. " / " .. result.maxRank)
         tinsert(lines, "")
         tinsert(lines, f.l("ROI this step: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
         tinsert(lines, f.l("Cumulative ROI: ") .. CraftSim.UTIL:FormatMoney(result.cumulativeROI, true))
     else
         tinsert(lines, f.bb(result.nodeName or ("Node " .. result.nodeID)))
-        tinsert(lines, "Rank: " .. result.currentRank .. " / " .. result.maxRank)
+        tinsert(lines, "Rank: " .. math.max(0, result.currentRank) .. " / " .. result.maxRank)
         tinsert(lines, "Remaining Points: " .. result.remainingRanks)
         tinsert(lines, "")
         tinsert(lines, f.l("ROI per Point: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
