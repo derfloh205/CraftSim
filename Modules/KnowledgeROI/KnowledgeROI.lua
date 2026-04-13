@@ -356,3 +356,260 @@ end
 --- @field totalEstimatedROI number
 --- @field affectedRecipeCount number
 --- @field topRecipes CraftSim.KnowledgeROIRecipeImpact[]
+
+--- @class CraftSim.KnowledgeROI.PathStep
+--- @field step number sequential step number (1, 2, 3, ...)
+--- @field nodeID number
+--- @field nodeName string
+--- @field nodeIcon number?
+--- @field rankBefore number rank before this investment
+--- @field rankAfter number rank after this investment
+--- @field maxRank number
+--- @field roiPerPoint number profit delta for this single step
+--- @field cumulativeROI number cumulative total profit after all steps so far
+
+
+--- Returns the number of unspent knowledge points for the given recipe's profession.
+--- Uses C_ProfSpecs.GetCurrencyInfoForSkillLine which provides numAvailable + currencyName.
+---@param recipeData CraftSim.RecipeData
+---@return number availablePoints
+---@return string? currencyName
+function CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
+    local skillLineID = recipeData.professionData.skillLineID
+    if not skillLineID or skillLineID == 0 then return 0, nil end
+
+    local ok, currencyInfo = pcall(C_ProfSpecs.GetCurrencyInfoForSkillLine, skillLineID)
+    if not ok or not currencyInfo then return 0, nil end
+
+    return currencyInfo.numAvailable or 0, currencyInfo.currencyName
+end
+
+
+--- Greedy algorithm: given N available knowledge points, compute the optimal
+--- sequence of node investments that maximizes cumulative profit.
+---
+--- Algorithm:
+--- 1. Runs a full profession scan to get initial node ROI values at current ranks
+--- 2. For each available point, picks the node with highest roiPerPoint
+--- 3. Virtually bumps that node's rank and recalculates its ROI for the next iteration
+--- 4. Returns an ordered roadmap of PathStep entries
+---
+--- Only the selected node is recalculated each iteration (lazy recalc). Cross-node
+--- profit dependencies are ignored for performance — this is a standard greedy heuristic.
+---
+---@param recipeData CraftSim.RecipeData
+---@param numPoints number how many points to plan
+---@param progressCallback? fun(phase: string, progress: number, total: number)
+---@return CraftSim.KnowledgeROI.PathStep[]
+function CraftSim.KNOWLEDGE_ROI:CalculateOptimalPath(recipeData, numPoints, progressCallback)
+    CraftSim.DEBUG:StartProfiling("KnowledgeROI.OptimalPath")
+
+    if numPoints <= 0 then
+        CraftSim.DEBUG:StopProfiling("KnowledgeROI.OptimalPath")
+        return {}
+    end
+
+    -- Phase 1: Run full scan to get initial node ROIs
+    if progressCallback then progressCallback("scan", 0, 1) end
+    local scanResults = self:FullProfessionScan(recipeData, function(progress, total)
+        if progressCallback then progressCallback("scan", progress, total) end
+    end)
+
+    if #scanResults == 0 then
+        CraftSim.DEBUG:StopProfiling("KnowledgeROI.OptimalPath")
+        return {}
+    end
+
+    -- Build mapping context for recalculations
+    local profession = recipeData.professionData.professionInfo.profession
+    local expansionID = recipeData.professionData.expansionID
+    local profData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not profData or not profData[profession] then
+        CraftSim.DEBUG:StopProfiling("KnowledgeROI.OptimalPath")
+        return {}
+    end
+
+    local specData = profData[profession]
+    local recipeMapping = specData.recipeMapping
+    local nodeDataMap = specData.nodeData
+
+    ---@type table<number, table<RecipeID, boolean>>
+    local nodeToRecipes = {}
+    for recipeID, perkIDs in pairs(recipeMapping) do
+        for _, perkID in ipairs(perkIDs) do
+            local perkEntry = nodeDataMap[perkID]
+            if perkEntry then
+                local baseNodeID = perkEntry.nodeID
+                nodeToRecipes[baseNodeID] = nodeToRecipes[baseNodeID] or {}
+                nodeToRecipes[baseNodeID][recipeID] = true
+            end
+        end
+    end
+
+    local crafterUID = recipeData:GetCrafterUID()
+    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession) or {}
+    local cachedRecipeSet = {}
+    for _, rid in ipairs(cachedRecipeIDs) do
+        cachedRecipeSet[rid] = true
+    end
+
+    -- Build working state from scan results
+    ---@type table<number, {nodeID: number, nodeName: string, nodeIcon: number?, currentRank: number, maxRank: number, roiPerPoint: number, needsRecalc: boolean}>
+    local nodeStates = {}
+    for _, result in ipairs(scanResults) do
+        nodeStates[result.nodeID] = {
+            nodeID = result.nodeID,
+            nodeName = result.nodeName,
+            nodeIcon = result.nodeIcon,
+            currentRank = result.currentRank,
+            maxRank = result.maxRank,
+            roiPerPoint = result.roiPerPoint,
+            needsRecalc = false,
+        }
+    end
+
+    -- Phase 2: Greedy loop
+    ---@type CraftSim.KnowledgeROI.PathStep[]
+    local path = {}
+    local cumulativeROI = 0
+
+    for step = 1, numPoints do
+        if progressCallback then progressCallback("optimize", step, numPoints) end
+
+        -- Recalculate any nodes flagged from previous iteration
+        for nodeID, state in pairs(nodeStates) do
+            if state.needsRecalc and state.currentRank < state.maxRank then
+                state.roiPerPoint = self:RecalculateNodeROIAtVirtualRank(
+                    nodeID, state.currentRank, recipeData, nodeToRecipes, cachedRecipeSet)
+                state.needsRecalc = false
+            end
+        end
+
+        -- Find node with highest positive ROI
+        local bestNodeID = nil
+        local bestROI = 0
+        for nodeID, state in pairs(nodeStates) do
+            if state.currentRank < state.maxRank and state.roiPerPoint > bestROI then
+                bestROI = state.roiPerPoint
+                bestNodeID = nodeID
+            end
+        end
+
+        -- Stop if no positive-ROI node remains
+        if not bestNodeID then break end
+
+        local state = nodeStates[bestNodeID]
+        cumulativeROI = cumulativeROI + bestROI
+
+        ---@type CraftSim.KnowledgeROI.PathStep
+        local pathStep = {
+            step = step,
+            nodeID = bestNodeID,
+            nodeName = state.nodeName,
+            nodeIcon = state.nodeIcon,
+            rankBefore = state.currentRank,
+            rankAfter = state.currentRank + 1,
+            maxRank = state.maxRank,
+            roiPerPoint = bestROI,
+            cumulativeROI = cumulativeROI,
+        }
+        tinsert(path, pathStep)
+
+        -- Virtually bump rank; flag for recalculation next iteration
+        state.currentRank = state.currentRank + 1
+        if state.currentRank < state.maxRank then
+            state.needsRecalc = true
+        end
+    end
+
+    CraftSim.DEBUG:StopProfiling("KnowledgeROI.OptimalPath")
+    return path
+end
+
+
+--- Recalculate a node's ROI at a virtual rank (after the greedy algo has
+--- virtually spent one or more points on it).
+---
+--- Sums the profit-delta across all affected known recipes for the transition
+--- from virtualCurrentRank → virtualCurrentRank + 1.
+---@param nodeID number
+---@param virtualCurrentRank number
+---@param contextRecipeData CraftSim.RecipeData
+---@param nodeToRecipes table<number, table<RecipeID, boolean>>
+---@param cachedRecipeSet table<RecipeID, boolean>
+---@return number totalDelta
+function CraftSim.KNOWLEDGE_ROI:RecalculateNodeROIAtVirtualRank(nodeID, virtualCurrentRank, contextRecipeData, nodeToRecipes, cachedRecipeSet)
+    local affectedRecipeIDs = nodeToRecipes[nodeID]
+    if not affectedRecipeIDs then return 0 end
+
+    local totalDelta = 0
+    for recipeID in pairs(affectedRecipeIDs) do
+        if cachedRecipeSet[recipeID] then
+            local ok, delta = pcall(self.CalculateRecipeNodeDeltaAtVirtualRank, self,
+                recipeID, contextRecipeData, nodeID, virtualCurrentRank)
+            if ok and delta and delta ~= 0 then
+                totalDelta = totalDelta + delta
+            end
+        end
+    end
+
+    return totalDelta
+end
+
+
+--- Compute the profit delta for a single recipe when bumping a node from
+--- virtualCurrentRank → virtualCurrentRank + 1.
+---
+--- Unlike CalculateRecipeNodeDelta (Phase 1), this function overrides the
+--- node to a virtual rank before simulating the bump, allowing evaluation
+--- of future states where multiple points have already been virtually spent.
+---@param recipeID RecipeID
+---@param contextRecipeData CraftSim.RecipeData
+---@param targetNodeID number
+---@param virtualCurrentRank number
+---@return number profitDelta
+function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDeltaAtVirtualRank(recipeID, contextRecipeData, targetNodeID, virtualCurrentRank)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if not recipeInfo then return 0 end
+    if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then return 0 end
+
+    local ok, simRecipe = pcall(CraftSim.RecipeData, {
+        recipeID = recipeID,
+        crafterData = contextRecipeData.crafterData,
+    })
+    if not ok or not simRecipe then return 0 end
+    if not simRecipe.supportsCraftingStats or not simRecipe.specializationData then return 0 end
+
+    -- Find target node and set to virtual current rank
+    local found = false
+    for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
+        if nodeData.nodeID == targetNodeID then
+            if virtualCurrentRank >= nodeData.maxRank then return 0 end
+            nodeData.rank = virtualCurrentRank
+            nodeData:Update()
+            found = true
+            break
+        end
+    end
+    if not found then return 0 end
+
+    -- Profit at virtual current rank
+    simRecipe.specializationData:UpdateProfessionStats()
+    simRecipe:Update()
+    local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
+
+    -- Bump to virtualCurrentRank + 1 on the same RecipeData instance
+    for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
+        if nodeData.nodeID == targetNodeID then
+            nodeData.rank = virtualCurrentRank + 1
+            nodeData:Update()
+            break
+        end
+    end
+
+    simRecipe.specializationData:UpdateProfessionStats()
+    simRecipe:Update()
+    local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
+
+    return newProfit - baseProfit
+end

@@ -94,11 +94,28 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 offsetX = -15,
                 offsetY = -26,
             } },
-            label = "Full Profession Scan",
-            sizeX = 140,
+            label = "Full Scan",
+            sizeX = 85,
             sizeY = 22,
             clickCallback = function()
                 CraftSim.KNOWLEDGE_ROI.UI:StartFullScan()
+            end,
+        })
+
+        frame.content.optimizeButton = GGUI.Button({
+            parent = frame.content,
+            anchorPoints = { {
+                anchorParent = frame.content,
+                anchorA = "TOPRIGHT",
+                anchorB = "TOPRIGHT",
+                offsetX = -105,
+                offsetY = -26,
+            } },
+            label = "Optimize",
+            sizeX = 85,
+            sizeY = 22,
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_ROI.UI:StartOptimizePath()
             end,
         })
 
@@ -211,7 +228,9 @@ function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
         return
     end
 
-    content.modeText:SetText(f.l("Single Recipe ROI"))
+    local availPts = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
+    local ptsText = availPts > 0 and (" — " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts") or ""
+    content.modeText:SetText(f.l("Single Recipe ROI") .. ptsText)
 
     CraftSim.DEBUG:StartProfiling("KnowledgeROI.SingleRecipe")
     local results = CraftSim.KNOWLEDGE_ROI:CalculateForRecipe(recipeData)
@@ -243,10 +262,16 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
                 nameCol.icon:Hide()
             end
 
-            nameCol.text:SetText(result.nodeName or ("Node " .. result.nodeID))
-
-            local rankText = tostring(result.currentRank) .. "/" .. tostring(result.maxRank)
-            rankCol.text:SetText(rankText)
+            -- PathStep results (from Optimize) have a step field
+            if result.step then
+                nameCol.text:SetText(GUTIL:ColorizeText("#" .. result.step, GUTIL.COLORS.WHITE) ..
+                    " " .. (result.nodeName or ""))
+                rankCol.text:SetText(result.rankBefore .. "→" .. result.rankAfter .. "/" .. result.maxRank)
+            else
+                nameCol.text:SetText(result.nodeName or ("Node " .. result.nodeID))
+                local rankText = tostring(result.currentRank) .. "/" .. tostring(result.maxRank)
+                rankCol.text:SetText(rankText)
+            end
 
             -- Color-code ROI: green for positive, red for negative, white for zero
             local roiText
@@ -279,25 +304,35 @@ end
 ---@return string
 function CraftSim.KNOWLEDGE_ROI.UI:BuildRowTooltip(result)
     local lines = {}
-    tinsert(lines, f.bb(result.nodeName or ("Node " .. result.nodeID)))
-    tinsert(lines, "Rank: " .. result.currentRank .. " / " .. result.maxRank)
-    tinsert(lines, "Remaining Points: " .. result.remainingRanks)
-    tinsert(lines, "")
-    tinsert(lines, f.l("ROI per Point: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
-    tinsert(lines, f.l("Total Estimated ROI: ") .. CraftSim.UTIL:FormatMoney(result.totalEstimatedROI, true))
 
-    -- Full scan results include affected recipe details
-    if result.topRecipes and #result.topRecipes > 0 then
+    if result.step then
+        -- Optimal Path roadmap step
+        tinsert(lines, f.bb("Step #" .. result.step .. ": " .. (result.nodeName or "")))
+        tinsert(lines, "Rank: " .. result.rankBefore .. " → " .. result.rankAfter .. " / " .. result.maxRank)
         tinsert(lines, "")
-        tinsert(lines, f.l("Top Affected Recipes:"))
-        local count = math.min(5, #result.topRecipes)
-        for i = 1, count do
-            local impact = result.topRecipes[i]
-            local deltaStr = CraftSim.UTIL:FormatMoney(impact.profitDelta, true)
-            tinsert(lines, "  " .. (impact.recipeName or "") .. ": " .. deltaStr)
-        end
-        if result.affectedRecipeCount and result.affectedRecipeCount > count then
-            tinsert(lines, "  ... and " .. (result.affectedRecipeCount - count) .. " more")
+        tinsert(lines, f.l("ROI this step: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
+        tinsert(lines, f.l("Cumulative ROI: ") .. CraftSim.UTIL:FormatMoney(result.cumulativeROI, true))
+    else
+        tinsert(lines, f.bb(result.nodeName or ("Node " .. result.nodeID)))
+        tinsert(lines, "Rank: " .. result.currentRank .. " / " .. result.maxRank)
+        tinsert(lines, "Remaining Points: " .. result.remainingRanks)
+        tinsert(lines, "")
+        tinsert(lines, f.l("ROI per Point: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
+        tinsert(lines, f.l("Total Estimated ROI: ") .. CraftSim.UTIL:FormatMoney(result.totalEstimatedROI, true))
+
+        -- Full scan results include affected recipe details
+        if result.topRecipes and #result.topRecipes > 0 then
+            tinsert(lines, "")
+            tinsert(lines, f.l("Top Affected Recipes:"))
+            local count = math.min(5, #result.topRecipes)
+            for i = 1, count do
+                local impact = result.topRecipes[i]
+                local deltaStr = CraftSim.UTIL:FormatMoney(impact.profitDelta, true)
+                tinsert(lines, "  " .. (impact.recipeName or "") .. ": " .. deltaStr)
+            end
+            if result.affectedRecipeCount and result.affectedRecipeCount > count then
+                tinsert(lines, "  ... and " .. (result.affectedRecipeCount - count) .. " more")
+            end
         end
     end
 
@@ -333,8 +368,61 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartFullScan()
             content.modeText:SetText(f.l("Scanning... ") .. progress .. "/" .. total)
         end)
 
+        local availPts = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
+        local ptsText = availPts > 0 and (", " .. availPts .. " pts") or ""
         content.modeText:SetText(f.l("Full Profession ROI") ..
-            " (" .. #results .. " nodes)")
+            " (" .. #results .. " nodes" .. ptsText .. ")")
         self:PopulateNodeList(content, results)
+    end)
+end
+
+
+--- Start the optimal path calculation (triggered by Optimize button).
+function CraftSim.KNOWLEDGE_ROI.UI:StartOptimizePath()
+    local recipeData = CraftSim.MODULES.recipeData
+    if not recipeData then
+        print("No recipe data available for optimization")
+        return
+    end
+
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME
+    local frame
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    else
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    end
+
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
+    local content = frame.content
+    content.modeText:SetText(f.l("Preparing scan..."))
+    content.nodeList:Remove()
+    content.nodeList:UpdateDisplay()
+
+    local availablePoints = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
+    -- If no available points detected, plan ahead with a default of 5 points
+    local pointsToPlan = availablePoints > 0 and availablePoints or 5
+
+    C_Timer.After(0.01, function()
+        local path = CraftSim.KNOWLEDGE_ROI:CalculateOptimalPath(recipeData, pointsToPlan,
+            function(phase, progress, total)
+                if phase == "scan" then
+                    content.modeText:SetText(f.l("Scanning... ") .. progress .. "/" .. total)
+                else
+                    content.modeText:SetText(f.l("Optimizing... step ") .. progress .. "/" .. total)
+                end
+            end)
+
+        local headerText = f.l("Optimal Path") .. " (" .. #path .. " steps"
+        if availablePoints > 0 then
+            headerText = headerText .. ", " .. availablePoints .. " pts available"
+        else
+            headerText = headerText .. ", planning " .. pointsToPlan .. " pts"
+        end
+        headerText = headerText .. ")"
+        content.modeText:SetText(headerText)
+
+        self:PopulateNodeList(content, path)
     end)
 end
