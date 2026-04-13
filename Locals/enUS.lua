@@ -328,6 +328,7 @@ function CraftSim.LOCAL_EN:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "Select Recipe Crafter",
         PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "Auction Buyout: ",
         PRICING_REAGENT_LIST_OVERRIDE = "\n\nOverride",
+        PRICING_REAGENT_LIST_VENDOR = "\n\nNPC Vendor Price: ",
         PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\nCrafting ",
         PRICING_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM = "\n- Expected Costs Per Item: ",
         PRICING_REAGENT_LIST_CONCENTRATION_COST = f.gold("Concentration Cost: "),
@@ -1063,6 +1064,7 @@ greater or equal the configured sale rate threshold.
         -- columns
         SOURCE_COLUMN_AH = "AH",
         SOURCE_COLUMN_OVERRIDE = "OR",
+        SOURCE_COLUMN_NPC = "NPC",
         SOURCE_COLUMN_WO = "WO",
 
         -- disenchant
@@ -1078,5 +1080,20 @@ greater or equal the configured sale rate threshold.
         OPTIONS_BANKING_MAX_ITEMS_PER_FRAME = "Maximum Items per Frame: ",
         OPTIONS_BANKING_MAX_ITEMS_PER_FRAME_TOOLTIP =
         "Set the maximum number of items moved per frame when using the put and get commands",
+
+        -- NPC vendor integration
+        OPTIONS_VENDOR_PRICE_TAB              = "|TInterface\\Minimap\\Tracking\\Vendor:16:16|t NPC Vendor Prices",
+        OPTIONS_VENDOR_PRICE_PREFER_NPC       = "Prefer NPC vendor price when cheaper",
+        OPTIONS_VENDOR_PRICE_PREFER_NPC_TOOLTIP =
+            "When a crafting reagent is available from an NPC vendor at a fixed price, use that price instead of the Auction House price if it is cheaper.\n\n"
+            .. "Vendor prices are learned automatically when you open any merchant.\n\n"
+            .. "The vendor tracking icon (" .. "|TInterface\\Minimap\\Tracking\\Vendor:16:16|t" .. ") is shown next to reagents that are currently priced from an NPC vendor.",
+
+        -- Reagent source labels (used in tooltips and shopping list)
+        VENDOR_INTEGRATION_PRICE_SOURCE_NPC    = "|TInterface\\Minimap\\Tracking\\Vendor:14:14|t NPC",
+        VENDOR_INTEGRATION_PRICE_SOURCE_AH     = "|TInterface\\Icons\\inv_misc_coin_01:14:14|t AH",
+        VENDOR_INTEGRATION_SHOPPING_NPC_HEADER = "|TInterface\\Minimap\\Tracking\\Vendor:16:16|t Buy from NPC",
+        VENDOR_INTEGRATION_SHOPPING_AH_HEADER  = "|TInterface\\Icons\\inv_misc_coin_01:16:16|t Buy from AH",
+        VENDOR_INTEGRATION_SAVINGS_LABEL       = "|TInterface\\Minimap\\Tracking\\Vendor:14:14|t NPC savings: ",
     }
 end

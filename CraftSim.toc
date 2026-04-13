@@ -49,6 +49,7 @@ DB/recipeSubCrafterDB.lua
 DB/multicraftPreloadDB.lua
 DB/customerHistoryDB.lua
 DB/crafterDB.lua
+DB/vendorPriceDB.lua
 DB/priceOverrideDB.lua
 DB/craftListsDB.lua
 DB/lastCraftingCostDB.lua
@@ -80,6 +81,8 @@ Modules/PreCraftBuffGate/PreCraftBuffGate.lua
 
 Modules/Disenchant/Disenchant.lua
 Modules/Disenchant/UI.lua
+
+Modules/VendorIntegration/VendorIntegration.lua
 
 Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
@@ -155,6 +158,7 @@ Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
+Data/VendorReagentData.lua
 Data/News.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua

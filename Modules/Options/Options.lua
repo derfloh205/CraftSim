@@ -164,6 +164,12 @@ function CraftSim.OPTIONS:Init()
     proxySlider("CraftSimOpt_REGISTERED_CRAFTERS_MAX", GO.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX,
         L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX"), L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL"), 1, 50, 1, 0)
 
+    -- NPC Vendor Prices
+    regSection(L("OPTIONS_VENDOR_PRICE_TAB"), nil)
+    proxyBool("CraftSimOpt_VENDOR_PRICE_PREFER_NPC", GO.VENDOR_PRICE_PREFER_NPC,
+        L("OPTIONS_VENDOR_PRICE_PREFER_NPC"),
+        L("OPTIONS_VENDOR_PRICE_PREFER_NPC_TOOLTIP"))
+
     -- TSM (embedded panel; `CraftSimOptionsInitTSMPanel` runs from template OnLoad)
     if select(2, C_AddOns.IsAddOnLoaded("TradeSkillMaster")) then
         regSection(L("OPTIONS_TSM_TAB"), L("OPTIONS_TSM_SECTION_TOOLTIP"))

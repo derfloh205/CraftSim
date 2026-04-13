@@ -113,6 +113,27 @@ function CraftSim.SLASH:CMD_disenchant()
     CraftSim.DISENCHANT.UI:ShowAndLoad()
 end
 
+--- /craftsim vendorprice [itemID] – debug NPC vendor price lookup
+--- /craftsim vendorprice all    – list all dynamically discovered vendor prices
+function CraftSim.SLASH:CMD_vendorprice(args)
+    local arg1 = args and args[1]
+    if arg1 == "all" then
+        CraftSim.VENDOR_INTEGRATION:DebugPrintAll()
+    elseif arg1 then
+        local itemID = tonumber(arg1)
+        if itemID then
+            CraftSim.VENDOR_INTEGRATION:DebugPrintPrice(itemID)
+        else
+            CraftSim.DEBUG:SystemPrint(f.r("CraftSim vendorprice: ") .. "expected a numeric itemID or 'all'")
+        end
+    else
+        CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" vendorprice <itemID>")
+            .. " - Print vendor price for an item")
+        CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" vendorprice all")
+            .. " - List all dynamically discovered vendor prices")
+    end
+end
+
 function CraftSim.SLASH:CMD_put(args)
     CraftSim.UTIL:MoveItemIntoBank(args[1], tonumber(args[2]))
 end
@@ -136,6 +157,8 @@ function CraftSim.SLASH:CMD_help()
         f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
         f.bb(" disenchant") .. " - Open the disenchanting helper")
+    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+        f.bb(" vendorprice <itemID|all>") .. " - Debug NPC vendor price lookup")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
         f.bb(" put <[itemlink]|itemID|searchTerm>") .. " - Move an item into the bank or warbank, if open")
     CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..

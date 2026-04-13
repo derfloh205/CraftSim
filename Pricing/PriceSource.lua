@@ -21,6 +21,9 @@ local print = CraftSim.DEBUG:RegisterDebugID("Data.PriceSource")
 ---@field noPriceSource boolean
 ---@field isExpectedCost boolean
 ---@field expectedCostsData? CraftSim.ExpectedCraftingCostsData
+---@field isVendorPrice boolean  true when the used price comes from an NPC vendor
+---@field vendorPrice? number    the vendor price found (copper), set when a vendor source exists regardless of which price was used
+---@field vendorName? string     name of the vendor NPC that sells this item
 
 ---Wrapper for Price Source addons price fetch by itemID
 ---@param itemID ItemID
@@ -38,6 +41,7 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPr
         noPriceSource = false,
         isAHPrice = false,
         isExpectedCost = false,
+        isVendorPrice = false,
     }
 
     if forceAHPrice then
@@ -50,6 +54,19 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPr
         if priceOverrideData then
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo
+        end
+
+        -- NPC vendor price integration: prefer the vendor price when it is cheaper
+        if CraftSim.VENDOR_INTEGRATION:IsEnabled() then
+            local vendorPrice, vendorName = CraftSim.VENDOR_INTEGRATION:GetVendorPrice(itemID)
+            if vendorPrice and vendorPrice > 0 then
+                priceInfo.vendorPrice = vendorPrice
+                priceInfo.vendorName  = vendorName
+                if priceInfo.noAHPriceFound or vendorPrice < priceInfo.ahPrice then
+                    priceInfo.isVendorPrice = true
+                    return vendorPrice, priceInfo
+                end
+            end
         end
 
         if considerSubCrafts then
@@ -109,6 +126,7 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, force
         noPriceSource = false,
         isAHPrice = false,
         isExpectedCost = false,
+        isVendorPrice = false,
     }
     if not CraftSim.PRICE_APIS.available then
         priceInfo.noPriceSource = true
@@ -134,6 +152,19 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, force
         if priceOverrideData then
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo
+        end
+
+        -- NPC vendor price integration: prefer the vendor price when it is cheaper
+        if CraftSim.VENDOR_INTEGRATION:IsEnabled() then
+            local vendorPrice, vendorName = CraftSim.VENDOR_INTEGRATION:GetVendorPrice(itemID)
+            if vendorPrice and vendorPrice > 0 then
+                priceInfo.vendorPrice = vendorPrice
+                priceInfo.vendorName  = vendorName
+                if priceInfo.noAHPriceFound or vendorPrice < priceInfo.ahPrice then
+                    priceInfo.isVendorPrice = true
+                    return vendorPrice, priceInfo
+                end
+            end
         end
 
         if considerSubCrafts then

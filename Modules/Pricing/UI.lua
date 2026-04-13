@@ -280,6 +280,11 @@ function CraftSim.PRICING.UI:Init()
                     sourceColumn.text:SetText(f.l(L("SOURCE_COLUMN_OVERRIDE")))
                 end
 
+                function sourceColumn:SetVendor()
+                    sourceColumn.text:SetText(
+                        "|TInterface\\Minimap\\Tracking\\Vendor:14:14|t " .. f.bb(L("SOURCE_COLUMN_NPC")))
+                end
+
                 function sourceColumn:SetUnknown()
                     sourceColumn.text:SetText(f.r("-"))
                 end
@@ -552,6 +557,20 @@ function CraftSim.PRICING:UpdateDisplay(recipeData)
                     L("PRICING_REAGENT_LIST_OVERRIDE") ..
                     CraftSim.UTIL:FormatMoney(price)
                 sourceColumn:SetOverride()
+            elseif priceInfo.isVendorPrice then
+                local vendorName = priceInfo.vendorName ~= "" and priceInfo.vendorName or L("SOURCE_COLUMN_NPC")
+                tooltip = tooltip ..
+                    "\n" .. "|TInterface\\Minimap\\Tracking\\Vendor:14:14|t " ..
+                    L("PRICING_REAGENT_LIST_VENDOR") ..
+                    CraftSim.UTIL:FormatMoney(price) ..
+                    "  " .. f.grey("(" .. vendorName .. ")")
+                if priceInfo.vendorPrice and priceInfo.ahPrice > 0 then
+                    local saved = priceInfo.ahPrice - priceInfo.vendorPrice
+                    if saved > 0 then
+                        tooltip = tooltip .. "  " .. f.g("-" .. CraftSim.UTIL:FormatMoney(saved))
+                    end
+                end
+                sourceColumn:SetVendor()
             elseif priceInfo.isAHPrice then
                 sourceColumn:SetAH()
             else

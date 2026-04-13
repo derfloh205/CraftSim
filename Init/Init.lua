@@ -360,6 +360,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:InitCraftRecipeHooks()
 		CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
 		CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
+		CraftSim.VENDOR_INTEGRATION:HookItemTooltip()
 
 		CraftSim.CONTROL_PANEL.UI:Init()
 		CraftSim.INIT:InitStaticPopups()
