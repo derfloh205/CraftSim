@@ -131,7 +131,7 @@ end
 ---@param recipeInfo TradeSkillRecipeInfo
 function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
     if not recipeInfo then
-        printF("recipeInfo is nil: Exclude")
+        printF("FilterRecipeInfo: recipeInfo is nil for crafter " .. tostring(crafterUID) .. " - excluding")
         return false
     end
     printF("Filtering Recipe: " .. tostring(recipeInfo.name))
