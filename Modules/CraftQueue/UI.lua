@@ -724,13 +724,6 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         }
 
-        GGUI.HelpIcon {
-            parent = frame.content,
-            anchorParent = frame.content.craftQueueOptionsButton.frame,
-            anchorA = "LEFT", anchorB = "RIGHT",
-            text = L("CRAFT_QUEUE_HELP"),
-        }
-
         ---@type GGUI.BlizzardTab
         frame.content.queueTab = GGUI.BlizzardTab({
             buttonOptions = {
@@ -1547,6 +1540,62 @@ function CraftSim.CRAFTQ.UI:Init()
             label = L("CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL"),
             clickCallback = nil,
         })
+
+        frame.content.queueTutorialButton = GGUI.TutorialButton({
+            parent = frame.content,
+            anchorPoints = {
+                {
+                    anchorParent = frame.content.craftQueueOptionsButton.frame,
+                    anchorA = "LEFT",
+                    anchorB = "RIGHT",
+                    offsetX = 5,
+                },
+            },
+            sizeX = 25,
+            sizeY = 25,
+            glowOnInit = false,
+            autoToggleMode = "helpPlate",
+            helpPlateParent = queueTab.content,
+            helpPlateDefinition = {
+                parent = queueTab.content,
+                steps = {
+                    {
+                        button = {
+                            --useMainButton = true,
+                            offsetX = 0,
+                            offsetY = 0,
+                        },
+                        highlight = {
+                            frame = queueTab.content.craftList.frame,
+                            offsetX = 0,
+                            offsetY = 0,
+                            extraWidth = 0,
+                            extraHeight = 0,
+                        },
+                        toolTipDir = "LEFT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = queueTab.content.craftNextButton.frame,
+                            includeFrameWidth = true,
+                            offsetX = 10,
+                            offsetY = -14,
+                        },
+                        highlight = {
+                            frame = queueTab.content.craftNextButton.frame,
+                            offsetX = -6,
+                            offsetY = 6,
+                            extraWidth = 12,
+                            extraHeight = 12,
+                        },
+                        toolTipDir = "UP",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP"),
+                    },
+                },
+            },
+        })
+        frame.content.queueTutorialButton.frame:Show()
 
 
         if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
