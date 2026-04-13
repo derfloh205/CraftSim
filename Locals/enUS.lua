@@ -582,6 +582,9 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " Minimap Button",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX = "Use Coin Textures: ",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "Use coin icons to format money",
+        OPTIONS_GENERAL_ALLOW_GATHERING_QUEUEABLE = "Allow Gathering profession crafts to be queueable",
+        OPTIONS_GENERAL_ALLOW_GATHERING_QUEUEABLE_TOOLTIP =
+        "When enabled, gathering profession recipes (Fishing/Skinning/Mining/Herbalism) can be added to CraftQueue.",
         OPTIONS_SETTINGS_COIN_TEXTURES_LABEL = "Use coin textures for money",
         OPTIONS_TOOLTIP_TAB = "Tooltip",
         OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "Show registered crafters on item tooltips",
