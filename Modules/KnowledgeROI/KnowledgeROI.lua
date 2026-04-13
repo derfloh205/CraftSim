@@ -197,7 +197,8 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     end
 
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
-    -- configID can be 0 (truthy in Lua but invalid for C_Traits) when tree hasn't loaded yet
+    -- C_ProfSpecs can return 0 when the profession tree has not loaded yet.
+    -- Convert that to nil because 0 is truthy in Lua, but it is not a valid configID for C_Traits.
     if configID == 0 then configID = nil end
 
     print("FullScan: configID=" .. tostring(configID) .. " skillLineID=" .. tostring(recipeData.professionData.skillLineID))

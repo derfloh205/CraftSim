@@ -452,8 +452,8 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartFullScan()
     content.nodeList:Remove()
     content.nodeList:UpdateDisplay()
 
-    -- Use C_Timer to avoid blocking the UI while computing
-    C_Timer.After(0.01, function()
+    -- Use C_Timer to defer the scan until the next update without relying on a fragile short delay
+    C_Timer.After(0, function()
         local results = CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, function(progress, total)
             content.modeText:SetText(f.l("Scanning... ") .. progress .. "/" .. total)
         end)
