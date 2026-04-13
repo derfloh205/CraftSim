@@ -568,7 +568,7 @@ function CraftSim.KNOWLEDGE_ROI:CheckAndNotifyUnspentPoints()
     local plan = CraftSim.DB.KNOWLEDGE_ROI:GetWeeklyPlan(crafterUID, profession)
     local bestHint = ""
     if plan and plan.topNodeName then
-        bestHint = " — Best: " .. plan.topNodeName
+        bestHint = " - Best: " .. plan.topNodeName
     end
 
     CraftSim.DEBUG:SystemPrint(
@@ -577,7 +577,7 @@ function CraftSim.KNOWLEDGE_ROI:CheckAndNotifyUnspentPoints()
         GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) ..
         " unspent knowledge point" .. (availPts > 1 and "s" or "") ..
         bestHint ..
-        " — Open " .. f.l("Knowledge ROI") .. " panel to optimize!"
+        " - Open " .. f.l("Knowledge ROI") .. " panel to optimize!"
     )
 end
 

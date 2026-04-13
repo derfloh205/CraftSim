@@ -266,7 +266,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
     end
 
     local availPts = CraftSim.KNOWLEDGE_ROI:GetAvailableKnowledgePoints(recipeData)
-    local ptsText = availPts > 0 and (" — " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts") or ""
+    local ptsText = availPts > 0 and (" - " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts") or ""
     content.modeText:SetText(f.l("Single Recipe ROI") .. ptsText)
 
     -- Show saved weekly plan summary if available
@@ -339,7 +339,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
             if result.step then
                 nameCol.text:SetText(prefix .. GUTIL:ColorizeText("#" .. result.step, GUTIL.COLORS.WHITE) ..
                     " " .. (result.nodeName or ""))
-                rankCol.text:SetText(math.max(0, result.rankBefore) .. "→" .. math.max(0, result.rankAfter) .. "/" .. result.maxRank)
+                rankCol.text:SetText(math.max(0, result.rankBefore) .. "->" .. math.max(0, result.rankAfter) .. "/" .. result.maxRank)
             else
                 nameCol.text:SetText(prefix .. (result.nodeName or ("Node " .. result.nodeID)))
                 local rankText = tostring(math.max(0, result.currentRank)) .. "/" .. tostring(result.maxRank)
@@ -398,7 +398,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:BuildRowTooltip(result)
     if result.step then
         -- Optimal Path roadmap step
         tinsert(lines, f.bb("Step #" .. result.step .. ": " .. (result.nodeName or "")))
-        tinsert(lines, "Rank: " .. math.max(0, result.rankBefore) .. " → " .. math.max(0, result.rankAfter) .. " / " .. result.maxRank)
+        tinsert(lines, "Rank: " .. math.max(0, result.rankBefore) .. " -> " .. math.max(0, result.rankAfter) .. " / " .. result.maxRank)
         tinsert(lines, "")
         tinsert(lines, f.l("ROI this step: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
         tinsert(lines, f.l("Cumulative ROI: ") .. CraftSim.UTIL:FormatMoney(result.cumulativeROI, true))
@@ -581,7 +581,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartWeeklyPlan()
 
         self:PopulateNodeList(content, plan.path)
     else
-        -- No saved plan — run Optimize
+        -- No saved plan - run Optimize
         self:StartOptimizePath()
     end
 end
