@@ -339,14 +339,14 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     if opts.CRAFTING_COST then
         addTextRow(
             L("RECIPE_INFO_CRAFTING_COST_LABEL"),
-            CraftSim.UTIL:FormatMoney(craftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-craftingCosts, true),
             f.white("Total " .. f.bb("crafting cost") .. " for one craft"))
     end
 
     if opts.AVG_CRAFTING_COST then
         addTextRow(
             L("RECIPE_INFO_AVG_CRAFTING_COST_LABEL"),
-            CraftSim.UTIL:FormatMoney(recipeData.priceData.averageCraftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-recipeData.priceData.averageCraftingCosts, true),
             f.white(f.bb("Average") .. " crafting cost per craft considering " ..
                 f.l("Resourcefulness") .. " and " .. f.l("Multicraft")))
     end
@@ -400,7 +400,7 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     if opts.CONCENTRATION_COST and recipeData.concentrationCost > 0 then
         addTextRow(
             L("RECIPE_INFO_CONCENTRATION_COST_LABEL"),
-            f.white(tostring(recipeData.concentrationCost)),
+            f.gold(tostring(recipeData.concentrationCost)),
             f.white(f.bb("Base Concentration cost") .. " for one craft (not accounting for " ..
                 f.l("Ingenuity") .. " refund)"))
     end
