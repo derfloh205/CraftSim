@@ -165,6 +165,9 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     end
 
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
+    -- configID can be 0 (truthy in Lua but invalid for C_Traits) when tree hasn't loaded yet
+    if configID == 0 then configID = nil end
+
     local total = GUTIL:Count(baseNodes)
     local progress = 0
 
@@ -174,11 +177,16 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
             progressCallback(progress, total)
         end
 
-        -- Get current rank from the API
+        -- Get current rank from the API; fallback to 0 if API unavailable
         local nodeInfo = configID and C_Traits.GetNodeInfo(configID, baseNodeID)
-        local currentRank = nodeInfo and nodeInfo.activeRank and (nodeInfo.activeRank - 1) or -1
+        local currentRank
+        if nodeInfo and nodeInfo.activeRank then
+            currentRank = nodeInfo.activeRank - 1 -- CraftSim convention: activeRank 0 = rank -1 (uninvested)
+        else
+            currentRank = 0 -- Assume uninvested when API unavailable
+        end
 
-        if nodeInfo and currentRank < baseNodeEntry.maxRank then
+        if currentRank < baseNodeEntry.maxRank then
             local affectedRecipeIDs = nodeToRecipes[baseNodeID]
             if affectedRecipeIDs then
                 local totalDelta = 0
@@ -198,29 +206,28 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
                     end
                 end
 
-                if totalDelta ~= 0 then
-                    -- Sort recipe impacts by profit delta descending
-                    table.sort(recipeImpacts, function(a, b)
-                        return a.profitDelta > b.profitDelta
-                    end)
+                -- Include node even if totalDelta is 0; shows investable nodes with neutral ROI
+                -- Sort recipe impacts by profit delta descending
+                table.sort(recipeImpacts, function(a, b)
+                    return a.profitDelta > b.profitDelta
+                end)
 
-                    local remainingRanks = baseNodeEntry.maxRank - currentRank
+                local remainingRanks = baseNodeEntry.maxRank - math.max(0, currentRank)
 
-                    ---@type CraftSim.KnowledgeROI.FullScanResult
-                    local result = {
-                        nodeID = baseNodeID,
-                        nodeName = self:GetNodeName(baseNodeID, recipeData) or ("Node " .. baseNodeID),
-                        nodeIcon = baseNodeEntry.icon,
-                        currentRank = currentRank,
-                        maxRank = baseNodeEntry.maxRank,
-                        remainingRanks = remainingRanks,
-                        roiPerPoint = totalDelta,
-                        totalEstimatedROI = totalDelta * remainingRanks,
-                        affectedRecipeCount = #recipeImpacts,
-                        topRecipes = recipeImpacts,
-                    }
-                    tinsert(results, result)
-                end
+                ---@type CraftSim.KnowledgeROI.FullScanResult
+                local result = {
+                    nodeID = baseNodeID,
+                    nodeName = self:GetNodeName(baseNodeID, recipeData) or ("Node " .. baseNodeID),
+                    nodeIcon = baseNodeEntry.icon,
+                    currentRank = currentRank,
+                    maxRank = baseNodeEntry.maxRank,
+                    remainingRanks = remainingRanks,
+                    roiPerPoint = totalDelta,
+                    totalEstimatedROI = totalDelta * remainingRanks,
+                    affectedRecipeCount = #recipeImpacts,
+                    topRecipes = recipeImpacts,
+                }
+                tinsert(results, result)
             end
         end
     end
@@ -299,6 +306,8 @@ end
 ---@return string?
 function CraftSim.KNOWLEDGE_ROI:GetNodeName(nodeID, recipeData)
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
+    if configID == 0 then configID = nil end
+    if not configID then return nil end
     local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
     if nodeInfo and nodeInfo.entryIDs then
         local entryInfos = GUTIL:Map(nodeInfo.entryIDs, function(entryID)
