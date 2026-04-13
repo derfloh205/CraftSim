@@ -1,0 +1,340 @@
+---@class CraftSim
+local CraftSim = select(2, ...)
+
+local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
+
+---@class CraftSim.KNOWLEDGE_ROI.UI
+CraftSim.KNOWLEDGE_ROI.UI = {}
+
+local print = CraftSim.DEBUG:RegisterDebugID("Modules.KnowledgeROI.UI")
+
+function CraftSim.KNOWLEDGE_ROI.UI:Init()
+    local sizeX = 350
+    local sizeY = 400
+    local offsetX = 260
+    local offsetY = 200
+
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
+    ---@class CraftSim.KNOWLEDGE_ROI.FRAME : GGUI.Frame
+    local frameNO_WO = GGUI.Frame({
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.KNOWLEDGE_ROI,
+        title = "CraftSim Knowledge ROI",
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMRIGHT",
+        offsetX = offsetX,
+        offsetY = offsetY,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_KNOWLEDGE_ROI"),
+        frameTable = CraftSim.INIT.FRAMES,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel,
+    })
+
+    ---@class CraftSim.KNOWLEDGE_ROI.FRAME : GGUI.Frame
+    local frameWO = GGUI.Frame({
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO,
+        title = "CraftSim Knowledge ROI",
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMRIGHT",
+        offsetX = offsetX,
+        offsetY = offsetY,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_KNOWLEDGE_ROI"),
+        frameTable = CraftSim.INIT.FRAMES,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel,
+    })
+
+    ---@param frame CraftSim.KNOWLEDGE_ROI.FRAME
+    local function createContent(frame)
+        ---@class CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT : Frame
+        frame.content = frame.content
+
+        frame:Hide()
+
+        frame.content.modeText = GGUI.Text({
+            parent = frame.content,
+            anchorParent = frame.content,
+            anchorA = "TOPLEFT",
+            anchorB = "TOPLEFT",
+            text = f.l("Single Recipe Mode"),
+            justifyOptions = { type = 'H', align = "LEFT" },
+            offsetX = 15,
+            offsetY = -30,
+        })
+
+        frame.content.fullScanButton = GGUI.Button({
+            parent = frame.content,
+            anchorPoints = { {
+                anchorParent = frame.content,
+                anchorA = "TOPRIGHT",
+                anchorB = "TOPRIGHT",
+                offsetX = -15,
+                offsetY = -26,
+            } },
+            label = "Full Profession Scan",
+            sizeX = 140,
+            sizeY = 22,
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_ROI.UI:StartFullScan()
+            end,
+        })
+
+        frame.content.nodeList = GGUI.FrameList({
+            parent = frame.content,
+            anchorParent = frame.content.modeText.frame,
+            anchorA = "TOPLEFT",
+            anchorB = "BOTTOMLEFT",
+            hideScrollbar = false,
+            sizeY = 310,
+            selectionOptions = {
+                noSelectionColor = true,
+                hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+            },
+            rowHeight = 28,
+            offsetX = -5,
+            offsetY = -5,
+            scale = 1,
+            columnOptions = {
+                {
+                    label = "Node",
+                    width = 150,
+                },
+                {
+                    label = "Rank",
+                    width = 60,
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    label = "ROI / Pt",
+                    width = 100,
+                    justifyOptions = { type = "H", align = "RIGHT" },
+                },
+            },
+            showHeaderLine = true,
+            rowConstructor = function(columns)
+                ---@class CraftSim.KNOWLEDGE_ROI.NODE_LIST.NAME_COL : Frame
+                local nameCol = columns[1]
+
+                ---@class CraftSim.KNOWLEDGE_ROI.NODE_LIST.RANK_COL : Frame
+                local rankCol = columns[2]
+
+                ---@class CraftSim.KNOWLEDGE_ROI.NODE_LIST.ROI_COL : Frame
+                local roiCol = columns[3]
+
+                local iconSize = 20
+                nameCol.icon = GGUI.Texture({
+                    parent = nameCol,
+                    anchorParent = nameCol,
+                    anchorA = "LEFT",
+                    anchorB = "LEFT",
+                    sizeX = iconSize,
+                    sizeY = iconSize,
+                })
+
+                nameCol.text = GGUI.Text({
+                    parent = nameCol,
+                    anchorParent = nameCol.icon.frame,
+                    justifyOptions = { type = "H", align = "LEFT" },
+                    anchorA = "LEFT",
+                    anchorB = "RIGHT",
+                    offsetX = 3,
+                    fixedWidth = 120,
+                })
+
+                rankCol.text = GGUI.Text({
+                    parent = rankCol,
+                    anchorParent = rankCol,
+                })
+
+                roiCol.text = GGUI.Text({
+                    parent = roiCol,
+                    anchorParent = roiCol,
+                    anchorA = "RIGHT",
+                    anchorB = "RIGHT",
+                    offsetX = -5,
+                    justifyOptions = { type = "H", align = "RIGHT" },
+                })
+            end,
+        })
+    end
+
+    createContent(frameNO_WO)
+    createContent(frameWO)
+
+    CraftSim.KNOWLEDGE_ROI.frame = frameNO_WO
+    CraftSim.KNOWLEDGE_ROI.frameWO = frameWO
+end
+
+--- Update the knowledge ROI display for the given recipe.
+---@param recipeData CraftSim.RecipeData
+function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME
+    local frame
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    else
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    end
+
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
+    local content = frame.content
+
+    content.nodeList:Remove()
+
+    if not recipeData.specializationData or not recipeData.supportsCraftingStats then
+        content.modeText:SetText(f.l("No specialization data available"))
+        content.nodeList:UpdateDisplay()
+        return
+    end
+
+    content.modeText:SetText(f.l("Single Recipe ROI"))
+
+    CraftSim.DEBUG:StartProfiling("KnowledgeROI.SingleRecipe")
+    local results = CraftSim.KNOWLEDGE_ROI:CalculateForRecipe(recipeData)
+    CraftSim.DEBUG:StopProfiling("KnowledgeROI.SingleRecipe")
+
+    self:PopulateNodeList(content, results)
+end
+
+--- Populate the frame list with node ROI results.
+---@param content CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
+---@param results CraftSim.KnowledgeROI.NodeResult[]|CraftSim.KnowledgeROI.FullScanResult[]
+function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
+    content.nodeList:Remove()
+
+    for _, result in ipairs(results) do
+        content.nodeList:Add(function(row)
+            local columns = row.columns
+            ---@type CraftSim.KNOWLEDGE_ROI.NODE_LIST.NAME_COL
+            local nameCol = columns[1]
+            ---@type CraftSim.KNOWLEDGE_ROI.NODE_LIST.RANK_COL
+            local rankCol = columns[2]
+            ---@type CraftSim.KNOWLEDGE_ROI.NODE_LIST.ROI_COL
+            local roiCol = columns[3]
+
+            if result.nodeIcon then
+                nameCol.icon:SetTexture(result.nodeIcon)
+                nameCol.icon:Show()
+            else
+                nameCol.icon:Hide()
+            end
+
+            nameCol.text:SetText(result.nodeName or ("Node " .. result.nodeID))
+
+            local rankText = tostring(result.currentRank) .. "/" .. tostring(result.maxRank)
+            rankCol.text:SetText(rankText)
+
+            -- Color-code ROI: green for positive, red for negative, white for zero
+            local roiText
+            if result.roiPerPoint > 0 then
+                roiText = GUTIL:ColorizeText(
+                    CraftSim.UTIL:FormatMoney(result.roiPerPoint, false),
+                    GUTIL.COLORS.GREEN)
+            elseif result.roiPerPoint < 0 then
+                roiText = GUTIL:ColorizeText(
+                    CraftSim.UTIL:FormatMoney(result.roiPerPoint, false),
+                    GUTIL.COLORS.RED)
+            else
+                roiText = CraftSim.UTIL:FormatMoney(0, false)
+            end
+            roiCol.text:SetText(roiText)
+
+            -- Tooltip with details
+            row.tooltipOptions = {
+                text = self:BuildRowTooltip(result),
+                anchor = "ANCHOR_CURSOR",
+            }
+        end)
+    end
+
+    content.nodeList:UpdateDisplay()
+end
+
+--- Build a tooltip string for a node ROI row.
+---@param result CraftSim.KnowledgeROI.NodeResult|CraftSim.KnowledgeROI.FullScanResult
+---@return string
+function CraftSim.KNOWLEDGE_ROI.UI:BuildRowTooltip(result)
+    local lines = {}
+    tinsert(lines, f.bb(result.nodeName or ("Node " .. result.nodeID)))
+    tinsert(lines, "Rank: " .. result.currentRank .. " / " .. result.maxRank)
+    tinsert(lines, "Remaining Points: " .. result.remainingRanks)
+    tinsert(lines, "")
+    tinsert(lines, f.l("ROI per Point: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
+    tinsert(lines, f.l("Total Estimated ROI: ") .. CraftSim.UTIL:FormatMoney(result.totalEstimatedROI, true))
+
+    -- Full scan results include affected recipe details
+    if result.topRecipes and #result.topRecipes > 0 then
+        tinsert(lines, "")
+        tinsert(lines, f.l("Top Affected Recipes:"))
+        local count = math.min(5, #result.topRecipes)
+        for i = 1, count do
+            local impact = result.topRecipes[i]
+            local deltaStr = CraftSim.UTIL:FormatMoney(impact.profitDelta, true)
+            tinsert(lines, "  " .. (impact.recipeName or "") .. ": " .. deltaStr)
+        end
+        if result.affectedRecipeCount and result.affectedRecipeCount > count then
+            tinsert(lines, "  ... and " .. (result.affectedRecipeCount - count) .. " more")
+        end
+    end
+
+    return table.concat(lines, "\n")
+end
+
+--- Start a full profession scan (triggered by button).
+function CraftSim.KNOWLEDGE_ROI.UI:StartFullScan()
+    local recipeData = CraftSim.MODULES.recipeData
+    if not recipeData then
+        print("No recipe data available for scan")
+        return
+    end
+
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME
+    local frame
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    else
+        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI) --[[@as CraftSim.KNOWLEDGE_ROI.FRAME]]
+    end
+
+    ---@type CraftSim.KNOWLEDGE_ROI.FRAME.CONTENT
+    local content = frame.content
+    content.modeText:SetText(f.l("Scanning..."))
+    content.nodeList:Remove()
+    content.nodeList:UpdateDisplay()
+
+    -- Use C_Timer to avoid blocking the UI while computing
+    C_Timer.After(0.01, function()
+        local results = CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, function(progress, total)
+            content.modeText:SetText(f.l("Scanning... ") .. progress .. "/" .. total)
+        end)
+
+        content.modeText:SetText(f.l("Full Profession ROI") ..
+            " (" .. #results .. " nodes)")
+        self:PopulateNodeList(content, results)
+    end)
+end
