@@ -157,7 +157,14 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
     for _, rid in ipairs(cachedRecipeIDs) do
         cachedRecipeSet[rid] = true
     end
+    -- Fallback: if no cached recipe IDs (user never did a Recipe Scan), use all recipes from the static mapping
+    if not next(cachedRecipeSet) then
+        for recipeID in pairs(recipeMapping) do
+            cachedRecipeSet[recipeID] = true
+        end
+    end
 
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
     local total = GUTIL:Count(baseNodes)
     local progress = 0
 
@@ -168,11 +175,10 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
         end
 
         -- Get current rank from the API
-        local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
-        local nodeInfo = C_Traits.GetNodeInfo(configID, baseNodeID)
+        local nodeInfo = configID and C_Traits.GetNodeInfo(configID, baseNodeID)
         local currentRank = nodeInfo and nodeInfo.activeRank and (nodeInfo.activeRank - 1) or -1
 
-        if currentRank >= 0 and currentRank < baseNodeEntry.maxRank then
+        if nodeInfo and currentRank < baseNodeEntry.maxRank then
             local affectedRecipeIDs = nodeToRecipes[baseNodeID]
             if affectedRecipeIDs then
                 local totalDelta = 0
@@ -451,6 +457,12 @@ function CraftSim.KNOWLEDGE_ROI:CalculateOptimalPath(recipeData, numPoints, prog
     local cachedRecipeSet = {}
     for _, rid in ipairs(cachedRecipeIDs) do
         cachedRecipeSet[rid] = true
+    end
+    -- Fallback: if no cached recipe IDs, use all recipes from the static mapping
+    if not next(cachedRecipeSet) then
+        for recipeID in pairs(recipeMapping) do
+            cachedRecipeSet[recipeID] = true
+        end
     end
 
     -- Build working state from scan results
