@@ -12,8 +12,8 @@ CraftSim.KNOWLEDGE_ROI.UI = {}
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.KnowledgeROI.UI")
 
 function CraftSim.KNOWLEDGE_ROI.UI:Init()
-    local sizeX = 350
-    local sizeY = 400
+    local sizeX = 370
+    local sizeY = 430
     local offsetX = 260
     local offsetY = 200
 
@@ -82,7 +82,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             text = f.l("Single Recipe Mode"),
             justifyOptions = { type = 'H', align = "LEFT" },
             offsetX = 15,
-            offsetY = -30,
+            offsetY = -15,
         })
 
         frame.content.fullScanButton = GGUI.Button({
@@ -92,7 +92,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -15,
-                offsetY = -50,
+                offsetY = -35,
             } },
             label = "Full Scan",
             sizeX = 85,
@@ -109,7 +109,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -105,
-                offsetY = -50,
+                offsetY = -35,
             } },
             label = "Optimize",
             sizeX = 85,
@@ -126,7 +126,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -195,
-                offsetY = -50,
+                offsetY = -35,
             } },
             label = "Weekly",
             sizeX = 70,
@@ -153,14 +153,14 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
             hideScrollbar = false,
-            sizeY = 250,
+            sizeY = 300,
             selectionOptions = {
                 noSelectionColor = true,
                 hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
             },
             rowHeight = 28,
             offsetX = 10,
-            offsetY = -78,
+            offsetY = -80,
             scale = 1,
             columnOptions = {
                 {
