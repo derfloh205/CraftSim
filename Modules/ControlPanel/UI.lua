@@ -67,9 +67,9 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"))
 
             addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL"),
+                L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
                 "MODULE_AVERAGE_PROFIT",
-                L("CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP"))
+                L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"))
 
             addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),

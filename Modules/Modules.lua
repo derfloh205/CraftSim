@@ -301,16 +301,16 @@ function CraftSim.MODULES:UpdateUI()
 		CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 	end
 
-	-- AverageProfit Module
+	-- AverageProfit (Recipe Info) Module
 	CraftSim.FRAME:ToggleFrame(averageProfitFrame,
 		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(averageProfitFrameWO,
 		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showAverageProfit then
-		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
+		local statWeights = CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
 
 		if statWeights then
-			CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(recipeData, statWeights)
+			CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
 		end
 	end
 

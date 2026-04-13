@@ -314,6 +314,7 @@ function CraftSim.RecipeData:new(options)
     else
         self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter(forceCache)
     end
+    CraftSim.DEBUG:StopProfiling("- RD: OperationInfo")
 
     ---@type CraftSim.ProfessionStats
     self.baseProfessionStats = CraftSim.ProfessionStats()
@@ -322,37 +323,7 @@ function CraftSim.RecipeData:new(options)
     ---@type CraftSim.ProfessionStats
     self.professionStatModifiers = CraftSim.ProfessionStats()
 
-    self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
-    CraftSim.DEBUG:StopProfiling("- RD: OperationInfo")
-
-    if self.supportsIngenuity and self.supportsSpecializations then
-        self.concentrationData = self:GetConcentrationDataForCrafter()
-    end
-
-    if self.professionData:UsesGear() then
-        CraftSim.DEBUG:StartProfiling("- RD: ProfessionGearCache")
-        -- cache available profession gear by calling this once
-        CraftSim.TOPGEAR:GetProfessionGearFromInventory(self, forceCache)
-        CraftSim.DEBUG:StopProfiling("- RD: ProfessionGearCache")
-
-        self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
-    end
-
-    self.baseProfessionStats:subtract(self.buffData.professionStats)
-    -- As we dont know in this case what the factors are without gear and reagents and such
-    -- we set them to 0 and let them accumulate in UpdateProfessionStats
-    self.baseProfessionStats:ClearExtraValues()
-
-    -- exception: when salvage recipe, then resourcefulness is supported! set the base manually to the specs one (if available)
-    if self.isSalvageRecipe then
-        self.supportsResourcefulness = true
-        if self.specializationData then
-            self.baseProfessionStats.resourcefulness.value = self.specializationData.professionStats.resourcefulness
-                .value
-        else
-            self.baseProfessionStats.resourcefulness.value = 0
-        end
-    end
+    self:ApplyBaseProfessionStatsFromOperationInfo(forceCache)
 
     self:UpdateProfessionStats()
 
@@ -387,6 +358,53 @@ function CraftSim.RecipeData:new(options)
     end
 end
 
+--- Rebuild base profession stats from `self.baseOperationInfo` (gear/buff stripped, extras cleared),
+--- salvage and work-order multicraft rules applied. Caller must set `baseOperationInfo` first.
+---@param forceCache boolean? passed to GetProfessionGearFromInventory on first-style init
+function CraftSim.RecipeData:ApplyBaseProfessionStatsFromOperationInfo(forceCache)
+    if not self.baseProfessionStats or not self.baseOperationInfo then
+        return
+    end
+    forceCache = forceCache or false
+
+    self.supportsMulticraft = false
+    self.supportsResourcefulness = false
+    self.supportsIngenuity = false
+
+    self.baseProfessionStats:Clear()
+    self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
+
+    if self.supportsIngenuity and self.supportsSpecializations then
+        self.concentrationData = self:GetConcentrationDataForCrafter()
+    end
+
+    if self.professionData:UsesGear() then
+        CraftSim.DEBUG:StartProfiling("- RD: ProfessionGearCache")
+        CraftSim.TOPGEAR:GetProfessionGearFromInventory(self, forceCache)
+        CraftSim.DEBUG:StopProfiling("- RD: ProfessionGearCache")
+
+        self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
+    end
+
+    self.baseProfessionStats:subtract(self.buffData.professionStats)
+    self.baseProfessionStats:ClearExtraValues()
+
+    if self.isSalvageRecipe then
+        self.supportsResourcefulness = true
+        if self.specializationData then
+            self.baseProfessionStats.resourcefulness.value = self.specializationData.professionStats.resourcefulness
+                .value
+        else
+            self.baseProfessionStats.resourcefulness.value = 0
+        end
+    end
+
+    if self.orderData then
+        self.supportsMulticraft = false
+        self.baseProfessionStats.multicraft:Clear()
+    end
+end
+
 ---@param orderData CraftingOrderInfo
 function CraftSim.RecipeData:SetOrder(orderData)
     self.orderData = GUTIL:CopyTableDeep(orderData or {}) -- avoid taint
@@ -394,6 +412,10 @@ function CraftSim.RecipeData:SetOrder(orderData)
     self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
         self.orderData.orderID, self.concentrating)
     self:ApplyOrderReagentsToSlots()
+    if self.baseProfessionStats then
+        self:ApplyBaseProfessionStatsFromOperationInfo(false)
+        self:Update()
+    end
 end
 
 ---@param reagentInfo table
@@ -870,6 +892,10 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
     self.professionStats.multicraft.value = math.min(self.professionStats.multicraft.percentDivisionFactor,
         self.professionStats.multicraft.value)
+
+    if not self.supportsMulticraft then
+        self.professionStats.multicraft:Clear()
+    end
 
     if self.supportsQualities then
         self.concentrationCost = self:UpdateConcentrationCost()
