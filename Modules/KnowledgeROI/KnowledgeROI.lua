@@ -68,8 +68,10 @@ function CraftSim.KNOWLEDGE_ROI:SimulateNodeRankIncrease(recipeData, nodeIndex, 
     -- Capture stats BEFORE rank bump
     local oldStats = simNodeData.professionStats:Copy()
 
-    -- Bump rank by 1
-    simNodeData.rank = simNodeData.rank + 1
+    -- Bump rank to maxRank (full investment simulation)
+    -- Simulating full investment captures ALL quality threshold crossings
+    -- and perk unlocks, giving accurate total ROI for the entire node.
+    simNodeData.rank = simNodeData.maxRank
     simNodeData:Update()
 
     -- Apply the stat DELTA directly to recipe professionStats.
@@ -103,12 +105,9 @@ function CraftSim.KNOWLEDGE_ROI:SimulateNodeRankIncrease(recipeData, nodeIndex, 
     simRecipeData.priceData:Update()
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipeData)
 
+    -- profitDelta is the TOTAL delta from investing ALL remaining ranks
     local profitDelta = newProfit - baseProfit
-
-    -- Compute how many remaining ranks and total remaining ROI estimate
-    -- (linear approximation for remaining points)
     local remainingRanks = nodeData.maxRank - nodeData.rank
-    local totalEstimatedROI = profitDelta * remainingRanks
 
     ---@type CraftSim.KnowledgeROI.NodeResult
     local result = {
@@ -120,8 +119,8 @@ function CraftSim.KNOWLEDGE_ROI:SimulateNodeRankIncrease(recipeData, nodeIndex, 
         remainingRanks = remainingRanks,
         baseProfit = baseProfit,
         projectedProfit = newProfit,
-        roiPerPoint = profitDelta,
-        totalEstimatedROI = totalEstimatedROI,
+        roiPerPoint = remainingRanks > 0 and (profitDelta / remainingRanks) or 0,
+        totalEstimatedROI = profitDelta,
     }
 
     return result
@@ -225,32 +224,24 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
         if currentRank < baseNodeEntry.maxRank then
             local affectedRecipeIDs = nodeToRecipes[baseNodeID]
 
-            -- Debug: log first 3 nodes in detail
-            if progress <= 3 then
-                local affectedCount = affectedRecipeIDs and GUTIL:Count(affectedRecipeIDs) or 0
-                print("FullScan node #" .. progress .. ": id=" .. baseNodeID ..
-                    " rank=" .. currentRank .. "/" .. baseNodeEntry.maxRank ..
-                    " affectedRecipes=" .. affectedCount ..
-                    " nodeInfo=" .. tostring(nodeInfo ~= nil))
-            end
+            local affectedCount = affectedRecipeIDs and GUTIL:Count(affectedRecipeIDs) or 0
+            print("FullScan node #" .. progress .. ": id=" .. baseNodeID ..
+                " rank=" .. currentRank .. "/" .. baseNodeEntry.maxRank ..
+                " recipes=" .. affectedCount)
 
             if affectedRecipeIDs then
                 local totalDelta = 0
                 local recipeImpacts = {}
-                local recipesTried = 0
-                local recipesSkipped = 0
                 local recipesErrored = 0
 
                 for recipeID in pairs(affectedRecipeIDs) do
-                    -- Only consider recipes the player actually knows
                     if cachedRecipeSet[recipeID] then
-                        recipesTried = recipesTried + 1
                         local ok, delta, impact = pcall(self.CalculateRecipeNodeDelta, self, recipeID, recipeData,
                             baseNodeID, currentRank)
                         if not ok then
                             recipesErrored = recipesErrored + 1
                             if recipesErrored <= 2 then
-                                print("FullScan ERROR for recipe " .. recipeID .. " node " .. baseNodeID .. ": " .. tostring(delta))
+                                print("FullScan ERROR recipe " .. recipeID .. " node " .. baseNodeID .. ": " .. tostring(delta))
                             end
                         elseif delta and delta ~= 0 then
                             totalDelta = totalDelta + delta
@@ -258,16 +249,11 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
                                 tinsert(recipeImpacts, impact)
                             end
                         end
-                    else
-                        recipesSkipped = recipesSkipped + 1
                     end
                 end
 
-                -- Debug: log recipe processing stats for first 3 nodes
-                if progress <= 3 then
-                    print("FullScan node #" .. progress .. " recipes: tried=" .. recipesTried ..
-                        " skipped=" .. recipesSkipped .. " errored=" .. recipesErrored ..
-                        " totalDelta=" .. string.format("%.2f", totalDelta))
+                if recipesErrored > 0 then
+                    print("FullScan node #" .. progress .. ": " .. recipesErrored .. " recipe errors")
                 end
 
                 -- Include node even if totalDelta is 0; shows investable nodes with neutral ROI
@@ -286,8 +272,8 @@ function CraftSim.KNOWLEDGE_ROI:FullProfessionScan(recipeData, progressCallback)
                     currentRank = currentRank,
                     maxRank = baseNodeEntry.maxRank,
                     remainingRanks = remainingRanks,
-                    roiPerPoint = totalDelta,
-                    totalEstimatedROI = totalDelta * remainingRanks,
+                    roiPerPoint = remainingRanks > 0 and (totalDelta / remainingRanks) or 0,
+                    totalEstimatedROI = totalDelta,
                     affectedRecipeCount = #recipeImpacts,
                     topRecipes = recipeImpacts,
                 }
@@ -324,31 +310,19 @@ end
 function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipeData, targetNodeID, currentRank)
     -- Create recipe data for this recipe
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-    if not recipeInfo then
-        print("  Delta: recipeID=" .. recipeID .. " -> NO recipeInfo")
-        return 0, nil
-    end
-    if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
-        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> gathering/dummy")
-        return 0, nil
-    end
+    if not recipeInfo then return 0, nil end
+    if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then return 0, nil end
 
     local ok, simRecipe = pcall(CraftSim.RecipeData, {
         recipeID = recipeID,
         crafterData = contextRecipeData.crafterData,
     })
     if not ok or not simRecipe then
-        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> RecipeData creation failed: " .. tostring(simRecipe))
+        print("  RecipeData creation failed for " .. recipeID .. ": " .. tostring(simRecipe))
         return 0, nil
     end
-    if not simRecipe.supportsCraftingStats then
-        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> no craftingStats support")
-        return 0, nil
-    end
-    if not simRecipe.specializationData then
-        print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") -> NO specializationData")
-        return 0, nil
-    end
+    if not simRecipe.supportsCraftingStats then return 0, nil end
+    if not simRecipe.specializationData then return 0, nil end
 
     -- Base profit
     local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
@@ -366,23 +340,19 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
             break
         end
     end
-    if not targetNode then
-        print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> node NOT FOUND in recipe specData (" .. #simRecipe.specializationData.nodeData .. " nodes)")
-        return 0, nil
-    end
-    if targetNode.rank >= targetNode.maxRank then
-        print("  Delta: recipeID=" .. recipeID .. " node=" .. targetNodeID .. " -> already at maxRank " .. targetNode.rank)
-        return 0, nil
-    end
+    if not targetNode then return 0, nil end
+    if targetNode.rank >= targetNode.maxRank then return 0, nil end
 
     -- Capture stats BEFORE rank bump
     local oldStats = targetNode.professionStats:Copy()
 
-    -- Bump rank and recalculate node stats
-    targetNode.rank = targetNode.rank + 1
+    -- Bump rank to maxRank (full investment simulation)
+    -- Simulating full investment captures ALL quality threshold crossings
+    -- and perk unlocks across the entire node's remaining ranks.
+    targetNode.rank = targetNode.maxRank
     targetNode:Update()
 
-    -- Calculate stat delta from the +1 rank
+    -- Calculate stat delta from full investment (current rank -> maxRank)
     local newStats = targetNode.professionStats
     local dSkill = newStats.skill.value - oldStats.skill.value
     local dMulticraft = newStats.multicraft.value - oldStats.multicraft.value
@@ -418,12 +388,6 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDelta(recipeID, contextRecipe
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
     local delta = newProfit - baseProfit
-
-    -- Debug: log actual profit values
-    print("  Delta: recipeID=" .. recipeID .. " (" .. (recipeInfo.name or "?") .. ") node=" .. targetNodeID ..
-        " dSkill=" .. string.format("%.1f", dSkill) ..
-        " base=" .. string.format("%.2f", baseProfit) .. " new=" .. string.format("%.2f", newProfit) ..
-        " delta=" .. string.format("%.2f", delta))
 
     ---@type CraftSim.KnowledgeROIRecipeImpact
     local impact = {
@@ -732,8 +696,10 @@ function CraftSim.KNOWLEDGE_ROI:CalculateOptimalPath(recipeData, numPoints, prog
         -- Recalculate any nodes flagged from previous iteration
         for nodeID, state in pairs(nodeStates) do
             if state.needsRecalc and state.currentRank < state.maxRank then
-                state.roiPerPoint = self:RecalculateNodeROIAtVirtualRank(
+                local fullDelta = self:RecalculateNodeROIAtVirtualRank(
                     nodeID, state.currentRank, recipeData, nodeToRecipes, cachedRecipeSet)
+                local remaining = state.maxRank - state.currentRank
+                state.roiPerPoint = remaining > 0 and (fullDelta / remaining) or 0
                 state.needsRecalc = false
             end
         end
@@ -879,9 +845,9 @@ function CraftSim.KNOWLEDGE_ROI:CalculateRecipeNodeDeltaAtVirtualRank(recipeID, 
     simRecipe.priceData:Update()
     local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
 
-    -- Now bump to virtualCurrentRank + 1 and apply the incremental delta
+    -- Now bump to maxRank (full investment from virtual rank) and apply delta
     local preStats = targetNode.professionStats:Copy()
-    targetNode.rank = virtualCurrentRank + 1
+    targetNode.rank = targetNode.maxRank
     targetNode:Update()
     local postStats = targetNode.professionStats
 
