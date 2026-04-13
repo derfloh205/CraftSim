@@ -535,6 +535,10 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE = "Remember Last Recipe",
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP = "Reopen last selected recipe when opening the crafting window",
         OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES = "Supported Price Sources:",
+        OPTIONS_GENERAL_INVENTORY_SOURCE = "Inventory Source",
+        OPTIONS_GENERAL_CURRENT_INVENTORY_SOURCE = "Current Inventory Source: ",
+        OPTIONS_GENERAL_NO_INVENTORY_SOURCE = "No Supported Inventory Addon loaded!",
+        OPTIONS_GENERAL_SUPPORTED_INVENTORY_SOURCES = "Supported Inventory Sources:",
         OPTIONS_PERFORMANCE_RAM = "Enable RAM cleanup while crafting",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "Crafts",
         OPTIONS_PERFORMANCE_RAM_TOOLTIP =

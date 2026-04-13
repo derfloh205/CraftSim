@@ -331,6 +331,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.DEBUG.UI:Init()
 
 		CraftSim.PRICE_API:InitPriceSource()
+		CraftSim.INVENTORY_API:InitInventorySource()
 
 
 		CraftSim.RECIPE_INFO.UI:Init()

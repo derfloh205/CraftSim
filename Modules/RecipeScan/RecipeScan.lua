@@ -682,10 +682,17 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                     tsmItemString) or 0
             end
 
-            -- TSM Enhanced: subtract existing inventory from restock target
+            -- subtract existing inventory from restock target using the selected inventory addon
+            -- (TSM Smart Restock still takes priority if enabled and TSM is the active inventory source)
             if CraftSimTSM:IsAvailable() and CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_ENABLED") then
                 local _, _, owned = CraftSimTSM:GetSmartRestockAmount(recipeData)
                 restockAmount = math.max(0, restockAmount - owned)
+            elseif recipeData.resultData.expectedItem then
+                local itemID = recipeData.resultData.expectedItem:GetItemID()
+                if itemID then
+                    local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID) or 0
+                    restockAmount = math.max(0, restockAmount - owned)
+                end
             end
 
             if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < restockAmount then

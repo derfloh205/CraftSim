@@ -344,7 +344,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         if options.subtractInventory then
             local itemID = recipeData.resultData.expectedItem:GetItemID()
             if itemID then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, false) or 0
+                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID) or 0
                 queueAmount = math.max(0, queueAmount - owned)
             end
         end

@@ -110,6 +110,37 @@ function CraftSim.OPTIONS:Init()
             L("OPTIONS_GENERAL_NO_PRICE_SOURCE"), nil))
     end
 
+    local inventoryAddons = CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()
+    if #inventoryAddons > 1 then
+        local supportedInventoryTooltip = L("OPTIONS_GENERAL_SUPPORTED_INVENTORY_SOURCES") ..
+            "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_INVENTORY_ADDONS, "\n")
+        local defaultInventorySource = CraftSim.INVENTORY_API.name or inventoryAddons[1]
+        local invDdSetting = Settings.RegisterProxySetting(mainCategory, "CraftSimOpt_INVENTORY_SOURCE",
+            Settings.VarType.String,
+            L("OPTIONS_GENERAL_INVENTORY_SOURCE"), defaultInventorySource,
+            function()
+                return CraftSim.INVENTORY_API.name
+            end,
+            function(v)
+                CraftSim.INVENTORY_APIS:SwitchAPIByAddonName(v)
+                CraftSim.DB.OPTIONS:Save(GO.INVENTORY_SOURCE, v)
+            end)
+        local function inventoryDropdownOptions()
+            local t = {}
+            for _, n in ipairs(inventoryAddons) do
+                t[#t + 1] = { controlType = Settings.ControlType.Radio, label = n, text = n, value = n }
+            end
+            return t
+        end
+        Settings.CreateDropdown(mainCategory, invDdSetting, inventoryDropdownOptions, supportedInventoryTooltip)
+    elseif #inventoryAddons == 1 then
+        Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
+            L("OPTIONS_GENERAL_CURRENT_INVENTORY_SOURCE") .. " " .. tostring(CraftSim.INVENTORY_API.name), nil))
+    else
+        Settings.RegisterInitializer(mainCategory, CreateSettingsListSectionHeaderInitializer(
+            L("OPTIONS_GENERAL_NO_INVENTORY_SOURCE"), nil))
+    end
+
     proxyBool("CraftSimOpt_SHOW_PROFIT_PERCENTAGE", GO.SHOW_PROFIT_PERCENTAGE,
         L("OPTIONS_GENERAL_SHOW_PROFIT"),
         L("OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP"))
