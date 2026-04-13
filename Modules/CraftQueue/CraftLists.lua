@@ -160,7 +160,7 @@ function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
     table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER"))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT") .. f.bb(tostring(options.restockAmount or 1)))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED") .. ": " .. yn(options.enableUnlearned))
-    table.insert(lines, "  " .. "Only Profitable: " .. yn(options.onlyProfitable))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE") .. ": " .. yn(options.onlyProfitable))
 
     return table.concat(lines, "\n")
 end

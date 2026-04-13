@@ -312,7 +312,7 @@ function CraftSim.RECIPE_SCAN:GetCraftListScanItems(row)
     end)
 
     local scanItems = {}
-    local seenKey = {} -- avoid duplicate (recipeID, listID) pairs
+    local seenRecipeListPairs = {} -- track unique (recipeID:listID) combinations to avoid duplicates
 
     local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
 
@@ -331,8 +331,8 @@ function CraftSim.RECIPE_SCAN:GetCraftListScanItems(row)
         end
         for _, recipeID in ipairs(recipeIDs) do
             local key = tostring(recipeID) .. ":" .. tostring(listRef.id)
-            if not seenKey[key] then
-                seenKey[key] = true
+            if not seenRecipeListPairs[key] then
+                seenRecipeListPairs[key] = true
                 -- get recipeInfo - from live API if current profession, else from cache
                 local recipeInfo = nil
                 if row.crafterProfessionUID == playerCrafterProfessionUID then

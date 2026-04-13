@@ -507,6 +507,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_CRAFTLISTS_NO_LISTS = f.grey("No Craft Lists created yet"),
         CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER = f.bb("Options") .. ":",
         CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER = f.bb("Restock Options") .. ":",
+        CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE = "Only Profitable",
 
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim Top Gear",
