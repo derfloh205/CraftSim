@@ -282,7 +282,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
             ageText = math.floor(age / 86400) .. "d ago"
         end
         content.summaryText:SetText(
-            CreateAtlasMarkup("loottoast-star", 14, 14) .. " " ..
+            CreateAtlasMarkup("PetJournal-FavoritesIcon", 14, 14) .. " " ..
             "Plan: " .. CraftSim.UTIL:FormatMoney(plan.totalGain, true) ..
             " from " .. plan.availablePoints .. " pts" ..
             "  " .. GUTIL:ColorizeText("(" .. ageText .. ")", GUTIL.COLORS.GREY))
@@ -332,7 +332,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
             -- "Next Best" badge on first positive-ROI row
             local prefix = ""
             if i == 1 and result.roiPerPoint > 0 then
-                prefix = CreateAtlasMarkup("loottoast-star", 14, 14) .. " "
+                prefix = CreateAtlasMarkup("PetJournal-FavoritesIcon", 14, 14) .. " "
             end
 
             -- PathStep results (from Optimize) have a step field
@@ -521,7 +521,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartOptimizePath()
         if #path > 0 then
             local totalGain = path[#path].cumulativeROI or 0
             content.summaryText:SetText(
-                CreateAtlasMarkup("loottoast-star", 14, 14) .. " " ..
+                CreateAtlasMarkup("PetJournal-FavoritesIcon", 14, 14) .. " " ..
                 "Total gain: " .. CraftSim.UTIL:FormatMoney(totalGain, true) ..
                 " from " .. #path .. " pts")
         end
@@ -574,7 +574,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:StartWeeklyPlan()
         content.modeText:SetText(headerText)
 
         content.summaryText:SetText(
-            CreateAtlasMarkup("loottoast-star", 14, 14) .. " " ..
+            CreateAtlasMarkup("PetJournal-FavoritesIcon", 14, 14) .. " " ..
             "Plan: " .. CraftSim.UTIL:FormatMoney(plan.totalGain, true) ..
             " from " .. plan.availablePoints .. " pts" ..
             "  " .. GUTIL:ColorizeText("(saved " .. ageText .. ")", GUTIL.COLORS.GREY))
