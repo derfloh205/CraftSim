@@ -626,6 +626,9 @@ function CraftSim.LOCAL_EN:GetData()
         CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL = "Specialization Info",
         CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP =
         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
+        CONTROL_PANEL_MODULES_KNOWLEDGE_ROI_LABEL = "Knowledge ROI",
+        CONTROL_PANEL_MODULES_KNOWLEDGE_ROI_TOOLTIP =
+        "Shows the profit Return on Investment for each unspent knowledge point, helping you decide where to invest next!",
         CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL = "Craft Log",
         CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP = "Show a crafting log and statistics about your crafts!",
         CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL = "Pricing",
