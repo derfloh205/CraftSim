@@ -256,72 +256,6 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 10,
         }
 
-        local chatMessageColumnWidth = 450
-
-        ---@type GGUI.FrameList.ColumnOption[]
-        local columnOptionsChatFrame = {
-            {
-                label = "", -- Timestamp
-                width = 100,
-                justifyOptions = { type = "H", align = "RIGHT" }
-            },
-            {
-                label = "", -- Sender
-                width = 100,
-                justifyOptions = { type = "H", align = "RIGHT" }
-            },
-            {
-                label = "", -- Message
-                width = chatMessageColumnWidth,
-                justifyOptions = { type = "H", align = "LEFT" }
-            }
-        }
-
-        frame.content.chatMessageList = GGUI.FrameList({
-            parent = frame.content,
-            anchorParent = frame.content.customerName.frame,
-            anchorA = "TOP",
-            anchorB = "BOTTOM",
-            offsetY = -8,
-            columnOptions = columnOptionsChatFrame,
-            showBorder = true,
-            rowHeight = 20,
-            sizeY = 200,
-            rowConstructor = function(columns)
-                local timeColumn = columns[1]
-                local senderColumn = columns[2]
-                local messageColumn = columns[3]
-
-                timeColumn.text = GGUI.Text({
-                    parent = timeColumn,
-                    anchorParent = timeColumn,
-                    anchorA = "RIGHT",
-                    anchorB = "RIGHT",
-                    justifyOptions = { type = "H", align = "RIGHT" },
-                    text = L("CUSTOMER_HISTORY_CHAT_MESSAGE_TIMESTAMP")
-                })
-                senderColumn.text = GGUI.Text({
-                    parent = senderColumn,
-                    anchorParent = senderColumn,
-                    anchorA = "RIGHT",
-                    anchorB = "RIGHT",
-                    justifyOptions = { type = "H", align = "RIGHT" },
-                    text = L("CUSTOMER_HISTORY_CHAT_MESSAGE_SENDER")
-                })
-                messageColumn.text = GGUI.Text({
-                    parent = messageColumn,
-                    anchorParent = messageColumn,
-                    anchorA = "TOPLEFT",
-                    anchorB = "TOPLEFT",
-                    justifyOptions = { type = "HV", alignH = "LEFT", alignV = "CENTER" },
-                    text = L("CUSTOMER_HISTORY_CHAT_MESSAGE_MESSAGE"),
-                    fixedWidth = chatMessageColumnWidth,
-                    offsetY = -4.1,
-                })
-
-                GGUI:EnableHyperLinksForFrameAndChilds(messageColumn)
-            end
-        })
 
         ---@type GGUI.FrameList.ColumnOption[]
         local columnOptionsCraftList = {
@@ -354,7 +288,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
 
         frame.content.craftList = GGUI.FrameList({
             parent = frame.content,
-            anchorParent = frame.content.chatMessageList.frame,
+            anchorParent = frame.content.customerName.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = -30,
@@ -460,12 +394,10 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
         CraftSim.CUSTOMER_HISTORY.frame.content.customerName:Hide()
         CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton:Hide()
         CraftSim.CUSTOMER_HISTORY.frame.content.craftList:Hide()
-        CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList:Hide()
     else
         CraftSim.CUSTOMER_HISTORY.frame.content.customerName:Show()
         CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton:Show()
         CraftSim.CUSTOMER_HISTORY.frame.content.craftList:Show()
-        CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList:Show()
     end
 end
 
@@ -479,7 +411,6 @@ function CraftSim.CUSTOMER_HISTORY.UI:OnCustomerSelected(customerHistory)
         CraftSim.CUSTOMER_HISTORY:StartWhisper(fullName)
     end
 
-    CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerChatHistory(customerHistory.customer, customerHistory.chatHistory)
     CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(customerHistory.craftHistory)
 end
 
@@ -540,77 +471,6 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
     end
 
     craftList:UpdateDisplay()
-end
-
----@param chatHistory CraftSim.DB.CustomerHistory.ChatMessage
-function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerChatHistory(customer, chatHistory)
-    ---@type GGUI.FrameList
-    local chatMessageList = CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList
-
-    chatMessageList:Remove()
-
-    ---@type CraftSim.DB.CustomerHistory.ChatMessage[]
-    local chatMessagesReversed = CraftSim.GUTIL:Sort(chatHistory,
-        ---@param chatMessageA CraftSim.DB.CustomerHistory.ChatMessage
-        ---@param chatMessageB CraftSim.DB.CustomerHistory.ChatMessage
-        function(chatMessageA, chatMessageB)
-            return chatMessageA.timestamp < chatMessageB.timestamp
-        end)
-
-    -- insert headers per day
-    ---@type (CraftSim.DB.CustomerHistory.ChatMessage | {day:string})[]
-    local chatMessages = {}
-    local currentDate = nil
-    for _, chatMessage in pairs(chatMessagesReversed) do
-        local dayString = CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedDayString(chatMessage.timestamp)
-        if currentDate ~= dayString then
-            table.insert(chatMessages, {
-                day = dayString
-            })
-            currentDate = dayString
-        end
-        table.insert(chatMessages, chatMessage)
-    end
-
-    for _, chatMessage in pairs(chatMessages) do
-        chatMessageList:Add(function(row)
-            local columns = row.columns
-            local timeColumn = columns[1]
-            local senderColumn = columns[2]
-            local messageColumn = columns[3]
-
-            if chatMessage.day then
-                timeColumn.text:SetText(f.whisper("[" .. chatMessage.day .. "]"))
-                senderColumn.text:SetText("")
-                messageColumn.text:SetText("")
-            else
-                timeColumn.text:SetText(f.whisper("[" ..
-                    CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedTimeString(chatMessage.timestamp) .. "]"))
-
-                local sender = "[" .. tostring(customer) .. "]: "
-
-                if chatMessage.fromPlayer then
-                    sender = L("CUSTOMER_HISTORY_CHAT_MESSAGE_YOU")
-                end
-
-                senderColumn.text:SetText(f.whisper(tostring(sender)))
-                messageColumn.text:SetText(f.whisper(tostring(chatMessage.content)))
-            end
-
-            -- adjust row height
-            ---@type Frame
-            local rowFrame = row.frame
-            ---@type SimpleFontString
-            local messageText = messageColumn.text.frame
-            local messageHeight = math.max(20, messageText:GetStringHeight())
-            rowFrame:SetHeight(messageHeight)
-        end)
-    end
-
-    chatMessageList:UpdateDisplay()
-    RunNextFrame(function()
-        chatMessageList:ScrollDown()
-    end)
 end
 
 ---@param timestamp number
