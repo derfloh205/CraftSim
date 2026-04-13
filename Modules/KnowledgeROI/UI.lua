@@ -194,6 +194,14 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                     offsetX = -5,
                     justifyOptions = { type = "H", align = "RIGHT" },
                 })
+
+                -- ROI heatmap background bar
+                local rowFrame = nameCol:GetParent()
+                local bg = rowFrame:CreateTexture(nil, "BACKGROUND")
+                bg:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+                bg:SetAllPoints(rowFrame)
+                bg:SetAlpha(0)
+                rowFrame.roiBg = bg
             end,
         })
     end
@@ -245,7 +253,16 @@ end
 function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
     content.nodeList:Remove()
 
+    -- Determine ROI range for heatmap normalization
+    local maxROI, minROI = 0, 0
     for _, result in ipairs(results) do
+        local roi = result.roiPerPoint or 0
+        if roi > maxROI then maxROI = roi end
+        if roi < minROI then minROI = roi end
+    end
+    local roiRange = math.max(maxROI, math.abs(minROI), 1) -- avoid division by zero
+
+    for i, result in ipairs(results) do
         content.nodeList:Add(function(row)
             local columns = row.columns
             ---@type CraftSim.KNOWLEDGE_ROI.NODE_LIST.NAME_COL
@@ -262,13 +279,19 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
                 nameCol.icon:Hide()
             end
 
+            -- "Next Best" badge on first positive-ROI row
+            local prefix = ""
+            if i == 1 and result.roiPerPoint > 0 then
+                prefix = GUTIL:ColorizeText("★ ", GUTIL.COLORS.LEGENDARY)
+            end
+
             -- PathStep results (from Optimize) have a step field
             if result.step then
-                nameCol.text:SetText(GUTIL:ColorizeText("#" .. result.step, GUTIL.COLORS.WHITE) ..
+                nameCol.text:SetText(prefix .. GUTIL:ColorizeText("#" .. result.step, GUTIL.COLORS.WHITE) ..
                     " " .. (result.nodeName or ""))
                 rankCol.text:SetText(math.max(0, result.rankBefore) .. "→" .. math.max(0, result.rankAfter) .. "/" .. result.maxRank)
             else
-                nameCol.text:SetText(result.nodeName or ("Node " .. result.nodeID))
+                nameCol.text:SetText(prefix .. (result.nodeName or ("Node " .. result.nodeID)))
                 local rankText = tostring(math.max(0, result.currentRank)) .. "/" .. tostring(result.maxRank)
                 rankCol.text:SetText(rankText)
             end
@@ -287,6 +310,23 @@ function CraftSim.KNOWLEDGE_ROI.UI:PopulateNodeList(content, results)
                 roiText = CraftSim.UTIL:FormatMoney(0, false)
             end
             roiCol.text:SetText(roiText)
+
+            -- ROI heatmap background color
+            local rowFrame = nameCol:GetParent()
+            if rowFrame.roiBg then
+                local roi = result.roiPerPoint or 0
+                if roi > 0 then
+                    local t = math.min(roi / roiRange, 1)
+                    rowFrame.roiBg:SetVertexColor(0, 0.8, 0, 1)
+                    rowFrame.roiBg:SetAlpha(0.08 + t * 0.17) -- 0.08 to 0.25
+                elseif roi < 0 then
+                    local t = math.min(math.abs(roi) / roiRange, 1)
+                    rowFrame.roiBg:SetVertexColor(0.8, 0, 0, 1)
+                    rowFrame.roiBg:SetAlpha(0.08 + t * 0.17)
+                else
+                    rowFrame.roiBg:SetAlpha(0)
+                end
+            end
 
             -- Tooltip with details
             row.tooltipOptions = {
