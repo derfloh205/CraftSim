@@ -79,10 +79,10 @@ CraftSim already shows which specialization nodes affect a given recipe (Special
 | Accuracy of "weekly craft estimate" | Misleading ROI | Default to CraftLog actuals; fallback to configurable manual estimate |
 
 ## Integration Branch
-Target: `feat/IncredibleFeature`
+Target: `feat/KnowledgePathROI`
 
 ## Status
-- [ ] Phase 1 — Node ROI Calculation Engine
-- [ ] Phase 2 — Heatmap Visualization
-- [ ] Phase 3 — Path Simulation
-- [ ] Phase 4 — Weekly Planner Integration
+- [x] Phase 1 — Node ROI Calculation Engine (bc8bee07)
+- [x] Phase 2 — Optimal Path Calculator (cfa5a846) + Bugfixes (af01afe1)
+- [x] Phase 3 — ROI Heatmap Visualization & Tooltip Integration (d71b8edf)
+- [x] Phase 4 — Weekly Planner Integration (9e2471a4)
