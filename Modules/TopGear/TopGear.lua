@@ -191,15 +191,18 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
 
                             -- Only exclude items that are definitively from an older expansion.
                             if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
-                                local professionGear = CraftSim.ProfessionGear()
-                                professionGear:SetItem(itemLink)
-                                table.insert(inventoryGear, professionGear)
+                                -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
+                                if not isCached or C_Item.IsBound(itemLoc) then
+                                    local professionGear = CraftSim.ProfessionGear()
+                                    professionGear:SetItem(itemLink)
+                                    table.insert(inventoryGear, professionGear)
 
-                                CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(
-                                    crafterUID,
-                                    recipeData.professionData.professionInfo.profession,
-                                    professionGear
-                                )
+                                    CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(
+                                        crafterUID,
+                                        recipeData.professionData.professionInfo.profession,
+                                        professionGear
+                                    )
+                                end
                             end
                         end
                     end
