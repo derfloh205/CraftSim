@@ -82,7 +82,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             text = f.l("Single Recipe Mode"),
             justifyOptions = { type = 'H', align = "LEFT" },
             offsetX = 15,
-            offsetY = -15,
+            offsetY = -30,
         })
 
         frame.content.fullScanButton = GGUI.Button({
@@ -92,7 +92,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -15,
-                offsetY = -35,
+                offsetY = -55,
             } },
             label = "Full Scan",
             sizeX = 85,
@@ -109,7 +109,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -105,
-                offsetY = -35,
+                offsetY = -55,
             } },
             label = "Optimize",
             sizeX = 85,
@@ -126,7 +126,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
                 anchorA = "TOPRIGHT",
                 anchorB = "TOPRIGHT",
                 offsetX = -195,
-                offsetY = -35,
+                offsetY = -55,
             } },
             label = "Weekly",
             sizeX = 70,
@@ -160,7 +160,7 @@ function CraftSim.KNOWLEDGE_ROI.UI:Init()
             },
             rowHeight = 28,
             offsetX = 10,
-            offsetY = -80,
+            offsetY = -83,
             scale = 1,
             columnOptions = {
                 {
