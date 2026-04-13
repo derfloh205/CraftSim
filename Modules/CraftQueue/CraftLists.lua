@@ -369,8 +369,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             end
         end
 
-        if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
-            or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+        if not CraftSim.CRAFTQ:IsRecipeInfoQueueable(recipeInfo) then
             if not recipeInfo then
                 print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
             else

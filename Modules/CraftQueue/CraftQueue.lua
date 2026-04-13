@@ -721,7 +721,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
 
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
-        if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+        if not CraftSim.CRAFTQ:IsRecipeInfoQueueable(recipeInfo) then
             frameDistributor:Continue()
             return
         end
@@ -1047,14 +1047,46 @@ function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, exc
     return itemCount
 end
 
+---@return boolean
+function CraftSim.CRAFTQ:IsGatheringQueueingEnabled()
+    return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_ALLOW_GATHERING_RECIPES")
+end
+
+---@param recipeInfo TradeSkillRecipeInfo?
+---@return boolean
+function CraftSim.CRAFTQ:IsRecipeInfoQueueable(recipeInfo)
+    if not recipeInfo then
+        return false
+    end
+    if recipeInfo.isDummyRecipe or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
+        return false
+    end
+    if tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeInfo.recipeID) then
+        return false
+    end
+    if recipeInfo.isGatheringRecipe and not self:IsGatheringQueueingEnabled() then
+        return false
+    end
+    return true
+end
+
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
-    return
-        not recipeData.isRecraft and
-        not recipeData.isSalvageRecipe and
-        not recipeData.isBaseRecraftRecipe and
-        recipeData.resultData.itemsByQuality[1] and -- needs at least one result?
-        not recipeData.isAlchemicalExperimentation
+    if not recipeData then
+        return false
+    end
+    if not self:IsRecipeInfoQueueable(recipeData.recipeInfo) then
+        return false
+    end
+    if recipeData.isBaseRecraftRecipe or recipeData.isAlchemicalExperimentation then
+        return false
+    end
+    local profession = recipeData.professionData and recipeData.professionData.professionInfo and
+        recipeData.professionData.professionInfo.profession
+    if profession and CraftSim.CONST.GATHERING_PROFESSIONS[profession] and not self:IsGatheringQueueingEnabled() then
+        return false
+    end
+    return recipeData.resultData and recipeData.resultData.itemsByQuality and recipeData.resultData.itemsByQuality[1]
 end
 
 ---@class CraftSim.CraftQueue.RestockRecipeOption
@@ -1130,6 +1162,9 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     end
 
     if not recipeData then
+        return
+    end
+    if not CraftSim.CRAFTQ:IsRecipeQueueable(recipeData) then
         return
     end
 

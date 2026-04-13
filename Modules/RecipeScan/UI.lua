@@ -394,6 +394,15 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     -- do this only if the profession is not yet added to the list
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
+    local allowGatheringQueueable = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_ALLOW_GATHERING_RECIPES")
+
+    if not allowGatheringQueueable then
+        -- Remove already-cached gathering rows when the option is turned off.
+        content.professionList:Remove(function(row)
+            return CraftSim.CONST.GATHERING_PROFESSIONS[row.profession]
+        end)
+    end
+
     local activeRows = content.professionList.activeRows
     local crafterDBDataMap = CraftSim.DB.CRAFTER:GetAll()
 
@@ -405,7 +414,8 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
                 return activeRow.crafterProfessionUID == crafterProfessionUID
             end)
             local isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS[profession]
-            if not alreadyListed and not isGatheringProfession then
+            local includeProfession = not isGatheringProfession or allowGatheringQueueable
+            if not alreadyListed and includeProfession then
                 CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
             end
         end

@@ -2057,8 +2057,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 return
             end
             local recipeInfo = recipeData.recipeInfo
-            if recipeInfo and (recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
-                    or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe) then
+            if not CraftSim.CRAFTQ:IsRecipeInfoQueueable(recipeInfo) then
                 CraftSim.DEBUG:SystemPrint(f.r("This recipe type cannot be added to a Craft List!"))
                 return
             end
@@ -3203,13 +3202,11 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
     local buttonOptionsWO = CraftSim.CRAFTQ.queueRecipeButtonOptionsWO
 
-    local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
-        [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
+    local isTradeSkillAllowed = not C_TradeSkillUI.IsTradeSkillGuild() and
         not C_TradeSkillUI.IsTradeSkillLinked() and not C_TradeSkillUI.IsNPCCrafting() and
         not C_TradeSkillUI.IsRuneforging()
 
-    local isRecipeAllowed = not recipeData.isSalvageRecipe and not recipeData.isRecraft and not recipeData
-        .isBaseRecraftRecipe
+    local isRecipeAllowed = CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
 
     -- reset state if changed by anything
     button:SetEnabled(true)

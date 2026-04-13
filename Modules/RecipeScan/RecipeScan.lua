@@ -231,7 +231,9 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         return false
     end
     if categoryIncluded then
-        if recipeInfo and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
+        local isQueueable = CraftSim.CRAFTQ and CraftSim.CRAFTQ.IsRecipeInfoQueueable and
+            CraftSim.CRAFTQ:IsRecipeInfoQueueable(recipeInfo)
+        if isQueueable then
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
                 local isSoulbound = GUTIL:isItemSoulbound(GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
@@ -258,7 +260,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
                 printF(GUTIL:ColorizeText("Include", GUTIL.COLORS.GREEN))
                 return true
             end
-            printF("Is Gathering/Salvage/Recraft: Exclude")
+            printF("Missing hyperlink: Exclude")
             return false
         end
     end
@@ -618,7 +620,9 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
     local filteredResults = GUTIL:Filter(results, function(recipeData)
         local marginThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SEND_TO_CRAFTQUEUE_PROFIT_MARGIN_THRESHOLD")
         local relativeProfit = recipeData.relativeProfitCached
-        return relativeProfit >= marginThreshold;
+        local isQueueable = CraftSim.CRAFTQ and CraftSim.CRAFTQ.IsRecipeQueueable and
+            CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
+        return relativeProfit >= marginThreshold and isQueueable;
     end)
 
     -- If "Create CraftList" mode is enabled, show name popup and create a craft list
@@ -693,6 +697,10 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
             end
 
             if restockAmount >= 1 then
+                if not (CraftSim.CRAFTQ and CraftSim.CRAFTQ.IsRecipeQueueable and CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)) then
+                    frameDistributor:Continue()
+                    return
+                end
                 CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
             end
 
