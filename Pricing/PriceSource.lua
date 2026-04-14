@@ -62,7 +62,7 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPr
             if vendorPrice and vendorPrice > 0 then
                 priceInfo.vendorPrice = vendorPrice
                 priceInfo.vendorName  = vendorName
-                if priceInfo.noAHPriceFound or vendorPrice < priceInfo.ahPrice then
+                if priceInfo.noAHPriceFound or CraftSim.VENDOR_INTEGRATION:IsVendorPreferred(vendorPrice, priceInfo.ahPrice) then
                     priceInfo.isVendorPrice = true
                     return vendorPrice, priceInfo
                 end
@@ -160,7 +160,7 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, force
             if vendorPrice and vendorPrice > 0 then
                 priceInfo.vendorPrice = vendorPrice
                 priceInfo.vendorName  = vendorName
-                if priceInfo.noAHPriceFound or vendorPrice < priceInfo.ahPrice then
+                if priceInfo.noAHPriceFound or CraftSim.VENDOR_INTEGRATION:IsVendorPreferred(vendorPrice, priceInfo.ahPrice) then
                     priceInfo.isVendorPrice = true
                     return vendorPrice, priceInfo
                 end
