@@ -395,6 +395,9 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			if not craftingOrdersPreloadedThisSession then
+				CraftSim.DEBUG:StartProfiling("Preload Crafting Orders")
+			end
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
 			CraftSim.DEBUG:StartProfiling("Update Customer History")
@@ -425,6 +428,8 @@ function CraftSim.INIT:HookToProfessionsFrame()
 						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
 					end
+					local ms = CraftSim.DEBUG:StopProfiling("Preload Crafting Orders")
+					print("Preloaded crafting orders in " .. ms .. " ms")
 				end
 			end)
 		end)
