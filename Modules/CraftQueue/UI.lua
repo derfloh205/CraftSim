@@ -1541,63 +1541,6 @@ function CraftSim.CRAFTQ.UI:Init()
             clickCallback = nil,
         })
 
-        frame.content.queueTutorialButton = GGUI.TutorialButton({
-            parent = frame.content,
-            anchorPoints = {
-                {
-                    anchorParent = frame.content.craftQueueOptionsButton.frame,
-                    anchorA = "LEFT",
-                    anchorB = "RIGHT",
-                    offsetX = 5,
-                },
-            },
-            sizeX = 25,
-            sizeY = 25,
-            glowOnInit = false,
-            autoToggleMode = "helpPlate",
-            helpPlateParent = queueTab.content,
-            helpPlateDefinition = {
-                parent = queueTab.content,
-                steps = {
-                    {
-                        button = {
-                            --useMainButton = true,
-                            offsetX = 0,
-                            offsetY = 0,
-                        },
-                        highlight = {
-                            frame = queueTab.content.craftList.frame,
-                            offsetX = 0,
-                            offsetY = 0,
-                            extraWidth = 0,
-                            extraHeight = 0,
-                        },
-                        toolTipDir = "LEFT",
-                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP"),
-                    },
-                    {
-                        button = {
-                            frame = queueTab.content.craftNextButton.frame,
-                            includeFrameWidth = true,
-                            offsetX = 10,
-                            offsetY = -14,
-                        },
-                        highlight = {
-                            frame = queueTab.content.craftNextButton.frame,
-                            offsetX = -6,
-                            offsetY = 6,
-                            extraWidth = 12,
-                            extraHeight = 12,
-                        },
-                        toolTipDir = "UP",
-                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP"),
-                    },
-                },
-            },
-        })
-        frame.content.queueTutorialButton.frame:Show()
-
-
         if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
             ---@type GGUI.Button
             queueTab.content.createAuctionatorShoppingList = GGUI.Button({
@@ -1665,6 +1608,129 @@ function CraftSim.CRAFTQ.UI:Init()
         CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
 
         self:InitializeQuickAccessBar(frame)
+
+        frame.content.queueTutorialButton = GGUI.TutorialButton({
+            parent = frame.content,
+            anchorPoints = {
+                {
+                    anchorParent = frame.content,
+                    anchorA = "TOPRIGHT",
+                    anchorB = "TOPRIGHT",
+                    offsetX = -70,
+                    offsetY = 5,
+                },
+            },
+            scale = 0.7,
+            glowOnInit = false,
+            autoToggleMode = "helpPlate",
+            helpPlateParent = queueTab.content,
+            helpPlateDefinition = {
+                parent = queueTab.content,
+                steps = {
+                    {
+                        button = {
+                            offsetX = queueTab.content.craftList.frame:GetWidth() / 2,
+                            offsetY = -queueTab.content.craftList.frame:GetHeight() / 2 + 20,
+                            frame = queueTab.content.craftList.frame,
+                        },
+                        highlight = {
+                            frame = queueTab.content.craftList.frame,
+                            offsetX = 0,
+                            offsetY = 0,
+                            extraWidth = 20,
+                            extraHeight = 0,
+                        },
+                        toolTipDir = "LEFT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = queueTab.content.craftNextButton.frame,
+                            includeFrameWidth = true,
+                            offsetX = 5,
+                            offsetY = 8,
+                        },
+                        highlight = {
+                            frame = queueTab.content.craftNextButton.frame,
+                            offsetX = -4,
+                            offsetY = 4,
+                            extraWidth = 8,
+                            extraHeight = 8,
+                        },
+                        toolTipDir = "RIGHT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = queueTab.content.queueCraftListsButton.frame,
+                            includeFrameWidth = true,
+                            offsetX = 30,
+                            offsetY = -30,
+                        },
+                        highlight = {
+                            frame = queueTab.content.queueCraftListsButton.frame,
+                            offsetX = -4,
+                            offsetY = 4,
+                            extraWidth = 35,
+                            extraHeight = 85,
+                        },
+                        toolTipDir = "RIGHT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_QUEUE_BUTTONS_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = queueTab.content.createAuctionatorShoppingList.frame,
+                            includeFrameWidth = true,
+                            offsetX = 5,
+                            offsetY = 10,
+                        },
+                        highlight = {
+                            frame = queueTab.content.createAuctionatorShoppingList.frame,
+                            offsetX = -4,
+                            offsetY = 4,
+                            extraWidth = 8,
+                            extraHeight = 8,
+                        },
+                        toolTipDir = "RIGHT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_SHOPPING_LIST_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = queueTab.content.quickBarFrame.frame,
+                            includeFrameWidth = true,
+                            offsetX = 50,
+                            offsetY = -8,
+                        },
+                        highlight = {
+                            frame = queueTab.content.quickBarFrame.frame,
+                            offsetX = -4,
+                            offsetY = -5,
+                            extraWidth = 60,
+                            extraHeight = -15,
+                        },
+                        toolTipDir = "RIGHT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_QUICK_ACCESS_BAR_TOOLTIP"),
+                    },
+                    {
+                        button = {
+                            frame = frame.content.craftQueueOptionsButton.frame,
+                            includeFrameWidth = true,
+                            offsetX = 5,
+                            offsetY = 10,
+                        },
+                        highlight = {
+                            frame = frame.content.craftQueueOptionsButton.frame,
+                            offsetX = -4,
+                            offsetY = 4,
+                            extraWidth = 8,
+                            extraHeight = 8,
+                        },
+                        toolTipDir = "RIGHT",
+                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_CRAFT_QUEUE_OPTIONS_TOOLTIP"),
+                    },
+                },
+            },
+        })
     end
 
     createContent(CraftSim.CRAFTQ.frame)

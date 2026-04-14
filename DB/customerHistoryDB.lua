@@ -16,7 +16,6 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.customerHistoryDB")
 ---@class CraftSim.DB.CustomerHistory
 ---@field customer string
 ---@field realm string
----@field chatHistory CraftSim.DB.CustomerHistory.ChatMessage[]
 ---@field craftHistory CraftSim.DB.CustomerHistory.Craft[]
 ---@field totalTip number
 ---@field totalOrders number
@@ -24,11 +23,6 @@ local print = CraftSim.DEBUG:RegisterDebugID("Database.customerHistoryDB")
 ---@field provisionSome number
 ---@field provisionNone number
 ---@field npc boolean
-
----@class CraftSim.DB.CustomerHistory.ChatMessage
----@field fromPlayer boolean
----@field content string
----@field timestamp number unix ts in seconds
 
 ---@class CraftSim.DB.CustomerHistory.Craft
 ---@field itemLink string
@@ -77,7 +71,6 @@ end
 function CraftSim.DB.CUSTOMER_HISTORY:Get(customer, realm)
     CraftSimDB.customerHistoryDB.data[customer .. "-" .. realm] = CraftSimDB.customerHistoryDB.data
         [customer .. "-" .. realm] or {
-            chatHistory = {},
             craftHistory = {},
             customer = customer,
             realm = realm,
@@ -92,10 +85,6 @@ end
 
 ---@param customerHistory CraftSim.DB.CustomerHistory
 function CraftSim.DB.CUSTOMER_HISTORY:Save(customerHistory)
-    local maxEntriesPerClient = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT")
-    --- limit chat history to a certain amount of messages
-    CraftSim.GUTIL:TrimTable(customerHistory.chatHistory, maxEntriesPerClient, true)
-
     CraftSimDB.customerHistoryDB.data[customerHistory.customer .. "-" .. customerHistory.realm] = customerHistory
 end
 
@@ -110,6 +99,12 @@ function CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(minimumTip)
         if not customerHistory.totalTip or customerHistory.totalTip <= minimumTip then
             CraftSimDB.customerHistoryDB.data[customerID] = nil
         end
+    end
+end
+
+function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_2_3_Remove_ChatHistory()
+    for _, customerHistory in pairs(CraftSimDB.customerHistoryDB.data) do
+        customerHistory.chatHistory = nil
     end
 end
 

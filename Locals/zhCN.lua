@@ -761,9 +761,6 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_MENU_INGENUITY_IGNORE = f.r("忽略") .. f.gold("奇思触发") .. "时的队列数量减少",
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION = "在" .. f.gold("专注") .. "全用完后" .. f.r("移除"),
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP = "当剩余的专注不足以继续制作时，自动移除已制作的配方。",
-        CRAFT_QUEUE_HELP = f.bb("左键点击") .. " .. 跳转到配方\n" ..
-            f.bb("右键点击") .. " .. 打开配方选项\n" ..
-            f.bb("中键点击") .. " .. 从队列中移除配方",
 
         -- craft buffs
 
