@@ -286,9 +286,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         oc.nodeList = GGUI.FrameList {
             parent = oc, anchorParent = oc,
             anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            hideScrollbar = false, sizeY = 290,
+            hideScrollbar = false, sizeY = 272,
             selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
-            rowHeight = 26, offsetX = 10, offsetY = -85, scale = 1,
+            rowHeight = 26, offsetX = 10, offsetY = -103, scale = 1,
             columnOptions = {
                 { label = "Node",    width = 165 },
                 { label = "Rank",    width = 70,  justifyOptions = { type = "H", align = "CENTER" } },
