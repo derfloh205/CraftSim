@@ -46,11 +46,19 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                 label = L("CUSTOMER_HISTORY_CUSTOMER_HEADER"),
                 width = 150,
                 headerScale = 0.9,
+                resizable = true,
+                resizeCallback = function(columnFrame, newWidth)
+                    columnFrame.text:SetWidth(newWidth - 10)
+                end,
             },
             {
                 label = L("CUSTOMER_HISTORY_TOTAL_TIP_HEADER"),
                 width = 100,
                 headerScale = 0.9,
+                resizable = true,
+                resizeCallback = function(columnFrame, newWidth)
+                    columnFrame.text:SetWidth(newWidth - 10)
+                end,
             }
         }
 
