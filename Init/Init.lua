@@ -386,7 +386,7 @@ function CraftSim.INIT:HandleAuctionatorHooks()
 end
 
 local professionFrameHooked = false
-local craftingOrdersPreloadedThisSession = false
+local craftingOrdersPreloadedThisSession = {}
 function CraftSim.INIT:HookToProfessionsFrame()
 	if professionFrameHooked then
 		return
@@ -395,9 +395,6 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
-			if not craftingOrdersPreloadedThisSession then
-				CraftSim.DEBUG:StartProfiling("Preload Crafting Orders")
-			end
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
 			CraftSim.DEBUG:StartProfiling("Update Customer History")
@@ -419,17 +416,20 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click).
 			-- Clicking tab 3 then immediately back to tab 1 within the same RunNextFrame
 			RunNextFrame(function()
+				local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+				local professionID = professionInfo and professionInfo.professionID or nil
 				-- triggers the server request without any visible UI flicker.
-				if (not craftingOrdersPreloadedThisSession
+				if professionID and (not craftingOrdersPreloadedThisSession[professionID]
 						and C_CraftingOrders.ShouldShowCraftingOrderTab()
 						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
 					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-						craftingOrdersPreloadedThisSession = true
+						craftingOrdersPreloadedThisSession[professionID] = true
 						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
 					end
 					local ms = CraftSim.DEBUG:StopProfiling("Preload Crafting Orders")
 					print("Preloaded crafting orders in " .. ms .. " ms")
+					GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFTING_ORDERS_PRELOADED")
 				end
 			end)
 		end)

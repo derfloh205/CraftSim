@@ -94,6 +94,10 @@ end
 
 --- Updates only the Craft Queue "add work orders" enabled state (near table or Crafting Orders tab available).
 function CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+	-- do not alter state if we are currently in a queueing process
+	if CraftSim.CRAFTQ.queuingWorkOrders then
+		return
+	end
 	local craftQ = CraftSim.CRAFTQ.frame
 	if not craftQ or not craftQ.content or not craftQ.content.queueTab or not craftQ.content.queueTab.content then
 		return
@@ -108,7 +112,7 @@ end
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
-	
+
 	if not recipeInfo then
 		return nil
 	end
