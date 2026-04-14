@@ -11,250 +11,21 @@ CraftSim.KNOWLEDGE_POINT_VALUE.UI = {}
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.SpecializationInfo.KnowledgePointValue.UI")
 
-function CraftSim.KNOWLEDGE_POINT_VALUE.UI:Init()
-    local sizeX = 370
-    local sizeY = 460
-    local offsetX = 260
-    local offsetY = 200
-
-    local frameLevel = CraftSim.UTIL:NextFrameLevel()
-
-    ---@class CraftSim.KNOWLEDGE_POINT_VALUE.FRAME : GGUI.Frame
-    local frameNO_WO = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE,
-        title = "CraftSim Knowledge Point Value",
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        anchorA = "BOTTOMLEFT",
-        anchorB = "BOTTOMRIGHT",
-        offsetX = offsetX,
-        offsetY = offsetY,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_KNOWLEDGE_POINT_VALUE"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel,
-    })
-
-    ---@class CraftSim.KNOWLEDGE_POINT_VALUE.FRAME : GGUI.Frame
-    local frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO,
-        title = "CraftSim Knowledge Point Value",
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        anchorA = "BOTTOMLEFT",
-        anchorB = "BOTTOMRIGHT",
-        offsetX = offsetX,
-        offsetY = offsetY,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_KNOWLEDGE_POINT_VALUE"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel,
-    })
-
-    ---@param frame CraftSim.KNOWLEDGE_POINT_VALUE.FRAME
-    local function createContent(frame)
-        ---@class CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT : Frame
-        frame.content = frame.content
-
-        frame:Hide()
-
-        frame.content.modeText = GGUI.Text({
-            parent = frame.content,
-            anchorParent = frame.content,
-            anchorA = "TOPLEFT",
-            anchorB = "TOPLEFT",
-            text = f.l("Single Recipe Mode"),
-            justifyOptions = { type = 'H', align = "LEFT" },
-            offsetX = 15,
-            offsetY = -30,
-        })
-
-        frame.content.fullScanButton = GGUI.Button({
-            parent = frame.content,
-            anchorPoints = { {
-                anchorParent = frame.content,
-                anchorA = "TOPRIGHT",
-                anchorB = "TOPRIGHT",
-                offsetX = -15,
-                offsetY = -50,
-            } },
-            label = "Full Scan",
-            sizeX = 85,
-            sizeY = 22,
-            clickCallback = function()
-                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan()
-            end,
-        })
-
-        frame.content.optimizeButton = GGUI.Button({
-            parent = frame.content,
-            anchorPoints = { {
-                anchorParent = frame.content,
-                anchorA = "TOPRIGHT",
-                anchorB = "TOPRIGHT",
-                offsetX = -105,
-                offsetY = -50,
-            } },
-            label = "Optimize",
-            sizeX = 85,
-            sizeY = 22,
-            clickCallback = function()
-                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath()
-            end,
-        })
-
-        frame.content.weeklyPlanButton = GGUI.Button({
-            parent = frame.content,
-            anchorPoints = { {
-                anchorParent = frame.content,
-                anchorA = "TOPRIGHT",
-                anchorB = "TOPRIGHT",
-                offsetX = -195,
-                offsetY = -50,
-            } },
-            label = "Weekly",
-            sizeX = 70,
-            sizeY = 22,
-            clickCallback = function()
-                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan()
-            end,
-        })
-
-        frame.content.summaryText = GGUI.Text({
-            parent = frame.content,
-            anchorParent = frame.content,
-            anchorA = "BOTTOMLEFT",
-            anchorB = "BOTTOMLEFT",
-            justifyOptions = { type = 'H', align = "LEFT" },
-            offsetX = 15,
-            offsetY = 8,
-            scale = 0.9,
-        })
-
-        frame.content.nodeList = GGUI.FrameList({
-            parent = frame.content,
-            anchorParent = frame.content,
-            anchorA = "TOPLEFT",
-            anchorB = "TOPLEFT",
-            hideScrollbar = false,
-            sizeY = 310,
-            selectionOptions = {
-                noSelectionColor = true,
-                hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
-            },
-            rowHeight = 28,
-            offsetX = 10,
-            offsetY = -100,
-            scale = 1,
-            columnOptions = {
-                {
-                    label = "Node",
-                    width = 150,
-                },
-                {
-                    label = "Rank",
-                    width = 60,
-                    justifyOptions = { type = "H", align = "CENTER" },
-                },
-                {
-                    label = "ROI / Pt",
-                    width = 100,
-                    justifyOptions = { type = "H", align = "RIGHT" },
-                },
-            },
-            showHeaderLine = true,
-            rowConstructor = function(columns)
-                ---@class CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.NAME_COL : Frame
-                local nameCol = columns[1]
-
-                ---@class CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.RANK_COL : Frame
-                local rankCol = columns[2]
-
-                ---@class CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.ROI_COL : Frame
-                local roiCol = columns[3]
-
-                local iconSize = 20
-                nameCol.icon = GGUI.Texture({
-                    parent = nameCol,
-                    anchorParent = nameCol,
-                    anchorA = "LEFT",
-                    anchorB = "LEFT",
-                    sizeX = iconSize,
-                    sizeY = iconSize,
-                })
-
-                nameCol.text = GGUI.Text({
-                    parent = nameCol,
-                    anchorParent = nameCol.icon.frame,
-                    justifyOptions = { type = "H", align = "LEFT" },
-                    anchorA = "LEFT",
-                    anchorB = "RIGHT",
-                    offsetX = 3,
-                    fixedWidth = 120,
-                })
-
-                rankCol.text = GGUI.Text({
-                    parent = rankCol,
-                    anchorParent = rankCol,
-                })
-
-                roiCol.text = GGUI.Text({
-                    parent = roiCol,
-                    anchorParent = roiCol,
-                    anchorA = "RIGHT",
-                    anchorB = "RIGHT",
-                    offsetX = -5,
-                    justifyOptions = { type = "H", align = "RIGHT" },
-                })
-
-                -- ROI heatmap background bar
-                local rowFrame = nameCol:GetParent()
-                local bg = rowFrame:CreateTexture(nil, "BACKGROUND")
-                bg:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-                bg:SetAllPoints(rowFrame)
-                bg:SetAlpha(0)
-                rowFrame.roiBg = bg
-            end,
-        })
-    end
-
-    createContent(frameNO_WO)
-    createContent(frameWO)
-
-    CraftSim.KNOWLEDGE_POINT_VALUE.frame = frameNO_WO
-    CraftSim.KNOWLEDGE_POINT_VALUE.frameWO = frameWO
+--- Returns the optimizeContent sub-frame of the appropriate SpecInfo frame.
+local function GetOptimizeContent()
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    local frameID = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER
+        and CraftSim.CONST.FRAMES.SPEC_INFO_WO
+        or  CraftSim.CONST.FRAMES.SPEC_INFO
+    local specFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, frameID)
+    return specFrame and specFrame.content and specFrame.content.optimizeContent or nil
 end
 
---- Update the knowledge point value display for the given recipe.
+--- Update the knowledge point value display for the given recipe (single-recipe mode).
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.KNOWLEDGE_POINT_VALUE.UI:UpdateDisplay(recipeData)
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME
-    local frame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    else
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    end
-
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT
-    local content = frame.content
+    local content = GetOptimizeContent()
+    if not content then return end
 
     content.nodeList:Remove()
 
@@ -268,6 +39,11 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:UpdateDisplay(recipeData)
     local availPts = CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
     local ptsText = availPts > 0 and (" - " .. GUTIL:ColorizeText(tostring(availPts), GUTIL.COLORS.GREEN) .. " pts") or ""
     content.modeText:SetText(f.l("Single Recipe Value") .. ptsText)
+
+    -- Pre-fill the KP input with detected available points
+    if availPts > 0 then
+        content.pointsInput.textInput:SetText(tostring(availPts))
+    end
 
     -- Show saved weekly plan summary if available
     local plan = CraftSim.KNOWLEDGE_POINT_VALUE:GetSavedWeeklyPlan(recipeData)
@@ -298,7 +74,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:UpdateDisplay(recipeData)
 end
 
 --- Populate the frame list with node ROI results.
----@param content CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT
+---@param content Frame  the optimizeContent sub-frame
 ---@param results CraftSim.KnowledgePointValue.NodeResult[]|CraftSim.KnowledgePointValue.FullScanResult[]
 function CraftSim.KNOWLEDGE_POINT_VALUE.UI:PopulateNodeList(content, results)
     content.nodeList:Remove()
@@ -315,12 +91,9 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:PopulateNodeList(content, results)
     for i, result in ipairs(results) do
         content.nodeList:Add(function(row)
             local columns = row.columns
-            ---@type CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.NAME_COL
             local nameCol = columns[1]
-            ---@type CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.RANK_COL
             local rankCol = columns[2]
-            ---@type CraftSim.KNOWLEDGE_POINT_VALUE.NODE_LIST.ROI_COL
-            local roiCol = columns[3]
+            local roiCol  = columns[3]
 
             if result.nodeIcon then
                 nameCol.icon:SetTexture(result.nodeIcon)
@@ -342,20 +115,15 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:PopulateNodeList(content, results)
                 rankCol.text:SetText(math.max(0, result.rankBefore) .. "->" .. math.max(0, result.rankAfter) .. "/" .. result.maxRank)
             else
                 nameCol.text:SetText(prefix .. (result.nodeName or ("Node " .. result.nodeID)))
-                local rankText = tostring(math.max(0, result.currentRank)) .. "/" .. tostring(result.maxRank)
-                rankCol.text:SetText(rankText)
+                rankCol.text:SetText(tostring(math.max(0, result.currentRank)) .. "/" .. tostring(result.maxRank))
             end
 
-            -- Color-code ROI: green for positive, red for negative, white for zero
+            -- Color-code ROI
             local roiText
             if result.roiPerPoint > 0 then
-                roiText = GUTIL:ColorizeText(
-                    CraftSim.UTIL:FormatMoney(result.roiPerPoint, false),
-                    GUTIL.COLORS.GREEN)
+                roiText = GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(result.roiPerPoint, false), GUTIL.COLORS.GREEN)
             elseif result.roiPerPoint < 0 then
-                roiText = GUTIL:ColorizeText(
-                    CraftSim.UTIL:FormatMoney(result.roiPerPoint, false),
-                    GUTIL.COLORS.RED)
+                roiText = GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(result.roiPerPoint, false), GUTIL.COLORS.RED)
             else
                 roiText = CraftSim.UTIL:FormatMoney(0, false)
             end
@@ -368,7 +136,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:PopulateNodeList(content, results)
                 if roi > 0 then
                     local t = math.min(roi / roiRange, 1)
                     rowFrame.roiBg:SetVertexColor(0, 0.8, 0, 1)
-                    rowFrame.roiBg:SetAlpha(0.08 + t * 0.17) -- 0.08 to 0.25
+                    rowFrame.roiBg:SetAlpha(0.08 + t * 0.17)
                 elseif roi < 0 then
                     local t = math.min(math.abs(roi) / roiRange, 1)
                     rowFrame.roiBg:SetVertexColor(0.8, 0, 0, 1)
@@ -378,7 +146,6 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:PopulateNodeList(content, results)
                 end
             end
 
-            -- Tooltip with details
             row.tooltipOptions = {
                 text = self:BuildRowTooltip(result),
                 anchor = "ANCHOR_CURSOR",
@@ -396,7 +163,6 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:BuildRowTooltip(result)
     local lines = {}
 
     if result.step then
-        -- Optimal Path roadmap step
         tinsert(lines, f.bb("Step #" .. result.step .. ": " .. (result.nodeName or "")))
         tinsert(lines, "Rank: " .. math.max(0, result.rankBefore) .. " -> " .. math.max(0, result.rankAfter) .. " / " .. result.maxRank)
         tinsert(lines, "")
@@ -410,15 +176,13 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:BuildRowTooltip(result)
         tinsert(lines, f.l("ROI per Point: ") .. CraftSim.UTIL:FormatMoney(result.roiPerPoint, true))
         tinsert(lines, f.l("Total Estimated ROI: ") .. CraftSim.UTIL:FormatMoney(result.totalEstimatedROI, true))
 
-        -- Full scan results include affected recipe details
         if result.topRecipes and #result.topRecipes > 0 then
             tinsert(lines, "")
             tinsert(lines, f.l("Top Affected Recipes:"))
             local count = math.min(5, #result.topRecipes)
             for i = 1, count do
                 local impact = result.topRecipes[i]
-                local deltaStr = CraftSim.UTIL:FormatMoney(impact.profitDelta, true)
-                tinsert(lines, "  " .. (impact.recipeName or "") .. ": " .. deltaStr)
+                tinsert(lines, "  " .. (impact.recipeName or "") .. ": " .. CraftSim.UTIL:FormatMoney(impact.profitDelta, true))
             end
             if result.affectedRecipeCount and result.affectedRecipeCount > count then
                 tinsert(lines, "  ... and " .. (result.affectedRecipeCount - count) .. " more")
@@ -429,25 +193,15 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:BuildRowTooltip(result)
     return table.concat(lines, "\n")
 end
 
---- Start a full profession scan (triggered by button).
-function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan()
+--- Start a full profession scan.
+---@param content Frame  the optimizeContent sub-frame (passed from button callback)
+function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan(content)
     local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then
         print("No recipe data available for scan")
         return
     end
 
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME
-    local frame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    else
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    end
-
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT
-    local content = frame.content
     content.modeText:SetText(f.l("Scanning..."))
     content.nodeList:Remove()
     content.nodeList:UpdateDisplay()
@@ -466,33 +220,28 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan()
     )
 end
 
-
---- Start the optimal path calculation (triggered by Optimize button).
-function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath()
+--- Start the optimal path calculation.
+--- Uses the KP count from `content.pointsInput` (auto-detected available pts or user-set value).
+---@param content Frame  the optimizeContent sub-frame (passed from button callback)
+function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath(content)
     local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then
         print("No recipe data available for optimization")
         return
     end
 
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME
-    local frame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    else
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    end
-
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT
-    local content = frame.content
     content.modeText:SetText(f.l("Preparing scan..."))
     content.summaryText:SetText("")
     content.nodeList:Remove()
     content.nodeList:UpdateDisplay()
 
-    local availablePoints = CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
-    local pointsToPlan = availablePoints > 0 and availablePoints or 5
+    -- Read target point count from the input field (user can override)
+    local pointsToPlan = tonumber(content.pointsInput.textInput:GetText()) or 0
+    if pointsToPlan <= 0 then
+        local availPts = CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
+        pointsToPlan = availPts > 0 and availPts or 5
+        content.pointsInput.textInput:SetText(tostring(pointsToPlan))
+    end
 
     CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPathAsync(recipeData, pointsToPlan,
         function(phase, progress, total)
@@ -503,19 +252,18 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath()
             end
         end,
         function(path)
+            local availPts = CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
             local headerText = f.l("Optimal Path") .. " (" .. #path .. " steps"
-            if availablePoints > 0 then
-                headerText = headerText .. ", " .. availablePoints .. " pts available"
+            if availPts > 0 then
+                headerText = headerText .. ", " .. availPts .. " pts"
             else
-                headerText = headerText .. ", planning " .. pointsToPlan .. " pts"
+                headerText = headerText .. ", " .. pointsToPlan .. " pts planned"
             end
             headerText = headerText .. ")"
             content.modeText:SetText(headerText)
 
-            -- Save as weekly plan
-            CraftSim.KNOWLEDGE_POINT_VALUE:SaveWeeklyPlan(recipeData, path, availablePoints)
+            CraftSim.KNOWLEDGE_POINT_VALUE:SaveWeeklyPlan(recipeData, path, pointsToPlan)
 
-            -- Show summary
             if #path > 0 then
                 local totalGain = path[#path].cumulativeROI or 0
                 content.summaryText:SetText(
@@ -529,28 +277,15 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath()
     )
 end
 
-
---- Start the Weekly Plan: load saved plan instantly, or run Optimize if stale/missing.
-function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan()
+--- Start the Weekly Plan: load saved plan instantly, or run Optimize if missing.
+---@param content Frame  the optimizeContent sub-frame (passed from button callback)
+function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan(content)
     local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then
         print("No recipe data available for weekly plan")
         return
     end
 
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME
-    local frame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    else
-        frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE) --[[@as CraftSim.KNOWLEDGE_POINT_VALUE.FRAME]]
-    end
-
-    ---@type CraftSim.KNOWLEDGE_POINT_VALUE.FRAME.CONTENT
-    local content = frame.content
-
-    -- Try loading saved plan
     local plan = CraftSim.KNOWLEDGE_POINT_VALUE:GetSavedWeeklyPlan(recipeData)
     if plan and plan.path and #plan.path > 0 then
         local availPts = CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
@@ -580,7 +315,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan()
 
         self:PopulateNodeList(content, plan.path)
     else
-        -- No saved plan - run Optimize
-        self:StartOptimizePath()
+        -- No saved plan – run Optimize
+        self:StartOptimizePath(content)
     end
 end

@@ -640,7 +640,7 @@ CraftSim.KNOWLEDGE_POINT_VALUE.notifiedThisSession = {}
 --- Check for unspent knowledge points and notify the player once per session per profession.
 --- Called from ProfessionsFrame OnShow hook.
 function CraftSim.KNOWLEDGE_POINT_VALUE:CheckAndNotifyUnspentPoints()
-    if not CraftSim.DB.OPTIONS:Get("MODULE_KNOWLEDGE_POINT_VALUE") then return end
+    if not CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO") then return end
 
     local recipeData = CraftSim.MODULES.recipeData
     if not recipeData then return end

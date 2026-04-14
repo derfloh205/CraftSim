@@ -102,11 +102,6 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP"))
 
             addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_KNOWLEDGE_POINT_VALUE_LABEL"),
-                "MODULE_KNOWLEDGE_POINT_VALUE",
-                L("CONTROL_PANEL_MODULES_KNOWLEDGE_POINT_VALUE_TOOLTIP"))
-
-            addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
                 "MODULE_CRAFT_LOG",
                 L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
