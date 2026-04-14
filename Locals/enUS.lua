@@ -927,12 +927,16 @@ greater or equal the configured sale rate threshold.
             " is active during stat optimization when the buff is not detected on the player.\n\n" ..
             "This does not add a Shatter-style prerequisite row to the craft queue.",
         CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP =
-        "Queued recipes are listed here. Left-click a row to open it, right-click for actions.",
-        CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP = "Use Craft Next to process the first craftable queued recipe.",
-        CRAFT_QUEUE_HELP = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
-            f.bb("Right Click") .. " .. Open Recipe Options\n" ..
-            f.bb("Middle Click") .. " .. Remove Recipe from Queue",
-
+        "Queued recipes are listed here.\nLeft-click a recipe to navigate to it\nRight-click for actions\nMiddle Mouse Button to remove a recipe",
+        CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP = "Use Craft Next to craft the first craftable queued recipe on top",
+        CRAFT_QUEUE_TUTORIAL_QUEUE_BUTTONS_TOOLTIP =
+        "These buttons can be used to automatically queue a range of recipes.\nCraftLists are predefined lists of recipes\nFirst Crafts are recipes with first craft bonuses\nWork Orders are either Patron, Guild, Personal or Public Orders that can be queued based on your selection criteria",
+        CRAFT_QUEUE_TUTORIAL_SHOPPING_LIST_TOOLTIP =
+        "If you have the Auctionator addon loaded, you can use a button here to create a shopping list based on your queued recipes missing reagents.",
+        CRAFT_QUEUE_TUTORIAL_QUICK_ACCESS_BAR_TOOLTIP =
+        "This is a quick access to your upgradeable soulbound finishing reagents (Patron Order Rewards). For Enchanting there is also a quick access button for the shatter buff recipe",
+        CRAFT_QUEUE_TUTORIAL_CRAFT_QUEUE_OPTIONS_TOOLTIP =
+        "Here you can find general options to configure the Craft Queue",
         -- craft lists
         CRAFT_LISTS_TAB_LABEL = "Craft Lists",
         CRAFT_LISTS_QUEUE_BUTTON_LABEL = "Queue Craft Lists",
