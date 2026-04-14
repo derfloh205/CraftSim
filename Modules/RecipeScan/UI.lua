@@ -706,6 +706,50 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     end
                 end
             end
+
+            rootDescription:CreateDivider()
+
+            -- Only Craftlists filter: scan only selected craft lists using their optimization options
+            local crafterUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(row.crafterData)
+            local onlyCraftlistsCB = rootDescription:CreateCheckbox(
+                L("RECIPE_SCAN_ONLY_CRAFTLISTS_BUTTON"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_CRAFTLISTS")
+                end,
+                function()
+                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_CRAFTLISTS")
+                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_ONLY_CRAFTLISTS", not value)
+                end)
+            onlyCraftlistsCB:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip, L("RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP"))
+            end)
+
+            local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
+            if #allLists == 0 then
+                onlyCraftlistsCB:CreateTitle(L("RECIPE_SCAN_CRAFTLISTS_NO_LISTS"))
+            else
+                onlyCraftlistsCB:CreateTitle(L("RECIPE_SCAN_CRAFTLISTS_SELECT_TITLE"))
+                local selectedCraftLists = CraftSim.DB.OPTIONS:Get("RECIPESCAN_CRAFTLIST_SCAN_SELECTED")
+                selectedCraftLists[crafterUID] = selectedCraftLists[crafterUID] or {}
+                for _, list in ipairs(allLists) do
+                    local listRef = list
+                    local listCB = onlyCraftlistsCB:CreateCheckbox(
+                        listRef.name,
+                        function()
+                            local sel = CraftSim.DB.OPTIONS:Get("RECIPESCAN_CRAFTLIST_SCAN_SELECTED")
+                            sel[crafterUID] = sel[crafterUID] or {}
+                            return sel[crafterUID][listRef.id] == true
+                        end,
+                        function()
+                            local sel = CraftSim.DB.OPTIONS:Get("RECIPESCAN_CRAFTLIST_SCAN_SELECTED")
+                            sel[crafterUID] = sel[crafterUID] or {}
+                            sel[crafterUID][listRef.id] = not (sel[crafterUID][listRef.id] == true) or nil
+                        end)
+                    listCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddNormalLine(tooltip, CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(listRef))
+                    end)
+                end
+            end
         end,
     }
 

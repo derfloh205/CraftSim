@@ -42,17 +42,13 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
 
     if recipeData.isEnchantingRecipe and recipeData.baseOperationInfo then
         local craftingDataID = self.recipeData.baseOperationInfo.craftingDataID
-        if not CraftSim.ENCHANT_RECIPE_DATA[craftingDataID] then
+        local ed = CraftSim.ENCHANT_RECIPE_DATA[craftingDataID]
+        if not ed then
             print("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. "/" .. craftingDataID)
             return
         end
-        local itemIDs = {
-            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q1,
-            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q2,
-            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q3,
-        }
-
-        for _, itemID in pairs(itemIDs) do
+        -- q1–q3 scroll ids: expectedItem uses itemsByQuality[expectedQuality] when supportsQualities; not only lowest.
+        for _, itemID in pairs({ ed.q1, ed.q2, ed.q3 }) do
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
         -- only for quality supporting gear, non quality gear would be the toylike Scepter of Spectacle: Air for example
@@ -272,4 +268,42 @@ function CraftSim.ResultData:GetJSON(indent)
         nil)
     jb:End()
     return jb.json
+end
+
+--- One representative item for a simple tooltip (e.g. Craft Lists). No quality tier / expected-quality logic.
+--- Enchants: craftingDataID + ENCHANT_RECIPE_DATA (GetRecipeOutputItemData is invalid for them). Others: recipe hyperlink or first output slot.
+---@param recipeID number
+---@param recipeInfo TradeSkillRecipeInfo?
+---@return number? itemID
+---@return string? itemLink
+function CraftSim.ResultData.GetCraftListTooltipItemIDOrLink(recipeID, recipeInfo)
+    if not recipeInfo then
+        return nil, nil
+    end
+    if recipeInfo.isEnchantingRecipe then
+        local op = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, nil, false)
+        if not op then
+            return nil, nil
+        end
+        local ed = CraftSim.ENCHANT_RECIPE_DATA[op.craftingDataID]
+        -- Single scroll item id for tooltip; craft list does not distinguish q1/q2/q3.
+        if ed and not ed.noOutputTinker and ed.q1 then
+            return ed.q1, nil
+        end
+        return nil, nil
+    end
+    if recipeInfo.hyperlink and recipeInfo.hyperlink ~= "" then
+        return nil, recipeInfo.hyperlink
+    end
+    local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, {}, nil, 1)
+    if outputItemData then
+        local iid = outputItemData.itemID
+        if iid and iid > 0 then
+            return iid, nil
+        end
+        if outputItemData.hyperlink and outputItemData.hyperlink ~= "" then
+            return nil, outputItemData.hyperlink
+        end
+    end
+    return nil, nil
 end

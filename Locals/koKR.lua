@@ -736,9 +736,6 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_QUEUE_MENU_INGENUITY_IGNORE = f.gold("독창 발동 시 ") .. f.r("무시 ") .. "(대기열 수량 감소 방지)",
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION = f.gold("집중 ") .. "모두 소모 시 " .. f.r("제거"),
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP = "남은 집중력이 부족하여 더 이상 제작할 수 없을 때 대기열에서 자동으로 제거합니다.",
-        CRAFT_QUEUE_HELP = f.bb("좌클릭") .. " .. 제작법으로 이동\n" ..
-            f.bb("우클릭") .. " .. 제작법 옵션 열기\n" ..
-            f.bb("휠 클릭") .. " .. 대기열에서 제거",
 
         -- craft lists (제작 목록)
         CRAFT_LISTS_TAB_LABEL = "제작 목록",
@@ -760,12 +757,11 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_CREATE_POPUP_TITLE = "제작 목록 만들기",
         CRAFT_LISTS_EXPORT_POPUP_TITLE = "제작 목록 내보내기",
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "제작 목록 가져오기",
-        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
-            f.gold(" 집중 활성화"),
-        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = f.gold("집중") .. " 최적화",
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("스마트 ") .. f.gold("집중") .. f.bb(" 대기열 추가"),
+        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "집중 활성화",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "집중 최적화",
+        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("스마트 집중") .. f.bb(" 대기열 추가"),
         CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP = "포인트당 집중 효율이 가장 높은 순서대로 제작법을 대기열에 추가하여 사용 가능한 집중력을 모두 소모합니다.",
-        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = f.gold("집중") .. f.bb(" 대기열 수량 보정"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "집중" .. f.bb(" 대기열 수량 보정"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP = "활성화하면 " .. f.bb("독창") .. "에 따른 예상 제작 횟수만큼 집중 제작 대기열을 추가합니다.",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "전문 기술 도구 최적화",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "최고 수익 품질 자동 선택",
@@ -784,7 +780,8 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "대기열 수량 오프셋: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "예약된 제작 횟수에 항상 지정된 수량을 더합니다.",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "제작 목록 재입고: 가방·은행·전쟁 금고 보유량 차감",
-        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP = "켜면 재입고 목표에서 이미 보유한 수량을 뺀 만큼만 대기열에 넣습니다.\n\n끄면 보유 여부와 관계없이 목표 수량만큼 대기열에 넣습니다.",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
+        "켜면 재입고 목표에서 이미 보유한 수량을 뺀 만큼만 대기열에 넣습니다.\n\n끄면 보유 여부와 관계없이 목표 수량만큼 대기열에 넣습니다.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "대기열 추가 후 자동으로 쇼핑 리스트 생성",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("선택된 목록 없음"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("제작법을 보려면 목록을 선택하세요."),
