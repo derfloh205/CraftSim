@@ -25,7 +25,7 @@
 ## IconTexture: Interface\Icons\inv_misc_coin_02
 ## SavedVariables: CraftSimDB
 ## Dependencies: Blizzard_Professions
-## OptionalDeps: Auctionator, TradeSkillMaster, RECrystallize, OribosExchange
+## OptionalDeps: Auctionator, TradeSkillMaster, RECrystallize, OribosExchange, Syndicator
 
 embeds.xml
 
@@ -69,8 +69,10 @@ Init/Init.lua
 Init/Slash.lua
 
 Pricing/ProfitCalculation.lua
-Pricing/PriceAPIs.lua
-Pricing/PriceSource.lua
+
+DataSource/PriceAPIs.lua
+DataSource/PriceSource.lua
+DataSource/InventorySource.lua
 
 Modules/Modules.lua
 

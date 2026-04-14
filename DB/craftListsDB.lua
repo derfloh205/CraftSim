@@ -12,7 +12,6 @@ CraftSim.DB = CraftSim.DB
 ---@field smartConcentrationQueuing boolean
 ---@field offsetConcentrationCraftAmount boolean
 ---@field optimizeProfessionTools boolean
----@field autoselectTopProfitQuality boolean
 ---@field optimizeFinishingReagents boolean
 ---@field includeSoulboundFinishingReagents boolean
 ---@field onlyHighestQualitySoulboundFinishingReagents boolean
@@ -52,7 +51,6 @@ local function DefaultOptions()
         smartConcentrationQueuing = false,
         offsetConcentrationCraftAmount = false,
         optimizeProfessionTools = true,
-        autoselectTopProfitQuality = true,
         optimizeFinishingReagents = false,
         includeSoulboundFinishingReagents = false,
         onlyHighestQualitySoulboundFinishingReagents = false,

@@ -119,27 +119,6 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     end
 end
 
----@param idOrLink? number | string
----@return number? auctionAmount
-function CraftSimTSM:GetAuctionAmount(idOrLink)
-    if not idOrLink then
-        return
-    end
-    if type(idOrLink) == 'number' then
-        return CraftSimTSM:GetAuctionAmountByItemID(idOrLink)
-    else
-        return CraftSimTSM:GetAuctionAmountByItemLink(idOrLink)
-    end
-end
-
-function CraftSimTSM:GetAuctionAmountByItemID(itemID)
-    return TSM_API.GetAuctionQuantity("i:" .. itemID)
-end
-
-function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
-    return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
-end
-
 ---@param itemID string
 ---@param isReagent boolean?
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)

@@ -393,16 +393,21 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, false)
     CraftSim.RECIPE_SCAN.UI:ResetResults(row)
 
-    local OPT_ID                    = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN
-    local KEYS                      = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
-    local FA                        = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
+    local OPT_ID                          = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS.RECIPESCAN_SCAN
+    local KEYS                            = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local FA                              = CraftSim.WIDGETS.OptimizationOptions.FINISHING_REAGENTS_ALGORITHM
     -- Global optimization options (used when not in craft list mode)
-    local globalOptimizeGear              = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS, false)
+    local globalOptimizeGear              = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_PROFESSION_TOOLS,
+        false)
     local globalConcentrationEnabled      = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ENABLE_CONCENTRATION, true)
-    local globalOptimizeConcentration     = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION, false)
-    local globalOptimizeTopProfit         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
-    local globalOptimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_FINISHING_REAGENTS, false)
-    local globalFinishingAlgorithm        = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
+    local globalOptimizeConcentration     = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION,
+        false)
+    local globalOptimizeTopProfit         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
+        KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
+    local globalOptimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS
+    .OPTIMIZE_FINISHING_REAGENTS, false)
+    local globalFinishingAlgorithm        = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
+        KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
     local globalReagentAllocation         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION,
         CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
     local globalOptimizationScanMode      = globalReagentAllocation == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
@@ -460,7 +465,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
 
                         -- Apply TSM sale rate filter (after optimization)
                         if TSM_API and recipeData.resultData and recipeData.resultData.expectedItem then
-                            local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
+                            local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get(
+                            "RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                             if tsmSaleRateThreshold > 0 then
                                 local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem
                                     :GetItemLink())
@@ -503,8 +509,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 optimizeFinishingReagents = listOptions.optimizeFinishingReagents
                 finishingAlgorithm        = listOptions.finishingReagentsAlgorithm or FA.SIMPLE
 
-                local reagentAllocation = listOptions.reagentAllocation or "OPTIMIZE_HIGHEST"
-                local SCAN_MODES = CraftSim.RECIPE_SCAN.SCAN_MODES
+                local reagentAllocation   = listOptions.reagentAllocation or "OPTIMIZE_HIGHEST"
+                local SCAN_MODES          = CraftSim.RECIPE_SCAN.SCAN_MODES
                 if reagentAllocation == SCAN_MODES.Q1 then
                     recipeData.reagentData:SetReagentsMaxByQuality(1)
                 elseif reagentAllocation == SCAN_MODES.Q2 then
@@ -821,10 +827,18 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                     tsmItemString) or 0
             end
 
-            -- TSM Enhanced: subtract existing inventory from restock target
+            -- subtract existing inventory from restock target using the selected inventory addon
+            -- (TSM Smart Restock still takes priority if enabled and TSM is the active inventory source)
             if CraftSimTSM:IsAvailable() and CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_ENABLED") then
                 local _, _, owned = CraftSimTSM:GetSmartRestockAmount(recipeData)
                 restockAmount = math.max(0, restockAmount - owned)
+            elseif recipeData.resultData.expectedItem then
+                local itemID = recipeData.resultData.expectedItem:GetItemID()
+                local itemLink = recipeData.resultData.expectedItem:GetItemLink()
+                if itemID or itemLink then
+                    local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID) or 0
+                    restockAmount = math.max(0, restockAmount - owned)
+                end
             end
 
             if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < restockAmount then

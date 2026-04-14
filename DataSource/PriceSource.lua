@@ -171,14 +171,3 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, force
     priceInfo.isAHPrice = true
     return priceInfo.ahPrice, priceInfo
 end
-
---- returns the amount of the item the player has in the AH or nil if no price source addon is loaded that can fetch this for us
----@param idOrLink? number | string
----@return number? auctionAmount
-function CraftSim.PRICE_SOURCE:GetAuctionAmount(idOrLink)
-    if C_AddOns.IsAddOnLoaded(CraftSimTSM.name) then
-        return CraftSimTSM:GetAuctionAmount(idOrLink)
-    else
-        return
-    end
-end
