@@ -2467,6 +2467,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
             nameColumn.text:SetText(listRef.name)
             typeColumn.text:SetText(isGlobal and L("CRAFT_LISTS_GLOBAL_LABEL")
                 or L("CRAFT_LISTS_CHARACTER_LABEL"))
+
+            row.tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                textCallback = function()
+                    return CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(listRef)
+                end,
+            }
         end)
     end
 

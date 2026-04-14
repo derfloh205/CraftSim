@@ -140,6 +140,37 @@ function CraftSim.CRAFT_LISTS:ApplySmartQueueing()
     end
 end
 
+--- Build a tooltip text string summarizing a craft list's optimization and restock options
+---@param list CraftSim.CraftList
+---@return string
+function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
+    local options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+    local lines = {}
+    local function yn(v) return v and f.g("Yes") or f.r("No") end
+
+    table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER"))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION") .. ": " .. yn(options.enableConcentration))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS") .. ": " .. yn(options.optimizeProfessionTools))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY") .. ": " .. yn(options.autoselectTopProfitQuality))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING") .. ": " .. yn(options.optimizeFinishingReagents))
+    table.insert(lines,
+        "  " ..
+        L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION") ..
+        ": " .. f.bb(tostring(options.reagentAllocation or "OPTIMIZE_HIGHEST")))
+
+    table.insert(lines, "")
+    table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER"))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT") .. f.bb(tostring(options.restockAmount or 1)))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED") .. ": " .. yn(options.enableUnlearned))
+    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE") .. ": " .. yn(options.onlyProfitable))
+
+    return f.white(table.concat(lines, "\n"))
+end
+
 --- Queue all craft lists that are selected for queue by the current character
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
