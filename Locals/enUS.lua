@@ -728,6 +728,9 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "Only " .. f.g("Profitable"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "Only queue work orders with expected positive profit",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "Work Order Type",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_CHECKBOX = f.g("Auto Queue ") .. f.bb("Work Orders"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP =
+        "Automatically queue work orders upon opening a profession table the first time after login",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "Patron Orders",
         CRAFT_QUEUE_GUILD_ORDERS_BUTTON = "Guild Orders",
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Personal Orders",

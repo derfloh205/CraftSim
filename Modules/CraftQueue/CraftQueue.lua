@@ -30,6 +30,10 @@ CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RES
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
 
+GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
+    "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
+})
+
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
 
@@ -228,9 +232,11 @@ end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
     local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.QueueWorkOrders")
+    CraftSim.CRAFTQ.queuingWorkOrders = true
     print("QueueWorkOrders", false, true)
     local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
     if not profession or not CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton() then
+        CraftSim.CRAFTQ.queuingWorkOrders = false
         return
     end
     local normalizedRealmName = GetNormalizedRealmName()
@@ -260,6 +266,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         finally = function()
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
+            CraftSim.CRAFTQ.queuingWorkOrders = false
         end,
         continue = function(frameDistributor, _, workOrderType, _, progress)
             local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
@@ -1490,4 +1497,10 @@ function CraftSim.CRAFTQ:ResetQuickBuyCache()
     qbCache.purchasePending = false
     wipe(qbCache.boughtSearchStrings)
     wipe(qbCache.resultRows)
+end
+
+function CraftSim.CRAFTQ:CRAFTSIM_CRAFTING_ORDERS_PRELOADED()
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
+        RunNextFrame(function() self:QueueWorkOrders() end)
+    end
 end
