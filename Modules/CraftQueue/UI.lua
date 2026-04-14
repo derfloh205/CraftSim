@@ -2529,6 +2529,25 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 restockText = " " .. f.l("[" .. tostring(target) .. "]")
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
+
+            local tipItemID, tipItemLink = CraftSim.ResultData.GetCraftListTooltipItemIDOrLink(id, recipeInfo)
+            row.tooltipOptions = {
+                owner = row.frame,
+                anchor = "ANCHOR_CURSOR_RIGHT",
+            }
+            if tipItemID then
+                row.tooltipOptions.itemID = tipItemID
+                row.tooltipOptions.itemLink = nil
+                row.tooltipOptions.text = nil
+            elseif tipItemLink then
+                row.tooltipOptions.itemID = nil
+                row.tooltipOptions.itemLink = tipItemLink
+                row.tooltipOptions.text = nil
+            else
+                row.tooltipOptions.itemID = nil
+                row.tooltipOptions.itemLink = nil
+                row.tooltipOptions.text = name .. "\n" .. f.grey("Recipe ID: " .. tostring(id))
+            end
         end)
     end
 
