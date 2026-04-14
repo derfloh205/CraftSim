@@ -1549,6 +1549,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     anchorA = "TOPRIGHT",
                     anchorB = "TOPRIGHT",
                     offsetX = -70,
+                    offsetY = 5,
                 },
             },
             scale = 0.7,
