@@ -341,7 +341,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.TOPGEAR.UI:Init()
 		CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 		CraftSim.SPECIALIZATION_INFO.UI:Init()
-		CraftSim.KNOWLEDGE_ROI.UI:Init()
+		CraftSim.KNOWLEDGE_POINT_VALUE.UI:Init()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
 		CraftSim.SIMULATION_MODE.UI:Init()
 		CraftSim.RECIPE_SCAN.UI:Init()
@@ -406,10 +406,11 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			CraftSim.CRAFTQ.UI:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
 
-			-- Knowledge ROI: deferred unspent points notification
-			C_Timer.After(1.5, function()
-				CraftSim.KNOWLEDGE_ROI:CheckAndNotifyUnspentPoints()
-			end)
+			-- Knowledge Point Value: deferred unspent points notification
+			CraftSim.GUTIL:WaitFor(
+				function() return CraftSim.MODULES.recipeData ~= nil end,
+				function() CraftSim.KNOWLEDGE_POINT_VALUE:CheckAndNotifyUnspentPoints() end,
+				0.1, 5)
 
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()

@@ -335,12 +335,12 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
             GameTooltip:Show()
         end
 
-        -- Knowledge ROI tooltip injection
-        local roiEntry = CraftSim.DB.KNOWLEDGE_ROI:Get(playerUID, nodeID)
+        -- Knowledge Point Value tooltip injection
+        local roiEntry = CraftSim.DB.KNOWLEDGE_POINT_VALUE:Get(playerUID, nodeID)
         if roiEntry and roiEntry.roiPerPoint ~= 0 then
             GameTooltip:AddLine(" ")
             local roiColor = roiEntry.roiPerPoint > 0 and "|cff00ff00" or "|cffff4444"
-            GameTooltip:AddLine(roiColor .. "Knowledge ROI: " .. CraftSim.UTIL:FormatMoney(roiEntry.roiPerPoint, true) .. " / pt|r")
+            GameTooltip:AddLine(roiColor .. "Knowledge Point Value: " .. CraftSim.UTIL:FormatMoney(roiEntry.roiPerPoint, true) .. " / pt|r")
             if roiEntry.totalRemainingROI and roiEntry.totalRemainingROI ~= 0 then
                 GameTooltip:AddLine(roiColor .. "Total remaining: " .. CraftSim.UTIL:FormatMoney(roiEntry.totalRemainingROI, true) .. "|r")
             end

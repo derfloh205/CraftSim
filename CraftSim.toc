@@ -53,7 +53,7 @@ DB/crafterDB.lua
 DB/priceOverrideDB.lua
 DB/craftListsDB.lua
 DB/lastCraftingCostDB.lua
-DB/knowledgeROIDB.lua
+DB/knowledgePointValueDB.lua
 
 Media/Media.lua
 
@@ -113,8 +113,8 @@ Modules/ControlPanel/UI.lua
 Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/UI.lua
 
-Modules/KnowledgeROI/KnowledgeROI.lua
-Modules/KnowledgeROI/UI.lua
+Modules/SpecializationInfo/KnowledgePointValue.lua
+Modules/SpecializationInfo/KnowledgePointValueUI.lua
 
 Modules/Options/Options.lua
 Modules/Options/CraftSimOptionsTsm.xml

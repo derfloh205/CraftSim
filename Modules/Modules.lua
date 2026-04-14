@@ -21,8 +21,8 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
 	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	local knowledgeROIFrameH = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI)
-	local knowledgeROIFrameWOH = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO)
+	local knowledgePointValueFrameH = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE)
+	local knowledgePointValueFrameWOH = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO)
 	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
 	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
@@ -55,8 +55,8 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	customerHistoryFrame:Hide()
 	specInfoFrame:Hide()
 	specInfoFrameWO:Hide()
-	knowledgeROIFrameH:Hide()
-	knowledgeROIFrameWOH:Hide()
+	knowledgePointValueFrameH:Hide()
+	knowledgePointValueFrameWOH:Hide()
 	averageProfitFrame:Hide()
 	averageProfitFrameWO:Hide()
 	topgearFrame:Hide()
@@ -180,8 +180,8 @@ function CraftSim.MODULES:UpdateUI()
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
-	local knowledgeROIFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI)
-	local knowledgeROIFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_ROI_WO)
+	local knowledgePointValueFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE)
+	local knowledgePointValueFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.KNOWLEDGE_POINT_VALUE_WO)
 
 	-- pre hide
 	CraftSim.CRAFTQ.queueRecipeButton:Hide()
@@ -256,7 +256,7 @@ function CraftSim.MODULES:UpdateUI()
 	if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
 		showSpecInfo = true
 	end
-	local showKnowledgeROI = showSpecInfo -- same condition as spec info
+	local showKnowledgePointValue = showSpecInfo -- same condition as spec info
 	showSimulationMode = not recipeData.isOldWorldRecipe and not recipeData.isBaseRecraftRecipe
 
 	showReagentOptimization = showReagentOptimization and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_OPTIMIZATION")
@@ -271,7 +271,7 @@ function CraftSim.MODULES:UpdateUI()
 	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
 	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
-	showKnowledgeROI = showKnowledgeROI and CraftSim.DB.OPTIONS:Get("MODULE_KNOWLEDGE_ROI")
+	showKnowledgePointValue = showKnowledgePointValue and CraftSim.DB.OPTIONS:Get("MODULE_KNOWLEDGE_POINT_VALUE")
 
 	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
 	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
@@ -381,15 +381,15 @@ function CraftSim.MODULES:UpdateUI()
 		CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
 	end
 
-	-- Knowledge ROI Module
-	CraftSim.FRAME:ToggleFrame(knowledgeROIFrame,
-		showKnowledgeROI and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(knowledgeROIFrameWO,
-		showKnowledgeROI and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showKnowledgeROI then
-		CraftSim.DEBUG:StartProfiling("Knowledge ROI")
-		CraftSim.KNOWLEDGE_ROI.UI:UpdateDisplay(recipeData)
-		CraftSim.DEBUG:StopProfiling("Knowledge ROI")
+	-- Knowledge Point Value Module
+	CraftSim.FRAME:ToggleFrame(knowledgePointValueFrame,
+		showKnowledgePointValue and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(knowledgePointValueFrameWO,
+		showKnowledgePointValue and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showKnowledgePointValue then
+		CraftSim.DEBUG:StartProfiling("Knowledge Point Value")
+		CraftSim.KNOWLEDGE_POINT_VALUE.UI:UpdateDisplay(recipeData)
+		CraftSim.DEBUG:StopProfiling("Knowledge Point Value")
 	end
 
 	-- CraftBuffs Module
