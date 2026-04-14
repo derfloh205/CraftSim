@@ -990,8 +990,42 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
 
     local crafterUIDs = GUTIL:ToSet(crafterUIDs)
 
-    --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
-    local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
+    --- Split reagentMap into NPC-vendor items and AH items
+    --- NPC items are excluded from the Auctionator list (buy from vendor, not AH)
+    ---@type table<ItemID, {itemName:string, qualityID:number?, quantity:number, vendorPrice:number, vendorName:string}>
+    local npcItems = {}
+    ---@type table<ItemID, {itemName:string, qualityID:number?, quantity:number}>
+    local ahItems = {}
+
+    local vendorEnabled = CraftSim.VENDOR_INTEGRATION and CraftSim.VENDOR_INTEGRATION:IsEnabled()
+
+    for itemID, info in pairs(reagentMap) do
+        local resolvedID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID) or itemID
+        local vendorPrice, vendorName = nil, nil
+        if vendorEnabled then
+            vendorPrice, vendorName = CraftSim.VENDOR_INTEGRATION:GetVendorPrice(resolvedID)
+        end
+        if vendorPrice and vendorPrice > 0 then
+            -- Use IsVendorPreferred for consistent tie-breaking with PriceSource
+            local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(resolvedID, true)
+            if CraftSim.VENDOR_INTEGRATION:IsVendorPreferred(vendorPrice, ahPrice) then
+                npcItems[resolvedID] = {
+                    itemName   = info.itemName,
+                    qualityID  = info.qualityID,
+                    quantity   = info.quantity,
+                    vendorPrice = vendorPrice,
+                    vendorName  = vendorName or "",
+                }
+            else
+                ahItems[itemID] = info
+            end
+        else
+            ahItems[itemID] = info
+        end
+    end
+
+    --- convert AH items to Auctionator Search Strings and deduct item count (of all crafters total)
+    local searchStrings = GUTIL:Map(ahItems, function(info, itemID)
         itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
         if not itemID then
             return nil
@@ -1020,6 +1054,44 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
 
     CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List"))
+
+    --- Print NPC vendor shopping summary
+    local npcCount = GUTIL:Count(npcItems)
+    if npcCount > 0 then
+        local ICON_NPC = CraftSim.VENDOR_INTEGRATION and CraftSim.VENDOR_INTEGRATION.ICON_NPC or ""
+        local totalVendorCost = 0
+        local totalAHCostIfBoughtFromAH = 0
+
+        CraftSim.DEBUG:SystemPrint(ICON_NPC .. f.l(" Acheter chez un vendeur NPC (" .. npcCount .. " items):"))
+        for itemID, info in pairs(npcItems) do
+            local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
+                return itemCount + CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+            end)
+            local needed = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0)
+            if needed > 0 then
+                local lineCost = info.vendorPrice * needed
+                totalVendorCost = totalVendorCost + lineCost
+                local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, true) or info.vendorPrice
+                totalAHCostIfBoughtFromAH = totalAHCostIfBoughtFromAH + (ahPrice * needed)
+                CraftSim.DEBUG:SystemPrint(string.format(
+                    "  |cffffffff%s|r x%d  %s  %s(%s)",
+                    info.itemName,
+                    needed,
+                    GUTIL:FormatMoney(lineCost),
+                    ICON_NPC,
+                    info.vendorName ~= "" and info.vendorName or "?"
+                ))
+            end
+        end
+
+        local savings = totalAHCostIfBoughtFromAH - totalVendorCost
+        if savings > 0 then
+            CraftSim.DEBUG:SystemPrint(string.format(
+                f.g("  Économies NPC: %s") .. f.grey(" (vs tout acheter à l'HV)"),
+                GUTIL:FormatMoney(savings)
+            ))
+        end
+    end
 
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end

@@ -38,6 +38,16 @@ function CraftSim.VENDOR_INTEGRATION:IsEnabled()
     return CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.VENDOR_PRICE_PREFER_NPC)
 end
 
+--- Returns true when the vendor price should be used instead of ahPrice.
+--- Vendor wins when cheaper OR equal (no AH fees, guaranteed stock).
+---@param vendorPrice number  vendor price in copper
+---@param ahPrice number|nil  AH buy price in copper (nil = no AH data)
+---@return boolean
+function CraftSim.VENDOR_INTEGRATION:IsVendorPreferred(vendorPrice, ahPrice)
+    if not ahPrice then return true end
+    return vendorPrice <= ahPrice
+end
+
 -- ──────────────────────────────────────────────────────────────
 -- Price lookup
 -- ──────────────────────────────────────────────────────────────
@@ -82,36 +92,34 @@ local function ScanMerchant()
     if not numItems or numItems == 0 then return end
 
     local scanned, updated = 0, 0
-    local vendorName = UnitName("target") or UnitName("npc") or ""
+    local vendorName = UnitName("target") or ""
 
     for i = 1, numItems do
-        local name, _, price, _, numAvailable = GetMerchantItemInfo(i)
+        -- C_MerchantFrame.GetItemInfo replaces the old GetMerchantItemInfo global (removed in Midnight)
+        local info = C_MerchantFrame.GetItemInfo(i)
 
-        -- Skip unlimited-supply-check: numAvailable == -1 means unlimited; > 0 limited supply.
-        -- We store both but flag limited supply so callers can warn the player.
-        if name and price and price > 0 then
-            local itemLink = GetMerchantItemLink(i)
-            if itemLink then
-                local itemID = select(1, C_Item.GetItemInfoInstant(itemLink))
-                if itemID then
-                    local existing = CraftSim.DB.VENDOR_PRICE:Get(itemID)
-                    -- Only update if price changed or we have no entry yet
-                    if not existing or existing.price ~= price then
-                        CraftSim.DB.VENDOR_PRICE:Save(itemID, {
-                            price      = price,
-                            vendorName = vendorName,
-                            timestamp  = GetServerTime(),
-                        })
-                        updated = updated + 1
-                    end
-                    scanned = scanned + 1
+        if info and info.name and info.price and info.price > 0 then
+            -- GetMerchantItemID is cheaper than going through the item link
+            local itemID = GetMerchantItemID(i)
+            if itemID then
+                local existing = CraftSim.DB.VENDOR_PRICE:Get(itemID)
+                -- Only update if price changed or we have no entry yet
+                if not existing or existing.price ~= info.price then
+                    CraftSim.DB.VENDOR_PRICE:Save(itemID, {
+                        price      = info.price,
+                        vendorName = vendorName,
+                        timestamp  = GetServerTime(),
+                    })
+                    updated = updated + 1
                 end
+                scanned = scanned + 1
             end
         end
     end
 
-    print(string.format("VendorIntegration: scanned %d items from %q, updated %d entries",
-        scanned, vendorName, updated))
+    CraftSim.DEBUG:SystemPrint(string.format(
+        "|cff33ff99CraftSim VendorIntegration:|r Scanné %d articles chez %s (%d mis à jour)",
+        scanned, vendorName ~= "" and vendorName or "?", updated))
 end
 
 function CraftSim.VENDOR_INTEGRATION:MERCHANT_SHOW()
@@ -131,20 +139,38 @@ end
 ---Useful for verification during development.
 ---@param itemID ItemID
 function CraftSim.VENDOR_INTEGRATION:DebugPrintPrice(itemID)
-    local price, vendorName = CraftSim.VENDOR_INTEGRATION:GetVendorPrice(itemID)
-    if price then
+    local vendorPrice, vendorName = CraftSim.VENDOR_INTEGRATION:GetVendorPrice(itemID)
+    local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, true)
+    local enabled = CraftSim.VENDOR_INTEGRATION:IsEnabled()
+    CraftSim.DEBUG:SystemPrint(string.format(
+        "|cff33ff99CraftSim VendorIntegration|r ItemID %d  enabled=%s",
+        itemID, tostring(enabled)))
+    if vendorPrice then
         CraftSim.DEBUG:SystemPrint(string.format(
-            "|cff33ff99CraftSim VendorIntegration|r ItemID %d → %s%s (vendor: %s)",
-            itemID,
+            "  Vendeur: %s%s (%s)",
             CraftSim.VENDOR_INTEGRATION.ICON_NPC,
-            GUTIL:FormatMoney(price),
-            vendorName
+            GUTIL:FormatMoney(vendorPrice),
+            vendorName ~= "" and vendorName or "?"
         ))
     else
+        CraftSim.DEBUG:SystemPrint("  Vendeur: inconnu")
+    end
+    if ahPrice then
+        local cheaper = vendorPrice and vendorPrice < ahPrice and "|cff00ff00 ← moins cher|r" or ""
         CraftSim.DEBUG:SystemPrint(string.format(
-            "|cff33ff99CraftSim VendorIntegration|r ItemID %d → no vendor price known",
-            itemID
+            "  HV:      %s%s%s",
+            CraftSim.VENDOR_INTEGRATION.ICON_AH,
+            GUTIL:FormatMoney(ahPrice),
+            cheaper
         ))
+    else
+        CraftSim.DEBUG:SystemPrint("  HV:      pas de prix")
+        if vendorPrice then
+            CraftSim.DEBUG:SystemPrint("  → Prix vendeur sera utilisé (pas de prix HV)")
+        end
+    end
+    if vendorPrice and ahPrice and vendorPrice >= ahPrice then
+        CraftSim.DEBUG:SystemPrint("|cffffff00  → HV moins cher, prix vendeur ignoré|r")
     end
 end
 

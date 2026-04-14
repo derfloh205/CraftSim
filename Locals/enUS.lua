@@ -1104,11 +1104,12 @@ greater or equal the configured sale rate threshold.
 
         -- NPC vendor integration
         OPTIONS_VENDOR_PRICE_TAB              = "|TInterface\\Minimap\\Tracking\\Vendor:16:16|t NPC Vendor Prices",
-        OPTIONS_VENDOR_PRICE_PREFER_NPC       = "Prefer NPC vendor price when cheaper",
+        OPTIONS_VENDOR_PRICE_PREFER_NPC       = "Prefer NPC vendor price (cheaper or equal to AH)",
         OPTIONS_VENDOR_PRICE_PREFER_NPC_TOOLTIP =
-            "When a crafting reagent is available from an NPC vendor at a fixed price, use that price instead of the Auction House price if it is cheaper.\n\n"
+            "When a crafting reagent is available from an NPC vendor at a fixed price, use that price instead of the Auction House price if it is cheaper or equal.\n\n"
+            .. "Buying from a vendor avoids prices and stock uncertainty.\n\n"
             .. "Vendor prices are learned automatically when you open any merchant.\n\n"
-            .. "The vendor tracking icon (" .. "|TInterface\\Minimap\\Tracking\\Vendor:16:16|t" .. ") is shown next to reagents that are currently priced from an NPC vendor.",
+            .. "The NPC vendor icon is shown next to reagents that are currently priced from a vendor.",
 
         -- Reagent source labels (used in tooltips and shopping list)
         VENDOR_INTEGRATION_PRICE_SOURCE_NPC    = "|TInterface\\Minimap\\Tracking\\Vendor:14:14|t NPC",
