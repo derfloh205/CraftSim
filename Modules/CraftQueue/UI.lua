@@ -1545,10 +1545,10 @@ function CraftSim.CRAFTQ.UI:Init()
             parent = frame.content,
             anchorPoints = {
                 {
-                    anchorParent = frame.content.craftQueueOptionsButton.frame,
-                    anchorA = "LEFT",
-                    anchorB = "RIGHT",
-                    offsetX = 5,
+                    anchorParent = frame.content,
+                    anchorA = "TOPRIGHT",
+                    anchorB = "TOPRIGHT",
+                    offsetX = -70,
                 },
             },
             scale = 0.7,

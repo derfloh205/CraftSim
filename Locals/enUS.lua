@@ -920,11 +920,8 @@ greater or equal the configured sale rate threshold.
             " is active during stat optimization when the buff is not detected on the player.\n\n" ..
             "This does not add a Shatter-style prerequisite row to the craft queue.",
         CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP =
-        "Queued recipes are listed here. Left-click a row to open it, right-click for actions.",
-        CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP = "Use Craft Next to process the first craftable queued recipe.",
-        CRAFT_QUEUE_HELP = f.bb("Left Click") .. " .. Jump to Recipe\n" ..
-            f.bb("Right Click") .. " .. Open Recipe Options\n" ..
-            f.bb("Middle Click") .. " .. Remove Recipe from Queue",
+        "Queued recipes are listed here.\nLeft-click a recipe to navigate to it\nRight-click for actions\nMiddle Mouse Button to remove a recipe",
+        CRAFT_QUEUE_TUTORIAL_CRAFT_NEXT_TOOLTIP = "Use Craft Next to craft the first craftable queued recipe on top",
 
         -- craft lists
         CRAFT_LISTS_TAB_LABEL = "Craft Lists",
