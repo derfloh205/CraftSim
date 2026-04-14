@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.0.1"),
+        f.PG .. f.bb("Craft Queue"),
+        f.a .. "- Added option to autoqueue work orders when opening",
+        f.a .. "  a profession table for the first time after login",
+        f.p .. "Fixed a loading error when Auctionator is not loaded",
         newP("26.0.0"),
         f.PG .. f.g("Outsourced Inventory Tracking to dedicated addons"),
         f.a .. "- For now, " .. f.bb("TSM") .. " and " .. f.bb("Syndicator") .. " are supported",
