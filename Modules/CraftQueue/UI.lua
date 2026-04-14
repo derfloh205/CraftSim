@@ -898,6 +898,19 @@ function CraftSim.CRAFTQ.UI:Init()
                                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
                                         CraftSim.CRAFTQ.UI:UpdateDisplay()
                                     end)
+
+                                    if recipeData:IsWorkOrder() then
+                                        rootDescription:CreateDivider()
+                                        rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_ADD"),
+                                            function()
+                                                local blacklist = CraftSim.DB.OPTIONS:Get(
+                                                    "CRAFTQUEUE_WORK_ORDERS_BLACKLIST") or {}
+                                                blacklist[recipeData.recipeID] = true
+                                                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_BLACKLIST", blacklist)
+                                                CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
+                                                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                                            end)
+                                    end
                                 end)
                             elseif IsMouseButtonDown("MiddleButton") then
                                 CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
@@ -1248,6 +1261,95 @@ function CraftSim.CRAFTQ.UI:Init()
                 autoQueueWorkOrders:SetTooltip(function(tooltip, elementDescription)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP"))
+                end);
+
+                -- Alert Settings submenu (grouped under auto queue)
+                local alertSubMenu = rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_ENABLED_CHECKBOX"))
+
+                local alertEnabledCB = alertSubMenu:CreateCheckbox(
+                    L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_ENABLED_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_ENABLED")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_ENABLED")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALERTS_ENABLED", not value)
+                    end)
+
+                alertEnabledCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_ENABLED_TOOLTIP"))
+                end);
+
+                local alertSoundCB = alertSubMenu:CreateCheckbox(
+                    L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_SOUND_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_SOUND")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_SOUND")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALERTS_SOUND", not value)
+                    end)
+
+                alertSoundCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_SOUND_TOOLTIP"))
+                end);
+
+                local alertChatCB = alertSubMenu:CreateCheckbox(
+                    L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_CHAT_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_CHAT")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_CHAT")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALERTS_CHAT", not value)
+                    end)
+
+                alertChatCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_CHAT_TOOLTIP"))
+                end);
+
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(alertSubMenu, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT_LABEL"),
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.CurrencyInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 60, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT"),
+                        borderAdjustWidth = 1,
+                        minValue = 0,
+                        tooltipOptions = {
+                            anchor = "ANCHOR_TOP",
+                            owner = frame,
+                            text = f.white(L("CRAFT_QUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT_TOOLTIP")),
+                        },
+                        onValueValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT",
+                                tonumber(input.total) or 0)
+                        end,
+                    }
+                end, 210, 25, "CRAFTQUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT_INPUT")
+
+                -- Blacklist management
+                alertSubMenu:CreateDivider()
+
+                local clearBlacklistBtn = alertSubMenu:CreateButton(
+                    L("CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_CLEAR"),
+                    function()
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_BLACKLIST", {})
+                    end)
+
+                clearBlacklistBtn:SetTooltip(function(tooltip, elementDescription)
+                    local blacklist = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_BLACKLIST") or {}
+                    local count = 0
+                    for _ in pairs(blacklist) do count = count + 1 end
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_CLEAR_TOOLTIP") ..
+                        "\n\n" .. f.white("Currently blacklisted: " .. count .. " recipe(s)"))
                 end);
 
                 local orderTypeSubMenu = rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON"))

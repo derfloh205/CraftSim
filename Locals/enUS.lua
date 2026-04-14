@@ -735,6 +735,20 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_CHECKBOX = f.g("Auto Queue ") .. f.bb("Work Orders"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP =
         "Automatically queue work orders upon opening a profession table the first time after login",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_ENABLED_CHECKBOX = f.gold("Alerts") .. " on Auto Queue",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_ENABLED_TOOLTIP =
+        "Notify you when profitable work orders are found during auto-queue.\nRequires Auto Queue to be enabled.",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT_LABEL = "Min Profit for Alert: ",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT_TOOLTIP =
+        "Minimum net profit (after reagent costs) to trigger an alert.\nSet to " ..
+        f.bb("0") .. " to alert on any profitable order. Amount in gold:",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_SOUND_CHECKBOX = "Play " .. f.bb("Sound"),
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_SOUND_TOOLTIP = "Play a sound when profitable orders are found",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_CHAT_CHECKBOX = f.bb("Chat") .. " Message",
+        CRAFT_QUEUE_WORK_ORDERS_ALERTS_CHAT_TOOLTIP = "Print a summary in chat when profitable orders are found",
+        CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_ADD = "Blacklist Recipe",
+        CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_CLEAR = f.r("Clear") .. " Recipe Blacklist",
+        CRAFT_QUEUE_WORK_ORDERS_BLACKLIST_CLEAR_TOOLTIP = "Remove all recipes from the work order blacklist",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "Patron Orders",
         CRAFT_QUEUE_GUILD_ORDERS_BUTTON = "Guild Orders",
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Personal Orders",

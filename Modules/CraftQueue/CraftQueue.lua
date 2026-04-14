@@ -230,7 +230,9 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
     self.UI:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ:QueueWorkOrders()
+function CraftSim.CRAFTQ:QueueWorkOrders(options)
+    options = options or {}
+    local isAutoQueue = options.isAutoQueue or false
     local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.QueueWorkOrders")
     CraftSim.CRAFTQ.queuingWorkOrders = true
     print("QueueWorkOrders", false, true)
@@ -247,6 +249,15 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
     local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+    local blacklist = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_BLACKLIST") or {}
+
+    --- Alert tracking accumulator (only used during auto-queue)
+    local alertData = {
+        queuedCount = 0,
+        bestProfit = 0,
+        totalProfit = 0,
+        bestRecipeName = nil,
+    }
 
     local workOrderTypes = {
         CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
@@ -267,6 +278,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
             CraftSim.CRAFTQ.queuingWorkOrders = false
+
+            -- Fire alerts if this was an auto-queue and alerts are enabled
+            if isAutoQueue and alertData.queuedCount > 0 then
+                CraftSim.CRAFTQ:FireWorkOrderAlerts(alertData)
+            end
         end,
         continue = function(frameDistributor, _, workOrderType, _, progress)
             local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
@@ -317,6 +333,14 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                     end
                                     for i = 1, math.min(maxCount, #publicOrderCandidates) do
                                         CraftSim.CRAFTQ:AddRecipe { recipeData = publicOrderCandidates[i].recipeData }
+                                        -- Track for alerts
+                                        local candidate = publicOrderCandidates[i]
+                                        alertData.queuedCount = alertData.queuedCount + 1
+                                        alertData.totalProfit = alertData.totalProfit + candidate.averageProfit
+                                        if candidate.averageProfit > alertData.bestProfit then
+                                            alertData.bestProfit = candidate.averageProfit
+                                            alertData.bestRecipeName = candidate.recipeData.recipeName
+                                        end
                                     end
                                 end
                                 frameDistributor:Continue()
@@ -345,6 +369,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                                 if recipeInfo and recipeInfo.learned then
+                                    -- Blacklist check: skip recipes the user never wants to craft
+                                    if blacklist[order.spellID] then
+                                        print("Recipe blacklisted, skipping: " .. tostring(order.spellID))
+                                        distributor:Continue()
+                                        return
+                                    end
+
                                     local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
                                     if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
@@ -514,6 +545,13 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                     -- skip: not profitable and not a KP order within range
                                                 elseif isWithinKPCost and isWithinMaxCost then
                                                     CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                    -- Track for alerts
+                                                    alertData.queuedCount = alertData.queuedCount + 1
+                                                    alertData.totalProfit = alertData.totalProfit + recipeData.averageProfitCached
+                                                    if recipeData.averageProfitCached > alertData.bestProfit then
+                                                        alertData.bestProfit = recipeData.averageProfitCached
+                                                        alertData.bestRecipeName = recipeData.recipeName
+                                                    end
                                                 end
                                             end
                                         end
@@ -1573,6 +1611,34 @@ end
 
 function CraftSim.CRAFTQ:CRAFTSIM_CRAFTING_ORDERS_PRELOADED()
     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
-        RunNextFrame(function() self:QueueWorkOrders() end)
+        RunNextFrame(function() self:QueueWorkOrders({ isAutoQueue = true }) end)
+    end
+end
+
+--- Fire sound and/or chat alerts after auto-queue finds profitable orders.
+---@param alertData table {queuedCount, bestProfit, totalProfit, bestRecipeName}
+function CraftSim.CRAFTQ:FireWorkOrderAlerts(alertData)
+    if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_ENABLED") then
+        return
+    end
+
+    local minProfit = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT") or 0
+    if alertData.bestProfit < minProfit then
+        return
+    end
+
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_SOUND") then
+        PlaySound(SOUNDKIT.AUCTION_WINDOW_OPEN, "Master")
+    end
+
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ALERTS_CHAT") then
+        local bestProfitText = GUTIL:FormatMoney(alertData.bestProfit, true, nil, true)
+        local msg = string.format(
+            "|cff00ccffCraftSim:|r Queued %d work order(s) — best profit: %s (%s)",
+            alertData.queuedCount,
+            bestProfitText,
+            alertData.bestRecipeName or "?"
+        )
+        print(msg)
     end
 end

@@ -1,152 +1,121 @@
-# Feature: Crafting Order Sniper & Commission Optimizer
+# Feature: Crafting Order Sniper — Smart Alert System
 
 ## Summary
 
-Monitor available public and patron Work Orders in real-time to surface the most profitable commissions. Alert the player when a high-value order appears, calculate net profit after reagent costs, and provide historical commission data to help set competitive prices.
+Enhance the existing CraftQueue Work Orders system with smart alerts: notify the player (sound + chat message) when profitable orders are detected during auto-queue, with configurable profit thresholds and alert settings integrated directly into the existing Work Orders options dropdown.
 
 ## Problem Statement
 
-The Crafting Orders system in Midnight is a significant gold source, but the in-game UI for browsing orders is primitive:
-- No profitability calculation (commission minus reagent costs)
-- No filtering by profit threshold
-- No alerts when valuable orders appear
-- No historical data on typical commission rates per recipe
-- Must be physically at a crafting station to browse orders
+CraftSim already computes profitability and auto-queues work orders when opening a profession table. However, the player has no notification when high-value orders are found — they must manually check the queue to see what was added.
 
-Players waste time manually scanning orders, doing mental math, and missing profitable opportunities.
+## What Already Exists (as of 2026-04-14)
 
-## Proposed Features
+The following features are **already implemented** in CraftQueue:
 
-### Phase 1 — Order Profitability Scanner
-- Hook into `C_CraftingOrders.GetCrafterOrders()` when at a crafting station
-- For each available order, compute:
-  - **Commission** (gold offered by customer)
-  - **Reagent cost** (materials not provided by customer, priced from TSM/Auctionator)
-  - **Concentration cost** (if needed to hit the required quality, valued at gold/concentration-point)
-  - **Net profit** = commission - reagent cost - concentration opportunity cost
-  - **Moxie earned** (if patron order)
-- Display sorted by net profit with color coding (green = profitable, red = loss)
+- ✅ **Order Profitability Calculation**: `averageProfitCached` (commission - reagent cost - concentration)
+- ✅ **Moxie Valuation**: configurable gold-per-moxie, included in profit calculations
+- ✅ **Auto-Queue on Detection** (commit `2faea16`): `CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE` triggers `QueueWorkOrders()` when profession frame opens
+- ✅ **Per-Profession Preload**: orders preloaded once per profession per session
+- ✅ **Order Type Filtering**: Patron, Guild, Personal, Public checkboxes
+- ✅ **Profit Filtering**: "Only Profitable" option
+- ✅ **Patron Order Filters**: Spark recipes, KP, Acuity, Power Rune, force/allow concentration
+- ✅ **Patron Cost Limits**: Max cost per order, max cost per KP
+- ✅ **Public Order Sorting**: Top N by profit, limited by available claims
+- ✅ **Navigate to Order**: Click queue row to open order in Blizzard UI
+- ✅ **Patron Reward Values UI**: Configurable moxie values per currency
 
-### Phase 2 — Smart Alert System
-- Configurable profit threshold: "Alert me for orders with net profit > X gold"
-- Sound + visual notification when a qualifying order appears
-- Support for both:
-  - **Active scanning**: periodic refresh while at crafting station (throttled, configurable interval)
-  - **Passive detection**: hook into `CRAFTINGORDERS_UPDATE_ORDER_COUNT` event
-- Alert cooldown to prevent spam (min 30s between alerts for same recipe)
-- Filter by: profession, recipe category, minimum profit, patron-only, public-only
+## Proposed Feature — Smart Alert System
 
-### Phase 3 — Commission History & Analytics
-- Track all orders seen (accepted or not) in `CraftSimDB.ORDER_HISTORY`
-- Per-recipe analytics:
-  - Average commission offered
-  - Median commission
-  - Frequency (orders/day)
-  - Your acceptance rate
-  - Profit trend over time
-- "Fair Price" recommendation when posting your own commissions
-- "Competition" indicator: how many orders are available vs crafters (indirect via frequency)
+Integrated into the existing CraftQueue Work Orders options, directly below the "Auto Queue" checkbox.
 
-### Phase 4 — Patron Order Optimization
-- Focus on patron (NPC) orders specifically:
-  - Track Moxie rewards per order
-  - Calculate Moxie-per-gold-spent ROI
-  - Recommend which patron orders to prioritize for Moxie farming
-  - Weekly patron order tracker: completed / available / missed
-- Integration with Moxie Budget Optimizer (if feat/MoxieBudget exists)
+### Alert Settings (in Work Orders options dropdown)
+- **Enable Alerts** checkbox (master toggle, default: off)
+- **Minimum Profit Threshold**: CurrencyInput — only alert for orders with net profit ≥ this value (default: 0 = alert on any profitable order)
+- **Sound Alert** checkbox (default: on) — play a sound when profitable orders are found
+- **Chat Alert** checkbox (default: on) — print a summary in chat when profitable orders are found
 
-### Phase 5 — Quick-Accept UI Enhancement
-- Floating panel near the crafting orders UI showing top 5 most profitable orders
-- One-click to navigate to the order in the Blizzard UI (cannot auto-accept — player action required)
-- "Quick Reject" list for recipes you never want to craft (configurable blacklist)
-- Reagent availability check: "You have all materials for this order" badge
+### Alert Behavior
+- Fires **after** auto-queue completes (in the `finally` callback of `QueueWorkOrders`)
+- Counts how many orders were queued and the total/best profit
+- If any queued order meets the profit threshold:
+  - Play `SOUNDKIT.AUCTION_WINDOW_OPEN` (or similar recognizable sound)
+  - Print to chat: `"|cff00ccffCraftSim:|r Queued X work orders — best profit: Y gold"`
+- Alert only fires during auto-queue (not manual "Queue Work Orders" button clicks)
+- No cooldown needed since auto-queue fires once per profession per session
+
+### Blacklist (Recipe Ignore List)
+- Stored in SavedVariables: `CraftSimDB.WORK_ORDER_BLACKLIST` — table of `recipeID = true`
+- During `QueueWorkOrders`, skip any recipe in the blacklist
+- Right-click context menu on CraftQueue work order rows: "Blacklist this recipe"
+- Option in Work Orders dropdown: "Clear Blacklist" button
 
 ## Technical Approach
 
-### Data Sources
-- `C_CraftingOrders.GetCrafterOrders()` — returns available orders (must be at crafting station)
-- `C_CraftingOrders.GetOrderClaimInfo()` — claim status
-- `CRAFTINGORDERS_UPDATE_ORDER_COUNT` / `CRAFTINGORDERS_DISPLAY_CRAFTER_FULFILLED_MSG` events
-- `CraftSim.RecipeData` — recipe data for reagent cost calculation
-- `CraftSim.PriceData` — reagent pricing
-- `CraftSim.ConcentrationData` — concentration cost estimation
-
-### Architecture
-- New module: `Modules/OrderSniper/`
-  - `OrderSniper.lua` — core scanning and profitability engine
-  - `OrderSniperUI.lua` — alert system and quick-accept panel
-  - `OrderHistory.lua` — historical tracking and analytics
-  - `PatronOptimizer.lua` — patron order Moxie ROI calculations
-- New DB repositories:
-  - `CraftSimDB.ORDER_HISTORY` — historical orders seen and accepted
-  - `CraftSimDB.ORDER_SNIPER_CONFIG` — alert thresholds, blacklists, preferences
-
-### Key Algorithms
-1. **Net Profit Calculation**:
-   ```
-   net_profit = commission
-              - Σ(reagent_cost × qty for non-provided reagents)
-              - concentration_cost_in_gold (if quality upgrade needed)
-              + moxie_value (if patron order, valued at gold-per-moxie rate)
-   ```
-2. **Concentration Gold Value**: Derived from the most profitable concentration-spending recipe available. "1 concentration point = X gold opportunity cost"
-3. **Alert Scoring**: `score = net_profit × urgency_factor` where urgency increases as order approaches expiration
-4. **Fair Commission**: Percentile-based from history — "90th percentile commission for this recipe = X gold"
-
-### Event Flow
+### Data Flow
 ```
-Player arrives at crafting station
-  → TRADE_SKILL_SHOW event
-  → OrderSniper registers CRAFTINGORDERS_UPDATE_ORDER_COUNT
-  → Periodic scan via C_Timer (configurable: 30s / 60s / 120s)
-  → For each order: compute net profit
-  → If profit > threshold → play sound + show alert frame
-  → Log all orders to ORDER_HISTORY
-
-Player leaves crafting station
-  → TRADE_SKILL_CLOSE event
-  → OrderSniper unregisters events, stops timer
+ProfessionsFrame opens
+  → Preload orders per profession (existing)
+  → CRAFTSIM_CRAFTING_ORDERS_PRELOADED fires
+  → Auto-queue enabled? → QueueWorkOrders()
+  → Track queued orders during scan (count, profits)
+  → QueueWorkOrders finally: → fire alerts if threshold met
 ```
+
+### Changes Required
+
+#### `Util/Const.lua` — New option keys
+- `CRAFTQUEUE_WORK_ORDERS_ALERTS_ENABLED`
+- `CRAFTQUEUE_WORK_ORDERS_ALERTS_MIN_PROFIT`
+- `CRAFTQUEUE_WORK_ORDERS_ALERTS_SOUND`
+- `CRAFTQUEUE_WORK_ORDERS_ALERTS_CHAT`
+- `CRAFTQUEUE_WORK_ORDERS_BLACKLIST`
+
+#### `Locals/enUS.lua` + `Locals/LocalizationIDs.lua` — New strings
+- Alert checkbox labels and tooltips
+- Blacklist context menu text
+
+#### `Modules/CraftQueue/CraftQueue.lua` — Alert logic
+- Track queued orders during scan (accumulator in `QueueWorkOrders`)
+- Fire alert in `finally` callback
+- Blacklist check in `queueRecipe()` inner function
+
+#### `Modules/CraftQueue/UI.lua` — Settings UI
+- Add alert options in the Work Orders options dropdown, grouped under "Auto Queue" section
+- Right-click context menu on queue rows for blacklist
 
 ### Performance Considerations
-- Only scan when at crafting station (event-gated)
-- Throttle scans to minimum 30s interval
-- Cache reagent prices for the scan session (invalidate on new Auctionator scan)
-- ORDER_HISTORY pruning: keep last 30 days, compress older data to daily summaries
+- Zero overhead when alerts disabled
+- Alert fires once per auto-queue (not per order)
+- Blacklist is a simple table lookup (O(1))
 
 ## Compliance Notes
-- ✅ No automation: player must manually accept orders
-- ✅ No protected actions: alerts are purely informational
-- ✅ Scanning is throttled and event-gated
-- ✅ No advantage over manual browsing — just calculated information faster
+- ✅ No automation: player must manually accept orders from the queue
+- ✅ No protected actions: alerts are purely informational (sound + chat)
+- ✅ No new frames or windows: integrated into existing dropdown
 
 ## Dependencies
-- CraftSim core (RecipeData, PriceData, ConcentrationData)
-- GGUI framework for alert and panel UI
+- CraftSim core (existing CraftQueue, RecipeData, PriceData)
+- GGUI framework (existing)
 - No external addon dependencies
 
 ## API Verification (2026-04-13)
-- ✅ `C_CraftingOrders.GetCrafterOrders()` — returns available orders table
-- ✅ `C_CraftingOrders` namespace — extensive API for order management (72KB of API docs)
-- ✅ `CRAFTINGORDERS_UPDATE_ORDER_COUNT` event — fires on order list changes
-- ✅ `C_CurrencyInfo.GetCurrencyInfo()` — Moxie tracking for patron orders
-- ⚠️ Orders only accessible at crafting station — cannot scan remotely
+- ✅ `PlaySound(SOUNDKIT.*)` — standard WoW sound API
+- ✅ `C_CraftingOrders.GetCrafterOrders()` — already used in QueueWorkOrders
+- ✅ `CRAFTSIM_CRAFTING_ORDERS_PRELOADED` — custom event, already wired
 
 ## Risks & Mitigations
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Orders only visible at crafting station | Limited scanning window | Clear UX: "Go to crafting station to scan"; show last scan results when away |
-| Rapid order turnover (sniped before accepting) | Frustrating alerts for gone orders | Show order age/expiry; re-check before alert |
-| Commission manipulation (fake high orders) | Bad history data | Outlier detection; median more robust than mean |
-| Blizzard throttles order queries | Rate-limited scanning | Respect server throttles; adaptive scan interval |
-| Moxie valuation subjective | Misleading patron order ROI | Configurable gold-per-moxie rate with sensible default |
+| Sound spam if many professions visited | Annoying alerts | Once per profession per session (existing preload guard) |
+| Blacklist grows unbounded | SavedVariables bloat | Blacklist is recipe IDs only (small); add "Clear All" button |
+| Profit threshold misleading | User confusion | Tooltip explains: "Minimum net profit after reagent costs" |
 
 ## Integration Branch
 Target: `feat/IncredibleFeature`
 
 ## Status
-- [ ] Phase 1 — Order Profitability Scanner
-- [ ] Phase 2 — Smart Alert System
-- [ ] Phase 3 — Commission History & Analytics
-- [ ] Phase 4 — Patron Order Optimization
-- [ ] Phase 5 — Quick-Accept UI Enhancement
+- [x] Phase 1 — Order Profitability Scanner (already done in CraftQueue)
+- [ ] Phase 2 — Smart Alert System (this feature)
+- [x] ~~Phase 3 — Commission History & Analytics~~ (removed — too heavy, no clear value)
+- [x] Phase 4 — Patron Order Optimization (already done: moxie valuation, KP cost limits)
+- [x] ~~Phase 5 — Quick-Accept UI Enhancement~~ (removed — no screen space for floating panel)
