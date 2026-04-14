@@ -2,7 +2,12 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.INVENTORY_API
+---@field name string
+---@field GetInventoryCount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number
+---@field GetAuctionAmount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number?
 CraftSim.INVENTORY_API = {}
 CraftSim.INVENTORY_APIS = {}
 
@@ -69,19 +74,40 @@ function CraftSimSYNDICATOR:IsAvailable()
     return Syndicator ~= nil and Syndicator.API ~= nil
 end
 
+--- TODO: when fetch by itemlink is fixed, use it
 --- Returns the total inventory count (bags + bank) for an itemID.
 --- Uses Syndicator's data to query current character inventory.
----@param itemID ItemID
+---@param itemIDOrLink ItemID | string
 ---@return number count
-function CraftSimSYNDICATOR:GetInventoryCount(itemID)
+function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink)
     if not self:IsAvailable() then return 0 end
-    if not itemID then return 0 end
+    if not itemIDOrLink then return 0 end
+
+    ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
+    local inventoryInfo
+
+    if Syndicator.API and Syndicator.API.GetInventoryInfo then
+        if type(itemIDOrLink) == "string" then
+            local itemID = GUTIL:GetItemIDByLink(itemIDOrLink)
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemID) or 0
+        else
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemIDOrLink) or 0
+        end
+    end
 
     local total = 0
+    if inventoryInfo and inventoryInfo.characters then
+        for _, characterInfo in ipairs(inventoryInfo.characters) do
+            total = total + (characterInfo.bags or 0) + (characterInfo.bank or 0) +
+                (characterInfo.equipped or 0) + (characterInfo.mail or 0) +
+                (characterInfo.void or 0) + (characterInfo.auctions or 0)
+        end
 
-    -- Syndicator API v1: query inventory count across tracked characters
-    if Syndicator.API.v1 and Syndicator.API.v1.GetItemCount then
-        total = Syndicator.API.v1.GetItemCount(CraftSimAddonName, itemID) or 0
+        if inventoryInfo.warband and inventoryInfo.warband[1] then
+            total = total + (inventoryInfo.warband[1] or 0)
+        end
     end
 
     return total
@@ -89,10 +115,34 @@ end
 
 --- Returns the count of items posted on the AH by the player via Syndicator.
 --- Returns nil if not supported.
----@param itemID ItemID
+---@param itemIDOrLink ItemID | string
 ---@return number? auctionAmount
-function CraftSimSYNDICATOR:GetAuctionAmount(itemID)
-    return nil
+function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink)
+    if not self:IsAvailable() then return 0 end
+    if not itemIDOrLink then return 0 end
+
+    ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
+    local inventoryInfo
+
+    if Syndicator.API and Syndicator.API.GetInventoryInfo then
+        if type(itemIDOrLink) == "string" then
+            local itemID = GUTIL:GetItemIDByLink(itemIDOrLink)
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemID) or 0
+        else
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemIDOrLink) or 0
+        end
+    end
+
+    local total = 0
+    if inventoryInfo and inventoryInfo.characters then
+        for _, characterInfo in ipairs(inventoryInfo.characters) do
+            total = total + (characterInfo.auctions or 0)
+        end
+    end
+
+    return total
 end
 
 -- ---------------------------------------------------------------------------
@@ -100,13 +150,19 @@ end
 -- ---------------------------------------------------------------------------
 
 --- Returns the total inventory count (bags + bank + optionally AH) for an itemID via TSM.
----@param itemID ItemID
+---@param itemIDOrLink ItemID | string
 ---@return number count
-function CraftSimTSM:GetInventoryCount(itemID)
+function CraftSimTSM:GetInventoryCount(itemIDOrLink)
     if not self:IsAvailable() then return 0 end
-    if not itemID then return 0 end
+    if not itemIDOrLink then return 0 end
 
-    local tsmStr = "i:" .. itemID
+    local tsmStr = ""
+    if type(itemIDOrLink) == "string" then
+        tsmStr = TSM_API.ToItemString(itemIDOrLink)
+    else
+        tsmStr = "i:" .. itemIDOrLink
+    end
+
     local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
     local total = (numPlayer or 0) + (numAuctions or 0)
 
@@ -119,6 +175,27 @@ function CraftSimTSM:GetInventoryCount(itemID)
     end
 
     return total
+end
+
+---@param idOrLink? number | string
+---@return number? auctionAmount
+function CraftSimTSM:GetAuctionAmount(idOrLink)
+    if not idOrLink then
+        return
+    end
+    if type(idOrLink) == 'number' then
+        return CraftSimTSM:GetAuctionAmountByItemID(idOrLink)
+    else
+        return CraftSimTSM:GetAuctionAmountByItemLink(idOrLink)
+    end
+end
+
+function CraftSimTSM:GetAuctionAmountByItemID(itemID)
+    return TSM_API.GetAuctionQuantity("i:" .. itemID)
+end
+
+function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
+    return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
 end
 
 -- ---------------------------------------------------------------------------
@@ -155,14 +232,14 @@ CraftSim.INVENTORY_SOURCE = {}
 
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
----@param itemID ItemID
+---@param itemIDOrLink ItemID | string
 ---@return number count
-function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID)
-    if not itemID then return 0 end
+function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink)
+    if not itemIDOrLink then return 0 end
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryCount then
-        return CraftSim.INVENTORY_API:GetInventoryCount(itemID) or 0
+        return CraftSim.INVENTORY_API:GetInventoryCount(itemIDOrLink) or 0
     end
-    return CraftSimINVENTORY_NONE:GetInventoryCount(itemID)
+    return CraftSimINVENTORY_NONE:GetInventoryCount(itemIDOrLink)
 end
 
 --- Returns the count of items currently posted on the AH using the active inventory addon.
@@ -170,12 +247,10 @@ end
 ---@param itemIDOrLink number | string
 ---@return number? auctionAmount
 function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink)
-    local itemID = type(itemIDOrLink) == "number" and itemIDOrLink or
-        (itemIDOrLink and C_Item.GetItemInfoInstant(itemIDOrLink))
-    if not itemID then return nil end
+    if not itemIDOrLink then return nil end
 
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
-        return CraftSim.INVENTORY_API:GetAuctionAmount(itemID)
+        return CraftSim.INVENTORY_API:GetAuctionAmount(itemIDOrLink)
     end
     return nil
 end

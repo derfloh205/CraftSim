@@ -154,8 +154,6 @@ function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
         "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS") .. ": " .. yn(options.optimizeProfessionTools))
     table.insert(lines,
-        "  " .. L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY") .. ": " .. yn(options.autoselectTopProfitQuality))
-    table.insert(lines,
         "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING") .. ": " .. yn(options.optimizeFinishingReagents))
     table.insert(lines,
         "  " ..
@@ -375,8 +373,9 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         -- (this subtracts the number of RESULT items already owned, not reagents)
         if options.subtractInventory then
             local itemID = recipeData.resultData.expectedItem:GetItemID()
-            if itemID then
-                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID) or 0
+            local itemLink = recipeData.resultData.expectedItem:GetItemLink()
+            if itemID or itemLink then
+                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID) or 0
                 queueAmount = math.max(0, queueAmount - owned)
             end
         end

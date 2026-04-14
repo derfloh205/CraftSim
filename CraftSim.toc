@@ -69,8 +69,8 @@ Init/Init.lua
 Init/Slash.lua
 
 Pricing/ProfitCalculation.lua
-Pricing/PriceAPIs.lua
 
+DataSource/PriceAPIs.lua
 DataSource/PriceSource.lua
 DataSource/InventorySource.lua
 
