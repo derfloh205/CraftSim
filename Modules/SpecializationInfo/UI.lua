@@ -220,6 +220,15 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan(oc)
             end,
         }
+        oc.fullScanButton.tooltipOptions = {
+            anchor = "ANCHOR_CURSOR",
+            text = f.white("Full Scan") .. "\n" ..
+                "Calculates ROI per knowledge point for every node\n" ..
+                "across all your cached recipes in this profession.\n\n" ..
+                f.grey("Use once to build the value table.\n" ..
+                "Processing is spread across multiple frames."),
+        }
+
         oc.optimizeButton = GGUI.Button {
             parent = oc,
             anchorPoints = { { anchorParent = oc.fullScanButton.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -3 } },
@@ -228,13 +237,33 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath(oc)
             end,
         }
+        oc.optimizeButton.tooltipOptions = {
+            anchor = "ANCHOR_CURSOR",
+            text = f.white("Optimize") .. "\n" ..
+                "Runs a full scan then greedily picks the highest-ROI\n" ..
+                "node at each step to build an optimal spending path.\n\n" ..
+                f.l("KP input") .. ": how many points to plan.\n" ..
+                "Auto-detected from your unspent points (falls back to 5).\n\n" ..
+                f.grey("The result is saved and can be reloaded instantly\n" ..
+                "with " .. f.white("Load Plan") .. " without recalculating."),
+        }
+
         oc.weeklyButton = GGUI.Button {
             parent = oc,
             anchorPoints = { { anchorParent = oc.optimizeButton.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -3 } },
-            label = "Weekly", sizeX = 65, sizeY = 22,
+            label = "Load Plan", sizeX = 70, sizeY = 22,
             clickCallback = function()
                 CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan(oc)
             end,
+        }
+        oc.weeklyButton.tooltipOptions = {
+            anchor = "ANCHOR_CURSOR",
+            text = f.white("Load Plan") .. "\n" ..
+                "Displays the last saved plan instantly (no recalculation).\n\n" ..
+                "If no plan has been saved yet, runs " .. f.white("Optimize") .. " automatically.\n\n" ..
+                f.grey("Typical workflow:\n" ..
+                "1. Click Optimize once per week.\n" ..
+                "2. Use Load Plan to quickly review the saved path."),
         }
 
         oc.summaryText = GGUI.Text {
