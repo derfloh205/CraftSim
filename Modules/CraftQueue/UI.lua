@@ -1623,6 +1623,29 @@ function CraftSim.CRAFTQ.UI:Init()
 
         self:InitializeQuickAccessBar(frame)
 
+
+        local auctionatorHelpPanelDef
+        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+            auctionatorHelpPanelDef =
+            {
+                button = {
+                    frame = queueTab.content.createAuctionatorShoppingList.frame,
+                    includeFrameWidth = true,
+                    offsetX = 5,
+                    offsetY = 10,
+                },
+                highlight = {
+                    frame = queueTab.content.createAuctionatorShoppingList.frame,
+                    offsetX = -4,
+                    offsetY = 4,
+                    extraWidth = 8,
+                    extraHeight = 8,
+                },
+                toolTipDir = "RIGHT",
+                toolTipText = L("CRAFT_QUEUE_TUTORIAL_SHOPPING_LIST_TOOLTIP"),
+            }
+        end
+
         frame.content.queueTutorialButton = GGUI.TutorialButton({
             parent = frame.content,
             anchorPoints = {
@@ -1693,23 +1716,6 @@ function CraftSim.CRAFTQ.UI:Init()
                     },
                     {
                         button = {
-                            frame = queueTab.content.createAuctionatorShoppingList.frame,
-                            includeFrameWidth = true,
-                            offsetX = 5,
-                            offsetY = 10,
-                        },
-                        highlight = {
-                            frame = queueTab.content.createAuctionatorShoppingList.frame,
-                            offsetX = -4,
-                            offsetY = 4,
-                            extraWidth = 8,
-                            extraHeight = 8,
-                        },
-                        toolTipDir = "RIGHT",
-                        toolTipText = L("CRAFT_QUEUE_TUTORIAL_SHOPPING_LIST_TOOLTIP"),
-                    },
-                    {
-                        button = {
                             frame = queueTab.content.quickBarFrame.frame,
                             includeFrameWidth = true,
                             offsetX = 50,
@@ -1742,6 +1748,7 @@ function CraftSim.CRAFTQ.UI:Init()
                         toolTipDir = "RIGHT",
                         toolTipText = L("CRAFT_QUEUE_TUTORIAL_CRAFT_QUEUE_OPTIONS_TOOLTIP"),
                     },
+                    auctionatorHelpPanelDef
                 },
             },
         })
