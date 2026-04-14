@@ -150,11 +150,17 @@ function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
 
     table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER"))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION") .. ": " .. yn(options.enableConcentration))
-    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS") .. ": " .. yn(options.optimizeProfessionTools))
-    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY") .. ": " .. yn(options.autoselectTopProfitQuality))
-    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING") .. ": " .. yn(options.optimizeFinishingReagents))
-    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION") .. ": " .. f.bb(tostring(options.reagentAllocation or "OPTIMIZE_HIGHEST")))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY") .. ": " .. yn(options.autoselectTopProfitQuality))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING") .. ": " .. yn(options.optimizeFinishingReagents))
+    table.insert(lines,
+        "  " ..
+        L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION") ..
+        ": " .. f.bb(tostring(options.reagentAllocation or "OPTIMIZE_HIGHEST")))
 
     table.insert(lines, "")
     table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER"))
@@ -162,7 +168,7 @@ function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED") .. ": " .. yn(options.enableUnlearned))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE") .. ": " .. yn(options.onlyProfitable))
 
-    return table.concat(lines, "\n")
+    return f.white(table.concat(lines, "\n"))
 end
 
 --- Queue all craft lists that are selected for queue by the current character

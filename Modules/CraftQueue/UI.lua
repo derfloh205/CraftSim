@@ -2470,7 +2470,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
 
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
-                text = CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(listRef),
+                textCallback = function()
+                    return CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(listRef)
+                end,
             }
         end)
     end

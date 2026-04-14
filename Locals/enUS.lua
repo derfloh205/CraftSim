@@ -502,7 +502,8 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
             " database is updated for each scanned recipe.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
         RECIPE_SCAN_ONLY_CRAFTLISTS_BUTTON = "Only Craft Lists",
-        RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP = "When enabled, all other filters are ignored and only the selected craft lists are scanned using their respective optimization options.",
+        RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP =
+        "When enabled, all other filters are ignored and only the selected craft lists are scanned using their respective optimization options.",
         RECIPE_SCAN_CRAFTLISTS_SELECT_TITLE = "Select Craft Lists to Scan:",
         RECIPE_SCAN_CRAFTLISTS_NO_LISTS = f.grey("No Craft Lists created yet"),
         CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER = f.bb("Options") .. ":",
@@ -957,13 +958,12 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_CREATE_POPUP_TITLE = "Create Craft List",
         CRAFT_LISTS_EXPORT_POPUP_TITLE = "Export Craft List",
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "Import Craft List",
-        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = CraftSim.GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
-            f.gold(" Enable Concentration"),
-        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize " .. f.gold("Concentration"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. f.gold("Concentration") .. f.bb(" Queueing"),
+        CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "Enable Concentration",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize Concentration",
+        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. "Concentration" .. f.bb(" Queueing"),
         CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP =
         "Queue recipes in order of most concentration value per point, spending all available concentration",
-        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset " .. f.gold("Concentration") .. f.bb(" Queue Amount"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset Concentration" .. f.bb(" Queue Amount"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP =
             "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
             f.bb("Ingenuity"),
