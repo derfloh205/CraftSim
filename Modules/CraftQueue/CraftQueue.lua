@@ -339,13 +339,19 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
 end
 
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
-    self:EndCraftClickLock()
+    local isCrafting = C_TradeSkillUI.IsCrafting and C_TradeSkillUI.IsCrafting()
+    if not isCrafting then
+        self:EndCraftClickLock()
+    end
     self:SyncPendingWorkOrderSubmitState()
     self.UI:UpdateDisplay()
 end
 
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
-    self:EndCraftClickLock()
+    local isCrafting = C_TradeSkillUI.IsCrafting and C_TradeSkillUI.IsCrafting()
+    if not isCrafting then
+        self:EndCraftClickLock()
+    end
     self:SyncPendingWorkOrderSubmitState()
     self.UI:UpdateDisplay()
 end
