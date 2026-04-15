@@ -50,12 +50,128 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
+--- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
+---@type table<number, number>
+CraftSim.CRAFTQ.pendingWorkOrderSubmit = {}
+CraftSim.CRAFTQ.pendingWorkOrderSubmitLockSeconds = 1.0
+
+--- Generic anti-spam lock for queue craft actions (work orders and normal queue crafts).
+CraftSim.CRAFTQ.craftClickLockUntil = 0
+CraftSim.CRAFTQ.craftClickLockSeconds = 0.8
+
 --- Saved in DB for "cheapest owned" mote mode (midnight / TWW shatter); same sentinel as PreCraftBuffGate.
 CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
 
 --- Shattering Essence often appears a few frames after TRADE_SKILL_ITEM_CRAFTED_RESULT; refresh until buff state matches.
 function CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
     CraftSim.PRE_CRAFT_BUFF_GATE:ScheduleQueueDisplayRefreshForDelayedCraftingState()
+end
+
+function CraftSim.CRAFTQ:BeginCraftClickLock()
+    local lockSeconds = self.craftClickLockSeconds or 0.8
+    self.craftClickLockUntil = GetTime() + lockSeconds
+
+    -- Fallback unlock in case no crafting event arrives (e.g. blocked craft attempt).
+    C_Timer.After(lockSeconds + 0.05, function()
+        if self.craftClickLockUntil <= 0 then
+            return
+        end
+        local isCrafting = C_TradeSkillUI.IsCrafting and C_TradeSkillUI.IsCrafting()
+        if not isCrafting and GetTime() >= self.craftClickLockUntil then
+            self.craftClickLockUntil = 0
+            if self.frame and self.frame:IsVisible() then
+                self.UI:UpdateDisplay()
+            end
+        end
+    end)
+end
+
+function CraftSim.CRAFTQ:EndCraftClickLock()
+    self.craftClickLockUntil = 0
+end
+
+---@return boolean
+function CraftSim.CRAFTQ:IsCraftClickLocked()
+    if not self.craftClickLockUntil or self.craftClickLockUntil <= 0 then
+        return false
+    end
+
+    local isCrafting = C_TradeSkillUI.IsCrafting and C_TradeSkillUI.IsCrafting()
+    if isCrafting then
+        return true
+    end
+
+    if GetTime() < self.craftClickLockUntil then
+        return true
+    end
+
+    self.craftClickLockUntil = 0
+    return false
+end
+
+---@param orderID number?
+function CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
+    if orderID then
+        local expiresAt = GetTime() + (self.pendingWorkOrderSubmitLockSeconds or 1.0)
+        self.pendingWorkOrderSubmit[orderID] = expiresAt
+
+        -- Auto-recover if Blizzard never flips this order to fulfillable within the short lock window.
+        C_Timer.After((self.pendingWorkOrderSubmitLockSeconds or 1.0) + 0.05, function()
+            local expiry = self.pendingWorkOrderSubmit[orderID]
+            if expiry and GetTime() >= expiry then
+                self.pendingWorkOrderSubmit[orderID] = nil
+                if self.frame and self.frame:IsVisible() then
+                    self.UI:UpdateDisplay()
+                end
+            end
+        end)
+    end
+end
+
+---@param orderID number?
+function CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
+    if orderID then
+        self.pendingWorkOrderSubmit[orderID] = nil
+    end
+end
+
+---@param orderID number?
+---@return boolean
+function CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID)
+    if not orderID then
+        return false
+    end
+
+    local expiry = self.pendingWorkOrderSubmit[orderID]
+    if not expiry then
+        return false
+    end
+
+    if GetTime() < expiry then
+        return true
+    end
+
+    self.pendingWorkOrderSubmit[orderID] = nil
+    return false
+end
+
+--- Keep pending-submit guard aligned with Blizzard's currently claimed order state.
+function CraftSim.CRAFTQ:SyncPendingWorkOrderSubmitState()
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if not claimedOrder then
+        wipe(self.pendingWorkOrderSubmit)
+        return
+    end
+
+    for orderID, _ in pairs(self.pendingWorkOrderSubmit) do
+        if orderID ~= claimedOrder.orderID then
+            self.pendingWorkOrderSubmit[orderID] = nil
+        end
+    end
+
+    if claimedOrder.isFulfillable then
+        self.pendingWorkOrderSubmit[claimedOrder.orderID] = nil
+    end
 end
 
 function CraftSim.CRAFTQ:ClearMidnightShatterStaleAfterLoginPersisted()
@@ -223,10 +339,14 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
 end
 
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
+    self:EndCraftClickLock()
+    self:SyncPendingWorkOrderSubmitState()
     self.UI:UpdateDisplay()
 end
 
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
+    self:EndCraftClickLock()
+    self:SyncPendingWorkOrderSubmitState()
     self.UI:UpdateDisplay()
 end
 
@@ -1039,7 +1159,12 @@ end
 
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
+    CraftSim.CRAFTQ:EndCraftClickLock()
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
+        local orderData = CraftSim.CRAFTQ.currentlyCraftedRecipeData.orderData
+        if orderData and orderData.orderID then
+            CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderData.orderID)
+        end
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end
 end

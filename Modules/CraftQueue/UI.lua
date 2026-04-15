@@ -59,8 +59,12 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@param fallbackRecipeData CraftSim.RecipeData?
 local function TriggerPreCraftGateAction(gateId, crafterData, fallbackRecipeData)
+    if CraftSim.CRAFTQ:IsCraftClickLocked() then
+        return
+    end
     local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(crafterData, gateId)
     if fresh and fresh:CanCraft(1) then
+        CraftSim.CRAFTQ:BeginCraftClickLock()
         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
         fresh:Craft(1)
         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
@@ -4176,6 +4180,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     craftButtonColumn.craftButton.clickCallback = nil
 
     local statusColumnTooltip = ""
+    local craftClickLocked = CraftSim.CRAFTQ:IsCraftClickLocked()
 
     if not craftQueueItem.learned then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
@@ -4217,16 +4222,22 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
             if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                local pendingSubmit = CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(recipeData.orderData.orderID)
                 if claimedOrder.isFulfillable then
+                    CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_SUBMIT"))
 
                     craftButtonColumn.craftButton.clickCallback = function()
+                        CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                         C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
                             recipeData.professionData.professionInfo.profession)
                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
                         self:UpdateDisplay()
                     end
+                elseif pendingSubmit then
+                    craftButtonColumn.craftButton:SetEnabled(false)
+                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIMED"))
                 elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
@@ -4240,12 +4251,19 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData,
                         statusColumnTooltip)
                 elseif craftQueueItem.allowedToCraft then
-                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetEnabled(not craftClickLocked)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
-                    craftButtonColumn.craftButton.clickCallback = function()
-                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
-                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                    if not craftClickLocked then
+                        craftButtonColumn.craftButton.clickCallback = function()
+                            if CraftSim.CRAFTQ:IsCraftClickLocked() then
+                                return
+                            end
+                            CraftSim.CRAFTQ:BeginCraftClickLock()
+                            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                            recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                            CraftSim.CRAFTQ.UI:UpdateDisplay()
+                        end
                     end
                 else
                     craftButtonColumn.craftButton:SetEnabled(false)
@@ -4278,15 +4296,22 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         elseif craftQueueItem.pcbgData.needsStep and craftQueueItem.pcbgData.recipeData then
             SetCraftQueueRowShatterCraftButton(craftButtonColumn, craftQueueItem, recipeData, statusColumnTooltip)
         else
-            craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
+            craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft and not craftClickLocked)
             if craftQueueItem.allowedToCraft then
                 craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
-                craftButtonColumn.craftButton.clickCallback = function()
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
-                    recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
-                    CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                if not craftClickLocked then
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        if CraftSim.CRAFTQ:IsCraftClickLocked() then
+                            return
+                        end
+                        CraftSim.CRAFTQ:BeginCraftClickLock()
+                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                        CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
+                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                        CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
+                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                        CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    end
                 end
             end
         end
