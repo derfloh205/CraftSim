@@ -6,6 +6,7 @@ CraftSim.MODULES = {}
 
 ---@alias CraftSim.ModuleID
 ---| "MODULE_REAGENT_OPTIMIZATION"
+---| "MODULE_CONCENTRATION_TRACKER"
 ---| "MODULE_AVERAGE_PROFIT"
 ---| "MODULE_TOP_GEAR"
 ---| "MODULE_COST_OVERVIEW"
@@ -319,7 +320,7 @@ function CraftSim.MODULES:UpdateUI()
 	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
 
 	if showConcentrationTracker then
-		CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+		CraftSim.CONCENTRATION_TRACKER.UI:Update()
 	end
 
 	if showCooldowns then

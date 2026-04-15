@@ -13,7 +13,7 @@ CraftSim.CONCENTRATION_TRACKER.frame = nil
 ---@type CraftSim.CONCENTRATION_TRACKER.TRACKER_FRAME
 CraftSim.CONCENTRATION_TRACKER.trackerFrame = nil
 
----@class CraftSim.CONCENTRATION_TRACKER.UI
+---@class CraftSim.CONCENTRATION_TRACKER.UI : CraftSim.Module.UI
 CraftSim.CONCENTRATION_TRACKER.UI = {}
 
 CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE = {
@@ -338,7 +338,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             rootDescription:CreateButton(formatModeLabel, function()
                 CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_FORMAT_MODE", formatModeOption)
                 dropdown:SetDefaultText(formatModeLabel)
-                CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+                CraftSim.CONCENTRATION_TRACKER.UI:Update()
                 CraftSim.CRAFTQ.UI:UpdateDisplay()
                 if CraftSim.SIMULATION_MODE and CraftSim.SIMULATION_MODE.recipeData then
                     CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
@@ -448,7 +448,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end)
 end
 
-function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+function CraftSim.CONCENTRATION_TRACKER.UI:Update()
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     if not concentrationData or not concentrationData.currencyID then return end
 

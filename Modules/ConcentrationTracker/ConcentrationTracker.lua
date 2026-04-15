@@ -4,8 +4,10 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.CONCENTRATION_TRACKER
+---@class CraftSim.CONCENTRATION_TRACKER : CraftSim.Module
 CraftSim.CONCENTRATION_TRACKER = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
 
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
