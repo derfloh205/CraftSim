@@ -323,3 +323,19 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_15_16_Rename_CraftQueue_Auto_Shopping_L
 
     CraftSimDB.optionsDB.data[oldKey] = nil
 end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_16_17_Migrate_Module_Visibility_Options()
+    local modulesEnabled = CraftSim.DB.OPTIONS:Get("MODULES_ENABLED")
+    local options = CraftSim.DB.OPTIONS.db.data
+    for moduleID, _ in pairs(modulesEnabled) do
+        local oldOption = options[moduleID]
+        if oldOption ~= nil then
+            modulesEnabled[moduleID] = oldOption
+        end
+
+        options[moduleID] = nil
+    end
+
+    modulesEnabled["MODULE_RECIPE_INFO"] = options["MODULE_AVERAGE_PROFIT"]
+    options["MODULE_AVERAGE_PROFIT"] = nil
+end

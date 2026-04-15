@@ -645,6 +645,7 @@ function CraftSim.CRAFTQ.UI:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_QUEUE"),
+        onCollapseCallback = CraftSim.MODULES:HandleModuleCollapse("MODULE_CRAFT_QUEUE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,

@@ -1,11 +1,46 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-local CraftSimAddonName = select(1, ...)
 
 ---@class Craftsim.Modules
 CraftSim.MODULES = {}
 
+---@alias CraftSim.ModuleID
+---| "MODULE_REAGENT_OPTIMIZATION"
+---| "MODULE_AVERAGE_PROFIT"
+---| "MODULE_TOP_GEAR"
+---| "MODULE_COST_OVERVIEW"
+---| "MODULE_SPEC_INFO"
+---| "MODULE_PRICE_OVERRIDE"
+---| "MODULE_RECIPE_SCAN"
+---| "MODULE_CRAFT_LOG"
+---| "MODULE_CUSTOMER_HISTORY"
+---| "MODULE_PRICING"
+---| "MODULE_CRAFT_QUEUE"
+---| "MODULE_CRAFT_BUFFS"
+---| "MODULE_COOLDOWNS"
+---| "MODULE_EXPLANATIONS"
+---| "MODULE_STATISTICS"
+
+---@class CraftSim.Module.UI
+---@field module CraftSim.Module
+---@field Init fun(self: CraftSim.Module.UI)
+---@field Update fun(self: CraftSim.Module.UI)
+
+---@class CraftSim.Module
+---@field moduleID CraftSim.ModuleID
+---@field frame GGUI.Frame
+---@field frameWO GGUI.Frame? frameWO is the work order version of the module, if it has one
+---@field UI CraftSim.Module.UI
+
+---@type table<CraftSim.ModuleID, CraftSim.Module>
+CraftSim.MODULES.modules = {}
+
 local GUTIL = CraftSim.GUTIL
+
+GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
+	"CRAFTSIM_MODULE_CLOSED",
+	"CRAFTSIM_MODULE_MINIMIZED",
+})
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
@@ -14,6 +49,12 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules")
 
 ---@type CraftSim.RecipeData?
 CraftSim.MODULES.recipeData = nil
+
+---@param moduleID CraftSim.ModuleID
+---@param module CraftSim.Module
+function CraftSim.MODULES:RegisterModule(moduleID, module)
+	CraftSim.MODULES.modules[moduleID] = module
+end
 
 ---@param keepControlPanel boolean?
 ---@param keepCraftQ boolean?
@@ -150,11 +191,15 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	return nil
 end
 
----@param moduleOption CraftSim.GENERAL_OPTIONS
-function CraftSim.MODULES:HandleModuleClose(moduleOption)
-	return function()
-		CraftSim.DB.OPTIONS:Save(moduleOption, false)
-	end
+---@param module CraftSim.Module
+function CraftSim.MODULES:MODULE_CLOSED(module)
+	local modulesEnabled = CraftSim.DB.OPTIONS:Get("MODULES_ENABLED")
+	modulesEnabled[module.moduleID] = false
+end
+
+---@param module CraftSim.Module
+function CraftSim.MODULES:CRAFTSIM_MODULE_MINIMIZED(module)
+
 end
 
 --- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
