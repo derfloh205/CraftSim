@@ -81,7 +81,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     maxOptimizationQualities[currentRecipeID] = value
                 end
 
-                CraftSim.MODULES:UpdateUI()
+                CraftSim.MODULES:Update()
             end,
         }
 
@@ -95,7 +95,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             tooltip = "If enabled, all qualities up to the max quality will be optimized, and the one with the highest profit will be shown",
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED", checked)
-                CraftSim.MODULES:UpdateUI()
+                CraftSim.MODULES:Update()
             end
         }
 
@@ -310,7 +310,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE", not value)
-                        CraftSim.MODULES:UpdateUI()
+                        CraftSim.MODULES:Update()
                     end)
 
                 concentrationCB:SetTooltip(function(tooltip, elementDescription)
@@ -325,7 +325,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS", not value)
-                        CraftSim.MODULES:UpdateUI()
+                        CraftSim.MODULES:Update()
                     end)
 
                 finishingReagentsCB:SetTooltip(function(tooltip, elementDescription)
@@ -341,7 +341,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
                     function()
                         local algo = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM") or
-                        FA.SIMPLE
+                            FA.SIMPLE
                         return algo ~= FA.PERMUTATION
                     end,
                     function() CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM", FA.SIMPLE) end)
@@ -353,11 +353,13 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
                     function()
                         local algo = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM") or
-                        FA.SIMPLE
+                            FA.SIMPLE
                         return algo == FA.PERMUTATION
                     end,
-                    function() CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM",
-                            FA.PERMUTATION) end)
+                    function()
+                        CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM",
+                            FA.PERMUTATION)
+                    end)
                 permutationRadio:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
@@ -372,7 +374,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:UpdateUI()
+                        CraftSim.MODULES:Update()
                     end)
 
                 finishingReagentsSoulboundCB:SetTooltip(function(tooltip, elementDescription)
@@ -384,14 +386,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     L("OPTIMIZATION_OPTIONS_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS"),
                     function()
                         return CraftSim.DB.OPTIONS:Get(
-                        "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS")
+                            "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS")
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get(
                             "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save(
                             "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:UpdateUI()
+                        CraftSim.MODULES:Update()
                     end)
 
                 onlyHighestQualitySoulboundCB:SetTooltip(function(tooltip, elementDescription)
@@ -408,7 +410,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:UpdateUI()
+                        CraftSim.MODULES:Update()
                     end)
 
                 finishingReagentsLockedSlotsCB:SetTooltip(function(tooltip, elementDescription)
@@ -734,7 +736,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
                 reagentList:Add(function(_, columns)
                     local iconColumn = columns[1]
                     local qualityColumns = isSimplified and { columns[2], columns[3] } or
-                    { columns[2], columns[3], columns[4] }
+                        { columns[2], columns[3], columns[4] }
 
                     iconColumn.text:SetText(GUTIL:IconToText(reagent.items[1].item:GetItemIcon(), 25, 25))
 

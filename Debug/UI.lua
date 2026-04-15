@@ -21,7 +21,6 @@ function CraftSim.DEBUG.UI:Init()
         anchorB = "BOTTOMRIGHT",
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.DEBUG,
         title = "CraftSim Log",
         closeable = true,
         moveable = true,
@@ -65,11 +64,12 @@ function CraftSim.DEBUG.UI:Init()
                     end
 
                     local capturedID = fullID
-                    buttonCache[capturedID] = buttonCache[capturedID] or previousButton:CreateCheckbox(splitID, function()
-                        return debugIDTable[capturedID]
-                    end, function()
-                        debugIDTable[capturedID] = not debugIDTable[capturedID]
-                    end)
+                    buttonCache[capturedID] = buttonCache[capturedID] or
+                        previousButton:CreateCheckbox(splitID, function()
+                            return debugIDTable[capturedID]
+                        end, function()
+                            debugIDTable[capturedID] = not debugIDTable[capturedID]
+                        end)
                 end
             end
 
@@ -172,7 +172,10 @@ function CraftSim.DEBUG.UI:ShowCopyPopup(debugFrame)
         editBox:SetWidth(540)
         editBox:SetAutoFocus(false)
         editBox:SetScript("OnEscapePressed", function() popup:Hide() end)
-        editBox:SetScript("OnShow", function(self) self:SetFocus() self:HighlightText() end)
+        editBox:SetScript("OnShow", function(self)
+            self:SetFocus()
+            self:HighlightText()
+        end)
         scrollFrame:SetScrollChild(editBox)
 
         popup.editBox = editBox
@@ -197,7 +200,6 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
         offsetX = 10,
         sizeX = 200,
         sizeY = 550,
-        frameID = CraftSim.CONST.FRAMES.DEBUG_CONTROL,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -330,10 +332,13 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
             for _, repository in ipairs(repositories) do
                 local version = repository.db.version
                 if version > 0 then
-                    resetDBVersions:CreateButton(repository.name .. " " .. repository.db.version .. " -> " .. (repository.db.version - 1), function()
-                        repository.db.version = version - 1
-                        CraftSim.DEBUG:SystemPrint(f.l(string.format("CraftSim DB Version for %s set to %d", repository.name, repository.db.version)))
-                    end)
+                    resetDBVersions:CreateButton(
+                        repository.name .. " " .. repository.db.version .. " -> " .. (repository.db.version - 1),
+                        function()
+                            repository.db.version = version - 1
+                            CraftSim.DEBUG:SystemPrint(f.l(string.format("CraftSim DB Version for %s set to %d",
+                                repository.name, repository.db.version)))
+                        end)
                 end
             end
 

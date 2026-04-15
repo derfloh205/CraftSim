@@ -100,7 +100,7 @@ function CraftSim.PRICING.UI:Init()
             menu = function(ownerRegion, rootDescription)
                 rootDescription:CreateButton(f.r(L("PRICING_DELETE_ALL_OVERRIDES")), function()
                     CraftSim.DB.PRICE_OVERRIDE:ClearAll()
-                    CraftSim.MODULES:UpdateUI()
+                    CraftSim.MODULES:Update()
                 end)
             end
         }
@@ -181,14 +181,14 @@ function CraftSim.PRICING.UI:Init()
                                     recipeID = recipeID,
                                     qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(item:GetItemID())
                                 })
-                                CraftSim.MODULES:UpdateUI()
+                                CraftSim.MODULES:Update()
                             end)
 
                             if priceOverrideData then
                                 rootDescription:CreateButton(f.l("Delete Price Override"),
                                     function()
                                         CraftSim.DB.PRICE_OVERRIDE:DeleteGlobalOverride(item:GetItemID())
-                                        CraftSim.MODULES:UpdateUI()
+                                        CraftSim.MODULES:Update()
                                     end)
                             end
                         end)
@@ -351,14 +351,14 @@ function CraftSim.PRICING.UI:Init()
                                     price = tonumber(inputValue),
                                     qualityID = qualityID,
                                 })
-                                CraftSim.MODULES:UpdateUI()
+                                CraftSim.MODULES:Update()
                             end)
 
                             if priceOverrideData then
                                 rootDescription:CreateButton(f.l("Delete Price Override"),
                                     function()
                                         CraftSim.DB.PRICE_OVERRIDE:DeleteResultOverride(recipeID, qualityID)
-                                        CraftSim.MODULES:UpdateUI()
+                                        CraftSim.MODULES:Update()
                                     end)
                             end
                         end)

@@ -874,7 +874,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                         end
                                     end
                                     ProfessionsFrame.OrdersPage:ViewOrder(orderForView)
-                                    CraftSim.MODULES:UpdateUI()
+                                    CraftSim.MODULES:Update()
                                 else
                                     if not ProfessionsFrame.CraftingPage:IsVisible() then
                                         ProfessionsFrame:GetTabButton(1):Click()

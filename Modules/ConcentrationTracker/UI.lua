@@ -61,7 +61,6 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
         scale = 1,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -165,7 +164,6 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         scale = 0.9,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER_TRACKER_FRAME,
         title = L("CONCENTRATION_TRACKER_TITLE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -352,6 +350,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
         text = L("CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT")
     }
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:ShouldShow()
+    return true
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()

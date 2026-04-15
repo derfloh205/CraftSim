@@ -33,8 +33,8 @@ Init/GLibs.lua
 
 Util/Const.lua
 
-Modules/Debug/Debug.lua
-Modules/Debug/UI.lua
+Debug/Debug.lua
+Debug/UI.lua
 
 Util/Util.lua
 
@@ -67,6 +67,8 @@ Util/ItemTooltips.lua
 
 Init/Init.lua
 Init/Slash.lua
+Init/ControlPanel/ControlPanel.lua
+Init/ControlPanel/UI.lua
 
 Pricing/ProfitCalculation.lua
 
@@ -104,9 +106,6 @@ Modules/CraftLog/UI.lua
 
 Modules/Pricing/Pricing.lua
 Modules/Pricing/UI.lua
-
-Modules/ControlPanel/ControlPanel.lua
-Modules/ControlPanel/UI.lua
 
 Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/UI.lua

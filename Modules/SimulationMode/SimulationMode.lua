@@ -21,7 +21,7 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 function CraftSim.SIMULATION_MODE:MaxSpecData()
@@ -33,7 +33,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 ---@param userInput boolean
@@ -72,14 +72,14 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
@@ -102,7 +102,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
         inputBox:SetText(inputNumber)
     end
 
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -110,7 +110,7 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
 
     self:InitializeReagentList()
 
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
@@ -144,7 +144,8 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     -- also includes spec diff -- otherwise spec diff gets double-counted each update cycle)
 
     -- update difficulty based on input
-    local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and simulationModeFrames.recipeDifficultyMod.currentValue or 0
+    local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and
+    simulationModeFrames.recipeDifficultyMod.currentValue or 0
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
@@ -160,7 +161,8 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
 
     local resourcefulnessMod = 0
     if recipeData.supportsResourcefulness then
-        resourcefulnessMod = simulationModeFrames.resourcefulnessMod and simulationModeFrames.resourcefulnessMod.currentValue or 0
+        resourcefulnessMod = simulationModeFrames.resourcefulnessMod and
+        simulationModeFrames.resourcefulnessMod.currentValue or 0
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
@@ -192,7 +194,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     print("Update Reagent Input Frames:")
 
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
+    CraftSim.SIMULATION_MODE.frame
 
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
@@ -213,7 +216,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
         if optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
             recipeData.reagentData:SetOptionalCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
         else
-            local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
+            local itemID = optionalReagentItemSelector.selectedItem and
+            optionalReagentItemSelector.selectedItem:GetItemID()
             if itemID then
                 -- try to set required selectable if available else put to optional/finishing
                 if tContains(possibleRequiredSelectableItemIDs, itemID) then
@@ -285,7 +289,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     -- update simulation recipe data and UI
     self:UpdateSimulationMode()
 
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
 
 --- used by allocate button in reagent optimization module
@@ -299,11 +303,11 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     end
 
     -- set simulation reagents to recipeData reagents
-    CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData:GetCraftingReagentInfoTbl())
+    CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData
+    :GetCraftingReagentInfoTbl())
     CraftSim.SIMULATION_MODE:InitializeReagentList()
-    CraftSim.MODULES:UpdateUI()
+    CraftSim.MODULES:Update()
 end
-
 
 --- Overhaul
 
@@ -337,11 +341,11 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
         local q2Input = columns[3].input --[[@as GGUI.NumericInput]]
         local q3Input = columns[4].input --[[@as GGUI.NumericInput]]
 
-        local newMax = math.max(requiredQuantity - (q1Input.currentValue + q2Input.currentValue + q3Input.currentValue), 0)
+        local newMax = math.max(requiredQuantity - (q1Input.currentValue + q2Input.currentValue + q3Input.currentValue),
+            0)
         q1Input.maxValue = q1Input.currentValue + newMax
         q2Input.maxValue = q2Input.currentValue + newMax
         q3Input.maxValue = q3Input.currentValue + newMax
-
     else
         local requiredQuantity = recipeData.reagentData:GetRequiredQuantityByItemID(itemID)
         local q1Input = columns[2].input --[[@as GGUI.NumericInput]]
@@ -355,6 +359,6 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     local quantityFulfilled = recipeData.reagentData:SetRequiredReagent(itemID, quantity)
 
     if quantityFulfilled then
-        CraftSim.MODULES:UpdateUI()
+        CraftSim.MODULES:Update()
     end
 end

@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.DISENCHANT.UI
+---@class CraftSim.DISENCHANT.UI : CraftSim.Module.UI
 CraftSim.DISENCHANT.UI = {}
 
 ---@type CraftSim.DISENCHANT.FRAME
@@ -23,7 +23,6 @@ function CraftSim.DISENCHANT.UI:Init()
         anchorParent = UIParent,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.DISENCHANT,
         title = L("DISENCHANT_TITLE"),
         closeable = true,
         moveable = true,
@@ -74,7 +73,7 @@ function CraftSim.DISENCHANT.UI:Init()
                             initialValue = CraftSim.DB.OPTIONS:Get("DISENCHANT_MIN_ILVL"),
                             onNumberValidCallback = function(input)
                                 CraftSim.DB.OPTIONS:Save("DISENCHANT_MIN_ILVL", input.currentValue)
-                                CraftSim.DISENCHANT.UI:UpdateUI()
+                                CraftSim.DISENCHANT.UI:Update()
                             end,
                         }
                     end, 200, 20, "DISENCHANT_OPTIONS_MIN_ILVL_INPUT")
@@ -86,7 +85,7 @@ function CraftSim.DISENCHANT.UI:Init()
                 onClick = function()
                     CraftSim.DB.OPTIONS:Save("DISENCHANT_BLACKLIST", {})
                     wipe(CraftSim.DISENCHANT.sessionBlacklist)
-                    CraftSim.DISENCHANT.UI:UpdateUI()
+                    CraftSim.DISENCHANT.UI:Update()
                 end
             }
         },
@@ -116,7 +115,7 @@ function CraftSim.DISENCHANT.UI:Init()
                         CraftSim.DEBUG:SystemPrint(f.l("CraftSim Disenchant: ") ..
                             "Blacklisted for session: " .. itemLink)
                     end
-                    CraftSim.DISENCHANT.UI:UpdateUI()
+                    CraftSim.DISENCHANT.UI:Update()
                 else
                     CraftSim.DISENCHANT.UI:UpdateDisenchantButton(row.item)
                 end
@@ -187,7 +186,7 @@ function CraftSim.DISENCHANT.UI:Init()
     }
 end
 
-function CraftSim.DISENCHANT.UI:UpdateUI()
+function CraftSim.DISENCHANT.UI:Update()
     local items, countMap = CraftSim.DISENCHANT:LoadItems()
     local content = CraftSim.DISENCHANT.frame.content --[[@as CraftSim.DISENCHANT.FRAME.CONTENT]]
     content.itemList:Remove()
@@ -227,7 +226,7 @@ end
 
 function CraftSim.DISENCHANT.UI:ShowAndLoad()
     local frame = CraftSim.DISENCHANT.frame
-    self:UpdateUI()
+    self:Update()
     frame:Show()
 end
 

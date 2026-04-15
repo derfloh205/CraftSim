@@ -21,11 +21,13 @@ CraftSim.MODULES = {}
 ---| "MODULE_COOLDOWNS"
 ---| "MODULE_EXPLANATIONS"
 ---| "MODULE_STATISTICS"
+---| "MODULE_DISENCHANT"
 
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
 ---@field Init fun(self: CraftSim.Module.UI)
 ---@field Update fun(self: CraftSim.Module.UI)
+---@field ShouldShow fun(self: CraftSim.Module.UI): boolean
 
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
@@ -37,6 +39,7 @@ CraftSim.MODULES = {}
 CraftSim.MODULES.modules = {}
 
 local GUTIL = CraftSim.GUTIL
+local GGUI = CraftSim.GGUI
 
 GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 	"CRAFTSIM_MODULE_CLOSED",
@@ -45,16 +48,27 @@ GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
-
-local print = CraftSim.DEBUG:RegisterDebugID("Modules")
+local Logger = CraftSim.Logger
 
 ---@type CraftSim.RecipeData?
 CraftSim.MODULES.recipeData = nil
+
+local print = CraftSim.DEBUG:RegisterDebugID("Modules")
 
 ---@param moduleID CraftSim.ModuleID
 ---@param module CraftSim.Module
 function CraftSim.MODULES:RegisterModule(moduleID, module)
 	CraftSim.MODULES.modules[moduleID] = module
+end
+
+function CraftSim.MODULES:Init()
+	for moduleID, module in pairs(CraftSim.MODULES.modules) do
+		print("Initializing Module UI: " .. moduleID)
+		Logger:LogDebug("Initializing Module UI: {module}", moduleID)
+
+		module.moduleID = moduleID
+		module.UI:Init()
+	end
 end
 
 ---@param keepControlPanel boolean?
@@ -113,6 +127,55 @@ function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
 	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
 	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
 	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
+end
+
+-- TODO MODULE REFACTOR
+function CraftSim.MODULES:RestorePositions()
+	-- local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
+	-- local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+	-- local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
+	-- local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	-- 	CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
+	-- local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
+	-- local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+	-- local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	-- 	CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
+	-- local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	-- 	CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
+	-- local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
+	-- local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
+
+	-- infoFrame:RestoreSavedConfig(UIParent)
+	-- debugFrame:RestoreSavedConfig(UIParent)
+	-- CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
+	-- CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
+	-- CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
+	-- CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
+	-- specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
+	-- specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
+	-- averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
+	-- averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
+	-- topgearFrame:RestoreSavedConfig(ProfessionsFrame)
+	-- topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
+	-- CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
+	-- CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
+	-- reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
+	-- reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
+	-- CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+	-- local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	-- 	CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
+	-- if patronRewardValuesFrame then
+	-- 	patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
+	-- end
+
+	-- CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+	-- CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+	-- CraftSim.STATISTICS.frameNO_WO:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+	-- CraftSim.STATISTICS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+	-- CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
+	-- CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
+
+	-- CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
 end
 
 --- Shows recipe-independent modules based on saved options.
@@ -203,9 +266,32 @@ function CraftSim.MODULES:CRAFTSIM_MODULE_MINIMIZED(module)
 
 end
 
---- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
-function CraftSim.MODULES:UpdateUI()
+--- Determine basic craftsim visibility
+---@return boolean
+function CraftSim.MODULES:ShouldShow()
 	if not ProfessionsFrame:IsVisible() then
+		return false
+	end
+
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		Logger:LogDebug(
+			"Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
+		return false
+	end
+
+
+	return true
+end
+
+---@return boolean
+function CraftSim.MODULES:IsWorkOrderUI()
+	return CraftSim.UTIL:IsWorkOrder()
+end
+
+--- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
+function CraftSim.MODULES:Update()
+	if not self:ShouldShow() then
+		self:Hide()
 		return
 	end
 
@@ -230,12 +316,6 @@ function CraftSim.MODULES:UpdateUI()
 	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
 	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
-
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		print("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
-		CraftSim.MODULES:Hide()
-		return
-	end
 
 	CraftSim.CONTROL_PANEL.frame:Show()
 	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))

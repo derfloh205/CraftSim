@@ -20,6 +20,9 @@ externals:
   Libs/GGUI:
     url: https://github.com/derfloh205/GGUI.git
     tag: 2.1
+  Libs/LibLog-1.0:
+    url: https://github.com/Snakybo/LibLog-1.0.git
+    tag: r5
 
 ignore:
   - Libs/LibStub/tests

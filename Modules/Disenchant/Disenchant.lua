@@ -4,10 +4,10 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.DISENCHANT : Frame
----@field UI CraftSim.DISENCHANT.UI
----@field frame CraftSim.DISENCHANT.FRAME
+---@class CraftSim.DISENCHANT : CraftSim.Module
 CraftSim.DISENCHANT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED", "BANKFRAME_CLOSED" })
+
+CraftSim.MODULES:RegisterModule("MODULE_DISENCHANT", CraftSim.DISENCHANT)
 
 ---@type table<string, boolean>
 CraftSim.DISENCHANT.sessionBlacklist = {}
@@ -53,18 +53,18 @@ end
 
 function CraftSim.DISENCHANT:BAG_UPDATE_DELAYED()
     if not self.frame:IsVisible() then return end
-    CraftSim.DISENCHANT.UI:UpdateUI()
+    CraftSim.DISENCHANT.UI:Update()
 end
 
 function CraftSim.DISENCHANT:BANKFRAME_OPENED()
     if not self.frame:IsVisible() then return end
-    CraftSim.DISENCHANT.UI:UpdateUI()
+    CraftSim.DISENCHANT.UI:Update()
 end
 
 function CraftSim.DISENCHANT:BANKFRAME_CLOSED()
     if not self.frame:IsVisible() then return end
     RunNextFrame(function()
-        CraftSim.DISENCHANT.UI:UpdateUI()
+        CraftSim.DISENCHANT.UI:Update()
     end)
 end
 

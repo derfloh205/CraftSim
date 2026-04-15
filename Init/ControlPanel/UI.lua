@@ -27,8 +27,6 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         offsetY = -13,
         sizeX = 180,
         sizeY = 30,
-        frameID = CraftSim.CONST.FRAMES.CONTROL_PANEL,
-        --backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -51,7 +49,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 end, function()
                     local checked = CraftSim.DB.OPTIONS:Get(moduleSV)
                     CraftSim.DB.OPTIONS:Save(moduleSV, not checked)
-                    CraftSim.MODULES:UpdateUI()
+                    CraftSim.MODULES:Update()
                     if optionalFrameToToggle then
                         GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(not checked)
                     end

@@ -21,3 +21,9 @@ CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
 
 ---@class LibDBIcon
 CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
+
+---@class LibLog-1.0
+CraftSim.LibLog = LibStub:GetLibrary("LibLog-1.0")
+---@class LibLog-1.0.Logger
+CraftSim.Logger = { name = "CraftSim" }
+CraftSim.LibLog:Embed(CraftSim.Logger)

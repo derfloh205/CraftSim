@@ -105,7 +105,7 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 		return false
 	end, function()
 		CraftSim.DEBUG:StartProfiling("MODULES UPDATE")
-		CraftSim.MODULES:UpdateUI()
+		CraftSim.MODULES:Update()
 		-- do not do this all in the same frame to ease performance
 		RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
 		CraftSim.DEBUG:StopProfiling("MODULES UPDATE")
@@ -120,7 +120,7 @@ function CraftSim.INIT:HookToEvents()
 
 	local function UpdateUI(self)
 		if CraftSim.INIT.visibleRecipeID then
-			CraftSim.MODULES:UpdateUI()
+			CraftSim.MODULES:Update()
 		end
 	end
 
@@ -164,7 +164,7 @@ function CraftSim.INIT:HookToEvents()
 			CraftSim.MODULES:Hide(true, true)
 		else
 			print("Updating UI without recipeID")
-			CraftSim.MODULES:UpdateUI()
+			CraftSim.MODULES:Update()
 		end
 	end
 
@@ -325,33 +325,37 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 			sizeX = 300,
 			sizeY = 300,
 			title = "CraftSim Popup",
-			frameID = CraftSim.CONST.FRAMES.POPUP,
 		})
 
 		CraftSim.DEBUG.UI:Init()
 
 		CraftSim.PRICE_API:InitPriceSource()
 		CraftSim.INVENTORY_API:InitInventorySource()
+		CraftSim.FRAME:InitNewsUI()
 
+		-- Modules
 
-		CraftSim.RECIPE_INFO.UI:Init()
-		CraftSim.EXPLANATIONS.UI:Init()
-		CraftSim.TOPGEAR.UI:Init()
-		CraftSim.REAGENT_OPTIMIZATION.UI:Init()
-		CraftSim.SPECIALIZATION_INFO.UI:Init()
-		CraftSim.FRAME:InitOneTimeNoteFrame()
-		CraftSim.SIMULATION_MODE.UI:Init()
-		CraftSim.RECIPE_SCAN.UI:Init()
-		CraftSim.CRAFT_LOG.UI:Init()
-		CraftSim.STATISTICS.UI:Init()
-		CraftSim.CUSTOMER_HISTORY.UI:Init()
-		CraftSim.PRICING.UI:Init()
-		CraftSim.SUPPORTERS.UI:Init()
-		CraftSim.CRAFTQ.UI:Init()
-		CraftSim.CRAFT_BUFFS.UI:Init()
-		CraftSim.COOLDOWNS.UI:Init()
-		CraftSim.CONCENTRATION_TRACKER.UI:Init()
-		CraftSim.DISENCHANT.UI:Init()
+		CraftSim.MODULES:Init()
+
+		-- CraftSim.RECIPE_INFO.UI:Init()
+		-- CraftSim.EXPLANATIONS.UI:Init()
+		-- CraftSim.TOPGEAR.UI:Init()
+		-- CraftSim.REAGENT_OPTIMIZATION.UI:Init()
+		-- CraftSim.SPECIALIZATION_INFO.UI:Init()
+		-- CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
+		-- CraftSim.SIMULATION_MODE.UI:Init()
+		-- CraftSim.RECIPE_SCAN.UI:Init()
+		-- CraftSim.CRAFT_LOG.UI:Init()
+		-- CraftSim.STATISTICS.UI:Init()
+		-- CraftSim.CUSTOMER_HISTORY.UI:Init()
+		-- CraftSim.CUSTOMER_HISTORY:Init()
+		-- CraftSim.PRICING.UI:Init()
+		-- CraftSim.SUPPORTERS.UI:Init()
+		-- CraftSim.CRAFTQ.UI:Init()
+		-- CraftSim.CRAFT_BUFFS.UI:Init()
+		-- CraftSim.COOLDOWNS.UI:Init()
+		-- CraftSim.CONCENTRATION_TRACKER.UI:Init() -- done
+		-- CraftSim.DISENCHANT.UI:Init() -- done
 
 		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()
@@ -359,19 +363,15 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:HookToProfessionUnlearnedFunction()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
-		CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
+
 		CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
 
 		CraftSim.CONTROL_PANEL.UI:Init()
 		CraftSim.INIT:InitStaticPopups()
 
-
-		CraftSim.CUSTOMER_HISTORY:Init()
-
 		CraftSim.OPTIONS:Init()
 
-
-		CraftSim.FRAME:RestoreModulePositions()
+		CraftSim.MODULES:RestorePositions()
 	end
 end
 
@@ -486,13 +486,13 @@ function CraftSim.INIT:HookToConcentrationButtons()
 
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		CraftSim.MODULES:UpdateUI()
+		CraftSim.MODULES:Update()
 	end)
 
 	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
 		.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
-		CraftSim.MODULES:UpdateUI()
+		CraftSim.MODULES:Update()
 	end)
 end
 

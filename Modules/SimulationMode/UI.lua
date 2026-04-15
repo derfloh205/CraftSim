@@ -107,7 +107,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     scale = 1.2,
                 },
                 onSelectCallback = function()
-                    CraftSim.MODULES:UpdateUI()
+                    CraftSim.MODULES:Update()
                 end
             })
             return optionalReagentDropdown
@@ -149,7 +149,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
                 end
 
-                CraftSim.MODULES:UpdateUI()
+                CraftSim.MODULES:Update()
             end
 
         frames.toggleButton = GGUI.Checkbox {
