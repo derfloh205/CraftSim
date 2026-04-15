@@ -672,6 +672,16 @@ function CraftSim.CRAFTQ.UI:Init()
                             not value)
                     end)
 
+                local autoShoppingListCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOPPING_LIST")
+                    end,
+                    function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOPPING_LIST")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_AUTO_SHOPPING_LIST", not value)
+                    end)
+
                 local ingenuityIgnoreCB = rootDescription:CreateCheckbox(
                     L("CRAFT_QUEUE_MENU_INGENUITY_IGNORE"),
                     function()
@@ -1115,16 +1125,6 @@ function CraftSim.CRAFTQ.UI:Init()
                 end
 
                 rootDescription:CreateDivider()
-
-                local autoShoppingListCB = rootDescription:CreateCheckbox(
-                    L("CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
-                    end,
-                    function()
-                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
-                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST", not value)
-                    end)
 
                 local updateLastCostCB = rootDescription:CreateCheckbox(
                     L("CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST"),

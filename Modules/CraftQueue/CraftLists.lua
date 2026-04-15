@@ -202,11 +202,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
             queueListsButton:SetStatus("Ready")
         end
         CraftSim.CRAFTQ.UI:UpdateDisplay()
-        -- auto shopping list is a general CraftQueue option
-        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST")
-            and CraftSim.CRAFTQ.CreateAuctionatorShoppingList then
-            CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
-        end
+        CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
     end
 
     local listIndex = 1
