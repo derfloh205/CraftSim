@@ -505,9 +505,21 @@ local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
 local moxieValuesOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES
 
+---@param currencyID number
+---@param copperTotal number
+local function SavePatronMoxieCopper(currencyID, copperTotal)
+    local stored = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
+    if type(stored) ~= "table" then
+        stored = {}
+        CraftSim.DB.OPTIONS:Save(moxieValuesOptionKey, stored)
+    end
+    stored[currencyID] = tonumber(copperTotal) or 0
+end
+
 function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
-    local sizeX = 360
-    local sizeY = 470 -- one row per MOXIE_CURRENCY_IDS + intro
+    local sizeX = 520
+    local sizeY = 440 -- compact moxie table popup
+    local suggestColW = 78
 
     ---@type GGUI.Frame
     CraftSim.CRAFTQ.patronRewardValuesFrame = CraftSim.GGUI.Frame({
@@ -534,7 +546,8 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
 
     local padX = 12
     local rowInnerW = sizeX - 2 * padX
-    local currencyColW = 68
+    local currencyColW = 62
+    local columnGapW = 16
 
     local introText = GGUI.Text({
         parent = content,
@@ -549,70 +562,165 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
         fixedWidth = rowInnerW,
     })
 
-    local moxieRowIconGap = 6
+    local moxieRowIconGap = 10
     local moxieRowIconSlot = CRAFT_QUEUE_RESULT_ICON_SIZE
 
-    local prevBottom = introText.frame
-    for _, moxieCurrencyID in ipairs(CraftSim.CONST.MOXIE_CURRENCY_IDS) do
-        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(moxieCurrencyID)
-        local labelText = (currencyInfo and currencyInfo.name or ("#" .. tostring(moxieCurrencyID))) .. ": "
+    CraftSim.CRAFTQ.patronMoxieSurplusRows = {}
 
-        local row = CreateFrame("Frame", nil, content, "BackdropTemplate")
-        row:SetSize(rowInnerW, 26)
-        row:SetPoint("TOPLEFT", prevBottom, "BOTTOMLEFT", 0, -6)
+    content.moxieValuesList = GGUI.FrameList({
+        parent = content,
+        anchorParent = introText.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        offsetY = -20,
+        sizeY = sizeY - 95,
+        showBorder = false,
+        hideScrollbar = true,
+        rowHeight = 30,
+        columnOptions = {
+            { label = L("CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_MOXIE"), width = rowInnerW - currencyColW - suggestColW - (2 * columnGapW) - 12 },
+            { label = "", width = columnGapW },
+            { label = L("CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_CURRENT"), width = currencyColW, justifyOptions = { type = "H", align = "CENTER" } },
+            { label = "", width = columnGapW },
+            { label = L("CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_SUGGESTED"), width = suggestColW, justifyOptions = { type = "H", align = "CENTER" } },
+        },
+        rowConstructor = function(columns, row)
+            local moxieCol = columns[1]
+            local currentCol = columns[3]
+            local suggestCol = columns[5]
 
-        local labelLeft = 0
-        if currencyInfo then
-            local rowIcon = GGUI.Icon({
-                parent = row,
-                anchorParent = row,
+            moxieCol.icon = GGUI.Icon({
+                parent = moxieCol,
+                anchorParent = moxieCol,
                 anchorA = "LEFT",
                 anchorB = "LEFT",
-                offsetX = 0,
-                offsetY = 0,
                 sizeX = moxieRowIconSlot,
                 sizeY = moxieRowIconSlot,
                 hideQualityIcon = true,
             })
-            rowIcon:SetCurrency(moxieCurrencyID)
-            labelLeft = moxieRowIconSlot + moxieRowIconGap
-        end
+            moxieCol.label = GGUI.Text {
+                parent = moxieCol,
+                anchorParent = moxieCol.icon.frame,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                offsetX = moxieRowIconGap,
+                text = "",
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = moxieCol:GetWidth() - moxieRowIconSlot - moxieRowIconGap - 4,
+            }
 
-        GGUI.Text {
-            parent = row,
-            anchorParent = row,
-            anchorA = "LEFT",
-            anchorB = "LEFT",
-            offsetX = labelLeft,
-            text = labelText,
-            justifyOptions = { type = "H", align = "LEFT" },
-            fixedWidth = rowInnerW - currencyColW - labelLeft,
-        }
-        local values = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
-        local initial = (type(values) == "table" and tonumber(values[moxieCurrencyID])) or 0
-        GGUI.CurrencyInput {
-            parent = row, anchorParent = row,
-            sizeX = 60, sizeY = 22, offsetX = 0,
-            anchorA = "RIGHT", anchorB = "RIGHT",
-            initialValue = initial,
-            borderAdjustWidth = 1,
-            minValue = 0.94,
-            tooltipOptions = {
-                anchor = "ANCHOR_TOP",
-                owner = row,
-                text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP") ..
-                    GUTIL:FormatMoney(1000000, false, nil, false, false)),
-            },
-            onValueValidCallback = function(input)
-                local stored = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
-                if type(stored) ~= "table" then
-                    stored = {}
-                    CraftSim.DB.OPTIONS:Save(moxieValuesOptionKey, stored)
+            currentCol.input = GGUI.CurrencyInput {
+                parent = currentCol, anchorParent = currentCol,
+                sizeX = 60, sizeY = 22, offsetX = 0,
+                anchorA = "RIGHT", anchorB = "RIGHT",
+                initialValue = 0,
+                borderAdjustWidth = 1,
+                minValue = 0.94,
+                tooltipOptions = {
+                    anchor = "ANCHOR_TOP",
+                    owner = currentCol,
+                    text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP") ..
+                        GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                },
+            }
+
+            suggestCol.button = GGUI.Button {
+                parent = suggestCol,
+                anchorParent = suggestCol,
+                anchorA = "RIGHT",
+                anchorB = "RIGHT",
+                sizeX = suggestColW,
+                sizeY = 22,
+                label = "—",
+            }
+        end,
+    })
+
+    local moxieValuesList = content.moxieValuesList --[[@as GGUI.FrameList]]
+    moxieValuesList:Remove()
+    for _, moxieCurrencyID in ipairs(CraftSim.CONST.MOXIE_CURRENCY_IDS) do
+        moxieValuesList:Add(function(row, columns)
+            local moxieCol = columns[1]
+            local currentCol = columns[3]
+            local suggestCol = columns[5]
+            local values = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
+            local initial = (type(values) == "table" and tonumber(values[moxieCurrencyID])) or 0
+            local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(moxieCurrencyID)
+            local labelText = C_CurrencyInfo.GetCurrencyLink(moxieCurrencyID, 1) or
+                (currencyInfo and currencyInfo.name) or ("#" .. tostring(moxieCurrencyID))
+
+            moxieCol.icon:SetCurrency(moxieCurrencyID)
+            moxieCol.label:SetText(labelText)
+            moxieCol:EnableMouse(true)
+            moxieCol:SetScript("OnEnter", function(frame)
+                GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
+                GameTooltip:SetCurrencyByID(moxieCurrencyID, 1)
+                GameTooltip:Show()
+            end)
+            moxieCol:SetScript("OnLeave", GameTooltip_Hide)
+            currentCol.input:SetValue(initial)
+            currentCol.input.onValueValidCallback = function(input)
+                SavePatronMoxieCopper(moxieCurrencyID, tonumber(input.total) or 0)
+            end
+
+            suggestCol.button.clickCallback = function()
+                local suggested = CraftSim.PATRON_MOXIE_SURPLUS:ComputeCopperPerMoxie(moxieCurrencyID)
+                if not suggested or suggested <= 0 then
+                    return
                 end
-                stored[moxieCurrencyID] = tonumber(input.total) or 0
-            end,
-        }
-        prevBottom = row
+                currentCol.input:SetValue(suggested)
+                SavePatronMoxieCopper(moxieCurrencyID, suggested)
+            end
+            suggestCol.button.frame:SetScript("OnEnter", function(btn)
+                local suggested = CraftSim.PATRON_MOXIE_SURPLUS:ComputeCopperPerMoxie(moxieCurrencyID)
+                GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
+                GameTooltip:ClearLines()
+                if suggested and suggested > 0 then
+                    local expectedMoxie = CraftSim.PATRON_MOXIE_SURPLUS:GetExpectedMoxie(moxieCurrencyID)
+                    GameTooltip:AddLine(L("CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_SUGGEST_TOOLTIP"), 1, 1, 1, true)
+                    if expectedMoxie and expectedMoxie > 0 then
+                        GameTooltip:AddLine(" ", 1, 1, 1)
+                        GameTooltip:AddDoubleLine(L("CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_REAGENT_TOTAL"),
+                            GUTIL:FormatMoney(math.floor((suggested * expectedMoxie) + 0.5), true, nil, true), 1, 1,
+                            1, 1, 1, 1)
+                        GameTooltip:AddDoubleLine(L("CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_PER_MOXIE"),
+                            GUTIL:FormatMoney(suggested, true, nil, true), 1, 1, 1, 1, 1, 1)
+                    end
+                else
+                    GameTooltip:AddLine(L("CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_NO_DATA_TOOLTIP"), 1, 0.4, 0.4, true)
+                end
+                GameTooltip:Show()
+            end)
+            suggestCol.button.frame:SetScript("OnLeave", GameTooltip_Hide)
+
+            tinsert(CraftSim.CRAFTQ.patronMoxieSurplusRows, {
+                currencyID = moxieCurrencyID,
+                button = suggestCol.button,
+                currencyInput = currentCol.input,
+            })
+        end)
+    end
+    moxieValuesList:UpdateDisplay()
+
+    CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
+end
+
+--- Updates surplus-derived Moxie value buttons (call after prices change or frame shown).
+function CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
+    local rows = CraftSim.CRAFTQ.patronMoxieSurplusRows
+    if not rows then
+        return
+    end
+    local suggestColW = 78
+    for _, r in ipairs(rows) do
+        local suggested = CraftSim.PATRON_MOXIE_SURPLUS:ComputeCopperPerMoxie(r.currencyID)
+        if suggested and suggested > 0 then
+            r.button.frame:SetEnabled(true)
+            r.button:SetText(GUTIL:FormatMoney(suggested, false, nil, true), suggestColW, false)
+        else
+            r.button.frame:SetEnabled(false)
+            r.button:SetText("—", suggestColW, false)
+        end
     end
 end
 
@@ -620,6 +728,7 @@ function CraftSim.CRAFTQ.UI:ShowPatronRewardValuesFrame()
     if not CraftSim.CRAFTQ.patronRewardValuesFrame then
         return
     end
+    CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     CraftSim.CRAFTQ.patronRewardValuesFrame:Show()
     CraftSim.CRAFTQ.patronRewardValuesFrame:Raise()
 end

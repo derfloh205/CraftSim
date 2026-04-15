@@ -780,6 +780,20 @@ function CraftSim.LOCAL_EN:GetData()
             " includes Moxie at these rates when " ..
             f.bb("Include Moxie in expected profit") ..
             " is enabled (otherwise gold-only: tips, commission, item rewards).",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_SUGGEST_TOOLTIP = "Suggested value per " ..
+            f.bb("Moxie") ..
+            " from your price source, using average yields for Midnight " ..
+            f.bb("Master … Surplus Reagent") ..
+            " turn-ins (tier-2 reagent prices).\n\n" ..
+            f.g("Left-click") ..
+            " to copy this value into the Current column.",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_NO_DATA_TOOLTIP =
+        "No surplus table for this profession, no price source, or all listed reagents priced at zero.",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_MOXIE = "Moxie",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_CURRENT = "Current",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_SUGGESTED = "Suggested",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_REAGENT_TOTAL = "Reagents (expected)",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_PER_MOXIE = "Per " .. f.bb("Moxie"),
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") ..
             f.gold("Concentration") .. f.bb(" Queueing"),
@@ -800,7 +814,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP =
         "Always add given amount to the number of queued crafts",
         CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = f.g("Automatically Create") ..
-        " " .. f.bb("Shopping List") .. " after queueing",
+            " " .. f.bb("Shopping List") .. " after queueing",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
         RECIPE_COOLDOWN_CHARGES_INLINE = "(%d/%d)",
