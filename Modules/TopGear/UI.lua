@@ -37,7 +37,7 @@ function CraftSim.TOPGEAR.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_TOP_GEAR"),
+        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_TOP_GEAR"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -59,7 +59,7 @@ function CraftSim.TOPGEAR.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_TOP_GEAR"),
+        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_TOP_GEAR"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -271,7 +271,8 @@ function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMo
     end
 
     if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
-        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE") .. CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE") ..
+        CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_MUTLICRAFT") ..
             CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
