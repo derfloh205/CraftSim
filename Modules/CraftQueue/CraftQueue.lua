@@ -267,6 +267,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
             CraftSim.CRAFTQ.queuingWorkOrders = false
+            self:CreateAutoShoppingListAfterQueue()
         end,
         continue = function(frameDistributor, _, workOrderType, _, progress)
             local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
@@ -639,6 +640,13 @@ function CraftSim.CRAFTQ:ClearAll()
     CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
+function CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOPPING_LIST")
+        and self.CreateAuctionatorShoppingList then
+        self:CreateAuctionatorShoppingList()
+    end
+end
+
 function CraftSim.CRAFTQ:QueueFavorites()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
@@ -799,12 +807,6 @@ function CraftSim.CRAFTQ:QueueFavorites()
 
     queueFavoritesButton:SetEnabled(false)
 
-    local function createShoppingList()
-        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST") then
-            CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
-        end
-    end
-
     -- keep table reference but change contents
     if bothMainProfessions then
         local professionFavorites = CraftSim.DB.CRAFTER:GetFavoriteRecipeProfessions(crafterUID)
@@ -813,7 +815,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             iterationsPerFrame = 1,
             finally = function()
                 queueFavoritesButton:SetStatus("Ready")
-                createShoppingList()
+                self:CreateAutoShoppingListAfterQueue()
             end,
             continue = function(frameDistributor, profession, recipeIDs, _, _)
                 wipe(optimizedRecipes)
@@ -847,7 +849,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
             finally = function()
                 finalizeProfessionProcess()
                 queueFavoritesButton:SetStatus("Ready")
-                createShoppingList()
+                self:CreateAutoShoppingListAfterQueue()
             end,
             continue = function(frameDistributor, _, recipeID, _, progress)
                 processFavoriteRecipe(frameDistributor, recipeID, profession, progress)
@@ -1220,6 +1222,8 @@ function CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions(rootDescription)
 end
 
 function CraftSim.CRAFTQ:QueueFirstCrafts()
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+
     local openRecipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
     local currentSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
@@ -1240,6 +1244,9 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
     GUTIL.FrameDistributor {
         iterationsPerFrame = 2,
         iterationTable = firstCraftRecipeIDs,
+        finally = function()
+            self:CreateAutoShoppingListAfterQueue()
+        end,
         continue = function(frameDistributor, _, recipeID, _, _)
             local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
             local isSkillLine = recipeData.professionData.skillLineID == currentSkillLineID

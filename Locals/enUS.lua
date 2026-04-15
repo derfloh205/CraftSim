@@ -799,7 +799,8 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_LABEL = "Offset Queue Amount: ",
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP =
         "Always add given amount to the number of queued crafts",
-        CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = "Automatically create a Shopping List after Scan",
+        CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = f.g("Automatically Create") ..
+        " " .. f.bb("Shopping List") .. " after queueing",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
         RECIPE_COOLDOWN_CHARGES_INLINE = "(%d/%d)",
@@ -907,7 +908,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_QUEUE_ORDER_MINIMUM_QUALITY = "\nMinimum Quality: ",
         CRAFT_QUEUE_ORDER_REWARDS = "\nRewards:",
         CRAFT_QUEUE_RESTOCK_FAVORITES_OPTIONS_AUTO_SHOPPING_LIST =
-        "If enabled, CraftSim will automatically create a shopping list after scanning.",
+        "If enabled, CraftSim will automatically create a shopping list after queueing operations.",
         CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL = "Ignore " .. f.e("Spark") .. " Recipes",
         CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP = "Ignore recipes that require a spark reagent",
         CRAFT_QUEUE_MENU_AUTO_SHOW = f.g("Automatically Open ") .. "when a recipe is queued",
@@ -993,7 +994,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
         "When enabled, craft list restock queues max(0, target - how many you already have).\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
-        CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after Queue",
+        CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after queueing",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
             " database is updated for each recipe when queuing craft lists.\n\nThis allows querying the last known average crafting cost per item via the CraftSim API.",
