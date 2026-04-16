@@ -33,7 +33,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_LOG"),
+        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_LOG"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "DIALOG",
@@ -90,139 +90,139 @@ function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
         parent = frame.content,
         anchorPoints = { { anchorParent = frame.title.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 } },
         menuUtilCallback = function(ownerRegion, rootDescription)
-                local disableCB = rootDescription:CreateCheckbox(
-                    L("CRAFT_LOG_DISABLE_CHECKBOX"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_DISABLE")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE",
-                            newValue)
-                    end)
+            local disableCB = rootDescription:CreateCheckbox(
+                L("CRAFT_LOG_DISABLE_CHECKBOX"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_DISABLE")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE",
+                        newValue)
+                end)
 
-                disableCB:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
-                end);
+            disableCB:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip,
+                    L("CRAFT_LOG_DISABLE_CHECKBOX_TOOLTIP"))
+            end);
 
-                local disableADVData = rootDescription:CreateCheckbox(
-                    f.r("Disable ") .. " Advanced Data Processing",
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE_ADV_DATA")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_DISABLE_ADV_DATA")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE_ADV_DATA",
-                            newValue)
-                    end)
+            local disableADVData = rootDescription:CreateCheckbox(
+                f.r("Disable ") .. " Advanced Data Processing",
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_DISABLE_ADV_DATA")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_DISABLE_ADV_DATA")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_DISABLE_ADV_DATA",
+                        newValue)
+                end)
 
-                disableADVData:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        "Disables the recording of advanced log data to save RAM and CPU during crafting")
-                end);
+            disableADVData:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip,
+                    "Disables the recording of advanced log data to save RAM and CPU during crafting")
+            end);
 
-                local ignoreWorkOrdersCB = rootDescription:CreateCheckbox(
-                    f.r("Ignore ") .. "Work Orders",
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_IGNORE_WORK_ORDERS")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_IGNORE_WORK_ORDERS",
-                            newValue)
-                    end)
+            local ignoreWorkOrdersCB = rootDescription:CreateCheckbox(
+                f.r("Ignore ") .. "Work Orders",
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_IGNORE_WORK_ORDERS")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_IGNORE_WORK_ORDERS",
+                        newValue)
+                end)
 
-                local showAdvancedLogCB = rootDescription:CreateCheckbox(
-                    "Show " .. f.l("Advanced Craft Log"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_SHOW_ADV_LOG")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_SHOW_ADV_LOG",
-                            newValue)
+            local showAdvancedLogCB = rootDescription:CreateCheckbox(
+                "Show " .. f.l("Advanced Craft Log"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_SHOW_ADV_LOG")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_SHOW_ADV_LOG",
+                        newValue)
 
-                        if newValue then
-                            CraftSim.CRAFT_LOG.advFrame:Show()
-                            -- also update
-                            local recipeData = CraftSim.MODULES.recipeData
-                            if recipeData then
-                                self:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
-                            end
-                        else
-                            CraftSim.CRAFT_LOG.advFrame:Hide()
+                    if newValue then
+                        CraftSim.CRAFT_LOG.advFrame:Show()
+                        -- also update
+                        local recipeData = CraftSim.MODULES.recipeData
+                        if recipeData then
+                            self:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
                         end
-                    end)
+                    else
+                        CraftSim.CRAFT_LOG.advFrame:Hide()
+                    end
+                end)
 
-                local hideBlizzardCraftingLog = rootDescription:CreateCheckbox(
-                    "Hide " .. f.bb("Blizzard Default Crafting Log"),
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG",
-                            newValue)
+            local hideBlizzardCraftingLog = rootDescription:CreateCheckbox(
+                "Hide " .. f.bb("Blizzard Default Crafting Log"),
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG",
+                        newValue)
 
-                        if newValue then
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
-                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:UnregisterAllEvents()
-                            if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
-                                ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
-                            elseif ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:IsVisible() then
-                                ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:Hide()
-                            end
-                        else
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
-                            ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
-                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_ITEM_CRAFTED_RESULT")
-                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
-                                "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                    if newValue then
+                        ProfessionsFrame.CraftingPage.CraftingOutputLog:UnregisterAllEvents()
+                        ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:UnregisterAllEvents()
+                        if ProfessionsFrame.CraftingPage.CraftingOutputLog:IsVisible() then
+                            ProfessionsFrame.CraftingPage.CraftingOutputLog:Hide()
+                        elseif ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:IsVisible() then
+                            ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:Hide()
                         end
-                    end)
-
-                hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+                    else
+                        ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                            "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                        ProfessionsFrame.CraftingPage.CraftingOutputLog:RegisterEvent(
+                            "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                        ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
+                            "TRADE_SKILL_ITEM_CRAFTED_RESULT")
+                        ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:RegisterEvent(
+                            "TRADE_SKILL_CURRENCY_REWARD_RESULT")
+                    end
                 end)
 
-                local autoShowCB = rootDescription:CreateCheckbox(
-                    f.g("Auto Show ") .. "on Craft",
-                    function()
-                        return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW")
-                    end, function()
-                        local newValue = not CraftSim.DB.OPTIONS:Get(
-                            "CRAFT_LOG_AUTO_SHOW")
-                        CraftSim.DB.OPTIONS:Save("CRAFT_LOG_AUTO_SHOW",
-                            newValue)
-                    end)
+            hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip,
+                    "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+            end)
 
-                hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+            local autoShowCB = rootDescription:CreateCheckbox(
+                f.g("Auto Show ") .. "on Craft",
+                function()
+                    return CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW")
+                end, function()
+                    local newValue = not CraftSim.DB.OPTIONS:Get(
+                        "CRAFT_LOG_AUTO_SHOW")
+                    CraftSim.DB.OPTIONS:Save("CRAFT_LOG_AUTO_SHOW",
+                        newValue)
                 end)
 
+            hideBlizzardCraftingLog:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip,
+                    "Hides the default UI " .. f.bb("Crafting Output Log") .. " when crafting");
+            end)
 
-                -- TODO: Fix/Refactor and Reimplement
-                local exportOptions = rootDescription:CreateButton(f.l("Export Data Feature - WIP"))
-                exportOptions:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip,
-                        f.l("Feature will be reworked and reimplemented in a future update"));
-                end)
-                -- local exportOptions = rootDescription:CreateButton("Export Data")
 
-                -- exportOptions:CreateButton("as " .. f.bb("JSON"), function()
-                --     local json = CraftSim.CRAFT_LOG:ExportJSON()
-                --     CraftSim.UTIL:ShowTextCopyBox(json)
-                -- end)
+            -- TODO: Fix/Refactor and Reimplement
+            local exportOptions = rootDescription:CreateButton(f.l("Export Data Feature - WIP"))
+            exportOptions:SetTooltip(function(tooltip, elementDescription)
+                GameTooltip_AddInstructionLine(tooltip,
+                    f.l("Feature will be reworked and reimplemented in a future update"));
+            end)
+            -- local exportOptions = rootDescription:CreateButton("Export Data")
 
-                local clearDataButton = rootDescription:CreateButton(f.r("Clear Data"), function()
-                    CraftSim.CRAFT_LOG:ClearData()
-                end)
+            -- exportOptions:CreateButton("as " .. f.bb("JSON"), function()
+            --     local json = CraftSim.CRAFT_LOG:ExportJSON()
+            --     CraftSim.UTIL:ShowTextCopyBox(json)
+            -- end)
+
+            local clearDataButton = rootDescription:CreateButton(f.r("Clear Data"), function()
+                CraftSim.CRAFT_LOG:ClearData()
+            end)
         end,
     }
 
@@ -919,7 +919,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
         if craftResult.triggeredResourcefulness then
             for _, savedReagent in pairs(craftResult.savedReagents) do
                 if savedReagent:IsCurrency() then
-                    local currencyLink = C_CurrencyInfo.GetCurrencyLink(savedReagent.currencyID) or savedReagent.currencyName
+                    local currencyLink = C_CurrencyInfo.GetCurrencyLink(savedReagent.currencyID) or
+                    savedReagent.currencyName
                     resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, currencyLink or "")
                 else
                     local itemLink = savedReagent.item:GetItemLink()
@@ -959,7 +960,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
 
         local commissionText = ""
         if craftResult.isWorkOrder then
-            local commission = (tonumber(craftResult.orderData.tipAmount) or 0) - (tonumber(craftResult.orderData.consortiumCut) or 0)
+            local commission = (tonumber(craftResult.orderData.tipAmount) or 0) -
+            (tonumber(craftResult.orderData.consortiumCut) or 0)
             commissionText = CraftSim.UTIL:FormatMoney(commission, true)
         end
 
@@ -1241,12 +1243,13 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     row.craftResultSavedReagent = craftResultReagent
                     if craftResultReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultReagent.currencyID)
-                        row.itemColumn.text:SetText(currencyLink or craftResultReagent.currencyName or ("Currency:" .. tostring(craftResultReagent.currencyID)))
+                        row.itemColumn.text:SetText(currencyLink or craftResultReagent.currencyName or
+                        ("Currency:" .. tostring(craftResultReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil
                     else
-                        craftResultReagent.item:ContinueOnItemLoad(function ()
+                        craftResultReagent.item:ContinueOnItemLoad(function()
                             row.itemColumn.text:SetText(craftResultReagent.item:GetItemLink())
                             row.countColumn.text:SetText(craftResultReagent.quantity or 0)
                             row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(-craftResultReagent.costs, true))
@@ -1277,13 +1280,14 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     row.craftResultSavedReagent = craftResultSavedReagent
                     if craftResultSavedReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultSavedReagent.currencyID)
-                        row.itemColumn.text:SetText(currencyLink or craftResultSavedReagent.currencyName or ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
+                        row.itemColumn.text:SetText(currencyLink or craftResultSavedReagent.currencyName or
+                        ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil
                     else
                         craftResultSavedReagent.item:ContinueOnItemLoad(
-                            function ()
+                            function()
                                 row.itemColumn.text:SetText(craftResultSavedReagent.item:GetItemLink())
                                 row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                                 row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(craftResultSavedReagent.costs, true))

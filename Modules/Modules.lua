@@ -150,6 +150,13 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	return nil
 end
 
+---@param moduleOption CraftSim.GENERAL_OPTIONS
+function CraftSim.MODULES:HandleModuleClose(moduleOption)
+	return function()
+		CraftSim.DB.OPTIONS:Save(moduleOption, false)
+	end
+end
+
 --- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
 function CraftSim.MODULES:UpdateUI()
 	if not ProfessionsFrame:IsVisible() then

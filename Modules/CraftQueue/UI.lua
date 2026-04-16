@@ -59,8 +59,12 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@param fallbackRecipeData CraftSim.RecipeData?
 local function TriggerPreCraftGateAction(gateId, crafterData, fallbackRecipeData)
+    if CraftSim.CRAFTQ:IsCraftClickLocked() then
+        return
+    end
     local fresh = CraftSim.PRE_CRAFT_BUFF_GATE:PrepareCastRecipeDataForGate(crafterData, gateId)
     if fresh and fresh:CanCraft(1) then
+        CraftSim.CRAFTQ:BeginCraftClickLock()
         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
         fresh:Craft(1)
         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
@@ -749,7 +753,7 @@ function CraftSim.CRAFTQ.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_QUEUE"),
+        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_QUEUE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -3719,7 +3723,23 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         local craftButton = firstRow.columns[9].craftButton --[[@as GGUI.Button]]
         local button = craftButton.frame --[[@as Button]]
         queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
-        queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
+        queueTab.content.craftNextButton.clickCallback = function(_, mouseButton)
+            if CraftSim.CRAFTQ:IsCraftClickLocked() then
+                return
+            end
+
+            local currentFirstRow = queueTab.content.craftList.activeRows[1]
+            if not currentFirstRow then
+                return
+            end
+
+            local currentCraftButton = currentFirstRow.columns[9].craftButton --[[@as GGUI.Button]]
+            local currentButton = currentCraftButton.frame --[[@as Button]]
+            local currentCallback = currentCraftButton.clickCallback
+            if currentButton and currentButton:IsEnabled() and currentCallback then
+                currentCallback(currentCraftButton, mouseButton or "LeftButton")
+            end
+        end
         queueTab.content.craftNextButton:SetText(L("CRAFT_QUEUE_BUTTON_NEXT") .. button:GetText(), 10,
             true)
     else
@@ -4285,6 +4305,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     craftButtonColumn.craftButton.clickCallback = nil
 
     local statusColumnTooltip = ""
+    local craftClickLocked = CraftSim.CRAFTQ:IsCraftClickLocked()
 
     if not craftQueueItem.learned then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
@@ -4326,16 +4347,31 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
             if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                local pendingSubmit = CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(recipeData.orderData.orderID)
                 if claimedOrder.isFulfillable then
+                    CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_SUBMIT"))
 
                     craftButtonColumn.craftButton.clickCallback = function()
+                        -- Disarm stale callbacks immediately so spam clicks cannot trigger a second action
+                        -- while Blizzard updates claimed-order state.
+                        craftButtonColumn.craftButton.clickCallback = nil
+                        local queueTab = CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame.content and
+                            CraftSim.CRAFTQ.frame.content.queueTab
+                        if queueTab and queueTab.content and queueTab.content.craftNextButton then
+                            queueTab.content.craftNextButton.clickCallback = nil
+                        end
+                        CraftSim.CRAFTQ:BeginCraftClickLock()
+                        CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                         C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
                             recipeData.professionData.professionInfo.profession)
                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
                         self:UpdateDisplay()
                     end
+                elseif pendingSubmit then
+                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
                 elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
@@ -4352,9 +4388,27 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
                     craftButtonColumn.craftButton.clickCallback = function()
+                        if CraftSim.CRAFTQ:IsCraftClickLocked() then
+                            return
+                        end
+                        local currentClaimedOrder = C_CraftingOrders.GetClaimedOrder()
+                        if not (currentClaimedOrder and recipeData.orderData and
+                                currentClaimedOrder.orderID == recipeData.orderData.orderID) then
+                            CraftSim.CRAFTQ.UI:UpdateDisplay()
+                            return
+                        end
+                        local orderID = recipeData.orderData and recipeData.orderData.orderID
+                        if CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID) then
+                            CraftSim.CRAFTQ.UI:UpdateDisplay()
+                            return
+                        end
+                        -- Mark immediately to block double-craft clicks before crafted-result event arrives.
+                        CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
+                        CraftSim.CRAFTQ:BeginCraftClickLock()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                         recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                        CraftSim.CRAFTQ.UI:UpdateDisplay()
                     end
                 else
                     craftButtonColumn.craftButton:SetEnabled(false)
@@ -4391,11 +4445,16 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             if craftQueueItem.allowedToCraft then
                 craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
                 craftButtonColumn.craftButton.clickCallback = function()
+                    if CraftSim.CRAFTQ:IsCraftClickLocked() then
+                        return
+                    end
+                    CraftSim.CRAFTQ:BeginCraftClickLock()
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                     CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
                     recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                     CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                    CraftSim.CRAFTQ.UI:UpdateDisplay()
                 end
             end
         end

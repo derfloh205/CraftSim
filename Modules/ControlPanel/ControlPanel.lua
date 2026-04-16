@@ -253,10 +253,3 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
         mapRecipe()
     end
 end
-
----@param moduleOption CraftSim.GENERAL_OPTIONS
-function CraftSim.CONTROL_PANEL:HandleModuleClose(moduleOption)
-    return function()
-        CraftSim.DB.OPTIONS:Save(moduleOption, false)
-    end
-end
