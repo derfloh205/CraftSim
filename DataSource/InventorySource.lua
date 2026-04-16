@@ -48,7 +48,7 @@ end
 function CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()
     local loadedAddons = {}
     for _, addonName in pairs(CraftSim.CONST.SUPPORTED_INVENTORY_ADDONS) do
-        if select(2, C_AddOns.IsAddOnLoaded(addonName)) then
+        if C_AddOns.IsAddOnLoaded(addonName) then
             table.insert(loadedAddons, addonName)
         end
     end

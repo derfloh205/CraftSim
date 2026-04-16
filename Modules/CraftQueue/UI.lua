@@ -1559,7 +1559,7 @@ function CraftSim.CRAFTQ.UI:Init()
             clickCallback = nil,
         })
 
-        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+        if C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
             ---@type GGUI.Button
             queueTab.content.createAuctionatorShoppingList = GGUI.Button({
                 parent = queueTab.content,
@@ -1629,7 +1629,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
 
         local auctionatorHelpPanelDef
-        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+        if C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
             auctionatorHelpPanelDef =
             {
                 button = {
