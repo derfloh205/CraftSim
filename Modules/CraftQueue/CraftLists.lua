@@ -10,7 +10,7 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFT_LISTS
 CraftSim.CRAFT_LISTS = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.CraftLists")
 
 ---@param list CraftSim.CraftList
 ---@return CraftSim.CraftListRecipeEntry[]

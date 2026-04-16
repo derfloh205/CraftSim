@@ -6,7 +6,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
 CraftSim.ProfessionGear = CraftSim.CraftSimObject:extend()
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ProfessionGear")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ProfessionGear")
 
 function CraftSim.ProfessionGear:new()
 	---@type CraftSim.ProfessionStats
@@ -111,7 +111,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 			end
 		end
 	end
-	
+
 	if parsedSkill > 0 then
 		self.professionStats.skill.value = parsedSkill
 	end

@@ -67,8 +67,7 @@ Util/ItemTooltips.lua
 
 Init/Init.lua
 Init/Slash.lua
-Init/ControlPanel/ControlPanel.lua
-Init/ControlPanel/UI.lua
+
 
 Pricing/ProfitCalculation.lua
 
@@ -77,6 +76,9 @@ DataSource/PriceSource.lua
 DataSource/InventorySource.lua
 
 Modules/Modules.lua
+
+Modules/ControlPanel/ControlPanel.lua
+Modules/ControlPanel/UI.lua
 
 Modules/ItemCount/ItemCount.lua
 

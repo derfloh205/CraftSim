@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftBuffs")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftBuffs")
 
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -756,7 +756,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     if info.addedAuras then
         for _, v in pairs(info.addedAuras) do
             local isTrackedBuff = (not issecretvalue or not issecretvalue(v.spellId)) and
-            tContains(CraftSim.CONST.BUFF_IDS, tonumber(v.spellId))
+                tContains(CraftSim.CONST.BUFF_IDS, tonumber(v.spellId))
             local isAlreadyActive = tContains(self.activeBuffInstanceIds, v.auraInstanceID)
             if isTrackedBuff and not isAlreadyActive then
                 tinsert(self.activeBuffInstanceIds, v.auraInstanceID)
@@ -771,7 +771,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
             local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
             if aura then
                 local isTrackedBuff = (not issecretvalue or not issecretvalue(aura.spellId)) and
-                tContains(CraftSim.CONST.BUFF_IDS, tonumber(aura.spellId))
+                    tContains(CraftSim.CONST.BUFF_IDS, tonumber(aura.spellId))
                 local isAlreadyActive = tContains(self.activeBuffInstanceIds, aura.auraInstanceID)
                 if isTrackedBuff and not isAlreadyActive then
                     tinsert(self.activeBuffInstanceIds, aura.auraInstanceID)

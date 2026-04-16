@@ -11,12 +11,11 @@ CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CustomerHistory")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.CustomerHistory")
 
 function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY:AutoPurge()
 end
-
 
 ---@param result Enum.CraftingOrderResult
 ---@param orderID number

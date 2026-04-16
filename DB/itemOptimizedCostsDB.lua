@@ -18,7 +18,7 @@ CraftSim.DB.ITEM_OPTIMIZED_COSTS = CraftSim.DB:RegisterRepository("ItemOptimized
 ---@field concentration boolean
 ---@field concentrationCost number
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.itemOptimizedCostsDB")
+local print = CraftSim.DEBUG:RegisterLogger("Database.itemOptimizedCostsDB")
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Init()
     if not CraftSimDB.itemOptimizedCostsDB then
@@ -92,20 +92,20 @@ end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimRecipeDataCache then
-            CraftSimDB.itemOptimizedCostsDB.data = CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] or {}
-        end
+    if CraftSimRecipeDataCache then
+        CraftSimDB.itemOptimizedCostsDB.data = CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] or {}
+    end
 end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS.MIGRATION:M_1_2_Remove_colored_crafter_names()
     -- remove any crafter entries with colored names...
-        for _, data in pairs(CraftSimDB.itemOptimizedCostsDB.data or {}) do
-            for crafterUID, _ in pairs(data) do
-                if string.find(crafterUID, '\124c') then
-                    data[crafterUID] = nil
-                end
+    for _, data in pairs(CraftSimDB.itemOptimizedCostsDB.data or {}) do
+        for crafterUID, _ in pairs(data) do
+            if string.find(crafterUID, '\124c') then
+                data[crafterUID] = nil
             end
         end
+    end
 end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS.MIGRATION:M_2_3_Remove_fishing_from_concentrationData()

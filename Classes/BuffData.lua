@@ -11,7 +11,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 
 local debug = false
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.BuffData")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.BuffData")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.BuffData:new(recipeData)
@@ -151,10 +151,9 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- DF Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then
-
         if self.recipeData.supportsCraftingspeed then
-        --- General
-        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
+            --- General
+            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
         end
 
         if self.recipeData.supportsQualities then

@@ -230,9 +230,9 @@ function CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
     CraftSim.PRE_CRAFT_BUFF_GATE:ShowMidnightEnchantShatterMoteMenu(recipeData)
 end
 
-local printQB = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.AuctionatorQuickBuy")
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue")
-local printFC = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.FirstCrafts")
+local printQB = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.AuctionatorQuickBuy")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue")
+local printFC = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.FirstCrafts")
 
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
@@ -357,7 +357,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
 end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
-    local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.QueueWorkOrders")
+    local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.QueueWorkOrders")
     CraftSim.CRAFTQ.queuingWorkOrders = true
     print("QueueWorkOrders", false, true)
     local profession = CraftSim.UTIL:GetProfessionsFrameProfession()

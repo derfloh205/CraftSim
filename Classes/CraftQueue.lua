@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
 CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.CraftQueue")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.CraftQueue")
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
@@ -382,7 +382,7 @@ end
 ---@return boolean HasActiveSubRecipes
 ---@return boolean HasActiveSubRecipesFromAlts
 function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
-    local print = CraftSim.DEBUG:RegisterDebugID("SUB_RECIPE_DATA")
+    local print = CraftSim.DEBUG:RegisterLogger("SUB_RECIPE_DATA")
     local activeSubRecipes = false
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
 

@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.MULTICRAFT_PRELOAD : CraftSim.DB.Repository
 CraftSim.DB.MULTICRAFT_PRELOAD = CraftSim.DB:RegisterRepository("MulticraftPreloadDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.multicraftPreloadDB")
+local print = CraftSim.DEBUG:RegisterLogger("Database.multicraftPreloadDB")
 
 function CraftSim.DB.MULTICRAFT_PRELOAD:Init()
     if not CraftSimDB.multicraftPreloadDB then
@@ -52,8 +52,8 @@ end
 --- Migrations
 function CraftSim.DB.MULTICRAFT_PRELOAD.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimRecipeDataCache then
-            CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] or
-                {}
-        end
+    if CraftSimRecipeDataCache then
+        CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] or
+            {}
+    end
 end

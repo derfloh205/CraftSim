@@ -15,7 +15,7 @@ local GGUI = CraftSim.GGUI
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns.UI")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.Cooldowns.UI")
 
 local DEFAULT_LIST_SCALE = 0.95
 local DEFAULT_LIST_ROW_HEIGHT = 21

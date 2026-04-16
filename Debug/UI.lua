@@ -13,91 +13,23 @@ local GGUI = CraftSim.GGUI
 local f = GUTIL:GetFormatter()
 
 function CraftSim.DEBUG.UI:Init()
-    local sizeX = 700
-    local sizeY = 550
     ---@class CraftSim.DEBUG.FRAME : GGUI.Frame
     local debugFrame = GGUI.Frame({
-        anchorA = "BOTTOMRIGHT",
-        anchorB = "BOTTOMRIGHT",
-        sizeX = sizeX,
-        sizeY = sizeY,
-        title = "CraftSim Log",
-        closeable = true,
-        moveable = true,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         parent = UIParent,
         anchorParent = UIParent,
-        frameTable = CraftSim.INIT.FRAMES,
+        anchorA = "BOTTOMRIGHT",
+        anchorB = "BOTTOMRIGHT",
+        closeable = true,
+        moveable = true,
+        title = "CraftSim Debug Tools",
+        sizeX = 200,
+        sizeY = 550,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = 50,
     })
-
-    local debugIDTable = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-    local registeredDebugIDs = CraftSim.DEBUG:GetRegisteredDebugIDs()
-
-    debugFrame.content.optionsButton = CraftSim.WIDGETS.OptionsButton {
-        parent = debugFrame.frame,
-        anchorPoints = { {
-            anchorParent = debugFrame.title.frame,
-            anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        } },
-        menuUtilCallback = function(ownerRegion, rootDescription)
-            local logIDs = rootDescription:CreateButton("Log IDs")
-
-            -- dynamically create logid checkboxes use . as delimiter for categories
-            local buttonCache = {}
-
-            for _, debugID in pairs(registeredDebugIDs) do
-                local splitIDs = strsplittable(".", debugID)
-                local fullID = ""
-                for i, splitID in ipairs(splitIDs) do
-                    local previousButton
-                    if i == 1 then
-                        fullID = splitID
-                        previousButton = logIDs
-                    else
-                        local previousID = fullID
-                        previousButton = buttonCache[previousID]
-                        fullID = string.format("%s.%s", previousID, splitID)
-                    end
-
-                    local capturedID = fullID
-                    buttonCache[capturedID] = buttonCache[capturedID] or
-                        previousButton:CreateCheckbox(splitID, function()
-                            return debugIDTable[capturedID]
-                        end, function()
-                            debugIDTable[capturedID] = not debugIDTable[capturedID]
-                        end)
-                end
-            end
-
-            rootDescription:CreateCheckbox(
-                "Enable Autoscroll",
-                function()
-                    return CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL")
-                end, function()
-                    local value = CraftSim.DB.OPTIONS:Get(
-                        "DEBUG_AUTO_SCROLL")
-                    CraftSim.DB.OPTIONS:Save("DEBUG_AUTO_SCROLL",
-                        not value)
-                end)
-
-            rootDescription:CreateButton(f.r("Disable All"), function()
-                CraftSim.DEBUG:DisableAllLogIDs()
-            end)
-
-            rootDescription:CreateButton(f.l("Clear"), function()
-                CraftSim.DEBUG.frame.content.logBox:Clear()
-                wipe(CraftSim.DEBUG.frame.logBuffer)
-            end)
-
-            rootDescription:CreateButton(f.bb("Copy All"), function()
-                CraftSim.DEBUG.UI:ShowCopyPopup(CraftSim.DEBUG.frame)
-            end)
-        end
-    }
 
     CraftSim.DEBUG.frame = debugFrame
 
@@ -108,105 +40,13 @@ end
 function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     CraftSim.FRAME:ToggleFrame(debugFrame, CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
 
+    debugFrame:SetVisible(CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
+
     debugFrame:HookScript("OnShow", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", true) end)
     debugFrame:HookScript("OnHide", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", false) end)
 
-    debugFrame.logBuffer = {}
-
-    debugFrame.content.logBox = GGUI.ScrollingMessageFrame {
-        parent = debugFrame.content,
-        anchorParent = debugFrame.content,
-        anchorA = "TOP", anchorB = "TOP", offsetY = -35, offsetX = 0,
-        enableScrolling = true,
-        showScrollBar = true,
-        maxLines = 100000,
-        sizeX = 650,
-        sizeY = 500,
-        justifyOptions = { type = "H", align = "LEFT" },
-        copyable = true,
-    }
-
-    debugFrame.content.logBox:EnableHyperLinksForFrameAndChilds()
-
-    debugFrame.addDebug = function(debugOutput, debugID, printLabel)
-        if debugFrame:IsVisible() then
-            local line
-            if printLabel then
-                line = "\n- " .. debugID .. ":\n" .. tostring(debugOutput)
-            else
-                line = "\n" .. tostring(debugOutput)
-            end
-            debugFrame.content.logBox:AddMessage(line)
-            tinsert(debugFrame.logBuffer, line)
-        end
-    end
-
-    CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
-
-    GGUI:EnableHyperLinksForFrameAndChilds(debugFrame.content)
-end
-
-function CraftSim.DEBUG.UI:ShowCopyPopup(debugFrame)
-    if not debugFrame.copyPopup then
-        local popup = CreateFrame("Frame", nil, UIParent, "BasicFrameTemplateWithInset")
-        popup:SetSize(600, 450)
-        popup:SetPoint("CENTER")
-        popup:SetMovable(true)
-        popup:EnableMouse(true)
-        popup:RegisterForDrag("LeftButton")
-        popup:SetScript("OnDragStart", popup.StartMoving)
-        popup:SetScript("OnDragStop", popup.StopMovingOrSizing)
-        popup:SetFrameStrata("DIALOG")
-
-        local title = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        title:SetPoint("TOP", popup, "TOP", 0, -8)
-        title:SetText("Debug Log — Select All (Ctrl+A) then Copy (Ctrl+C)")
-
-        local scrollFrame = CreateFrame("ScrollFrame", nil, popup, "UIPanelScrollFrameTemplate")
-        scrollFrame:SetPoint("TOPLEFT", popup, "TOPLEFT", 10, -30)
-        scrollFrame:SetPoint("BOTTOMRIGHT", popup, "BOTTOMRIGHT", -30, 10)
-
-        local editBox = CreateFrame("EditBox", nil, scrollFrame)
-        editBox:SetMultiLine(true)
-        editBox:SetFontObject(ChatFontNormal)
-        editBox:SetWidth(540)
-        editBox:SetAutoFocus(false)
-        editBox:SetScript("OnEscapePressed", function() popup:Hide() end)
-        editBox:SetScript("OnShow", function(self)
-            self:SetFocus()
-            self:HighlightText()
-        end)
-        scrollFrame:SetScrollChild(editBox)
-
-        popup.editBox = editBox
-        debugFrame.copyPopup = popup
-    end
-
-    local fullText = table.concat(debugFrame.logBuffer)
-    debugFrame.copyPopup.editBox:SetText(fullText)
-    debugFrame.copyPopup.editBox:HighlightText()
-    debugFrame.copyPopup:Show()
-    debugFrame.copyPopup.editBox:SetFocus()
-end
-
-function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
-    ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL : GGUI.Frame
-    local controlPanel = GGUI.Frame({
-        parent = debugFrame.frame,
-        anchorParent = debugFrame.frame,
-        anchorA = "TOPRIGHT",
-        anchorB = "TOPLEFT",
-        title = "CraftSim Debug Tools",
-        offsetX = 10,
-        sizeX = 200,
-        sizeY = 550,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-    })
-
     ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL.CONTENT : Frame
-    local content = controlPanel.content
+    local content = debugFrame.content
 
     content.moduleDebugTools = GGUI.FilterButton {
         label = "Modules",
@@ -353,6 +193,23 @@ function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
                     end
                 }
             end)
+        end
+    }
+
+    content.dbDebugTools = GGUI.Button {
+        label = "View Logs",
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.moduleDebugTools.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+        } },
+        sizeX = 160, sizeY = 23,
+        clickCallback = function()
+            if LogSinkTableFrame then
+                LogSinkTableFrame:Show()
+            else
+                CraftSim.DEBUG:SystemPrint(f.bb(LOGSINK_ADDON) ..
+                    " is not loaded. Please install and load " .. f.bb(LOGSINK_ADDON) .. " to view logs.")
+            end
         end
     }
 end

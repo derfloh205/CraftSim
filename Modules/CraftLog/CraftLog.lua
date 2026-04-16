@@ -4,9 +4,10 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftLog")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftLog")
 ---@class CraftSim.CRAFT_LOG : Frame
-CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN", "UNIT_SPELLCAST_SUCCEEDED" })
+CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN",
+    "UNIT_SPELLCAST_SUCCEEDED" })
 
 ---@type CraftSim.RecipeData
 CraftSim.CRAFT_LOG.currentRecipeData = nil
@@ -24,11 +25,10 @@ function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
-
 local craftSpellIdInProgress = nil;
 local craftCount = 0;
 --- Used to count how many times we crafted (rather than relying on the number of calls to CRAFT_LOG.UpdateCraftData)
-function CraftSim.CRAFT_LOG:TRADE_SKILL_CRAFT_BEGIN( aSpellId )
+function CraftSim.CRAFT_LOG:TRADE_SKILL_CRAFT_BEGIN(aSpellId)
     -- reset craftCount to 0 if spellid changes
     if craftSpellIdInProgress ~= aSpellId then
         craftCount = 0;
@@ -38,7 +38,7 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_CRAFT_BEGIN( aSpellId )
 end
 
 --- Used to count how many times we crafted (rather than relying on the number of calls to CRAFT_LOG.UpdateCraftData)
-function CraftSim.CRAFT_LOG:UNIT_SPELLCAST_SUCCEEDED( aUnit, aCastGUID, aSpellId )
+function CraftSim.CRAFT_LOG:UNIT_SPELLCAST_SUCCEEDED(aUnit, aCastGUID, aSpellId)
     if aUnit ~= "player" then return end
 
     -- Only count if the spell matches the last started craft spellId
@@ -80,7 +80,7 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
 
     -- always update reagents of that craft
     GUTIL:WaitForEvent("PLAYERBANKSLOTS_CHANGED", function()
-        local print = CraftSim.DEBUG:RegisterDebugID("CACHE_ITEM_COUNT")
+        local print = CraftSim.DEBUG:RegisterLogger("CACHE_ITEM_COUNT")
         print("PLAYERBANKSLOTS_CHANGED After Craft")
         -- update item count for each of the used reagents in this craft! (in next frame to batch results)
         RunNextFrame(function()
@@ -124,7 +124,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param enableAdvData boolean
 function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData, enableAdvData)
-    local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftLog.UpdateCraftData")
+    local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftLog.UpdateCraftData")
     local recipeID = recipeData.recipeID
 
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CRAFT_LOG.currentSessionData or CraftSim.CraftSessionData()
@@ -132,9 +132,9 @@ function CraftSim.CRAFT_LOG:UpdateCraftData(craftResult, recipeData, enableAdvDa
 
     local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
 
-    craftSessionData:AddCraftResult(craftResult, enableAdvData, craftCount )
+    craftSessionData:AddCraftResult(craftResult, enableAdvData, craftCount)
     if enableAdvData then
-        craftRecipeData:AddCraftResult(craftResult, recipeData, craftCount )
+        craftRecipeData:AddCraftResult(craftResult, recipeData, craftCount)
     end
 
     -- Reset the craftCount after logging these results
@@ -160,7 +160,7 @@ function CraftSim.CRAFT_LOG:AccumulateCraftResults()
 
     if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_IGNORE_WORK_ORDERS") and recipeData:IsWorkOrder() then return end
 
-    local craftResult = CraftSim.CraftResult(recipeData, collectedCraftingItemResultData, craftCount )
+    local craftResult = CraftSim.CraftResult(recipeData, collectedCraftingItemResultData, craftCount)
 
     local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
         if savedReagent:IsCurrency() then return nil end
@@ -226,4 +226,3 @@ function CraftSim.CRAFT_LOG:MergeReagentsItemData(totalReagents, newReagents)
         end
     end
 end
-

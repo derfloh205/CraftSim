@@ -12,7 +12,7 @@ CraftSim.MODULES:RegisterModule("MODULE_DISENCHANT", CraftSim.DISENCHANT)
 ---@type table<string, boolean>
 CraftSim.DISENCHANT.sessionBlacklist = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.Disenchant")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.Disenchant")
 function CraftSim.DISENCHANT:Init()
 end
 

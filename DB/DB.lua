@@ -15,7 +15,7 @@ CraftSim.DB = {}
 ---@alias CurrencyID number
 ---@alias QualityID number between 1 and 5
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database")
+local print = CraftSim.DEBUG:RegisterLogger("Database")
 
 ---@class CraftSim.DB.Repository
 ---@field name string
@@ -59,7 +59,7 @@ end
 function CraftSim.DB:Init()
     for _, repository in ipairs(self.repositories) do
         repository:Init()
-        if not self:Migrate(repository)then 
+        if not self:Migrate(repository) then
             self:ReportMigrationError()
             return
         end

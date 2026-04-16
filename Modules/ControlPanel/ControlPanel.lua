@@ -11,7 +11,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
 CraftSim.CONTROL_PANEL.frame = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.ControlPanel")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.ControlPanel")
 
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     print("ForgeFinder Export..")

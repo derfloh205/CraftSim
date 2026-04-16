@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(options: CraftSim.OnCraftData.Options): CraftSim.OnCraftData
 CraftSim.OnCraftData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.OnCraftData")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.OnCraftData")
 
 ---@class CraftSim.OnCraftData.Options
 ---@field recipeID RecipeID

@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(name: string?, value: number?, percentDivisionFactor: number?): CraftSim.ProfessionStat
 CraftSim.ProfessionStat = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.ProfessionsStats.ProfessionStat")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.ProfessionsStats.ProfessionStat")
 
 ---@param name string
 ---@param value number?

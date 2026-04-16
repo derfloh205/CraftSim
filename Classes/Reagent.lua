@@ -1,6 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.Reagent")
+local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.Reagent")
 
 local GUTIL = CraftSim.GUTIL
 
@@ -171,7 +171,7 @@ end
 function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
     local currentMinTimes = math.huge
 
-    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.ReagentData.Reagent.HasQuantityXTimes")
+    local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ReagentData.Reagent.HasQuantityXTimes")
     for q, reagentItem in pairs(self.items) do
         if reagentItem.quantity > 0 then
             -- use original item if available

@@ -12,7 +12,7 @@ CraftSim.RECIPE_INFO.frame = nil
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeInfo")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.RecipeInfo")
 
 local statIncreaseFactor = 5
 
@@ -20,20 +20,20 @@ local statIncreaseFactor = 5
 --- Keys that are true are shown by default; false keys must be toggled on by the user.
 CraftSim.RECIPE_INFO.DISPLAY_OPTIONS_DEFAULTS = {
     -- Stat-weight rows: on by default
-    AVG_PROFIT             = true,
-    MULTICRAFT_WEIGHT      = true,
-    RESOURCEFULNESS_WEIGHT = true,
-    CONCENTRATION_WEIGHT   = true,
+    AVG_PROFIT                = true,
+    MULTICRAFT_WEIGHT         = true,
+    RESOURCEFULNESS_WEIGHT    = true,
+    CONCENTRATION_WEIGHT      = true,
     -- Extra rows: off by default
-    CRAFTING_COST               = false,
-    AVG_CRAFTING_COST           = false,
-    RESULT_ICONS                = false,
-    KNOWLEDGE_POINTS            = false,
-    AVG_YIELD                   = false,
-    AVG_MULTICRAFT_ITEMS        = false,
-    AVG_RESOURCEFULNESS_SAVED   = false,
-    CONCENTRATION_PROFIT        = false,
-    CONCENTRATION_COST          = false,
+    CRAFTING_COST             = false,
+    AVG_CRAFTING_COST         = false,
+    RESULT_ICONS              = false,
+    KNOWLEDGE_POINTS          = false,
+    AVG_YIELD                 = false,
+    AVG_MULTICRAFT_ITEMS      = false,
+    AVG_RESOURCEFULNESS_SAVED = false,
+    CONCENTRATION_PROFIT      = false,
+    CONCENTRATION_COST        = false,
 }
 
 --- Returns the display-options table, filling in any missing keys from defaults.
@@ -51,7 +51,7 @@ function CraftSim.RECIPE_INFO:GetQualityThresholds(maxQuality, recipeDifficulty,
     if maxQuality == 1 then
         return {}
     elseif maxQuality == 2 then
-        return {recipeDifficulty + offset}
+        return { recipeDifficulty + offset }
     elseif maxQuality == 3 then
         return { recipeDifficulty * 0.5 + offset, recipeDifficulty + offset }
     elseif maxQuality == 5 then

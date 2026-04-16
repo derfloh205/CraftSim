@@ -12,7 +12,7 @@ CraftSim.REAGENT_OPTIMIZATION.UI = {}
 ---@type CraftSim.RecipeData
 CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.ReagentOptimization.UI")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.ReagentOptimization.UI")
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local sizeX = 310

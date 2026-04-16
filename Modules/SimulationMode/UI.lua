@@ -16,7 +16,7 @@ CraftSim.SIMULATION_MODE.UI.WORKORDER = nil
 ---@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER : GGUI.Frame
 CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UI")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode.UI")
 
 function CraftSim.SIMULATION_MODE.UI:Init()
     local x, y = ProfessionsFrame.CraftingPage.SchematicForm:GetSize()

@@ -38,9 +38,9 @@ CraftSim.RECIPE_SCAN.SORT_MODES = {
     CRAFTING_COST = "CRAFTING_COST",
 }
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan")
-local printF = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.Filter")
-local printS = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.Scanning")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.RecipeScan")
+local printF = CraftSim.DEBUG:RegisterLogger("Modules.RecipeScan.Filter")
+local printS = CraftSim.DEBUG:RegisterLogger("Modules.RecipeScan.Scanning")
 
 ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 function CraftSim.RECIPE_SCAN:ToggleScanButton(row, value)
@@ -405,7 +405,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     local globalOptimizeTopProfit         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
         KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
     local globalOptimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS
-    .OPTIMIZE_FINISHING_REAGENTS, false)
+        .OPTIMIZE_FINISHING_REAGENTS, false)
     local globalFinishingAlgorithm        = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
         KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
     local globalReagentAllocation         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION,
@@ -466,7 +466,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         -- Apply TSM sale rate filter (after optimization)
                         if TSM_API and recipeData.resultData and recipeData.resultData.expectedItem then
                             local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get(
-                            "RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
+                                "RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                             if tsmSaleRateThreshold > 0 then
                                 local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem
                                     :GetItemLink())

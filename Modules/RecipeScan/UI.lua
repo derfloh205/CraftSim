@@ -12,7 +12,7 @@ CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 ---@class CraftSim.RECIPE_SCAN.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.UI")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.RecipeScan.UI")
 
 --- Returns the craft lists that contain the given recipeID for the given crafter
 ---@param recipeData CraftSim.RecipeData

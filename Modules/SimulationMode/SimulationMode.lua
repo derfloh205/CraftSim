@@ -16,7 +16,7 @@ CraftSim.SIMULATION_MODE.specializationData = nil
 ---@type {skill: number, multicraft: number, resourcefulness: number, ingenuity: number, recipeDifficulty: number}?
 CraftSim.SIMULATION_MODE.userStatModifiers = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode")
 
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
@@ -145,7 +145,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
 
     -- update difficulty based on input
     local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and
-    simulationModeFrames.recipeDifficultyMod.currentValue or 0
+        simulationModeFrames.recipeDifficultyMod.currentValue or 0
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
@@ -162,7 +162,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     local resourcefulnessMod = 0
     if recipeData.supportsResourcefulness then
         resourcefulnessMod = simulationModeFrames.resourcefulnessMod and
-        simulationModeFrames.resourcefulnessMod.currentValue or 0
+            simulationModeFrames.resourcefulnessMod.currentValue or 0
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
@@ -195,7 +195,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
 
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
-    CraftSim.SIMULATION_MODE.frame
+        CraftSim.SIMULATION_MODE.frame
 
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
@@ -217,7 +217,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
             recipeData.reagentData:SetOptionalCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
         else
             local itemID = optionalReagentItemSelector.selectedItem and
-            optionalReagentItemSelector.selectedItem:GetItemID()
+                optionalReagentItemSelector.selectedItem:GetItemID()
             if itemID then
                 -- try to set required selectable if available else put to optional/finishing
                 if tContains(possibleRequiredSelectableItemIDs, itemID) then
@@ -241,7 +241,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UpdateRecipeDataBuffsBySimulatedBuffs")
+    local print = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode.UpdateRecipeDataBuffsBySimulatedBuffs")
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
 
     if not recipeData then return end
@@ -304,7 +304,7 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
 
     -- set simulation reagents to recipeData reagents
     CraftSim.SIMULATION_MODE.recipeData:SetReagentsByCraftingReagentInfoTbl(recipeData.reagentData
-    :GetCraftingReagentInfoTbl())
+        :GetCraftingReagentInfoTbl())
     CraftSim.SIMULATION_MODE:InitializeReagentList()
     CraftSim.MODULES:Update()
 end

@@ -7,45 +7,35 @@ CraftSim.DEBUG = {}
 ---@type table<string, number>
 CraftSim.DEBUG.profilings = {}
 CraftSim.DEBUG.isMute = false
-CraftSim.DEBUG.registeredDebugIDs = {}
+
+---@type LibLog-1.0.Logger[]
+CraftSim.DEBUG.registeredLogger = {}
 
 ---@class CraftSim.DEBUG.FRAME
 CraftSim.DEBUG.frame = nil
 
 local GUTIL = CraftSim.GUTIL
+local LibLog = CraftSim.LibLog
 
 local systemPrint = print
 
----@param debugID string Format: Category.(...).ID
----@return fun(text: string | table, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
-function CraftSim.DEBUG:RegisterDebugID(debugID)
-    -- check for each subID
-    local splitIDs = strsplittable(".", debugID)
-    local fullID = ""
-    for i, splitID in ipairs(splitIDs) do
-        if i == 1 then
-            fullID = splitID
-        else
-            fullID = string.format("%s.%s", fullID, splitID)
-        end
-        if not tContains(self.registeredDebugIDs, fullID) then
-            tinsert(self.registeredDebugIDs, fullID)
-        end
-    end
-    local function print(text, recursive, l, level)
-        if CraftSim.DEBUG and CraftSim.DEBUG.frame then
-            CraftSim.DEBUG:print(text, debugID, recursive, l, level)
-        else
-            systemPrint(text)
-        end
-    end
-
-    return print
+---@param loggerID string
+---@return LibLog-1.0.Logger
+function CraftSim.DEBUG:RegisterLogger(loggerID)
+    local newLogger = { name = loggerID }
+    CraftSim.LibLog:Embed(newLogger)
+    table.insert(self.registeredLogger, newLogger)
+    return newLogger
 end
 
+local profiling = CraftSim.DEBUG:RegisterLogger("CraftSim Profiling")
+
 ---@return string[]
-function CraftSim.DEBUG:GetRegisteredDebugIDs()
-    return self.registeredDebugIDs
+---@deprecated
+function CraftSim.DEBUG:GetRegisteredLoggerIDs()
+    return GUTIL:Map(self.registeredLogger, function(logger)
+        return logger.name
+    end)
 end
 
 function CraftSim.DEBUG:SystemPrint(text)
@@ -64,50 +54,11 @@ function CraftSim.DEBUG:InspectTable(t, label, openDevTool)
     end
 end
 
-function CraftSim.DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
-    local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-    if debugIDsDB[debugID] and not CraftSim.DEBUG.isMute then
-        if type(debugOutput) == "table" then
-            CraftSim.DEBUG:PrintTable(debugOutput, debugID, recursive, level)
-        else
-            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
-            debugFrame.addDebug(debugOutput, debugID, printLabel)
-        end
-    end
-end
-
--- for debug purposes
-function CraftSim.DEBUG:PrintTable(t, debugID, recursive, level)
-    level = level or 0
-    local levelString = ""
-    for i = 1, level, 1 do
-        levelString = levelString .. "-"
-    end
-
-    if t.Debug then
-        for _, line in pairs(t:Debug()) do
-            CraftSim.DEBUG:print(levelString .. tostring(line), debugID, false)
-        end
-        return
-    end
-
-    for k, v in pairs(t) do
-        if type(v) == 'function' then
-            CraftSim.DEBUG:print(levelString .. tostring(k) .. ": function", debugID, false)
-        elseif not recursive or type(v) ~= "table" then
-            CraftSim.DEBUG:print(levelString .. tostring(k) .. ": " .. tostring(v), debugID, false)
-        elseif type(v) == "table" then
-            CraftSim.DEBUG:print(levelString .. tostring(k) .. ": ", debugID, false)
-            CraftSim.DEBUG:PrintTable(v, debugID, recursive, level + 1)
-        end
-    end
-end
-
 function CraftSim.DEBUG:ProfilingUpdate(label)
-    local print = CraftSim.DEBUG:RegisterDebugID("Profiling")
+    local print = CraftSim.DEBUG:RegisterLogger("Profiling")
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
-    print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)")
+    print:LogDebug("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
 end
 
 ---@param label string
@@ -121,18 +72,19 @@ end
 function CraftSim.DEBUG:StopProfiling(label)
     local startTime = CraftSim.DEBUG.profilings[label]
     if not startTime then
-        CraftSim.DEBUG:print("Util Profiling Label not found on Stop: " .. tostring(label))
+        profiling:LogError("Util Profiling Label not found on Stop: {label}", label)
         return 0
     end
     local time = debugprofilestop()
     local diff = CraftSim.GUTIL:Round(time - startTime)
     CraftSim.DEBUG.profilings[label] = nil
-    CraftSim.DEBUG:print(label .. ": " .. diff .. " ms", "Profiling")
+    profiling:LogDebug("{label}: {diff} ms", label, diff)
     return diff
 end
 
+---@deprecated
 function CraftSim.DEBUG:DisableAllLogIDs()
-    local debugIDs = self:GetRegisteredDebugIDs()
+    local debugIDs = self:GetRegisteredLoggerIDs()
     local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
     for _, debugID in ipairs(debugIDs) do
         debugIDsDB[debugID] = false

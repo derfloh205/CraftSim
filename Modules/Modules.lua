@@ -53,7 +53,7 @@ local Logger = CraftSim.Logger
 ---@type CraftSim.RecipeData?
 CraftSim.MODULES.recipeData = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules")
+local print = CraftSim.DEBUG:RegisterLogger("Modules")
 
 ---@param moduleID CraftSim.ModuleID
 ---@param module CraftSim.Module

@@ -12,7 +12,7 @@ CraftSim.NEWS.GITHUB_COLLABS = {
     NETOUSS = "https://github.com/netouss",
 }
 
-local print = CraftSim.DEBUG:RegisterDebugID("Data.News")
+local print = CraftSim.DEBUG:RegisterLogger("Data.News")
 local function newP(v) return f.l("\nPatch Notes " .. v .. "\n") end
 local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 

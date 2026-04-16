@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.COOLDOWNS : Frame
 CraftSim.COOLDOWNS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.Cooldowns")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.Cooldowns")
 
 CraftSim.COOLDOWNS.isUpdatingTimers = false
 

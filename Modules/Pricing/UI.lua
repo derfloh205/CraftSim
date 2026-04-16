@@ -13,7 +13,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.PRICING.frame = nil
 CraftSim.PRICING.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.Pricing.UI")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.Pricing.UI")
 local f = CraftSim.GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
