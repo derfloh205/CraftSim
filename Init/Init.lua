@@ -409,10 +409,10 @@ function CraftSim.INIT:HookToProfessionsFrame()
 		function()
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
-			CraftSim.DEBUG:StartProfiling("Update Customer History")
-			CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
-			CraftSim.DEBUG:StopProfiling("Update Customer History")
-			CraftSim.CRAFTQ.UI:UpdateDisplay()
+			--CraftSim.DEBUG:StartProfiling("Update Customer History")
+			--CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
+			--CraftSim.DEBUG:StopProfiling("Update Customer History")
+			--CraftSim.CRAFTQ.UI:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()

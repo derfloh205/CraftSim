@@ -23,7 +23,7 @@ function CraftSim.DEBUG.UI:Init()
         moveable = true,
         title = "CraftSim Debug Tools",
         sizeX = 200,
-        sizeY = 550,
+        sizeY = 200,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -199,17 +199,16 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     content.dbDebugTools = GGUI.Button {
         label = "View Logs",
         parent = content,
+        macro = true,
+        macroText = "/logs",
+
         anchorPoints = { {
-            anchorParent = content.moduleDebugTools.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+            anchorParent = content.dbDebugTools.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
         } },
         sizeX = 160, sizeY = 23,
-        clickCallback = function()
-            if LogSinkTableFrame then
-                LogSinkTableFrame:Show()
-            else
-                CraftSim.DEBUG:SystemPrint(f.bb(LOGSINK_ADDON) ..
-                    " is not loaded. Please install and load " .. f.bb(LOGSINK_ADDON) .. " to view logs.")
-            end
-        end
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            text = "View logs using " .. f.bb("LogSink: Table") .. " addon",
+        },
     }
 end
