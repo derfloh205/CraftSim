@@ -22,17 +22,17 @@ CraftSim.MODULES = {}
 ---| "MODULE_EXPLANATIONS"
 ---| "MODULE_STATISTICS"
 ---| "MODULE_DISENCHANT"
+---| "MODULE_CONTROL_PANEL"
 
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
 ---@field Init fun(self: CraftSim.Module.UI)
 ---@field Update fun(self: CraftSim.Module.UI)
----@field ShouldShow fun(self: CraftSim.Module.UI): boolean
+---@field VisibleByContext? fun(self: CraftSim.Module.UI): boolean -- if not provided, true
 
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
 ---@field frame GGUI.Frame
----@field frameWO GGUI.Frame? frameWO is the work order version of the module, if it has one
 ---@field UI CraftSim.Module.UI
 
 ---@type table<CraftSim.ModuleID, CraftSim.Module>
@@ -71,65 +71,20 @@ function CraftSim.MODULES:Init()
 	end
 end
 
----@param keepControlPanel boolean?
----@param keepCraftQ boolean?
-function CraftSim.MODULES:Hide(keepControlPanel, keepCraftQ)
-	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
-	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local reagentOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	local reagentOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
-	-- hide control panel and return
-	if not keepControlPanel then
-		CraftSim.CONTROL_PANEL.frame:Hide()
+--- ignores modules without VisibleByContext function, otherwise shows or hides modules based on it
+--- requires such modules to have a GGUI.Frame assigned to module.frame
+function CraftSim.MODULES:UpdateVisibilityByContext()
+	for moduleID, module in pairs(CraftSim.MODULES.modules) do
+		if module.UI.VisibleByContext then
+			if module.frame then
+				module.frame:SetVisible(module.UI:VisibleByContext())
+			end
+		end
 	end
-	if not keepCraftQ then
-		CraftSim.CRAFTQ.frame:Hide()
-	end
-	local patronRewardValuesFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
-	if patronRewardValuesFrame then
-		patronRewardValuesFrame:Hide()
-	end
-	-- hide all modules
-	CraftSim.RECIPE_SCAN.frame:Hide()
-	CraftSim.CRAFT_BUFFS.frame:Hide()
-	CraftSim.CRAFT_BUFFS.frameWO:Hide()
-	CraftSim.COOLDOWNS.frame:Hide()
-	CraftSim.CRAFT_LOG.logFrame:Hide()
-	CraftSim.CRAFT_LOG.advFrame:Hide()
-	CraftSim.CONCENTRATION_TRACKER.frame:Hide()
-	customerHistoryFrame:Hide()
-	specInfoFrame:Hide()
-	specInfoFrameWO:Hide()
-	averageProfitFrame:Hide()
-	averageProfitFrameWO:Hide()
-	topgearFrame:Hide()
-	topgearFrameWO:Hide()
-	CraftSim.PRICING.frame:Hide()
-	CraftSim.PRICING.frameWO:Hide()
-	reagentOptimizationFrame:Hide()
-	reagentOptimizationFrameWO:Hide()
-	-- hide sim mode toggle button
-	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
-	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
-	CraftSim.EXPLANATIONS.frame:Hide()
-	CraftSim.STATISTICS.UI:SetVisible(false)
-
-	CraftSim.CRAFTQ.queueRecipeButton:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
 end
 
 -- TODO MODULE REFACTOR
+---@deprecated
 function CraftSim.MODULES:RestorePositions()
 	-- local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
 	-- local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
@@ -181,18 +136,13 @@ end
 --- Shows recipe-independent modules based on saved options.
 --- Called from ProfessionsFrame OnShow to ensure modules are visible even when
 --- SchematicForm:Init or tab OnClick does not fire (e.g. opening on the Crafting Orders tab).
+---@deprecated
 function CraftSim.MODULES:ShowRecipeIndependentModules()
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
 		return
 	end
 
 	CraftSim.CONTROL_PANEL.frame:Show()
-	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
-	CraftSim.RECIPE_SCAN.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN"))
-	CraftSim.CRAFT_LOG.logFrame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG"))
-	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY"))
-	CraftSim.COOLDOWNS.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS"))
-	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(true)
 
 	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 end
@@ -266,9 +216,9 @@ function CraftSim.MODULES:CRAFTSIM_MODULE_MINIMIZED(module)
 
 end
 
---- Determine basic craftsim visibility
+--- Determine basic craftsim visibility for professionsframe dependent modules
 ---@return boolean
-function CraftSim.MODULES:ShouldShow()
+function CraftSim.MODULES:VisibleByContext()
 	if not ProfessionsFrame:IsVisible() then
 		return false
 	end
@@ -290,7 +240,7 @@ end
 
 --- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
 function CraftSim.MODULES:Update()
-	if not self:ShouldShow() then
+	if not self:VisibleByContext() then
 		self:Hide()
 		return
 	end

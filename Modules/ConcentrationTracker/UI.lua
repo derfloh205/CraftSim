@@ -352,7 +352,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     }
 end
 
-function CraftSim.CONCENTRATION_TRACKER.UI:ShouldShow()
+function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
     return true
 end
 

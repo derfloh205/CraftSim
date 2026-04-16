@@ -224,6 +224,10 @@ function CraftSim.DISENCHANT.UI:Update()
     end)
 end
 
+function CraftSim.DISENCHANT.UI:VisibleByContext()
+
+end
+
 function CraftSim.DISENCHANT.UI:ShowAndLoad()
     local frame = CraftSim.DISENCHANT.frame
     self:Update()

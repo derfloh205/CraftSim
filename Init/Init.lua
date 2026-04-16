@@ -12,6 +12,7 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
+local Logger = CraftSim.Logger
 
 ---@class CraftSim.INIT : Frame
 CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
@@ -20,6 +21,10 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
 	"PLAYER_ENTERING_WORLD",
 	"TRADE_SKILL_FAVORITES_CHANGED",
 }
+
+GUTIL:RegisterCustomEvents(CraftSim.INIT, {
+	"CRAFTSIM_OPEN_RECIPE_INFO_UPDATED",
+})
 
 CraftSim.INIT.FRAMES = {}
 
@@ -61,6 +66,46 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 
 	-- load craft queue
 	CraftSim.CRAFTQ:InitializeCraftQueue()
+end
+
+---@param recipeInfo TradeSkillRecipeInfo?
+function CraftSim.INIT:CRAFTSIM_OPEN_RECIPE_INFO_UPDATED(recipeInfo)
+	-- if init turn sim mode off
+	if CraftSim.SIMULATION_MODE.isActive then
+		CraftSim.SIMULATION_MODE.isActive = false
+		CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:SetChecked(false)
+		CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:SetChecked(false)
+	end
+
+	if recipeInfo and recipeInfo.recipeID then
+		Logger:LogDebug("OpenRecipeChanged: {recipeID}", tostring(recipeInfo.recipeID))
+		CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
+
+		local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+		local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+
+		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
+			professionInfo.profession)
+		CraftSim.INIT:InitializeVisibleRecipeID(true)
+
+		local recipeID = recipeInfo.recipeID
+
+		-- this should happen exactly once on the first open recipe when a profession opened fresh after a client start
+		-- otherwise it just always fizzles
+		-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
+		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
+			if recipeID == CraftSim.INIT.visibleRecipeID then
+				print("Multicraft Info Loaded")
+				CraftSim.INIT:InitializeVisibleRecipeID(true)
+			end
+		end, 1)
+	elseif recipeInfo == nil then
+		Logger:LogDebug("Hide all frames recipeInfo nil")
+		CraftSim.MODULES:Hide(true, true)
+	else
+		Logger:LogDebug("Updating UI without recipeID")
+		CraftSim.MODULES:Update()
+	end
 end
 
 local hookedEvent = false
@@ -118,73 +163,42 @@ function CraftSim.INIT:HookToEvents()
 	end
 	hookedEvent = true
 
-	local function UpdateUI(self)
+	local function OpenRecipeAllocationUpdated(self)
 		if CraftSim.INIT.visibleRecipeID then
-			CraftSim.MODULES:Update()
+			GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_ALLOCATION_UPDATED")
 		end
 	end
 
-	local function InitNewRecipeID(self, recipeInfo)
-		print("InitNewRecipeID called")
+	local function OpenRecipeInfoUpdated(self, recipeInfo)
+		Logger:LogDebug("OpenRecipeInfoUpdated: {recipeInfo}", recipeInfo)
 		if not self:IsVisible() then
-			print("not visible, return")
+			Logger:LogDebug("not visible, return")
 			return
 		end
-		-- if init turn sim mode off
-		if CraftSim.SIMULATION_MODE.isActive then
-			CraftSim.SIMULATION_MODE.isActive = false
-			CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:SetChecked(false)
-			CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:SetChecked(false)
-		end
 
-		if recipeInfo and recipeInfo.recipeID then
-			print("Init: " .. tostring(recipeInfo.recipeID))
-			CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
-
-			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-
-			CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
-				professionInfo.profession)
-			CraftSim.INIT:InitializeVisibleRecipeID(true)
-
-			local recipeID = recipeInfo.recipeID
-
-			-- this should happen exactly once on the first open recipe when a profession opened fresh after a client start
-			-- otherwise it just always fizzles
-			-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
-			GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
-				if recipeID == CraftSim.INIT.visibleRecipeID then
-					print("Multicraft Info Loaded")
-					CraftSim.INIT:InitializeVisibleRecipeID(true)
-				end
-			end, 1)
-		elseif recipeInfo == nil then
-			print("Hide all frames recipeInfo nil")
-			CraftSim.MODULES:Hide(true, true)
-		else
-			print("Updating UI without recipeID")
-			CraftSim.MODULES:Update()
-		end
+		GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_INFO_UPDATED")
 	end
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
 	local hookFrame2 = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
-	hooksecurefunc(hookFrame, "Init", InitNewRecipeID)
-	hooksecurefunc(hookFrame2, "Init", InitNewRecipeID)
+	hooksecurefunc(hookFrame, "Init", OpenRecipeInfoUpdated)
+	hooksecurefunc(hookFrame2, "Init", OpenRecipeInfoUpdated)
 
 	-- events that update the current recipe's reagents should only update the modules' uis but not trigger a full recheck of the visible recipe
-	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, UpdateUI)
-	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, UpdateUI)
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, OpenRecipeAllocationUpdated)
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified,
+		OpenRecipeAllocationUpdated)
 
-	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, UpdateUI)
-	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, UpdateUI)
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified,
+		OpenRecipeAllocationUpdated)
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified,
+		OpenRecipeAllocationUpdated)
 
 	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
 	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]
 
-	recipeTab:HookScript("OnClick", InitNewRecipeID)
-	craftingOrderTab:HookScript("OnClick", InitNewRecipeID)
+	recipeTab:HookScript("OnClick", OpenRecipeInfoUpdated)
+	craftingOrderTab:HookScript("OnClick", OpenRecipeInfoUpdated)
 end
 
 function CraftSim.INIT:InitStaticPopups()

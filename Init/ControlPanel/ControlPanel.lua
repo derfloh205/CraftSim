@@ -1,8 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.CONTROL_PANEL
+---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_CONTROL_PANEL", CraftSim.CONTROL_PANEL)
 
 local GUTIL = CraftSim.GUTIL
 

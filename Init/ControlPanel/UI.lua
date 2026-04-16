@@ -8,10 +8,10 @@ local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
----@class CraftSim.CONTROL_PANEL
+---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
 
----@class CraftSim.CONTROL_PANEL.UI
+---@class CraftSim.CONTROL_PANEL.UI : CraftSim.Module.UI
 CraftSim.CONTROL_PANEL.UI = {}
 
 function CraftSim.CONTROL_PANEL.UI:Init()
@@ -159,4 +159,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
     end)
 
     frame:Hide()
+end
+
+function CraftSim.CONTROL_PANEL.UI:Update()
+
 end
