@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = {}
 

@@ -4,10 +4,10 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CRAFTQ
+---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = CraftSim.CRAFTQ
 
----@class CraftSim.CRAFTQ.UI
+---@class CraftSim.CRAFTQ.UI : CraftSim.Module.UI
 CraftSim.CRAFTQ.UI = {}
 
 local L = CraftSim.UTIL:GetLocalizer()
@@ -81,7 +81,7 @@ local function TriggerPreCraftGateAction(gateId, crafterData, fallbackRecipeData
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: " .. "Missing Shatter Reagent: " .. activeReagentSlot:GetItemLink()))
     else
         CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = rd, amount = 1 })
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
+        CraftSim.CRAFTQ.UI:Update()
     end
 end
 
@@ -519,14 +519,12 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES,
         title = L("CRAFT_QUEUE_PATRON_REWARD_VALUES_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
         hide = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
@@ -638,15 +636,17 @@ function CraftSim.CRAFTQ.UI:Init()
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE,
         title = L("CRAFT_QUEUE_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_QUEUE"),
-        onCollapseCallback = CraftSim.MODULES:HandleModuleCollapse("MODULE_CRAFT_QUEUE"),
-        frameTable = CraftSim.INIT.FRAMES,
+        onCloseCallback = function()
+            GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", self.module)
+        end,
+        onCollapseCallback = function()
+            GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", self.module)
+        end,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
@@ -897,7 +897,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                             end)
                                             rootDescription:CreateButton(f.l("Force Equipped Tools"), function()
                                                 recipeData:SetEquippedProfessionGearSet()
-                                                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                                                CraftSim.CRAFTQ.UI:Update()
                                             end)
                                         end
                                     end
@@ -911,12 +911,12 @@ function CraftSim.CRAFTQ.UI:Init()
                                         end)
                                     rootDescription:CreateButton(f.r("Remove"), function()
                                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
-                                        CraftSim.CRAFTQ.UI:UpdateDisplay()
+                                        CraftSim.CRAFTQ.UI:Update()
                                     end)
                                 end)
                             elseif IsMouseButtonDown("MiddleButton") then
                                 CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
-                                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                                CraftSim.CRAFTQ.UI:Update()
                             end
                         end
                     end
@@ -1844,7 +1844,7 @@ function CraftSim.CRAFTQ.UI:Init()
     CraftSim.CRAFTQ.frame:HookScript("OnShow", function()
         RunNextFrame(function()
             if CraftSim.CRAFTQ.frame:IsVisible() then
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                CraftSim.CRAFTQ.UI:Update()
             end
         end)
     end)
@@ -2599,7 +2599,6 @@ function CraftSim.CRAFTQ.UI:ShowCraftListNamePopup(title, defaultName, isGlobal,
         anchorParent = UIParent,
         sizeX = 350, sizeY = isRename and 100 or 120,
         frameID = "CRAFT_LIST_NAME_POPUP",
-        frameTable = {},
         title = title,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
@@ -2658,7 +2657,6 @@ function CraftSim.CRAFTQ.UI:ShowCraftListImportPopup(callback)
         anchorParent = UIParent,
         sizeX = 500, sizeY = 130,
         frameID = "CRAFT_LIST_IMPORT_POPUP",
-        frameTable = {},
         title = L("CRAFT_LISTS_IMPORT_POPUP_TITLE"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
@@ -2785,7 +2783,6 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     local editRecipeFrame = GGUI.Frame {
         parent = parent, anchorParent = anchorParent,
         sizeX = editFrameX, sizeY = editFrameY, backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE, frameTable = CraftSim.INIT.FRAMES,
         title = L("CRAFT_QUEUE_EDIT_RECIPE_TITLE"),
         frameStrata = "DIALOG", closeable = true, closeOnClickOutside = true, moveable = true, frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     }
@@ -3512,7 +3509,7 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
                                 CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
                             elseif fresh then
                                 CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = fresh, amount = 1 })
-                                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                                CraftSim.CRAFTQ.UI:Update()
                             end
                         end
                     end
@@ -3668,7 +3665,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
     queueTab.content.totalCraftingCosts:SetText(f.r(CraftSim.UTIL:FormatMoney(totalCraftingCosts)))
 end
 
-function CraftSim.CRAFTQ.UI:UpdateDisplay()
+function CraftSim.CRAFTQ.UI:Update()
     CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
@@ -4259,7 +4256,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
                             recipeData.professionData.professionInfo.profession)
                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
-                        self:UpdateDisplay()
+                        self:Update()
                     end
                 elseif pendingSubmit then
                     craftButtonColumn.craftButton:SetEnabled(true)
@@ -4286,12 +4283,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         local currentClaimedOrder = C_CraftingOrders.GetClaimedOrder()
                         if not (currentClaimedOrder and recipeData.orderData and
                                 currentClaimedOrder.orderID == recipeData.orderData.orderID) then
-                            CraftSim.CRAFTQ.UI:UpdateDisplay()
+                            CraftSim.CRAFTQ.UI:Update()
                             return
                         end
                         local orderID = recipeData.orderData and recipeData.orderData.orderID
                         if CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID) then
-                            CraftSim.CRAFTQ.UI:UpdateDisplay()
+                            CraftSim.CRAFTQ.UI:Update()
                             return
                         end
                         -- Mark immediately to block double-craft clicks before crafted-result event arrives.
@@ -4300,7 +4297,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                         recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
-                        CraftSim.CRAFTQ.UI:UpdateDisplay()
+                        CraftSim.CRAFTQ.UI:Update()
                     end
                 else
                     craftButtonColumn.craftButton:SetEnabled(false)
@@ -4346,7 +4343,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                     CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
-                    CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    CraftSim.CRAFTQ.UI:Update()
                 end
             end
         end

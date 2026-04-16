@@ -337,7 +337,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                 CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_FORMAT_MODE", formatModeOption)
                 dropdown:SetDefaultText(formatModeLabel)
                 CraftSim.CONCENTRATION_TRACKER.UI:Update()
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                CraftSim.CRAFTQ.UI:Update()
                 if CraftSim.SIMULATION_MODE and CraftSim.SIMULATION_MODE.recipeData then
                     CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
                 end

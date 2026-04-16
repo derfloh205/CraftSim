@@ -713,7 +713,7 @@ local function OnCraftSimTrackedPlayerBuffsChanged()
     if CraftSim.INIT.visibleRecipeID then
         CraftSim.MODULES:Update()
     elseif CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE") and CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
+        CraftSim.CRAFTQ.UI:Update()
     end
 end
 

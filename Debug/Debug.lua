@@ -19,6 +19,8 @@ local LibLog = CraftSim.LibLog
 local systemPrint = print
 
 function CraftSim.DEBUG:Init()
+    GUTIL:SetEventLogger(self:RegisterLogger("CraftSim Events"))
+
     -- Initialize Logger LogLevels
     local minimumLogLevel = CraftSim.DB.OPTIONS:Get("DEBUG_MINIMUM_LOG_LEVEL")
     self:SetMinimumLogLevel(minimumLogLevel)

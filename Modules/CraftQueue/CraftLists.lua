@@ -201,7 +201,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         if queueListsButton then
             queueListsButton:SetStatus("Ready")
         end
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
+        CraftSim.CRAFTQ.UI:Update()
         CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
     end
 
@@ -315,7 +315,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                 end
             end
 
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end
     end
 
@@ -524,7 +524,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
                         amount = maxQueueAmount, -- if its nil it will default to 1
                         splitSoulboundFinishingReagent = options.includeSoulboundFinishingReagents,
                     }
-                    CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    CraftSim.CRAFTQ.UI:Update()
 
                     -- Update last crafting cost DB if option is enabled
                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then

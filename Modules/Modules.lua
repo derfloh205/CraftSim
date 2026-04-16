@@ -58,6 +58,11 @@ local Logger = CraftSim.DEBUG:RegisterLogger("Modules")
 ---@param module CraftSim.Module
 function CraftSim.MODULES:RegisterModule(moduleID, module)
 	CraftSim.MODULES.modules[moduleID] = module
+
+	-- Inject module reference into UI
+	if module.UI then
+		module.UI.module = module
+	end
 end
 
 function CraftSim.MODULES:Init()
@@ -356,7 +361,7 @@ function CraftSim.MODULES:Update()
 	end
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
-	CraftSim.CRAFTQ.UI:UpdateDisplay()
+	CraftSim.CRAFTQ.UI:Update()
 	CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)

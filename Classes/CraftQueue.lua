@@ -65,7 +65,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     local subRecipe = recipeData.optimizedSubRecipes[itemID]
                     if subRecipe then
                         Logger:LogDebug("Found self crafted reagent: queue into cq: " ..
-                        subRecipe.recipeName .. " q" .. qualityID)
+                            subRecipe.recipeName .. " q" .. qualityID)
                         subRecipe:SetNonQualityReagentsMax()
 
                         -- its allocated but is it also necessary to craft? Or do I own enough?
@@ -483,7 +483,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
             end
         end
     end
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 ---@return number maxDepth

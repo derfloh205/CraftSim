@@ -164,18 +164,17 @@ function CraftSim.INIT:HookToEvents()
 
 	local function OpenRecipeAllocationUpdated(self)
 		if CraftSim.INIT.visibleRecipeID then
-			GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_ALLOCATION_UPDATED")
+			GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_ALLOCATION_UPDATED", CraftSim.INIT.visibleRecipeID)
 		end
 	end
 
 	local function OpenRecipeInfoUpdated(self, recipeInfo)
-		Logger:LogDebug("OpenRecipeInfoUpdated: {recipeInfo}", recipeInfo)
 		if not self:IsVisible() then
 			Logger:LogDebug("not visible, return")
 			return
 		end
 
-		GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_INFO_UPDATED")
+		GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_INFO_UPDATED", recipeInfo)
 	end
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm

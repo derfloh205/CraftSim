@@ -24,7 +24,7 @@ local QB_STATUS = {
 }
 
 
----@class CraftSim.CRAFTQ : Frame
+---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
@@ -33,6 +33,8 @@ CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RES
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
 })
+
+CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ)
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -80,7 +82,7 @@ function CraftSim.CRAFTQ:BeginCraftClickLock()
         if not isCrafting and GetTime() >= self.craftClickLockUntil then
             self.craftClickLockUntil = 0
             if self.frame and self.frame:IsVisible() then
-                self.UI:UpdateDisplay()
+                self.UI:Update()
             end
         end
     end)
@@ -121,7 +123,7 @@ function CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
             if expiry and GetTime() >= expiry then
                 self.pendingWorkOrderSubmit[orderID] = nil
                 if self.frame and self.frame:IsVisible() then
-                    self.UI:UpdateDisplay()
+                    self.UI:Update()
                 end
             end
         end)
@@ -342,7 +344,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
         self:EndCraftClickLock()
     end
     self:SyncPendingWorkOrderSubmitState()
-    self.UI:UpdateDisplay()
+    self.UI:Update()
 end
 
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
@@ -351,7 +353,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
         self:EndCraftClickLock()
     end
     self:SyncPendingWorkOrderSubmitState()
-    self.UI:UpdateDisplay()
+    self.UI:Update()
 end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
@@ -760,7 +762,7 @@ end
 
 function CraftSim.CRAFTQ:ClearAll()
     CraftSim.CRAFTQ.craftQueue:ClearAll()
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 function CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
@@ -846,7 +848,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                 end
             end
 
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end
     end
 
@@ -921,7 +923,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     recipeData:AdjustSoulboundFinishingForAmount(totalAmount)
 
                     CraftSim.CRAFTQ.craftQueue:AddRecipe { recipeData = recipeData, amount = totalAmount }
-                    CraftSim.CRAFTQ.UI:UpdateDisplay()
+                    CraftSim.CRAFTQ.UI:Update()
                 end
                 frameDistributor:Continue()
             end
@@ -1155,7 +1157,7 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
         CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         -- Equip / unequip updates inventory after a delay; refresh queue gear state unless mid Equip() sequence.
         if not CraftSim.TOPGEAR.IsEquipping then
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end
     end
 end
@@ -1442,7 +1444,7 @@ function CraftSim.CRAFTQ:NEW_RECIPE_LEARNED(recipeID)
         end
     end
 
-    self.UI:UpdateDisplay()
+    self.UI:Update()
 end
 
 --- Magic Command for one-button shopping list buying

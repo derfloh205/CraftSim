@@ -118,13 +118,13 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
                 "MODULE_CUSTOMER_HISTORY",
                 L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
-                CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
+                CraftSim.MODULES.modules["MODULE_CUSTOMER_HISTORY"].frame)
 
             addModuleCheckbox(
                 L("CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL"),
                 "MODULE_EXPLANATIONS",
                 L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
-                CraftSim.CONST.FRAMES.EXPLANATIONS)
+                CraftSim.MODULES.modules["MODULE_EXPLANATIONS"].frame)
 
             local exports = rootDescription:CreateButton(L("CONTROL_PANEL_EXPORTS"))
 
