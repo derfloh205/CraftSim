@@ -12,7 +12,6 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
-local Logger = CraftSim.Logger
 
 ---@class CraftSim.INIT : Frame
 CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
@@ -327,6 +326,7 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
+		CraftSim.DEBUG:Init()
 		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 

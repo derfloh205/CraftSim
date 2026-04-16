@@ -22,7 +22,7 @@ function CraftSim.DEBUG.UI:Init()
         closeable = true,
         moveable = true,
         title = "CraftSim Debug Tools",
-        sizeX = 200,
+        sizeX = 220,
         sizeY = 200,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -196,7 +196,7 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         end
     }
 
-    content.dbDebugTools = GGUI.Button {
+    content.logTools = GGUI.Button {
         label = "View Logs",
         parent = content,
         macro = true,
@@ -210,5 +210,29 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
             anchor = "ANCHOR_TOP",
             text = "View logs using " .. f.bb("LogSink: Table") .. " addon",
         },
+    }
+
+    content.logOptions = CraftSim.WIDGETS.OptionsButton {
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.logTools.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
+        } },
+        menuUtilCallback = function(ownerRegion, rootDescription)
+            ---@type table<number, string>
+            local logLevelsSorted = {}
+            for key, value in pairs(CraftSim.LibLog.LogLevel) do
+                logLevelsSorted[value] = key
+            end
+            for i = 0, 6 do
+                local loglevel = logLevelsSorted[i]
+                rootDescription:CreateRadio(loglevel, function()
+                    return CraftSim.DB.OPTIONS:Get("DEBUG_MINIMUM_LOG_LEVEL") == i
+                end, function()
+                    CraftSim.DEBUG:SetMinimumLogLevel(i)
+                    CraftSim.DB.OPTIONS:Save("DEBUG_MINIMUM_LOG_LEVEL", i)
+                    return MenuResponse.Refresh
+                end)
+            end
+        end
     }
 end

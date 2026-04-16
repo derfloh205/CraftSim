@@ -339,3 +339,7 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_16_17_Migrate_Module_Visibility_Options
     modulesEnabled["MODULE_RECIPE_INFO"] = options["MODULE_AVERAGE_PROFIT"]
     options["MODULE_AVERAGE_PROFIT"] = nil
 end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_17_18_Remove_DebugID_SavedVariable()
+    CraftSimDB.optionsDB.data["DEBUG_IDS"] = nil
+end

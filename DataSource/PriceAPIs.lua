@@ -111,7 +111,7 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     elseif exchangeLoaded then
         CraftSimPriceAPI = CraftSimEXCHANGE
     else
-        Logger:LogWarn("CraftSim: No supported price source found")
+        Logger:LogWarning("CraftSim: No supported price source found")
         Logger:LogDebug("Supported addons are: ")
         for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
             Logger:LogDebug(name)
@@ -174,7 +174,7 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
     local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
     if error then
         Logger:LogError("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error))
-        Logger:LogWarn("CraftSimTSM:GetItemSaleRate itemLink: " .. tostring(itemLink))
+        Logger:LogWarning("CraftSimTSM:GetItemSaleRate itemLink: " .. tostring(itemLink))
     end
     salerate = salerate or 0 -- nil safe
     return salerate / 1000
@@ -308,13 +308,13 @@ function CraftSimTSM:GetExpectedDeposit(recipeData)
         else
             deposit = result
             if deposit == nil then
-                Logger:LogWarn("GetExpectedDeposit: TSM expression returned nil for '" ..
+                Logger:LogWarning("GetExpectedDeposit: TSM expression returned nil for '" ..
                     tostring(expression) .. "' and item '" .. tostring(tsmStr) .. "'")
             end
         end
     else
-        Logger:LogWarn("GetExpectedDeposit: No TSM deposit expression configured; using 0 for item '" ..
-        tostring(tsmStr) .. "'")
+        Logger:LogWarning("GetExpectedDeposit: No TSM deposit expression configured; using 0 for item '" ..
+            tostring(tsmStr) .. "'")
         deposit = nil
     end
     depositCache[tsmStr] = { value = deposit, t = now }

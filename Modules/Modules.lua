@@ -62,7 +62,6 @@ end
 
 function CraftSim.MODULES:Init()
 	for moduleID, module in pairs(CraftSim.MODULES.modules) do
-		Logger:LogDebug("Initializing Module UI: " .. moduleID)
 		Logger:LogDebug("Initializing Module UI: {module}", moduleID)
 
 		module.moduleID = moduleID

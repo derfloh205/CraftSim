@@ -6,7 +6,6 @@ CraftSim.DEBUG = {}
 
 ---@type table<string, number>
 CraftSim.DEBUG.profilings = {}
-CraftSim.DEBUG.isMute = false
 
 ---@type LibLog-1.0.Logger[]
 CraftSim.DEBUG.registeredLogger = {}
@@ -19,11 +18,24 @@ local LibLog = CraftSim.LibLog
 
 local systemPrint = print
 
+function CraftSim.DEBUG:Init()
+    -- Initialize Logger LogLevels
+    local minimumLogLevel = CraftSim.DB.OPTIONS:Get("DEBUG_MINIMUM_LOG_LEVEL")
+    self:SetMinimumLogLevel(minimumLogLevel)
+end
+
+---@param logLevel LibLog-1.0.LogLevel
+function CraftSim.DEBUG:SetMinimumLogLevel(logLevel)
+    for _, logger in pairs(self.registeredLogger) do
+        logger:SetLogLevel(logLevel)
+    end
+end
+
 ---@param loggerID string
 ---@return LibLog-1.0.Logger
 function CraftSim.DEBUG:RegisterLogger(loggerID)
     local newLogger = { name = loggerID }
-    CraftSim.LibLog:Embed(newLogger)
+    LibLog:Embed(newLogger)
     table.insert(self.registeredLogger, newLogger)
     return newLogger
 end
@@ -79,14 +91,4 @@ function CraftSim.DEBUG:StopProfiling(label)
     CraftSim.DEBUG.profilings[label] = nil
     profiling:LogDebug("{label}: {diff} ms", label, diff)
     return diff
-end
-
----@deprecated
-function CraftSim.DEBUG:DisableAllLogIDs()
-    local debugIDs = self:GetRegisteredLoggerIDs()
-    local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-    for _, debugID in ipairs(debugIDs) do
-        debugIDsDB[debugID] = false
-    end
-    CraftSim.DB.OPTIONS:Save("DEBUG_IDS", debugIDsDB)
 end
