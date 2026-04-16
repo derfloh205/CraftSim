@@ -765,6 +765,9 @@ function CraftSim.LOCAL_EN:GetData()
             " order " ..
             f.bb("Moxie") ..
             " rewards and the first-craft moxie bonus are added to expected profit using your Moxie values below. When disabled, Moxie stays informational in tooltips only.",
+        CRAFT_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES_CHECKBOX = "Auto-update Moxie values from price updates",
+        CRAFT_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES_TOOLTIP =
+        "When enabled, CraftSim recomputes Moxie values whenever recipe prices refresh and only overwrites entries whose computed value changed.",
         CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP = "How much you value one unit of this profession's " ..
             f.bb("Moxie") ..
             " reward. Shown in tooltips; also used in expected profit when " ..
@@ -774,12 +777,9 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_REWARD_VALUES_MENU_BUTTON = "Set Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_INTRO = "Set how much you value one unit of each profession's " ..
             f.bb("Moxie") ..
-            ". " ..
-            "Always shown in tooltips; " ..
-            f.bb("expected profit") ..
-            " includes Moxie at these rates when " ..
+            "; grouped rows share one value, and this value is used in expected profit when " ..
             f.bb("Include Moxie in expected profit") ..
-            " is enabled (otherwise gold-only: tips, commission, item rewards).",
+            " is enabled.",
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_SUGGEST_TOOLTIP = "Suggested value per " ..
             f.bb("Moxie") ..
             " from your price source, using average yields for Midnight " ..
@@ -790,6 +790,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_NO_DATA_TOOLTIP =
         "No surplus table for this profession, no price source, or all listed reagents priced at zero.",
         CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_MOXIE = "Moxie",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_ITEMS = "Possible Items",
         CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_CURRENT = "Current",
         CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_SUGGESTED = "Suggested",
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_REAGENT_TOTAL = "Reagents (expected)",

@@ -623,7 +623,8 @@ function CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(currencyID)
     if type(values) ~= "table" then
         return 0
     end
-    return tonumber(values[currencyID]) or 0
+    local storageCurrencyID = CraftSim.PATRON_MOXIE_SURPLUS:GetStorageCurrencyID(currencyID)
+    return tonumber(values[storageCurrencyID] or values[tostring(storageCurrencyID)]) or 0
 end
 
 --- Manu Moxie currency for the recipe's profession (API may omit `professionInfo.profession`; fall back via skill line).

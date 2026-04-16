@@ -44,23 +44,26 @@ local SURPLUS_BAG_ENCHANTING = {
     { itemID = 251285, qty = 1 },    -- Petrified Root
 }
 
+local MAJESTIC_COUNT = 1.2 / 3
+local OTHER_COUNT = 5.8 / 3
+
 local SURPLUS_BAG_LW_SKINNING = {
-    { itemID = 238512, qty = 35.2 }, -- Void-Tempered Leather Q2
-    { itemID = 238514, qty = 35.2 }, -- Void-Tempered Scales Q2
-    { itemID = 238519, qty = 4.5 },  -- Void-Tempered Hide Q2
-    { itemID = 238521, qty = 4.5 },  -- Void-Tempered Plating Q2
+    { itemID = 238512, qty = 35.2 },           -- Void-Tempered Leather Q2
+    { itemID = 238514, qty = 35.2 },           -- Void-Tempered Scales Q2
+    { itemID = 238519, qty = 4.5 },            -- Void-Tempered Hide Q2
+    { itemID = 238521, qty = 4.5 },            -- Void-Tempered Plating Q2
     -- One-of-three outcome groups: distribute expected quantity across options.
-    { itemID = 238528, qty = 0.4 },              -- Majestic Claw (1.2 / 3)
-    { itemID = 238530, qty = 0.4 },              -- Majestic Fin (1.2 / 3)
-    { itemID = 238529, qty = 0.4 },              -- Majestic Hide (1.2 / 3)
-    { itemID = 238522, qty = 1.9333333333333 },  -- Peerless Plumage (5.8 / 3)
-    { itemID = 238525, qty = 1.9333333333333 },  -- Fantastic Fur (5.8 / 3)
-    { itemID = 238523, qty = 1.9333333333333 },  -- Carving Canine (5.8 / 3)
-    { itemID = 251285, qty = 1 },                -- Petrified Root
+    { itemID = 238528, qty = MAJESTIC_COUNT }, -- Majestic Claw (1.2 / 3)
+    { itemID = 238530, qty = MAJESTIC_COUNT }, -- Majestic Fin (1.2 / 3)
+    { itemID = 238529, qty = MAJESTIC_COUNT }, -- Majestic Hide (1.2 / 3)
+    { itemID = 238522, qty = OTHER_COUNT },    -- Peerless Plumage (5.8 / 3)
+    { itemID = 238525, qty = OTHER_COUNT },    -- Fantastic Fur (5.8 / 3)
+    { itemID = 238523, qty = OTHER_COUNT },    -- Carving Canine (5.8 / 3)
+    { itemID = 251285, qty = 1 },              -- Petrified Root
 }
 
 local SURPLUS_BAG_TAILORING = {
-    { itemID = 237018, qty = 5.0 },  -- Arcanoweave Q2
+    { itemID = 237017, qty = 5.0 },  -- Arcanoweave Q2
     { itemID = 237016, qty = 5.0 },  -- Sunfire Silk Q2
     { itemID = 236965, qty = 12.5 }, -- Bright Linen Q2
     { itemID = 251285, qty = 1.0 },  -- Petrified Root
@@ -92,10 +95,32 @@ local specsByCurrencyID = {
     [3266] = SURPLUS_BAG_TAILORING,
 }
 
+---@type table<number, number>
+local storageCurrencyIDByCurrencyID = {
+    -- Shared bag/value groups should use one storage key.
+    [3256] = 3256, -- alchemy/herbalism/inscription
+    [3260] = 3256,
+    [3261] = 3256,
+    [3257] = 3257, -- blacksmithing/engineering/jewelcrafting/mining
+    [3259] = 3257,
+    [3262] = 3257,
+    [3264] = 3257,
+    [3263] = 3263, -- leatherworking/skinning
+    [3265] = 3263,
+    [3258] = 3258, -- enchanting
+    [3266] = 3266, -- tailoring
+}
+
 ---@param currencyID number
 ---@return CraftSim.PatronMoxieSurplusEntry[]|nil
 function CraftSim.PATRON_MOXIE_SURPLUS:GetSpec(currencyID)
     return specsByCurrencyID[currencyID]
+end
+
+---@param currencyID number
+---@return number
+function CraftSim.PATRON_MOXIE_SURPLUS:GetStorageCurrencyID(currencyID)
+    return storageCurrencyIDByCurrencyID[currencyID] or currencyID
 end
 
 ---@param currencyID number
