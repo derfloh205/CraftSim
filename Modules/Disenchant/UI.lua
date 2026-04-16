@@ -10,7 +10,7 @@ CraftSim.DISENCHANT.UI = {}
 ---@type CraftSim.DISENCHANT.FRAME
 CraftSim.DISENCHANT.frame = nil
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.Disenchant.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("Disenchant.UI")
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 

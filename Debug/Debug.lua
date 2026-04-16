@@ -39,7 +39,7 @@ function CraftSim.DEBUG:GetRegisteredLoggerIDs()
 end
 
 function CraftSim.DEBUG:SystemPrint(text)
-    print(text)
+    systemPrint(text)
 end
 
 ---@param t table
@@ -55,10 +55,9 @@ function CraftSim.DEBUG:InspectTable(t, label, openDevTool)
 end
 
 function CraftSim.DEBUG:ProfilingUpdate(label)
-    local print = CraftSim.DEBUG:RegisterLogger("Profiling")
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
-    print:LogDebug("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
+    profiling:LogDebug("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
 end
 
 ---@param label string

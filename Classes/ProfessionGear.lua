@@ -6,7 +6,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
 CraftSim.ProfessionGear = CraftSim.CraftSimObject:extend()
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ProfessionGear")
+local Logger = CraftSim.DEBUG:RegisterLogger("ProfessionGear")
 
 function CraftSim.ProfessionGear:new()
 	---@type CraftSim.ProfessionStats
@@ -78,7 +78,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local extractedStats = C_Item.GetItemStats(itemLink)
 
 	if not extractedStats then
-		print("Could not extract item stats: " .. tostring(itemLink))
+		Logger:LogDebug("Could not extract item stats: " .. tostring(itemLink))
 		return
 	end
 
@@ -99,8 +99,8 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 
 	local equipMatchString = L("EQUIP_MATCH_STRING")
-	--print("TooltipData lines:")
-	--print(tooltipData.lines, true)
+	--Logger:LogDebug("TooltipData lines:")
+	--Logger:LogDebug(tooltipData.lines, true)
 	for _, line in pairs(tooltipData.lines) do
 		local lineText = line.leftText -- 10.1 Change
 		if lineText and string.find(lineText, equipMatchString) then

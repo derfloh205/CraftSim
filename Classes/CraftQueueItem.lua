@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.CraftQueue.CraftQueueItem")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueueItem")
 
 ---@class CraftSim.CraftQueueItem.Options
 ---@field recipeData CraftSim.RecipeData
@@ -142,7 +142,7 @@ end
 ---@param serializedData CraftSim.CraftQueueItem.Serialized
 ---@return CraftSim.CraftQueueItem?
 function CraftSim.CraftQueueItem:Deserialize(serializedData)
-    print("Deserialize CraftQueueItem")
+    Logger:LogDebug("Deserialize CraftQueueItem")
 
     ---@param serializedCraftQueueItem CraftSim.CraftQueueItem.Serialized
     ---@return CraftSim.RecipeData?
@@ -204,11 +204,11 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
 
 
     if recipeData then
-        print("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
-        print("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
-        print("professionGearCached: " .. tostring(recipeData.professionGearCached))
-        print("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
-        print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
+        Logger:LogDebug("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
+        Logger:LogDebug("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
+        Logger:LogDebug("professionGearCached: " .. tostring(recipeData.professionGearCached))
+        Logger:LogDebug("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
+        Logger:LogDebug("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
         return CraftSim.CraftQueueItem({
             recipeData = recipeData,
             amount = serializedData.amount,
@@ -248,19 +248,19 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
 
     self.amount = minimumCrafts
 
-    print("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+    Logger:LogDebug("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
         .amount)
-    print("parentCraftQueueItems: " .. #parentCraftQueueItems)
-    print("totalCount: " .. totalCount)
-    print("inventoryCount: " .. inventoryCount)
-    print("restCount: " .. restCount)
-    print("minimumCrafts: " .. minimumCrafts)
+    Logger:LogDebug("parentCraftQueueItems: " .. #parentCraftQueueItems)
+    Logger:LogDebug("totalCount: " .. totalCount)
+    Logger:LogDebug("inventoryCount: " .. inventoryCount)
+    Logger:LogDebug("restCount: " .. restCount)
+    Logger:LogDebug("minimumCrafts: " .. minimumCrafts)
 end
 
 function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     if not self.recipeData:HasActiveSubRecipes() then return end
 
-    print("UpdateSubRecipesInQueue for " .. self.recipeData.recipeName, false, true)
+    Logger:LogDebug("UpdateSubRecipesInQueue for " .. self.recipeData.recipeName, false, true)
 
     -- fetch cqis or add them if not existing
     local subCraftQueueItems = GUTIL:Map(self.recipeData.priceData.selfCraftedReagents, function(itemID)
@@ -269,13 +269,13 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
         if subRecipeData then
             if self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
                 local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
-                print(" - Searching in queue for " ..
+                Logger:LogDebug(" - Searching in queue for " ..
                     subRecipeData.recipeName .. "\n" .. subRecipeData:GetRecipeCraftQueueUID())
                 if not cqi then
-                    print(" - Not Found, Adding to queue")
+                    Logger:LogDebug(" - Not Found, Adding to queue")
                     cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, })
                 else
-                    print(" - Subrecipe already in queue")
+                    Logger:LogDebug(" - Subrecipe already in queue")
                 end
 
                 return cqi
@@ -285,7 +285,7 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
         return nil
     end)
 
-    print("#subCraftQueueItems: " .. #subCraftQueueItems)
+    Logger:LogDebug("#subCraftQueueItems: " .. #subCraftQueueItems)
 end
 
 function CraftSim.CraftQueueItem:GetNumParentRecipesInQueue()

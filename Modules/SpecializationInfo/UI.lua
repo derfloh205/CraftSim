@@ -9,7 +9,7 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.SPECIALIZATION_INFO.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.SpecializationInfo.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("SpecializationInfo.UI")
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290

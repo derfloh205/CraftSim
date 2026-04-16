@@ -43,7 +43,7 @@ local function generateSkillCacheKey(recipeData, requiredTbl)
     return table.concat(parts, "_")
 end
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ReagentData")
+local Logger = CraftSim.DEBUG:RegisterLogger("ReagentData")
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.ReagentData : CraftSim.CraftSimObject
@@ -345,8 +345,8 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
 
     -- explicitly do not use concentration flag here
 
-    print("max quality reagents crafting tbl:")
-    print(maxQualityReagentsCraftingTbl, true)
+    Logger:LogDebug("max quality reagents crafting tbl:")
+    Logger:LogDebug(maxQualityReagentsCraftingTbl, true)
 
     local recipeID = self.recipeData.recipeID
     local baseOperationInfo = nil
@@ -375,16 +375,16 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
         end
         local maxReagentIncreaseFactor = self.recipeData.baseProfessionStats.recipeDifficulty.value / maxSkill
 
-        print("ReagentData: maxReagentIncreaseFactor: " .. tostring(maxReagentIncreaseFactor))
+        Logger:LogDebug("ReagentData: maxReagentIncreaseFactor: " .. tostring(maxReagentIncreaseFactor))
 
         local percentFactor = (100 / maxReagentIncreaseFactor) / 100
 
-        print("ReagentData: maxReagentIncreaseFactor % of difficulty: " .. tostring(percentFactor) .. " %")
+        Logger:LogDebug("ReagentData: maxReagentIncreaseFactor % of difficulty: " .. tostring(percentFactor) .. " %")
 
         return percentFactor
     end
 
-    print("ReagentData: Could not determine max reagent skill factor: operationInfos nil")
+    Logger:LogDebug("ReagentData: Could not determine max reagent skill factor: operationInfos nil")
 end
 
 ---@return number skillWithReagents
@@ -435,14 +435,14 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
 
         return result
     end
-    print("ReagentData: Could not determine required reagent skill: operationInfos nil")
+    Logger:LogDebug("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0
 end
 
 ---@param reagents CraftSim.Reagent[]
 function CraftSim.ReagentData:EqualsQualityReagents(reagents)
-    print("EqualsQualityReagents ?")
-    print(reagents, true)
+    Logger:LogDebug("EqualsQualityReagents ?")
+    Logger:LogDebug(reagents, true)
     -- order can be different?
     local qualityReagents = GUTIL:Filter(self.requiredReagents, function(reagent) return reagent.hasQuality end)
     for index, reagentA in pairs(qualityReagents) do
@@ -450,21 +450,21 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
         for itemIndex, reagentItemA in pairs(reagentA.items) do
             local reagentItemB = reagentB.items[itemIndex]
 
-            print("compare items: " ..
+            Logger:LogDebug("compare items: " ..
                 tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
-            print("quantities: " .. tostring(reagentItemA.quantity) .. " - " .. tostring(reagentItemB.quantity))
+            Logger:LogDebug("quantities: " .. tostring(reagentItemA.quantity) .. " - " .. tostring(reagentItemB.quantity))
 
             if reagentItemA.item:GetItemID() ~= reagentItemB.item:GetItemID() then
-                print("different itemids...")
+                Logger:LogDebug("different itemids...")
                 return false
             elseif reagentItemA.quantity ~= reagentItemB.quantity then
-                print("different quantities")
+                Logger:LogDebug("different quantities")
                 return false
             end
         end
     end
 
-    print("equals!")
+    Logger:LogDebug("equals!")
     return true
 end
 
@@ -608,9 +608,7 @@ end
 
 ---@param crafterUID CrafterUID
 function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
-    local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ReagentData.GetCraftableAmount")
-
-    print("getCraftable amount", false, true)
+    Logger:LogDebug("getCraftable amount", false, true)
 
     local currentMinimumReagentFit = math.huge
     for _, requiredReagent in pairs(self.requiredReagents) do
@@ -637,7 +635,7 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
         end
     end
 
-    print("minimum required fit: " .. tostring(currentMinimumReagentFit))
+    Logger:LogDebug("minimum required fit: " .. tostring(currentMinimumReagentFit))
 
     local currentMinimumReagentFitOptional = math.huge
     ---@type CraftSim.OptionalReagentSlot[]
@@ -656,19 +654,19 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
                 currentMinimumReagentFitOptional)
         end
     end
-    print("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
+    Logger:LogDebug("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
 
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
             .ENCHANTING_VELLUM_ID, true)
         vellumMinimumFit = itemCount
-        print("minimum vellum fit: " .. tostring(vellumMinimumFit))
+        Logger:LogDebug("minimum vellum fit: " .. tostring(vellumMinimumFit))
     end
 
     local minFit = math.min(currentMinimumReagentFit, currentMinimumReagentFitOptional, vellumMinimumFit)
 
-    print("minimum total fit: " .. tostring(minFit))
+    Logger:LogDebug("minimum total fit: " .. tostring(minFit))
     return minFit
 end
 
@@ -685,7 +683,6 @@ end
 --- convert required and finished reagents to string that is displayable in a tooltip
 ---@param multiplier number? default: 1
 function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
-    local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ReagentData.GetTooltipText")
     multiplier = multiplier or 1
     local iconSize = 25
     local text = ""

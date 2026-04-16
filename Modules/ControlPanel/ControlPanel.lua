@@ -11,13 +11,13 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
 CraftSim.CONTROL_PANEL.frame = nil
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.ControlPanel")
+local Logger = CraftSim.DEBUG:RegisterLogger("ControlPanel")
 
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
-    print("ForgeFinder Export..")
+    Logger:LogDebug("ForgeFinder Export..")
 
     if not C_TradeSkillUI.IsTradeSkillReady() then
-        print("Tradeskill not ready")
+        Logger:LogDebug("Tradeskill not ready")
         return
     end
 
@@ -59,7 +59,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 
             local isCurrentExpansionRecipe = CraftSim.UTIL:IsCurrentExpansionRecipe(recipeInfo.recipeID)
             if not isCurrentExpansionRecipe then
-                print("not correct expac")
+                Logger:LogDebug("not correct expac")
                 return false
             end
 
@@ -72,10 +72,10 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         local numRecipes = #professionRecipeIDs
         local data = {}
 
-        print("filtered recipeID: " .. tostring(numRecipes))
+        Logger:LogDebug("filtered recipeID: " .. tostring(numRecipes))
 
         local function finishExport()
-            print("Created " .. #data .. " RecipeData")
+            Logger:LogDebug("Created " .. #data .. " RecipeData")
             if #data > 0 then
                 ---@type CraftSim.JSONBuilder
                 local jb = CraftSim.JSONBuilder()
@@ -96,7 +96,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 
         local function mapRecipe()
             local recipeID = professionRecipeIDs[currentIndex]
-            print("map recipe: " .. tostring(currentIndex))
+            Logger:LogDebug("map recipe: " .. tostring(currentIndex))
             if recipeID then
                 CraftSim.DEBUG:StartProfiling("RecipeDataCreation")
                 ---@type CraftSim.RecipeData
@@ -132,10 +132,10 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 end
 
 function CraftSim.CONTROL_PANEL:EasycraftExportAll()
-    print("Easycraft Export..")
+    Logger:LogDebug("Easycraft Export..")
 
     if not C_TradeSkillUI.IsTradeSkillReady() then
-        print("Tradeskill not ready")
+        Logger:LogDebug("Tradeskill not ready")
         return
     end
 
@@ -195,16 +195,16 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
             return
         end
 
-        print("filtered recipeID: " .. tostring(numRecipes))
+        Logger:LogDebug("filtered recipeID: " .. tostring(numRecipes))
 
         local function finishExport()
-            print("Created " .. #data .. " RecipeData")
+            Logger:LogDebug("Created " .. #data .. " RecipeData")
             if #data > 0 then
                 ---@type CraftSim.JSONBuilder
                 local jb = CraftSim.JSONBuilder()
                 jb.json = jb.json .. "[\n"
                 for index, recipeData in pairs(data) do
-                    print("skill: " .. tostring(recipeData.professionStats.skill.value))
+                    Logger:LogDebug("skill: " .. tostring(recipeData.professionStats.skill.value))
                     local recipeJson = recipeData:GetEasycraftExport(1)
                     if index == #data then
                         jb.json = jb.json .. recipeJson
@@ -221,7 +221,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
 
         local function mapRecipe()
             local recipeID = professionRecipeIDs[currentIndex]
-            print("map recipe: " .. tostring(currentIndex))
+            Logger:LogDebug("map recipe: " .. tostring(currentIndex))
             if recipeID then
                 CraftSim.DEBUG:StartProfiling("RecipeDataCreation")
                 ---@type CraftSim.RecipeData

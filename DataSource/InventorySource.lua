@@ -14,7 +14,7 @@ CraftSim.INVENTORY_APIS = {}
 CraftSimSYNDICATOR = { name = "Syndicator" }
 CraftSimINVENTORY_NONE = { name = "CraftSim" }
 
-local print = CraftSim.DEBUG:RegisterLogger("Data.InventoryAPI")
+local Logger = CraftSim.DEBUG:RegisterLogger("InventorySource")
 
 function CraftSim.INVENTORY_API:InitInventorySource()
     local loadedSources = CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()

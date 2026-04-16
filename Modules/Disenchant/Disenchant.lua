@@ -12,7 +12,7 @@ CraftSim.MODULES:RegisterModule("MODULE_DISENCHANT", CraftSim.DISENCHANT)
 ---@type table<string, boolean>
 CraftSim.DISENCHANT.sessionBlacklist = {}
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.Disenchant")
+local Logger = CraftSim.DEBUG:RegisterLogger("Disenchant")
 function CraftSim.DISENCHANT:Init()
 end
 
@@ -75,7 +75,7 @@ function CraftSim.DISENCHANT:FilterItems(items)
 
     return GUTIL:Filter(items, function(item)
         local itemLink = item:GetItemLink()
-        print("Filter Items: " .. itemLink)
+        Logger:LogDebug("Filter Items: " .. itemLink)
         -- not an equipment item
         if item:GetInventoryType() == 0 then return false end
 
@@ -85,7 +85,7 @@ function CraftSim.DISENCHANT:FilterItems(items)
         local itemSubType = itemInfo[7]
         local itemClass = itemInfo[12]
 
-        print("- ItemClass: " ..
+        Logger:LogDebug("- ItemClass: " ..
             tostring(itemClass) .. " ItemSubType: " .. tostring(itemSubType) .. " ItemQuality: " .. tostring(itemQuality))
 
         if itemClass == Enum.ItemClass.Container then return false end

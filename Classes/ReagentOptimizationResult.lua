@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.ReagentOptimizationResult")
+local Logger = CraftSim.DEBUG:RegisterLogger("ReagentOptimizationResult")
 
 ---@class CraftSim.ReagentOptimizationResult : CraftSim.CraftSimObject
 CraftSim.ReagentOptimizationResult = CraftSim.CraftSimObject:extend()

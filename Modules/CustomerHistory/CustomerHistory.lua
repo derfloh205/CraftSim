@@ -11,7 +11,7 @@ CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.CustomerHistory")
+local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory")
 
 function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY:AutoPurge()
@@ -34,8 +34,8 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
             end
         end
 
-        print("Claimed Order: ", false, true)
-        print(claimedOrder, true)
+        Logger:LogDebug("Claimed Order: ", false, true)
+        Logger:LogDebug(claimedOrder, true)
         local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
         local customerHistory = CraftSim.DB.CUSTOMER_HISTORY:Get(customer, realm)
         ---@type CraftSim.DB.CustomerHistory.Craft
@@ -104,14 +104,14 @@ function CraftSim.CUSTOMER_HISTORY:AutoPurge()
         -- debug
         local dayDiff = GUTIL:GetDaysBetweenTimestamps(currentTime,
             CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE"))
-        print("Day Difference:" .. dayDiff)
+        Logger:LogDebug("Day Difference:" .. dayDiff)
 
         if dayDiff >= CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") then
-            print("auto purge 0 tip customers.." .. tostring(dayDiff))
+            Logger:LogDebug("auto purge 0 tip customers.." .. tostring(dayDiff))
             CraftSim.DB.CUSTOMER_HISTORY:PurgeCustomers(tipThreshold)
             CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
         else
-            print("do not purge, daydiff too low: " .. tostring(dayDiff))
+            Logger:LogDebug("do not purge, daydiff too low: " .. tostring(dayDiff))
         end
     end
 end

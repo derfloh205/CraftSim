@@ -10,7 +10,7 @@ local GUTIL = CraftSim.GUTIL
 
 CraftSim.FRAME.frames = {}
 
-local print = CraftSim.DEBUG:RegisterLogger("Util.Frames")
+local Logger = CraftSim.DEBUG:RegisterLogger("Frames")
 
 function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if statDiff == nil then
@@ -37,7 +37,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.INIT.FRAMES) do
-        print(CraftSim.LOCAL:GetText("FRAMES_RESETTING") .. tostring(frame.frameID))
+        Logger:LogDebug(CraftSim.LOCAL:GetText("FRAMES_RESETTING") .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end

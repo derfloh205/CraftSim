@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterLogger("Database.ItemCountDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("ItemCountDB")
 
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB

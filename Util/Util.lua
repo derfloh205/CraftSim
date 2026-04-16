@@ -10,7 +10,7 @@ CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
 
-local print = CraftSim.DEBUG:RegisterLogger("Util")
+local Logger = CraftSim.DEBUG:RegisterLogger("Util")
 
 function CraftSim.UTIL:NextFrameLevel()
     local frameLevel = CraftSim.UTIL.frameLevel
@@ -226,7 +226,7 @@ function CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, cont
     end
 
     local itemName, _, _, _, _, _, _, _, _, _, _, _, _, _, itemExpacID = C_Item.GetItemInfo(itemID)
-    print(string.format("IsItemExpansionCompatible(%s, %s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
+    Logger:LogDebug(string.format("IsItemExpansionCompatible(%s, %s): recipeExpansionID=%s, itemID=%s, itemExpacID=%s",
         tostring(context), tostring(itemName), tostring(recipeExpansionID), tostring(itemID), tostring(itemExpacID)))
 
     if not recipeExpansionID then
@@ -409,8 +409,8 @@ function CraftSim.UTIL:IsCurrentExpansionRecipe(recipeID)
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         if not professionInfo.profession then
-            print("No Profession loaded yet?", false, true)
-            print(professionInfo, true)
+            Logger:LogDebug("No Profession loaded yet?", false, true)
+            Logger:LogDebug(professionInfo, true)
         end
 
         -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..

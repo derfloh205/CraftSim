@@ -48,12 +48,11 @@ GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
-local Logger = CraftSim.Logger
 
 ---@type CraftSim.RecipeData?
 CraftSim.MODULES.recipeData = nil
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules")
+local Logger = CraftSim.DEBUG:RegisterLogger("Modules")
 
 ---@param moduleID CraftSim.ModuleID
 ---@param module CraftSim.Module
@@ -63,7 +62,7 @@ end
 
 function CraftSim.MODULES:Init()
 	for moduleID, module in pairs(CraftSim.MODULES.modules) do
-		print("Initializing Module UI: " .. moduleID)
+		Logger:LogDebug("Initializing Module UI: " .. moduleID)
 		Logger:LogDebug("Initializing Module UI: {module}", moduleID)
 
 		module.moduleID = moduleID
@@ -174,13 +173,13 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 
 	local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
 	if not schematicForm then
-		print("CraftSim MODULES: No SchematicForm Visible")
+		Logger:LogDebug("CraftSim MODULES: No SchematicForm Visible")
 		return nil
 	end
 
 	local currentTransaction = schematicForm:GetTransaction()
 	if not currentTransaction then
-		print("CraftSim MODULES: SchematicForm without transaction!")
+		Logger:LogDebug("CraftSim MODULES: SchematicForm without transaction!")
 		return nil
 	end
 
@@ -281,7 +280,7 @@ function CraftSim.MODULES:Update()
 
 	local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
-	print("Export Mode: " .. tostring(exportMode))
+	Logger:LogDebug("Export Mode: " .. tostring(exportMode))
 
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		CraftSim.MODULES.recipeData = CraftSim.SIMULATION_MODE.recipeData
@@ -292,7 +291,7 @@ function CraftSim.MODULES:Update()
 	local recipeData = CraftSim.MODULES.recipeData
 
 	if not recipeData then
-		print("No recipe data found for visible recipe!")
+		Logger:LogDebug("No recipe data found for visible recipe!")
 		CraftSim.MODULES:Hide(true, true)
 		return
 	end

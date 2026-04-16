@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.ResultData")
+local Logger = CraftSim.DEBUG:RegisterLogger("ResultData")
 
 ---@class CraftSim.ResultData : CraftSim.CraftSimObject
 CraftSim.ResultData = CraftSim.CraftSimObject:extend()
@@ -44,7 +44,7 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         local craftingDataID = self.recipeData.baseOperationInfo.craftingDataID
         local ed = CraftSim.ENCHANT_RECIPE_DATA[craftingDataID]
         if not ed then
-            print("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. "/" .. craftingDataID)
+            Logger:LogDebug("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. "/" .. craftingDataID)
             return
         end
         -- q1–q3 scroll ids: expectedItem uses itemsByQuality[expectedQuality] when supportsQualities; not only lowest.
@@ -60,18 +60,18 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
     elseif recipeData.supportsQualities and not recipeData.isSalvageRecipe and not recipeData.recipeInfo.isGatheringRecipe then
-        print("fetching quality ids itemids:", false, true)
+        Logger:LogDebug("fetching quality ids itemids:", false, true)
         local itemIDs = C_TradeSkillUI.GetRecipeQualityItemIDs(recipeData.recipeID)
         for _, itemID in pairs(itemIDs or {}) do
-            print("itemID: " .. itemID)
+            Logger:LogDebug("itemID: " .. itemID)
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     else
-        print("fetching quality ids itemids:", false, true)
+        Logger:LogDebug("fetching quality ids itemids:", false, true)
         local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID,
             craftingReagentInfoTbl, recipeData.allocationItemGUID)
         for _, itemID in pairs(itemIDs) do
-            print("itemID: " .. itemID)
+            Logger:LogDebug("itemID: " .. itemID)
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     end
@@ -127,7 +127,7 @@ function CraftSim.ResultData:Update()
     -- based on stats predict the resulting items if there are any
 
     if #self.itemsByQuality == 0 then
-        print("ResultData: No OutputItems")
+        Logger:LogDebug("ResultData: No OutputItems")
         return
     end
 

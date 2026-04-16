@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.SpecializationData.NodeData.PerkData")
+local Logger = CraftSim.DEBUG:RegisterLogger("PerkData")
 
 
 ---@class CraftSim.PerkData : CraftSim.CraftSimObject

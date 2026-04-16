@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(currencyID : number): CraftSim.ConcentrationData
 CraftSim.ConcentrationData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.ConcentrationData")
+local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationData")
 
 ---@param currencyID number
 function CraftSim.ConcentrationData:new(currencyID)
@@ -29,7 +29,7 @@ function CraftSim.ConcentrationData:Copy()
 end
 
 function CraftSim.ConcentrationData:Update()
-    print("Updating ConcentrationData")
+    Logger:LogDebug("Updating ConcentrationData")
     local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.currencyID)
     if not currencyInfo then return end
     self.lastUpdated = GetServerTime() -- is in seconds

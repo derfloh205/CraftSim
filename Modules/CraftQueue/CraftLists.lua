@@ -10,7 +10,7 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFT_LISTS
 CraftSim.CRAFT_LISTS = {}
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.CraftLists")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
 ---@param list CraftSim.CraftList
 ---@return CraftSim.CraftListRecipeEntry[]
@@ -173,7 +173,7 @@ end
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    print("QueueSelectedLists called with crafterUID: " .. crafterUID)
+    Logger:LogDebug("QueueSelectedLists called with crafterUID: " .. crafterUID)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
@@ -216,7 +216,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         local list = selectedLists[listIndex]
         listIndex = listIndex + 1
 
-        print("Queueing list: " .. list.name)
+        Logger:LogDebug("Queueing list: " .. list.name)
 
         CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, processNextList)
     end
@@ -399,9 +399,9 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
         if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
             or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
             if not recipeInfo then
-                print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
+                Logger:LogDebug("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
             else
-                print(
+                Logger:LogDebug(
                     "Skipping unsupported recipe (dummy/gathering/recraft/salvage): " ..
                     recipeInfo.name .. " (recipeID: " .. recipeID .. ")", false, false, 1)
             end
@@ -411,17 +411,17 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         -- Skip unlearned recipes unless enableUnlearned option is set
         if not options.enableUnlearned and not recipeInfo.learned then
-            print("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
+            Logger:LogDebug("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
             frameDistributor:Continue()
             return
         end
 
-        print("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
+        Logger:LogDebug("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
 
         local recipeData = CraftSim.RecipeData { recipeID = recipeID, crafterData = playerCrafterData }
 
         if not recipeData then
-            print("Failed to create RecipeData", false, false, 1)
+            Logger:LogDebug("Failed to create RecipeData", false, false, 1)
             frameDistributor:Continue()
             return
         end
@@ -464,7 +464,7 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
 
         -- check if recipeData is on cooldown, and skip if it is
         if recipeData:OnCooldown() then
-            print("Skipping recipe on cooldown: " .. recipeData.recipeName)
+            Logger:LogDebug("Skipping recipe on cooldown: " .. recipeData.recipeName)
             frameDistributor:Continue()
             return
         end
@@ -506,13 +506,13 @@ function CraftSim.CRAFT_LISTS:QueueList(list, crafterUID, finally)
             } or nil,
             finally = function()
                 if options.onlyProfitable and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
-                    print("Skipping non-profitable recipe: " .. recipeData.recipeName)
+                    Logger:LogDebug("Skipping non-profitable recipe: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
 
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
-                print("queueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                Logger:LogDebug("queueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
                 if options.enableConcentration and options.smartConcentrationQueuing then
                     tinsert(optimizedRecipes, {
                         recipeData = recipeData,

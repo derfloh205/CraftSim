@@ -9,7 +9,7 @@ CraftSim.STATISTICS.frameNO_WO = nil
 ---@type GGUI.Frame
 CraftSim.STATISTICS.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterLogger("Modules.Statistics")
+local Logger = CraftSim.DEBUG:RegisterLogger("Statistics")
 
 -- https://math.stackexchange.com/questions/888165/abramowitz-and-stegun-approximation-for-cumulative-normal-distribution
 function CraftSim.STATISTICS:CDF(q, mu, sd)
@@ -72,10 +72,10 @@ function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityT
     local standardDeviationNumCrafts = math.sqrt(numCrafts) * standardDeviation
     local meanNumCrafts = meanOneCraft * numCrafts
 
-    print("mean (profit) of 1 craft: " .. CraftSim.UTIL:FormatMoney(meanOneCraft, true))
-    print("mean (profit) of " .. numCrafts .. " crafts: " .. CraftSim.UTIL:FormatMoney(meanNumCrafts, true))
-    print("standardDeviation 1 craft: " .. CraftSim.UTIL:FormatMoney(standardDeviation, true))
-    print("standardDeviation " .. numCrafts ..
+    Logger:LogDebug("mean (profit) of 1 craft: " .. CraftSim.UTIL:FormatMoney(meanOneCraft, true))
+    Logger:LogDebug("mean (profit) of " .. numCrafts .. " crafts: " .. CraftSim.UTIL:FormatMoney(meanNumCrafts, true))
+    Logger:LogDebug("standardDeviation 1 craft: " .. CraftSim.UTIL:FormatMoney(standardDeviation, true))
+    Logger:LogDebug("standardDeviation " .. numCrafts ..
         " crafts: " .. CraftSim.UTIL:FormatMoney(standardDeviationNumCrafts, true))
 
 
@@ -84,14 +84,14 @@ function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityT
     --meanNumCrafts = 5
     --standardDeviationNumCrafts = 1
 
-    print("CDF of: " .. tostring(meanNumCrafts) .. ", " .. tostring(standardDeviationNumCrafts))
+    Logger:LogDebug("CDF of: " .. tostring(meanNumCrafts) .. ", " .. tostring(standardDeviationNumCrafts))
     local cdfResult = CraftSim.STATISTICS:CDF(0, meanNumCrafts, standardDeviationNumCrafts)
-    print("result: " .. tostring(cdfResult))
+    Logger:LogDebug("result: " .. tostring(cdfResult))
 
     -- get probability of x or higher:
     local chanceOfHavingHigher = 1 - cdfResult
 
-    print("chance for profit > 0 after crafts: " .. tostring(chanceOfHavingHigher))
+    Logger:LogDebug("chance for profit > 0 after crafts: " .. tostring(chanceOfHavingHigher))
 
     return chanceOfHavingHigher
 end

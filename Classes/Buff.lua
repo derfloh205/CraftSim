@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.BuffData.Buff")
+local Logger = CraftSim.DEBUG:RegisterLogger("Buff")
 
 ---@class CraftSim.Buff : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, buffID: CraftSim.BuffID, professionStats:CraftSim.ProfessionStats, qualityID: number?, valuePointData: CraftSim.Buff.ValuePointData?, displayBuffID: number?, customTooltip: string?, displayItemID: number?): CraftSim.Buff

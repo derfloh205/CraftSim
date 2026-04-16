@@ -15,7 +15,7 @@ CraftSim.DB = {}
 ---@alias CurrencyID number
 ---@alias QualityID number between 1 and 5
 
-local print = CraftSim.DEBUG:RegisterLogger("Database")
+local Logger = CraftSim.DEBUG:RegisterLogger("Database")
 
 ---@class CraftSim.DB.Repository
 ---@field name string

@@ -18,7 +18,7 @@ CraftSim.DB.ITEM_OPTIMIZED_COSTS = CraftSim.DB:RegisterRepository("ItemOptimized
 ---@field concentration boolean
 ---@field concentrationCost number
 
-local print = CraftSim.DEBUG:RegisterLogger("Database.itemOptimizedCostsDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("itemOptimizedCostsDB")
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Init()
     if not CraftSimDB.itemOptimizedCostsDB then
@@ -62,7 +62,7 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
         for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
             local reachable = qualityID <= recipeData.resultData.expectedQualityConcentration
             if reachable then
-                print("Caching Optimized Costs Data for: " .. recipeData.recipeName .. " q" .. qualityID)
+                Logger:LogDebug("Caching Optimized Costs Data for: " .. recipeData.recipeName .. " q" .. qualityID)
                 local itemID = item:GetItemID()
                 CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
 

@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterLogger("Data.ItemCount")
+local Logger = CraftSim.DEBUG:RegisterLogger("ItemCount")
 
 ---@class CraftSim.ITEM_COUNT : Frame
 CraftSim.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })
@@ -70,7 +70,7 @@ end
 --- loops all of a players inventory+bank bags and updates all tradegoods item count
 function CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
     local alreadyUpdated = {} -- small map to cache already updated IDs to not double update them
-    print("Start Bag Update..")
+    Logger:LogDebug("Start Bag Update..")
     local function countBagItems(bagID)
         for slot = 1, C_Container.GetContainerNumSlots(bagID) do
             local itemID = C_Container.GetContainerItemID(bagID, slot)
@@ -81,7 +81,7 @@ function CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
                 local itemIcon = itemInfoInstant[5]
                 if Enum.ItemClass.Tradegoods == itemClassID then
                     if not alreadyUpdated[itemID] then
-                        print("Updating Count: " .. GUTIL:IconToText(itemIcon, 20, 20))
+                        Logger:LogDebug("Updating Count: " .. GUTIL:IconToText(itemIcon, 20, 20))
                         alreadyUpdated[itemID] = true
                         self:UpdateAllCountsForItemID(itemID)
                     end

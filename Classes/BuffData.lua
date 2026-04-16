@@ -11,7 +11,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 
 local debug = false
 
-local print = CraftSim.DEBUG:RegisterLogger("Classes.RecipeData.BuffData")
+local Logger = CraftSim.DEBUG:RegisterLogger("BuffData")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.BuffData:new(recipeData)
@@ -38,7 +38,7 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     local profession = self.recipeData.professionData.professionInfo.profession
 
-    print("Creating initial buff data objects: " .. tostring(profession), false, true)
+    Logger:LogDebug("Creating initial buff data objects: " .. tostring(profession), false, true)
 
     -- TWW Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
@@ -263,7 +263,7 @@ function CraftSim.BuffData:SetBuffByUID(buffUID, active)
     end)
 
     if buff then
-        print("Setting " .. buff.name .. ": " .. tostring(active))
+        Logger:LogDebug("Setting " .. buff.name .. ": " .. tostring(active))
         buff.active = active
     end
 end

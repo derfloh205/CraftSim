@@ -12,7 +12,7 @@ CraftSim.NEWS.GITHUB_COLLABS = {
     NETOUSS = "https://github.com/netouss",
 }
 
-local print = CraftSim.DEBUG:RegisterLogger("Data.News")
+local Logger = CraftSim.DEBUG:RegisterLogger("News")
 local function newP(v) return f.l("\nPatch Notes " .. v .. "\n") end
 local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 
@@ -115,8 +115,8 @@ function CraftSim.NEWS:GetChecksum(newsText)
         checksum = (checksum + string.byte(newsText, i)) % checkSumBitSize
     end
 
-    -- print("replacing links in newstext:")
-    -- print(newsText)
+    -- Logger:LogDebug("replacing links in newstext:")
+    -- Logger:LogDebug(newsText)
 
     return checksum
 end
