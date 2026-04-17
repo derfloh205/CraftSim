@@ -244,7 +244,7 @@ CraftSim.CRAFTQ.purchasedItem = nil
 ---@param itemID number
 ---@param boughtQuantity number
 function CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
         return -- do not need if Auctionator not loaded
     end
 
@@ -268,7 +268,7 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     self.quickBuyCache.pendingItemCount = nil
     self.quickBuyCache.pendingItemID = nil
 
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
         return -- do not need if Auctionator not loaded
     end
 
@@ -1234,7 +1234,7 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
         print("No quality checked -> sale rate true")
         return true -- if nothing is checked for an individual sale rate check then its just true
     end
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1]) then
         print("tsm not loaded -> sale rate true")
         return true -- always true if TSM is not loaded
     end
