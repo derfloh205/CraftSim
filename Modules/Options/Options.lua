@@ -196,7 +196,7 @@ function CraftSim.OPTIONS:Init()
         L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX"), L("OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL"), 1, 50, 1, 0)
 
     -- TSM (embedded panel; `CraftSimOptionsInitTSMPanel` runs from template OnLoad)
-    if select(2, C_AddOns.IsAddOnLoaded("TradeSkillMaster")) then
+    if C_AddOns.IsAddOnLoaded("TradeSkillMaster") then
         regSection(L("OPTIONS_TSM_TAB"), L("OPTIONS_TSM_SECTION_TOOLTIP"))
         Settings.RegisterInitializer(mainCategory,
             Settings.CreatePanelInitializer("CraftSimSettingsTsmPanelTemplate", {}))

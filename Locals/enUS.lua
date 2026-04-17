@@ -400,7 +400,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_CONCENTRATION_VALUE_HEADER = "C. Value",
         RECIPE_SCAN_CONCENTRATION_COST_HEADER = "C. Cost",
         RECIPE_SCAN_TOP_GEAR_HEADER = "Top Gear",
-        RECIPE_SCAN_INV_AH_HEADER = "Inv/AH",
+        RECIPE_SCAN_INV_AH_HEADER = "Inv",
         RECIPE_SCAN_SORT_BY_MARGIN = "Sort by Profit %",
         RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =
         "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
@@ -447,6 +447,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS = "Include " .. f.e("Soulbound") .. " Items",
         RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES = "Include " .. f.r("Unlearned") .. " Recipes",
         RECIPE_SCAN_INCLUDE_GEAR_LABEL = "Include Gear",
+        RECIPE_SCAN_INV_COUNT_INCLUDE_ALTS_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         RECIPE_SCAN_REAGENT_ALLOCATION = "Reagent Allocation",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q1 = "All Q1",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q2 = "All Q2",
@@ -1010,6 +1011,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
         "When enabled, craft list restock queues max(0, target - how many you already have).\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
+        CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
+        CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
+        "When enabled, alt characters' inventory is also subtracted from the restock target.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after queueing",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
