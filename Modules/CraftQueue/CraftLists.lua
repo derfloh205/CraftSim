@@ -138,12 +138,16 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     end
 
     -- ── Step 2: Cooldown Triage ───────────────────────────────────────────────
+    -- For shared cooldowns (e.g. alchemy transmutations), multiple recipe IDs share
+    -- the same lockout.  Use cooldownData.sharedCD as the group key when present so
+    -- that all recipes sharing a cooldown compete for the same pool of charges.
     ---@type table<string, CraftSim.CRAFT_LISTS.ScanEntry[]>
     local cooldownGroups = {}
     for _, entry in ipairs(allScanEntries) do
         local rd = entryEffectiveRD[entry]
         if rd.cooldownData and rd.cooldownData.isCooldownRecipe then
-            local key = entry.crafterUID .. ":" .. rd.recipeID
+            local cdKey = rd.cooldownData.sharedCD or rd.recipeID
+            local key = entry.crafterUID .. ":" .. cdKey
             cooldownGroups[key] = cooldownGroups[key] or {}
             tinsert(cooldownGroups[key], entry)
         end
