@@ -400,7 +400,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_CONCENTRATION_VALUE_HEADER = "C. Value",
         RECIPE_SCAN_CONCENTRATION_COST_HEADER = "C. Cost",
         RECIPE_SCAN_TOP_GEAR_HEADER = "Top Gear",
-        RECIPE_SCAN_INV_AH_HEADER = "Inv/AH",
+        RECIPE_SCAN_INV_AH_HEADER = "Inv",
         RECIPE_SCAN_SORT_BY_MARGIN = "Sort by Profit %",
         RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =
         "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
@@ -447,6 +447,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS = "Include " .. f.e("Soulbound") .. " Items",
         RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES = "Include " .. f.r("Unlearned") .. " Recipes",
         RECIPE_SCAN_INCLUDE_GEAR_LABEL = "Include Gear",
+        RECIPE_SCAN_INV_COUNT_INCLUDE_ALTS_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         RECIPE_SCAN_REAGENT_ALLOCATION = "Reagent Allocation",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q1 = "All Q1",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q2 = "All Q2",
