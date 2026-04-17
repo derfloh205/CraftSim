@@ -564,12 +564,13 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         -- Derive reagent optimize options from the allocation mode
         -- OPTIMIZE_HIGHEST and legacy "OPTIMIZE" leave optimizeReagentOptions as nil (default: optimize to highest quality)
         local optimizeReagentOptions = nil
+        local targetQuality = nil
         if reagentAllocation == "OPTIMIZE_MOST_PROFITABLE" then
             optimizeReagentOptions = { highestProfit = true }
         else
-            local targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
+            targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
             if targetQuality then
-                optimizeReagentOptions = { maxQuality = targetQuality }
+                optimizeReagentOptions = { minQuality = targetQuality, maxQuality = targetQuality }
             end
         end
 
@@ -633,6 +634,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     return
                 end
 
+                if targetQuality and recipeData.resultData.expectedQuality ~= targetQuality then
+                    print("Skipping not targetQuality: " .. recipeData.recipeName .. " (Target: ".. targetQuality .. " Expected: ".. recipeData.resultData.expectedQuality .. ")")
+                    frameDistributor:Continue()
+                    return
+                end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
                 Logger:LogDebug("maxQueueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
