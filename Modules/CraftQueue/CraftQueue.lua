@@ -31,6 +31,7 @@ CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RES
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
+    "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
 })
 
@@ -1640,5 +1641,15 @@ end
 function CraftSim.CRAFTQ:CRAFTSIM_CRAFTING_ORDERS_PRELOADED()
     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
         RunNextFrame(function() self:QueueWorkOrders() end)
+    end
+end
+
+---@param optionID CraftSim.GENERAL_OPTIONS
+---@param value any
+function CraftSim.CRAFTQ:CRAFTSIM_SETTINGS_UPDATED(optionID, value)
+    if optionID == "SHOW_TUTORIAL_BUTTONS" then
+        ---@type GGUI.TutorialButton
+        local queueTutorialButton = self.frame.content.queueTab.content.queueTutorialButton
+        queueTutorialButton.frame:SetShown(value)
     end
 end

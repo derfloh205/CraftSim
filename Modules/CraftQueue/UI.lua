@@ -1923,15 +1923,15 @@ function CraftSim.CRAFTQ.UI:Init()
             }
         end
 
-        frame.content.queueTutorialButton = GGUI.TutorialButton({
-            parent = frame.content,
+        queueTab.content.queueTutorialButton = GGUI.TutorialButton({
+            parent = queueTab.content,
             anchorPoints = {
                 {
-                    anchorParent = frame.content,
-                    anchorA = "TOPRIGHT",
-                    anchorB = "TOPRIGHT",
-                    offsetX = -70,
-                    offsetY = 5,
+                    anchorParent = frame.title.frame,
+                    anchorA = "RIGHT",
+                    anchorB = "LEFT",
+                    offsetX = -7,
+                    offsetY = 0,
                 },
             },
             scale = 0.7,
@@ -2028,6 +2028,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     auctionatorHelpPanelDef
                 },
             },
+            hide = not CraftSim.DB.OPTIONS:Get("SHOW_TUTORIAL_BUTTONS")
         })
     end
 

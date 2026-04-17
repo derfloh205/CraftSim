@@ -548,6 +548,8 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_GENERAL_CURRENT_INVENTORY_SOURCE = "Current Inventory Source: ",
         OPTIONS_GENERAL_NO_INVENTORY_SOURCE = "No Supported Inventory Addon loaded!",
         OPTIONS_GENERAL_SUPPORTED_INVENTORY_SOURCES = "Supported Inventory Sources:",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_CHECKBOX = "Show Module Tutorial Buttons",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_TOOLTIP = "Show tutorial buttons for each module",
         OPTIONS_PERFORMANCE_RAM = "Enable RAM cleanup while crafting",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "Crafts",
         OPTIONS_PERFORMANCE_RAM_TOOLTIP =
