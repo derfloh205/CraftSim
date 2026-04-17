@@ -38,6 +38,7 @@ function CraftSim.WIDGETS.ContextMenu.Build(rootDescription, items)
                 return item.get() == value
             end, function()
                 item.set(value)
+                return MenuResponse.Refresh
             end)
             if item.tooltip and el and el.SetTooltip then
                 el:SetTooltip(item.tooltip)
