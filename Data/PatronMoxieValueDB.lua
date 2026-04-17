@@ -95,6 +95,23 @@ local specsByCurrencyID = {
     [3266] = SURPLUS_BAG_TAILORING,
 }
 
+--- Vendor "Master … Surplus Reagent(s)" bag item ID -> storage currency id (same grouping as Craft Queue Moxie values).
+--- Midnight vendor surplus bags; item IDs confirmed in-game / Wowhead (no item 260535).
+---@type table<number, number>
+local surplusVendorBagItemToStorageCurrency = {
+    [260534] = 3256, -- Master Alchemist's (alchemy / herb / inscription group)
+    [260536] = 3257, -- Master Smith's
+    [260537] = 3258, -- Master Enchanter's
+    [260538] = 3257, -- Master Engineer's
+    [260539] = 3256, -- Master Herbalist's
+    [260540] = 3256, -- Master Scribe's (inscription)
+    [260541] = 3257, -- Master Jewelcrafter's
+    [260542] = 3263, -- Master Leatherworker's
+    [260543] = 3257, -- Master Miner's
+    [260544] = 3263, -- Master Skinner's
+    [260545] = 3266, -- Master Tailor's
+}
+
 ---@type table<number, number>
 local storageCurrencyIDByCurrencyID = {
     -- Shared bag/value groups should use one storage key.
@@ -121,6 +138,12 @@ end
 ---@return number
 function CraftSim.PATRON_MOXIE_SURPLUS:GetStorageCurrencyID(currencyID)
     return storageCurrencyIDByCurrencyID[currencyID] or currencyID
+end
+
+---@param itemID number
+---@return number|nil storageCurrencyID
+function CraftSim.PATRON_MOXIE_SURPLUS:GetVendorSurplusBagStorageCurrencyID(itemID)
+    return surplusVendorBagItemToStorageCurrency[itemID]
 end
 
 ---@param currencyID number
@@ -154,6 +177,20 @@ function CraftSim.PATRON_MOXIE_SURPLUS:ComputeCopperPerMoxie(currencyID)
         return nil
     end
     return RoundCopper(total / expectedMoxie)
+end
+
+--- AH estimate for one full surplus turn-in (expected reagents) and implied per-Moxie copper.
+---@param storageCurrencyID number
+---@return number|nil totalCopper
+---@return number|nil perMoxieCopper
+function CraftSim.PATRON_MOXIE_SURPLUS:GetSurplusTurnInAHValue(storageCurrencyID)
+    local perMoxie = self:ComputeCopperPerMoxie(storageCurrencyID)
+    local expectedMoxie = self:GetExpectedMoxie(storageCurrencyID)
+    if not perMoxie or not expectedMoxie or expectedMoxie <= 0 then
+        return nil, nil
+    end
+    local total = math.floor(perMoxie * expectedMoxie + 0.5)
+    return total, perMoxie
 end
 
 --- Persisted Craft Queue "copper per Moxie" overrides (shared storage key per surplus group).
