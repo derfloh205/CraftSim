@@ -2538,16 +2538,16 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") ..
                 " " .. GUTIL:GetQualityIconString(1, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q1 end,
-                function() opts.reagentAllocation = RA.Q1 end)
+                function() opts.reagentAllocation = RA.Q1 return MenuResponse.Refresh end)
             reagentAllocationButton:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") ..
                 " " .. GUTIL:GetQualityIconString(2, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q2 end,
-                function() opts.reagentAllocation = RA.Q2 end)
+                function() opts.reagentAllocation = RA.Q2 return MenuResponse.Refresh end)
             reagentAllocationButton:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q3") .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == RA.Q3 end,
-                function() opts.reagentAllocation = RA.Q3 end)
+                function() opts.reagentAllocation = RA.Q3 return MenuResponse.Refresh end)
 
             -- Optimize sub-submenu
             local reagentAllocationOptimizeButton = reagentAllocationButton:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
@@ -2558,12 +2558,12 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     local ra = opts.reagentAllocation or "OPTIMIZE_HIGHEST"
                     return ra == "OPTIMIZE_HIGHEST" or ra == "OPTIMIZE"
                 end,
-                function() opts.reagentAllocation = "OPTIMIZE_HIGHEST" end)
+                function() opts.reagentAllocation = "OPTIMIZE_HIGHEST" return MenuResponse.Refresh end)
 
             reagentAllocationOptimizeButton:CreateRadio(
                 L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE"),
                 function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == "OPTIMIZE_MOST_PROFITABLE" end,
-                function() opts.reagentAllocation = "OPTIMIZE_MOST_PROFITABLE" end)
+                function() opts.reagentAllocation = "OPTIMIZE_MOST_PROFITABLE" return MenuResponse.Refresh end)
 
             -- Target Quality sub-submenu
             local targetQualityButton = reagentAllocationOptimizeButton:CreateButton(
@@ -2579,7 +2579,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 targetQualityButton:CreateRadio(
                     qualityLabel,
                     function() return (opts.reagentAllocation or "OPTIMIZE_HIGHEST") == allocationValue end,
-                    function() opts.reagentAllocation = allocationValue end)
+                    function() opts.reagentAllocation = allocationValue return MenuResponse.Refresh end)
             end
 
             optimizationButton:CreateCheckbox(
@@ -2604,7 +2604,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local simpleRadio = finishingAlgorithmButton:CreateRadio(
                 L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
                 function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) ~= FA.PERMUTATION end,
-                function() opts.finishingReagentsAlgorithm = FA.SIMPLE end)
+                function() opts.finishingReagentsAlgorithm = FA.SIMPLE return MenuResponse.Refresh end)
             simpleRadio:SetTooltip(function(tooltip, _)
                 GameTooltip_AddInstructionLine(tooltip,
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
@@ -2613,7 +2613,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
             local permutationRadio = finishingAlgorithmButton:CreateRadio(
                 L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
                 function() return (opts.finishingReagentsAlgorithm or FA.SIMPLE) == FA.PERMUTATION end,
-                function() opts.finishingReagentsAlgorithm = FA.PERMUTATION end)
+                function() opts.finishingReagentsAlgorithm = FA.PERMUTATION return MenuResponse.Refresh end)
             permutationRadio:SetTooltip(function(tooltip, _)
                 GameTooltip_AddInstructionLine(tooltip,
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
