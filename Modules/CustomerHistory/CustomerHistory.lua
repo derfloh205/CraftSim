@@ -36,7 +36,6 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
         end
 
         Logger:LogDebug("Claimed Order: ", false, true)
-        Logger:LogDebug(claimedOrder, true)
         local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
         local customerHistory = CraftSim.DB.CUSTOMER_HISTORY:Get(customer, realm)
         ---@type CraftSim.DB.CustomerHistory.Craft

@@ -46,7 +46,6 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		local resourcefulness = string.lower(CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS"))
 		local ingenuity = string.lower(CraftSim.LOCAL:GetText("STAT_INGENUITY"))
 		local craftingspeed = string.lower(CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED"))
-		Logger:LogDebug(CraftSim.LOCAL)
 		if statName == craftingspeed then
 			self.craftingspeed:SetValueByPercent(statInfo.ratingPct / 100)
 		elseif statName == multicraft then

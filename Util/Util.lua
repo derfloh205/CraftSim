@@ -410,7 +410,6 @@ function CraftSim.UTIL:IsCurrentExpansionRecipe(recipeID)
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         if not professionInfo.profession then
             Logger:LogDebug("No Profession loaded yet?", false, true)
-            Logger:LogDebug(professionInfo, true)
         end
 
         -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..

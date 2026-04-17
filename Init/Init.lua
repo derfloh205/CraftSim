@@ -206,7 +206,6 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
-
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
@@ -317,6 +316,7 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
+		CraftSim.DEBUG:Init()
 		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 

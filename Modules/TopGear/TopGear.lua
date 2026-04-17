@@ -471,7 +471,6 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
 
     if hasResults and not recipeData.professionGearSet:Equals(results[1].professionGearSet) then
         Logger:LogDebug("best result")
-        Logger:LogDebug(results[1])
         CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
     else
         CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, false, exportMode)
