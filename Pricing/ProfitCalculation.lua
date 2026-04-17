@@ -114,16 +114,24 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     local expectedDeposit = CraftSimTSM:GetExpectedDeposit(recipeData)
 
     if not recipeData.supportsCraftingStats then
-        local resultItemPrice = priceData.qualityPriceList[1] or 0
-        local resultItem = recipeData.resultData.itemsByQuality[1]
-        local isGrey = resultItem and CraftSim.UTIL:IsGreyItem(resultItem:GetItemID())
-        local resultValue
-        if isGrey then
-            resultValue = resultItemPrice * recipeData.baseItemAmount
+        local profit
+        if recipeData.orderData then
+            -- For work orders the crafter receives a fixed commission; the crafted item
+            -- goes to the customer, so item value and multicraft yield are irrelevant.
+            local comissionProfit = self:CalculateCommissionProfit(recipeData)
+            profit = comissionProfit - priceData.craftingCosts
         else
-            resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+            local resultItemPrice = priceData.qualityPriceList[1] or 0
+            local resultItem = recipeData.resultData.itemsByQuality[1]
+            local isGrey = resultItem and CraftSim.UTIL:IsGreyItem(resultItem:GetItemID())
+            local resultValue
+            if isGrey then
+                resultValue = resultItemPrice * recipeData.baseItemAmount
+            else
+                resultValue = resultItemPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+            end
+            profit = resultValue - priceData.craftingCosts - expectedDeposit
         end
-        local profit = resultValue - priceData.craftingCosts - expectedDeposit
 
         local probabilityTable = { { chance = 1, profit = profit } }
         return profit, probabilityTable
