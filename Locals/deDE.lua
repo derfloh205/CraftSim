@@ -203,7 +203,7 @@ function CraftSim.LOCAL_DE:GetData()
         SPEC_INFO_WORK_IN_PROGRESS = "Spezialisierungsinfo\nIn Arbeit",
 
         -- Herstellungs-Ergebnisse-Fenster
-        CRAFT_LOG_TITLE = "CraftSim Herstellungsergebnisse",
+        CRAFT_LOG_TITLE = "CraftSim Ergebnisse",
         CRAFT_LOG_LOG = "Herstellungsprotokoll",
         CRAFT_LOG_LOG_1 = "Gewinn: ",
         CRAFT_LOG_LOG_2 = "Inspiriert!",
