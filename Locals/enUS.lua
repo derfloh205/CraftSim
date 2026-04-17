@@ -796,7 +796,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_SUGGESTED = "Suggested",
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_REAGENT_TOTAL = "Reagents (expected)",
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_PER_MOXIE = "Per " .. f.bb("Moxie"),
-        PATRON_MOXIE_SURPLUS_BAG_ITEM_TOOLTIP_EXPECTED_VALUE = "Expected value",
+        PATRON_MOXIE_SURPLUS_BAG_ITEM_TOOLTIP_EXPECTED_VALUE = "Expected Value",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") ..
             f.gold("Concentration") .. f.bb(" Queueing"),
