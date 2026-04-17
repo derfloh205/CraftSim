@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.CALC = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("ProfitCalculation")
+local Logger = CraftSim.DEBUG:RegisterLogger("ProfitCalculation")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
@@ -104,10 +104,10 @@ end
 ---@return number meanProfit
 ---@return CraftSim.ProbabilityInfo[] probabilityTable
 function CraftSim.CALC:GetAverageProfit(recipeData)
-    print("Get Average Profit", false, true)
-    print("Supports Crafting Stats: " .. tostring(recipeData.supportsCraftingStats))
-    print("Multicraft: " .. tostring(recipeData.supportsMulticraft))
-    print("Resourcefulness: " .. tostring(recipeData.supportsResourcefulness))
+    Logger:LogDebug("Get Average Profit", false, true)
+    Logger:LogDebug("Supports Crafting Stats: " .. tostring(recipeData.supportsCraftingStats))
+    Logger:LogDebug("Multicraft: " .. tostring(recipeData.supportsMulticraft))
+    Logger:LogDebug("Resourcefulness: " .. tostring(recipeData.supportsResourcefulness))
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
     -- TSM Enhanced: expected deposit cost (0 when disabled or TSM not loaded)
@@ -156,7 +156,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
         local probabilityTable = {}
 
-        print("Build Probability Table (MC, RES)")
+        Logger:LogDebug("Build Probability Table (MC, RES)")
 
         local bitMax = "11"
         local numBits = string.len(bitMax)
@@ -191,7 +191,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
 
             combinationProfit = resultValue - craftingCosts - expectedDeposit
-            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            --Logger:LogDebug(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = MC,
                 resourcefulness = RES,
@@ -207,8 +207,8 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
-        print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        Logger:LogDebug("Probability Sum: " .. tostring(probabilitySum))
+        Logger:LogDebug("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
@@ -221,7 +221,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
         local probabilityTable = {}
 
-        print("Build Probability Table (RES)")
+        Logger:LogDebug("Build Probability Table (RES)")
 
         local bitMax = "1"
         local numBits = string.len(bitMax)
@@ -248,7 +248,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
                 recipeData.baseItemAmount)
 
             combinationProfit = resultValue - craftingCosts - expectedDeposit
-            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            --Logger:LogDebug(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = RES,
                 chance = combinationChance,
@@ -263,17 +263,17 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
-        print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        Logger:LogDebug("Probability Sum: " .. tostring(probabilitySum))
+        Logger:LogDebug("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsResourcefulness then
         -- before having a salvage item allocated in prospecting e.g.
-        print("recipe does not support anything?")
+        Logger:LogDebug("recipe does not support anything?")
         return 0, {}
     end
 
-    print(CraftSim.GUTIL:ColorizeText("Szenario not implemented yet", CraftSim.GUTIL.COLORS.RED), false, true)
+    Logger:LogDebug(CraftSim.GUTIL:ColorizeText("Szenario not implemented yet", CraftSim.GUTIL.COLORS.RED), false, true)
 
 
     return 0, {}

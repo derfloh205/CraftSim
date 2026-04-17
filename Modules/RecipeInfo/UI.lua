@@ -13,7 +13,7 @@ CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 ---@class CraftSim.RECIPE_INFO.UI
 CraftSim.RECIPE_INFO.UI  = {}
 
-local print              = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeInfo.UI")
+local Logger              = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
 
 local NAME_COLUMN_WIDTH  = 130
 local VALUE_COLUMN_WIDTH = 180

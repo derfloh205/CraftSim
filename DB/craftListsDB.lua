@@ -42,7 +42,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.CRAFT_LISTS : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_LISTS = CraftSim.DB:RegisterRepository("CraftListsDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.craftListsDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("craftListsDB")
 
 ---@return CraftSim.CraftList.Options
 local function DefaultOptions()

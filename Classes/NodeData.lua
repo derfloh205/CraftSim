@@ -10,7 +10,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@overload fun(recipeData: CraftSim.RecipeData?, baseNodeData: CraftSim.RawPerkData?, perkMap?: table<number, CraftSim.RawPerkData>): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.SpecializationData.NodeData")
+local Logger = CraftSim.DEBUG:RegisterLogger("NodeData")
 
 ---@param recipeData CraftSim.RecipeData?
 ---@param baseNodeData CraftSim.RawPerkData

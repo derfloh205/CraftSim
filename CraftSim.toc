@@ -33,8 +33,8 @@ Init/GLibs.lua
 
 Util/Const.lua
 
-Modules/Debug/Debug.lua
-Modules/Debug/UI.lua
+Debug/Debug.lua
+Debug/UI.lua
 
 Util/Util.lua
 

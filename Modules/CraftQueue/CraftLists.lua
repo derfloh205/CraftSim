@@ -10,7 +10,7 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFT_LISTS
 CraftSim.CRAFT_LISTS = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
 ---@param list CraftSim.CraftList
 ---@return CraftSim.CraftListRecipeEntry[]
@@ -302,7 +302,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                     CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
                 end
             else
-                print("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
+                Logger:LogDebug("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
             end
         end
     end
@@ -348,7 +348,7 @@ end
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    print("QueueSelectedLists called with crafterUID: " .. crafterUID)
+    Logger:LogDebug("QueueSelectedLists called with crafterUID: " .. crafterUID)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
@@ -394,7 +394,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         local list = selectedLists[listIndex]
         listIndex = listIndex + 1
 
-        print("Scanning list: " .. list.name)
+        Logger:LogDebug("Scanning list: " .. list.name)
 
         CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, processNextList)
     end
@@ -515,9 +515,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
             or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
             if not recipeInfo then
-                print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
+                Logger:LogDebug("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
             else
-                print(
+                Logger:LogDebug(
                     "Skipping unsupported recipe (dummy/gathering/recraft/salvage): " ..
                     recipeInfo.name .. " (recipeID: " .. recipeID .. ")", false, false, 1)
             end
@@ -527,17 +527,17 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         -- Skip unlearned recipes unless enableUnlearned option is set
         if not options.enableUnlearned and not recipeInfo.learned then
-            print("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
+            Logger:LogDebug("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
             frameDistributor:Continue()
             return
         end
 
-        print("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
+        Logger:LogDebug("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
 
         local recipeData = CraftSim.RecipeData { recipeID = recipeID, crafterData = playerCrafterData }
 
         if not recipeData then
-            print("Failed to create RecipeData", false, false, 1)
+            Logger:LogDebug("Failed to create RecipeData", false, false, 1)
             frameDistributor:Continue()
             return
         end
@@ -580,7 +580,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         -- check if recipeData is on cooldown, and skip if it is
         if recipeData:OnCooldown() then
-            print("Skipping recipe on cooldown: " .. recipeData.recipeName)
+            Logger:LogDebug("Skipping recipe on cooldown: " .. recipeData.recipeName)
             frameDistributor:Continue()
             return
         end
@@ -628,13 +628,13 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
                 -- again during TriageAndQueue before the entry is actually queued.
                 if options.onlyProfitable and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
-                    print("Skipping non-profitable recipe: " .. recipeData.recipeName)
+                    Logger:LogDebug("Skipping non-profitable recipe: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
 
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
-                print("maxQueueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                Logger:LogDebug("maxQueueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

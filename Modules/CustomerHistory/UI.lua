@@ -10,7 +10,7 @@ CraftSim.CUSTOMER_HISTORY.UI = {}
 ---@type CraftSim.CUSTOMER_HISTORY.FRAME
 CraftSim.CUSTOMER_HISTORY.frame = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CustomerHistory.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory.UI")
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 

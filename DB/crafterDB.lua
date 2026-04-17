@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.CRAFTER : CraftSim.DB.Repository
 CraftSim.DB.CRAFTER = CraftSim.DB:RegisterRepository("CrafterDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.crafterDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("crafterDB")
 
 ---@class CraftSim.DB.CrafterDBData.ProfessionGearData
 ---@field cached boolean

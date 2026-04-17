@@ -16,7 +16,7 @@ CraftSim.SIMULATION_MODE.specializationData = nil
 ---@type {skill: number, multicraft: number, resourcefulness: number, ingenuity: number, recipeDifficulty: number}?
 CraftSim.SIMULATION_MODE.userStatModifiers = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode")
+local Logger = CraftSim.DEBUG:RegisterLogger("SimulationMode")
 
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
@@ -55,7 +55,7 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
         numericInput.textInput:SetText(tonumber(inputNumber), false)
     end
 
-    print("startinput after validation: " .. inputNumber)
+    Logger:LogDebug("startinput after validation: " .. inputNumber)
 
     -- update specdata
     ---@type CraftSim.NodeData
@@ -67,8 +67,8 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
     end
     nodeData.rank = inputNumber
 
-    print("new rank: " .. nodeData.rank)
-    print("new active: " .. tostring(nodeData.active))
+    Logger:LogDebug("new rank: " .. nodeData.rank)
+    Logger:LogDebug("new active: " .. tostring(nodeData.active))
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
@@ -128,8 +128,8 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         baseProfessionStatsSpec = CraftSim.SIMULATION_MODE.specializationData.professionStats
         professionStatsSpec = recipeData.specializationData.professionStats
 
-        print("base stats spec multi: " .. baseProfessionStatsSpec.multicraft.value)
-        print("profession stats spec multi: " .. professionStatsSpec.multicraft.value)
+        Logger:LogDebug("base stats spec multi: " .. baseProfessionStatsSpec.multicraft.value)
+        Logger:LogDebug("profession stats spec multi: " .. professionStatsSpec.multicraft.value)
 
         professionStatsSpecDiff = baseProfessionStatsSpec:Copy()
         professionStatsSpecDiff:subtract(professionStatsSpec)
@@ -189,7 +189,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     if not recipeData then
         return
     end
-    print("Update Reagent Input Frames:")
+    Logger:LogDebug("Update Reagent Input Frames:")
 
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
@@ -237,7 +237,6 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UpdateRecipeDataBuffsBySimulatedBuffs")
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
 
     if not recipeData then return end

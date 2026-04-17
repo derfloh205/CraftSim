@@ -10,7 +10,7 @@ local GUTIL = CraftSim.GUTIL
 
 CraftSim.FRAME.frames = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Util.Frames")
+local Logger = CraftSim.DEBUG:RegisterLogger("Frames")
 
 function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if statDiff == nil then
@@ -47,11 +47,9 @@ function CraftSim.FRAME:RestoreModulePositions()
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
     local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
-    local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
 
     infoFrame:RestoreSavedConfig(UIParent)
-    debugFrame:RestoreSavedConfig(UIParent)
     CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
@@ -85,7 +83,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.INIT.FRAMES) do
-        print(CraftSim.LOCAL:GetText("FRAMES_RESETTING") .. tostring(frame.frameID))
+        Logger:LogDebug(CraftSim.LOCAL:GetText("FRAMES_RESETTING") .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end

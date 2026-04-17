@@ -13,7 +13,7 @@ CraftSim.AVERAGEPROFIT = CraftSim.AVERAGEPROFIT
 ---@class CraftSim.AVERAGEPROFIT.UI
 CraftSim.AVERAGEPROFIT.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.AverageProfit.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("AverageProfit.UI")
 
 function CraftSim.AVERAGEPROFIT.UI:Init()
     local sizeX = 320

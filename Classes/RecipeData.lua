@@ -7,27 +7,27 @@ local GUTIL = CraftSim.GUTIL
 local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData")
-local printOC = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.OptimizeConcentration")
+local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
-    local parts = {tostring(recipeData.recipeID)}
-    
+    local parts = { tostring(recipeData.recipeID) }
+
     -- Add reagent configuration to key
     local requiredTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
     for reagentID, quantity in pairs(requiredTbl) do
         -- Handle case where quantity might be a table
-        local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or tostring(quantity)
+        local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or
+        tostring(quantity)
         table.insert(parts, reagentID .. ":" .. quantityStr)
     end
-    
+
     -- Add allocation GUID if present
     if recipeData.allocationItemGUID then
         table.insert(parts, tostring(recipeData.allocationItemGUID))
     end
-    
+
     -- Add order ID if present
     if recipeData.orderData then
         table.insert(parts, "order:" .. tostring(recipeData.orderData.orderID))
@@ -77,28 +77,29 @@ end
 local function reportCacheDiagnostics()
     local skillStats = CraftSim.ReagentData.GetSkillCacheStats()
     local concentrationStats = CraftSim.RecipeData.GetConcentrationCacheStats()
-    
+
     local skillTotal = skillStats.hits + skillStats.misses
     local concentrationTotal = concentrationStats.hits + concentrationStats.misses
-    
+
     if skillTotal > 0 or concentrationTotal > 0 then
         if skillTotal > 0 then
             local skillHitRate = (skillStats.hits / skillTotal) * 100
-            print(string.format("GetSkillFromRequiredReagents cache: %d/%d hits (%.1f%%)", 
+            Logger:LogDebug(string.format("GetSkillFromRequiredReagents cache: %d/%d hits (%.1f%%)",
                 skillStats.hits, skillTotal, skillHitRate))
         end
-        
+
         if concentrationTotal > 0 then
             local concentrationHitRate = (concentrationStats.hits / concentrationTotal) * 100
-            print(string.format("UpdateConcentrationCost cache: %d/%d hits (%.1f%%)", 
+            Logger:LogDebug(string.format("UpdateConcentrationCost cache: %d/%d hits (%.1f%%)",
                 concentrationStats.hits, concentrationTotal, concentrationHitRate))
         end
-        
+
         local totalHits = skillStats.hits + concentrationStats.hits
         local totalCalls = skillTotal + concentrationTotal
         if totalCalls > 0 then
             local overallHitRate = (totalHits / totalCalls) * 100
-            print(string.format("Overall cache performance: %d/%d hits (%.1f%%)", totalHits, totalCalls, overallHitRate))
+            Logger:LogDebug(string.format("Overall cache performance: %d/%d hits (%.1f%%)", totalHits, totalCalls,
+                overallHitRate))
         end
     end
 end
@@ -186,8 +187,7 @@ function CraftSim.RecipeData:new(options)
     if isWorkOrder then
         ---@type CraftingOrderInfo
         pendingOrderData = ProfessionsFrame.OrdersPage.OrderView.order
-        print("Craft Order Data:")
-        print(pendingOrderData, true)
+        Logger:LogDebug("Craft Order Data:")
     end
 
     if self:IsCrafter() and not forceCache then
@@ -211,7 +211,7 @@ function CraftSim.RecipeData:new(options)
     end
 
     if not self.recipeInfo then
-        print("Could not create recipeData: recipeInfo nil")
+        Logger:LogDebug("Could not create recipeData: recipeInfo nil")
         return nil
     end
 
@@ -263,7 +263,7 @@ function CraftSim.RecipeData:new(options)
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft) -- is working even if profession is not learned on the character!
     if not schematicInfo then
-        print("No RecipeData created: SchematicInfo not found")
+        Logger:LogDebug("No RecipeData created: SchematicInfo not found")
         return
     end
 
@@ -342,12 +342,12 @@ function CraftSim.RecipeData:new(options)
     local IsProfessionOpen = self:IsProfessionOpen()
 
     -- local print = CraftSim.DEBUG:SetDebugPrint("RECIPE_SCAN")
-    -- print("RecipeData: " .. self.recipeName)
-    -- print("- isCrafter: " .. tostring(isCrafter))
-    -- print("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
+    -- Logger:LogDebug("RecipeData: " .. self.recipeName)
+    -- Logger:LogDebug("- isCrafter: " .. tostring(isCrafter))
+    -- Logger:LogDebug("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
     CraftSim.DEBUG:StartProfiling("- RD: Cache Data")
     if isCrafter and IsProfessionOpen and self.learned then
-        -- print("- Caching Recipe!")
+        -- Logger:LogDebug("- Caching Recipe!")
         CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, self.professionData.professionInfo.profession, self.recipeID)
 
         CraftSim.DEBUG:StartProfiling("- RD: Cache Data ClassApi")
@@ -512,7 +512,8 @@ function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagent
 
     self:SetOptionalReagents(optionalReagentIDs)
     local reagentListItems = GUTIL:Map(requiredReagents, function(craftingReagentInfo)
-        return CraftSim.ReagentListItem(craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity, craftingReagentInfo.reagent.currencyID)
+        return CraftSim.ReagentListItem(craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity,
+            craftingReagentInfo.reagent.currencyID)
     end)
 
     self:SetReagents(reagentListItems)
@@ -581,8 +582,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 local allocations = 0
                 if reagentAllocation ~= nil then
                     allocations = reagentAllocation:GetQuantity()
-                    print("reagent #" .. i .. " allocation:", false, true)
-                    print(reagentAllocation, true)
+                    Logger:LogDebug("reagent #" .. i .. " allocation:", false, true)
                 end
                 local craftSimReagentItem = nil
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
@@ -677,8 +677,7 @@ end
 
 --- also sets a requiredSelectionReagent if not yet set
 function CraftSim.RecipeData:SetNonQualityReagentsMax()
-    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.SetNonQualityReagentsMax")
-    print("SetNonQualityReagentsMax", false, true)
+    Logger:LogDebug("SetNonQualityReagentsMax", false, true)
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         if not reagent.hasQuality then
             reagent.items[1].quantity = reagent.requiredQuantity
@@ -686,9 +685,9 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
     end
 
     if self.reagentData:HasRequiredSelectableReagent() then
-        print("- HasRequiredSelectableReagent", false, false)
+        Logger:LogDebug("- HasRequiredSelectableReagent", false, false)
         if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
-            print("- No active reagent", false, false)
+            Logger:LogDebug("- No active reagent", false, false)
             if self.reagentData.requiredSelectableReagentSlot:IsCurrency() then
                 local firstReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
                 if firstReagent then
@@ -718,7 +717,8 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                         cheapestReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
                     else -- else search for cheapest
                         for _, optionalReagent in ipairs(possibleReagents) do
-                            local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(),
+                            local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(
+                                optionalReagent.item:GetItemID(),
                                 true, false, true)
                             if not cheapestReagent then
                                 cheapestReagent = optionalReagent
@@ -809,9 +809,8 @@ end
 
 ---@return number concentrationCost
 function CraftSim.RecipeData:UpdateConcentrationCost()
-
     if not self.baseOperationInfo then return 0 end
-    
+
     local craftingDataID = self.baseOperationInfo.craftingDataID
     self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
 
@@ -822,16 +821,16 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
         concentrationCacheStats.hits = concentrationCacheStats.hits + 1
         return cachedResult
     end
-    
+
     concentrationCacheStats.misses = concentrationCacheStats.misses + 1
-    
+
     -- try to only enable it for simulation mode or if its not the current character
     if self.concentrationCurveData and (CraftSim.SIMULATION_MODE.isActive or not self:IsCrafter()) then
         local result = self:GetConcentrationCostForSkill(self.professionStats.skill.value)
-        
+
         -- Cache the result
         concentrationCostCache[cacheKey] = result
-        
+
         return result
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
@@ -840,7 +839,7 @@ function CraftSim.RecipeData:UpdateConcentrationCost()
 
         -- includes required and optionals
         local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
-        
+
         -- on purpose do not use concentration so we will always get the costs
         local operationInfo
         if self.orderData then
@@ -864,7 +863,7 @@ end
 function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
-    
+
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
@@ -1139,10 +1138,13 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local costPerSkill = costDiff / skillDiff
                 local costPerConcPoint = costPerSkill * skillPerConcentrationPoint
                 if not best or costPerConcPoint < best.costPerConcPoint then
-                    best = { reagent = reagent, 
-                    fromQ = 1, toQ = 2, 
-                    costPerConcPoint = costPerConcPoint, 
-                    available = q1 }
+                    best = {
+                        reagent = reagent,
+                        fromQ = 1,
+                        toQ = 2,
+                        costPerConcPoint = costPerConcPoint,
+                        available = q1
+                    }
                 end
             end
             -- Q2->Q3
@@ -1160,11 +1162,14 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local costPerSkill = costDiff / skillDiff
                 local costPerConcPoint = costPerSkill * skillPerConcentrationPoint
                 if not best or costPerConcPoint < best.costPerConcPoint then
-                    best = { reagent = reagent, 
-                    fromQ = 2, toQ = 3, 
-                    costPerConcPoint = costPerConcPoint, 
-                    available = q2, 
-                    space = reagent.requiredQuantity - q3 }
+                    best = {
+                        reagent = reagent,
+                        fromQ = 2,
+                        toQ = 3,
+                        costPerConcPoint = costPerConcPoint,
+                        available = q2,
+                        space = reagent.requiredQuantity - q3
+                    }
                 end
             end
         end
@@ -1189,11 +1194,13 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local costPerSkill = costDiff / skillDiff
                 local costPerConcPoint = costPerSkill * skillPerConcentrationPoint
                 if not best or costPerConcPoint < best.costPerConcPoint then
-                    best = { 
-                        reagent = reagent, 
-                        fromQ = 1, toQ = 2, 
-                        costPerConcPoint = costPerConcPoint, 
-                        available = q1 }
+                    best = {
+                        reagent = reagent,
+                        fromQ = 1,
+                        toQ = 2,
+                        costPerConcPoint = costPerConcPoint,
+                        available = q1
+                    }
                 end
             end
         end
@@ -1212,7 +1219,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 options.finally()
             end
             local ms = CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
-            printOC("Concentration Optimization completed in " .. ms .. " ms", true, true)
+            Logger:LogDebug("Concentration Optimization completed in " .. ms .. " ms", true, true)
         end,
         continue = function(frameDistributor, key, value, currentIteration)
             local concentrationValue = self:GetConcentrationValue()
@@ -1232,14 +1239,14 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             -- used to check if any upgrade was performed this iteration
             local performed = 0
 
-            printOC("Starting Concentration Optimization Iteration #" .. currentIteration)
+            Logger:LogDebug("Starting Concentration Optimization Iteration #" .. currentIteration)
 
             -- Shared helper: apply a reagent quality conversion and update tracking variables.
             local function applyConversion(upgrade, units)
                 upgrade.reagent.items[upgrade.fromQ].quantity = upgrade.reagent.items[upgrade.fromQ].quantity - units
-                upgrade.reagent.items[upgrade.toQ].quantity   = upgrade.reagent.items[upgrade.toQ].quantity   + units
-                performed       = performed       + units
-                convertedUnits  = convertedUnits  + units
+                upgrade.reagent.items[upgrade.toQ].quantity   = upgrade.reagent.items[upgrade.toQ].quantity + units
+                performed                                     = performed + units
+                convertedUnits                                = convertedUnits + units
             end
 
             local boughtConcentration = 0
@@ -1260,16 +1267,18 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                     maxUnits = math.min(maxUnits, best.space)
                 end
 
-                local units = 1 
-                
-                printOC("- Converting " .. math.min(best.available, units) .. " x " .. best.reagent.items[1].item:GetItemLink() .. " It: #" .. currentIteration)
+                local units = 1
+
+                Logger:LogDebug("- Converting " ..
+                math.min(best.available, units) ..
+                " x " .. best.reagent.items[1].item:GetItemLink() .. " It: #" .. currentIteration)
                 applyConversion(best, units)
                 -- update recipe stats based on new skill from reagent allocation after conversion
                 -- so concentration costs are updated
                 self:Update()
                 local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true)
                 boughtConcentration = lastConcentrationCost - currentConcentrationCost
-                printOC("-- BoughtConcentration: " .. boughtConcentration)
+                Logger:LogDebug("-- BoughtConcentration: " .. boughtConcentration)
             until boughtConcentration >= 1
 
             -- update concentration value after conversion for 1 cost reduction was done
@@ -1281,21 +1290,21 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             -- pre-upgrade CV used in the check. When no upgrade passed the pre-upgrade
             -- threshold, attempt the cheapest available upgrade as a threshold test and let
             -- the post-check below decide using the actual post-upgrade CV.
-            if performed == 0  then
+            if performed == 0 then
                 local best
-                if isSimplifiedQualityRecipe then 
+                if isSimplifiedQualityRecipe then
                     best = findBestUpgradeSimplified()
                 else
                     best = findBestUpgrade()
                 end
                 if best then
-                    printOC("- No upgrades passed pre-upgrade CV check, testing cheapest upgrade anyway")
+                    Logger:LogDebug("- No upgrades passed pre-upgrade CV check, testing cheapest upgrade anyway")
                     applyConversion(best, math.min(best.available, MAX_UNITS_PER_FRAME))
                 end
             end
 
             if performed == 0 then
-                printOC("- No beneficial upgrades found, ending optimization")
+                Logger:LogDebug("- No beneficial upgrades found, ending optimization")
                 frameDistributor:Break()
                 return
             end
@@ -1311,7 +1320,8 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 if concentrationValue > lastConcentrationValue then
                     frameDistributor:Continue()
                 else
-                    printOC("- Upgrade crossed a concentration bracket boundary but did not improve concentration value, rolling back")
+                    Logger:LogDebug(
+                    "- Upgrade crossed a concentration bracket boundary but did not improve concentration value, rolling back")
                     Rollback()
                     frameDistributor:Break()
                 end
@@ -1322,7 +1332,8 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             -- this can happen when the repeat until breaks early due to not being able to upgrade anymore
             -- or if the last possible upgrades are not enough to lessen concentration costs by at least 1
             if boughtConcentration < 1 then
-                printOC("- Upgrade did not decrease concentration cost, rolling back (Bought: " .. boughtConcentration .. ")")
+                Logger:LogDebug("- Upgrade did not decrease concentration cost, rolling back (Bought: " ..
+                boughtConcentration .. ")")
                 Rollback()
                 frameDistributor:Break()
                 return
@@ -1330,7 +1341,8 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
             -- if we did not increase the value, roll back
             if concentrationValue <= lastConcentrationValue then
-                printOC("- Upgrade did not increase concentration value, rolling back (Value: " .. concentrationValue .. ", Last: " .. lastConcentrationValue .. ")")
+                Logger:LogDebug("- Upgrade did not increase concentration value, rolling back (Value: " ..
+                concentrationValue .. ", Last: " .. lastConcentrationValue .. ")")
                 Rollback()
                 frameDistributor:Break()
                 return
@@ -1748,7 +1760,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
     }:Continue()
 end
 
-
 --- Adjusts finishing reagents for batch crafting so that soulbound finishers are only used
 --- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
 --- (and currencies) may still be used even if not fully owned, as they can be bought.
@@ -1805,7 +1816,7 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                         local avgProfit = self.averageProfitCached or select(1, self:GetAverageProfit())
                         local concValue = select(1, self:GetConcentrationValue())
 
-                        
+
                         local better = false
                         if useConcentration then
                             better = concValue > bestConcentrationValue
@@ -1817,7 +1828,6 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                             bestAverageProfit = avgProfit
                             bestConcentrationValue = concValue
                         end
-                        
                     end
 
                     -- Evaluate all possible non-soulbound / currency alternatives for this slot
@@ -1922,10 +1932,10 @@ end
 ---@return table probabilityTable
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
-    
+
     self.averageProfitCached = averageProfit
     self.relativeProfitCached = GUTIL:GetPercentRelativeTo(averageProfit, self.priceData.craftingCosts)
-    
+
     return averageProfit, probabilityTable
 end
 
@@ -1962,7 +1972,6 @@ end
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)
-    local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.Optimization")
     options = options or {}
 
     -- When using permutation-based finishing reagent optimisation, reagent and concentration
@@ -1974,7 +1983,8 @@ function CraftSim.RecipeData:Optimize(options)
     local optimizationTaskList = {
         options.optimizeGear and "GEAR",
         (not usePermutation) and options.optimizeReagentOptions and "REAGENTS",
-        (not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and "CONCENTRATION",
+        (not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and
+        "CONCENTRATION",
         options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
         options.optimizeSubRecipesOptions and "SUB_RECIPES",
     }
@@ -1986,15 +1996,15 @@ function CraftSim.RecipeData:Optimize(options)
         end,
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
-                print("Optimizing Gear..")
+                Logger:LogDebug("Optimizing Gear..")
                 self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "REAGENTS" then
-                print("Optimizing Reagents..")
+                Logger:LogDebug("Optimizing Reagents..")
                 self:OptimizeReagents(options.optimizeReagentOptions)
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "CONCENTRATION" then
-                print("Optimizing Concentration..")
+                Logger:LogDebug("Optimizing Concentration..")
 
                 self:OptimizeConcentration {
                     finally = function()
@@ -2008,10 +2018,11 @@ function CraftSim.RecipeData:Optimize(options)
                 }
             elseif optimizationTask == "FINISHING_REAGENTS" then
                 local finOpts = options.optimizeFinishingReagentsOptions
-                print("Optimizing Finishing Reagents.. (permutation: " .. tostring(finOpts.permutationBased) .. ")")
-                print("- includeLocked: " .. tostring(finOpts.includeLocked))
-                print("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
-                print("- onlyHighestQualitySoulbound: " .. tostring(finOpts.onlyHighestQualitySoulbound))
+                Logger:LogDebug("Optimizing Finishing Reagents.. (permutation: " ..
+                tostring(finOpts.permutationBased) .. ")")
+                Logger:LogDebug("- includeLocked: " .. tostring(finOpts.includeLocked))
+                Logger:LogDebug("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
+                Logger:LogDebug("- onlyHighestQualitySoulbound: " .. tostring(finOpts.onlyHighestQualitySoulbound))
 
                 if usePermutation then
                     -- Permutation-based: try every combination of finishing reagents, running
@@ -2150,8 +2161,8 @@ function CraftSim.RecipeData:IsCrafter()
     local crafterDataEquals = self:CrafterDataEquals(CraftSim.UTIL:GetPlayerCrafterData())
     local professionLearned = C_TradeSkillUI.IsRecipeProfessionLearned(self.recipeID)
     -- local print = CraftSim.DEBUG:SetDebugPrint("RECIPE_SCAN")
-    -- print("--crafterDataEquals: " .. tostring(crafterDataEquals))
-    -- print("--professionLearned: " .. tostring(professionLearned))
+    -- Logger:LogDebug("--crafterDataEquals: " .. tostring(crafterDataEquals))
+    -- Logger:LogDebug("--professionLearned: " .. tostring(professionLearned))
     return crafterDataEquals and professionLearned
 end
 
@@ -2175,7 +2186,7 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
 
     jb:Add("reagents", reagents) -- itemID mapped to required quantity
     if self.supportsQualities then
-        print("json, adding skill: ")
+        Logger:LogDebug("json, adding skill: ")
         jb:Add("skill", self.professionStats.skill.value)
         -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
         if self.supportsMulticraft or self.supportsResourcefulness then
@@ -2232,7 +2243,7 @@ function CraftSim.RecipeData:GetEasycraftExport(indent)
     jb:Add("expectedQuality", self.resultData.expectedQuality)
     jb:Add("expectedQualityConcentration", self.resultData.expectedQualityConcentration)
     if self.supportsQualities then
-        print("json, adding skill: ")
+        Logger:LogDebug("json, adding skill: ")
         jb:Add("skill", self.professionStats.skill.value)                     -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
         jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value) -- base difficulty (without optional reagents)
         jb:Add("concentration", self.concentrationCost)
@@ -2264,7 +2275,7 @@ function CraftSim.RecipeData:GetItemIDFromReagentInfo(reagentInfo)
     if not reagentInfo then
         return nil
     end
-    
+
     -- Try various possible paths for quality reagents (handles different API structures)
     if reagentInfo.reagent then
         if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.itemID then
@@ -2273,22 +2284,22 @@ function CraftSim.RecipeData:GetItemIDFromReagentInfo(reagentInfo)
             return reagentInfo.reagent.itemID
         end
     end
-    
+
     if reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.itemID then
         return reagentInfo.reagentInfo.reagent.itemID
     end
-    
+
     -- Basic reagents (or any reagent without reagent field) use slotIndex to find the reagent in requiredReagents
     if reagentInfo.slotIndex and self.reagentData then
         local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
             return reagent.dataSlotIndex == reagentInfo.slotIndex
         end)
-        
+
         if matchingReagent and matchingReagent.items and #matchingReagent.items > 0 then
             return matchingReagent.items[1].item:GetItemID()
         end
     end
-    
+
     return nil
 end
 
@@ -2613,7 +2624,6 @@ end
 --- returns recipe crafting info for all required and all active optional reagents
 ---@return CraftSim.ItemRecipeData[]
 function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
-    local print = CraftSim.DEBUG:RegisterDebugID("SUB_RECIPE_DATA")
     local craftingInfos = {}
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         for _, reagentItem in ipairs(reagent.items) do
@@ -2644,22 +2654,15 @@ end
 ---@param subRecipeDepth? number
 ---@return boolean success
 function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeIDs, subRecipeDepth)
-    local printD = CraftSim.DEBUG:RegisterDebugID("SUB_RECIPE_DATA")
     optimizeOptions = optimizeOptions or {}
     subRecipeDepth = subRecipeDepth or 0
     visitedRecipeIDs = visitedRecipeIDs or {}
 
-    local print = function(t, r, l)
-        if true then --self.recipeID == 376556 then
-            printD(t, r, l, subRecipeDepth)
-        end
-    end
-
-    print("Optimize SubRecipes for " .. self.recipeName .. " C: " .. tostring(self.concentrating))
-    print("- Depth: " .. subRecipeDepth)
+    Logger:LogDebug("Optimize SubRecipes for " .. self.recipeName .. " C: " .. tostring(self.concentrating))
+    Logger:LogDebug("- Depth: " .. subRecipeDepth)
 
     if subRecipeDepth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
-        print("Cancel Sub Recipe Optimization due to max depth")
+        Logger:LogDebug("Cancel Sub Recipe Optimization due to max depth")
         return false
     end
 
@@ -2674,7 +2677,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
-        print("looping subrecipeData: " .. data.itemID .. " - q" .. data.qualityID)
+        Logger:LogDebug("looping subrecipeData: " .. data.itemID .. " - q" .. data.qualityID)
         local recipeID = data.recipeID
         -- fall back to the first crafter if nothing is set?
         local crafterUID = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(data.recipeID) or
@@ -2714,7 +2717,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                     if not ignoreCooldownRecipe then
                         recipeData.subRecipeDepth = subRecipeDepth + 1
-                        print("- Checking SubRecipe: " ..
+                        Logger:LogDebug("- Checking SubRecipe: " ..
                             recipeData.recipeName .. "( q" .. tostring(data.qualityID) .. ")")
                         -- go deep!
                         local success = recipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeIDs,
@@ -2726,7 +2729,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             -- TODO replace call to deprecated method
                             recipeData:OptimizeProfit(optimizeOptions)
                             local profit = recipeData.averageProfitCached or recipeData:GetAverageProfit()
-                            print("- Profit: " ..
+                            Logger:LogDebug("- Profit: " ..
                                 CraftSim.UTIL:FormatMoney(profit, true, nil))
 
                             -- if the necessary item quality is reachable, map it to the recipe
@@ -2747,7 +2750,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                             recipeData:AddParentRecipe(self)
 
-                            print("- Quality Reachable: " ..
+                            Logger:LogDebug("- Quality Reachable: " ..
                                 tostring(reagentQualityReachable) .. " C: " .. tostring(concentrationOnly))
                             if reagentQualityReachable then
                                 self.optimizedSubRecipes[data.itemID] = recipeData
@@ -2757,7 +2760,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                 end
             end
         else
-            print("Break Inf Loop!")
+            Logger:LogDebug("Break Inf Loop!")
         end
     end
 
@@ -2903,7 +2906,8 @@ end
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
         ":" ..
-        self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
+        self.recipeID ..
+        ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
         ":" .. tostring(self.craftListID or 0) ..
         ":" .. tostring(self:IsUsingSoulboundFinishingReagent())
 end
@@ -2937,4 +2941,3 @@ function CraftSim.RecipeData:GetReagentUID()
 
     return uid
 end
-

@@ -28,7 +28,7 @@ CraftSim.INIT.visibleRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
-local print = CraftSim.DEBUG:RegisterDebugID("Init")
+local Logger = CraftSim.DEBUG:RegisterLogger("Init")
 
 function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
 	-- adapt cached values
@@ -70,14 +70,14 @@ local lastCallTime = 0
 function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 	local callTime = GetTime()
 	if lastCallTime == callTime then
-		print("SAME FRAME, RETURN")
+		Logger:LogDebug("SAME FRAME, RETURN")
 		return
 	else
-		print("NEW FRAME, CONTINUE")
+		Logger:LogDebug("NEW FRAME, CONTINUE")
 	end
 
-	print("lastCallTime: " .. tostring(lastCallTime))
-	print("callTime: " .. tostring(callTime))
+	Logger:LogDebug("lastCallTime: " .. tostring(lastCallTime))
+	Logger:LogDebug("callTime: " .. tostring(callTime))
 
 	lastCallTime = callTime
 
@@ -128,9 +128,9 @@ function CraftSim.INIT:HookToEvents()
 	end
 
 	local function InitNewRecipeID(self, recipeInfo)
-		print("InitNewRecipeID called")
+		Logger:LogDebug("InitNewRecipeID called")
 		if not self:IsVisible() then
-			print("not visible, return")
+			Logger:LogDebug("not visible, return")
 			return
 		end
 		-- if init turn sim mode off
@@ -141,7 +141,7 @@ function CraftSim.INIT:HookToEvents()
 		end
 
 		if recipeInfo and recipeInfo.recipeID then
-			print("Init: " .. tostring(recipeInfo.recipeID))
+			Logger:LogDebug("Init: " .. tostring(recipeInfo.recipeID))
 			CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
 
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
@@ -158,15 +158,15 @@ function CraftSim.INIT:HookToEvents()
 			-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
 			GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
 				if recipeID == CraftSim.INIT.visibleRecipeID then
-					print("Multicraft Info Loaded")
+					Logger:LogDebug("Multicraft Info Loaded")
 					CraftSim.INIT:InitializeVisibleRecipeID(true)
 				end
 			end, 1)
 		elseif recipeInfo == nil then
-			print("Hide all frames recipeInfo nil")
+			Logger:LogDebug("Hide all frames recipeInfo nil")
 			CraftSim.MODULES:Hide(true, true)
 		else
-			print("Updating UI without recipeID")
+			Logger:LogDebug("Updating UI without recipeID")
 			CraftSim.MODULES:UpdateUI()
 		end
 	end
@@ -206,8 +206,6 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
-	local print = CraftSim.DEBUG:RegisterDebugID("Init.InitCraftRecipeHooks")
-
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
@@ -220,7 +218,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		-- still need to check if craft comes from different source (other addons for example)
 		if not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.recipeID == onCraftData.recipeID then
 			-- craft was most probably started via default gui craft button
-			print("api was called via default gui")
+			Logger:LogDebug("api was called via default gui")
 			recipeData = CraftSim.MODULES.recipeData:Copy()
 		else
 			-- if it does not match with current recipe data, create a new one based on the data forwarded to the crafting api
@@ -318,6 +316,7 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
+		CraftSim.DEBUG:Init()
 		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 
@@ -382,7 +381,7 @@ function CraftSim.INIT:HandleAuctionatorHooks()
 	if Auctionator then ---@diagnostic disable-line: undefined-global
 		---@diagnostic disable-next-line: undefined-global
 		Auctionator.API.v1.RegisterForDBUpdate(CraftSimAddonName, function()
-			print("Auctionator DB Update")
+			Logger:LogDebug("Auctionator DB Update")
 			CraftSim.INIT:InitializeVisibleRecipeID(false)
 		end)
 	end
@@ -431,7 +430,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
 					end
 					local ms = CraftSim.DEBUG:StopProfiling("Preload Crafting Orders")
-					print("Preloaded crafting orders in " .. ms .. " ms")
+					Logger:LogDebug("Preloaded crafting orders in " .. ms .. " ms")
 					GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFTING_ORDERS_PRELOADED")
 				end
 			end)
@@ -542,7 +541,7 @@ function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRec
 	if not professionRecipeIDs then
 		return
 	end
-	print("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
+	Logger:LogDebug("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
 
 	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
 	for _, recipeID in ipairs(professionRecipeIDs) do

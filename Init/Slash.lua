@@ -67,7 +67,7 @@ function CraftSim.SLASH:CMD_news()
 end
 
 function CraftSim.SLASH:CMD_debug()
-    CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
+    CraftSim.DEBUG.frame:Show()
 end
 
 function CraftSim.SLASH:CMD_export(args)
