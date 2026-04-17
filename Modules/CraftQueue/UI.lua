@@ -507,19 +507,12 @@ end
 
 local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
 
-local moxieValuesOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES
 local moxieAutoUpdateOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES
 
 ---@type table<number, Enum.Profession>
 local professionByMoxieCurrencyID = {}
 for profession, currencyID in pairs(CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION) do
     professionByMoxieCurrencyID[currencyID] = profession
-end
-
----@param currencyID number
----@return number
-local function GetMoxieStorageCurrencyID(currencyID)
-    return CraftSim.PATRON_MOXIE_SURPLUS:GetStorageCurrencyID(currencyID)
 end
 
 ---@class CraftSim.MoxieCurrencyGroup
@@ -533,7 +526,7 @@ local function BuildMoxieCurrencyGroups()
     ---@type CraftSim.MoxieCurrencyGroup[]
     local groups = {}
     for _, currencyID in ipairs(CraftSim.CONST.MOXIE_CURRENCY_IDS) do
-        local storageCurrencyID = GetMoxieStorageCurrencyID(currencyID)
+        local storageCurrencyID = CraftSim.PATRON_MOXIE_SURPLUS:GetStorageCurrencyID(currencyID)
         local group = byStorageCurrencyID[storageCurrencyID]
         if not group then
             group = {
@@ -579,41 +572,16 @@ local function GetMoxieGroupItemIDs(storageCurrencyID)
     return itemIDs
 end
 
----@param stored table
----@param currencyID number
----@return number
-local function GetPatronMoxieStoredValue(stored, currencyID)
-    if type(stored) ~= "table" then
-        return 0
-    end
-    local storageCurrencyID = GetMoxieStorageCurrencyID(currencyID)
-    return tonumber(stored[storageCurrencyID] or stored[tostring(storageCurrencyID)]) or 0
-end
-
----@param currencyID number
----@param copperTotal number
-local function SavePatronMoxieCopper(currencyID, copperTotal)
-    local stored = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
-    if type(stored) ~= "table" then
-        stored = {}
-    end
-    local value = tonumber(copperTotal) or 0
-    local storageCurrencyID = GetMoxieStorageCurrencyID(currencyID)
-    stored[storageCurrencyID] = value
-    stored[tostring(storageCurrencyID)] = value
-    -- Persist explicitly in case OPTIONS storage does not track table mutations by reference.
-    CraftSim.DB.OPTIONS:Save(moxieValuesOptionKey, stored)
-end
-
 local function SyncPatronMoxieInputsFromDB()
     local rows = CraftSim.CRAFTQ.patronMoxieSurplusRows
     if not rows then
         return
     end
-    local updatedValues = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
+    local updatedValues = CraftSim.PATRON_MOXIE_VALUE_DB:GetStoredTable()
     for _, row in ipairs(rows) do
         if row.currencyInput and row.storageCurrencyID then
-            row.currencyInput:SetValue(GetPatronMoxieStoredValue(updatedValues, row.storageCurrencyID))
+            row.currencyInput:SetValue(CraftSim.PATRON_MOXIE_VALUE_DB:GetCopperPerMoxieFromStored(updatedValues,
+                row.storageCurrencyID))
         end
     end
 end
@@ -623,11 +591,7 @@ end
 function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     local changedAny = false
     local updateCount = 0
-    local stored = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
-    if type(stored) ~= "table" then
-        stored = {}
-        CraftSim.DB.OPTIONS:Save(moxieValuesOptionKey, stored)
-    end
+    local stored = CraftSim.PATRON_MOXIE_VALUE_DB:GetOrCreateStoredTable()
 
     for _, group in ipairs(BuildMoxieCurrencyGroups()) do
         local storageCurrencyID = group.storageCurrencyID
@@ -635,10 +599,10 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
         local normalizedSuggested = tonumber(suggested)
         if normalizedSuggested and normalizedSuggested > 0 then
             normalizedSuggested = math.floor(normalizedSuggested + 0.5)
-            local currentValue = GetPatronMoxieStoredValue(stored, storageCurrencyID)
+            local currentValue = CraftSim.PATRON_MOXIE_VALUE_DB:GetCopperPerMoxieFromStored(stored, storageCurrencyID)
             if currentValue ~= normalizedSuggested then
                 updateCount = updateCount + 1
-                SavePatronMoxieCopper(storageCurrencyID, normalizedSuggested)
+                CraftSim.PATRON_MOXIE_VALUE_DB:SetCopperPerMoxie(storageCurrencyID, normalizedSuggested)
                 stored[storageCurrencyID] = normalizedSuggested
                 stored[tostring(storageCurrencyID)] = normalizedSuggested
                 changedAny = true
@@ -807,8 +771,8 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
             local currentCol = columns[5]
             local suggestCol = columns[7]
             local storageCurrencyID = group.storageCurrencyID
-            local values = CraftSim.DB.OPTIONS:Get(moxieValuesOptionKey)
-            local initial = GetPatronMoxieStoredValue(values, storageCurrencyID)
+            local values = CraftSim.PATRON_MOXIE_VALUE_DB:GetStoredTable()
+            local initial = CraftSim.PATRON_MOXIE_VALUE_DB:GetCopperPerMoxieFromStored(values, storageCurrencyID)
             local labelText = GetMoxieGroupLinkLabel(group)
             local itemIDs = GetMoxieGroupItemIDs(storageCurrencyID)
 
@@ -850,7 +814,7 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
 
             currentCol.input:SetValue(initial)
             currentCol.input.onValueValidCallback = function(input)
-                SavePatronMoxieCopper(storageCurrencyID, tonumber(input.total) or 0)
+                CraftSim.PATRON_MOXIE_VALUE_DB:SetCopperPerMoxie(storageCurrencyID, tonumber(input.total) or 0)
                 SyncPatronMoxieInputsFromDB()
             end
 
@@ -860,7 +824,7 @@ function CraftSim.CRAFTQ.UI:InitPatronRewardValuesFrame()
                     return
                 end
                 currentCol.input:SetValue(suggested)
-                SavePatronMoxieCopper(storageCurrencyID, suggested)
+                CraftSim.PATRON_MOXIE_VALUE_DB:SetCopperPerMoxie(storageCurrencyID, suggested)
                 SyncPatronMoxieInputsFromDB()
             end
             suggestCol.button.frame:SetScript("OnEnter", function(btn)

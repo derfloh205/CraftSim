@@ -1,16 +1,14 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local GUTIL = CraftSim.GUTIL
-
 local function RoundCopper(value)
     local raw = value or 0
     -- Round down to whole silver to omit copper.
     return math.floor(raw / 100) * 100
 end
 
---- Expected contents of Midnight "Master … Surplus Reagent(s)" turn-ins and consortium Moxie yield,
---- using tier-2 (quality 2) trade-good item IDs where the game splits tiers by item ID.
+--- Static Midnight "Master … Surplus Reagent(s)" expectations and consortium Moxie yield.
+--- Tier-2 (quality 2) trade-good item IDs where the game splits tiers by item ID.
 --- Item IDs follow community references (Wowhead / TSM); adjust if Blizzard changes IDs.
 ---@class CraftSim.PatronMoxieSurplusEntry
 ---@field itemID number
