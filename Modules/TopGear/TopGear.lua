@@ -188,7 +188,6 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                         local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
                         if itemSubType == currentProfession and
                             (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-
                             -- Only exclude items that are definitively from an older expansion.
                             if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
                                 -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
@@ -255,7 +254,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
 
- -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
+    -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
     ---@type table<number, CraftSim.ProfessionGear>
     local highestItemLevels = {}
     for _, professionGear in pairs(accessoryItems) do

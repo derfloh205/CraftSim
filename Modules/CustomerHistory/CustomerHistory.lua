@@ -17,7 +17,6 @@ function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY:AutoPurge()
 end
 
-
 ---@param result Enum.CraftingOrderResult
 ---@param orderID number
 function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result, orderID)
