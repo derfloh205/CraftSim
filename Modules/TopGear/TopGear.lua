@@ -47,6 +47,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
     local availableModes = {}
+    local isNpcOrder = recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc
 
     table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)) -- profit should now also always be available since overwriting prices is always possible
 
@@ -54,7 +55,7 @@ function CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData
         table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
     end
 
-    if recipeData.supportsMulticraft then
+    if recipeData.supportsMulticraft and not isNpcOrder then
         table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT))
     end
 
@@ -188,7 +189,6 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                         local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
                         if itemSubType == currentProfession and
                             (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-
                             -- Only exclude items that are definitively from an older expansion.
                             if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
                                 -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
@@ -255,7 +255,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
 
- -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
+    -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
     ---@type table<number, CraftSim.ProfessionGear>
     local highestItemLevels = {}
     for _, professionGear in pairs(accessoryItems) do
