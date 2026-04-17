@@ -106,6 +106,9 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 	end, function()
 		CraftSim.DEBUG:StartProfiling("MODULES UPDATE")
 		CraftSim.MODULES:UpdateUI()
+		if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES") then
+			CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
+		end
 		-- do not do this all in the same frame to ease performance
 		RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
 		CraftSim.DEBUG:StopProfiling("MODULES UPDATE")

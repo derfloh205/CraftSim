@@ -40,6 +40,7 @@ Util/Util.lua
 
 DB/DB.lua
 DB/optionsDB.lua
+DB/patronMoxieValuesDB.lua
 DB/optimizationOptionsDB.lua
 DB/itemCountDB.lua
 DB/craftQueueDB.lua
@@ -158,6 +159,7 @@ Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
 Data/News.lua
+Data/PatronMoxieSurplusData.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua
 Data/SpecializationData/Dragonflight/Blacksmithing.lua
