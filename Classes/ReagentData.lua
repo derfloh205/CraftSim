@@ -607,7 +607,6 @@ end
 
 ---@param crafterUID CrafterUID
 function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
-    local Logger = CraftSim.DEBUG:RegisterLogger("ReagentData")
 
     Logger:LogDebug("getCraftable amount", false, true)
 
@@ -684,7 +683,6 @@ end
 --- convert required and finished reagents to string that is displayable in a tooltip
 ---@param multiplier number? default: 1
 function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
-    local Logger = CraftSim.DEBUG:RegisterLogger("ReagentData")
     multiplier = multiplier or 1
     local iconSize = 25
     local text = ""

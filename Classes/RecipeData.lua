@@ -676,7 +676,6 @@ end
 
 --- also sets a requiredSelectionReagent if not yet set
 function CraftSim.RecipeData:SetNonQualityReagentsMax()
-    local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
     Logger:LogDebug("SetNonQualityReagentsMax", false, true)
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         if not reagent.hasQuality then
@@ -1961,7 +1960,6 @@ end
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)
-    local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
     options = options or {}
 
     -- When using permutation-based finishing reagent optimisation, reagent and concentration
@@ -2612,7 +2610,6 @@ end
 --- returns recipe crafting info for all required and all active optional reagents
 ---@return CraftSim.ItemRecipeData[]
 function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
-    local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
     local craftingInfos = {}
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         for _, reagentItem in ipairs(reagent.items) do

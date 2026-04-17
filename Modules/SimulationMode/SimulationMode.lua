@@ -237,7 +237,6 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    local Logger = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode.UpdateRecipeDataBuffsBySimulatedBuffs")
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
 
     if not recipeData then return end
