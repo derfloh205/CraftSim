@@ -1469,30 +1469,22 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 topGearColumn.equippedText:SetIrrelevant()
             end
 
-            -- for inventory count, count all result items together
+            -- for inventory count, only count the specific expected result item for this row
             local includeAlts = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INV_COUNT_INCLUDE_ALTS")
-            local breakdownAggregated = {}
-            local breakdownLabelOrder = {}
-            for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
-                -- links are already loaded here
+            local resultItem = enableConcentration and recipeData.resultData.expectedItemConcentration
+                or recipeData.resultData.expectedItem
+            local breakdownLines = {}
+            local totalCount = 0
+            if resultItem then
                 local itemID = resultItem:GetItemID()
                 local itemLink = resultItem:GetItemLink()
                 if itemID or itemLink then
-                    local lines = CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(
+                    breakdownLines = CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(
                         itemLink or itemID, includeAlts)
-                    for _, line in ipairs(lines) do
-                        if not breakdownAggregated[line.label] then
-                            breakdownAggregated[line.label] = 0
-                            table.insert(breakdownLabelOrder, line.label)
-                        end
-                        breakdownAggregated[line.label] = breakdownAggregated[line.label] + line.count
+                    for _, line in ipairs(breakdownLines) do
+                        totalCount = totalCount + line.count
                     end
                 end
-            end
-
-            local totalCount = 0
-            for _, count in pairs(breakdownAggregated) do
-                totalCount = totalCount + count
             end
 
             countColumn.text:SetText(tostring(totalCount))
@@ -1500,8 +1492,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             -- Set per-source breakdown as tooltip on the count cell
             local sourceName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or "CraftSim"
             local tooltipLines = { f.bb("[" .. sourceName .. "]") }
-            for _, label in ipairs(breakdownLabelOrder) do
-                table.insert(tooltipLines, label .. ": " .. tostring(breakdownAggregated[label]))
+            for _, line in ipairs(breakdownLines) do
+                table.insert(tooltipLines, line.label .. ": " .. tostring(line.count))
             end
             table.insert(tooltipLines, f.bb("Total: ") .. tostring(totalCount))
             countColumn.tooltipOptions = {
