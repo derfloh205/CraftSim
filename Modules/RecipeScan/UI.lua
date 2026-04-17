@@ -760,7 +760,6 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         showOptions = {
             ENABLE_CONCENTRATION                              = true,
             REAGENT_ALLOCATION                                = true,
-            AUTOSELECT_TOP_PROFIT_QUALITY                     = true,
             OPTIMIZE_PROFESSION_TOOLS                         = true,
             OPTIMIZE_CONCENTRATION                            = true,
             OPTIMIZE_FINISHING_REAGENTS                       = true,
@@ -770,8 +769,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         },
         defaults = {
             ENABLE_CONCENTRATION                              = true,
-            REAGENT_ALLOCATION                                = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE,
-            AUTOSELECT_TOP_PROFIT_QUALITY                     = false,
+            REAGENT_ALLOCATION                                = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE_HIGHEST,
             OPTIMIZE_PROFESSION_TOOLS                         = false,
             OPTIMIZE_CONCENTRATION                            = false,
             OPTIMIZE_FINISHING_REAGENTS                       = false,

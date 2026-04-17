@@ -402,8 +402,6 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     local globalConcentrationEnabled      = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.ENABLE_CONCENTRATION, true)
     local globalOptimizeConcentration     = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION,
         false)
-    local globalOptimizeTopProfit         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
-        KEYS.AUTOSELECT_TOP_PROFIT_QUALITY, false)
     local globalOptimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS
     .OPTIMIZE_FINISHING_REAGENTS, false)
     local globalFinishingAlgorithm        = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
@@ -555,8 +553,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         if targetQuality then
                             optimizeReagentOptions = { maxQuality = targetQuality }
                         else
-                            -- OPTIMIZE, OPTIMIZE_HIGHEST, or any unrecognized value: respect AUTOSELECT_TOP_PROFIT_QUALITY
-                            optimizeReagentOptions = { highestProfit = globalOptimizeTopProfit }
+                            -- OPTIMIZE_HIGHEST or any legacy/unrecognized value: optimize for highest quality
+                            optimizeReagentOptions = {}
                         end
                     end
                 end
