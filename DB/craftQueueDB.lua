@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.CRAFT_QUEUE : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_QUEUE = CraftSim.DB:RegisterRepository("CraftQueueDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.craftQueueDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("craftQueueDB")
 
 function CraftSim.DB.CRAFT_QUEUE:Init()
     if not CraftSimDB.craftQueueDB then
@@ -44,12 +44,11 @@ function CraftSim.DB.CRAFT_QUEUE:Add(craftQueueItemSerialized)
     tinsert(CraftSimDB.craftQueueDB.data, craftQueueItemSerialized)
 end
 
-
 --- Migrations
 function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     if _G["CraftSimCraftQueueCache"] then
-            CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"]
-        end
+        CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"]
+    end
 end
 
 function CraftSim.DB.CRAFT_QUEUE.MIGRATION:M_1_2()

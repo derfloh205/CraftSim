@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.RECIPE_SUB_CRAFTER : CraftSim.DB.Repository
 CraftSim.DB.RECIPE_SUB_CRAFTER = CraftSim.DB:RegisterRepository("RecipeSubCrafterDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.recipeSubCrafterDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("recipeSubCrafterDB")
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:Init()
     if not CraftSimDB.recipeSubCrafterDB then
@@ -59,18 +59,18 @@ end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER.MIGRATION:M_0_1_Initial_Migration_from_old_cache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimRecipeDataCache then
-            CraftSimDB.recipeSubCrafterDB.data = CraftSimRecipeDataCache["subRecipeCrafterCache"] or {}
-        end
+    if CraftSimRecipeDataCache then
+        CraftSimDB.recipeSubCrafterDB.data = CraftSimRecipeDataCache["subRecipeCrafterCache"] or {}
+    end
 end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER.MIGRATION:M_1_2_Remove_colored_crafter_names()
     -- remove any crafter entries with colored names...
-        for itemID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data or {}) do
-            if string.find(crafterUID, '\124c') then
-                CraftSimDB.recipeSubCrafterDB.data[itemID] = nil
-            end
+    for itemID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data or {}) do
+        if string.find(crafterUID, '\124c') then
+            CraftSimDB.recipeSubCrafterDB.data[itemID] = nil
         end
+    end
 end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER.MIGRATION:M_2_3_TWW_Refactor_Reset()

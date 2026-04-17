@@ -8,7 +8,7 @@ CraftSim.TOPGEAR = {}
 CraftSim.TOPGEAR.IsEquipping = false
 CraftSim.TOPGEAR.EMPTY_SLOT = "EMPTY_SLOT"
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.TopGear")
+local Logger = CraftSim.DEBUG:RegisterLogger("TopGear")
 
 CraftSim.TOPGEAR.SIM_MODES = {
     PROFIT = "TOP_GEAR_SIM_MODES_PROFIT",
@@ -81,7 +81,7 @@ function CraftSim.TOPGEAR:GetValidCombosFromUniqueCombos(uniqueCombos)
             local _, limitName3, limitCount3 = C_Item.GetItemUniquenessByID(id3)
 
             if limitName2 ~= nil and limitCount2 >= 1 and limitName3 ~= nil and limitCount3 >= 1 then
-                --print("comparing limits: " .. limitName2 .. " == " .. limitName3)
+                --Logger:LogDebug("comparing limits: " .. limitName2 .. " == " .. limitName3)
                 if limitName2 ~= limitName3 then
                     table.insert(validCombos, { combo[1], combo[2], combo[3] })
                 end
@@ -125,7 +125,7 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
                 end
 
                 if existsGear1 and existsGear2 and existsTool then
-                    -- print("found matching combo..")
+                    -- Logger:LogDebug("found matching combo..")
                     return true
                 end
 
@@ -170,7 +170,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
         CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID,
             recipeData.professionData.professionInfo.profession)
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
-        print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
+        Logger:LogDebug("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}
         local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
 
@@ -188,7 +188,6 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                         local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
                         if itemSubType == currentProfession and
                             (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-
                             -- Only exclude items that are definitively from an older expansion.
                             if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
                                 -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
@@ -255,11 +254,11 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
 
- -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
+    -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
     ---@type table<number, CraftSim.ProfessionGear>
     local highestItemLevels = {}
     for _, professionGear in pairs(accessoryItems) do
-        print("Checking UniquenessIlvls: " .. professionGear.item:GetItemLink())
+        Logger:LogDebug("Checking UniquenessIlvls: " .. professionGear.item:GetItemLink())
         local uniqueCategoryID = select(4, C_Item.GetItemUniquenessByID(professionGear.item:GetItemID()))
         local itemLevel = professionGear:GetItemLevel()
 
@@ -408,12 +407,12 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
 
     -- sort results by selected mode
     if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
-        print("Top Gear Mode: Profit")
+        Logger:LogDebug("Top Gear Mode: Profit")
         results = GUTIL:Filter(results,
             ---@param result CraftSim.TopGearResult
             function(result)
                 -- should have at least 1 copper profit (and not some small decimal)
-                print("Relative Profit in Filter: " .. tostring(result.relativeProfit))
+                Logger:LogDebug("Relative Profit in Filter: " .. tostring(result.relativeProfit))
                 return result.relativeProfit >= 1
             end)
         results = GUTIL:Sort(results, function(resultA, resultB)
@@ -424,7 +423,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
             end
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
-        print("Top Gear Mode: Multicraft")
+        Logger:LogDebug("Top Gear Mode: Multicraft")
         results = GUTIL:Filter(results, function(result)
             return result.relativeStats.multicraft.value > 0
         end)
@@ -433,7 +432,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
                 resultB.professionGearSet.professionStats.multicraft.value
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS) then
-        print("Top Gear Mode: Resourcefulness")
+        Logger:LogDebug("Top Gear Mode: Resourcefulness")
         results = GUTIL:Filter(results, function(result)
             return result.relativeStats.resourcefulness.value > 0
         end)
@@ -442,7 +441,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
                 resultB.professionGearSet.professionStats.resourcefulness.value
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.CRAFTING_SPEED) then
-        print("Top Gear Mode: Craftingspeed")
+        Logger:LogDebug("Top Gear Mode: Craftingspeed")
         results = GUTIL:Filter(results, function(result)
             return result.relativeStats.craftingspeed.value > 0
         end)
@@ -451,7 +450,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
                 resultB.professionGearSet.professionStats.craftingspeed.value
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL) then
-        print("Top Gear Mode: Skill")
+        Logger:LogDebug("Top Gear Mode: Skill")
         results = GUTIL:Sort(results, function(resultA, resultB)
             local maxSkillA = resultA.professionGearSet.professionStats.skill.value
             local maxSkillB = resultB.professionGearSet.professionStats.skill.value
@@ -470,8 +469,8 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
     local hasResults = #results > 0
 
     if hasResults and not recipeData.professionGearSet:Equals(results[1].professionGearSet) then
-        print("best result")
-        print(results[1])
+        Logger:LogDebug("best result")
+        Logger:LogDebug(results[1])
         CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
     else
         CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, false, exportMode)

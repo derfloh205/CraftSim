@@ -13,7 +13,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.LAST_CRAFTING_COST : CraftSim.DB.Repository
 CraftSim.DB.LAST_CRAFTING_COST = CraftSim.DB:RegisterRepository("LastCraftingCostDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.lastCraftingCostDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("lastCraftingCostDB")
 
 function CraftSim.DB.LAST_CRAFTING_COST:Init()
     if not CraftSimDB.lastCraftingCostDB then
@@ -74,7 +74,8 @@ function CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
     local expectedCostsPerItem = recipeData.priceData and recipeData.priceData.expectedCostsPerItem or 0
     local timestamp = time()
 
-    print("Saving LastCraftingCost: " .. tostring(recipeData.recipeName) .. " q" .. tostring(expectedQuality) .. " crafter=" .. crafterUID)
+    Logger:LogDebug("Saving LastCraftingCost: " ..
+        tostring(recipeData.recipeName) .. " q" .. tostring(expectedQuality) .. " crafter=" .. crafterUID)
 
     CraftSimDB.lastCraftingCostDB.data[key] = CraftSimDB.lastCraftingCostDB.data[key] or {}
     CraftSimDB.lastCraftingCostDB.data[key][crafterUID] = {

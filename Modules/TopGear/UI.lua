@@ -9,7 +9,7 @@ CraftSim.TOPGEAR = CraftSim.TOPGEAR
 ---@class CraftSim.TOPGEAR.UI
 CraftSim.TOPGEAR.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.TopGear.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("TopGear.UI")
 
 function CraftSim.TOPGEAR.UI:Init()
     local sizeX = 270
@@ -272,7 +272,7 @@ function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMo
 
     if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE") ..
-        CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
+            CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_MUTLICRAFT") ..
             CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")

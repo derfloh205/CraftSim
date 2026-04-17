@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.optionsDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("optionsDB")
 
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB
@@ -322,4 +322,8 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_15_16_Rename_CraftQueue_Auto_Shopping_L
     end
 
     CraftSimDB.optionsDB.data[oldKey] = nil
+end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_16_17_Remove_DebugID_SavedVariable()
+    CraftSimDB.optionsDB.data["DEBUG_IDS"] = nil
 end

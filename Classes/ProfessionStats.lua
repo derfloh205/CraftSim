@@ -5,7 +5,7 @@ local CraftSim = select(2, ...)
 ---@overload fun(serialized: boolean?):CraftSim.ProfessionStats
 CraftSim.ProfessionStats = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.ProfessionStats")
+local Logger = CraftSim.DEBUG:RegisterLogger("ProfessionStats")
 
 ---@param serialized boolean?
 function CraftSim.ProfessionStats:new(serialized)
@@ -32,10 +32,10 @@ end
 ---@param operationInfo CraftingOperationInfo
 function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationInfo)
 	if not operationInfo then
-		print("No Operation Info -> No Stats")
+		Logger:LogDebug("No Operation Info -> No Stats")
 		return
 	end
-	print("Parse Stats By OperationInfo", false, true)
+	Logger:LogDebug("Parse Stats By OperationInfo", false, true)
 	self.skill.value = (operationInfo.baseSkill or 0) + (operationInfo.bonusSkill or 0)
 	self.recipeDifficulty.value = operationInfo.baseDifficulty or 0
 	local bonusStats = operationInfo.bonusStats or {}
@@ -46,7 +46,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		local resourcefulness = string.lower(CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS"))
 		local ingenuity = string.lower(CraftSim.LOCAL:GetText("STAT_INGENUITY"))
 		local craftingspeed = string.lower(CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED"))
-		print(CraftSim.LOCAL)
+		Logger:LogDebug(CraftSim.LOCAL)
 		if statName == craftingspeed then
 			self.craftingspeed:SetValueByPercent(statInfo.ratingPct / 100)
 		elseif statName == multicraft then

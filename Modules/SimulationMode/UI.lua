@@ -16,7 +16,7 @@ CraftSim.SIMULATION_MODE.UI.WORKORDER = nil
 ---@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER : GGUI.Frame
 CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.SimulationMode.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode.UI")
 
 function CraftSim.SIMULATION_MODE.UI:Init()
     local x, y = ProfessionsFrame.CraftingPage.SchematicForm:GetSize()
@@ -139,7 +139,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         local clickCallback =
         ---@param self GGUI.Checkbox
             function(self)
-                print("sim mode click callback")
+                Logger:LogDebug("sim mode click callback")
                 CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
                 local bestQBox = schematicForm.AllocateBestQualityCheckbox
                 if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
@@ -599,7 +599,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     end
 
 
-    print("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
+    Logger:LogDebug("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
 
     -- frame visiblities
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
@@ -621,7 +621,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
     local craftingDetailsFrame = simModeFrames.detailsFrame
-    print("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
+    Logger:LogDebug("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
 
 
     if not CraftSim.SIMULATION_MODE.isActive then

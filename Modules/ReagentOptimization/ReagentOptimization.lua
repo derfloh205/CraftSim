@@ -2,7 +2,7 @@
 
     This following logic executes a combinatorial optimization for a modified version of the knapsack
     problem for recipes with quality-rated, required reagents, referred to now simply as reagents.
-    
+
     These crafting equations are used to prepare the data for the optimization.
 
     -----------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.REAGENT_OPTIMIZATION
 CraftSim.REAGENT_OPTIMIZATION = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.ReagentOptimization")
+local Logger = CraftSim.DEBUG:RegisterLogger("ReagentOptimization")
 
 local function translateLuaIndex(index)
     return index + 1
@@ -101,7 +101,7 @@ end
 
 ---@return integer
 function CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
-    --print("get gcd between " .. a .. " and " .. b)
+    --Logger:LogDebug("get gcd between " .. a .. " and " .. b)
     if b ~= 0 then
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(b, a % b)
     else
@@ -115,7 +115,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.ReagentOptimizationResult[] results
 function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
-    print("optimizeKnapsack...")
+    Logger:LogDebug("optimizeKnapsack...")
     local numReagents, j, k, maxWeight
 
     numReagents = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
@@ -167,7 +167,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     -- do initial weight first
     local i = 0
     for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(0)
-        --print("current composition: " .. k)
+        --Logger:LogDebug("current composition: " .. k)
         if ks[i].compositions[k] then
             b[i][ks[i].compositions[k].weight] = ks[i].compositions[k].value
             c[i][ks[i].compositions[k].weight] = k
@@ -176,8 +176,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do next weights
     for i = 1, numReagents, 1 do
-        for k = 0, maxQualityFactor * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
-            for j = 0, maxWeight, 1 do -- for each possible weight value
+        for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(i)
+            for j = 0, maxWeight, 1 do                   -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
                     -- we know it is reachable
@@ -240,15 +240,16 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
             -- create the list of reagents that represent optimization for target BP
             for i = numReagents, 0, -1 do
-                k = c[i][j]                  -- the index into V and W for minValue > target
-                local composition = ks[i].compositions[k] -- to work around the single composition of patron order reagents
+                k = c[i][j] -- the index into V and W for minValue > target
+                local composition = ks[i].compositions
+                    [k]     -- to work around the single composition of patron order reagents
                 if composition then
-                    --print("current matstring: " .. tostring(matString))
-                    --print("name: " .. ks[i].name)
+                    --Logger:LogDebug("current matstring: " .. tostring(matString))
+                    --Logger:LogDebug("name: " .. ks[i].name)
                     local matAllocations = {}
                     for qualityIndex, qualityAllocations in pairs(composition.mix) do
-                        --print("qualityIndex: " .. qualityIndex)
-                        --print("allocations: " .. qualityAllocations)
+                        --Logger:LogDebug("qualityIndex: " .. qualityIndex)
+                        --Logger:LogDebug("allocations: " .. qualityAllocations)
                         table.insert(matAllocations, {
                             quality = qualityIndex,
                             itemID = ks[i].reagent.items[qualityIndex].item:GetItemID(),
@@ -286,7 +287,7 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResul
     if not bestResult then
         return false
     end
-    print("Is current allocation", false, true)
+    Logger:LogDebug("Is current allocation", false, true)
     return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
@@ -426,14 +427,14 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     for i = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(i)]
         local itemID = reagent.items[1].item:GetItemID()
-        --print("reagentWeightsBySlot array init: " .. i .. " to " .. CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) )
+        --Logger:LogDebug("reagentWeightsBySlot array init: " .. i .. " to " .. CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) )
         reagentWeightsBySlot[i] = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) --  * reagent.requiredQuantity fixed double counting of quantity
     end
 
     -- The greatest common divisor of the weights is derived here to simplify the factors used in later calculation and thereby reduce overall permutation count (i.e. compositions)
-    --print(" calculating gcd of " .. unpack(reagentWeightsBySlot))
+    --Logger:LogDebug(" calculating gcd of " .. unpack(reagentWeightsBySlot))
     local gcdOfReagentWeights = GUTIL:Fold(reagentWeightsBySlot, 0, function(a, b)
-        --print("fold " .. a .. " and " .. b)
+        --Logger:LogDebug("fold " .. a .. " and " .. b)
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
     end)
     -- prevent division-by-zero when no reagents are weighted
@@ -441,7 +442,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
         gcdOfReagentWeights = 1
     end
 
-    --print("gcd: " .. tostring(gcdOfReagentWeights))
+    --Logger:LogDebug("gcd: " .. tostring(gcdOfReagentWeights))
     -- create the ks items
 
     ---@type CraftSim.REAGENT_OPTIMIZATION.REAGENT[]
@@ -455,7 +456,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     for index = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(index)]
         -- get costs for reagent quality
-        -- print("creating ks item for " .. tostring(reagent.name) .. "(" .. tostring(reagent.itemsInfo[1]) .. ")")
+        -- Logger:LogDebug("creating ks item for " .. tostring(reagent.name) .. "(" .. tostring(reagent.itemsInfo[1]) .. ")")
 
         ---@class CraftSim.REAGENT_OPTIMIZATION.REAGENT
         ---@field compositions table<integer, CraftSim.REAGENT_OPTIMIZATION.REAGENT_COMPOSITION>
@@ -468,8 +469,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
             compositions = {}
         }
 
-        --print("recipeFactoredWeight of " .. reagent.name .. " is " .. ksItem.recipeFactoredWeight)
-        --print("recipeFactoredWeight[index] / weightGCD -> " .. recipeFactoredWeight[index] .. " / " .. weightGCD .. " = " .. recipeFactoredWeight[index] / weightGCD)
+        --Logger:LogDebug("recipeFactoredWeight of " .. reagent.name .. " is " .. ksItem.recipeFactoredWeight)
+        --Logger:LogDebug("recipeFactoredWeight[index] / weightGCD -> " .. recipeFactoredWeight[index] .. " / " .. weightGCD .. " = " .. recipeFactoredWeight[index] / weightGCD)
 
         -- fill compositions
         if recipeData:IsSimplifiedQualityRecipe() then
@@ -558,17 +559,17 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     --local skillsFromOptionalReagents = recipeData.reagentData:GetProfessionStatsByOptionals().skill.value
     --local totalBaseSkill = skillsFromOptionalReagents + recipeData.professionStats.skill.value
     local skillWithoutReagentIncrease = recipeData.professionStats.skill.value - reagentSkillContribution
-    print("in Simulation Mode: " .. tostring(recipeData.isSimulationModeData ~= nil))
-    print("skill total: " .. tostring(recipeData.professionStats.skill.value))
-    print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
+    Logger:LogDebug("in Simulation Mode: " .. tostring(recipeData.isSimulationModeData ~= nil))
+    Logger:LogDebug("skill total: " .. tostring(recipeData.professionStats.skill.value))
+    Logger:LogDebug("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
 
-    print("skillWithoutReagentIncrease" .. tostring(skillWithoutReagentIncrease))
+    Logger:LogDebug("skillWithoutReagentIncrease" .. tostring(skillWithoutReagentIncrease))
 
 
     local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData,
         skillWithoutReagentIncrease)
 
-    print("expectedQualityWithoutReagents: " .. tostring(expectedQualityWithoutReagents))
+    Logger:LogDebug("expectedQualityWithoutReagents: " .. tostring(expectedQualityWithoutReagents))
 
     local function calculateArrayBP(playerSkill)
         local arrayBP = {}
@@ -577,7 +578,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
             local skillBreakpoint = craftingDifficultyBP[i] * recipeData.professionStats.recipeDifficulty.value +
                 extraSkillPoint
 
-            print("skill BP: " .. skillBreakpoint)
+            Logger:LogDebug("skill BP: " .. skillBreakpoint)
             arrayBP[i] = skillBreakpoint - playerSkill
             -- If skill already meets or exceeds this BP...
             if arrayBP[i] <= 0 then -- ...then no skill bonus is needed to reach this breakpoint

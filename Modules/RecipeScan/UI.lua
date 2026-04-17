@@ -12,7 +12,7 @@ CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 ---@class CraftSim.RECIPE_SCAN.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("RecipeScan.UI")
 
 --- Returns the craft lists that contain the given recipeID for the given crafter
 ---@param recipeData CraftSim.RecipeData
@@ -120,8 +120,8 @@ end
 
 ---@param selectedRow CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 function CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(selectedRow, userInput)
-    print("select row: " .. tostring(selectedRow.crafterData.name) .. ": " .. tostring(selectedRow.profession))
-    print("userInput: " .. tostring(userInput))
+    Logger:LogDebug("select row: " .. tostring(selectedRow.crafterData.name) .. ": " .. tostring(selectedRow.profession))
+    Logger:LogDebug("userInput: " .. tostring(userInput))
     -- hide all others except me
     for _, row in pairs(selectedRow.activeRows) do
         row.contentFrame:Hide()
@@ -147,7 +147,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
             content.cachedRecipesInfoHelpIcon:Hide()
         end
     else
-        print("trade skill not ready")
+        Logger:LogDebug("trade skill not ready")
         content.cachedRecipesInfo:SetText("")
         content.cachedRecipesInfoHelpIcon:Hide()
     end
@@ -415,7 +415,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
 end
 
 function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
-    print("update prof list display")
+    Logger:LogDebug("update prof list display")
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
     content.professionList:UpdateDisplay(
@@ -709,18 +709,6 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
             rootDescription:CreateDivider()
 
-            -- Inventory count column: include alts option
-            rootDescription:CreateCheckbox(
-                L("RECIPE_SCAN_INV_COUNT_INCLUDE_ALTS_LABEL"),
-                function()
-                    return CraftSim.DB.OPTIONS:Get("RECIPESCAN_INV_COUNT_INCLUDE_ALTS")
-                end, function()
-                    local value = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INV_COUNT_INCLUDE_ALTS")
-                    CraftSim.DB.OPTIONS:Save("RECIPESCAN_INV_COUNT_INCLUDE_ALTS", not value)
-                end)
-
-            rootDescription:CreateDivider()
-
             -- Only Craftlists filter: scan only selected craft lists using their optimization options
             local crafterUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(row.crafterData)
             local onlyCraftlistsCB = rootDescription:CreateCheckbox(
@@ -772,6 +760,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         showOptions = {
             ENABLE_CONCENTRATION                              = true,
             REAGENT_ALLOCATION                                = true,
+            AUTOSELECT_TOP_PROFIT_QUALITY                     = true,
             OPTIMIZE_PROFESSION_TOOLS                         = true,
             OPTIMIZE_CONCENTRATION                            = true,
             OPTIMIZE_FINISHING_REAGENTS                       = true,
@@ -781,7 +770,8 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         },
         defaults = {
             ENABLE_CONCENTRATION                              = true,
-            REAGENT_ALLOCATION                                = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE_HIGHEST,
+            REAGENT_ALLOCATION                                = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION.OPTIMIZE,
+            AUTOSELECT_TOP_PROFIT_QUALITY                     = false,
             OPTIMIZE_PROFESSION_TOOLS                         = false,
             OPTIMIZE_CONCENTRATION                            = false,
             OPTIMIZE_FINISHING_REAGENTS                       = false,
@@ -1154,8 +1144,6 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             countColumn.text = GGUI.Text({
                 parent = countColumn, anchorParent = countColumn
             })
-            countColumn:EnableMouse(true)
-            GGUI:SetTooltipsByTooltipOptions(countColumn, countColumn)
         end
     })
 
@@ -1469,38 +1457,32 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 topGearColumn.equippedText:SetIrrelevant()
             end
 
-            -- for inventory count, only count the specific expected result item for this row
-            local includeAlts = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INV_COUNT_INCLUDE_ALTS")
-            local resultItem = enableConcentration and recipeData.resultData.expectedItemConcentration
-                or recipeData.resultData.expectedItem
-            local breakdownLines = {}
-            local totalCount = 0
-            if resultItem then
+            -- for inventory count, count all result items together? For now.. Maybe a user will have a better idea!
+
+            local totalCountInv = 0
+            local totalCountAH = nil
+            for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
+                -- links are already loaded here
                 local itemID = resultItem:GetItemID()
                 local itemLink = resultItem:GetItemLink()
                 if itemID or itemLink then
-                    breakdownLines = CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(
-                        itemLink or itemID, includeAlts)
-                    for _, line in ipairs(breakdownLines) do
-                        totalCount = totalCount + line.count
-                    end
+                    totalCountInv = totalCountInv +
+                        (CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID) or 0)
+                end
+                local countAH = CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemLink or itemID)
+
+                if countAH then
+                    totalCountAH = (totalCountAH or 0) + countAH
                 end
             end
 
-            countColumn.text:SetText(tostring(totalCount))
+            local countText = tostring(totalCountInv)
 
-            -- Set per-source breakdown as tooltip on the count cell
-            local sourceName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or "CraftSim"
-            local tooltipLines = { f.bb("[" .. sourceName .. "]") }
-            for _, line in ipairs(breakdownLines) do
-                table.insert(tooltipLines, line.label .. ": " .. tostring(line.count))
+            if totalCountAH then
+                countText = countText .. " / " .. totalCountAH
             end
-            table.insert(tooltipLines, f.bb("Total: ") .. tostring(totalCount))
-            countColumn.tooltipOptions = {
-                text = table.concat(tooltipLines, "\n"),
-                anchor = "ANCHOR_CURSOR",
-                owner = countColumn,
-            }
+
+            countColumn.text:SetText(countText)
 
             -- show reagents in tooltip when recipe is hovered
             row.tooltipOptions = {

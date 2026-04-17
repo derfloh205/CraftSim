@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.CraftSessionData")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftSessionData")
 
 ---@class CraftSim.CraftSessionData : CraftSim.CraftSimObject
 ---@overload fun(): CraftSim.CraftSessionData
@@ -33,7 +33,7 @@ end
 ---@param enableAdvData boolean
 ---@param aNumCrafts number
 function CraftSim.CraftSessionData:AddCraftResult(craftResult, enableAdvData, aNumCrafts)
-    print("SessionData: AddCraftResult")
+    Logger:LogDebug("SessionData: AddCraftResult")
     self.numCrafts = self.numCrafts + aNumCrafts
     table.insert(self.craftResults, craftResult)
 

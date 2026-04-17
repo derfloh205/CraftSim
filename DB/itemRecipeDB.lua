@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.ITEM_RECIPE : CraftSim.DB.Repository
 CraftSim.DB.ITEM_RECIPE = CraftSim.DB:RegisterRepository("ItemRecipeDB")
 
-local print = CraftSim.DEBUG:RegisterDebugID("Database.itemRecipeDB")
+local Logger = CraftSim.DEBUG:RegisterLogger("itemRecipeDB")
 
 ---@class CraftSim.ItemRecipeData
 ---@field recipeID RecipeID
@@ -112,29 +112,29 @@ end
 
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimRecipeDataCache then
-            CraftSimDB.itemRecipeDB.data = CraftSimRecipeDataCache["itemRecipeCache"] or {}
-        end
+    if CraftSimRecipeDataCache then
+        CraftSimDB.itemRecipeDB.data = CraftSimRecipeDataCache["itemRecipeCache"] or {}
+    end
 end
 
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_1_2_Remove_colored_crafter_names()
     -- remove any crafter entries with colored names...
-        for _, data in pairs(CraftSimDB.itemRecipeDB.data or {}) do
-            local correctedCrafterUIDs = {}
-            for _, crafterUID in pairs(data.crafters) do
-                if not string.find(crafterUID, '\124c') then
-                    tinsert(correctedCrafterUIDs, crafterUID)
-                end
+    for _, data in pairs(CraftSimDB.itemRecipeDB.data or {}) do
+        local correctedCrafterUIDs = {}
+        for _, crafterUID in pairs(data.crafters) do
+            if not string.find(crafterUID, '\124c') then
+                tinsert(correctedCrafterUIDs, crafterUID)
             end
-            data.crafters = correctedCrafterUIDs
         end
+        data.crafters = correctedCrafterUIDs
+    end
 end
 
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_2_3_Restore_data_table_if_missing()
     -- restore data table if not existing
-        CraftSimDB.itemCountDB.data = CraftSimDB.itemCountDB.data or {}
+    CraftSimDB.itemCountDB.data = CraftSimDB.itemCountDB.data or {}
 end
 
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_3_4_TWW_Refactor()
-     CraftSim.DB.ITEM_RECIPE:ClearAll()
+    CraftSim.DB.ITEM_RECIPE:ClearAll()
 end
