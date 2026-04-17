@@ -101,23 +101,25 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
     local total = 0
     if inventoryInfo and inventoryInfo.characters then
         local playerName = nil
+        local playerRealm = nil
         if not includeAlts then
-            -- UnitName("player") returns just the character name without realm suffix
-            playerName = UnitName("player")
+            -- Use UnitNameUnmodified to get the bare character name, and
+            -- GetNormalizedRealmName for the realm, to match Syndicator's format
+            playerName, playerRealm = UnitNameUnmodified("player")
+            playerRealm = playerRealm or GetNormalizedRealmName()
         end
         for _, characterInfo in ipairs(inventoryInfo.characters) do
-            local charName = characterInfo.character and characterInfo.character.name
-            -- Strip realm suffix (e.g. "Name-Realm" -> "Name") using strsplit;
-            -- parentheses force single-value capture from the multi-return strsplit
-            local normalizedCharName = charName and (strsplit("-", charName)) or charName
-            if includeAlts or normalizedCharName == playerName then
+            local charInfo = characterInfo.character
+            -- Match by both name and realm to handle same-name characters on different realms
+            if includeAlts or (charInfo and charInfo.name == playerName and charInfo.realm == playerRealm) then
                 total = total + (characterInfo.bags or 0) + (characterInfo.bank or 0) +
                     (characterInfo.equipped or 0) + (characterInfo.mail or 0) +
                     (characterInfo.void or 0) + (characterInfo.auctions or 0)
             end
         end
 
-        if includeAlts and inventoryInfo.warband and inventoryInfo.warband[1] then
+        -- Warband is always included regardless of includeAlts setting
+        if inventoryInfo.warband and inventoryInfo.warband[1] then
             total = total + (inventoryInfo.warband[1] or 0)
         end
     end
@@ -179,18 +181,18 @@ function CraftSimTSM:GetInventoryCount(itemIDOrLink, includeAlts)
     local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
     local total = (numPlayer or 0) + (numAuctions or 0)
 
-    -- includeAlts=true/false overrides the global settings; nil falls back to them.
-    -- Both alts and warbank are gated on the same `includeAlts` override so that
-    -- per-list and global settings are applied consistently.
-    local function resolveInclude(globalKey)
-        return includeAlts ~= nil and includeAlts or CraftSim.DB.OPTIONS:Get(globalKey)
-    end
-
-    if resolveInclude("TSM_SMART_RESTOCK_INCLUDE_ALTS") then
+    -- includeAlts=true/false overrides the global alts setting; nil falls back to it
+    local shouldIncludeAlts = includeAlts ~= nil and includeAlts or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    if shouldIncludeAlts then
         total = total + (numAlts or 0) + (numAltAuctions or 0)
     end
 
-    if resolveInclude("TSM_SMART_RESTOCK_INCLUDE_WARBANK") then
+    -- Warband is always included when called from a craft-list context (includeAlts ~= nil).
+    -- For other callers (includeAlts == nil) fall back to the global warbank setting.
+    local shouldIncludeWarbank = includeAlts ~= nil or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK")
+    if shouldIncludeWarbank then
         total = total + (TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0)
     end
 
