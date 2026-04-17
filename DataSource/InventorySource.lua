@@ -78,8 +78,9 @@ end
 --- Returns the total inventory count (bags + bank) for an itemID.
 --- Uses Syndicator's data to query current character inventory.
 ---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include all characters; if false/nil, only current player
 ---@return number count
-function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink)
+function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
@@ -99,13 +100,24 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink)
 
     local total = 0
     if inventoryInfo and inventoryInfo.characters then
+        local playerName = nil
+        if not includeAlts then
+            -- UnitName("player") returns just the character name without realm suffix
+            playerName = UnitName("player")
+        end
         for _, characterInfo in ipairs(inventoryInfo.characters) do
-            total = total + (characterInfo.bags or 0) + (characterInfo.bank or 0) +
-                (characterInfo.equipped or 0) + (characterInfo.mail or 0) +
-                (characterInfo.void or 0) + (characterInfo.auctions or 0)
+            local charName = characterInfo.character and characterInfo.character.name
+            -- Strip realm suffix (e.g. "Name-Realm" -> "Name") using strsplit;
+            -- parentheses force single-value capture from the multi-return strsplit
+            local normalizedCharName = charName and (strsplit("-", charName)) or charName
+            if includeAlts or normalizedCharName == playerName then
+                total = total + (characterInfo.bags or 0) + (characterInfo.bank or 0) +
+                    (characterInfo.equipped or 0) + (characterInfo.mail or 0) +
+                    (characterInfo.void or 0) + (characterInfo.auctions or 0)
+            end
         end
 
-        if inventoryInfo.warband and inventoryInfo.warband[1] then
+        if includeAlts and inventoryInfo.warband and inventoryInfo.warband[1] then
             total = total + (inventoryInfo.warband[1] or 0)
         end
     end
@@ -151,8 +163,9 @@ end
 
 --- Returns the total inventory count (bags + bank + optionally AH) for an itemID via TSM.
 ---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alts; if false, exclude alts; if nil, use global setting
 ---@return number count
-function CraftSimTSM:GetInventoryCount(itemIDOrLink)
+function CraftSimTSM:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
@@ -166,11 +179,18 @@ function CraftSimTSM:GetInventoryCount(itemIDOrLink)
     local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
     local total = (numPlayer or 0) + (numAuctions or 0)
 
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS") then
+    -- includeAlts=true/false overrides the global settings; nil falls back to them.
+    -- Both alts and warbank are gated on the same `includeAlts` override so that
+    -- per-list and global settings are applied consistently.
+    local function resolveInclude(globalKey)
+        return includeAlts ~= nil and includeAlts or CraftSim.DB.OPTIONS:Get(globalKey)
+    end
+
+    if resolveInclude("TSM_SMART_RESTOCK_INCLUDE_ALTS") then
         total = total + (numAlts or 0) + (numAltAuctions or 0)
     end
 
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK") then
+    if resolveInclude("TSM_SMART_RESTOCK_INCLUDE_WARBANK") then
         total = total + (TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0)
     end
 
@@ -233,11 +253,12 @@ CraftSim.INVENTORY_SOURCE = {}
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
 ---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alt characters' inventory; if false/nil, only current player
 ---@return number count
-function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink)
+function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
     if not itemIDOrLink then return 0 end
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryCount then
-        return CraftSim.INVENTORY_API:GetInventoryCount(itemIDOrLink) or 0
+        return CraftSim.INVENTORY_API:GetInventoryCount(itemIDOrLink, includeAlts) or 0
     end
     return CraftSimINVENTORY_NONE:GetInventoryCount(itemIDOrLink)
 end

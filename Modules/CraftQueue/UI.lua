@@ -2371,6 +2371,18 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP"))
             end)
 
+            local includeAltInvCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL"),
+                function()
+                    return opts.includeAltInventory
+                end,
+                function()
+                    opts.includeAltInventory = not opts.includeAltInventory
+                end)
+            includeAltInvCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP"))
+            end)
+
             local offsetConCB = restockingButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
                 function() return opts.offsetConcentrationCraftAmount end,

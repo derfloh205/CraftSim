@@ -486,7 +486,8 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             local itemID = recipeData.resultData.expectedItem:GetItemID()
             local itemLink = recipeData.resultData.expectedItem:GetItemLink()
             if itemID or itemLink then
-                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID) or 0
+                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID,
+                    options.includeAltInventory) or 0
                 queueAmount = math.max(0, queueAmount - owned)
             end
         end
