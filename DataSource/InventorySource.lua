@@ -8,6 +8,7 @@ local GUTIL = CraftSim.GUTIL
 ---@field name string
 ---@field GetInventoryCount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number
 ---@field GetAuctionAmount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number?
+---@field GetInventoryBreakdownLines fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string, includeAlts: boolean?): {label: string, count: number}[]
 CraftSim.INVENTORY_API = {}
 CraftSim.INVENTORY_APIS = {}
 
@@ -127,8 +128,58 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
     return total
 end
 
+--- Returns a per-source inventory breakdown list for tooltip display.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include all characters; if false/nil, only current player
+---@return {label: string, count: number}[] lines
+function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
+    if not self:IsAvailable() then return {} end
+    if not itemIDOrLink then return {} end
+
+    ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
+    local inventoryInfo
+
+    if Syndicator.API and Syndicator.API.GetInventoryInfo then
+        if type(itemIDOrLink) == "string" then
+            local itemID = GUTIL:GetItemIDByLink(itemIDOrLink)
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemID) or {}
+        else
+            ---@diagnostic disable-next-line: cast-local-type
+            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemIDOrLink) or {}
+        end
+    end
+
+    if not inventoryInfo or not inventoryInfo.characters then return {} end
+
+    local lines = {}
+    local playerName, playerRealm
+    if not includeAlts then
+        playerName, playerRealm = UnitNameUnmodified("player")
+        playerRealm = playerRealm or GetNormalizedRealmName()
+    end
+
+    for _, characterInfo in ipairs(inventoryInfo.characters) do
+        local charInfo = characterInfo.character
+        if includeAlts or (charInfo and charInfo.name == playerName and charInfo.realm == playerRealm) then
+            local charLabel = (charInfo and charInfo.name and charInfo.realm)
+                and (charInfo.name .. "-" .. charInfo.realm) or "Unknown"
+            local charInv = (characterInfo.bags or 0) + (characterInfo.bank or 0) +
+                (characterInfo.equipped or 0) + (characterInfo.mail or 0) + (characterInfo.void or 0)
+            table.insert(lines, { label = charLabel .. " (inv)", count = charInv })
+            table.insert(lines, { label = charLabel .. " (AH)", count = characterInfo.auctions or 0 })
+        end
+    end
+
+    -- Warband always included
+    if inventoryInfo.warband and inventoryInfo.warband[1] then
+        table.insert(lines, { label = "Warband", count = inventoryInfo.warband[1] or 0 })
+    end
+
+    return lines
+end
+
 --- Returns the count of items posted on the AH by the player via Syndicator.
---- Returns nil if not supported.
 ---@param itemIDOrLink ItemID | string
 ---@return number? auctionAmount
 function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink)
@@ -199,6 +250,38 @@ function CraftSimTSM:GetInventoryCount(itemIDOrLink, includeAlts)
     return total
 end
 
+--- Returns a per-source inventory breakdown list for tooltip display.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alts; if false, exclude alts; if nil, use global setting
+---@return {label: string, count: number}[] lines
+function CraftSimTSM:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
+    if not self:IsAvailable() then return {} end
+    if not itemIDOrLink then return {} end
+
+    local tsmStr = type(itemIDOrLink) == "string" and TSM_API.ToItemString(itemIDOrLink) or ("i:" .. itemIDOrLink)
+
+    local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
+
+    local shouldIncludeAlts = includeAlts ~= nil and includeAlts or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    local shouldIncludeWarbank = includeAlts ~= nil or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK")
+
+    local lines = {}
+    table.insert(lines, { label = "Player", count = numPlayer or 0 })
+    table.insert(lines, { label = "AH", count = numAuctions or 0 })
+    if shouldIncludeAlts then
+        table.insert(lines, { label = "Alts", count = numAlts or 0 })
+        table.insert(lines, { label = "Alt AH", count = numAltAuctions or 0 })
+    end
+    if shouldIncludeWarbank then
+        local warbank = TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0
+        table.insert(lines, { label = "Warband", count = warbank })
+    end
+
+    return lines
+end
+
 ---@param idOrLink? number | string
 ---@return number? auctionAmount
 function CraftSimTSM:GetAuctionAmount(idOrLink)
@@ -245,6 +328,15 @@ function CraftSimINVENTORY_NONE:GetAuctionAmount(itemIDOrLink)
     return nil
 end
 
+--- Returns a per-source inventory breakdown list for tooltip display.
+---@param itemID ItemID | string
+---@return {label: string, count: number}[] lines
+function CraftSimINVENTORY_NONE:GetInventoryBreakdownLines(itemID)
+    if not itemID then return {} end
+    local count = C_Item.GetItemCount(itemID, true, false, true) or 0
+    return { { label = "Current character", count = count } }
+end
+
 -- ---------------------------------------------------------------------------
 -- CraftSim.INVENTORY_SOURCE: High-level API used by feature modules
 -- ---------------------------------------------------------------------------
@@ -276,4 +368,16 @@ function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink)
         return CraftSim.INVENTORY_API:GetAuctionAmount(itemIDOrLink)
     end
     return nil
+end
+
+--- Returns a per-source inventory breakdown list for tooltip display.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alt characters' inventory; if false/nil, only current player
+---@return {label: string, count: number}[] lines
+function CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
+    if not itemIDOrLink then return {} end
+    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryBreakdownLines then
+        return CraftSim.INVENTORY_API:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
+    end
+    return CraftSimINVENTORY_NONE:GetInventoryBreakdownLines(itemIDOrLink)
 end
