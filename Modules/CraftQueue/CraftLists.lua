@@ -96,6 +96,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     end
 
     -- Group SBF entries by (crafterUID:sbfItemID), sort by WITH-SBF priority, then allocate.
+    -- Note: only sbfItemID is needed for grouping here; perCraft was already used above.
     ---@type table<string, CraftSim.CRAFT_LISTS.ScanEntry[]>
     local sbfGroups = {}
     for _, entry in ipairs(allScanEntries) do
@@ -210,14 +211,14 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         for _, item in ipairs(group.entries) do
             local entry = item.entry
             local rd = item.rd
-            local concentrationCosts = rd.concentrationCost
+            local concentrationCost = rd.concentrationCost
             if entry.options.offsetConcentrationCraftAmount then
                 local ingenuityChance = rd.professionStats.ingenuity:GetPercent(true)
                 local ingenuityRefund = 0.5 + rd.professionStats.ingenuity:GetExtraValue()
-                concentrationCosts = concentrationCosts -
-                    (concentrationCosts * ingenuityChance * ingenuityRefund)
+                concentrationCost = concentrationCost -
+                    (concentrationCost * ingenuityChance * ingenuityRefund)
             end
-            local queueableAmount = math.floor(currentConcentration / concentrationCosts)
+            local queueableAmount = math.floor(currentConcentration / concentrationCost)
             -- Full cost required for at least one craft; adjusted cost is only for expected count.
             if currentConcentration < rd.concentrationCost then
                 queueableAmount = 0
@@ -233,7 +234,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                     entrySbfCrafts[entry] = queueableAmount
                 end
                 entryOverrideAmount[entry] = queueableAmount
-                currentConcentration = currentConcentration - (concentrationCosts * queueableAmount)
+                currentConcentration = currentConcentration - (concentrationCost * queueableAmount)
                 picked = true
             else
                 -- smartConcentrationQueuing: only one recipe per profession gets queued.
@@ -279,7 +280,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                     CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
                 end
             else
-                print("Skipping non-profitable recipe (effective): " .. effectiveRD.recipeName)
+                print("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
             end
         end
     end
