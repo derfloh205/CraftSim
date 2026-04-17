@@ -619,11 +619,7 @@ end
 ---@param currencyID number
 ---@return number copperPerUnit
 function CraftSim.UTIL:GetPatronOrderMoxieCopperPerUnit(currencyID)
-    local values = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MOXIE_VALUES")
-    if type(values) ~= "table" then
-        return 0
-    end
-    return tonumber(values[currencyID]) or 0
+    return CraftSim.PATRON_MOXIE_VALUE_DB:GetCopperPerMoxie(currencyID)
 end
 
 --- Manu Moxie currency for the recipe's profession (API may omit `professionInfo.profession`; fall back via skill line).

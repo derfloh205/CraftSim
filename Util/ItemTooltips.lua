@@ -10,7 +10,7 @@ CraftSim.ITEM_TOOLTIPS = {}
 local tooltipHooked = false
 
 --- Format a unix timestamp as a human-readable date+time string
----@param timestamp number
+---@param timestamp number?
 ---@return string
 local function FormatTimestamp(timestamp)
     if not timestamp then return "?" end
@@ -87,6 +87,9 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
         local itemID = tooltipInfo.id
         local itemLink = tooltipInfo.hyperlink
 
+        local surplusStorageID = CraftSim.PATRON_MOXIE_SURPLUS:GetVendorSurplusBagStorageCurrencyID(itemID)
+        local hadSurplusBagMapping = surplusStorageID ~= nil
+
         local crafterUID, cost, timestamp
         if itemLink then
             crafterUID, cost, timestamp = CraftSim.DB.LAST_CRAFTING_COST:GetCheapestByItemLink(itemLink)
@@ -96,13 +99,29 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
 
         local showLastCost = cost and cost > 0
         local registeredUIDs = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS
-            .SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP)
+                .SHOW_REGISTERED_CRAFTERS_ITEM_TOOLTIP)
             and GetRegisteredCrafterUIDsForItem(itemID, itemLink)
             or {}
         local showRegistered = #registeredUIDs > 0
 
-        if not showLastCost and not showRegistered then
+        if not showLastCost and not showRegistered and not hadSurplusBagMapping then
             return
+        end
+
+        tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_HEADER"))
+
+        if hadSurplusBagMapping and surplusStorageID then
+            local totalCopper = CraftSim.PATRON_MOXIE_SURPLUS:GetSurplusTurnInAHValue(surplusStorageID)
+            if totalCopper then
+                tooltip:AddDoubleLine(f.white(L("PATRON_MOXIE_SURPLUS_BAG_ITEM_TOOLTIP_EXPECTED_VALUE")),
+                    CraftSim.UTIL:FormatMoney(totalCopper, true, nil, true))
+            else
+                tooltip:AddLine(L("CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_NO_DATA_TOOLTIP"), 0.65, 0.65, 0.65, true)
+            end
+        end
+
+        if hadSurplusBagMapping and (showLastCost or showRegistered) then
+            tooltip:AddLine(" ")
         end
 
         ---@type CrafterUID[]
@@ -115,8 +134,6 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             uidsForDupCheck = {}
         end
         local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(uidsForDupCheck)
-
-        tooltip:AddLine(L("LAST_CRAFTING_COST_TOOLTIP_HEADER"))
 
         if showLastCost then
             local costText = CraftSim.UTIL:FormatMoney(cost, true)
