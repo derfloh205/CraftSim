@@ -1559,7 +1559,7 @@ function CraftSim.CRAFTQ.UI:Init()
             clickCallback = nil,
         })
 
-        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+        if C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
             ---@type GGUI.Button
             queueTab.content.createAuctionatorShoppingList = GGUI.Button({
                 parent = queueTab.content,
@@ -1629,7 +1629,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
 
         local auctionatorHelpPanelDef
-        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+        if C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
             auctionatorHelpPanelDef =
             {
                 button = {
@@ -2369,6 +2369,18 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 end)
             subtractStockListCB:SetTooltip(function(tooltip, _)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP"))
+            end)
+
+            local includeAltInvCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL"),
+                function()
+                    return opts.includeAltInventory
+                end,
+                function()
+                    opts.includeAltInventory = not opts.includeAltInventory
+                end)
+            includeAltInvCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP"))
             end)
 
             local offsetConCB = restockingButton:CreateCheckbox(
