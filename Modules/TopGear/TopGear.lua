@@ -255,34 +255,16 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
 
- -- For each unique equip category, keep the highest ilvl item per stat profile.
-    -- Using a compound key (uniqueCategoryID + stat profile) ensures that accessories
-    -- with different stat combinations (e.g. multicraft vs resourcefulness) within the
-    -- same equip slot are all represented, even when one has a higher item level.
-    -- This prevents the optimizer from discarding lower-ilvl resourcefulness gear in
-    -- favour of higher-ilvl multicraft gear for recipes where multicraft has no value
-    -- (e.g. work orders or Furniture recipes that cannot multicraft).
-    ---@type table<string, CraftSim.ProfessionGear>
+ -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
+    ---@type table<number, CraftSim.ProfessionGear>
     local highestItemLevels = {}
     for _, professionGear in pairs(accessoryItems) do
         print("Checking UniquenessIlvls: " .. professionGear.item:GetItemLink())
         local uniqueCategoryID = select(4, C_Item.GetItemUniquenessByID(professionGear.item:GetItemID()))
-        local itemLevel = professionGear:GetItemLevel() or 0
+        local itemLevel = professionGear:GetItemLevel()
 
-        -- Build a short stat-profile string so items with different stat combinations
-        -- get distinct keys and are not dropped by the highest-ilvl deduplication.
-        local s = professionGear.professionStats
-        local statProfile = (s.multicraft.value > 0 and "mc" or "")
-            .. (s.resourcefulness.value > 0 and "res" or "")
-            .. (s.ingenuity.value > 0 and "ing" or "")
-            .. (s.craftingspeed.value > 0 and "cs" or "")
-            .. (s.skill.value > 0 and "sk" or "")
-        if statProfile == "" then statProfile = "other" end
-
-        local key = tostring(uniqueCategoryID or "nil") .. "_" .. statProfile
-
-        if not highestItemLevels[key] or (highestItemLevels[key]:GetItemLevel() or 0) < itemLevel then
-            highestItemLevels[key] = professionGear
+        if uniqueCategoryID and (not highestItemLevels[uniqueCategoryID] or highestItemLevels[uniqueCategoryID]:GetItemLevel() < itemLevel) then
+            highestItemLevels[uniqueCategoryID] = professionGear
         end
     end
 
@@ -295,13 +277,10 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local toolSlotItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType end)
 
-    -- Always include an empty slot so that every accessory can be evaluated on its own
-    -- (with the other slot empty).  This is essential when gearSlotItems contains multiple
-    -- accessories that share the same equip-limit group (e.g. a multicraft knife and a
-    -- resourcefulness knife that cannot both be equipped at the same time): without the
-    -- empty slot they would never appear in a valid combination and would be ignored by the
-    -- optimizer.
-    table.insert(gearSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
+    -- if it is not possible to fill all slots, add an empty slot for permutation calculation
+    if #gearSlotItems < 2 then
+        table.insert(gearSlotItems, CraftSim.TOPGEAR.EMPTY_SLOT)
+    end
 
     -- if no tool is available, add an empty slot for permutation calculation
     if #toolSlotItems < 1 then
@@ -309,6 +288,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     end
 
     -- permutate the gearslot items to get all combinations of two
+    -- since there is either the accessory with the highest ilvl or an empty slot it will be at max 2^2 combinations
 
     -- if cooking we do not need to make any combinations cause we only have one gear slot
     local gearSlotCombos = {}
