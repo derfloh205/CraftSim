@@ -410,7 +410,11 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
         KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
     local globalReagentAllocation         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION,
         CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE)
-    local globalOptimizationScanMode      = globalReagentAllocation == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
+    local RA                              = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+    local globalOptimizationScanMode      = globalReagentAllocation == RA.OPTIMIZE
+        or globalReagentAllocation == RA.OPTIMIZE_HIGHEST
+        or globalReagentAllocation == RA.OPTIMIZE_MOST_PROFITABLE
+        or string.match(tostring(globalReagentAllocation), "^OPTIMIZE_TARGET_%d+$") ~= nil
     local optimizeSubRecipes              = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
 
     CraftSim.DEBUG:StartProfiling("Total Recipe Scan")
@@ -543,7 +547,18 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                 if not globalOptimizationScanMode then
                     CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
                 else
-                    optimizeReagentOptions = { highestProfit = globalOptimizeTopProfit }
+                    recipeData:SetCheapestQualityReagentsMax()
+                    if globalReagentAllocation == RA.OPTIMIZE_MOST_PROFITABLE then
+                        optimizeReagentOptions = { highestProfit = true }
+                    else
+                        local targetQuality = tonumber(string.match(tostring(globalReagentAllocation), "^OPTIMIZE_TARGET_(%d+)$"))
+                        if targetQuality then
+                            optimizeReagentOptions = { maxQuality = targetQuality }
+                        else
+                            -- OPTIMIZE, OPTIMIZE_HIGHEST, or any unrecognized value: respect AUTOSELECT_TOP_PROFIT_QUALITY
+                            optimizeReagentOptions = { highestProfit = globalOptimizeTopProfit }
+                        end
+                    end
                 end
             end
 

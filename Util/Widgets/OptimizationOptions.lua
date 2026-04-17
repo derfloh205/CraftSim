@@ -55,13 +55,20 @@ CraftSim.WIDGETS = CraftSim.WIDGETS or {}
 ---@overload fun(options: CraftSim.WIDGETS.OptimizationOptions.ConstructorOptions): CraftSim.WIDGETS.OptimizationOptions
 CraftSim.WIDGETS.OptimizationOptions = CraftSim.WIDGETS.OptionsButton:extend()
 
----Reagent allocation mode values mirroring CraftSim.RECIPE_SCAN.SCAN_MODES.
+---Reagent allocation mode values.
 ---@enum CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
 CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION = {
-    Q1       = "Q1",
-    Q2       = "Q2",
-    Q3       = "Q3",
-    OPTIMIZE = "OPTIMIZE",
+    Q1                     = "Q1",
+    Q2                     = "Q2",
+    Q3                     = "Q3",
+    OPTIMIZE               = "OPTIMIZE",
+    OPTIMIZE_HIGHEST       = "OPTIMIZE_HIGHEST",
+    OPTIMIZE_MOST_PROFITABLE = "OPTIMIZE_MOST_PROFITABLE",
+    OPTIMIZE_TARGET_1      = "OPTIMIZE_TARGET_1",
+    OPTIMIZE_TARGET_2      = "OPTIMIZE_TARGET_2",
+    OPTIMIZE_TARGET_3      = "OPTIMIZE_TARGET_3",
+    OPTIMIZE_TARGET_4      = "OPTIMIZE_TARGET_4",
+    OPTIMIZE_TARGET_5      = "OPTIMIZE_TARGET_5",
 }
 
 ---DB key names for each individual optimization option value.
@@ -147,24 +154,54 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
             local sub = rootDescription:CreateButton(L("RECIPE_SCAN_REAGENT_ALLOCATION"))
 
             sub:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") .. " " .. GUTIL:GetQualityIconString(1, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q1") ..
+                " " .. GUTIL:GetQualityIconString(1, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(1, 20, 20),
                 function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q1 end,
-                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q1) end)
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q1) return MenuResponse.Refresh end)
 
             sub:CreateRadio(
-                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") .. " " .. GUTIL:GetQualityIconString(2, 20, 20),
+                L("RECIPE_SCAN_REAGENT_ALLOCATION_Q2") ..
+                " " .. GUTIL:GetQualityIconString(2, 20, 20) .. " | " .. GUTIL:GetQualityIconStringSimplified(2, 20, 20),
                 function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q2 end,
-                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q2) end)
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q2) return MenuResponse.Refresh end)
 
             sub:CreateRadio(
                 L("RECIPE_SCAN_REAGENT_ALLOCATION_Q3") .. " " .. GUTIL:GetQualityIconString(3, 20, 20),
                 function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.Q3 end,
-                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q3) end)
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.Q3) return MenuResponse.Refresh end)
 
-            sub:CreateRadio(
-                L("RECIPE_SCAN_MODE_OPTIMIZE"),
-                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.OPTIMIZE end,
-                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.OPTIMIZE) end)
+            -- Optimize sub-submenu
+            local optimizeSub = sub:CreateButton(L("RECIPE_SCAN_MODE_OPTIMIZE"))
+
+            optimizeSub:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_HIGHEST"),
+                function()
+                    local ra = getOption(KEYS.REAGENT_ALLOCATION) or RA.OPTIMIZE_HIGHEST
+                    return ra == RA.OPTIMIZE_HIGHEST or ra == RA.OPTIMIZE
+                end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.OPTIMIZE_HIGHEST) return MenuResponse.Refresh end)
+
+            optimizeSub:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_OPTIMIZE_MOST_PROFITABLE"),
+                function() return getOption(KEYS.REAGENT_ALLOCATION) == RA.OPTIMIZE_MOST_PROFITABLE end,
+                function() saveOption(KEYS.REAGENT_ALLOCATION, RA.OPTIMIZE_MOST_PROFITABLE) return MenuResponse.Refresh end)
+
+            -- Target Quality sub-submenu
+            local targetQualityButton = optimizeSub:CreateButton(
+                L("CRAFT_LISTS_OPTIONS_REAGENT_ALLOCATION_TARGET_QUALITY"))
+
+            for i = 1, 5 do
+                local qualityID = i
+                local allocationValue = RA["OPTIMIZE_TARGET_" .. qualityID]
+                local qualityLabel = GUTIL:GetQualityIconString(qualityID, 20, 20)
+                if qualityID <= 2 then
+                    qualityLabel = qualityLabel .. " | " .. GUTIL:GetQualityIconStringSimplified(qualityID, 20, 20)
+                end
+                targetQualityButton:CreateRadio(
+                    qualityLabel,
+                    function() return getOption(KEYS.REAGENT_ALLOCATION) == allocationValue end,
+                    function() saveOption(KEYS.REAGENT_ALLOCATION, allocationValue) return MenuResponse.Refresh end)
+            end
         end
 
         -- Autoselect Top Profit Quality (quality-gated)
@@ -205,7 +242,7 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
                 local simpleRadio = algorithmSub:CreateRadio(
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE"),
                     function() return getOption(KEYS.FINISHING_REAGENTS_ALGORITHM) ~= FA.PERMUTATION end,
-                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE) end)
+                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE) return MenuResponse.Refresh end)
                 simpleRadio:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
@@ -214,7 +251,7 @@ function CraftSim.WIDGETS.OptimizationOptions:new(options)
                 local permutationRadio = algorithmSub:CreateRadio(
                     L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION"),
                     function() return getOption(KEYS.FINISHING_REAGENTS_ALGORITHM) == FA.PERMUTATION end,
-                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.PERMUTATION) end)
+                    function() saveOption(KEYS.FINISHING_REAGENTS_ALGORITHM, FA.PERMUTATION) return MenuResponse.Refresh end)
                 permutationRadio:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_PERMUTATION_TOOLTIP"))
