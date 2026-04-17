@@ -309,6 +309,10 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
     if specNodeTooltipHooked then return end
     specNodeTooltipHooked = true
 
+    -- Defer GameTooltip modifications to the next frame to avoid running addon code within
+    -- Blizzard's secure specialization UI execution context. In WoW 12.0 (Midnight), calling
+    -- GameTooltip:AddLine() / Show() from within that secure context can taint the tooltip's
+    -- frame state, causing "tainted by 'CraftSim'" errors in MoneyFrame_Update.
     EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(configID, pathID)
         local nodeID = pathID
 
@@ -325,14 +329,17 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
             table.sort(orderedUIDs)
             local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(orderedUIDs)
 
-            GameTooltip:AddLine("\n" .. f.white(label) .. "\n")
-            for _, crafterUID in ipairs(orderedUIDs) do
-                local rank = crafterUIDRankMap[crafterUID]
-                local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
-                GameTooltip:AddLine(CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, display) .. ": " .. rank)
-            end
-
-            GameTooltip:Show()
+            RunNextFrame(function()
+                if GameTooltip:IsShown() then
+                    GameTooltip:AddLine("\n" .. f.white(label) .. "\n")
+                    for _, crafterUID in ipairs(orderedUIDs) do
+                        local rank = crafterUIDRankMap[crafterUID]
+                        local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
+                        GameTooltip:AddLine(CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, display) .. ": " .. rank)
+                    end
+                    GameTooltip:Show()
+                end
+            end)
         end
     end)
 end

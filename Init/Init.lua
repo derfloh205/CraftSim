@@ -118,9 +118,15 @@ function CraftSim.INIT:HookToEvents()
 	end
 	hookedEvent = true
 
+	-- Defer UI update to the next frame to avoid running addon code within Blizzard's secure
+	-- SchematicForm:Init execution context. In WoW 12.0 (Midnight), calling C_TradeSkillUI
+	-- APIs (e.g. GetCraftingOperationInfo) from within that secure context taints recipe data,
+	-- causing "tainted by 'CraftSim'" errors in MoneyFrame_Update when tooltips display sell prices.
 	local function UpdateUI(self)
 		if CraftSim.INIT.visibleRecipeID then
-			CraftSim.MODULES:UpdateUI()
+			RunNextFrame(function()
+				CraftSim.MODULES:UpdateUI()
+			end)
 		end
 	end
 
