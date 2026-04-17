@@ -66,11 +66,16 @@ end
 --- Pass order:
 ---   1. Global SBF allocation – for each SBF item, entries are sorted by their WITH-SBF
 ---      priority and SBF uses are assigned to the highest-value recipes across all lists.
----   2. Cooldown triage – cooldown-recipe entries are sorted and capped to available charges.
----   3. Global smart concentration queueing – for entries in lists that have
+---   2. Global smart concentration queueing – for entries in lists that have
 ---      smartConcentrationQueuing enabled, entries are grouped by crafter+profession and
 ---      sorted by the *effective* (post-SBF) concentration value.  Only the top-ranked
 ---      recipe per group receives concentration; all others in the group are dropped.
+---      This step runs BEFORE cooldown triage so that concentration-limited craft counts
+---      (stored in entryOverrideAmount) are known when cooldown charges are distributed.
+---   3. Cooldown triage – cooldown-recipe entries are sorted and capped to available
+---      charges.  Because concentration limits are already reflected in entryOverrideAmount,
+---      any charges freed by concentration can be redistributed to lower-priority entries
+---      that share the same cooldown (e.g. a non-concentrating list for the same recipe).
 ---   4. Queue – resulting entries are added to the craft queue with the appropriate
 ---      with-SBF / without-SBF split.
 ---@param allScanEntries CraftSim.CRAFT_LISTS.ScanEntry[]
@@ -137,51 +142,18 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
     end
 
-    -- ── Step 2: Cooldown Triage ───────────────────────────────────────────────
-    -- For shared cooldowns (e.g. alchemy transmutations), multiple recipe IDs share
-    -- the same lockout.  Use cooldownData.sharedCD as the group key when present so
-    -- that all recipes sharing a cooldown compete for the same pool of charges.
-    ---@type table<string, CraftSim.CRAFT_LISTS.ScanEntry[]>
-    local cooldownGroups = {}
-    for _, entry in ipairs(allScanEntries) do
-        local rd = entryEffectiveRD[entry]
-        if rd.cooldownData and rd.cooldownData.isCooldownRecipe then
-            local cdKey = rd.cooldownData.sharedCD or rd.recipeID
-            local key = entry.crafterUID .. ":" .. cdKey
-            cooldownGroups[key] = cooldownGroups[key] or {}
-            tinsert(cooldownGroups[key], entry)
-        end
-    end
-
     ---@type table<CraftSim.CRAFT_LISTS.ScanEntry, boolean>
     local skipEntry = {}
     ---@type table<CraftSim.CRAFT_LISTS.ScanEntry, number>
     local entryOverrideAmount = {}
 
-    for _, group in pairs(cooldownGroups) do
-        if #group > 1 then
-            table.sort(group, function(a, b)
-                return sortRecipeDataBySmartPriority(entryEffectiveRD[a], entryEffectiveRD[b])
-            end)
-            local availableCharges = group[1].recipeData.cooldownData:GetCurrentCharges() or 0
-            for _, entry in ipairs(group) do
-                if availableCharges <= 0 then
-                    skipEntry[entry] = true
-                else
-                    local maxQty = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
-                    local assigned = math.min(maxQty, availableCharges)
-                    availableCharges = availableCharges - assigned
-                    if assigned == 0 then
-                        skipEntry[entry] = true
-                    else
-                        entryOverrideAmount[entry] = assigned
-                    end
-                end
-            end
-        end
-    end
-
-    -- ── Step 3: Global Smart Concentration Queueing ──────────────────────────
+    -- ── Step 2: Global Smart Concentration Queueing ──────────────────────────
+    -- Runs BEFORE cooldown triage so that concentration-limited craft counts are
+    -- already in entryOverrideAmount when the cooldown step distributes charges.
+    -- This ensures charges freed by concentration limits (e.g. a concentrating entry
+    -- can only use 3 of 5 available cooldown charges) are redistributed to other
+    -- entries sharing the same cooldown instead of being silently discarded.
+    --
     -- Only applies to entries from lists that have smartConcentrationQueuing enabled.
     -- Entries are grouped globally by crafterUID:professionSkillLineID so that
     -- concentration is shared across craft lists (not allocated per-list).
@@ -190,7 +162,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
 
     for _, entry in ipairs(allScanEntries) do
         local opts = entry.options
-        if opts.enableConcentration and opts.smartConcentrationQueuing and not skipEntry[entry] then
+        if opts.enableConcentration and opts.smartConcentrationQueuing then
             local rd = entryEffectiveRD[entry]
             if rd.concentrating and rd.concentrationCost and rd.concentrationCost > 0 then
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
@@ -243,6 +215,52 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             else
                 -- smartConcentrationQueuing: only one recipe per profession gets queued.
                 skipEntry[entry] = true
+            end
+        end
+    end
+
+    -- ── Step 3: Cooldown Triage ───────────────────────────────────────────────
+    -- Runs AFTER concentration triage so concentration-reduced amounts are already
+    -- reflected in entryOverrideAmount. Charges freed by concentration limits are
+    -- redistributed to other entries that share the same cooldown (e.g. a
+    -- non-concentrating craft list for the same cooldown recipe).
+    --
+    -- For shared cooldowns (e.g. alchemy transmutations), multiple recipe IDs share
+    -- the same lockout.  Use cooldownData.sharedCD as the group key when present so
+    -- that all recipes sharing a cooldown compete for the same pool of charges.
+    ---@type table<string, CraftSim.CRAFT_LISTS.ScanEntry[]>
+    local cooldownGroups = {}
+    for _, entry in ipairs(allScanEntries) do
+        local rd = entryEffectiveRD[entry]
+        if rd.cooldownData and rd.cooldownData.isCooldownRecipe then
+            local cdKey = rd.cooldownData.sharedCD or rd.recipeID
+            local key = entry.crafterUID .. ":" .. cdKey
+            cooldownGroups[key] = cooldownGroups[key] or {}
+            tinsert(cooldownGroups[key], entry)
+        end
+    end
+
+    for _, group in pairs(cooldownGroups) do
+        table.sort(group, function(a, b)
+            return sortRecipeDataBySmartPriority(entryEffectiveRD[a], entryEffectiveRD[b])
+        end)
+        local availableCharges = group[1].recipeData.cooldownData:GetCurrentCharges() or 0
+        for _, entry in ipairs(group) do
+            if skipEntry[entry] then
+                -- Already excluded (e.g. lost concentration triage); don't count toward used charges.
+            elseif availableCharges <= 0 then
+                skipEntry[entry] = true
+            else
+                -- Use the concentration-limited amount if set, otherwise fall back to the
+                -- list's own max.  This allows freed charges to flow to lower-priority entries.
+                local committed = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
+                local assigned = math.min(committed, availableCharges)
+                availableCharges = availableCharges - assigned
+                if assigned == 0 then
+                    skipEntry[entry] = true
+                elseif assigned < committed then
+                    entryOverrideAmount[entry] = assigned
+                end
             end
         end
     end
