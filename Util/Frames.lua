@@ -35,6 +35,52 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
+function CraftSim.FRAME:RestoreModulePositions()
+    local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
+    local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+    local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
+    local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
+    local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
+    local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+    local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
+    local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
+    local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
+
+    infoFrame:RestoreSavedConfig(UIParent)
+    CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
+    CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
+    CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
+    specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
+    specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
+    averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    topgearFrame:RestoreSavedConfig(ProfessionsFrame)
+    topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
+    reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
+    reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+    local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
+    if patronRewardValuesFrame then
+        patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
+    end
+
+    CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+    CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+    CraftSim.STATISTICS.frameNO_WO:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+    CraftSim.STATISTICS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+    CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
+
+    CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
+end
+
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.INIT.FRAMES) do
         Logger:LogDebug(CraftSim.LOCAL:GetText("FRAMES_RESETTING") .. tostring(frame.frameID))

@@ -400,7 +400,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_CONCENTRATION_VALUE_HEADER = "C. Value",
         RECIPE_SCAN_CONCENTRATION_COST_HEADER = "C. Cost",
         RECIPE_SCAN_TOP_GEAR_HEADER = "Top Gear",
-        RECIPE_SCAN_INV_AH_HEADER = "Inv/AH",
+        RECIPE_SCAN_INV_AH_HEADER = "Inv",
         RECIPE_SCAN_SORT_BY_MARGIN = "Sort by Profit %",
         RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP =
         "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
@@ -447,6 +447,7 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_SCAN_INCLUDE_SOULBOUND_ITEMS = "Include " .. f.e("Soulbound") .. " Items",
         RECIPE_SCAN_INCLUDE_UNLEARNED_RECIPES = "Include " .. f.r("Unlearned") .. " Recipes",
         RECIPE_SCAN_INCLUDE_GEAR_LABEL = "Include Gear",
+        RECIPE_SCAN_INV_COUNT_INCLUDE_ALTS_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         RECIPE_SCAN_REAGENT_ALLOCATION = "Reagent Allocation",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q1 = "All Q1",
         RECIPE_SCAN_REAGENT_ALLOCATION_Q2 = "All Q2",
@@ -547,6 +548,8 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_GENERAL_CURRENT_INVENTORY_SOURCE = "Current Inventory Source: ",
         OPTIONS_GENERAL_NO_INVENTORY_SOURCE = "No Supported Inventory Addon loaded!",
         OPTIONS_GENERAL_SUPPORTED_INVENTORY_SOURCES = "Supported Inventory Sources:",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_CHECKBOX = "Show Module Tutorial Buttons",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_TOOLTIP = "Show tutorial buttons for each module",
         OPTIONS_PERFORMANCE_RAM = "Enable RAM cleanup while crafting",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "Crafts",
         OPTIONS_PERFORMANCE_RAM_TOOLTIP =
@@ -765,6 +768,9 @@ function CraftSim.LOCAL_EN:GetData()
             " order " ..
             f.bb("Moxie") ..
             " rewards and the first-craft moxie bonus are added to expected profit using your Moxie values below. When disabled, Moxie stays informational in tooltips only.",
+        CRAFT_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES_CHECKBOX = "Auto-update Moxie values from price updates",
+        CRAFT_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES_TOOLTIP =
+        "When enabled, CraftSim recomputes Moxie values whenever recipe prices refresh and only overwrites entries whose computed value changed.",
         CRAFT_QUEUE_PATRON_ORDERS_MOXIE_VALUE_TOOLTIP = "How much you value one unit of this profession's " ..
             f.bb("Moxie") ..
             " reward. Shown in tooltips; also used in expected profit when " ..
@@ -774,12 +780,25 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_REWARD_VALUES_MENU_BUTTON = "Set Moxie values",
         CRAFT_QUEUE_PATRON_REWARD_VALUES_INTRO = "Set how much you value one unit of each profession's " ..
             f.bb("Moxie") ..
-            ". " ..
-            "Always shown in tooltips; " ..
-            f.bb("expected profit") ..
-            " includes Moxie at these rates when " ..
+            "; grouped rows share one value, and this value is used in expected profit when " ..
             f.bb("Include Moxie in expected profit") ..
-            " is enabled (otherwise gold-only: tips, commission, item rewards).",
+            " is enabled.",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_SUGGEST_TOOLTIP = "Suggested value per " ..
+            f.bb("Moxie") ..
+            " from your price source, using average yields for Midnight " ..
+            f.bb("Master … Surplus Reagent") ..
+            " turn-ins (tier-2 reagent prices).\n\n" ..
+            f.g("Left-click") ..
+            " to copy this value into the Current column.",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_NO_DATA_TOOLTIP =
+        "No surplus table for this profession, no price source, or all listed reagents priced at zero.",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_MOXIE = "Moxie",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_ITEMS = "Possible Items",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_CURRENT = "Current",
+        CRAFT_QUEUE_PATRON_MOXIE_VALUES_HEADER_SUGGESTED = "Suggested",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_REAGENT_TOTAL = "Reagents (expected)",
+        CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_PER_MOXIE = "Per " .. f.bb("Moxie"),
+        PATRON_MOXIE_SURPLUS_BAG_ITEM_TOOLTIP_EXPECTED_VALUE = "Expected Value",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") ..
             f.gold("Concentration") .. f.bb(" Queueing"),
@@ -800,7 +819,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RESTOCK_FAVORITES_OFFSET_QUEUE_AMOUNT_TOOLTIP =
         "Always add given amount to the number of queued crafts",
         CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = f.g("Automatically Create") ..
-        " " .. f.bb("Shopping List") .. " after queueing",
+            " " .. f.bb("Shopping List") .. " after queueing",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
         RECIPE_COOLDOWN_CHARGES_INLINE = "(%d/%d)",
@@ -994,6 +1013,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
         "When enabled, craft list restock queues max(0, target - how many you already have).\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
+        CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
+        CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
+        "When enabled, alt characters' inventory is also subtracted from the restock target.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after queueing",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..

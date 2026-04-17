@@ -79,16 +79,15 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
     end
 
     -- always update reagents of that craft
-    GUTIL:WaitForEvent("PLAYERBANKSLOTS_CHANGED",
-        function()
-            Logger:LogDebug("PLAYERBANKSLOTS_CHANGED After Craft")
-            -- update item count for each of the used reagents in this craft! (in next frame to batch results)
-            RunNextFrame(function()
-                local recipeData = CraftSim.CRAFT_LOG.currentRecipeData
-                Logger:LogDebug("Updating Reagents Count for: " .. tostring(recipeData.recipeName))
-                recipeData.reagentData:UpdateItemCountCacheForAllocatedReagents()
-            end)
-        end, 0.1)
+    GUTIL:WaitForEvent("PLAYERBANKSLOTS_CHANGED", function()
+        Logger:LogDebug("PLAYERBANKSLOTS_CHANGED After Craft")
+        -- update item count for each of the used reagents in this craft! (in next frame to batch results)
+        RunNextFrame(function()
+            local recipeData = CraftSim.CRAFT_LOG.currentRecipeData
+            Logger:LogDebug("Updating Reagents Count for: " .. tostring(recipeData.recipeName))
+            recipeData.reagentData:UpdateItemCountCacheForAllocatedReagents()
+        end)
+    end, 0.1)
 end
 
 function CraftSim.CRAFT_LOG:ExportJSON()

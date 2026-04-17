@@ -153,7 +153,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             end)
 
             rootDescription:CreateButton(f.grey(L("CONTROL_PANEL_DEBUG")), function()
-                GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
+                CraftSim.DEBUG.frame:Show()
             end)
         end)
     end)

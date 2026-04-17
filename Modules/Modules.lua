@@ -270,6 +270,12 @@ function CraftSim.MODULES:Update()
 	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		Logger:LogDebug("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
+		CraftSim.MODULES:Hide()
+		return
+	end
+
 	CraftSim.CONTROL_PANEL.frame:Show()
 	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
 	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()

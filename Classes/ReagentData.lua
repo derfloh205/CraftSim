@@ -346,7 +346,6 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     -- explicitly do not use concentration flag here
 
     Logger:LogDebug("max quality reagents crafting tbl:")
-    Logger:LogDebug(maxQualityReagentsCraftingTbl, true)
 
     local recipeID = self.recipeData.recipeID
     local baseOperationInfo = nil
@@ -442,7 +441,6 @@ end
 ---@param reagents CraftSim.Reagent[]
 function CraftSim.ReagentData:EqualsQualityReagents(reagents)
     Logger:LogDebug("EqualsQualityReagents ?")
-    Logger:LogDebug(reagents, true)
     -- order can be different?
     local qualityReagents = GUTIL:Filter(self.requiredReagents, function(reagent) return reagent.hasQuality end)
     for index, reagentA in pairs(qualityReagents) do

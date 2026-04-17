@@ -31,6 +31,7 @@ CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RES
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
+    "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
 })
 
@@ -244,7 +245,7 @@ CraftSim.CRAFTQ.purchasedItem = nil
 ---@param itemID number
 ---@param boughtQuantity number
 function CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
         return -- do not need if Auctionator not loaded
     end
 
@@ -268,7 +269,7 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     self.quickBuyCache.pendingItemCount = nil
     self.quickBuyCache.pendingItemID = nil
 
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2]) then
         return -- do not need if Auctionator not loaded
     end
 
@@ -1233,7 +1234,7 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
         Logger:LogDebug("No quality checked -> sale rate true")
         return true -- if nothing is checked for an individual sale rate check then its just true
     end
-    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
+    if not C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1]) then
         Logger:LogDebug("tsm not loaded -> sale rate true")
         return true -- always true if TSM is not loaded
     end
@@ -1451,6 +1452,7 @@ end
 --- Currently only works for craftsim shopping list due to relying on bought item removal
 --- TODO: fix auto removal for reagents like darkmoon decks
 function CraftSim.CRAFTQ:AuctionatorQuickBuy()
+
     Logger:LogDebug("AuctionatorQuickBuy", false, true)
 
     local qbCache = self.quickBuyCache
@@ -1637,5 +1639,15 @@ end
 function CraftSim.CRAFTQ:CRAFTSIM_CRAFTING_ORDERS_PRELOADED()
     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
         RunNextFrame(function() self:QueueWorkOrders() end)
+    end
+end
+
+---@param optionID CraftSim.GENERAL_OPTIONS
+---@param value any
+function CraftSim.CRAFTQ:CRAFTSIM_SETTINGS_UPDATED(optionID, value)
+    if optionID == "SHOW_TUTORIAL_BUTTONS" then
+        ---@type GGUI.TutorialButton
+        local queueTutorialButton = self.frame.content.queueTab.content.queueTutorialButton
+        queueTutorialButton.frame:SetShown(value)
     end
 end

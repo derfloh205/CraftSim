@@ -188,7 +188,6 @@ function CraftSim.RecipeData:new(options)
         ---@type CraftingOrderInfo
         pendingOrderData = ProfessionsFrame.OrdersPage.OrderView.order
         Logger:LogDebug("Craft Order Data:")
-        Logger:LogDebug(pendingOrderData, true)
     end
 
     if self:IsCrafter() and not forceCache then
@@ -584,7 +583,6 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 if reagentAllocation ~= nil then
                     allocations = reagentAllocation:GetQuantity()
                     Logger:LogDebug("reagent #" .. i .. " allocation:", false, true)
-                    Logger:LogDebug(reagentAllocation, true)
                 end
                 local craftSimReagentItem = nil
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
