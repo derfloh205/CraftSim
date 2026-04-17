@@ -52,8 +52,8 @@ end
 --- Migrations
 function CraftSim.DB.MULTICRAFT_PRELOAD.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-    if CraftSimRecipeDataCache then
-        CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] or
-            {}
-    end
+        if CraftSimRecipeDataCache then
+            CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] or
+                {}
+        end
 end

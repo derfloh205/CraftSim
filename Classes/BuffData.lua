@@ -151,9 +151,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- DF Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then
+
         if self.recipeData.supportsCraftingspeed then
-            --- General
-            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
+        --- General
+        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(self.recipeData))
         end
 
         if self.recipeData.supportsQualities then

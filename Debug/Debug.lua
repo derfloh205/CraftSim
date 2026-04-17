@@ -44,6 +44,17 @@ end
 
 local profiling = CraftSim.DEBUG:RegisterLogger("CraftSim Profiling")
 
+---@deprecated Use RegisterLogger instead
+---@param debugID string
+---@return fun(text: string | table, recursiveTablePrint: boolean?, printLabel: boolean?, intent: number?)
+function CraftSim.DEBUG:RegisterDebugID(debugID)
+    local logger = self:RegisterLogger(debugID)
+    local function debugPrint(text, recursive, l, level)
+        logger:LogDebug(tostring(text))
+    end
+    return debugPrint
+end
+
 ---@return string[]
 ---@deprecated
 function CraftSim.DEBUG:GetRegisteredLoggerIDs()

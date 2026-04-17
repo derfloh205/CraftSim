@@ -12,7 +12,7 @@ CraftSim.DISENCHANT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BA
 ---@type table<string, boolean>
 CraftSim.DISENCHANT.sessionBlacklist = {}
 
-local Logger = CraftSim.DEBUG:RegisterLogger("Modules.Disenchant")
+local Logger = CraftSim.DEBUG:RegisterLogger("Disenchant")
 function CraftSim.DISENCHANT:Init()
 end
 

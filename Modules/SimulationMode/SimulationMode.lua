@@ -16,7 +16,7 @@ CraftSim.SIMULATION_MODE.specializationData = nil
 ---@type {skill: number, multicraft: number, resourcefulness: number, ingenuity: number, recipeDifficulty: number}?
 CraftSim.SIMULATION_MODE.userStatModifiers = nil
 
-local Logger = CraftSim.DEBUG:RegisterLogger("Modules.SimulationMode")
+local Logger = CraftSim.DEBUG:RegisterLogger("SimulationMode")
 
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()

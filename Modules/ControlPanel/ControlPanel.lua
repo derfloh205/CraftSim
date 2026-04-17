@@ -9,7 +9,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
 CraftSim.CONTROL_PANEL.frame = nil
 
-local Logger = CraftSim.DEBUG:RegisterLogger("Modules.ControlPanel")
+local Logger = CraftSim.DEBUG:RegisterLogger("ControlPanel")
 
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     Logger:LogDebug("ForgeFinder Export..")

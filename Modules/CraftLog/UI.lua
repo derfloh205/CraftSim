@@ -920,7 +920,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
             for _, savedReagent in pairs(craftResult.savedReagents) do
                 if savedReagent:IsCurrency() then
                     local currencyLink = C_CurrencyInfo.GetCurrencyLink(savedReagent.currencyID) or
-                        savedReagent.currencyName
+                    savedReagent.currencyName
                     resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, currencyLink or "")
                 else
                     local itemLink = savedReagent.item:GetItemLink()
@@ -961,7 +961,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
         local commissionText = ""
         if craftResult.isWorkOrder then
             local commission = (tonumber(craftResult.orderData.tipAmount) or 0) -
-                (tonumber(craftResult.orderData.consortiumCut) or 0)
+            (tonumber(craftResult.orderData.consortiumCut) or 0)
             commissionText = CraftSim.UTIL:FormatMoney(commission, true)
         end
 
@@ -1244,7 +1244,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     if craftResultReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultReagent.currencyID)
                         row.itemColumn.text:SetText(currencyLink or craftResultReagent.currencyName or
-                            ("Currency:" .. tostring(craftResultReagent.currencyID)))
+                        ("Currency:" .. tostring(craftResultReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil
@@ -1281,7 +1281,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     if craftResultSavedReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultSavedReagent.currencyID)
                         row.itemColumn.text:SetText(currencyLink or craftResultSavedReagent.currencyName or
-                            ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
+                        ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil

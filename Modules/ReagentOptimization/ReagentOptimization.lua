@@ -2,7 +2,7 @@
 
     This following logic executes a combinatorial optimization for a modified version of the knapsack
     problem for recipes with quality-rated, required reagents, referred to now simply as reagents.
-
+    
     These crafting equations are used to prepare the data for the optimization.
 
     -----------------------------------------------------------------------------------------------
@@ -176,8 +176,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do next weights
     for i = 1, numReagents, 1 do
-        for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(i)
-            for j = 0, maxWeight, 1 do                   -- for each possible weight value
+        for k = 0, maxQualityFactor * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
+            for j = 0, maxWeight, 1 do -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
                     -- we know it is reachable
@@ -240,9 +240,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
             -- create the list of reagents that represent optimization for target BP
             for i = numReagents, 0, -1 do
-                k = c[i][j] -- the index into V and W for minValue > target
-                local composition = ks[i].compositions
-                    [k]     -- to work around the single composition of patron order reagents
+                k = c[i][j]                  -- the index into V and W for minValue > target
+                local composition = ks[i].compositions[k] -- to work around the single composition of patron order reagents
                 if composition then
                     --Logger:LogDebug("current matstring: " .. tostring(matString))
                     --Logger:LogDebug("name: " .. ks[i].name)

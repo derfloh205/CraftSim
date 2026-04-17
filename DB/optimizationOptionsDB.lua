@@ -65,12 +65,12 @@ end
 --- Migrations
 
 function CraftSim.DB.OPTIMIZATION_OPTIONS.MIGRATION:M_0_1_Import_from_OptionsDB()
-    local newData                       = CraftSimDB.optimizationOptionsDB.data
-    local oldData                       = CraftSimDB.optionsDB and CraftSimDB.optionsDB.data or {}
-    local KEYS                          = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
-    local IDS                           = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS
+    local newData = CraftSimDB.optimizationOptionsDB.data
+    local oldData = CraftSimDB.optionsDB and CraftSimDB.optionsDB.data or {}
+    local KEYS    = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local IDS     = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS
 
-    newData[IDS.CRAFTQUEUE_ADD_RECIPE]  = {
+    newData[IDS.CRAFTQUEUE_ADD_RECIPE] = {
         [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY] = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_TOP_PROFIT_QUALITY"],
         [KEYS.OPTIMIZE_PROFESSION_TOOLS]     = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
         [KEYS.OPTIMIZE_CONCENTRATION]        = oldData["CRAFTQUEUE_QUEUE_OPEN_RECIPE_OPTIMIZE_CONCENTRATION"],
@@ -81,18 +81,37 @@ function CraftSim.DB.OPTIMIZATION_OPTIONS.MIGRATION:M_0_1_Import_from_OptionsDB(
         [KEYS.OPTIMIZE_PROFESSION_TOOLS]            = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_PROFESSION_GEAR"],
         [KEYS.OPTIMIZE_CONCENTRATION]               = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_CONCENTRATION"],
         [KEYS.OPTIMIZE_FINISHING_REAGENTS]          = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS"],
-        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] = oldData
-            ["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
+        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] = oldData["CRAFTQUEUE_EDIT_RECIPE_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
     }
 
-    newData[IDS.RECIPESCAN_SCAN]        = {
-        [KEYS.ENABLE_CONCENTRATION]                 = oldData["RECIPESCAN_ENABLE_CONCENTRATION"],
-        [KEYS.REAGENT_ALLOCATION]                   = oldData["RECIPESCAN_SCAN_MODE"],
-        [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY]        = oldData["RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"],
-        [KEYS.OPTIMIZE_PROFESSION_TOOLS]            = oldData["RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"],
-        [KEYS.OPTIMIZE_CONCENTRATION]               = oldData["RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"],
-        [KEYS.OPTIMIZE_FINISHING_REAGENTS]          = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"],
-        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS] = oldData
-            ["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
+    newData[IDS.RECIPESCAN_SCAN] = {
+        [KEYS.ENABLE_CONCENTRATION]                  = oldData["RECIPESCAN_ENABLE_CONCENTRATION"],
+        [KEYS.REAGENT_ALLOCATION]                    = oldData["RECIPESCAN_SCAN_MODE"],
+        [KEYS.AUTOSELECT_TOP_PROFIT_QUALITY]         = oldData["RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"],
+        [KEYS.OPTIMIZE_PROFESSION_TOOLS]             = oldData["RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"],
+        [KEYS.OPTIMIZE_CONCENTRATION]                = oldData["RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"],
+        [KEYS.OPTIMIZE_FINISHING_REAGENTS]           = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS"],
+        [KEYS.INCLUDE_SOULBOUND_FINISHING_REAGENTS]  = oldData["RECIPESCAN_OPTIMIZE_FINISHING_REAGENTS_INCLUDE_SOULBOUND"],
     }
+end
+
+function CraftSim.DB.OPTIMIZATION_OPTIONS.MIGRATION:M_1_2_RecipeScan_Migrate_Reagent_Allocation_Autoselect_Top_Profit()
+    local KEYS = CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS
+    local IDS  = CraftSim.CONST.OPTIMIZATION_OPTIONS_IDS
+    local RA   = CraftSim.WIDGETS.OptimizationOptions.REAGENT_ALLOCATION
+    local data = CraftSimDB.optimizationOptionsDB.data[IDS.RECIPESCAN_SCAN]
+
+    if data then
+        local currentAlloc = data[KEYS.REAGENT_ALLOCATION]
+        -- Only migrate if the stored value is the old generic "OPTIMIZE" mode
+        if currentAlloc == "OPTIMIZE" then
+            if data[KEYS.AUTOSELECT_TOP_PROFIT_QUALITY] then
+                data[KEYS.REAGENT_ALLOCATION] = RA.OPTIMIZE_MOST_PROFITABLE
+            else
+                data[KEYS.REAGENT_ALLOCATION] = RA.OPTIMIZE_HIGHEST
+            end
+        end
+        -- Remove the legacy key regardless
+        data[KEYS.AUTOSELECT_TOP_PROFIT_QUALITY] = nil
+    end
 end

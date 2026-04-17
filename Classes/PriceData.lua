@@ -127,8 +127,8 @@ function CraftSim.PriceData:Update()
                 local reagentPriceInfoQ2 = self.reagentPriceInfos[itemIDQ2]
                 local reagentPriceInfoQ3 = itemIDQ3 and self.reagentPriceInfos[itemIDQ3] or nil
                 local cheapestItemPrice = reagentPriceInfoQ3 and
-                    math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice, reagentPriceInfoQ3.itemPrice) or
-                    math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice)
+                                            math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice, reagentPriceInfoQ3.itemPrice) or
+                                            math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice)
                 local reagentCosts = cheapestItemPrice * reagent.requiredQuantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 if not isOrderReagent then

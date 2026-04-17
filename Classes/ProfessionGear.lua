@@ -111,7 +111,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 			end
 		end
 	end
-
+	
 	if parsedSkill > 0 then
 		self.professionStats.skill.value = parsedSkill
 	end

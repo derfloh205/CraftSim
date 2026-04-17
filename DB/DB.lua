@@ -59,7 +59,7 @@ end
 function CraftSim.DB:Init()
     for _, repository in ipairs(self.repositories) do
         repository:Init()
-        if not self:Migrate(repository) then
+        if not self:Migrate(repository)then 
             self:ReportMigrationError()
             return
         end

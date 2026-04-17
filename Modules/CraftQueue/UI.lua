@@ -505,7 +505,7 @@ local function SyncCraftQueueButtonDisabledTooltipProxy(gguiButton)
     end
 end
 
-local Logger = CraftSim.DEBUG:RegisterLogger("Modules.CraftQueue.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueue.UI")
 
 local moxieAutoUpdateOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES
 

@@ -177,9 +177,9 @@ function CraftSim.NodeData:HasRelevantStats(recipeData)
 
     -- check conditional stats: only relevant if the recipe supports them
     local conditionalStats = {
-        { stat = maxStats.multicraft,      supported = recipeData.supportsMulticraft },
-        { stat = maxStats.resourcefulness, supported = recipeData.supportsResourcefulness },
-        { stat = maxStats.ingenuity,       supported = recipeData.supportsIngenuity },
+        { stat = maxStats.multicraft,       supported = recipeData.supportsMulticraft },
+        { stat = maxStats.resourcefulness,  supported = recipeData.supportsResourcefulness },
+        { stat = maxStats.ingenuity,        supported = recipeData.supportsIngenuity },
     }
     for _, entry in pairs(conditionalStats) do
         if entry.supported then
@@ -214,13 +214,11 @@ end
 
 ---@return number? icon
 function CraftSim.NodeData:GetIcon()
-    local entryIDs        = C_Traits.GetNodeInfo(
-        C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), self.nodeID).entryIDs
-    local entryInfos      = GUTIL:Map(entryIDs, function(entryID)
-        return C_Traits.GetEntryInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID),
-            entryID)
+    local entryIDs = C_Traits.GetNodeInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), self.nodeID).entryIDs
+    local entryInfos = GUTIL:Map(entryIDs, function(entryID)
+        return C_Traits.GetEntryInfo(C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID), entryID)
     end)
-    local definitionInfos = GUTIL:Map(entryInfos, function(entryInfo)
+    local definitionInfos   = GUTIL:Map(entryInfos, function(entryInfo)
         return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
     end)
     if definitionInfos[1] then
@@ -334,16 +332,16 @@ end
 ---@param rank number
 ---@return CraftSim.NodeData
 function CraftSim.NodeData:BuildFromStaticData(recipeData, rawBaseNodeData, perkMap, rank)
-    local nodeData                                   = CraftSim.NodeData()
-    nodeData.nodeID                                  = rawBaseNodeData.nodeID
-    nodeData.recipeData                              = recipeData
-    nodeData.maxRank                                 = rawBaseNodeData.maxRank
-    nodeData.professionStats                         = CraftSim.ProfessionStats()
-    nodeData.maxProfessionStats                      = CraftSim.ProfessionStats()
-    nodeData.rank                                    = rank
-    nodeData.active                                  = false
+    local nodeData = CraftSim.NodeData()
+    nodeData.nodeID             = rawBaseNodeData.nodeID
+    nodeData.recipeData         = recipeData
+    nodeData.maxRank            = rawBaseNodeData.maxRank
+    nodeData.professionStats    = CraftSim.ProfessionStats()
+    nodeData.maxProfessionStats = CraftSim.ProfessionStats()
+    nodeData.rank               = rank
+    nodeData.active             = false
     -- icon is available in the static raw data; name is fetched lazily via GetName()
-    nodeData.icon                                    = rawBaseNodeData.icon
+    nodeData.icon               = rawBaseNodeData.icon
 
     -- Populate equals* multipliers from static raw_stats (needed by UpdateProfessionStats)
     nodeData.raw_stats                               = rawBaseNodeData.stats or {}
