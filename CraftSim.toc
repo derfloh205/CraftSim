@@ -158,7 +158,6 @@ Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
 Data/News.lua
-Data/PatronMoxieSurplusData.lua
 Data/PatronMoxieValueDB.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua
