@@ -635,7 +635,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 end
 
                 if targetQuality and recipeData.resultData.expectedQuality ~= targetQuality then
-                    print("Skipping not targetQuality: " .. recipeData.recipeName .. " (Target: ".. targetQuality .. " Expected: ".. recipeData.resultData.expectedQuality .. ")")
+                    Logger:LogDebug("Skipping not targetQuality: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
