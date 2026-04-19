@@ -59,10 +59,10 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         for _, itemLink in pairs(itemLinks) do
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
-    elseif recipeData.supportsQualities and not recipeData.isSalvageRecipe and not recipeData.recipeInfo.isGatheringRecipe then
+    elseif self.recipeData.qualityItemIDs then
         Logger:LogDebug("fetching quality ids itemids:", false, true)
-        local itemIDs = C_TradeSkillUI.GetRecipeQualityItemIDs(recipeData.recipeID)
-        for _, itemID in pairs(itemIDs or {}) do
+        local itemIDs = self.recipeData.qualityItemIDs
+        for _, itemID in pairs(itemIDs) do
             Logger:LogDebug("itemID: " .. itemID)
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end

@@ -253,6 +253,7 @@ function CraftSim.RecipeData:new(options)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = self.recipeInfo.maxQuality
+    self.qualityItemIDs = self.recipeInfo.qualityItemIDs or nil
 
     self.supportsMulticraft = false
     self.supportsResourcefulness = false
