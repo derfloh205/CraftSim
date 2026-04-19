@@ -25,6 +25,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("26.1.1"),
         f.pg .. f.bb("Craft Lists"),
         f.a .. "- When setting a target quality, lower qualities will not queue",
+        collab("https://github.com/chris-merritt"),
         f.pg .. "Fixed item amounts in leather moxie bag",
         collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         f.pg .. "Fixed Syndicator Inventory Source Gear Quality recognition",
