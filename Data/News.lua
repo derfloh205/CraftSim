@@ -22,6 +22,15 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.1"),
+        f.pg .. f.bb("Craft Lists"),
+        f.a .. "- When setting a target quality, lower qualities will not queue",
+        f.pg .. "Fixed item amounts in leather moxie bag",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        f.pg .. "Fixed Syndicator Inventory Source Gear Quality recognition",
+        f.a .. "- TSM might still struggle",
+        f.p .. "Debug Changes",
+        f.a .. "Logs are now viewable with the LogSink addon",
         newP("26.1.0"),
         f.PG .. f.g("New Moxie Auto Value Setting"),
         f.a .. "- In CraftQueue -> Work Order Options -> Patron Orders",
