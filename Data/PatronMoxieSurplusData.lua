@@ -44,21 +44,17 @@ local SURPLUS_BAG_ENCHANTING = {
     { itemID = 251285, qty = 1 },    -- Petrified Root
 }
 
-local MAJESTIC_COUNT = 1.2 / 3
-local OTHER_COUNT = 5.8 / 3
-
 local SURPLUS_BAG_LW_SKINNING = {
     { itemID = 238512, qty = 35.2 },           -- Void-Tempered Leather Q2
     { itemID = 238514, qty = 35.2 },           -- Void-Tempered Scales Q2
     { itemID = 238519, qty = 4.5 },            -- Void-Tempered Hide Q2
     { itemID = 238521, qty = 4.5 },            -- Void-Tempered Plating Q2
-    -- One-of-three outcome groups: distribute expected quantity across options.
-    { itemID = 238528, qty = MAJESTIC_COUNT }, -- Majestic Claw (1.2 / 3)
-    { itemID = 238530, qty = MAJESTIC_COUNT }, -- Majestic Fin (1.2 / 3)
-    { itemID = 238529, qty = MAJESTIC_COUNT }, -- Majestic Hide (1.2 / 3)
-    { itemID = 238522, qty = OTHER_COUNT },    -- Peerless Plumage (5.8 / 3)
-    { itemID = 238525, qty = OTHER_COUNT },    -- Fantastic Fur (5.8 / 3)
-    { itemID = 238523, qty = OTHER_COUNT },    -- Carving Canine (5.8 / 3)
+    { itemID = 238528, qty = 1.2 }, -- Majestic Claw (1.2 / 3)
+    { itemID = 238530, qty = 1.2 }, -- Majestic Fin (1.2 / 3)
+    { itemID = 238529, qty = 1.2 }, -- Majestic Hide (1.2 / 3)
+    { itemID = 238522, qty = 5.8 },    -- Peerless Plumage (5.8 / 3)
+    { itemID = 238525, qty = 5.8 },    -- Fantastic Fur (5.8 / 3)
+    { itemID = 238523, qty = 5.8 },    -- Carving Canine (5.8 / 3)
     { itemID = 251285, qty = 1 },              -- Petrified Root
 }
 
