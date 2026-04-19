@@ -22,6 +22,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.2"),
+        f.p .. "Fixed fresh load lua error",
         newP("26.1.1"),
         f.pg .. f.bb("Craft Lists"),
         f.a .. "- When setting a target quality, lower qualities will not queue",
