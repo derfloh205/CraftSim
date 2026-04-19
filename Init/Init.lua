@@ -172,6 +172,8 @@ function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_READY()
 	if recipeData then
 		CraftSim.MODULES.recipeData = recipeData
 		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_READY", recipeData)
+	else
+		Logger:LogWarning("Failed to build recipe data for visible recipe!")
 	end
 end
 

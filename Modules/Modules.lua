@@ -241,72 +241,27 @@ function CraftSim.MODULES:IsWorkOrderUI()
 	return CraftSim.UTIL:IsWorkOrder()
 end
 
+-- TODO REFERENCE ALL INIT CALLS HERE AND INTEGRATE INTO NEW EVENT FLOW
 --- Updates all modules based on the currently visible recipe and the options for the modules
 ---@deprecated use respective event instead
 function CraftSim.MODULES:Update()
-	if not self:VisibleByContext() then
-		self:Hide()
-		return
-	end
-
-	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
-	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local reagentOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	local reagentOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
-	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
-	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
-
 	-- pre hide
-	CraftSim.CRAFTQ.queueRecipeButton:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
-	CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
-	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
-	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
+	-- CraftSim.CRAFTQ.queueRecipeButton:Hide()
+	-- CraftSim.CRAFTQ.queueRecipeButtonWO:Hide()
+	-- CraftSim.CRAFTQ.queueRecipeButtonOptions:Hide()
+	-- CraftSim.CRAFTQ.queueRecipeButtonOptionsWO:Hide()
+	-- CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
+	-- CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		Logger:LogDebug(
-			"Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
-		CraftSim.MODULES:Hide()
-		return
-	end
+	-- CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 
-	CraftSim.CONTROL_PANEL.frame:Show()
-	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
-	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
-
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
-
-	if not recipeInfo or recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then
-		-- hide all modules
-		CraftSim.MODULES:Hide(true, true)
-		return
-	end
-
-	local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-
-	Logger:LogDebug("Export Mode: " .. tostring(exportMode))
-
-	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
-		CraftSim.MODULES.recipeData = CraftSim.SIMULATION_MODE.recipeData
-	else
-		CraftSim.MODULES.recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-	end
+	-- if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
+	-- 	CraftSim.MODULES.recipeData = CraftSim.SIMULATION_MODE.recipeData
+	-- else
+	-- 	CraftSim.MODULES.recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+	-- end
 
 	local recipeData = CraftSim.MODULES.recipeData
-
-	if not recipeData then
-		Logger:LogDebug("No recipe data found for visible recipe!")
-		CraftSim.MODULES:Hide(true, true)
-		return
-	end
 
 	local showReagentOptimization = false
 	local showAverageProfit = false
