@@ -9,6 +9,10 @@ CraftSim.CONCENTRATION_TRACKER = {}
 
 CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
 
+GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
+    "CRAFTSIM_PROFESSION_READY",
+})
+
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
 
@@ -75,4 +79,8 @@ end
 function CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)
     local formatted = concentrationData:GetFormattedDateMax()
     return f.bb(formatted)
+end
+
+function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_READY()
+    self.UI:Update()
 end

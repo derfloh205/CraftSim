@@ -121,9 +121,6 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 
 	lastCallTime = callTime
 
-	-- show or hide module windows based on window context and individual rules per module
-	CraftSim.MODULES:UpdateVisibilityByContext()
-
 	-- if freshLoginRecall and isInit then
 	-- 	-- hide all frames to reduce flicker on fresh login recall
 	-- 	freshLoginRecall = false
@@ -150,7 +147,9 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 end
 
 function CraftSim.INIT:CRAFTSIM_PROFESSION_READY()
-	-- Poll until current recipe info of visibleRecipeID is available, then trigger event for all listeners
+	CraftSim.MODULES:UpdateVisibilityByContext()
+
+	-- Poll until current recipe info of RecipeID is available, then trigger event for all listeners
 	GUTIL:WaitFor(function()
 		local recipeID = CraftSim.INIT.visibleRecipeID
 		if recipeID then

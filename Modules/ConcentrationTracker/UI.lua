@@ -353,7 +353,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
-    return true
+    -- only show for expansions DF and higher
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    return expansionID and expansionID >= CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
