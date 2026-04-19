@@ -33,6 +33,7 @@ function CraftSim.DEBUG:Init()
             minimumLogLevel = data["DEBUG_MINIMUM_LOG_LEVEL"] or minimumLogLevel
         end
     end
+
     self:SetMinimumLogLevel(minimumLogLevel)
 end
 
