@@ -953,6 +953,7 @@ function CraftSim.RecipeData:Copy()
 end
 
 ---@class CraftSim.RecipeData.OptimizeReagentOptions
+---@field minQuality number? default: 1
 ---@field maxQuality number? default: max of recipe
 ---@field highestProfit boolean? default: false
 
@@ -964,6 +965,7 @@ function CraftSim.RecipeData:OptimizeReagents(options)
     CraftSim.ReagentData.ClearSkillFromReagentsCache()
 
     options = options or {}
+    options.minQuality = options.minQuality or 1
     options.maxQuality = options.maxQuality or self.maxQuality
     options.highestProfit = options.highestProfit or false
 
@@ -988,7 +990,7 @@ function CraftSim.RecipeData:OptimizeReagents(options)
     if options.highestProfit then
         local optimizationResults = {}
 
-        for i = 1, options.maxQuality, 1 do
+        for i = options.minQuality, options.maxQuality, 1 do
             local qualityOptimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, i)
 
             self.reagentData:SetReagentsByOptimizationResult(qualityOptimizationResult)
