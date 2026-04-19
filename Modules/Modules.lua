@@ -263,61 +263,62 @@ function CraftSim.MODULES:Update()
 
 	local recipeData = CraftSim.MODULES.recipeData
 
-	local showReagentOptimization = false
-	local showAverageProfit = false
-	local showTopGear = false
-	local showSimulationMode = false
-	local showSpecInfo = false
+	-- local showReagentOptimization = false
+	-- local showAverageProfit = false
+	-- local showTopGear = false
+	-- local showSimulationMode = false
+	-- local showSpecInfo = false
 
-	-- always on modules
-	local showCraftResults = true
-	local showRecipeScan = true
-	local showCustomerHistory = true
-	local showCostOptimization = true
-	local showCraftBuffs = true
-	local showCooldowns = true
-	local showExplanations = true
-	local showStatistics = true
-	local showConcentrationTracker = true
+	-- -- always on modules
+	-- local showCraftResults = true
+	-- local showRecipeScan = true
+	-- local showCustomerHistory = true
+	-- local showCostOptimization = true
+	-- local showCraftBuffs = true
+	-- local showCooldowns = true
+	-- local showExplanations = true
+	-- local showStatistics = true
+	-- local showConcentrationTracker = true
 
-	if recipeData.supportsCraftingStats then
-		showAverageProfit = true
-		showTopGear = true
-	end
+	-- if recipeData.supportsCraftingStats then
+	-- 	showAverageProfit = true
+	-- 	showTopGear = true
+	-- end
 
-	if recipeData.hasQualityReagents then
-		showReagentOptimization = true
-	end
+	-- if recipeData.hasQualityReagents then
+	-- 	showReagentOptimization = true
+	-- end
 
-	if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
-		showSpecInfo = true
-	end
-	showSimulationMode = not recipeData.isOldWorldRecipe and not recipeData.isBaseRecraftRecipe
+	-- if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
+	-- 	showSpecInfo = true
+	-- end
+	-- showSimulationMode = not recipeData.isOldWorldRecipe and not recipeData.isBaseRecraftRecipe
 
-	showReagentOptimization = showReagentOptimization and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_OPTIMIZATION")
-	showAverageProfit = showAverageProfit and CraftSim.DB.OPTIONS:Get("MODULE_AVERAGE_PROFIT")
-	showTopGear = showTopGear and CraftSim.DB.OPTIONS:Get("MODULE_TOP_GEAR")
-	showSpecInfo = showSpecInfo and CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
-	showRecipeScan = showRecipeScan and CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN")
-	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG")
-	showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
-	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_PRICING")
-	showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
-	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
-	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
-	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
+	-- showReagentOptimization = showReagentOptimization and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_OPTIMIZATION")
+	-- showAverageProfit = showAverageProfit and CraftSim.DB.OPTIONS:Get("MODULE_AVERAGE_PROFIT")
+	-- showTopGear = showTopGear and CraftSim.DB.OPTIONS:Get("MODULE_TOP_GEAR")
+	-- showSpecInfo = showSpecInfo and CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
+	-- showRecipeScan = showRecipeScan and CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN")
+	-- showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG")
+	-- showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
+	-- showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_PRICING")
+	-- showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
+	-- showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
+	-- showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
+	-- showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
 
-	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
-	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
-	CraftSim.CRAFT_LOG.logFrame:SetVisible(showCraftResults)
-	CraftSim.CRAFT_LOG.advFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
-	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
-	CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
-	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
+	-- CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
+	-- CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
+	-- CraftSim.CRAFT_LOG.logFrame:SetVisible(showCraftResults)
+	-- CraftSim.CRAFT_LOG.advFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
+	-- CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
+	-- CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
+	-- CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
 
-	if showConcentrationTracker then
-		CraftSim.CONCENTRATION_TRACKER.UI:Update()
-	end
+	-- DONE
+	-- if showConcentrationTracker then
+	-- 	CraftSim.CONCENTRATION_TRACKER.UI:Update()
+	-- end
 
 	if showCooldowns then
 		CraftSim.COOLDOWNS.UI:UpdateDisplay()
