@@ -543,7 +543,7 @@ end
 
 function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
-    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 
     if not schematicForm then
         return
@@ -653,7 +653,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
 end
 
 function CraftSim.RecipeData:SetConcentrationBySchematicForm()
-    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
     if not schematicForm then
         return
     end
@@ -2021,7 +2021,7 @@ function CraftSim.RecipeData:Optimize(options)
             elseif optimizationTask == "FINISHING_REAGENTS" then
                 local finOpts = options.optimizeFinishingReagentsOptions
                 Logger:LogDebug("Optimizing Finishing Reagents.. (permutation: " ..
-                tostring(finOpts.permutationBased) .. ")")
+                    tostring(finOpts.permutationBased) .. ")")
                 Logger:LogDebug("- includeLocked: " .. tostring(finOpts.includeLocked))
                 Logger:LogDebug("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
                 Logger:LogDebug("- onlyHighestQualitySoulbound: " .. tostring(finOpts.onlyHighestQualitySoulbound))

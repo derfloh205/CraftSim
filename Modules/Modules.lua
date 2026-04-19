@@ -77,7 +77,7 @@ end
 --- ignores modules without VisibleByContext function, otherwise shows or hides modules based on it
 --- requires such modules to have a GGUI.Frame assigned to module.frame
 function CraftSim.MODULES:UpdateVisibilityByContext()
-	for moduleID, module in pairs(CraftSim.MODULES.modules) do
+	for _, module in pairs(CraftSim.MODULES.modules) do
 		if module.UI.VisibleByContext then
 			if module.frame then
 				module.frame:SetVisible(module.UI:VisibleByContext())
@@ -175,15 +175,15 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 		return nil
 	end
 
-	local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+	local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 	if not schematicForm then
-		Logger:LogDebug("CraftSim MODULES: No SchematicForm Visible")
+		Logger:LogError("CraftSim MODULES: No SchematicForm Visible")
 		return nil
 	end
 
 	local currentTransaction = schematicForm:GetTransaction()
 	if not currentTransaction then
-		Logger:LogDebug("CraftSim MODULES: SchematicForm without transaction!")
+		Logger:LogError("CraftSim MODULES: SchematicForm without transaction!")
 		return nil
 	end
 
@@ -241,7 +241,8 @@ function CraftSim.MODULES:IsWorkOrderUI()
 	return CraftSim.UTIL:IsWorkOrder()
 end
 
---- Recalculates and updates visibility of all modules based on the currently visible recipe and the options for the modules
+--- Updates all modules based on the currently visible recipe and the options for the modules
+---@deprecated use respective event instead
 function CraftSim.MODULES:Update()
 	if not self:VisibleByContext() then
 		self:Hide()
@@ -271,7 +272,8 @@ function CraftSim.MODULES:Update()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		Logger:LogDebug("Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
+		Logger:LogDebug(
+			"Hiding all modules because of crafting context (NPC crafting, Runeforging, Linked or Guild Recipe)")
 		CraftSim.MODULES:Hide()
 		return
 	end

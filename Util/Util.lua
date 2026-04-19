@@ -383,7 +383,7 @@ function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
-function CraftSim.UTIL:GetSchematicFormByVisibility()
+function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
     elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
