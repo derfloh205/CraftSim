@@ -268,9 +268,11 @@ function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
     recipeData.buffData:UpdateProfessionStats()
 end
 
-function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
-    ---@type CraftSim.SIMULATION_MODE.UI
-    local UI = self.UI
+function CraftSim.SIMULATION_MODE:InitializeSimulation(recipeData)
+    if not recipeData then
+        Logger:LogError("Cannot Enable Simulation Mode: No recipe data available")
+        return
+    end
     self.recipeData = recipeData
 
     if recipeData.specializationData then
@@ -286,15 +288,41 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         recipeDifficulty = 0,
     }
 
+    self:InitializeReagentList()
+
+    local UI = self.UI --[[@as CraftSim.SIMULATION_MODE.UI]]
+    UI:InitOptionalReagentItemSelectors(self.recipeData)
+    self:UpdateSimulationMode()
+end
+
+---@deprecated
+function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
+    -- ---@type CraftSim.SIMULATION_MODE.UI
+    -- local UI = self.UI
+    -- self.recipeData = recipeData
+
+    -- if recipeData.specializationData then
+    --     self.specializationData = recipeData.specializationData:Copy()
+    -- end
+
+    -- Reset user stat modifier inputs for the new simulation session
+    self.userStatModifiers = {
+        skill = 0,
+        multicraft = 0,
+        resourcefulness = 0,
+        ingenuity = 0,
+        recipeDifficulty = 0,
+    }
+
     -- update frame visiblity and initialize the input fields
     UI:UpdateVisibility()
-    self:InitializeReagentList()
-    UI:InitOptionalReagentItemSelectors(self.recipeData)
+    --self:InitializeReagentList()
+    --UI:InitOptionalReagentItemSelectors(self.recipeData)
 
     -- update simulation recipe data and UI
-    self:UpdateSimulationMode()
+    --self:UpdateSimulationMode()
 
-    CraftSim.MODULES:Update()
+    --CraftSim.MODULES:Update()
 end
 
 --- used by allocate button in reagent optimization module

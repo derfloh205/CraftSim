@@ -27,7 +27,6 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         offsetY = -13,
         sizeX = 180,
         sizeY = 30,
-        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
@@ -159,6 +158,31 @@ function CraftSim.CONTROL_PANEL.UI:Init()
     end)
 
     frame:Hide()
+
+    -- Simulation Mode Toggle Button
+    frame.content.simulateToggle = GGUI.ToggleButton({
+        parent = frame.content,
+        anchorParent = frame.content.controlPanelButton,
+        adjustWidth = true,
+        sizeX = 15,
+        sizeY = 20,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 5,
+        label = L("SIMULATION_MODE_LABEL"),
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            text = L("SIMULATION_MODE_TOOLTIP"),
+        },
+        onToggleCallback = function(_, value)
+            CraftSim.SIMULATION_MODE.isActive = not value
+            if CraftSim.SIMULATION_MODE.isActive then
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ENABLED")
+            else
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_DISABLED")
+            end
+        end
+    })
 end
 
 function CraftSim.CONTROL_PANEL.UI:Update()

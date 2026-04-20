@@ -711,9 +711,9 @@ end
 --- Craft queue (e.g. midnight shatter step) must refresh when auras change even if no recipe is focused in the schematic.
 local function OnCraftSimTrackedPlayerBuffsChanged()
     if CraftSim.INIT.visibleRecipeID then
-        CraftSim.MODULES:Update()
+        -- CraftSim.MODULES:Update()
     elseif CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE") and CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
-        CraftSim.CRAFTQ.UI:Update()
+        -- CraftSim.CRAFTQ.UI:Update()
     end
 end
 

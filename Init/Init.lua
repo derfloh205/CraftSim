@@ -27,8 +27,6 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED"
 })
 
-CraftSim.INIT.FRAMES = {}
-
 ---@type number?
 CraftSim.INIT.visibleRecipeID = nil
 CraftSim.INIT.initialLogin = false
@@ -157,10 +155,17 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 end
 
 function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_INITIALIZED()
-	-- build recipe data for the currently visible recipe and trigger update for all listeners
-	CraftSim.DEBUG:StartProfiling("Build Visible RecipeData")
-	local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-	CraftSim.DEBUG:StopProfiling("Build Visible RecipeData")
+	local recipeData
+	-- if simulation mode is active reuse its recipeData
+	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
+		Logger:LogDebug("Simulation Mode Active, using simulated recipe data")
+		recipeData = CraftSim.SIMULATION_MODE.recipeData
+		-- build recipe data for the currently visible recipe and trigger update for all listeners
+	else
+		CraftSim.DEBUG:StartProfiling("Build Visible RecipeData")
+		recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+		CraftSim.DEBUG:StopProfiling("Build Visible RecipeData")
+	end
 
 	if recipeData then
 		CraftSim.MODULES.recipeData = recipeData

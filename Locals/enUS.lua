@@ -81,7 +81,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Simulation Mode
         SIMULATION_MODE_NONE = "None",
-        SIMULATION_MODE_LABEL = "Simulation Mode",
+        SIMULATION_MODE_LABEL = "Simulate",
         SIMULATION_MODE_TITLE = "CraftSim Simulation Mode",
         SIMULATION_MODE_TOOLTIP =
         "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
