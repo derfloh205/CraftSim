@@ -182,6 +182,11 @@ function CraftSim.INIT:HookToEvents()
 	hookedEvent = true
 
 	local function OpenRecipeAllocationUpdated(self)
+		if CraftSim.SIMULATION_MODE.isActive then
+			Logger:LogWarning("Simulation Mode Active, skip default ui allocation update")
+			return
+		end
+
 		if not CraftSim.INIT.visibleRecipeID then
 			Logger:LogWarning("OpenRecipeAllocationUpdated: No visible recipe ID, return")
 			return
@@ -196,13 +201,11 @@ function CraftSim.INIT:HookToEvents()
 			return
 		end
 
-		local recipeData
-		if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
-			recipeData = CraftSim.SIMULATION_MODE.recipeData
-		else
-			recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+
+		local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+		if recipeData then
+			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 		end
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 	end
 
 	local function OpenRecipeInfoUpdated(self, recipeInfo)
@@ -532,16 +535,19 @@ function CraftSim.INIT:HookToConcentrationButtons()
 	end
 	concentrationButtonHooked = true
 
+	local function OnConcentrationToggle()
+		-- only if sim mode off
+		if not CraftSim.SIMULATION_MODE.isActive and CraftSim.MODULES.recipeData then
+			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", CraftSim.MODULES.recipeData)
+		end
+	end
+
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
-		.ConcentrateToggleButton:HookScript("OnClick", function()
-		CraftSim.MODULES:Update()
-	end)
+		.ConcentrateToggleButton:HookScript("OnClick", OnConcentrationToggle)
 
 	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
 		.ConcentrateContainer
-		.ConcentrateToggleButton:HookScript("OnClick", function()
-		CraftSim.MODULES:Update()
-	end)
+		.ConcentrateToggleButton:HookScript("OnClick", OnConcentrationToggle)
 end
 
 function CraftSim.INIT:PLAYER_LOGIN()
