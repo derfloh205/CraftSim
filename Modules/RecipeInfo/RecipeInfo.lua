@@ -34,6 +34,7 @@ CraftSim.RECIPE_INFO.DISPLAY_OPTIONS_DEFAULTS = {
     AVG_RESOURCEFULNESS_SAVED   = false,
     CONCENTRATION_PROFIT        = false,
     CONCENTRATION_COST          = false,
+    PROFIT_PER_QUALITY          = true,
 }
 
 --- Returns the display-options table, filling in any missing keys from defaults.
