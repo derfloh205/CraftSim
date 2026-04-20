@@ -327,20 +327,6 @@ function CraftSim.MODULES:Update()
 	CraftSim.CRAFTQ.UI:Update()
 	CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
 
-	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
-	showSimulationMode = (showSimulationMode and recipeData and not recipeData.isSalvageRecipe) or false
-	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton,
-		showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton,
-		showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.SIMULATION_MODE.UI:UpdateVisibility() -- show sim mode frames depending if active or not
-	if CraftSim.SIMULATION_MODE.isActive and recipeData then
-		-- update simulationframe recipedata by inputs and the frontend
-		-- since recipeData is a reference here to the recipeData in the simulationmode,
-		-- the recipeData that is used in the below modules should also be the modified one!
-		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-	end
-
 	-- Cost Optimization Module
 	CraftSim.FRAME:ToggleFrame(CraftSim.PRICING.frame,
 		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
