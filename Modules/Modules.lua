@@ -34,6 +34,7 @@ CraftSim.MODULES = {}
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
 ---@field frame GGUI.Frame
+---@field frameWO? GGUI.Frame
 ---@field UI CraftSim.Module.UI
 
 ---@type table<CraftSim.ModuleID, CraftSim.Module>

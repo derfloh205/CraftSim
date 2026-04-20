@@ -17,7 +17,6 @@ CraftSim.CONTROL_PANEL.UI = {}
 function CraftSim.CONTROL_PANEL.UI:Init()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
-    ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     local frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame.NineSlice.TopEdge,
@@ -32,6 +31,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
+    ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     CraftSim.CONTROL_PANEL.frame = frame
 
     frame.content.controlPanelButton = CreateFrame("DropdownButton", nil, frame.content,

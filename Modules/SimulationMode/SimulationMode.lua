@@ -12,6 +12,8 @@ GUTIL:RegisterCustomEvents(CraftSim.SIMULATION_MODE, {
     "CRAFTSIM_SIMULATION_MODE_ENABLED",
     "CRAFTSIM_SIMULATION_MODE_DISABLED",
     "CRAFTSIM_SIMULATION_MODE_INITIALIZED",
+    "CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED",
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
 })
 
 CraftSim.SIMULATION_MODE.isActive = false
@@ -29,7 +31,7 @@ local Logger = CraftSim.DEBUG:RegisterLogger("SimulationMode")
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
 function CraftSim.SIMULATION_MODE:MaxSpecData()
@@ -41,7 +43,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
 ---@param userInput boolean
@@ -63,7 +65,7 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
         numericInput.textInput:SetText(tonumber(inputNumber), false)
     end
 
-    Logger:LogDebug("startinput after validation: " .. inputNumber)
+    Logger:LogVerbose("startinput after validation: " .. inputNumber)
 
     -- update specdata
     ---@type CraftSim.NodeData
@@ -75,19 +77,19 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
     end
     nodeData.rank = inputNumber
 
-    Logger:LogDebug("new rank: " .. nodeData.rank)
-    Logger:LogDebug("new active: " .. tostring(nodeData.active))
+    Logger:LogVerbose("new rank: " .. nodeData.rank)
+    Logger:LogVerbose("new active: " .. tostring(nodeData.active))
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
@@ -110,7 +112,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
         inputBox:SetText(inputNumber)
     end
 
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -118,14 +120,11 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
 
     self:InitializeReagentList()
 
-    CraftSim.MODULES:Update()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
 end
 
-function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
-    local recipeData = CraftSim.SIMULATION_MODE.recipeData
-    if not recipeData then
-        return
-    end
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs(recipeData)
     recipeData.professionStatModifiers:Clear()
 
     local baseProfessionStatsSpec = nil
@@ -145,38 +144,38 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     end
 
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
+    local frame = CraftSim.UTIL:IsWorkOrder() and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
 
     -- Read raw user inputs from modInput widgets (these widgets are recreated each update
     -- and must be initialized from userStatModifiers, not from professionStatModifiers which
     -- also includes spec diff -- otherwise spec diff gets double-counted each update cycle)
 
     -- update difficulty based on input
-    local recipeDifficultyMod = simulationModeFrames.recipeDifficultyMod and
-        simulationModeFrames.recipeDifficultyMod.currentValue or 0
+    local recipeDifficultyMod = frame.recipeDifficultyMod and
+        frame.recipeDifficultyMod.currentValue or 0
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
-    local skillMod = simulationModeFrames.baseSkillMod and simulationModeFrames.baseSkillMod.currentValue or 0
+    local skillMod = frame.baseSkillMod and frame.baseSkillMod.currentValue or 0
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
     local multicraftMod = 0
     if recipeData.supportsMulticraft then
-        multicraftMod = simulationModeFrames.multicraftMod and simulationModeFrames.multicraftMod.currentValue or 0
+        multicraftMod = frame.multicraftMod and frame.multicraftMod.currentValue or 0
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)
     end
 
     local resourcefulnessMod = 0
     if recipeData.supportsResourcefulness then
-        resourcefulnessMod = simulationModeFrames.resourcefulnessMod and
-            simulationModeFrames.resourcefulnessMod.currentValue or 0
+        resourcefulnessMod = frame.resourcefulnessMod and
+            frame.resourcefulnessMod.currentValue or 0
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 
     local ingenuityMod = 0
     if recipeData.supportsIngenuity then
-        ingenuityMod = simulationModeFrames.ingenuityMod and simulationModeFrames.ingenuityMod.currentValue or 0
+        ingenuityMod = frame.ingenuityMod and frame.ingenuityMod.currentValue or 0
         recipeData.professionStatModifiers.ingenuity:addValue(ingenuityMod)
     end
 
@@ -190,16 +189,12 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         CraftSim.SIMULATION_MODE.userStatModifiers.ingenuity = ingenuityMod
     end
 
-    recipeData.concentrating = simulationModeFrames.concentrationToggleMod.isOn
+    recipeData.concentrating = frame.content.detailsFrame.content.concentrationToggleButton.isOn
 end
 
-function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
-    local recipeData = CraftSim.SIMULATION_MODE.recipeData
-    -- should not happen but nil check anyway
-    if not recipeData then
-        return
-    end
-    Logger:LogDebug("Update Reagent Input Frames:")
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(recipeData)
+    Logger:LogVerbose("Update Reagent Input Frames:")
 
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
@@ -240,34 +235,26 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     recipeData:SetOptionalReagents(itemIDs)
 end
 
-function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-    CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
-    CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
-    CraftSim.SIMULATION_MODE.recipeData:Update() -- update recipe Data by modifiers/reagents and such
-    CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs(recipeData)
+    local craftBuffsFrame = CraftSim.UTIL:IsWorkOrder() and CraftSim.CRAFT_BUFFS.frameWO or CraftSim.CRAFT_BUFFS.frame
+
+    -- local simulateBuffSelector = craftBuffsFrame.content.simulateBuffSelector
+
+    -- recipeData.buffData:SetBuffsByUIDToValueMap(simulateBuffSelector.savedVariablesTable)
+    -- recipeData.buffData:UpdateProfessionStats()
 end
 
-function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    local recipeData = CraftSim.SIMULATION_MODE.recipeData
-
-    if not recipeData then return end
-
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-
-    local craftBuffsFrame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        craftBuffsFrame = CraftSim.CRAFT_BUFFS.frame
-    else
-        craftBuffsFrame = CraftSim.CRAFT_BUFFS.frameWO
+function CraftSim.SIMULATION_MODE:UpdateSimulationModeRecipeData()
+    if not self.recipeData then
+        Logger:LogFatal("Cannot update simulation mode recipe data: no recipe data set")
+        return
     end
-
-    if not craftBuffsFrame then return end
-
-    local simulateBuffSelector = craftBuffsFrame.content.simulateBuffSelector
-
-    recipeData.buffData:SetBuffsByUIDToValueMap(simulateBuffSelector.savedVariablesTable)
-    recipeData.buffData:UpdateProfessionStats()
+    CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs(self.recipeData)
+    CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(self.recipeData)
+    CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs(self.recipeData)
+    CraftSim.SIMULATION_MODE.recipeData:Update() -- update recipe Data by modifiers/reagents and such
+    GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", CraftSim.SIMULATION_MODE.recipeData)
 end
 
 function CraftSim.SIMULATION_MODE:InitializeSimulation(recipeData)
@@ -290,38 +277,8 @@ function CraftSim.SIMULATION_MODE:InitializeSimulation(recipeData)
 
     local UI = self.UI --[[@as CraftSim.SIMULATION_MODE.UI]]
     UI:InitOptionalReagentItemSelectors(self.recipeData)
-    self:UpdateSimulationMode()
-    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_INITIALIZED")
-end
-
----@deprecated
-function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
-    -- ---@type CraftSim.SIMULATION_MODE.UI
-    -- local UI = self.UI
-    -- self.recipeData = recipeData
-
-    -- if recipeData.specializationData then
-    --     self.specializationData = recipeData.specializationData:Copy()
-    -- end
-
-    -- Reset user stat modifier inputs for the new simulation session
-    self.userStatModifiers = {
-        skill = 0,
-        multicraft = 0,
-        resourcefulness = 0,
-        ingenuity = 0,
-        recipeDifficulty = 0,
-    }
-
-    -- update frame visiblity and initialize the input fields
-    UI:UpdateVisibility()
-    --self:InitializeReagentList()
-    --UI:InitOptionalReagentItemSelectors(self.recipeData)
-
-    -- update simulation recipe data and UI
-    --self:UpdateSimulationMode()
-
-    --CraftSim.MODULES:Update()
+    UI:Update()
+    self:UpdateSimulationModeRecipeData()
 end
 
 --- used by allocate button in reagent optimization module
@@ -391,7 +348,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     local quantityFulfilled = recipeData.reagentData:SetRequiredReagent(itemID, quantity)
 
     if quantityFulfilled then
-        CraftSim.MODULES:Update()
+        GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED")
     end
 end
 
@@ -403,10 +360,50 @@ function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_ENABLED()
         return
     end
 
+    if recipeData.isSalvageRecipe or recipeData.recipeInfo.isRecraft then
+        Logger:LogWarning("Cannot Enable Simulation Mode: Salvage and Recraft recipes are not supported")
+        return
+    end
+
     self:InitializeSimulation(recipeData)
 end
 
-function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_INITIALIZED()
+function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_DISABLED()
+    self.recipeData = nil
+    self.specializationData = nil
+    self.userStatModifiers = nil
+    self.isActive = false
+
+    if self.frame then
+        self.frame:Hide()
+        self.frameWO:Hide()
+    end
+
+    -- reset buffs simulate selector
+    --CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetSavedVariablesTable({})
+
+    -- rebuild recipeData from default ui and fire initialized event
+    local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+
+    if recipeData then
+        GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
+    else
+        Logger:LogWarning("No recipe data found to re-initialize after disabling simulation mode")
+    end
+end
+
+function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED()
+    self:UpdateSimulationModeRecipeData()
+end
+
+function CraftSim.SIMULATION_MODE:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not self.isActive then return end
+    if not self.recipeData then return end
+
+    if not self.recipeData.recipeID == recipeData.recipeID then
+        return
+    end
+
     local UI = self.UI --[[@as CraftSim.SIMULATION_MODE.UI]]
-    UI:Update()
+    UI:UpdateCraftingDetailsPanel()
 end
