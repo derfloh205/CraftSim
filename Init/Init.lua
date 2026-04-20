@@ -196,9 +196,11 @@ function CraftSim.INIT:HookToEvents()
 			return
 		end
 
-		local recipeData = CraftSim.MODULES.recipeData
+		local recipeData
 		if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 			recipeData = CraftSim.SIMULATION_MODE.recipeData
+		else
+			recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 		end
 		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 	end
