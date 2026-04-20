@@ -21,7 +21,15 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameIDs = CraftSim.CONST and CraftSim.CONST.FRAMES
     local function onCloseModule()
-        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", self.module)
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", {moduleID = "MODULE_SPEC_INFO"})
+    end
+
+    local function onCollapseModule()
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", {moduleID = "MODULE_SPEC_INFO", open = false})
+    end
+
+    local function onCollapseOpenCallback()
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", {moduleID = "MODULE_SPEC_INFO", open = true})
     end
 
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
@@ -41,6 +49,8 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = onCloseModule,
+        onCollapseCallback = onCollapseModule,
+        onCollapseOpenCallback = onCollapseOpenCallback,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -65,6 +75,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = onCloseModule,
+        onCollapseCallback = onCollapseModule,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
