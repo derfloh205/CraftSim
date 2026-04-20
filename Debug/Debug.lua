@@ -21,8 +21,18 @@ local systemPrint = print
 function CraftSim.DEBUG:Init()
     GUTIL:SetEventLogger(self:RegisterLogger("CraftSim Events"), 3)
 
+    -- need to safely fetch the minimum log level due to db module initialized after debug
+
+    local minimumLogLevel = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["DEBUG_MINIMUM_LOG_LEVEL"]
+
     -- Initialize Logger LogLevels
-    local minimumLogLevel = CraftSim.DB.OPTIONS:Get("DEBUG_MINIMUM_LOG_LEVEL")
+    local optionsDB = CraftSimDB.optionsDB
+    if optionsDB then
+        local data = optionsDB.data
+        if data then
+            minimumLogLevel = data["DEBUG_MINIMUM_LOG_LEVEL"] or minimumLogLevel
+        end
+    end
     self:SetMinimumLogLevel(minimumLogLevel)
 end
 

@@ -346,8 +346,8 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
-		CraftSim.DEBUG:Init()
 		CraftSim.DB:Init()
+		CraftSim.DEBUG:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
