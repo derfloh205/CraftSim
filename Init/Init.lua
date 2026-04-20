@@ -182,9 +182,25 @@ function CraftSim.INIT:HookToEvents()
 	hookedEvent = true
 
 	local function OpenRecipeAllocationUpdated(self)
-		if CraftSim.INIT.visibleRecipeID then
-			GUTIL:TriggerCustomEvent("CRAFTSIM_OPEN_RECIPE_ALLOCATION_UPDATED", CraftSim.INIT.visibleRecipeID)
+		if not CraftSim.INIT.visibleRecipeID then
+			Logger:LogWarning("OpenRecipeAllocationUpdated: No visible recipe ID, return")
+			return
 		end
+		if not CraftSim.MODULES.recipeData then
+			Logger:LogWarning("OpenRecipeAllocationUpdated: No recipe data, return")
+			return
+		end
+
+		if not CraftSim.MODULES.recipeData.recipeID == CraftSim.INIT.visibleRecipeID then
+			Logger:LogWarning("OpenRecipeAllocationUpdated: recipeData not matching visible recipe ID, return")
+			return
+		end
+
+		local recipeData = CraftSim.MODULES.recipeData
+		if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
+			recipeData = CraftSim.SIMULATION_MODE.recipeData
+		end
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 	end
 
 	local function OpenRecipeInfoUpdated(self, recipeInfo)
