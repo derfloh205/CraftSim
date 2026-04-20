@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.SLASH
 CraftSim.SLASH = {}

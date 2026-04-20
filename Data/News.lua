@@ -22,6 +22,15 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.3"),
+        f.PG .. f.bb("Recipe Info"),
+        f.a .. "- Added new info option to display: " .. f.g("Profit Per Quality"),
+        f.a .. "- Same value like the old price details column",
+        f.a .. "  (SellPriceofQuality*(0.95)-CurrentCraftingCosts)",
+        f.a .. "- Enabled per default, can be disabled in Module Options",
+        f.p .. "Fixed help command lua error",
+        newP("26.1.2"),
+        f.p .. "Fixed fresh load lua error",
         newP("26.1.1"),
         f.pg .. f.bb("Craft Lists"),
         f.a .. "- When setting a target quality, lower qualities will not queue",

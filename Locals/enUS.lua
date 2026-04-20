@@ -295,6 +295,10 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_INFO_OPTION_CONCENTRATION_COST = "Concentration Cost",
         RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP =
         "Show the base Concentration point cost for one craft",
+        RECIPE_INFO_OPTION_PROFIT_PER_QUALITY = "Profit per Quality",
+        RECIPE_INFO_OPTION_PROFIT_PER_QUALITY_TOOLTIP =
+        "Show the estimated profit for each possible result quality (sell price minus crafting cost)",
+        RECIPE_INFO_QUALITY_PROFIT_LABEL = "Profit:",
 
         -- Cost Details Frame
         PRICING_TITLE = "CraftSim Pricing",
