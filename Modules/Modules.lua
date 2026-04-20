@@ -398,9 +398,6 @@ function CraftSim.MODULES:Update()
 		showSpecInfo and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(specInfoFrameWO,
 		showSpecInfo and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showSpecInfo then
-		CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
-	end
 
 	-- CraftBuffs Module
 	CraftSim.FRAME:ToggleFrame(craftBuffsFrame,

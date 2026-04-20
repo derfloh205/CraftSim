@@ -19,13 +19,18 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
+    local frameIDs = CraftSim.CONST and CraftSim.CONST.FRAMES
+    local function onCloseModule()
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", self.module)
+    end
+
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
     local frameNO_WO = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.SPEC_INFO,
+        frameID = frameIDs and frameIDs.SPEC_INFO,
         title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
@@ -35,7 +40,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_SPEC_INFO"),
+        onCloseCallback = onCloseModule,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -49,7 +54,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.SPEC_INFO_WO,
+        frameID = frameIDs and frameIDs.SPEC_INFO_WO,
         title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
@@ -59,7 +64,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_SPEC_INFO"),
+        onCloseCallback = onCloseModule,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -169,6 +174,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         }
     end
 
+    self.module.frame = frameNO_WO
+    self.module.frameWO = frameWO
+
     createContent(frameWO)
     createContent(frameNO_WO)
 end
@@ -179,9 +187,13 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     ---@type CraftSim.SPEC_INFO.FRAME
     local specInfoFrame
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO) --[[@as CraftSim.SPEC_INFO.FRAME]]
+        specInfoFrame = self.module.frameWO --[[@as CraftSim.SPEC_INFO.FRAME]]
     else
-        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO) --[[@as CraftSim.SPEC_INFO.FRAME]]
+        specInfoFrame = self.module.frame --[[@as CraftSim.SPEC_INFO.FRAME]]
+    end
+
+    if not specInfoFrame then
+        return
     end
 
     local specializationData = recipeData.specializationData
@@ -301,6 +313,42 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         filteredMaxStats.ingenuity:Clear()
     end
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
+end
+
+function CraftSim.SPECIALIZATION_INFO.UI:VisibleByContext()
+    local recipeData = CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData or CraftSim.MODULES.recipeData
+
+    if not recipeData then
+        return false
+    end
+
+    if recipeData.isCooking or recipeData.isOldWorldRecipe then
+        return false
+    end
+
+    return CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
+end
+
+function CraftSim.SPECIALIZATION_INFO.UI:Update()
+    local recipeData = CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData or CraftSim.MODULES.recipeData
+    local frame = self.module and self.module.frame
+    local frameWO = self.module and self.module.frameWO
+
+    if not recipeData then
+        if frame then frame:Hide() end
+        if frameWO then frameWO:Hide() end
+        return
+    end
+
+    local shouldShow = self:VisibleByContext()
+    if frame then frame:SetVisible(shouldShow and not CraftSim.UTIL:IsWorkOrder()) end
+    if frameWO then frameWO:SetVisible(shouldShow and CraftSim.UTIL:IsWorkOrder()) end
+
+    if not shouldShow then
+        return
+    end
+
+    self:UpdateInfo(recipeData)
 end
 
 local specNodeTooltipHooked = false
