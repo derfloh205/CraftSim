@@ -58,72 +58,72 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 end);
             end
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
-                "MODULE_REAGENT_OPTIMIZATION",
-                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
+            --     "MODULE_REAGENT_OPTIMIZATION",
+            --     L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
-                "MODULE_AVERAGE_PROFIT",
-                L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
+            --     "MODULE_AVERAGE_PROFIT",
+            --     L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),
-                "MODULE_TOP_GEAR",
-                L("CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),
+            --     "MODULE_TOP_GEAR",
+            --     L("CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL"),
-                "MODULE_CRAFT_QUEUE",
-                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL"),
+            --     "MODULE_CRAFT_QUEUE",
+            --     L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
-                "MODULE_PRICING",
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
+            --     "MODULE_PRICING",
+            --     L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
-                "MODULE_CRAFT_BUFFS",
-                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
+            --     "MODULE_CRAFT_BUFFS",
+            --     L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
-                "MODULE_COOLDOWNS",
-                L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
+            --     "MODULE_COOLDOWNS",
+            --     L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL"),
-                "MODULE_SPEC_INFO",
-                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL"),
+            --     "MODULE_SPEC_INFO",
+            --     L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
-                "MODULE_CRAFT_LOG",
-                L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
+            --     "MODULE_CRAFT_LOG",
+            --     L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),
-                "MODULE_STATISTICS",
-                L("CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),
+            --     "MODULE_STATISTICS",
+            --     L("CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
-                "MODULE_RECIPE_SCAN",
-                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"))
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
+            --     "MODULE_RECIPE_SCAN",
+            --     L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"))
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
-                "MODULE_CUSTOMER_HISTORY",
-                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
-                CraftSim.MODULES.modules["MODULE_CUSTOMER_HISTORY"].frame)
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
+            --     "MODULE_CUSTOMER_HISTORY",
+            --     L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
+            --     CraftSim.MODULES.modules["MODULE_CUSTOMER_HISTORY"].frame)
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL"),
-                "MODULE_EXPLANATIONS",
-                L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
-                CraftSim.MODULES.modules["MODULE_EXPLANATIONS"].frame)
+            -- addModuleCheckbox(
+            --     L("CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL"),
+            --     "MODULE_EXPLANATIONS",
+            --     L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
+            --     CraftSim.MODULES.modules["MODULE_EXPLANATIONS"].frame)
 
             local exports = rootDescription:CreateButton(L("CONTROL_PANEL_EXPORTS"))
 

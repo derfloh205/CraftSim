@@ -9,7 +9,9 @@ CraftSim.SIMULATION_MODE = {}
 CraftSim.MODULES:RegisterModule("MODULE_SIMULATION_MODE", CraftSim.SIMULATION_MODE)
 
 GUTIL:RegisterCustomEvents(CraftSim.SIMULATION_MODE, {
-    "CRAFTSIM_RECIPE_DATA_INITIALIZED",
+    "CRAFTSIM_SIMULATION_MODE_ENABLED",
+    "CRAFTSIM_SIMULATION_MODE_DISABLED",
+    "CRAFTSIM_SIMULATION_MODE_INITIALIZED",
 })
 
 CraftSim.SIMULATION_MODE.isActive = false
@@ -269,10 +271,6 @@ function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
 end
 
 function CraftSim.SIMULATION_MODE:InitializeSimulation(recipeData)
-    if not recipeData then
-        Logger:LogError("Cannot Enable Simulation Mode: No recipe data available")
-        return
-    end
     self.recipeData = recipeData
 
     if recipeData.specializationData then
@@ -293,6 +291,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulation(recipeData)
     local UI = self.UI --[[@as CraftSim.SIMULATION_MODE.UI]]
     UI:InitOptionalReagentItemSelectors(self.recipeData)
     self:UpdateSimulationMode()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_INITIALIZED")
 end
 
 ---@deprecated
@@ -396,7 +395,18 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     end
 end
 
----@param recipeData CraftSim.RecipeData
-function CraftSim.SIMULATION_MODE:CRAFTSIM_RECIPE_DATA_INITIALIZED(recipeData)
+function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_ENABLED()
+    local recipeData = CraftSim.MODULES.recipeData
 
+    if not recipeData then
+        Logger:LogError("Cannot Enable Simulation Mode: No recipe data available")
+        return
+    end
+
+    self:InitializeSimulation(recipeData)
+end
+
+function CraftSim.SIMULATION_MODE:CRAFTSIM_SIMULATION_MODE_INITIALIZED()
+    local UI = self.UI --[[@as CraftSim.SIMULATION_MODE.UI]]
+    UI:Update()
 end

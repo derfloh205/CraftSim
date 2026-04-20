@@ -584,27 +584,31 @@ function CraftSim.SIMULATION_MODE.UI:VisibleByContext()
 end
 
 function CraftSim.SIMULATION_MODE.UI:Update()
-    local recipeData = CraftSim.MODULES.recipeData
-    if not recipeData then
-        return -- In what case is this nil?
-    end
-
-
-    Logger:LogDebug("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
-
-    -- frame visiblities
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-
     if not CraftSim.SIMULATION_MODE.isActive then
         CraftSim.SIMULATION_MODE.frame:Hide()
         CraftSim.SIMULATION_MODE.frameWO:Hide()
         return
     end
 
-    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
-        CraftSim.SIMULATION_MODE.frame
-    local otherFrame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frame or
-        CraftSim.SIMULATION_MODE.frameWO
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    if not recipeData then
+        return
+    end
+
+    Logger:LogVerbose("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
+
+    -- frame visiblities
+    local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
+
+    CraftSim.SIMULATION_MODE.frame:Hide()
+    CraftSim.SIMULATION_MODE.frameWO:Hide()
+
+    if not CraftSim.SIMULATION_MODE.isActive then
+        return
+    end
+
+    local frame = isWorkOrder and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local otherFrame = isWorkOrder and CraftSim.SIMULATION_MODE.frame or CraftSim.SIMULATION_MODE.frameWO
     frame:Show()
     otherFrame:Hide()
 
@@ -625,6 +629,7 @@ function CraftSim.SIMULATION_MODE.UI:Update()
     --CraftSim.FRAME:ToggleFrame(craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
 end
 
+---@deprecated
 function CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local simModeFrames = nil
