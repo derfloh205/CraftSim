@@ -23,6 +23,7 @@ CraftSim.MODULES = {}
 ---| "MODULE_STATISTICS"
 ---| "MODULE_DISENCHANT"
 ---| "MODULE_CONTROL_PANEL"
+---| "MODULE_SIMULATION_MODE"
 
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
@@ -58,19 +59,17 @@ local Logger = CraftSim.DEBUG:RegisterLogger("Modules")
 ---@param module CraftSim.Module
 function CraftSim.MODULES:RegisterModule(moduleID, module)
 	CraftSim.MODULES.modules[moduleID] = module
-
-	-- Inject module reference into UI
-	if module.UI then
-		module.UI.module = module
-	end
+	module.moduleID = moduleID
 end
 
 function CraftSim.MODULES:Init()
 	for moduleID, module in pairs(CraftSim.MODULES.modules) do
 		Logger:LogDebug("Initializing Module UI: {module}", moduleID)
-
-		module.moduleID = moduleID
-		module.UI:Init()
+		-- Inject module reference into UI if there is one
+		if module.UI then
+			module.UI.module = module
+			module.UI:Init()
+		end
 	end
 end
 

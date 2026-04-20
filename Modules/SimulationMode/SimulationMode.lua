@@ -3,8 +3,14 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.SIMULATION_MODE
+---@class CraftSim.SIMULATION_MODE : CraftSim.Module
 CraftSim.SIMULATION_MODE = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_SIMULATION_MODE", CraftSim.SIMULATION_MODE)
+
+GUTIL:RegisterCustomEvents(CraftSim.SIMULATION_MODE, {
+    "CRAFTSIM_RECIPE_DATA_INITIALIZED",
+})
 
 CraftSim.SIMULATION_MODE.isActive = false
 ---@type CraftSim.RecipeData?
@@ -360,4 +366,9 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
     if quantityFulfilled then
         CraftSim.MODULES:Update()
     end
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:CRAFTSIM_RECIPE_DATA_INITIALIZED(recipeData)
+
 end

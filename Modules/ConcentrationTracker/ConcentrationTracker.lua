@@ -10,7 +10,7 @@ CraftSim.CONCENTRATION_TRACKER = {}
 CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
 
 GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
-    "CRAFTSIM_PROFESSION_READY",
+    "CRAFTSIM_PROFESSION_INITIALIZED",
 })
 
 ---@type table<number, CraftSim.ConcentrationData>
@@ -81,6 +81,6 @@ function CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationDa
     return f.bb(formatted)
 end
 
-function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_READY()
+function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_INITIALIZED()
     self.UI:Update()
 end

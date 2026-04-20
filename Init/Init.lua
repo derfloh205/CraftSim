@@ -23,8 +23,8 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
 
 GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_OPEN_RECIPE_INFO_UPDATED",
-	"CRAFTSIM_PROFESSION_READY",
-	"CRAFTSIM_RECIPE_INFO_READY"
+	"CRAFTSIM_PROFESSION_INITIALIZED",
+	"CRAFTSIM_RECIPE_INFO_INITIALIZED"
 })
 
 CraftSim.INIT.FRAMES = {}
@@ -71,13 +71,6 @@ end
 
 ---@param recipeInfo TradeSkillRecipeInfo?
 function CraftSim.INIT:CRAFTSIM_OPEN_RECIPE_INFO_UPDATED(recipeInfo)
-	-- if init turn sim mode off
-	if CraftSim.SIMULATION_MODE.isActive then
-		CraftSim.SIMULATION_MODE.isActive = false
-		CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:SetChecked(false)
-		CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:SetChecked(false)
-	end
-
 	if recipeInfo and recipeInfo.recipeID then
 		Logger:LogDebug("OpenRecipeChanged: {recipeID}", tostring(recipeInfo.recipeID))
 		CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
@@ -142,11 +135,11 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 		-- end
 		-- do not do this all in the same frame to ease performance
 		--RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
-		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_READY")
+		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_INITIALIZED")
 	end)
 end
 
-function CraftSim.INIT:CRAFTSIM_PROFESSION_READY()
+function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 	CraftSim.MODULES:UpdateVisibilityByContext()
 
 	-- Poll until current recipe info of RecipeID is available, then trigger event for all listeners
@@ -158,12 +151,12 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_READY()
 		end
 		return false
 	end, function()
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_READY",
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_INITIALIZED",
 			C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID))
 	end)
 end
 
-function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_READY()
+function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_INITIALIZED()
 	-- build recipe data for the currently visible recipe and trigger update for all listeners
 	CraftSim.DEBUG:StartProfiling("Build Visible RecipeData")
 	local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
@@ -171,7 +164,7 @@ function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_READY()
 
 	if recipeData then
 		CraftSim.MODULES.recipeData = recipeData
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_READY", recipeData)
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_INITIALIZED", recipeData)
 	else
 		Logger:LogWarning("Failed to build recipe data for visible recipe!")
 	end
@@ -571,7 +564,7 @@ function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRec
 	if not professionRecipeIDs then
 		return
 	end
-	Logger:LogDebug("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
+	Logger:LogVerbose("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
 
 	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
 	for _, recipeID in ipairs(professionRecipeIDs) do
