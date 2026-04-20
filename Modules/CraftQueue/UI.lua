@@ -605,7 +605,8 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     end
 
     if changedAny then
-        Logger:LogDebug("CraftSim: Auto-updating " .. tostring(updateCount) .. " Moxie value(s) from current price source data")
+        Logger:LogDebug("CraftSim: Auto-updating " ..
+        tostring(updateCount) .. " Moxie value(s) from current price source data")
         SyncPatronMoxieInputsFromDB()
         CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     end

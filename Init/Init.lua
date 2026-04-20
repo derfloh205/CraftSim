@@ -155,24 +155,32 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 end
 
 function CraftSim.INIT:CRAFTSIM_RECIPE_INFO_INITIALIZED()
-	local recipeData
-	-- if simulation mode is active reuse its recipeData
-	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
-		Logger:LogDebug("Simulation Mode Active, using simulated recipe data")
-		recipeData = CraftSim.SIMULATION_MODE.recipeData
-		-- build recipe data for the currently visible recipe and trigger update for all listeners
-	else
-		CraftSim.DEBUG:StartProfiling("Build Visible RecipeData")
-		recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-		CraftSim.DEBUG:StopProfiling("Build Visible RecipeData")
+	CraftSim.DEBUG:StartProfiling("Build Visible RecipeData")
+	local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+	CraftSim.DEBUG:StopProfiling("Build Visible RecipeData")
+
+	if not recipeData then
+		Logger:LogWarning("Failed to build recipe data for visible recipe!")
+		return
 	end
 
-	if recipeData then
-		CraftSim.MODULES.recipeData = recipeData
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_INITIALIZED", recipeData)
-	else
-		Logger:LogWarning("Failed to build recipe data for visible recipe!")
+	CraftSim.MODULES.recipeData = recipeData
+
+	if CraftSim.SIMULATION_MODE.isActive then
+		if not recipeData.recipeInfo.isRecraft and not recipeData.recipeInfo.isSalvageRecipe then
+			Logger:LogDebug("Simulation Mode Active, using simulated recipe data")
+			CraftSim.SIMULATION_MODE.recipeData = recipeData
+			GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ENABLED")
+			return
+		else
+			-- if sim mode is active on a recraft or salvage, disable it
+			CraftSim.SIMULATION_MODE.isActive = false
+			GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_DISABLED")
+		end
 	end
+
+	CraftSim.MODULES.recipeData = recipeData
+	GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 end
 
 function CraftSim.INIT:HookToEvents()

@@ -10,11 +10,11 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.SIMULATION_MODE.UI : CraftSim.Module.UI
 CraftSim.SIMULATION_MODE.UI = {}
 
----@class CraftSim.SIMULATION_MODE.UI.WORKORDER : GGUI.Frame
-CraftSim.SIMULATION_MODE.UI.WORKORDER = nil
+---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+CraftSim.SIMULATION_MODE.frame = nil
 
----@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER : GGUI.Frame
-CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
+---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+CraftSim.SIMULATION_MODE.frameWO = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("SimulationMode.UI")
 
@@ -54,38 +54,11 @@ function CraftSim.SIMULATION_MODE.UI:Init()
     })
 
     local function createContent(frame, isWorkOrder)
+        ---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+        local frame = frame
         local schematicForm = isWorkOrder and ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm or
             ProfessionsFrame.CraftingPage.SchematicForm
-        -- Toggle Button
-        do
-            -- local clickCallback =
-            -- ---@param self GGUI.Checkbox
-            --     function(self)
-            --         CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
-            --         Logger:LogDebug("Simulation Mode: {enabled}", self:GetChecked() and "Enabled" or "Disabled")
-            --         -- local bestQBox = schematicForm.AllocateBestQualityCheckbox
-            --         -- if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
-            --         --     bestQBox:Click()
-            --         -- end
-            --         if CraftSim.SIMULATION_MODE.isActive then
-            --             CraftSim.SIMULATION_MODE:InitializeSimulation(CraftSim.MODULES.recipeData)
-            --         end
-            --     end
 
-            -- frame.toggleButton = GGUI.Checkbox {
-            --     parent = schematicForm,
-            --     anchorParent = schematicForm.Details,
-            --     anchorA = "BOTTOM",
-            --     anchorB = "TOP",
-            --     offsetX = -65,
-            --     offsetY = 40,
-            --     label = L("SIMULATION_MODE_LABEL"),
-            --     tooltip = L("SIMULATION_MODE_TOOLTIP"),
-            --     clickCallback = clickCallback,
-            -- }
-
-            -- frame.toggleButton:Hide()
-        end
         -- Reagent Frames (Required + Optionals)
         do
             local anchorPoints = {
@@ -137,7 +110,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                         scale = 1.2,
                     },
                     onSelectCallback = function()
-                        CraftSim.MODULES:Update()
+                        --CraftSim.MODULES:Update()
                     end
                 })
                 return optionalReagentDropdown
@@ -302,21 +275,23 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     -- would cause spec diff to be double-counted on every update cycle.
     local userMods = CraftSim.SIMULATION_MODE.userStatModifiers or {}
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local detailsFrame = simModeFrames.detailsFrame
+    ---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+    local frame = CraftSim.UTIL:IsWorkOrder() and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local detailsFrame = frame.content.detailsFrame
 
     local statsList = detailsFrame.content.statsList --[[@as GGUI.FrameList]]
     statsList:Remove()
 
-    local function addStatRow(labelText, tooltipText, valueText, modValue, statKey)
+    local function addStatRow(label, tooltipText, value, modValue, statKey)
         statsList:Add(function(row)
             local columns = row.columns
-            local labelColumn = columns[1]
-            local valueColumn = columns[2]
+            local labelText = columns[1].text --[[@as GGUI.Text]]
+            local valueText = columns[2].text --[[@as GGUI.Text]]
             local modColumn = columns[3]
+            local modInput = modColumn.modInput --[[@as GGUI.NumericInput]]
 
-            labelColumn.text:SetText(labelText)
-            valueColumn.text:SetText(valueText)
+            labelText:SetText(label)
+            valueText:SetText(value)
 
             -- Row hover tooltip instead of legacy help button
             if tooltipText and tooltipText ~= "" then
@@ -330,23 +305,23 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             end
 
             if modValue ~= nil and statKey then
-                modColumn.modInput:SetValue(modValue)
-                modColumn.modInput.stat = statKey
-                modColumn.modInput:Show()
+                modInput:SetValue(modValue)
+                modInput.stat = statKey
+                modInput:Show()
                 -- Store reference for UpdateProfessionStatModifiersByInputs
                 if statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY then
-                    simModeFrames.recipeDifficultyMod = modColumn.modInput
+                    frame.recipeDifficultyMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT then
-                    simModeFrames.multicraftMod = modColumn.modInput
+                    frame.multicraftMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS then
-                    simModeFrames.resourcefulnessMod = modColumn.modInput
+                    frame.resourcefulnessMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL then
-                    simModeFrames.baseSkillMod = modColumn.modInput
+                    frame.baseSkillMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INGENUITY then
-                    simModeFrames.ingenuityMod = modColumn.modInput
+                    frame.ingenuityMod = modInput
                 end
             else
-                modColumn.modInput:Hide()
+                modInput:Hide()
             end
         end)
     end
@@ -514,9 +489,9 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     statsList:UpdateDisplay()
 
     -- Concentration toggle button visibility and state
-    simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
+    frame.content.detailsFrame.content.concentrationToggleButton:SetVisible(showConcentration)
     if showConcentration then
-        --simModeFrames.concentrationToggleMod:SetToggle(recipeData.concentrating)
+        frame.content.detailsFrame.content.concentrationToggleButton:SetToggle(recipeData.concentrating)
     end
 
     -- Quality meter
@@ -584,9 +559,10 @@ function CraftSim.SIMULATION_MODE.UI:VisibleByContext()
 end
 
 function CraftSim.SIMULATION_MODE.UI:Update()
+    CraftSim.SIMULATION_MODE.frame:Hide()
+    CraftSim.SIMULATION_MODE.frameWO:Hide()
+
     if not CraftSim.SIMULATION_MODE.isActive then
-        CraftSim.SIMULATION_MODE.frame:Hide()
-        CraftSim.SIMULATION_MODE.frameWO:Hide()
         return
     end
 
@@ -597,47 +573,15 @@ function CraftSim.SIMULATION_MODE.UI:Update()
 
     Logger:LogVerbose("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
 
-    -- frame visiblities
-    local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
-
-    CraftSim.SIMULATION_MODE.frame:Hide()
-    CraftSim.SIMULATION_MODE.frameWO:Hide()
-
-    if not CraftSim.SIMULATION_MODE.isActive then
-        return
-    end
-
-    local frame = isWorkOrder and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
-    local otherFrame = isWorkOrder and CraftSim.SIMULATION_MODE.frame or CraftSim.SIMULATION_MODE.frameWO
+    local frame = CraftSim.UTIL:IsWorkOrder() and CraftSim.SIMULATION_MODE.frameWO or
+        CraftSim.SIMULATION_MODE.frame --[[@as CraftSim.SIMULATION_MODE.FRAME]]
     frame:Show()
-    otherFrame:Hide()
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+    -- TODO: move to buff module and react to event
+    --CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
-    local craftingDetailsFrame = simModeFrames.detailsFrame
-    Logger:LogDebug("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
-
-
-    if not CraftSim.SIMULATION_MODE.isActive then
-        -- only hide, they will be shown automatically if available
-        for _, selector in pairs(frame.optionalReagentItemSelectors) do
-            selector:Hide()
-        end
+    -- only hide, they will be shown automatically if available
+    for _, selector in pairs(frame.optionalReagentItemSelectors) do
+        selector:Hide()
     end
-
-    --CraftSim.FRAME:ToggleFrame(craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
-end
-
----@deprecated
-function CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local simModeFrames = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        simModeFrames = CraftSim.SIMULATION_MODE.UI.WORKORDER
-    else
-        simModeFrames = CraftSim.SIMULATION_MODE.UI.NO_WORKORDER
-    end
-
-    return simModeFrames
 end
