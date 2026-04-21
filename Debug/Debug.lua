@@ -96,7 +96,7 @@ end
 function CraftSim.DEBUG:StopProfiling(label)
     local startTime = CraftSim.DEBUG.profilings[label]
     if not startTime then
-        profiling:LogError("Util Profiling Label not found on Stop: {label}", label)
+        profiling:LogWarning("Util Profiling Label not found on Stop: {label}", label)
         return 0
     end
     local time = debugprofilestop()

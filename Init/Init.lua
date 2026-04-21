@@ -19,12 +19,16 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
 	"PLAYER_LOGIN",
 	"PLAYER_ENTERING_WORLD",
 	"TRADE_SKILL_FAVORITES_CHANGED",
+	"TRADE_SKILL_DATA_SOURCE_CHANGED",
+	"TRADE_SKILL_SHOW",
+	"CRAFTING_DETAILS_UPDATE"
 }
 
 GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_OPEN_RECIPE_INFO_UPDATED",
 	"CRAFTSIM_PROFESSION_INITIALIZED",
-	"CRAFTSIM_RECIPE_INFO_INITIALIZED"
+	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
+	"CRAFTSIM_PROFESSION_OPENED"
 })
 
 ---@type number?
@@ -67,30 +71,79 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.CRAFTQ:InitializeCraftQueue()
 end
 
+function CraftSim.INIT:TRADE_SKILL_SHOW()
+	CraftSim.DEBUG:StartProfiling("TradeSkill Opening Load")
+end
+
+function CraftSim.INIT:CRAFTING_DETAILS_UPDATE()
+	Logger:LogInfo("CRAFTING_DETAILS_UPDATE")
+end
+
+function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
+	-- log what info is available on the first show of the profession frame after login/reload, to better understand when we can trigger our updates without missing info
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	if professionInfo then
+		Logger:LogInfo("TRADE_SKILL_DATA_SOURCE_CHANGED: professionInfo available - {professionInfo}", professionInfo)
+	else
+		Logger:LogInfo("TRADE_SKILL_DATA_SOURCE_CHANGED: professionInfo not available")
+	end
+
+	Logger:LogInfo("TRADE_SKILL_DATA_SOURCE_CHANGED: TradeSkillReady - {tradeSkillReady}",
+		C_TradeSkillUI.IsTradeSkillReady())
+
+	local selectedTabID = ProfessionsFrame.TabSystem.selectedTabID
+
+	local selectedTab
+	if selectedTabID == 1 then
+		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+	elseif selectedTabID == 2 then
+		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO
+	elseif selectedTabID == 3 then
+		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+	else
+		-- if its the first time opening after login/reload its nil
+		-- but also we can safely assume here its the recipe tab because its the default to open to
+		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+	end
+
+	local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+
+	local alreadyPreloaded = CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionInfo.profession)
+	if not alreadyPreloaded then
+		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
+		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
+			Logger:LogInfo("CRAFTING_DETAILS_UPDATE -> {profession}", professionInfo.professionName)
+			CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionInfo.profession, true)
+			GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab,
+				CraftSim.INIT.initialLogin,
+				CraftSim.INIT.isReloadingUI)
+		end, 0.2, true)
+	else
+		CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionInfo.profession, true)
+		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab, CraftSim.INIT.initialLogin,
+			CraftSim.INIT.isReloadingUI)
+	end
+end
+
+---@param professionInfo ProfessionInfo
+---@param selectedTab CraftSim.PROFESSIONS_TAB
+function CraftSim.INIT:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, isLogin, isReload)
+	if not professionInfo then return end
+
+	local profession = professionInfo.profession
+	Logger:LogInfo(
+		"Profession Opened: {profession}, selectedTab: {selectedTab}, isLogin: {isLogin}, isReload: {isReload}",
+		profession, selectedTab, isLogin, isReload)
+
+	CraftSim.DEBUG:StopProfiling("TradeSkill Opening Load")
+end
+
 ---@param recipeInfo TradeSkillRecipeInfo?
 function CraftSim.INIT:CRAFTSIM_OPEN_RECIPE_INFO_UPDATED(recipeInfo)
 	if recipeInfo and recipeInfo.recipeID then
 		Logger:LogDebug("OpenRecipeChanged: {recipeID}", tostring(recipeInfo.recipeID))
 		CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
-
-		local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-		local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-
-		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
-			professionInfo.profession)
 		CraftSim.INIT:InitializeVisibleRecipeID(true)
-
-		local recipeID = recipeInfo.recipeID
-
-		-- this should happen exactly once on the first open recipe when a profession opened fresh after a client start
-		-- otherwise it just always fizzles
-		-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
-		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
-			if recipeID == CraftSim.INIT.visibleRecipeID then
-				Logger:LogDebug("Multicraft Info Loaded")
-				--CraftSim.INIT:InitializeVisibleRecipeID(true)
-			end
-		end, 1)
 	end
 end
 
@@ -112,27 +165,10 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 
 	lastCallTime = callTime
 
-	-- if freshLoginRecall and isInit then
-	-- 	-- hide all frames to reduce flicker on fresh login recall
-	-- 	freshLoginRecall = false
-
-	-- 	-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
-	-- 	C_Timer.After(0.1, function()
-	-- 		CraftSim.INIT:InitializeVisibleRecipeID(true)
-	-- 	end)
-	-- 	return
-	-- end
-
 	-- Poll until profession data dependencies are ready, then trigger event for all listeners
 	GUTIL:WaitFor(function()
 		return self:IsProfessionReady()
 	end, function()
-		--CraftSim.MODULES:Update()
-		-- if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES") then
-		-- 	CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
-		-- end
-		-- do not do this all in the same frame to ease performance
-		--RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
 		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_INITIALIZED")
 	end)
 end
@@ -149,8 +185,21 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 		end
 		return false
 	end, function()
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_INITIALIZED",
-			C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID))
+		local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
+
+		if recipeInfo and not recipeInfo.supportsCraftingStats then
+			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_INITIALIZED",
+				recipeInfo)
+			return
+		else
+			-- If first operationInfo fetch after player started the client fresh
+			-- it can be that the multicraft stat is not loaded yet
+			-- but it does load then after the CRAFTING_STATS_UPDATED event
+			-- which is ONLY fired async after the very first op info api call after a fresh wow start
+
+
+			local operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(CraftSim.INIT.visibleRecipeID, {}, nil, false)
+		end
 	end)
 end
 
@@ -604,13 +653,15 @@ function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRec
 	if not professionRecipeIDs then
 		return
 	end
-	Logger:LogVerbose("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
+	Logger:LogInfo("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
 
 	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
 	for _, recipeID in ipairs(professionRecipeIDs) do
 		local concentrating = false
 		C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, nil, concentrating)
 	end
+
+	Logger:LogInfo("Trigger operationInfo prefetch completed for: " .. #professionRecipeIDs .. " recipes")
 
 	CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
