@@ -46,6 +46,7 @@ local GGUI = CraftSim.GGUI
 GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 	"CRAFTSIM_MODULE_CLOSED",
 	"CRAFTSIM_MODULE_MINIMIZED",
+	"CRAFTSIM_MODULE_MAXIMIZED",
 })
 
 local f = GUTIL:GetFormatter()
@@ -169,15 +170,18 @@ end
 
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
-
-	if not recipeInfo then
-		return nil
-	end
-
 	local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 	if not schematicForm then
 		Logger:LogError("CraftSim MODULES: No SchematicForm Visible")
+		return nil
+	end
+
+	-- On cold profession open, visibleRecipeID can lag behind the actually selected schematic recipe.
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
+	if not recipeInfo then
+		recipeInfo = schematicForm:GetRecipeInfo()
+	end
+	if not recipeInfo or not recipeInfo.recipeID then
 		return nil
 	end
 
