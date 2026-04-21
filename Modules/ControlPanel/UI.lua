@@ -48,7 +48,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 end, function()
                     local checked = CraftSim.DB.OPTIONS:Get(moduleSV)
                     CraftSim.DB.OPTIONS:Save(moduleSV, not checked)
-                    CraftSim.MODULES:Update()
+                    CraftSim.MODULES:UpdateVisibilityByContext()
                     if optionalFrameToToggle then
                         GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(not checked)
                     end

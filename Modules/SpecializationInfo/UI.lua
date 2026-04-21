@@ -25,6 +25,8 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameIDs = CraftSim.CONST and CraftSim.CONST.FRAMES
     local function onCloseModule()
+        CraftSim.DB.OPTIONS:Save("MODULE_SPEC_INFO", false)
+        CraftSim.MODULES:UpdateVisibilityByContext()
         GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_SPEC_INFO")
     end
 
