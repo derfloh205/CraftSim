@@ -21,15 +21,15 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameIDs = CraftSim.CONST and CraftSim.CONST.FRAMES
     local function onCloseModule()
-        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", {moduleID = "MODULE_SPEC_INFO"})
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_SPEC_INFO")
     end
 
     local function onCollapseModule()
-        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", {moduleID = "MODULE_SPEC_INFO", open = false})
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", "MODULE_SPEC_INFO")
     end
 
     local function onCollapseOpenCallback()
-        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", {moduleID = "MODULE_SPEC_INFO", open = true})
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MAXIMIZED", "MODULE_SPEC_INFO")
     end
 
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
