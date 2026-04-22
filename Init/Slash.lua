@@ -84,7 +84,7 @@ function CraftSim.SLASH:CMD_export(args)
     end
 end
 
-function CraftSim.SLASH:CMD_openprofession()
+function CraftSim.SLASH:CMD_openprofession(arg1)
     if ProfessionsFrame:IsVisible() then
         return
     end
@@ -103,12 +103,10 @@ function CraftSim.SLASH:CMD_openprofession()
         end
     end
 
-    -- fallback to first profession
-    if professions[1] then
+    -- fallback to first profession if not stated closest
+    if arg1 == "closest" and professions[1] then
         Logger:LogDebug("Opening profession " .. professions[1] .. " as fallback")
         C_TradeSkillUI.OpenTradeSkill(C_TradeSkillUI.GetProfessionSkillLineID(professions[1]))
-    else
-        Logger:LogError("CraftSim: No professions found for current character.")
     end
 end
 
