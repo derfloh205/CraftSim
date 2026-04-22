@@ -85,7 +85,9 @@ end
 function CraftSim.SLASH:CMD_craftqueue(args)
     local arg1 = args[1]
     if arg1 == "craftnext" then
-        CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
+        if CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback then
+            CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
+        end
     elseif arg1 == "queuelists" then
         CraftSim.CRAFT_LISTS:QueueSelectedLists()
     elseif arg1 == "queuefirstcrafts" then

@@ -1450,10 +1450,13 @@ end
 --- Currently only works for craftsim shopping list due to relying on bought item removal
 --- TODO: fix auto removal for reagents like darkmoon decks
 function CraftSim.CRAFTQ:AuctionatorQuickBuy()
-
     Logger:LogDebug("AuctionatorQuickBuy", false, true)
 
     local qbCache = self.quickBuyCache
+
+    if not AuctionHouseFrame:IsVisible() then
+        return
+    end
 
     if not AuctionatorShoppingFrame then
         CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.r("Quick Buy only available for Auctionator Shopping Lists"))
