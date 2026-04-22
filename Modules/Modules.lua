@@ -24,6 +24,7 @@ CraftSim.MODULES = {}
 ---| "MODULE_DISENCHANT"
 ---| "MODULE_CONTROL_PANEL"
 ---| "MODULE_SIMULATION_MODE"
+---| "MODULE_PATCH_NOTES"
 
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module

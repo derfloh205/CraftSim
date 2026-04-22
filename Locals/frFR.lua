@@ -537,7 +537,7 @@ function CraftSim.LOCAL_FR:GetData()
             "Module that shows you various explanations of how" .. f.l(" CraftSim") .. " calculates things",
         CONTROL_PANEL_RESET_FRAMES = "Réinit. Position fenêtres",
         CONTROL_PANEL_OPTIONS = "Options",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "En cours...",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -772,6 +772,7 @@ function CraftSim.LOCAL_FR:GetData()
 
         -- frames
         FRAMES_RESETTING = "réinitialisation de frameID: ",
+        PATCH_NOTES_TITLE = "Notes de mise à jour CraftSim",
         FRAMES_WHATS_NEW = "Quoi de neuf dans CraftSim?",
         FRAMES_JOIN_DISCORD = "Rejoignez le Discord!",
         FRAMES_DONATE_KOFI = "Visitez CraftSim sur Kofi",

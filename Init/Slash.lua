@@ -65,9 +65,11 @@ function CraftSim.SLASH:CMD_pricedebug()
     end
 end
 
-function CraftSim.SLASH:CMD_news()
-    CraftSim.NEWS:ShowNews(true)
+function CraftSim.SLASH:CMD_patchnotes()
+    CraftSim.PATCH_NOTES:ShowPatchNotes(true)
 end
+
+CraftSim.SLASH.CMD_news = CraftSim.SLASH.CMD_patchnotes
 
 function CraftSim.SLASH:CMD_debug()
     CraftSim.DEBUG.frame:Show()

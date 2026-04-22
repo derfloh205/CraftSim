@@ -527,7 +527,7 @@ function CraftSim.LOCAL_KO:GetData()
         CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP = f.l(" CraftSim") .. "의 각종 계산 방식을 설명해주는 모듈입니다.",
         CONTROL_PANEL_RESET_FRAMES = "창 위치 초기화",
         CONTROL_PANEL_OPTIONS = "옵션",
-        CONTROL_PANEL_NEWS = "새 소식",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "내보내는 중",
@@ -845,6 +845,7 @@ function CraftSim.LOCAL_KO:GetData()
 
         -- frames (프레임)
         FRAMES_RESETTING = "프레임 ID 초기화 중: ",
+        PATCH_NOTES_TITLE = "CraftSim 패치 노트",
         FRAMES_WHATS_NEW = "CraftSim 새로운 소식",
         FRAMES_JOIN_DISCORD = "디스코드 참여하기",
         FRAMES_DONATE_KOFI = "Kofi를 통해 CraftSim 후원하기",

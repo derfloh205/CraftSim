@@ -556,7 +556,7 @@ function CraftSim.LOCAL_CN:GetData()
             "该模块向你展示" .. f.l(" CraftSim") .. " 是如何计算的",
         CONTROL_PANEL_RESET_FRAMES = "重置框架位置",
         CONTROL_PANEL_OPTIONS = "选项",
-        CONTROL_PANEL_NEWS = "更新信息",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "导出",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 导出",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "正在导出",
@@ -820,6 +820,7 @@ function CraftSim.LOCAL_CN:GetData()
 
         -- frames
         FRAMES_RESETTING = "正在重置框架ID： ",
+        PATCH_NOTES_TITLE = "CraftSim 更新说明",
         FRAMES_WHATS_NEW = "CraftSim 有什么新功能？",
         FRAMES_JOIN_DISCORD = "加入 Discord!",
         FRAMES_DONATE_KOFI = "在 Kofi 上访问 CraftSim",

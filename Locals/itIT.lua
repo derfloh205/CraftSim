@@ -403,7 +403,7 @@ function CraftSim.LOCAL_IT:GetData()
         "Modulo che mostra i benefici di creazione attivi e quelli mancanti",
         CONTROL_PANEL_RESET_FRAMES = "Resetta posizioni finestre",
         CONTROL_PANEL_OPTIONS = "Opzioni",
-        CONTROL_PANEL_NEWS = "Novità",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = "Esporta per " .. f.l("Easycraft"),
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Esportazione",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -518,5 +518,6 @@ maggiore o uguale alla soglia configurata.
         -- static popups
         STATIC_POPUPS_YES = "Si",
         STATIC_POPUPS_NO = "No",
+        PATCH_NOTES_TITLE = "Note della patch di CraftSim",
     }
 end

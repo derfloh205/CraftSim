@@ -463,7 +463,7 @@ function CraftSim.LOCAL_RU:GetData()
             "Модуль, который показывает вам различные объяснения того, как" .. f.l(" CraftSim") .. " проводит вычисления",
         CONTROL_PANEL_RESET_FRAMES = "Сбросить позиции",
         CONTROL_PANEL_OPTIONS = "Параметры",
-        CONTROL_PANEL_NEWS = "Новости",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = "Экспорт " .. f.l("Easycraft"),
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Экспорт",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -618,5 +618,6 @@ function CraftSim.LOCAL_RU:GetData()
         -- static popups
         STATIC_POPUPS_YES = "Да",
         STATIC_POPUPS_NO = "Нет",
+        PATCH_NOTES_TITLE = "Примечания к обновлению CraftSim",
     }
 end

@@ -527,7 +527,7 @@ function CraftSim.LOCAL_PT:GetData()
             "Módulo que explana como o" .. f.l(" CraftSim") .. " calcula as coisas",
         CONTROL_PANEL_RESET_FRAMES = "Redefinir Janelas",
         CONTROL_PANEL_OPTIONS = "Ajustes",
-        CONTROL_PANEL_NEWS = "Novidades",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = " Exportar" .. f.l("Easycraft"),
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exportando",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -737,6 +737,7 @@ maior ou igual ao limite de taxa de venda configurado.
 
         -- frames
         FRAMES_RESETTING = "redefinir frameID: ",
+        PATCH_NOTES_TITLE = "Notas da atualização do CraftSim",
         FRAMES_WHATS_NEW = "O que há de Novo CraftSim?",
         FRAMES_JOIN_DISCORD = "Entre no Discord!",
         FRAMES_DONATE_KOFI = "Visite o CraftSim no Kofi",

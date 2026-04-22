@@ -147,8 +147,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
             end)
 
-            rootDescription:CreateButton(f.bb(L("CONTROL_PANEL_NEWS")), function()
-                CraftSim.NEWS:ShowNews(true)
+            rootDescription:CreateButton(f.bb(L("CONTROL_PANEL_PATCH_NOTES")), function()
+                CraftSim.PATCH_NOTES:ShowPatchNotes(true)
             end)
 
             rootDescription:CreateButton(f.grey(L("CONTROL_PANEL_DEBUG")), function()

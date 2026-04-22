@@ -81,6 +81,9 @@ Modules/Modules.lua
 Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/UI.lua
 
+Modules/PatchNotes/PatchNotes.lua
+Modules/PatchNotes/UI.lua
+
 Modules/ItemCount/ItemCount.lua
 
 Modules/PreCraftBuffGate/PreCraftBuffGate.lua
@@ -159,7 +162,6 @@ Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
-Data/News.lua
 Data/PatronMoxieSurplusData.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua
