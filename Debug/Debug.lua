@@ -82,7 +82,7 @@ end
 function CraftSim.DEBUG:ProfilingUpdate(label)
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
-    profiling:LogDebug("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
+    profiling:LogInfo("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
 end
 
 ---@param label string

@@ -32,7 +32,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 })
 
 ---@type number?
-CraftSim.INIT.visibleRecipeID = nil
+CraftSim.INIT.initialRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
@@ -77,6 +77,7 @@ end
 
 function CraftSim.INIT:CRAFTING_DETAILS_UPDATE()
 	Logger:LogInfo("CRAFTING_DETAILS_UPDATE")
+	CraftSim.DEBUG:ProfilingUpdate("CRAFTING_DETAILS_UPDATE CALLS")
 end
 
 function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
@@ -111,6 +112,7 @@ function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
 	local alreadyPreloaded = CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionInfo.profession)
 	if not alreadyPreloaded then
 		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
+		CraftSim.DEBUG:StartProfiling("CRAFTING_DETAILS_UPDATE CALLS")
 		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
 			Logger:LogInfo("CRAFTING_DETAILS_UPDATE -> {profession}", professionInfo.professionName)
 			CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionInfo.profession, true)
@@ -142,14 +144,13 @@ end
 function CraftSim.INIT:CRAFTSIM_OPEN_RECIPE_INFO_UPDATED(recipeInfo)
 	if recipeInfo and recipeInfo.recipeID then
 		Logger:LogDebug("OpenRecipeChanged: {recipeID}", tostring(recipeInfo.recipeID))
-		CraftSim.INIT.visibleRecipeID = recipeInfo.recipeID
+		CraftSim.INIT.initialRecipeID = recipeInfo.recipeID
 		CraftSim.INIT:InitializeVisibleRecipeID(true)
 	end
 end
 
+-- TODO: are those still necessary?
 local hookedEvent = false
-
-local freshLoginRecall = true
 local lastCallTime = 0
 function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 	local callTime = GetTime()
@@ -178,28 +179,15 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 
 	-- Poll until current recipe info of RecipeID is available, then trigger event for all listeners
 	GUTIL:WaitFor(function()
-		local recipeID = CraftSim.INIT.visibleRecipeID
+		local recipeID = CraftSim.INIT.initialRecipeID
 		if recipeID then
 			local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 			return recipeInfo ~= nil and recipeInfo.categoryID
 		end
 		return false
 	end, function()
-		local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
-
-		if recipeInfo and not recipeInfo.supportsCraftingStats then
-			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_INITIALIZED",
-				recipeInfo)
-			return
-		else
-			-- If first operationInfo fetch after player started the client fresh
-			-- it can be that the multicraft stat is not loaded yet
-			-- but it does load then after the CRAFTING_STATS_UPDATED event
-			-- which is ONLY fired async after the very first op info api call after a fresh wow start
-
-
-			local operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(CraftSim.INIT.visibleRecipeID, {}, nil, false)
-		end
+		local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.initialRecipeID)
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_INFO_INITIALIZED", recipeInfo)
 	end)
 end
 
@@ -244,7 +232,7 @@ function CraftSim.INIT:HookToEvents()
 			return
 		end
 
-		if not CraftSim.INIT.visibleRecipeID then
+		if not CraftSim.INIT.initialRecipeID then
 			Logger:LogWarning("OpenRecipeAllocationUpdated: No visible recipe ID, return")
 			return
 		end
@@ -253,7 +241,7 @@ function CraftSim.INIT:HookToEvents()
 			return
 		end
 
-		if not CraftSim.MODULES.recipeData.recipeID == CraftSim.INIT.visibleRecipeID then
+		if not CraftSim.MODULES.recipeData.recipeID == CraftSim.INIT.initialRecipeID then
 			Logger:LogWarning("OpenRecipeAllocationUpdated: recipeData not matching visible recipe ID, return")
 			return
 		end
