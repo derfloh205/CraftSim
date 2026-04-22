@@ -7,13 +7,7 @@ local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.SPECIALIZATION_INFO.UI
----@field simulationModeEnabled boolean set only from :UpdateSimulationMode; drives sim controls in :UpdateInfo
-CraftSim.SPECIALIZATION_INFO.UI = {
-    simulationModeEnabled = false,
-    recipeData = nil,
-}
-
-local Logger = CraftSim.DEBUG:RegisterLogger("SpecializationInfo.UI")
+CraftSim.SPECIALIZATION_INFO.UI = {}
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290
@@ -174,7 +168,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
+function CraftSim.SPECIALIZATION_INFO.UI:UpdateRecipeData(recipeData)
     ---@type CraftSim.SPEC_INFO.FRAME
     local specInfoFrame = self.module.frame --[[@as CraftSim.SPEC_INFO.FRAME]]
 
@@ -197,10 +191,12 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         content.notImplementedText:Hide()
     end
 
-    content.simResetButton:SetVisible(self.simulationModeEnabled)
-    content.simMaxButton:SetVisible(self.simulationModeEnabled)
+    local simulationModeEnabled = CraftSim.SIMULATION_MODE.isActive
+    content.simResetButton:SetVisible(simulationModeEnabled)
+    content.simMaxButton:SetVisible(simulationModeEnabled)
 
-    if self.simulationModeEnabled and CraftSim.SIMULATION_MODE.specializationData then
+    -- Figure out why the updated specialization data is not being used in the UI
+    if simulationModeEnabled and CraftSim.SIMULATION_MODE.specializationData then
         specializationData = CraftSim.SIMULATION_MODE.specializationData
     end
 
@@ -221,10 +217,10 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
                 local rankColumn = columns[2]
 
                 nameColumn.iconTexture:SetTexture(nodeData:GetIcon())
-                rankColumn.text:SetVisible(not self.simulationModeEnabled)
-                rankColumn.simText:SetVisible(self.simulationModeEnabled)
-                rankColumn.simInput:SetVisible(self.simulationModeEnabled)
-                if self.simulationModeEnabled then
+                rankColumn.text:SetVisible(not simulationModeEnabled)
+                rankColumn.simText:SetVisible(simulationModeEnabled)
+                rankColumn.simInput:SetVisible(simulationModeEnabled)
+                if simulationModeEnabled then
                     rankColumn.simInput.nodeData = nodeData
                     rankColumn.simInput.textInput:SetText(nodeData.rank)
                     if nodeData.active then
@@ -264,7 +260,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     end
 
     -- sort only if sim mode UI not active
-    if not self.simulationModeEnabled then
+    if not simulationModeEnabled then
         content.nodeList:UpdateDisplay(function(rowA, rowB)
             if rowA.active and not rowB.active then
                 return true
@@ -301,58 +297,14 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
 end
 
---- Whether the spec info module frame should show (only self.recipeData; never CraftSim.MODULES.recipeData).
+---@param recipeData CraftSim.RecipeData?
 function CraftSim.SPECIALIZATION_INFO.UI:VisibleByContext()
-    local recipeData = self.recipeData
-
-    if not recipeData then
-        return false
-    end
-
-    -- Only show while a recipe schematic is actually visible (hide on Specializations/other tabs
-    -- without destroying the last stored recipe snapshot).
+    -- Only show while a recipe schematic is actually visible (hide on Specializations/other tabs).
     if not CraftSim.UTIL:GetSchematicFormByContext() then
         return false
     end
 
-    if recipeData.isCooking or recipeData.isOldWorldRecipe then
-        return false
-    end
-
     return CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
-end
-
---- Clears stored recipe and reapplies module visibility (frame hides when no recipe; see :VisibleByContext()).
-function CraftSim.SPECIALIZATION_INFO.UI:ClearStoredRecipeAndRefreshVisibility()
-    self.recipeData = nil
-    CraftSim.MODULES:UpdateVisibilityByContext()
-end
-
---- When recipeData is provided, stores it on self; then refreshes module visibility and repaints from self.recipeData.
----@param recipeData CraftSim.RecipeData? omit to keep the last stored recipe (re-run visibility + UpdateInfo)
-function CraftSim.SPECIALIZATION_INFO.UI:UpdateRecipeData(recipeData)
-    if recipeData then
-        self.recipeData = recipeData
-    end
-    CraftSim.MODULES:UpdateVisibilityByContext()
-    if not self.recipeData or not self:VisibleByContext() then
-        return
-    end
-    self:UpdateInfo(self.recipeData)
-end
-
----@param enabled boolean whether this module shows simulation controls and sim specialization data
----@param recipeData CraftSim.RecipeData? when provided, replaces stored recipe before refresh (e.g. sim session recipe)
-function CraftSim.SPECIALIZATION_INFO.UI:UpdateSimulationMode(enabled, recipeData)
-    self.simulationModeEnabled = not not enabled
-    if recipeData then
-        self.recipeData = recipeData
-    end
-    self:UpdateRecipeData()
-end
-
-function CraftSim.SPECIALIZATION_INFO.UI:Update()
-    self:UpdateSimulationMode(CraftSim.SIMULATION_MODE.isActive)
 end
 
 local specNodeTooltipHooked = false
@@ -361,13 +313,11 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
     if specNodeTooltipHooked then return end
     specNodeTooltipHooked = true
 
-    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(configID, pathID)
-        local nodeID = pathID
-
+    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(_, pathID)
         local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
 
         local label = CraftSim.LOCAL:GetText("SPECIALIZATION_INFO_TOOLTIP_LABEL")
-        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(pathID, playerUID)
         if next(crafterUIDRankMap) then
             ---@type CrafterUID[]
             local orderedUIDs = {}
