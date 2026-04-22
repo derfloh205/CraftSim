@@ -763,6 +763,8 @@ function CraftSim.LOCAL_FR:GetData()
         CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE = "Europe - Date max",
         CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE = "Amérique - Date max",
         CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT = "Heures restantes",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie : %s",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
 
         -- static popups
         STATIC_POPUPS_YES = "Oui",
