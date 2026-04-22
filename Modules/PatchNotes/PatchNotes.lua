@@ -113,9 +113,7 @@ end
 function CraftSim.PATCH_NOTES:IsPatchNotesUpdate(patchNotesText)
     local newChecksum = CraftSim.PATCH_NOTES:GetChecksum(patchNotesText)
     local oldChecksum = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PATCH_NOTES_CHECKSUM)
-    if oldChecksum == nil then
-        oldChecksum = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.NEWS_CHECKSUM)
-    end
+
     if newChecksum ~= oldChecksum then
         return newChecksum
     end
