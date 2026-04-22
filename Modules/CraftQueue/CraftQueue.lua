@@ -1446,6 +1446,7 @@ function CraftSim.CRAFTQ:NEW_RECIPE_LEARNED(recipeID)
     self.UI:UpdateDisplay()
 end
 
+local LibAHTab
 --- Magic Command for one-button shopping list buying
 --- Currently only works for craftsim shopping list due to relying on bought item removal
 --- TODO: fix auto removal for reagents like darkmoon decks
@@ -1455,6 +1456,15 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
     local qbCache = self.quickBuyCache
 
     if not AuctionHouseFrame:IsVisible() then
+        return
+    end
+
+    if not AuctionatorShoppingFrame:IsVisible() then
+        -- Auctionator owned lib
+        LibAHTab = LibAHTab or LibStub("LibAHTab-1-0")
+        if LibAHTab:DoesIDExist("AuctionatorTabs_Shopping") then
+            LibAHTab:SetSelected("AuctionatorTabs_Shopping")
+        end
         return
     end
 
