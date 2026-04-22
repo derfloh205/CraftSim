@@ -127,6 +127,8 @@ CraftSim.CONST.FRAME_LIST_SELECTION_COLORS = {
     SELECTED_LIGHT_WHITE = { 1, 1, 1, 0.5 },
     HOVER_LIGHT_GREEN = { 0, 1, 0, 0.2 },
     SELECTED_LIGHT_GREEN = { 0, 1, 0, 0.4 },
+    --- Subtle warm tint for “this row is the logged-in character” (e.g. concentration tracker list).
+    CURRENT_PLAYER_LIGHT_YELLOW = { 1, 0.96, 0.72, 0.26 },
 }
 
 ---@enum CraftSim.EXPANSION_IDS
