@@ -170,7 +170,7 @@ end
 
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.visibleRecipeID)
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.initialRecipeID)
 
 	if not recipeInfo then
 		return nil
@@ -412,5 +412,5 @@ function CraftSim.MODULES:Update()
 		CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
 	end
 
-	CraftSim.INIT.lastRecipeID = CraftSim.INIT.visibleRecipeID
+	CraftSim.INIT.lastRecipeID = CraftSim.INIT.initialRecipeID
 end
