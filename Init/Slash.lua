@@ -116,13 +116,24 @@ function CraftSim.SLASH:CMD_bruto()
         return
     end
 
+    local tradersBrutoID = 2265
+    local bfaBrutoID = 1039
+
     Logger:LogDebug("Trying to summon Brutosaur")
     local IsMounted = IsMounted()
-    local CanSummonBruto = C_MountJournal.GetMountUsabilityByID(2265, true)
-    Logger:LogDebug("IsMounted: " .. tostring(IsMounted) .. ", CanSummonBruto: " .. tostring(CanSummonBruto))
-    local brutoMountID = 2265
-    if not IsMounted and CanSummonBruto then
-        C_MountJournal.SummonByID(brutoMountID)
+    local canSummonTradersBruto = C_MountJournal.GetMountUsabilityByID(tradersBrutoID, true)
+    local canSummonBFABruto = C_MountJournal.GetMountUsabilityByID(bfaBrutoID, true)
+    Logger:LogDebug("IsMounted: {mounted}, tradersBruto: {tB}, bfaBruto: {bfa}",
+        IsMounted, canSummonTradersBruto, canSummonBFABruto)
+
+    if not IsMounted then
+        if canSummonTradersBruto then
+            Logger:LogDebug("Summoning Traders Bruto")
+            C_MountJournal.SummonByID(tradersBrutoID)
+        elseif canSummonBFABruto then
+            Logger:LogDebug("Summoning BFA Bruto")
+            C_MountJournal.SummonByID(bfaBrutoID)
+        end
     end
 end
 
