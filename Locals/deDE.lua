@@ -558,7 +558,7 @@ function CraftSim.LOCAL_DE:GetData()
             "Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
         CONTROL_PANEL_RESET_FRAMES = "Fensterpos. zurücksetzen",
         CONTROL_PANEL_OPTIONS = "Optionen",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exportiere",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -775,6 +775,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
 
         -- frames
         FRAMES_RESETTING = "Zurücksetzen von Frame-ID: ",
+        PATCH_NOTES_TITLE = "CraftSim Patchnotizen",
         FRAMES_WHATS_NEW = "Was gibt's Neues bei CraftSim?",
         FRAMES_JOIN_DISCORD = "Tritt dem Discord bei!",
         FRAMES_DONATE_KOFI = "Besuche CraftSim auf Kofi",

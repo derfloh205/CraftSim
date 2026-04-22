@@ -653,7 +653,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.l(" CraftSim") .. " calculates things",
         CONTROL_PANEL_RESET_FRAMES = "Reset Frame Positions",
         CONTROL_PANEL_OPTIONS = "Options",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "Exports",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exporting",
@@ -1089,6 +1089,7 @@ greater or equal the configured sale rate threshold.
 
         -- frames
         FRAMES_RESETTING = "resetting frameID: ",
+        PATCH_NOTES_TITLE = "CraftSim Patch Notes",
         FRAMES_WHATS_NEW = "CraftSim What's New?",
         FRAMES_JOIN_DISCORD = "Join the Discord!",
         FRAMES_DONATE_KOFI = "Visit CraftSim on Kofi",

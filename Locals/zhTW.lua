@@ -351,7 +351,7 @@ function CraftSim.LOCAL_TW:GetData()
         CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP = "提供與客戶對談的歷史記錄、製作過的物品和佣金的模組",
         CONTROL_PANEL_RESET_FRAMES = "重置框架位置",
         CONTROL_PANEL_OPTIONS = "選項",
-        CONTROL_PANEL_NEWS = "更新資訊",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 匯出",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "正在匯出",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND = "没有适用于 The War Within 扩展包的导出配方",
@@ -442,5 +442,6 @@ function CraftSim.LOCAL_TW:GetData()
         -- static popups
         STATIC_POPUPS_YES = "是",
         STATIC_POPUPS_NO = "否",
+        PATCH_NOTES_TITLE = "CraftSim 更新說明",
     }
 end

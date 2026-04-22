@@ -4,29 +4,32 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
-CraftSim.NEWS = {}
+---@class CraftSim.PATCH_NOTES : CraftSim.Module
+CraftSim.PATCH_NOTES = {}
 
-CraftSim.NEWS.GITHUB_COLLABS = {
+CraftSim.MODULES:RegisterModule("MODULE_PATCH_NOTES", CraftSim.PATCH_NOTES)
+
+CraftSim.PATCH_NOTES.GITHUB_COLLABS = {
     AVILENE = "https://github.com/avilene",
     CODEPOET = "https://github.com/ergh99",
     NETOUSS = "https://github.com/netouss",
 }
 
-local Logger = CraftSim.DEBUG:RegisterLogger("News")
+local Logger = CraftSim.DEBUG:RegisterLogger("PatchNotes")
 local function newP(v) return f.l("\nPatch Notes " .. v .. "\n") end
 local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 
 ---@param itemMap table<string, ItemMixin>
-function CraftSim.NEWS:GET_NEWS(itemMap)
+function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
     local supporterListUpdate = f.p .. f.patreon("Supporter List Update ") ..
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
-    local news = {
+    local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("26.1.5"),
         f.PG .. f.bb("Concentration Tracker"),
         f.a .. "- Show Moxie Count for Character on hover",
         f.p .. "DB2 Data Update for 12.0.5.67088",
-        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("26.1.3"),
         f.PG .. f.bb("Recipe Info"),
         f.a .. "- Added new info option to display: " .. f.g("Profit Per Quality"),
@@ -41,7 +44,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- When setting a target quality, lower qualities will not queue",
         collab("https://github.com/chris-merritt"),
         f.pg .. "Fixed item amounts in leather moxie bag",
-        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         f.pg .. "Fixed Syndicator Inventory Source Gear Quality recognition",
         f.a .. "- TSM might still struggle",
         f.p .. "Debug Changes",
@@ -52,7 +55,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Either manually or automatically determine moxie value",
         f.a .. "- Automatic will use community data for value calculation",
         f.a .. "- Added tooltips to Moxie Profession Bags to show value",
-        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
+        collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         f.PG .. f.bb("CraftQueue"),
         f.a .. "- Reworked Queue Craft Lists queuing logic",
         f.a .. "- Added CraftList Restock Option to include alts inventory",
@@ -87,61 +90,65 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added tooltips to show their configured options",
         f.a .. "- Added tooltips to show result item",
     }
-    return table.concat(news, "\n")
+
+    return table.concat(patchNotes, "\n")
 end
 
----@param newsText string
-function CraftSim.NEWS:GetChecksum(newsText)
+---@param patchNotesText string
+function CraftSim.PATCH_NOTES:GetChecksum(patchNotesText)
     local checksum = 0
     local checkSumBitSize = 256
 
-    -- replace each itemLink with a generic string so there are no differences between characters in the checksum
-    -- for _, item in pairs(itemMap) do
-    -- end
-    newsText = string.gsub(newsText, "|cff%x+|Hitem:.+|h|r", "[LINK]")
+    patchNotesText = string.gsub(patchNotesText, "|cff%x+|Hitem:.+|h|r", "[LINK]")
 
-    -- Iterate through each character in the string
-    for i = 1, #newsText do
-        checksum = (checksum + string.byte(newsText, i)) % checkSumBitSize
+    for i = 1, #patchNotesText do
+        checksum = (checksum + string.byte(patchNotesText, i)) % checkSumBitSize
     end
-
-    -- Logger:LogDebug("replacing links in newstext:")
-    -- Logger:LogDebug(newsText)
 
     return checksum
 end
 
----@param newsText string
----@return string | nil newChecksum newChecksum when news should be shown, otherwise nil
-function CraftSim.NEWS:IsNewsUpdate(newsText)
-    local newChecksum = CraftSim.NEWS:GetChecksum(newsText)
-    local oldChecksum = CraftSim.DB.OPTIONS:Get("NEWS_CHECKSUM")
+---@param patchNotesText string
+---@return string | nil newChecksum
+function CraftSim.PATCH_NOTES:IsPatchNotesUpdate(patchNotesText)
+    local newChecksum = CraftSim.PATCH_NOTES:GetChecksum(patchNotesText)
+    local oldChecksum = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PATCH_NOTES_CHECKSUM)
+    if oldChecksum == nil then
+        oldChecksum = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.NEWS_CHECKSUM)
+    end
     if newChecksum ~= oldChecksum then
         return newChecksum
     end
+
     return nil
 end
 
----@param force boolean wether to skip the checksum verification
+---@param force boolean
 ---@async
-function CraftSim.NEWS:ShowNews(force)
+function CraftSim.PATCH_NOTES:ShowPatchNotes(force)
     local itemMap = {
         enchantingRod = Item:CreateFromItemID(224116),
     }
+
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(CraftSim.GUTIL:Map(itemMap, function(i) return i end), function()
-        local newsText = CraftSim.NEWS:GET_NEWS(itemMap)
-        local newChecksum = CraftSim.NEWS:IsNewsUpdate(newsText)
+        local patchNotesText = CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
+        local newChecksum = CraftSim.PATCH_NOTES:IsPatchNotesUpdate(patchNotesText)
         if newChecksum == nil and (not force) then
             return
         end
 
-        CraftSim.DB.OPTIONS:Save("NEWS_CHECKSUM", newChecksum)
+        CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PATCH_NOTES_CHECKSUM, newChecksum)
 
-        local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
-        -- resize
+        local infoFrame = CraftSim.PATCH_NOTES.frame
+        local showInfo = infoFrame and infoFrame.showInfo
+        if not infoFrame or type(showInfo) ~= "function" then
+            Logger:LogWarning("Patch Notes info frame not initialized")
+            return
+        end
+
         infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
         infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
         infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
-        infoFrame.showInfo(newsText)
+        showInfo(patchNotesText)
     end)
 end

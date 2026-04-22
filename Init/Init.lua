@@ -440,7 +440,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 
 		CraftSim.PRICE_API:InitPriceSource()
 		CraftSim.INVENTORY_API:InitInventorySource()
-		CraftSim.FRAME:InitNewsUI()
 
 		-- Modules
 
@@ -612,11 +611,6 @@ end
 
 function CraftSim.INIT:PLAYER_LOGIN()
 	CraftSim.SLASH:Init()
-
-	-- show one time note
-	if CraftSim.DB.OPTIONS:Get("SHOW_NEWS") then
-		CraftSim.NEWS:ShowNews(false)
-	end
 end
 
 function CraftSim_OnAddonCompartmentClick()
