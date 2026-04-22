@@ -7,6 +7,8 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.SLASH
 CraftSim.SLASH = {}
 
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftSim.SLASH")
+
 ---@type table<string, fun(self: CraftSim.SLASH, args:table)>
 CraftSim.SLASH.commands = {}
 
@@ -82,10 +84,38 @@ function CraftSim.SLASH:CMD_export(args)
     end
 end
 
+function CraftSim.SLASH:CMD_openprofession()
+    if ProfessionsFrame:IsVisible() then
+        return
+    end
+
+    -- get professions for current character
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local professions = CraftSim.DB.CRAFTER:GetProfessions(crafterUID)
+
+    for _, profession in ipairs(professions) do
+        local nearFocus = C_TradeSkillUI.IsNearProfessionSpellFocus(profession)
+        Logger:LogDebug("Checking profession " .. profession .. " for focus: " .. tostring(nearFocus))
+        if nearFocus then
+            Logger:LogDebug("Opening profession " .. profession .. " because of focus")
+            C_TradeSkillUI.OpenTradeSkill(C_TradeSkillUI.GetProfessionSkillLineID(profession))
+            return
+        end
+    end
+
+    -- fallback to first profession
+    if professions[1] then
+        Logger:LogDebug("Opening profession " .. professions[1] .. " as fallback")
+        C_TradeSkillUI.OpenTradeSkill(C_TradeSkillUI.GetProfessionSkillLineID(professions[1]))
+    else
+        Logger:LogError("CraftSim: No professions found for current character.")
+    end
+end
+
 function CraftSim.SLASH:CMD_craftqueue(args)
     local arg1 = args[1]
     if arg1 == "craftnext" then
-        if CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback then
+        if ProfessionsFrame:IsVisible() and CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback then
             CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
         end
     elseif arg1 == "queuelists" then
