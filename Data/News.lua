@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.4"),
+        f.PG .. f.bb("Concentration Tracker"),
+        f.a .. "- Show Moxie Count for Character on hover",
+        f.p .. "DB2 Data Update for 12.0.5.67088",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("26.1.3"),
         f.PG .. f.bb("Recipe Info"),
         f.a .. "- Added new info option to display: " .. f.g("Profit Per Quality"),
