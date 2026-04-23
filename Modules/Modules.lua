@@ -26,6 +26,11 @@ CraftSim.MODULES = {}
 ---| "MODULE_SIMULATION_MODE"
 ---| "MODULE_PATCH_NOTES"
 
+---@class CraftSim.Module.ControlPanelData
+---@field label CraftSim.LOCALIZATION_IDS
+---@field tooltip CraftSim.LOCALIZATION_IDS
+---@field sortOrder? number
+
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
 ---@field Init fun(self: CraftSim.Module.UI)
@@ -34,6 +39,8 @@ CraftSim.MODULES = {}
 
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
+---@field controlPanelData CraftSim.Module.ControlPanelData?
+---@field isControlPanelModule boolean
 ---@field frame GGUI.Frame
 ---@field frameWO? GGUI.Frame
 ---@field UI CraftSim.Module.UI
@@ -47,6 +54,7 @@ local GGUI = CraftSim.GGUI
 GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 	"CRAFTSIM_MODULE_CLOSED",
 	"CRAFTSIM_MODULE_MINIMIZED",
+	"CRAFTSIM_MODULE_MAXIMIZED",
 })
 
 local f = GUTIL:GetFormatter()
@@ -59,9 +67,14 @@ local Logger = CraftSim.DEBUG:RegisterLogger("Modules")
 
 ---@param moduleID CraftSim.ModuleID
 ---@param module CraftSim.Module
-function CraftSim.MODULES:RegisterModule(moduleID, module)
+---@param controlPanelData CraftSim.Module.ControlPanelData? -- if provided, module will be added to the control panel with the given data
+function CraftSim.MODULES:RegisterModule(moduleID, module, controlPanelData)
 	CraftSim.MODULES.modules[moduleID] = module
 	module.moduleID = moduleID
+	module.controlPanelData = controlPanelData
+	module.isControlPanelModule = controlPanelData ~= nil
+
+	Logger:LogDebug("Registering Module: {module} data: {data}", moduleID, module.controlPanelData)
 end
 
 function CraftSim.MODULES:Init()
@@ -75,15 +88,22 @@ function CraftSim.MODULES:Init()
 	end
 end
 
+function CraftSim.MODULES:UpdateModuleVisibility(module)
+	if module.UI.VisibleByContext then
+		local visible = module.UI:VisibleByContext()
+		if CraftSim.UTIL:IsWorkOrder() and module.frameWO then
+			module.frameWO:SetVisible(visible)
+		elseif module.frame then
+			module.frame:SetVisible(visible)
+		end
+	end
+end
+
 --- ignores modules without VisibleByContext function, otherwise shows or hides modules based on it
 --- requires such modules to have a GGUI.Frame assigned to module.frame
 function CraftSim.MODULES:UpdateVisibilityByContext()
 	for _, module in pairs(CraftSim.MODULES.modules) do
-		if module.UI.VisibleByContext then
-			if module.frame then
-				module.frame:SetVisible(module.UI:VisibleByContext())
-			end
-		end
+		self:UpdateModuleVisibility(module)
 	end
 end
 
@@ -179,6 +199,15 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 	if not schematicForm then
 		Logger:LogError("CraftSim MODULES: No SchematicForm Visible")
+		return nil
+	end
+
+	-- On cold profession open, visibleRecipeID can lag behind the actually selected schematic recipe.
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.initialRecipeID)
+	if not recipeInfo then
+		recipeInfo = schematicForm:GetRecipeInfo()
+	end
+	if not recipeInfo or not recipeInfo.recipeID then
 		return nil
 	end
 
@@ -399,9 +428,6 @@ function CraftSim.MODULES:Update()
 		showSpecInfo and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(specInfoFrameWO,
 		showSpecInfo and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showSpecInfo then
-		CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
-	end
 
 	-- CraftBuffs Module
 	CraftSim.FRAME:ToggleFrame(craftBuffsFrame,

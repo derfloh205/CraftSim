@@ -31,6 +31,19 @@ embeds.xml
 
 Init/GLibs.lua
 
+Locals/Localization.lua
+Locals/enUS.lua
+Locals/deDE.lua
+Locals/itIT.lua
+Locals/ruRU.lua
+Locals/ptBR.lua
+Locals/frFR.lua
+Locals/esES.lua
+Locals/esMX.lua
+Locals/koKR.lua
+Locals/zhTW.lua
+Locals/zhCN.lua
+
 Util/Const.lua
 
 Debug/Debug.lua
@@ -142,19 +155,6 @@ Modules/CraftBuffs/UI.lua
 
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
-
-Locals/Localization.lua
-Locals/enUS.lua
-Locals/deDE.lua
-Locals/itIT.lua
-Locals/ruRU.lua
-Locals/ptBR.lua
-Locals/frFR.lua
-Locals/esES.lua
-Locals/esMX.lua
-Locals/koKR.lua
-Locals/zhTW.lua
-Locals/zhCN.lua
 
 Data/EnchantData.lua
 Data/ToolEnchantData.lua

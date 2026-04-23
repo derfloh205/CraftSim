@@ -28,7 +28,8 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_OPEN_RECIPE_INFO_UPDATED",
 	"CRAFTSIM_PROFESSION_INITIALIZED",
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
-	"CRAFTSIM_PROFESSION_OPENED"
+	"CRAFTSIM_PROFESSION_OPENED",
+	"CRAFTSIM_PROFESSION_TAB_CLICKED",
 })
 
 ---@type number?
@@ -107,10 +108,10 @@ function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
 		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 	end
 
-	local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
 	local alreadyPreloaded = CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionInfo.profession)
 	if not alreadyPreloaded then
+		local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
 		CraftSim.DEBUG:StartProfiling("CRAFTING_DETAILS_UPDATE CALLS")
 		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
@@ -147,6 +148,14 @@ function CraftSim.INIT:CRAFTSIM_OPEN_RECIPE_INFO_UPDATED(recipeInfo)
 		CraftSim.INIT.initialRecipeID = recipeInfo.recipeID
 		CraftSim.INIT:InitializeVisibleRecipeID(true)
 	end
+end
+
+---@param tab CraftSim.PROFESSIONS_TAB
+function CraftSim.INIT:CRAFTSIM_PROFESSION_TAB_CLICKED(tab)
+	CraftSim.MODULES:UpdateVisibilityByContext()
+
+	-- if recipe/crafting order tab was clicked, the Init hook will trigger and any recipedata update will fire automatically
+	-- so we just need to tend to the module visibilities
 end
 
 -- TODO: are those still necessary?
@@ -279,10 +288,25 @@ function CraftSim.INIT:HookToEvents()
 		OpenRecipeAllocationUpdated)
 
 	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
+	local specTab = ProfessionsFrame.TabSystem.tabs[2]
 	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]
 
-	recipeTab:HookScript("OnClick", OpenRecipeInfoUpdated)
-	craftingOrderTab:HookScript("OnClick", OpenRecipeInfoUpdated)
+	local function tabClicked(tab)
+		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_TAB_CLICKED", tab)
+	end
+
+	recipeTab:HookScript("OnClick",
+		function()
+			tabClicked(CraftSim.CONST.PROFESSIONS_TAB.RECIPE)
+		end)
+	specTab:HookScript("OnClick",
+		function()
+			tabClicked(CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO)
+		end)
+	craftingOrderTab:HookScript("OnClick",
+		function()
+			tabClicked(CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS)
+		end)
 end
 
 function CraftSim.INIT:InitStaticPopups()

@@ -49,6 +49,7 @@ end
 function CraftSim.DEBUG:RegisterLogger(loggerID)
     local newLogger = { name = loggerID }
     LibLog:Embed(newLogger)
+    newLogger:SetLogLevel(2)
     table.insert(self.registeredLogger, newLogger)
     return newLogger
 end

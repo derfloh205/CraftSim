@@ -42,21 +42,44 @@ function CraftSim.CONTROL_PANEL.UI:Init()
 
     frame.content.controlPanelButton:HookScript("OnClick", function()
         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
-            local function addModuleCheckbox(label, moduleSV, moduleTooltip, optionalFrameToToggle)
+            ---@param moduleID CraftSim.ModuleID
+            ---@param data CraftSim.Module.ControlPanelData
+            local function addModuleCheckbox(moduleID, data)
+                local label = L(data.label)
+                local tooltip = L(data.tooltip)
+
                 local cb = rootDescription:CreateCheckbox(label, function()
-                    return CraftSim.DB.OPTIONS:Get(moduleSV)
+                    return CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
                 end, function()
-                    local checked = CraftSim.DB.OPTIONS:Get(moduleSV)
-                    CraftSim.DB.OPTIONS:Save(moduleSV, not checked)
-                    CraftSim.MODULES:Update()
-                    if optionalFrameToToggle then
-                        GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(not checked)
-                    end
+                    local checked = CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
+                    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, not checked)
+                    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
                 end)
-                cb:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip, moduleTooltip);
+                cb:SetTooltip(function(tt, _)
+                    GameTooltip_AddInstructionLine(tt, tooltip);
                 end);
             end
+
+            local controlPanelModules = GUTIL:Map(CraftSim.MODULES.modules, function(module, _)
+                if module.controlPanelData then
+                    return module
+                end
+                return nil
+            end)
+
+            table.sort(controlPanelModules, function(a, b)
+                local aSort = a.controlPanelData.sortOrder or math.huge
+                local bSort = b.controlPanelData.sortOrder or math.huge
+                return aSort < bSort
+            end)
+
+            for _, module in ipairs(controlPanelModules) do
+                addModuleCheckbox(
+                    module.moduleID,
+                    module.controlPanelData)
+            end
+
+
 
             -- addModuleCheckbox(
             --     L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
@@ -124,6 +147,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             --     "MODULE_EXPLANATIONS",
             --     L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
             --     CraftSim.MODULES.modules["MODULE_EXPLANATIONS"].frame)
+
+            rootDescription:CreateDivider()
 
             local exports = rootDescription:CreateButton(L("CONTROL_PANEL_EXPORTS"))
 

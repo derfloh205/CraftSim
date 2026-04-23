@@ -37,7 +37,6 @@ end
 
 function CraftSim.FRAME:RestoreModulePositions()
     local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-    local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
     local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
     local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
@@ -55,7 +54,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
-    specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
     topgearFrame:RestoreSavedConfig(ProfessionsFrame)

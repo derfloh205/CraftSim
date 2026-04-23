@@ -57,6 +57,22 @@ function CraftSim.DB.OPTIONS:Save(option, value)
     CraftSimDB.optionsDB.data[option] = value
 end
 
+---@param moduleID CraftSim.ModuleID
+---@return boolean isEnabled
+function CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] = CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] or
+        CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["MODULES_ENABLED"]
+    return CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"][moduleID]
+end
+
+---@param moduleID CraftSim.ModuleID
+---@param enabled boolean
+function CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, enabled)
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] = CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] or
+        CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["MODULES_ENABLED"]
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"][moduleID] = enabled
+end
+
 --- Migrations
 
 function CraftSim.DB.OPTIONS.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
