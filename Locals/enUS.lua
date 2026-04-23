@@ -1,11 +1,13 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
+
 CraftSim.LOCAL_EN = {}
 
 ---@return table<CraftSim.LOCALIZATION_IDS, string>
 function CraftSim.LOCAL_EN:GetData()
-    local f = CraftSim.GUTIL:GetFormatter()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     local shatter_post_login_tooltip = "\n\n" ..
         f.white("Cast Shatter once after login so CraftSim matches your buff.")

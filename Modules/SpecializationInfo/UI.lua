@@ -17,10 +17,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
-    local frameIDs = CraftSim.CONST and CraftSim.CONST.FRAMES
     local function onCloseModule()
-        CraftSim.DB.OPTIONS:Save("MODULE_SPEC_INFO", false)
-        CraftSim.MODULES:UpdateVisibilityByContext()
         GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_SPEC_INFO")
     end
 
@@ -38,7 +35,6 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = frameIDs and frameIDs.SPEC_INFO,
         title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
@@ -51,7 +47,6 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         onCloseCallback = onCloseModule,
         onCollapseCallback = onCollapseModule,
         onCollapseOpenCallback = onCollapseOpenCallback,
-        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
@@ -297,14 +292,14 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateRecipeData(recipeData)
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
 end
 
----@param recipeData CraftSim.RecipeData?
 function CraftSim.SPECIALIZATION_INFO.UI:VisibleByContext()
-    -- Only show while a recipe schematic is actually visible (hide on Specializations/other tabs).
-    if not CraftSim.UTIL:GetSchematicFormByContext() then
-        return false
-    end
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    local hasSchematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 
-    return CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
+    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_SPEC_INFO") and (isRecipeTab or isCraftingOrderTab) and
+        hasSchematicForm
 end
 
 local specNodeTooltipHooked = false

@@ -26,6 +26,11 @@ CraftSim.MODULES = {}
 ---| "MODULE_SIMULATION_MODE"
 ---| "MODULE_PATCH_NOTES"
 
+---@class CraftSim.Module.ControlPanelData
+---@field label CraftSim.LOCALIZATION_IDS
+---@field tooltip CraftSim.LOCALIZATION_IDS
+---@field sortOrder? number
+
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
 ---@field Init fun(self: CraftSim.Module.UI)
@@ -34,6 +39,8 @@ CraftSim.MODULES = {}
 
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
+---@field controlPanelData CraftSim.Module.ControlPanelData?
+---@field isControlPanelModule boolean
 ---@field frame GGUI.Frame
 ---@field frameWO? GGUI.Frame
 ---@field UI CraftSim.Module.UI
@@ -60,9 +67,14 @@ local Logger = CraftSim.DEBUG:RegisterLogger("Modules")
 
 ---@param moduleID CraftSim.ModuleID
 ---@param module CraftSim.Module
-function CraftSim.MODULES:RegisterModule(moduleID, module)
+---@param controlPanelData CraftSim.Module.ControlPanelData? -- if provided, module will be added to the control panel with the given data
+function CraftSim.MODULES:RegisterModule(moduleID, module, controlPanelData)
 	CraftSim.MODULES.modules[moduleID] = module
 	module.moduleID = moduleID
+	module.controlPanelData = controlPanelData
+	module.isControlPanelModule = controlPanelData ~= nil
+
+	Logger:LogDebug("Registering Module: {module} data: {data}", moduleID, module.controlPanelData)
 end
 
 function CraftSim.MODULES:Init()
@@ -76,15 +88,22 @@ function CraftSim.MODULES:Init()
 	end
 end
 
+function CraftSim.MODULES:UpdateModuleVisibility(module)
+	if module.UI.VisibleByContext then
+		local visible = module.UI:VisibleByContext()
+		if CraftSim.UTIL:IsWorkOrder() and module.frameWO then
+			module.frameWO:SetVisible(visible)
+		elseif module.frame then
+			module.frame:SetVisible(visible)
+		end
+	end
+end
+
 --- ignores modules without VisibleByContext function, otherwise shows or hides modules based on it
 --- requires such modules to have a GGUI.Frame assigned to module.frame
 function CraftSim.MODULES:UpdateVisibilityByContext()
 	for _, module in pairs(CraftSim.MODULES.modules) do
-		if module.UI.VisibleByContext then
-			if module.frame then
-				module.frame:SetVisible(module.UI:VisibleByContext())
-			end
-		end
+		self:UpdateModuleVisibility(module)
 	end
 end
 

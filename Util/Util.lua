@@ -960,3 +960,27 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo, maxCount)
         }:Continue()
     end)
 end
+
+---@return CraftSim.PROFESSIONS_TAB? selectedTab
+function CraftSim.UTIL:GetSelectedProfessionTab()
+    if not ProfessionsFrame:IsVisible() then
+        return nil
+    end
+
+    local selectedTabID = ProfessionsFrame.TabSystem.selectedTabID
+
+    local selectedTab
+    if selectedTabID == 1 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    elseif selectedTabID == 2 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO
+    elseif selectedTabID == 3 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    else
+        -- if its the first time opening after login/reload its nil
+        -- but also we can safely assume here its the recipe tab because its the default to open to
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    end
+
+    return selectedTab
+end

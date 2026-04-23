@@ -11,6 +11,7 @@ CraftSim.MODULES:RegisterModule("MODULE_CONTROL_PANEL", CraftSim.CONTROL_PANEL)
 GUTIL:RegisterCustomEvents(CraftSim.CONTROL_PANEL, {
     "CRAFTSIM_SIMULATION_MODE_DISABLED",
     "CRAFTSIM_RECIPE_INFO_INITIALIZED",
+    "CRAFTSIM_MODULE_CLOSED",
 })
 
 local GUTIL = CraftSim.GUTIL
@@ -274,4 +275,18 @@ function CraftSim.CONTROL_PANEL:CRAFTSIM_RECIPE_INFO_INITIALIZED(recipeInfo)
     -- disable simulateToggle button for salvage and recraft recipes since they are not supported in sim mode
     local supported = not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft
     self.frame.content.simulateToggle:SetEnabled(supported)
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CONTROL_PANEL:CRAFTSIM_MODULE_CLOSED(moduleID)
+    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, false)
+    local module = CraftSim.MODULES.modules[moduleID]
+    if module then
+        if module.frame then
+            module.frame:Hide()
+        end
+        if module.frameWO then
+            module.frameWO:Hide()
+        end
+    end
 end
