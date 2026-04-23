@@ -164,6 +164,8 @@ local function createContent(frame)
                 L("RECIPE_INFO_OPTION_CONCENTRATION_PROFIT_TOOLTIP"))
             addToggleCheckbox(L("RECIPE_INFO_OPTION_CONCENTRATION_COST"), "CONCENTRATION_COST",
                 L("RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP"))
+            addToggleCheckbox(L("RECIPE_INFO_OPTION_PROFIT_PER_QUALITY"), "PROFIT_PER_QUALITY",
+                L("RECIPE_INFO_OPTION_PROFIT_PER_QUALITY_TOOLTIP"))
         end,
     }
 
@@ -403,6 +405,23 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
             f.gold(tostring(recipeData.concentrationCost)),
             f.white(f.bb("Base Concentration cost") .. " for one craft (not accounting for " ..
                 f.l("Ingenuity") .. " refund)"))
+    end
+
+    if opts.PROFIT_PER_QUALITY and recipeData.supportsQualities then
+        for q, item in ipairs(recipeData.resultData.itemsByQuality) do
+            local qualityPrice = recipeData.priceData.qualityPriceList[q] or 0
+            local isGrey      = item and CraftSim.UTIL:IsGreyItem(item:GetItemID())
+            local sellValue   = isGrey and (qualityPrice * recipeData.baseItemAmount)
+                or (qualityPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT)
+            local profit      = sellValue - craftingCosts
+            local relative    = showProfitPct and craftingCosts or nil
+            local qualityIcon = GUTIL:GetQualityIconString(q, ICON_SIZE, ICON_SIZE)
+            addTextRow(
+                qualityIcon .. " " .. L("RECIPE_INFO_QUALITY_PROFIT_LABEL"),
+                CraftSim.UTIL:FormatMoney(profit, true, relative),
+                f.white(f.bb("Estimated profit") .. " per craft selling " .. f.l("Quality " .. q) ..
+                    " result (sell price - crafting cost)"))
+        end
     end
 
     -- autoAdjustHeight handles resizing after this call

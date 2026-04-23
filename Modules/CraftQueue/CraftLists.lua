@@ -136,7 +136,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     for _, entry in ipairs(allScanEntries) do
         local sbfCrafts = entrySbfCrafts[entry] or 0
         if sbfCrafts > 0 then
-            entryEffectiveRD[entry] = entry.recipeData -- with SBF
+            entryEffectiveRD[entry] = entry.recipeData                          -- with SBF
         else
             entryEffectiveRD[entry] = entry.recipeDataNoSBF or entry.recipeData -- without SBF
         end
@@ -634,13 +634,14 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     return
                 end
 
-                if targetQuality and recipeData.resultData.expectedQuality ~= targetQuality then
+                if targetQuality and recipeData.resultData.expectedQuality < targetQuality then
                     Logger:LogDebug("Skipping not targetQuality: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
-                Logger:LogDebug("maxQueueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                Logger:LogDebug("maxQueueAmount for recipe " ..
+                recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

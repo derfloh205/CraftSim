@@ -26,6 +26,7 @@ local Logger = CraftSim.DEBUG:RegisterLogger("crafterDB")
 ---@field class ClassFile
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
 ---@field concentrationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.ConcentrationData.Serialized>>
+---@field moxieData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, number>> last-seen Manu Moxie currency amount per profession (player snapshot)
 ---@field favoriteRecipes table<Enum.Profession, RecipeID[]>
 ---@field midnightShatterStaleAfterLogin boolean? legacy; migrated to preCraftBuffStale["midnight_enchant_shatter"]
 ---@field preCraftBuffStale table<string, boolean>? pre-craft buff gate ids -> post-login stale until cast
@@ -75,7 +76,8 @@ end
 function CraftSim.DB.CRAFTER:SetPreCraftBuffStaleAfterLogin(crafterUID, gateId, stale)
     MigrateLegacyMidnightShatterStale(crafterUID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale = CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale or {}
+    CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale = CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale or
+        {}
     CraftSimDB.crafterDB.data[crafterUID].preCraftBuffStale[gateId] = not not stale
 end
 
@@ -83,7 +85,8 @@ end
 ---@param crafterUID CrafterUID
 ---@return boolean
 function CraftSim.DB.CRAFTER:GetMidnightShatterStaleAfterLogin(crafterUID)
-    return self:GetPreCraftBuffStaleAfterLogin(crafterUID, CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID.MIDNIGHT_ENCHANT_SHATTER)
+    return self:GetPreCraftBuffStaleAfterLogin(crafterUID, CraftSim.CONST.PRE_CRAFT_BUFF_GATE_ID
+        .MIDNIGHT_ENCHANT_SHATTER)
 end
 
 ---@deprecated use SetPreCraftBuffStaleAfterLogin
@@ -454,6 +457,34 @@ end
 ---@param crafterUID CrafterUID
 ---@param profession Enum.Profession
 ---@param expansionID CraftSim.EXPANSION_IDS
+---@param quantity number
+function CraftSim.DB.CRAFTER:SaveCrafterMoxieData(crafterUID, profession, expansionID, quantity)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData = CraftSimDB.crafterDB.data[crafterUID].moxieData or {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID] = CraftSimDB.crafterDB.data[crafterUID]
+        .moxieData[expansionID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID][profession] = quantity
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param expansionID CraftSim.EXPANSION_IDS
+---@return number?
+function CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansionID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData = CraftSimDB.crafterDB.data[crafterUID].moxieData or {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID] = CraftSimDB.crafterDB.data[crafterUID]
+        .moxieData[expansionID] or {}
+    local amount = CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID][profession]
+    if amount == nil then
+        return nil
+    end
+    return amount
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param expansionID CraftSim.EXPANSION_IDS
 ---@return CraftSim.ConcentrationData?
 function CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession, expansionID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
@@ -532,6 +563,16 @@ function CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, profession, recipe
     end
 end
 
+---@param crafterUID CrafterUID
+---@return Enum.Profession[] professions
+function CraftSim.DB.CRAFTER:GetProfessions(crafterUID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local crafterData = CraftSimDB.crafterDB.data[crafterUID]
+    return GUTIL:Map(crafterData.cachedRecipeIDs or {}, function(value, key)
+        return key
+    end)
+end
+
 function CraftSim.DB.CRAFTER:UpdateProfessionFavorites()
     if C_TradeSkillUI.IsTradeSkillReady() then
         local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
@@ -569,6 +610,7 @@ function CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(crafterUID, profession)
     CraftSimDB.crafterDB.data[crafterUID].cooldownData = CraftSimDB.crafterDB.data[crafterUID].cooldownData or {}
     CraftSimDB.crafterDB.data[crafterUID].concentrationData = CraftSimDB.crafterDB.data[crafterUID].concentrationData or
         {}
+    CraftSimDB.crafterDB.data[crafterUID].moxieData = CraftSimDB.crafterDB.data[crafterUID].moxieData or {}
     CraftSimDB.crafterDB.data[crafterUID].operationInfos = CraftSimDB.crafterDB.data[crafterUID].operationInfos or {}
     CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes = CraftSimDB.crafterDB.data[crafterUID].favoriteRecipes or {}
     CraftSimDB.crafterDB.data[crafterUID].professionGear = CraftSimDB.crafterDB.data[crafterUID].professionGear or {}
@@ -580,6 +622,10 @@ function CraftSim.DB.CRAFTER:RemoveCrafterProfessionData(crafterUID, profession)
     local cachedRecipeIDs = CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs[profession]
 
     for _, expansionData in pairs(CraftSimDB.crafterDB.data[crafterUID].concentrationData) do
+        expansionData[profession] = nil
+    end
+
+    for _, expansionData in pairs(CraftSimDB.crafterDB.data[crafterUID].moxieData) do
         expansionData[profession] = nil
     end
 
@@ -628,70 +674,70 @@ end
 --- Migrations
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_0_1_Import_from_CraftSimRecipeDataCache()
-     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimRecipeDataCache then
-            for crafterUID, cachedProfessionRecipes in pairs(CraftSimRecipeDataCache["cachedRecipeIDs"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs = cachedProfessionRecipes
-            end
-
-            for crafterUID, recipeInfos in pairs(CraftSimRecipeDataCache["recipeInfoCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].recipeInfos = recipeInfos
-            end
-
-            for crafterUID, professionInfos in pairs(CraftSimRecipeDataCache["professionInfoCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].professionInfos = professionInfos
-            end
-
-            for crafterUID, operationInfos in pairs(CraftSimRecipeDataCache["operationInfoCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].operationInfos = operationInfos
-            end
-
-            for crafterUID, specializationData in pairs(CraftSimRecipeDataCache["specializationDataCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].specializationData = specializationData
-            end
-
-            for crafterUID, professionGear in pairs(CraftSimRecipeDataCache["professionGearCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].professionGear = professionGear
-            end
-
-            for crafterUID, class in pairs(CraftSimRecipeDataCache["altClassCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].class = class
-            end
-
-            for crafterUID, cooldownData in pairs(CraftSimRecipeDataCache["cooldownCache"] or {}) do
-                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-                CraftSimDB.crafterDB.data[crafterUID].cooldownData = cooldownData
-            end
+    local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
+    if CraftSimRecipeDataCache then
+        for crafterUID, cachedProfessionRecipes in pairs(CraftSimRecipeDataCache["cachedRecipeIDs"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs = cachedProfessionRecipes
         end
+
+        for crafterUID, recipeInfos in pairs(CraftSimRecipeDataCache["recipeInfoCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].recipeInfos = recipeInfos
+        end
+
+        for crafterUID, professionInfos in pairs(CraftSimRecipeDataCache["professionInfoCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].professionInfos = professionInfos
+        end
+
+        for crafterUID, operationInfos in pairs(CraftSimRecipeDataCache["operationInfoCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].operationInfos = operationInfos
+        end
+
+        for crafterUID, specializationData in pairs(CraftSimRecipeDataCache["specializationDataCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].specializationData = specializationData
+        end
+
+        for crafterUID, professionGear in pairs(CraftSimRecipeDataCache["professionGearCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].professionGear = professionGear
+        end
+
+        for crafterUID, class in pairs(CraftSimRecipeDataCache["altClassCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].class = class
+        end
+
+        for crafterUID, cooldownData in pairs(CraftSimRecipeDataCache["cooldownCache"] or {}) do
+            CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+            CraftSimDB.crafterDB.data[crafterUID].cooldownData = cooldownData
+        end
+    end
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_1_2_Remove_colored_crafter_names()
     -- remove any crafter entries with colored names...
-        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data or {}) do
-            if string.find(crafterUID, '\124c') then
-                CraftSimDB.crafterDB.data[crafterUID] = nil
-            end
+    for crafterUID, _ in pairs(CraftSimDB.crafterDB.data or {}) do
+        if string.find(crafterUID, '\124c') then
+            CraftSimDB.crafterDB.data[crafterUID] = nil
         end
+    end
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_2_3_Remove_fishing_from_concentrationData()
     -- remove fishing if in concentrationData
     for crafterUID, data in pairs(CraftSimDB.crafterDB.data or {}) do
-            for expansionID, professionConDataList in pairs(data.concentrationData or {}) do
-                for profession, _ in pairs(professionConDataList) do
-                    if profession == Enum.Profession.Fishing then
-                        CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][profession] = nil
-                    end
+        for expansionID, professionConDataList in pairs(data.concentrationData or {}) do
+            for profession, _ in pairs(professionConDataList) do
+                if profession == Enum.Profession.Fishing then
+                    CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][profession] = nil
                 end
             end
         end
+    end
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_3_4_ClearAll()
@@ -701,16 +747,16 @@ end
 function CraftSim.DB.CRAFTER.MIGRATION.M_4_5_Remove_gathering_concentration_data()
     -- remove gathering conc data
     for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
-            crafterData = crafterData --[[@as CraftSim.DB.CrafterDBData]]
-            for expansionID, concentrationData in pairs(crafterData.concentrationData or {}) do
-                for professionID, _ in pairs(concentrationData or {}) do
-                    if CraftSim.CONST.GATHERING_PROFESSIONS[professionID] then
-                        -- remove
-                        CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][professionID] = nil
-                    end
+        crafterData = crafterData --[[@as CraftSim.DB.CrafterDBData]]
+        for expansionID, concentrationData in pairs(crafterData.concentrationData or {}) do
+            for professionID, _ in pairs(concentrationData or {}) do
+                if CraftSim.CONST.GATHERING_PROFESSIONS[professionID] then
+                    -- remove
+                    CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][professionID] = nil
                 end
             end
         end
+    end
 end
 
 function CraftSim.DB.CRAFTER.MIGRATION.M_5_6_Compact_specialization_data()

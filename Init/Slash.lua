@@ -2,9 +2,12 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.SLASH
 CraftSim.SLASH = {}
+
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftSim.SLASH")
 
 ---@type table<string, fun(self: CraftSim.SLASH, args:table)>
 CraftSim.SLASH.commands = {}
@@ -81,10 +84,65 @@ function CraftSim.SLASH:CMD_export(args)
     end
 end
 
+function CraftSim.SLASH:CMD_openprofession(arg1)
+    if ProfessionsFrame:IsVisible() then
+        return
+    end
+
+    -- get professions for current character
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local professions = CraftSim.DB.CRAFTER:GetProfessions(crafterUID)
+
+    for _, profession in ipairs(professions) do
+        local nearFocus = C_TradeSkillUI.IsNearProfessionSpellFocus(profession)
+        Logger:LogDebug("Checking profession " .. profession .. " for focus: " .. tostring(nearFocus))
+        if nearFocus then
+            Logger:LogDebug("Opening profession " .. profession .. " because of focus")
+            C_TradeSkillUI.OpenTradeSkill(C_TradeSkillUI.GetProfessionSkillLineID(profession))
+            return
+        end
+    end
+
+    -- fallback to first profession if not stated closest
+    if arg1 == "closest" and professions[1] then
+        Logger:LogDebug("Opening profession " .. professions[1] .. " as fallback")
+        C_TradeSkillUI.OpenTradeSkill(C_TradeSkillUI.GetProfessionSkillLineID(professions[1]))
+    end
+end
+
+function CraftSim.SLASH:CMD_bruto()
+    -- dont do it if mailbox or AH is open
+    if MailFrame:IsVisible() or AuctionHouseFrame:IsVisible() then
+        return
+    end
+
+    local tradersBrutoID = 2265
+    local bfaBrutoID = 1039
+
+    Logger:LogDebug("Trying to summon Brutosaur")
+    local IsMounted = IsMounted()
+    local canSummonTradersBruto = C_MountJournal.GetMountUsabilityByID(tradersBrutoID, true)
+    local canSummonBFABruto = C_MountJournal.GetMountUsabilityByID(bfaBrutoID, true)
+    Logger:LogDebug("IsMounted: {mounted}, tradersBruto: {tB}, bfaBruto: {bfa}",
+        IsMounted, canSummonTradersBruto, canSummonBFABruto)
+
+    if not IsMounted then
+        if canSummonTradersBruto then
+            Logger:LogDebug("Summoning Traders Bruto")
+            C_MountJournal.SummonByID(tradersBrutoID)
+        elseif canSummonBFABruto then
+            Logger:LogDebug("Summoning BFA Bruto")
+            C_MountJournal.SummonByID(bfaBrutoID)
+        end
+    end
+end
+
 function CraftSim.SLASH:CMD_craftqueue(args)
     local arg1 = args[1]
     if arg1 == "craftnext" then
-        CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
+        if ProfessionsFrame:IsVisible() and CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback then
+            CraftSim.CRAFTQ.frame.content.queueTab.content.craftNextButton.clickCallback()
+        end
     elseif arg1 == "queuelists" then
         CraftSim.CRAFT_LISTS:QueueSelectedLists()
     elseif arg1 == "queuefirstcrafts" then
@@ -109,6 +167,12 @@ function CraftSim.SLASH:CMD_quickbuy()
     CraftSim.CRAFTQ:AuctionatorQuickBuy()
 end
 
+function CraftSim.SLASH:CMD_collectmail()
+    if MailFrame:IsVisible() then
+        OpenAllMail:StartOpening()
+    end
+end
+
 function CraftSim.SLASH:CMD_disenchant()
     CraftSim.DISENCHANT.UI:ShowAndLoad()
 end
@@ -122,26 +186,34 @@ function CraftSim.SLASH:CMD_get(args)
 end
 
 function CraftSim.SLASH:CMD_help()
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") .. f.bb(" news") .. " - Show the latest patch notes")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" debug") .. " - Open the debug window")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" export recipeids") ..
+    local c = f.l("/craftsim ")
+    CraftSim.DEBUG:SystemPrint(c .. f.bb("news") .. " - Show the latest patch notes")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("debug") .. " - Open the debug window")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("export recipeids") ..
         " - Export all recipeIDs of the current expansion in a CSV format in a copy box")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" export") .. " - Export the currently visible recipe data as JSON in a copy box")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.r(" resetdb") .. " - Reset the addon's database and reload the UI")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.g(" quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" disenchant") .. " - Open the disenchanting helper")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" put <[itemlink]|itemID|searchTerm>") .. " - Move an item into the bank or warbank, if open")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
-        f.bb(" get <[itemlink]|itemID|searchTerm>") ..
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("export") .. " - Export the currently visible recipe data as JSON in a copy box")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.r("resetdb") .. " - Reset the addon's database and reload the UI")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.g("quickbuy") .. " - spam to quickly buy contents of the craftsim shopping list")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("disenchant") .. " - Open the disenchanting helper")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("bruto") .. " - Summon the Traders bruto mount")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("collectmail") .. " - Collect all mail")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("openprofession [closest]") ..
+        " - Opens the profession window (closest -> only the one where you are standing)")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("put <[itemlink]|itemID|searchTerm>") .. " - Move an item into the bank or warbank, if open")
+    CraftSim.DEBUG:SystemPrint(c ..
+        f.bb("get <[itemlink]|itemID|searchTerm>") ..
         " - Move an item from the bank or warbank into the inventory, if open")
-    CraftSim.DEBUG:SystemPrint(f.l("/craftsim") ..
+    CraftSim.DEBUG:SystemPrint(c ..
         f.bb(" craftqueue ") .. "[command] - Various commands to interact with the craft queue:")
     CraftSim.DEBUG:SystemPrint(
         f.bb("    craftnext") .. " - Craft next recipe")
