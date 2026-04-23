@@ -13,7 +13,7 @@ CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 ---@class CraftSim.RECIPE_INFO.UI
 CraftSim.RECIPE_INFO.UI  = {}
 
-local Logger              = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
+local Logger             = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
 
 local NAME_COLUMN_WIDTH  = 130
 local VALUE_COLUMN_WIDTH = 180
@@ -341,14 +341,14 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     if opts.CRAFTING_COST then
         addTextRow(
             L("RECIPE_INFO_CRAFTING_COST_LABEL"),
-            CraftSim.UTIL:FormatMoney(-craftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-recipeData.priceData.craftingCostsNoOrderReagents, true),
             f.white("Total " .. f.bb("crafting cost") .. " for one craft"))
     end
 
     if opts.AVG_CRAFTING_COST then
         addTextRow(
             L("RECIPE_INFO_AVG_CRAFTING_COST_LABEL"),
-            CraftSim.UTIL:FormatMoney(-recipeData.priceData.averageCraftingCosts, true),
+            CraftSim.UTIL:FormatMoney(-recipeData.priceData.averageCraftingCostsNoOrderReagents, true),
             f.white(f.bb("Average") .. " crafting cost per craft considering " ..
                 f.l("Resourcefulness") .. " and " .. f.l("Multicraft")))
     end
@@ -410,12 +410,12 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     if opts.PROFIT_PER_QUALITY and recipeData.supportsQualities then
         for q, item in ipairs(recipeData.resultData.itemsByQuality) do
             local qualityPrice = recipeData.priceData.qualityPriceList[q] or 0
-            local isGrey      = item and CraftSim.UTIL:IsGreyItem(item:GetItemID())
-            local sellValue   = isGrey and (qualityPrice * recipeData.baseItemAmount)
+            local isGrey       = item and CraftSim.UTIL:IsGreyItem(item:GetItemID())
+            local sellValue    = isGrey and (qualityPrice * recipeData.baseItemAmount)
                 or (qualityPrice * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT)
-            local profit      = sellValue - craftingCosts
-            local relative    = showProfitPct and craftingCosts or nil
-            local qualityIcon = GUTIL:GetQualityIconString(q, ICON_SIZE, ICON_SIZE)
+            local profit       = sellValue - craftingCosts
+            local relative     = showProfitPct and craftingCosts or nil
+            local qualityIcon  = GUTIL:GetQualityIconString(q, ICON_SIZE, ICON_SIZE)
             addTextRow(
                 qualityIcon .. " " .. L("RECIPE_INFO_QUALITY_PROFIT_LABEL"),
                 CraftSim.UTIL:FormatMoney(profit, true, relative),
