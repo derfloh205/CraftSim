@@ -25,6 +25,10 @@ function CraftSim.SLASH:Init()
         if not input then
             return
         end
+        if input == "" then
+            Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
+            return
+        end
 
         -- parse arguments from input, consider itemlinks and quotes
         local command, arguments = GUTIL:ParseSlashCommandInput(input)
@@ -33,9 +37,6 @@ function CraftSim.SLASH:Init()
         if commandCallback then
             commandCallback(self, arguments)
             return
-        else
-            -- open options if any other command or no command is given
-            Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
         end
     end
 end

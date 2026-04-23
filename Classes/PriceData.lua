@@ -179,7 +179,8 @@ function CraftSim.PriceData:Update()
     for _, activeOptionalReagent in pairs(activeOptionalReagents) do
         if activeOptionalReagent and not activeOptionalReagent:IsCurrency() then
             local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
-            Logger:LogDebug("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
+            Logger:LogDebug("added optional reagent to crafting cost: " ..
+            tostring(activeOptionalReagent.item:GetItemLink()))
             local itemID = activeOptionalReagent.item:GetItemID()
             local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
@@ -223,6 +224,7 @@ function CraftSim.PriceData:Update()
 
     local expectedYieldPerCraft = self.recipeData.resultData.expectedYieldPerCraft
     self.averageCraftingCosts = self.craftingCosts - self.resourcefulnessSavedCostsAverage
+    self.averageCraftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents - self.resourcefulnessSavedCostsAverage
     self.expectedCostsPerItem = self.averageCraftingCosts / (expectedYieldPerCraft > 0 and expectedYieldPerCraft or 1)
 
     Logger:LogDebug("calculated crafting costs: " .. tostring(self.craftingCosts))

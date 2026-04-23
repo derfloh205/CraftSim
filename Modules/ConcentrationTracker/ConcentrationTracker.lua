@@ -57,7 +57,12 @@ function CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, prof
     end
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
         local info = C_CurrencyInfo.GetCurrencyInfo(moxieCurrencyID)
-        return (info and info.quantity) or 0, true
+        local liveQuantity = (info and info.quantity) or 0
+        local storedQuantity = CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansionID)
+        if storedQuantity ~= liveQuantity then
+            CraftSim.DB.CRAFTER:SaveCrafterMoxieData(crafterUID, profession, expansionID, liveQuantity)
+        end
+        return liveQuantity, true
     end
     return CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansionID), true
 end
