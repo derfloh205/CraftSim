@@ -605,7 +605,8 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     end
 
     if changedAny then
-        Logger:LogDebug("CraftSim: Auto-updating " .. tostring(updateCount) .. " Moxie value(s) from current price source data")
+        Logger:LogDebug("CraftSim: Auto-updating " ..
+        tostring(updateCount) .. " Moxie value(s) from current price source data")
         SyncPatronMoxieInputsFromDB()
         CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     end
@@ -4530,7 +4531,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     end
     if not craftQueueItem.correctProfessionOpen then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession")
+        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. L("CRAFT_QUEUE_STATUS_WRONG_PROFESSION_OR_STATION"))
     end
     if craftQueueItem.pcbgData.needsStep then
         local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
@@ -4541,8 +4542,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     craftButtonColumn.craftButton.frame:SetAlpha(1)
 
     if recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
-        local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
-            .profession)
+        local accessToOrders = recipeData:IsProfessionOpen()
 
         if accessToOrders then
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()

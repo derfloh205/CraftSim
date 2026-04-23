@@ -825,6 +825,7 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_RESTOCK_FAVORITES_AUTO_SHOPPING_LIST = f.g("Automatically Create") ..
             " " .. f.bb("Shopping List") .. " after queueing",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "Wrong Profession",
+        CRAFT_QUEUE_STATUS_WRONG_PROFESSION_OR_STATION = "Wrong profession or station",
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "On Cooldown",
         RECIPE_COOLDOWN_CHARGES_INLINE = "(%d/%d)",
         RECIPE_COOLDOWN_CHARGES_TOOLTIP = "Cooldown charges: %d / %d",

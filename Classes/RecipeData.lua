@@ -339,14 +339,14 @@ function CraftSim.RecipeData:new(options)
 
     -- only cache if this character is the crafter and the profession is open
     local isCrafter = self:IsCrafter()
-    local IsProfessionOpen = self:IsProfessionOpen()
+    local IsProfessionUISkillLineOpen = self:IsProfessionUISkillLineOpenForRecipe()
 
     -- local print = CraftSim.DEBUG:SetDebugPrint("RECIPE_SCAN")
     -- Logger:LogDebug("RecipeData: " .. self.recipeName)
     -- Logger:LogDebug("- isCrafter: " .. tostring(isCrafter))
-    -- Logger:LogDebug("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
+    -- Logger:LogDebug("- IsProfessionUISkillLineOpen: " .. tostring(IsProfessionUISkillLineOpen))
     CraftSim.DEBUG:StartProfiling("- RD: Cache Data")
-    if isCrafter and IsProfessionOpen and self.learned then
+    if isCrafter and IsProfessionUISkillLineOpen and self.learned then
         -- Logger:LogDebug("- Caching Recipe!")
         CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, self.professionData.professionInfo.profession, self.recipeID)
 
@@ -2423,8 +2423,8 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 end
 
----@return boolean true of the profession the recipe belongs to is opened
-function CraftSim.RecipeData:IsProfessionOpen()
+---@return boolean true when the Professions UI is open for this recipe's profession and child skill line (no spell focus).
+function CraftSim.RecipeData:IsProfessionUISkillLineOpenForRecipe()
     if not ProfessionsFrame:IsVisible() then
         return false
     end
@@ -2433,7 +2433,44 @@ function CraftSim.RecipeData:IsProfessionOpen()
     end
 
     local openProfessionID = ProfessionsFrame.professionInfo.profession
-    return openProfessionID == self.professionData.professionInfo.profession
+    local recipeProfession = self.professionData.professionInfo.profession
+    if openProfessionID ~= recipeProfession then
+        return false
+    end
+
+    local recipeSkillLineID = self.professionData.skillLineID
+    if recipeSkillLineID and recipeSkillLineID > 0 then
+        if C_TradeSkillUI.IsTradeSkillReady() then
+            local openSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+            if openSkillLineID and openSkillLineID > 0 and openSkillLineID ~= recipeSkillLineID then
+                return false
+            end
+        else
+            local openFrameSkillLineID = ProfessionsFrame.professionInfo.professionID
+            if openFrameSkillLineID and openFrameSkillLineID > 0 and openFrameSkillLineID ~= recipeSkillLineID then
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+---@return boolean true when the matching profession UI is open and (for the crafter in normal trade skill mode) in range of this recipe's profession spell focus when the game requires it.
+function CraftSim.RecipeData:IsProfessionOpen()
+    if not self:IsProfessionUISkillLineOpenForRecipe() then
+        return false
+    end
+
+    local recipeProfession = self.professionData.professionInfo.profession
+    if self:IsCrafter() and not (C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsNPCCrafting() or
+            C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillGuild()) then
+        if recipeProfession and not C_TradeSkillUI.IsNearProfessionSpellFocus(recipeProfession) then
+            return false
+        end
+    end
+
+    return true
 end
 
 ---@return boolean onCooldown
@@ -2520,7 +2557,7 @@ end
 
 --- Re-query cooldown/charges from the trade skill UI when the crafter has this recipe's profession open (keeps queue and edit UI accurate after a craft).
 function CraftSim.RecipeData:RefreshCooldownDataIfProfessionOpen()
-    if not self:IsCrafter() or not self:IsProfessionOpen() then
+    if not self:IsCrafter() or not self:IsProfessionUISkillLineOpenForRecipe() then
         return
     end
     local currentCooldown, isDayCooldown, _, maxCharges = C_TradeSkillUI.GetRecipeCooldown(self.recipeID)
