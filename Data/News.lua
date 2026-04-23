@@ -33,8 +33,6 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Fixed crafting and avg crafting costs including client reagents",
         f.p .. f.bb("Craft Lists"),
         f.a .. "- Fixed target quality option queueing lower qualities",
-
-
         newP("26.1.5"),
         f.PG .. f.bb("Concentration Tracker"),
         f.a .. "- Show Moxie Count for Character on hover",
