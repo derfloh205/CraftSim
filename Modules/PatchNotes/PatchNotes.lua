@@ -25,6 +25,17 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.6"),
+        f.PG .. f.g("New Slash Commands"),
+        f.a .. "- " .. f.l("/craftsim bruto") .. " - Summon Brutosaur Mount",
+        f.a .. "- " .. f.l("/craftsim openprofession") .. " - Open Profession Window",
+        f.a .. "  " .. f.bb("[closest]") .. " - optional arg to only open a profession",
+        f.a .. "  if you are standing at a crafting table",
+        f.a .. "- " .. f.l("/craftsim collectmail") .. " - Collect all mail",
+        f.p .. f.bb("Recipe Info"),
+        f.a .. "- Fixed crafting and avg crafting costs including client reagents",
+        f.p .. f.bb("Craft Lists"),
+        f.a .. "- Fixed target quality option queueing lower qualities",
         newP("26.1.5"),
         f.PG .. f.bb("Concentration Tracker"),
         f.a .. "- Show Moxie Count for Character on hover",
