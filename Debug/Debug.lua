@@ -35,6 +35,15 @@ function CraftSim.DEBUG:Init()
     end
 
     self:SetMinimumLogLevel(minimumLogLevel)
+
+    local eventDevLogging = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["EVENT_DEV_TOOL_LOGGING_ENABLED"]
+    if optionsDB then
+        local data = optionsDB.data
+        if data then
+            eventDevLogging = data["EVENT_DEV_TOOL_LOGGING_ENABLED"] or eventDevLogging
+        end
+    end
+    GUTIL:SetEventDevToolLogging(eventDevLogging)
 end
 
 ---@param logLevel LibLog-1.0.LogLevel

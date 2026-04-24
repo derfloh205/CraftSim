@@ -99,7 +99,6 @@ Modules/PatchNotes/UI.lua
 
 Modules/ItemCount/ItemCount.lua
 
-
 Modules/Disenchant/Disenchant.lua
 Modules/Disenchant/UI.lua
 
