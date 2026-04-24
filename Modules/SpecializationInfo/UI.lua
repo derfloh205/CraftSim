@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.SPECIALIZATION_INFO.UI
+---@class CraftSim.SPECIALIZATION_INFO.UI : CraftSim.Module.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
@@ -153,7 +153,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SPECIALIZATION_INFO.UI:UpdateRecipeData(recipeData)
+function CraftSim.SPECIALIZATION_INFO.UI:Update(recipeData)
     ---@type CraftSim.SPEC_INFO.FRAME
     local specInfoFrame = self.module.frame --[[@as CraftSim.SPEC_INFO.FRAME]]
 

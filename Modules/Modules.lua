@@ -34,7 +34,7 @@ CraftSim.MODULES = {}
 ---@class CraftSim.Module.UI
 ---@field module CraftSim.Module
 ---@field Init fun(self: CraftSim.Module.UI)
----@field Update fun(self: CraftSim.Module.UI)
+---@field Update fun(self: CraftSim.Module.UI, ...: any)
 ---@field VisibleByContext? fun(self: CraftSim.Module.UI): boolean -- if not provided, true
 
 ---@class CraftSim.Module
