@@ -886,6 +886,8 @@ function CraftSim.CRAFTQ.UI:Init()
     local sizeX = 900
     local sizeY = 420
 
+    local onClose, onMin, onMax = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
+
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
     CraftSim.CRAFTQ.frame = GGUI.Frame({
         parent = ProfessionsFrame,
@@ -897,12 +899,9 @@ function CraftSim.CRAFTQ.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = function()
-            GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", self.module)
-        end,
-        onCollapseCallback = function()
-            GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", self.module)
-        end,
+        onCloseCallback = onClose,
+        onCollapseCallback = onMin,
+        onCollapseOpenCallback = onMax,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
