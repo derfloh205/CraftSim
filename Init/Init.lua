@@ -30,6 +30,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
 	"CRAFTSIM_PROFESSION_OPENED",
 	"CRAFTSIM_PROFESSION_TAB_CLICKED",
+	"CRAFTSIM_ORDER_VIEW_CLOSED",
 })
 
 ---@type number?
@@ -564,6 +565,9 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	if ProfessionsFrame.OrdersPage then
 		ProfessionsFrame.OrdersPage:HookScript("OnShow", refreshAddWorkOrdersButtonDeferred)
+		ProfessionsFrame.OrdersPage.OrderView:HookScript("OnHide", function()
+			GUTIL:TriggerCustomEvent("CRAFTSIM_ORDER_VIEW_CLOSED")
+		end)
 	end
 	local craftingOrdersTab = ProfessionsFrame.TabSystem and ProfessionsFrame.TabSystem.tabs[3]
 	if craftingOrdersTab then
@@ -681,4 +685,8 @@ function CraftSim.INIT:IsProfessionReady()
 	local tradeSkillRdy = C_TradeSkillUI.IsTradeSkillReady()
 	local operationInfosPreloaded = profession_available and CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession)
 	return profession_available and tradeSkillRdy and operationInfosPreloaded
+end
+
+function CraftSim.INIT:CRAFTSIM_ORDER_VIEW_CLOSED()
+	CraftSim.MODULES:UpdateVisibilityByContext()
 end
