@@ -76,3 +76,12 @@ end
 function CraftSimAPI:RegisterEvents(table, events)
     GUTIL:RegisterCustomEvents(table, events)
 end
+
+--- Add a custom module to craftsim
+--- A module should follow the CraftSim.Module type found in [Modules.lua](../Modules/Modules.lua), and can optionally be registered for the control panel to get a button in the craftsim settings to open it.
+---@param moduleID string
+---@param module CraftSim.Module
+---@param controlPanelOptions table
+function CraftSimAPI:RegisterCustomModule(moduleID, module, controlPanelOptions)
+    CraftSim.MODULES:RegisterModule(moduleID, module, controlPanelOptions)
+end
