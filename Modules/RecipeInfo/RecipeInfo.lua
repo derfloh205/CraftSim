@@ -1,13 +1,14 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.RECIPE_INFO : CraftSim.Module
 CraftSim.RECIPE_INFO = {}
 
 CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
-    label = "CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL",
-    tooltip = "CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP",
+    label = L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"),
 })
 
 GUTIL:RegisterCustomEvents(CraftSim.RECIPE_INFO, {

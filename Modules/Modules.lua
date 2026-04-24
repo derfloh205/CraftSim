@@ -29,8 +29,8 @@ CraftSim.MODULES = {}
 ---| "MODULE_PATCH_NOTES"
 
 ---@class CraftSim.Module.ControlPanelData
----@field label CraftSim.LOCALIZATION_IDS
----@field tooltip CraftSim.LOCALIZATION_IDS
+---@field label string
+---@field tooltip string
 ---@field sortOrder? number
 
 ---@class CraftSim.Module.UI

@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local systemPrint = print
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLog")
@@ -10,8 +11,8 @@ CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_
     "UNIT_SPELLCAST_SUCCEEDED" })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_LOG", CraftSim.CRAFT_LOG, {
-    label = "CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL",
-    tooltip = "CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP",
+    label = L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"),
 })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFT_LOG, {

@@ -46,9 +46,9 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(row, value)
     content.scanButton:SetEnabled(value)
     content.cancelScanButton:SetVisible(not value)
     if not value then
-        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCANNING") .. " 0%")
+        content.scanButton:SetText(L("RECIPE_SCAN_SCANNING") .. " 0%")
     else
-        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCAN_RECIPIES"))
+        content.scanButton:SetText(L("RECIPE_SCAN_SCAN_RECIPIES"))
     end
 
     -- if within professionscan always hide the cancel button in the scanning row

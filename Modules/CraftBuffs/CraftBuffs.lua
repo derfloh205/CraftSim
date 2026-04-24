@@ -12,8 +12,8 @@ local L = CraftSim.LOCAL:GetLocalizer()
 CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "UNIT_AURA" })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_BUFFS", CraftSim.CRAFT_BUFFS, {
-    label = "CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL",
-    tooltip = "CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP",
+    label = L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP"),
 })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFT_BUFFS, {

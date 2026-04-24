@@ -84,11 +84,13 @@ function CraftSim.LOCAL:TranslateStatName(statName)
     end
 end
 
+CraftSim.LOCAL.L = nil
 ---@return fun(ID: CraftSim.LOCALIZATION_IDS): string
 function CraftSim.LOCAL:GetLocalizer()
-    return function(ID)
+    CraftSim.LOCAL.L = CraftSim.LOCAL.L or function(ID)
         return CraftSim.LOCAL:GetText(ID)
     end
+    return CraftSim.LOCAL.L
 end
 
 CraftSim.LOCAL:Init() -- all prerequisites loaded, .toc order important here

@@ -19,8 +19,8 @@ GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
 })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
-    label = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL",
-    tooltip = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP",
+    label = L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"),
 })
 
 ---@type CraftSim.CraftQueue
