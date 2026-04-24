@@ -20,6 +20,8 @@ CraftSim.AVERAGEPROFIT = CraftSim.RECIPE_INFO
 
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frame = nil
+---@type CraftSim.RecipeData?
+CraftSim.RECIPE_INFO.currentRecipeData = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeInfo")
 
@@ -150,6 +152,8 @@ function CraftSim.RECIPE_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
         return
     end
 
+    self.currentRecipeData = recipeData
+
     -- Re-apply module visibility when fresh recipe data arrives (e.g. after order view reopen).
     CraftSim.MODULES:UpdateModuleVisibility(self)
 
@@ -158,6 +162,7 @@ function CraftSim.RECIPE_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
 end
 
 function CraftSim.RECIPE_INFO:CRAFTSIM_ORDER_VIEW_CLOSED()
+    self.currentRecipeData = nil
     if self.frame then
         self.frame:Hide()
     end

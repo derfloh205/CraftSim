@@ -12,8 +12,6 @@ CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 
 ---@class CraftSim.RECIPE_INFO.UI
 CraftSim.RECIPE_INFO.UI  = {}
----@type table?
-CraftSim.RECIPE_INFO.UI.preparedRows = nil
 
 local Logger             = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
 
@@ -126,7 +124,11 @@ local function createContent(frame)
                     function()
                         local opts = CraftSim.RECIPE_INFO:GetDisplayOptions()
                         opts[optKey] = not opts[optKey]
-                        CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
+                        local recipeData = CraftSim.RECIPE_INFO.currentRecipeData
+                        if recipeData then
+                            local statWeights = CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
+                            CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
+                        end
                     end)
                 if tooltip then
                     cb:SetTooltip(function(tt, _)
@@ -350,10 +352,11 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
     }
 end
 
-function CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
+---@param state table
+function CraftSim.RECIPE_INFO.UI:RenderFromState(state)
     local recipeInfoFrame = self.module.frame
     local opts = CraftSim.RECIPE_INFO:GetDisplayOptions()
-    local rows = self.preparedRows or {}
+    local rows = state.rows or {}
     local profitList = recipeInfoFrame.content.profitList --[[@as GGUI.FrameList]]
     profitList:Remove()
 
@@ -409,8 +412,7 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     priceOverrideWarning:SetVisible(recipeData.priceData:PriceOverridesActive())
 
     local state = self:BuildDisplayState(recipeData, statWeights)
-    self.preparedRows = state.rows
-    self:RenderCachedDisplay()
+    self:RenderFromState(state)
 end
 
 function CraftSim.RECIPE_INFO.UI:VisibleByContext()
