@@ -109,9 +109,7 @@ end
 function CraftSim.MODULES:UpdateModuleVisibility(module)
 	if module.UI and module.UI.VisibleByContext then
 		local visible = module.UI:VisibleByContext()
-		if CraftSim.UTIL:IsWorkOrder() and module.frameWO then
-			module.frameWO:SetVisible(visible)
-		elseif module.frame then
+		if module.frame then
 			module.frame:SetVisible(visible)
 		end
 	end

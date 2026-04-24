@@ -12,6 +12,7 @@ GUTIL:RegisterCustomEvents(CraftSim.CONTROL_PANEL, {
     "CRAFTSIM_SIMULATION_MODE_DISABLED",
     "CRAFTSIM_RECIPE_INFO_INITIALIZED",
     "CRAFTSIM_MODULE_CLOSED",
+    "CRAFTSIM_MODULE_OPENED"
 })
 
 local GUTIL = CraftSim.GUTIL
@@ -280,13 +281,11 @@ end
 ---@param moduleID CraftSim.ModuleID
 function CraftSim.CONTROL_PANEL:CRAFTSIM_MODULE_CLOSED(moduleID)
     CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, false)
-    local module = CraftSim.MODULES.modules[moduleID]
-    if module then
-        if module.frame then
-            module.frame:Hide()
-        end
-        if module.frameWO then
-            module.frameWO:Hide()
-        end
-    end
+    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CONTROL_PANEL:CRAFTSIM_MODULE_OPENED(moduleID)
+    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, true)
+    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
 end
