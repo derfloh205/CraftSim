@@ -1,0 +1,57 @@
+---@meta
+
+---@alias CraftSim.Event
+--- Fired when the SchematicForm on either the CraftingPage or OrdersPage is initialized for a new recipe.
+--- args: recipeInfo RecipeInfo
+---| "CRAFTSIM_OPEN_RECIPE_INFO_UPDATED"
+--- Fired once profession operation-info data has fully loaded and the profession is ready for use.
+--- args: none
+---| "CRAFTSIM_PROFESSION_INITIALIZED"
+--- Fired after a profession is opened and all CRAFTING_DETAILS_UPDATE data is available.
+--- args: professionInfo ProfessionInfo, selectedTab CraftSim.PROFESSIONS_TAB, isLogin boolean, isReload boolean
+---| "CRAFTSIM_PROFESSION_OPENED"
+--- Fired when the initial recipe's RecipeInfo becomes available after a profession opens.
+--- args: recipeInfo RecipeInfo
+---| "CRAFTSIM_RECIPE_INFO_INITIALIZED"
+--- Fired when Simulation Mode is activated for the currently visible recipe.
+--- args: none
+---| "CRAFTSIM_SIMULATION_MODE_ENABLED"
+--- Fired when Simulation Mode is deactivated (e.g. switching to a recraft/salvage recipe).
+--- args: none
+---| "CRAFTSIM_SIMULATION_MODE_DISABLED"
+--- Fired whenever a reagent allocation changes while Simulation Mode is active.
+--- args: none
+---| "CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED"
+--- Fired when the active RecipeData should be re-evaluated by all listening modules (reagent change, concentration toggle, sim mode update, etc.).
+--- args: recipeData CraftSim.RecipeData?
+---| "CRAFTSIM_RECIPE_DATA_UPDATED"
+--- Fired when the player clicks one of the profession frame tabs (Recipe, Spec, Crafting Orders).
+--- args: tab CraftSim.PROFESSIONS_TAB
+---| "CRAFTSIM_PROFESSION_TAB_CLICKED"
+--- Fired immediately after CraftRecipe / SalvageRecipe is called and CraftSim has built the RecipeData for the craft in progress.
+--- args: recipeData CraftSim.RecipeData
+---| "CRAFTSIM_CRAFT_RECIPE_DATA_PREPARED"
+--- Fired once crafting orders for the current profession have been silently preloaded in the background.
+--- args: none
+---| "CRAFTSIM_CRAFTING_ORDERS_PRELOADED"
+--- Fired when the crafting-orders OrderView panel is hidden.
+--- args: none
+---| "CRAFTSIM_ORDER_VIEW_CLOSED"
+--- Fired when a long CraftQueue process (work orders, first crafts, or craft lists) finishes.
+--- args: queueType "WORK_ORDERS"|"FIRST_CRAFTS"|"CRAFT_LISTS"
+---| "CRAFTSIM_CRAFTQUEUE_QUEUE_PROCESS_FINISHED"
+--- Fired when a module frame is closed by the user.
+--- args: moduleID CraftSim.ModuleID
+---| "CRAFTSIM_MODULE_CLOSED"
+--- Fired when a module frame is minimized by the user.
+--- args: moduleID CraftSim.ModuleID
+---| "CRAFTSIM_MODULE_MINIMIZED"
+--- Fired when a module frame is maximized/restored by the user.
+--- args: moduleID CraftSim.ModuleID
+---| "CRAFTSIM_MODULE_MAXIMIZED"
+--- Fired when a CraftSim setting is saved via the WoW Settings panel.
+--- args: optKey CraftSim.GENERAL_OPTIONS, value any
+---| "CRAFTSIM_SETTINGS_UPDATED"
+--- Fired when the set of active tracked craft buffs changes (buff added or removed).
+--- args: none
+---| "CRAFTSIM_CRAFT_BUFFS_UPDATED"
