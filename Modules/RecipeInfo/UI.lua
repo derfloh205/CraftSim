@@ -416,11 +416,9 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
 end
 
 function CraftSim.RECIPE_INFO.UI:VisibleByContext()
+    local moduleEnabled = CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+    if not moduleEnabled then return false end
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
-    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
-    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
-    local hasSchematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 
-    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) and (isRecipeTab or isCraftingOrderTab) and
-        hasSchematicForm
+    return CraftSim.UTIL:IsWorkOrder() or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
