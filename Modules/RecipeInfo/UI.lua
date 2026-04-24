@@ -12,10 +12,8 @@ CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 
 ---@class CraftSim.RECIPE_INFO.UI
 CraftSim.RECIPE_INFO.UI  = {}
----@type table<string, { row: any, rowData: table }>
-CraftSim.RECIPE_INFO.UI.rowRefsByKey = {}
 ---@type table?
-CraftSim.RECIPE_INFO.UI.currentRowData = nil
+CraftSim.RECIPE_INFO.UI.preparedRows = nil
 
 local Logger             = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
 
@@ -214,12 +212,9 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
     local rows                  = {}
     local showProfitPct         = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
     local craftingCosts         = recipeData.priceData.craftingCosts
-    local rowCounter            = 0
 
     local function addTextRow(optKey, name, value, tooltip)
-        rowCounter = rowCounter + 1
         tinsert(rows, {
-            rowKey = optKey .. ":" .. tostring(rowCounter),
             optKey = optKey,
             type = "text",
             name = name,
@@ -229,9 +224,7 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
     end
 
     local function addIconsRow(optKey, items, tooltip)
-        rowCounter = rowCounter + 1
         tinsert(rows, {
-            rowKey = optKey .. ":" .. tostring(rowCounter),
             optKey = optKey,
             type = "icons",
             name = L("RECIPE_INFO_RESULT_ITEMS_LABEL"),
@@ -360,17 +353,15 @@ end
 function CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
     local recipeInfoFrame = self.module.frame
     local opts = CraftSim.RECIPE_INFO:GetDisplayOptions()
-    local rows = self.currentRowData or {}
+    local rows = self.preparedRows or {}
     local profitList = recipeInfoFrame.content.profitList --[[@as GGUI.FrameList]]
     profitList:Remove()
-    self.rowRefsByKey = {}
 
     for _, rowData in ipairs(rows) do
         if opts[rowData.optKey] then
             profitList:Add(function(row, columns)
                 local nameColumn = columns[1]
                 local valueColumn = columns[2]
-                row.recipeInfoRowKey = rowData.rowKey
                 row.recipeInfoRowData = rowData
 
                 nameColumn.text:SetText(rowData.name)
@@ -403,67 +394,8 @@ function CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
                     end
                 end
 
-                self.rowRefsByKey[rowData.rowKey] = {
-                    row = row,
-                    rowData = rowData,
-                }
             end)
         end
-    end
-
-    profitList:UpdateDisplay()
-end
-
----@param state table
-function CraftSim.RECIPE_INFO.UI:RebuildRowsFromState(state)
-    local recipeInfoFrame = self.module.frame
-    local profitList = recipeInfoFrame.content.profitList --[[@as GGUI.FrameList]]
-    profitList:Remove()
-    self.rowRefsByKey = {}
-    self.currentRowData = state.rows
-
-    for _, rowData in ipairs(state.rows) do
-        profitList:Add(function(row, columns)
-            local nameColumn = columns[1]
-            local valueColumn = columns[2]
-            row.recipeInfoRowKey = rowData.rowKey
-            row.recipeInfoRowData = rowData
-
-            nameColumn.text:SetText(rowData.name)
-            row.tooltipOptions = rowData.tooltip and {
-                anchor = "ANCHOR_CURSOR",
-                owner = row.frame,
-                text = rowData.tooltip,
-            } or nil
-
-            if rowData.type == "text" then
-                valueColumn.text:SetText(rowData.value)
-                for i = 1, MAX_RESULT_ICONS do
-                    if valueColumn["icon" .. i] then
-                        valueColumn["icon" .. i]:Hide()
-                    end
-                end
-            elseif rowData.type == "icons" then
-                valueColumn.text:SetText("")
-                for i = 1, MAX_RESULT_ICONS do
-                    local icon = valueColumn["icon" .. i]
-                    if icon then
-                        local item = rowData.items and rowData.items[i]
-                        if item then
-                            icon:SetItem(item)
-                            icon:Show()
-                        else
-                            icon:Hide()
-                        end
-                    end
-                end
-            end
-
-            self.rowRefsByKey[rowData.rowKey] = {
-                row = row,
-                rowData = rowData,
-            }
-        end)
     end
 
     profitList:UpdateDisplay()
@@ -477,7 +409,7 @@ function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
     priceOverrideWarning:SetVisible(recipeData.priceData:PriceOverridesActive())
 
     local state = self:BuildDisplayState(recipeData, statWeights)
-    self:RebuildRowsFromState(state)
+    self.preparedRows = state.rows
     self:RenderCachedDisplay()
 end
 
