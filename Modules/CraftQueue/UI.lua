@@ -4673,3 +4673,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     CraftSim.DEBUG:StopProfiling(profilingID)
 end
+
+function CraftSim.CRAFTQ.UI:VisibleByContext()
+    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+end
