@@ -442,13 +442,6 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
     return linksByQuality
 end
 
----@return fun(ID: CraftSim.LOCALIZATION_IDS | string): string
-function CraftSim.UTIL:GetLocalizer()
-    return function(ID)
-        return CraftSim.LOCAL:GetText(ID)
-    end
-end
-
 --- Clock icon + localized current/max charges. Same data path as Recipe Scan (`GetCooldownDataForRecipeCrafter`).
 ---@param recipeData CraftSim.RecipeData
 ---@return string

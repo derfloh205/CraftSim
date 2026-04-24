@@ -41,7 +41,7 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
 }
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationTracker.UI")
 

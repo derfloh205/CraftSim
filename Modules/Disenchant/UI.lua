@@ -12,7 +12,7 @@ CraftSim.DISENCHANT.frame = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Disenchant.UI")
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 function CraftSim.DISENCHANT.UI:Init()
     local sizeX = 270

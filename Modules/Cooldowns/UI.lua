@@ -12,7 +12,7 @@ CraftSim.COOLDOWNS.frame = nil
 
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Cooldowns.UI")

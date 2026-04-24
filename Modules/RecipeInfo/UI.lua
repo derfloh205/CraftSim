@@ -5,7 +5,7 @@ local GGUI               = CraftSim.GGUI
 local GUTIL              = CraftSim.GUTIL
 
 local f                  = GUTIL:GetFormatter()
-local L                  = CraftSim.UTIL:GetLocalizer()
+local L                  = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.RECIPE_INFO
 CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
@@ -173,33 +173,33 @@ local function createContent(frame)
 end
 
 function CraftSim.RECIPE_INFO.UI:Init()
-    local sizeX                  = 320
-    local sizeY                  = 105
-    local offsetX                = -10
-    local offsetY                = 30
+    local sizeX                           = 320
+    local sizeY                           = 105
+    local offsetX                         = -10
+    local offsetY                         = 30
     local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
-    CraftSim.RECIPE_INFO.frame   = GGUI.Frame({
-        parent             = ProfessionsFrame,
-        anchorParent       = ProfessionsFrame,
-        anchorA            = "BOTTOMRIGHT",
-        anchorB            = "BOTTOMRIGHT",
-        sizeX              = sizeX,
-        sizeY              = sizeY,
-        offsetX            = offsetX,
-        offsetY            = offsetY,
-        title              = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE"),
-        collapseable       = true,
-        closeable          = true,
-        moveable           = true,
-        backdropOptions    = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback    = onClose,
-        onCollapseCallback = onMinimize,
+    CraftSim.RECIPE_INFO.frame            = GGUI.Frame({
+        parent                 = ProfessionsFrame,
+        anchorParent           = ProfessionsFrame,
+        anchorA                = "BOTTOMRIGHT",
+        anchorB                = "BOTTOMRIGHT",
+        sizeX                  = sizeX,
+        sizeY                  = sizeY,
+        offsetX                = offsetX,
+        offsetY                = offsetY,
+        title                  = CraftSim.LOCAL:GetText("RECIPE_INFO_TITLE"),
+        collapseable           = true,
+        closeable              = true,
+        moveable               = true,
+        backdropOptions        = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback        = onClose,
+        onCollapseCallback     = onMinimize,
         onCollapseOpenCallback = onMaximize,
-        frameConfigTable   = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata        = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel         = CraftSim.UTIL:NextFrameLevel(),
+        frameConfigTable       = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata            = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction     = true,
+        frameLevel             = CraftSim.UTIL:NextFrameLevel(),
     })
 
     createContent(CraftSim.RECIPE_INFO.frame)
@@ -211,9 +211,9 @@ end
 ---@param statWeights CraftSim.Statweights
 ---@return table
 function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
-    local rows                  = {}
-    local showProfitPct         = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
-    local craftingCosts         = recipeData.priceData.craftingCosts
+    local rows          = {}
+    local showProfitPct = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
+    local craftingCosts = recipeData.priceData.craftingCosts
 
     local function addTextRow(optKey, name, value, tooltip)
         tinsert(rows, {
@@ -396,7 +396,6 @@ function CraftSim.RECIPE_INFO.UI:RenderFromState(state)
                         end
                     end
                 end
-
             end)
         end
     end

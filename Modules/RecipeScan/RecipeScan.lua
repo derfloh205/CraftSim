@@ -6,7 +6,7 @@ CraftSim.RECIPE_SCAN = {}
 
 local GUTIL = CraftSim.GUTIL
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
@@ -547,7 +547,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                     if globalReagentAllocation == RA.OPTIMIZE_MOST_PROFITABLE then
                         optimizeReagentOptions = { highestProfit = true }
                     else
-                        local targetQuality = tonumber(string.match(tostring(globalReagentAllocation), "^OPTIMIZE_TARGET_(%d+)$"))
+                        local targetQuality = tonumber(string.match(tostring(globalReagentAllocation),
+                            "^OPTIMIZE_TARGET_(%d+)$"))
                         if targetQuality then
                             optimizeReagentOptions = { maxQuality = targetQuality }
                         else

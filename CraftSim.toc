@@ -30,8 +30,8 @@
 embeds.xml
 
 Init/GLibs.lua
+Media/Media.lua
 
-Locals/Localization.lua
 Locals/enUS.lua
 Locals/deDE.lua
 Locals/itIT.lua
@@ -43,6 +43,7 @@ Locals/esMX.lua
 Locals/koKR.lua
 Locals/zhTW.lua
 Locals/zhCN.lua
+Locals/Localization.lua
 
 Util/Const.lua
 
@@ -66,8 +67,6 @@ DB/crafterDB.lua
 DB/priceOverrideDB.lua
 DB/craftListsDB.lua
 DB/lastCraftingCostDB.lua
-
-Media/Media.lua
 
 Util/Frames.lua
 Util/Widgets/ContextMenu.lua

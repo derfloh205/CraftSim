@@ -10,7 +10,7 @@ CraftSim.CRAFTQ = CraftSim.CRAFTQ
 ---@class CraftSim.CRAFTQ.UI : CraftSim.Module.UI
 CraftSim.CRAFTQ.UI = {}
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 ---@param loginStale boolean

@@ -5,7 +5,7 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.SIMULATION_MODE.UI : CraftSim.Module.UI
 CraftSim.SIMULATION_MODE.UI = {}
@@ -496,7 +496,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 
     -- Quality meter
     if recipeData.supportsQualities then
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
+        local thresholds = CraftSim.RECIPE_INFO:GetQualityThresholds(recipeData.maxQuality,
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         detailsFrame.content.qualityMeter:Update(recipeData, thresholds)
     else

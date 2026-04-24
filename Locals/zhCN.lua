@@ -143,11 +143,12 @@ function CraftSim.LOCAL_CN:GetData()
             "这告诉我们机率分配 " .. f.l("X") .. " 的期望值 " .. f.l("E") .. " 是所有数值与其可能性的乘积的总和。\n" ..
             "所以如果我们有一个 " ..
             f.bb("情况 A 机率 30%") ..
-            " 利润 " .. CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            " 利润 " .. CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " 和一个" ..
-            f.bb("情况 B 机率 70%") .. " 利润 " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " 那该情况的期望利润就是\n" ..
+            f.bb("情况 B 机率 70%") ..
+            " 利润 " .. CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) .. " 那该情况的期望利润就是\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7 ") ..
-            " 是 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            " 是 " .. CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "你可以在" .. f.bb("统计数据") .. "窗口中查看当前配方的所有情况！"
         ,
 

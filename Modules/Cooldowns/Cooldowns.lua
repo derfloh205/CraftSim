@@ -2,13 +2,14 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.COOLDOWNS : CraftSim.Module
 CraftSim.COOLDOWNS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
 CraftSim.MODULES:RegisterModule("MODULE_COOLDOWNS", CraftSim.COOLDOWNS, {
-    label = "CONTROL_PANEL_MODULES_COOLDOWNS_LABEL",
-    tooltip = "CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP",
+    label = L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"),
 })
 
 GUTIL:RegisterCustomEvents(CraftSim.COOLDOWNS,

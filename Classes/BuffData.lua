@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeData: CraftSim.RecipeData): CraftSim.BuffData
 CraftSim.BuffData = CraftSim.CraftSimObject:extend()
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local debug = false
 

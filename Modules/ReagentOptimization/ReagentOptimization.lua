@@ -566,7 +566,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     Logger:LogDebug("skillWithoutReagentIncrease" .. tostring(skillWithoutReagentIncrease))
 
 
-    local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData,
+    local expectedQualityWithoutReagents = CraftSim.RECIPE_INFO:GetExpectedQualityBySkill(recipeData,
         skillWithoutReagentIncrease)
 
     Logger:LogDebug("expectedQualityWithoutReagents: " .. tostring(expectedQualityWithoutReagents))

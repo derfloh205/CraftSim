@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.SPECIALIZATION_INFO : CraftSim.Module
 CraftSim.SPECIALIZATION_INFO = {}

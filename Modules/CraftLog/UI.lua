@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 local LibGraph = CraftSim.LibGraph
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_LOG
 CraftSim.CRAFT_LOG = CraftSim.CRAFT_LOG

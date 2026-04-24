@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local tinsert = tinsert or table.insert
 

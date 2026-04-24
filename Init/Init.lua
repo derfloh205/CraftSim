@@ -11,7 +11,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT = {}
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.INIT : Frame
 CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
@@ -441,7 +441,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 
-		CraftSim.LOCAL:Init()
+		--CraftSim.LOCAL:Init()
 
 		CraftSim.GGUI:InitializePopup({
 			backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,

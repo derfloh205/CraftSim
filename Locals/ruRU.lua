@@ -141,12 +141,13 @@ function CraftSim.LOCAL_RU:GetData()
             "Так что в " ..
             f.bb("случае A с шансом 30%") ..
             " и прибылью " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " и " ..
             f.bb("случае B с шансом 70%") ..
             " и прибылью " .. f.m(300 * 10000) .. " ожидаемая прибыль равна\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "что равно " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "что равно " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
         ,
 

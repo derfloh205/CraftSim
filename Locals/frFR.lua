@@ -146,12 +146,15 @@ function CraftSim.LOCAL_FR:GetData()
             "So if we have one " ..
             f.bb("case A with chance 30%") ..
             " and profit " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " and a " ..
             f.bb("case B with chance 70%") ..
-            " and profit " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " then the expected profit of that is\n" ..
+            " and profit " ..
+            CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) ..
+            " then the expected profit of that is\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "which is " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
 

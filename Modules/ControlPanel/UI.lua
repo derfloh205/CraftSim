@@ -6,7 +6,7 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
@@ -45,8 +45,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             ---@param moduleID CraftSim.ModuleID
             ---@param data CraftSim.Module.ControlPanelData
             local function addModuleCheckbox(moduleID, data)
-                local label = L(data.label)
-                local tooltip = L(data.tooltip)
+                local label = data.label
+                local tooltip = data.tooltip
 
                 local cb = rootDescription:CreateCheckbox(label, function()
                     return CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)

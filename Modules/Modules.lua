@@ -65,7 +65,7 @@ GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 })
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@type CraftSim.RecipeData?
 CraftSim.MODULES.recipeData = nil

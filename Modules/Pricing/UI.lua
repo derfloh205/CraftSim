@@ -15,7 +15,7 @@ CraftSim.PRICING.frameWO = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Pricing.UI")
 local f = CraftSim.GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 function CraftSim.PRICING.UI:Init()
     local sizeX = 620

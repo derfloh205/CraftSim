@@ -827,20 +827,6 @@ CraftSim.CONST.ENCHANTING_SHATTER_BUFF_ASSUME_ACTIVE_FOR_STATS = {
     [CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_ORDER] = true,
 }
 
-CraftSim.CONST.LOCALES = {
-    EN = "enUS",
-    DE = "deDE",
-    IT = "itIT",
-    RU = "ruRU",
-    PT = "ptBR",
-    ES = "esES",
-    FR = "frFR",
-    MX = "esMX",
-    KO = "koKR",
-    TW = "zhTW",
-    CN = "zhCN",
-}
-
 ---@type table<CraftSim.EXPANSION_IDS, Enum.Profession[]>
 CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
 {

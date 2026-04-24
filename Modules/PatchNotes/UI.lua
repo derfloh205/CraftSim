@@ -6,7 +6,7 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.PATCH_NOTES : CraftSim.Module
 CraftSim.PATCH_NOTES = CraftSim.PATCH_NOTES
