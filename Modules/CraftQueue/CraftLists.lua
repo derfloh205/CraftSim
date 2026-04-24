@@ -307,7 +307,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
     end
 
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 --- Build a tooltip text string summarizing a craft list's optimization and restock options
@@ -380,7 +380,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
             queueListsButton:SetStatus("Ready")
         end
         CraftSim.CRAFTQ.UI:Update()
-        CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+        CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
     end
 
     local listIndex = 1
@@ -641,7 +641,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
                 Logger:LogDebug("maxQueueAmount for recipe " ..
-                recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                    recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

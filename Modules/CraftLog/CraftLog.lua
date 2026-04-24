@@ -5,9 +5,19 @@ local GUTIL = CraftSim.GUTIL
 
 local systemPrint = print
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLog")
----@class CraftSim.CRAFT_LOG : Frame
+---@class CraftSim.CRAFT_LOG : CraftSim.Module
 CraftSim.CRAFT_LOG = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN",
     "UNIT_SPELLCAST_SUCCEEDED" })
+
+CraftSim.MODULES:RegisterModule("MODULE_CRAFT_LOG", CraftSim.CRAFT_LOG, {
+    label = "CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL",
+    tooltip = "CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP",
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.CRAFT_LOG, {
+    "CRAFTSIM_CRAFT_RECIPE_DATA_PREPARED",
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 ---@type CraftSim.RecipeData
 CraftSim.CRAFT_LOG.currentRecipeData = nil
@@ -15,13 +25,26 @@ CraftSim.CRAFT_LOG.currentRecipeData = nil
 CraftSim.CRAFT_LOG.currentSessionData = nil
 
 ---@type CraftSim.CRAFT_LOG.LOG_FRAME
-CraftSim.CRAFT_LOG.logFrame = nil
+CraftSim.CRAFT_LOG.frame = nil
 ---@type CraftSim.CRAFT_LOG.DETAILS_FRAME
 CraftSim.CRAFT_LOG.advFrame = nil
 
 ---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFT_LOG:CRAFTSIM_CRAFT_RECIPE_DATA_PREPARED(recipeData)
+    self:SetCraftedRecipeData(recipeData)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFT_LOG:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not recipeData or not self.UI or not self.advFrame or not self.advFrame:IsVisible() then
+        return
+    end
+
+    self.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
+end
+
+---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
-    Logger:LogDebug("OnCraftRecipe: " .. tostring(recipeData))
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
@@ -59,9 +82,10 @@ function CraftSim.CRAFT_LOG:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultDa
         return
     end
 
-    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_LOG") then
-        CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_LOG", true)
-        CraftSim.CRAFT_LOG.logFrame:Show()
+    local modulesEnabled = CraftSim.DB.OPTIONS:Get("MODULES_ENABLED")
+    if CraftSim.DB.OPTIONS:Get("CRAFT_LOG_AUTO_SHOW") and not modulesEnabled["MODULE_CRAFT_LOG"] then
+        modulesEnabled["MODULE_CRAFT_LOG"] = true
+        CraftSim.CRAFT_LOG.frame:Show()
         CraftSim.CRAFT_LOG.advFrame:SetVisible(CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"))
     end
 
@@ -98,10 +122,10 @@ end
 
 function CraftSim.CRAFT_LOG:ClearData()
     CraftSim.CRAFT_LOG.currentSessionData = CraftSim.CraftSessionData()
-    CraftSim.CRAFT_LOG.logFrame.content.craftLogScrollingMessageFrame:Clear()
-    CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:Remove()
-    CraftSim.CRAFT_LOG.logFrame.content.craftedItemsList:UpdateDisplay()
-    CraftSim.CRAFT_LOG.logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
+    CraftSim.CRAFT_LOG.frame.content.craftLogScrollingMessageFrame:Clear()
+    CraftSim.CRAFT_LOG.frame.content.craftedItemsList:Remove()
+    CraftSim.CRAFT_LOG.frame.content.craftedItemsList:UpdateDisplay()
+    CraftSim.CRAFT_LOG.frame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
     CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(CraftSim.MODULES.recipeData.recipeID)
 end
 

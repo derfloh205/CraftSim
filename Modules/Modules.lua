@@ -23,6 +23,7 @@ CraftSim.MODULES = {}
 ---| "MODULE_EXPLANATIONS"
 ---| "MODULE_STATISTICS"
 ---| "MODULE_DISENCHANT"
+---| "MODULE_SHOPPING"
 ---| "MODULE_CONTROL_PANEL"
 ---| "MODULE_SIMULATION_MODE"
 ---| "MODULE_PATCH_NOTES"
@@ -43,6 +44,7 @@ CraftSim.MODULES = {}
 ---@field label? string
 
 ---@class CraftSim.Module
+---@field Init fun(self: CraftSim.Module)
 ---@field moduleID CraftSim.ModuleID
 ---@field controlPanelData CraftSim.Module.ControlPanelData?
 ---@field isControlPanelModule boolean
@@ -86,6 +88,9 @@ function CraftSim.MODULES:Init()
 	for moduleID, module in pairs(CraftSim.MODULES.modules) do
 		Logger:LogDebug("Initializing Module UI: {module}", moduleID)
 		-- Inject module reference into UI if there is one
+		if module.Init then
+			module:Init()
+		end
 		if module.UI then
 			module.UI.module = module
 			module.UI:Init()
@@ -103,7 +108,7 @@ function CraftSim.MODULES:Init()
 end
 
 function CraftSim.MODULES:UpdateModuleVisibility(module)
-	if module.UI.VisibleByContext then
+	if module.UI and module.UI.VisibleByContext then
 		local visible = module.UI:VisibleByContext()
 		if CraftSim.UTIL:IsWorkOrder() and module.frameWO then
 			module.frameWO:SetVisible(visible)

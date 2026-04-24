@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 CraftSimAPI = {}
 
 ---Fetch a CraftSim.RecipeData instance for a recipe
@@ -61,4 +63,16 @@ function CraftSimAPI:GetLastCraftingCost(itemIDOrLink)
         return cost, timestamp, crafterUID
     end
     return nil, nil, nil
+end
+
+--- CraftSim triggers and listens to custom [events](Events.lua) for internal communication between modules.
+--- You can also register your own listeners to these events.
+--- If a table is registered any function that has the exact same name as an event will be called
+--- when that event is fired, with the event arguments passed as function arguments.
+--- E.g function RegisteredTable:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, isLogin, isReload)
+--- When registered, craftsim logging will also log your events to LogSink:Table / DevTool addon
+---@param table table the table to register the callback on (e.g. a module or UI frame)
+---@param events CraftSim.Event[]
+function CraftSimAPI:RegisterEvents(table, events)
+    GUTIL:RegisterCustomEvents(table, events)
 end
