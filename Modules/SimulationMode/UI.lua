@@ -100,7 +100,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                     anchorParent = frame.content,
                     anchorA = "BOTTOMLEFT",
                     anchorB = "BOTTOMLEFT",
-                    offsetX = 10 + offsetX,
+                    offsetX = 15 + offsetX,
                     offsetY = 30,
                     sizeX = 30,
                     sizeY = 30,
@@ -110,7 +110,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                         scale = 1.2,
                     },
                     onSelectCallback = function()
-                        --CraftSim.MODULES:Update()
+                        CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
                     end
                 })
                 return optionalReagentDropdown
@@ -523,20 +523,23 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
         itemSelector.isCurrencySlot = false
         itemSelector.selectedCurrencyID = nil
         itemSelector.currencyOptionalSlot = nil
+        itemSelector.slot = nil
         itemSelector:Hide()
     end
 
     local selectorIndex = 1
 
     local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
-
     for _, optionalReagentSlot in pairs(GUTIL:Concat({ { requiredSelectableReagentSlot }, optionalReagentSlots, finishingReagentSlots })) do
         local currentSelector = optionalReagentItemSelectors[selectorIndex]
+        if not currentSelector or not optionalReagentSlot then
+            break
+        end
         selectorIndex = selectorIndex + 1
 
+        currentSelector.slot = optionalReagentSlot
         currentSelector.currencyOptionalSlot = optionalReagentSlot
         currentSelector.isCurrencySlot = optionalReagentSlot:IsCurrency()
-
         currentSelector:SetItems(optionalReagentSlot:GetItemSelectorEntries())
 
         if optionalReagentSlot.activeReagent then
@@ -580,8 +583,7 @@ function CraftSim.SIMULATION_MODE.UI:Update()
     -- TODO: move to buff module and react to event
     --CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
-    -- only hide, they will be shown automatically if available
-    for _, selector in pairs(frame.optionalReagentItemSelectors) do
-        selector:Hide()
-    end
+    -- Rebuild selector visibility/options from current simulated recipe state.
+    -- This ensures optional + finishing reagent selectors are visible after UI refreshes.
+    self:InitOptionalReagentItemSelectors(recipeData)
 end

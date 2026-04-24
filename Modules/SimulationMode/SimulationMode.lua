@@ -216,14 +216,16 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(recipeData)
 
     local itemIDs = {}
     for _, optionalReagentItemSelector in pairs(optionalReagentItemSelectors) do
-        if optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
-            recipeData.reagentData:SetOptionalCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
+        local slot = optionalReagentItemSelector.slot
+        if slot and optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
+            slot:SetCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
         else
             local itemID = optionalReagentItemSelector.selectedItem and
                 optionalReagentItemSelector.selectedItem:GetItemID()
             if itemID then
                 -- try to set required selectable if available else put to optional/finishing
-                if tContains(possibleRequiredSelectableItemIDs, itemID) then
+                if slot == recipeData.reagentData.requiredSelectableReagentSlot or
+                    tContains(possibleRequiredSelectableItemIDs, itemID) then
                     recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
                 else
                     table.insert(itemIDs, itemID)
