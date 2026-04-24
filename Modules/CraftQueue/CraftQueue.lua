@@ -1459,6 +1459,10 @@ function CraftSim.CRAFTQ:AuctionatorQuickBuy()
         return
     end
 
+    if not AuctionatorShoppingFrame then
+        return
+    end
+
     if not AuctionatorShoppingFrame:IsVisible() then
         -- Auctionator owned lib
         LibAHTab = LibAHTab or LibStub("LibAHTab-1-0")
