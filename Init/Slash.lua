@@ -113,9 +113,21 @@ function CraftSim.SLASH:CMD_openprofession(arg1)
     end
 end
 
-function CraftSim.SLASH:CMD_bruto()
-    -- dont do it if mailbox or AH is open
-    if MailFrame:IsVisible() or AuctionHouseFrame:IsVisible() then
+function CraftSim.SLASH:CMD_bruto(...)
+    local args = ...
+    -- dont do it user disabled
+    if tContains(args, "nomail") and MailFrame:IsVisible() then
+        return
+    end
+    if tContains(args, "noah") and AuctionHouseFrame:IsVisible() then
+        return
+    end
+
+    if tContains(args, "noprof") and ProfessionsFrame:IsVisible() then
+        return
+    end
+
+    if tContains(args, "notable") and CraftSim.UTIL:IsNearProfessionsFrameCraftingTable() then
         return
     end
 
