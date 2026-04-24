@@ -50,7 +50,7 @@ function CraftSim.FRAME:RestoreModulePositions()
 
     infoFrame:RestoreSavedConfig(UIParent)
     CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
+    CraftSim.CRAFT_LOG.frame:RestoreSavedConfig(UIParent)
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)

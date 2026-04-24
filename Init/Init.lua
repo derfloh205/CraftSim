@@ -349,7 +349,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 
 		CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, onCraftData.amount, onCraftData.itemTargetLocation,
 			onCraftData.isEnchant)
-		CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
+		GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFT_RECIPE_DATA_PREPARED", recipeData)
 	end
 
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe",
