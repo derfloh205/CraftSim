@@ -105,6 +105,8 @@ Modules/Disenchant/UI.lua
 Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
 
+Modules/Shopping/Shopping.lua
+
 Modules/CraftQueue/CraftQueue.lua
 Modules/CraftQueue/Debug.lua
 Modules/CraftQueue/CraftLists.lua

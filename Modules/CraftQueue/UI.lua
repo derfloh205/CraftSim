@@ -1846,7 +1846,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 offsetY = -2,
                 offsetX = 5,
                 clickCallback = function()
-                    CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+                    CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
                 end,
                 label = L("CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL")
             })

@@ -167,7 +167,7 @@ function CraftSim.SLASH:CMD_craftqueue(args)
     elseif arg1 == "clear" then
         CraftSim.CRAFTQ:ClearAll()
     elseif arg1 == "createshoppinglist" then
-        CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+        CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
     end
 end
 
@@ -179,7 +179,7 @@ function CraftSim.SLASH:CMD_resetdb()
 end
 
 function CraftSim.SLASH:CMD_quickbuy()
-    CraftSim.CRAFTQ:AuctionatorQuickBuy()
+    CraftSim.SHOPPING:AuctionatorQuickBuy()
 end
 
 function CraftSim.SLASH:CMD_collectmail()

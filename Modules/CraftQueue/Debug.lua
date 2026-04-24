@@ -20,6 +20,6 @@ function CraftSim.CRAFTQ.DEBUG:Inspect_CraftQueueItems()
 end
 
 function CraftSim.CRAFTQ.DEBUG:Inspect_QuickBuyCache()
-    if not CraftSim.CRAFTQ.quickBuyCache then return end
-    CraftSim.DEBUG:InspectTable(CraftSim.CRAFTQ.quickBuyCache, "QuickBuyCache", true)
+    if not CraftSim.SHOPPING or not CraftSim.SHOPPING.quickBuyCache then return end
+    CraftSim.DEBUG:InspectTable(CraftSim.SHOPPING.quickBuyCache, "QuickBuyCache", true)
 end
