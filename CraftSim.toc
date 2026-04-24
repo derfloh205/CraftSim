@@ -132,6 +132,7 @@ Modules/Options/Options.lua
 Modules/Options/CraftSimOptionsTsm.xml
 
 Modules/SimulationMode/SimulationMode.lua
+Modules/SimulationMode/Debug.lua
 Modules/SimulationMode/UI.lua
 
 Modules/RecipeInfo/RecipeInfo.lua

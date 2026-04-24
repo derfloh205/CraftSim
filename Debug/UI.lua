@@ -56,6 +56,32 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         } },
         sizeX = 160, sizeY = 23,
         menuUtilCallback = function(ownerRegion, rootDescription)
+            local debugModules = GUTIL:Map(CraftSim.MODULES.modules, function(module)
+                if module.DEBUG then
+                    return module
+                end
+                return false
+            end)
+
+            for _, module in ipairs(debugModules) do
+                if module and module.DEBUG then
+                    local moduleLabel = module.DEBUG.label or module.moduleID
+                    local moduleDebugButton = rootDescription:CreateButton(moduleLabel)
+                    moduleDebugButton:CreateButton("Inspect Module Table", function()
+                        CraftSim.DEBUG:InspectTable(module, moduleLabel, true)
+                    end)
+
+                    for label, debugFunction in pairs(module.DEBUG) do
+                        if type(debugFunction) == "function" then
+                            local title = string.gsub(label, "_", " ")
+                            moduleDebugButton:CreateButton(title, debugFunction)
+                        end
+                    end
+                end
+            end
+
+            rootDescription:CreateDivider()
+
             local main = rootDescription:CreateButton("Main")
             main:CreateButton("Inspect CraftSim Addon Table", function()
                 CraftSim.DEBUG:InspectTable(CraftSim, "CraftSim", true)

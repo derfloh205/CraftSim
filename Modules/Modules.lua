@@ -37,12 +37,17 @@ CraftSim.MODULES = {}
 ---@field Update fun(self: CraftSim.Module.UI, ...: any)
 ---@field VisibleByContext? fun(self: CraftSim.Module.UI): boolean -- if not provided, true
 
+---@class CraftSim.Module.Debug
+---@field module CraftSim.Module
+---@field label? string
+
 ---@class CraftSim.Module
 ---@field moduleID CraftSim.ModuleID
 ---@field controlPanelData CraftSim.Module.ControlPanelData?
 ---@field isControlPanelModule boolean
 ---@field frame GGUI.Frame
 ---@field UI CraftSim.Module.UI
+---@field DEBUG CraftSim.Module.Debug?
 
 ---@type table<CraftSim.ModuleID, CraftSim.Module>
 CraftSim.MODULES.modules = {}
@@ -83,6 +88,10 @@ function CraftSim.MODULES:Init()
 		if module.UI then
 			module.UI.module = module
 			module.UI:Init()
+		end
+
+		if module.DEBUG then
+			module.DEBUG.module = module
 		end
 
 		-- TODO: create globally named ggui native anchor frames to be saved and restored to
