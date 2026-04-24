@@ -8,6 +8,11 @@ local tinsert = tinsert or table.insert
 
 ---@class CraftSim.PRE_CRAFT_BUFF_GATE
 CraftSim.PRE_CRAFT_BUFF_GATE = {}
+
+GUTIL:RegisterCustomEvents(CraftSim.PRE_CRAFT_BUFF_GATE, {
+    "CRAFTSIM_CRAFT_BUFFS_UPDATED",
+})
+
 local PCBG = CraftSim.PRE_CRAFT_BUFF_GATE
 
 ---@alias CraftSim.PreCraftBuffGateId string
@@ -221,11 +226,7 @@ function PCBG:ShouldRefreshCraftQueueOnAura(craftQueue)
     return false
 end
 
----@param unitTarget string
-function PCBG:UNIT_AURA(unitTarget)
-    if unitTarget ~= "player" then
-        return
-    end
+function PCBG:CRAFTSIM_CRAFT_BUFFS_UPDATED()
     if not self:ShouldRefreshCraftQueueOnAura(CraftSim.CRAFTQ) then
         return
     end

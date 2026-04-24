@@ -28,14 +28,17 @@ local QB_STATUS = {
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
-    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
+    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
 })
 
-CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ)
+CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
+    label = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL",
+    tooltip = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP",
+})
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -184,11 +187,6 @@ end
 ---@return boolean
 function CraftSim.CRAFTQ:IsMidnightShatterStaleAfterLoginEffective()
     return CraftSim.PRE_CRAFT_BUFF_GATE:IsMidnightShatterStaleAfterLoginEffective()
-end
-
----@param unitTarget string
-function CraftSim.CRAFTQ:UNIT_AURA(unitTarget)
-    CraftSim.PRE_CRAFT_BUFF_GATE:UNIT_AURA(unitTarget)
 end
 
 ---@param unitTarget string

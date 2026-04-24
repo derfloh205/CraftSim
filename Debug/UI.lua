@@ -116,21 +116,6 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
                 end
             end)
 
-            local craftQueue = rootDescription:CreateButton("CraftQueue")
-
-            craftQueue:CreateButton("Inspect CraftQueueItems", function()
-                local nameMap = {}
-                for index, cqi in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-                    nameMap["[" .. index .. "] " .. cqi.recipeData:GetCrafterUID() .. "-" .. cqi.recipeData.recipeName] =
-                        cqi
-                end
-                CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
-            end)
-
-            craftQueue:CreateButton("Inspect CraftQueue.QuickBuyCache", function()
-                CraftSim.DEBUG:InspectTable(CraftSim.CRAFTQ.quickBuyCache, "QuickBuyCache", true)
-            end)
-
             local craftLog = rootDescription:CreateButton("CraftLog")
 
             craftLog:CreateButton("Inspect CraftSessionData", function()
