@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.RECIPE_INFO
+---@class CraftSim.RECIPE_INFO : CraftSim.Module
 CraftSim.RECIPE_INFO = {}
 
 CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
@@ -13,9 +13,6 @@ CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
 GUTIL:RegisterCustomEvents(CraftSim.RECIPE_INFO, {
     "CRAFTSIM_RECIPE_DATA_UPDATED",
 })
-
--- Backward compatibility alias
-CraftSim.AVERAGEPROFIT = CraftSim.RECIPE_INFO
 
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frame = nil
