@@ -12,6 +12,7 @@ CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
 
 GUTIL:RegisterCustomEvents(CraftSim.RECIPE_INFO, {
     "CRAFTSIM_RECIPE_DATA_UPDATED",
+    "CRAFTSIM_ORDER_VIEW_CLOSED",
 })
 
 -- Backward compatibility alias
@@ -149,8 +150,17 @@ function CraftSim.RECIPE_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
         return
     end
 
+    -- Re-apply module visibility when fresh recipe data arrives (e.g. after order view reopen).
+    CraftSim.MODULES:UpdateModuleVisibility(self)
+
     local statWeights = self:CalculateStatWeights(recipeData)
     self.UI:UpdateDisplay(recipeData, statWeights)
+end
+
+function CraftSim.RECIPE_INFO:CRAFTSIM_ORDER_VIEW_CLOSED()
+    if self.frame then
+        self.frame:Hide()
+    end
 end
 
 --- Returns allocated and maximum knowledge points for this recipe from spec data
