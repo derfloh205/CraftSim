@@ -31,6 +31,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_PROFESSION_OPENED",
 	"CRAFTSIM_PROFESSION_TAB_CLICKED",
 	"CRAFTSIM_ORDER_VIEW_CLOSED",
+	"CRAFTSIM_CRAFT_BUFFS_UPDATED",
 })
 
 ---@type number?
@@ -689,4 +690,27 @@ end
 
 function CraftSim.INIT:CRAFTSIM_ORDER_VIEW_CLOSED()
 	CraftSim.MODULES:UpdateVisibilityByContext()
+end
+
+function CraftSim.INIT:CRAFTSIM_CRAFT_BUFFS_UPDATED()
+	if not ProfessionsFrame:IsVisible() then
+		return
+	end
+
+	if CraftSim.SIMULATION_MODE.isActive then
+		return
+	end
+
+	local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+	if not selectedTab or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO then return end
+	if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS then
+		if not ProfessionsFrame.OrdersPage.OrderView:IsVisible() then
+			return
+		end
+	end
+
+	local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+	if not recipeData then return end
+
+	GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 end

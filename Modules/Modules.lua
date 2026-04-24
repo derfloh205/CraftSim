@@ -43,7 +43,6 @@ CraftSim.MODULES = {}
 ---@field controlPanelData CraftSim.Module.ControlPanelData?
 ---@field isControlPanelModule boolean
 ---@field frame GGUI.Frame
----@field frameWO? GGUI.Frame
 ---@field UI CraftSim.Module.UI
 
 ---@type table<CraftSim.ModuleID, CraftSim.Module>
@@ -85,6 +84,11 @@ function CraftSim.MODULES:Init()
 		if module.UI then
 			module.UI.module = module
 			module.UI:Init()
+		end
+
+		-- TODO: create globally named ggui native anchor frames to be saved and restored to
+		if module.frame and module.frame.RestoreSavedConfig then
+			--module.frame:RestoreSavedConfig()
 		end
 	end
 end
@@ -267,6 +271,7 @@ function CraftSim.MODULES:VisibleByContext()
 	return true
 end
 
+<<<<<<< fix/recipe-info
 ---@return boolean
 function CraftSim.MODULES:IsWorkOrderUI()
 	return CraftSim.UTIL:IsWorkOrder()
@@ -431,6 +436,9 @@ function CraftSim.MODULES:Update()
 	CraftSim.INIT.lastRecipeID = CraftSim.INIT.initialRecipeID
 end
 
+=======
+---@param module CraftSim.Module
+>>>>>>> refactor/EventBasedModules
 ---@return function closedCallback, function minimizedCallback, function maximizedCallback
 function CraftSim.MODULES:GetModuleFrameStateCallbacks(module)
 	return function()
