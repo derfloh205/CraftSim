@@ -38,8 +38,6 @@ end
 function CraftSim.FRAME:RestoreModulePositions()
     local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-    local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
     local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
@@ -55,7 +53,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
-    averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
     topgearFrame:RestoreSavedConfig(ProfessionsFrame)
     topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
