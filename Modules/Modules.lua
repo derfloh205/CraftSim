@@ -351,7 +351,7 @@ function CraftSim.MODULES:Update()
 	-- end
 
 	if showCooldowns then
-		CraftSim.COOLDOWNS.UI:UpdateDisplay()
+		CraftSim.COOLDOWNS.UI:Update()
 	end
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
@@ -439,4 +439,13 @@ function CraftSim.MODULES:Update()
 	end
 
 	CraftSim.INIT.lastRecipeID = CraftSim.INIT.initialRecipeID
+end
+
+---@return function closedCallback, function minimizedCallback
+function CraftSim.MODULES:GetModuleFrameStateCallbacks(module)
+	return function()
+		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", module.moduleID)
+	end, function()
+		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", module.moduleID)
+	end
 end
