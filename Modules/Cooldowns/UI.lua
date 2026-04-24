@@ -152,7 +152,7 @@ function CraftSim.COOLDOWNS.UI:Init()
     local offsetX = 0
     local offsetY = 0
 
-    local onClose, onMinimize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
     ---@class CraftSim.COOLDOWNS.FRAME : GGUI.Frame
     CraftSim.COOLDOWNS.frame = GGUI.Frame({
@@ -170,7 +170,8 @@ function CraftSim.COOLDOWNS.UI:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = onClose,
-        onMinimizeCallback = onMinimize,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,

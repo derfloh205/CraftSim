@@ -441,11 +441,13 @@ function CraftSim.MODULES:Update()
 	CraftSim.INIT.lastRecipeID = CraftSim.INIT.initialRecipeID
 end
 
----@return function closedCallback, function minimizedCallback
+---@return function closedCallback, function minimizedCallback, function maximizedCallback
 function CraftSim.MODULES:GetModuleFrameStateCallbacks(module)
 	return function()
 		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", module.moduleID)
 	end, function()
 		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MINIMIZED", module.moduleID)
+	end, function()
+		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MAXIMIZED", module.moduleID)
 	end
 end
