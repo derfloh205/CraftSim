@@ -814,3 +814,7 @@ function CraftSim.COOLDOWNS.UI:UpdateTimers()
         activeRow:UpdateTimers()
     end
 end
+
+function CraftSim.COOLDOWNS.UI:VisibleByContext()
+    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+end
