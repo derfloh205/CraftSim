@@ -1,16 +1,24 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
+local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.RECIPE_INFO
 CraftSim.RECIPE_INFO = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
+    label = "CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL",
+    tooltip = "CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP",
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.RECIPE_INFO, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 -- Backward compatibility alias
 CraftSim.AVERAGEPROFIT = CraftSim.RECIPE_INFO
 
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frame = nil
----@type GGUI.Frame
-CraftSim.RECIPE_INFO.frameWO = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeInfo")
 
@@ -133,6 +141,16 @@ function CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
     local concentrationValue = recipeData:GetConcentrationValue()
 
     return CraftSim.Statweights(averageProfit, multicraftWeight, resourcefulnessWeight, concentrationValue)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not recipeData then
+        return
+    end
+
+    local statWeights = self:CalculateStatWeights(recipeData)
+    self.UI:UpdateDisplay(recipeData, statWeights)
 end
 
 --- Returns allocated and maximum knowledge points for this recipe from spec data

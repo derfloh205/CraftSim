@@ -7,6 +7,7 @@ CraftSim.MODULES = {}
 ---@alias CraftSim.ModuleID
 ---| "MODULE_REAGENT_OPTIMIZATION"
 ---| "MODULE_CONCENTRATION_TRACKER"
+---| "MODULE_RECIPE_INFO"
 ---| "MODULE_AVERAGE_PROFIT"
 ---| "MODULE_TOP_GEAR"
 ---| "MODULE_COST_OVERVIEW"
@@ -371,18 +372,7 @@ function CraftSim.MODULES:Update()
 		CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeData.recipeID)
 	end
 
-	-- AverageProfit (Recipe Info) Module
-	CraftSim.FRAME:ToggleFrame(averageProfitFrame,
-		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(averageProfitFrameWO,
-		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showAverageProfit then
-		local statWeights = CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
-
-		if statWeights then
-			CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
-		end
-	end
+	-- RecipeInfo is updated via CRAFTSIM_RECIPE_DATA_UPDATED subscribers.
 
 	-- Statistics Module
 	CraftSim.STATISTICS.UI:SetVisible(showStatistics, exportMode)
