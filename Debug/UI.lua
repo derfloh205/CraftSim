@@ -56,21 +56,13 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         } },
         sizeX = 160, sizeY = 23,
         menuUtilCallback = function(ownerRegion, rootDescription)
-            local debugModules = GUTIL:Map(CraftSim.MODULES.modules, function(module)
+            for moduleID, module in pairs(CraftSim.MODULES.modules) do
+                local moduleLabel = (module.DEBUG and module.DEBUG.label) or moduleID
+                local moduleDebugButton = rootDescription:CreateButton(moduleLabel)
+                moduleDebugButton:CreateButton("Inspect Module Table", function()
+                    CraftSim.DEBUG:InspectTable(module, moduleLabel, true)
+                end)
                 if module.DEBUG then
-                    return module
-                end
-                return false
-            end)
-
-            for _, module in ipairs(debugModules) do
-                if module and module.DEBUG then
-                    local moduleLabel = module.DEBUG.label or module.moduleID
-                    local moduleDebugButton = rootDescription:CreateButton(moduleLabel)
-                    moduleDebugButton:CreateButton("Inspect Module Table", function()
-                        CraftSim.DEBUG:InspectTable(module, moduleLabel, true)
-                    end)
-
                     for label, debugFunction in pairs(module.DEBUG) do
                         if type(debugFunction) == "function" then
                             local title = string.gsub(label, "_", " ")
