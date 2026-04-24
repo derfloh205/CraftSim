@@ -43,6 +43,9 @@
 --- Fired when a module frame is closed by the user.
 --- args: moduleID CraftSim.ModuleID
 ---| "CRAFTSIM_MODULE_CLOSED"
+--- Fired when a module frame is opened by the user.
+--- args: moduleID CraftSim.ModuleID
+---| "CRAFTSIM_MODULE_OPENED"
 --- Fired when a module frame is minimized by the user.
 --- args: moduleID CraftSim.ModuleID
 ---| "CRAFTSIM_MODULE_MINIMIZED"

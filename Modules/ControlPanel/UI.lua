@@ -52,8 +52,11 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                     return CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
                 end, function()
                     local checked = CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
-                    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, not checked)
-                    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
+                    if not checked then
+                        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_OPENED", moduleID)
+                    else
+                        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", moduleID)
+                    end
                 end)
                 cb:SetTooltip(function(tt, _)
                     GameTooltip_AddInstructionLine(tt, tooltip);

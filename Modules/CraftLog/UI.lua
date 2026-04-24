@@ -1497,3 +1497,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     self:UpdateReagentDetails(craftRecipeData)
     self:UpdateResultAnalysis(craftRecipeData)
 end
+
+function CraftSim.CRAFT_LOG.UI:VisibleByContext()
+    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+end
