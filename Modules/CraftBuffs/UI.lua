@@ -231,21 +231,5 @@ function CraftSim.CRAFT_BUFFS.UI:VisibleByContext()
     if not moduleEnabled then return false end
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
 
-    if not selectedTab then
-        return false
-    end
-
-    if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO then
-        return false
-    end
-
-    if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS then
-        if ProfessionsFrame.OrdersPage.OrderView:IsVisible() then
-            return true
-        else
-            return false
-        end
-    end
-
-    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    return CraftSim.UTIL:IsWorkOrder() or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
