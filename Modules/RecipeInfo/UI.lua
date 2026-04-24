@@ -12,8 +12,6 @@ CraftSim.RECIPE_INFO     = CraftSim.RECIPE_INFO
 
 ---@class CraftSim.RECIPE_INFO.UI
 CraftSim.RECIPE_INFO.UI  = {}
----@type table?
-CraftSim.RECIPE_INFO.UI.cachedDisplayState = nil
 
 local Logger             = CraftSim.DEBUG:RegisterLogger("RecipeInfo.UI")
 
@@ -212,9 +210,12 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
     local rows                  = {}
     local showProfitPct         = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
     local craftingCosts         = recipeData.priceData.craftingCosts
+    local rowCounter            = 0
 
     local function addTextRow(optKey, name, value, tooltip)
+        rowCounter = rowCounter + 1
         tinsert(rows, {
+            rowKey = optKey .. ":" .. tostring(rowCounter),
             optKey = optKey,
             type = "text",
             name = name,
@@ -224,7 +225,9 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
     end
 
     local function addIconsRow(optKey, items, tooltip)
+        rowCounter = rowCounter + 1
         tinsert(rows, {
+            rowKey = optKey .. ":" .. tostring(rowCounter),
             optKey = optKey,
             type = "icons",
             name = L("RECIPE_INFO_RESULT_ITEMS_LABEL"),
@@ -351,43 +354,24 @@ function CraftSim.RECIPE_INFO.UI:BuildDisplayState(recipeData, statWeights)
 end
 
 function CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
-    local state = self.cachedDisplayState
-    if not state then
-        return
-    end
-
     local recipeInfoFrame = self.module.frame
     local opts = CraftSim.RECIPE_INFO:GetDisplayOptions()
-    local priceOverrideWarning = recipeInfoFrame.content.priceOverrideWarning --[[@as GGUI.Texture]]
-    priceOverrideWarning:SetVisible(state.priceOverridesActive)
 
     local profitList = recipeInfoFrame.content.profitList --[[@as GGUI.FrameList]]
-    profitList:Remove()
+    for _, row in pairs(profitList.activeRows) do
+        if row and row.frame then
+            local rowData = row.recipeInfoRowData
+            local show = rowData and opts[rowData.optKey] and true or false
+            row.frame:SetShown(show)
 
-    for _, rowData in ipairs(state.rows) do
-        if opts[rowData.optKey] then
-            if rowData.type == "text" then
-                profitList:Add(function(row, columns)
-                    local nameColumn = columns[1]
-                    local valueColumn = columns[2]
-                    nameColumn.text:SetText(rowData.name)
-                    valueColumn.text:SetText(rowData.value)
-                    for i = 1, MAX_RESULT_ICONS do
-                        if valueColumn["icon" .. i] then
-                            valueColumn["icon" .. i]:Hide()
-                        end
-                    end
-                    row.tooltipOptions = rowData.tooltip and {
-                        anchor = "ANCHOR_CURSOR",
-                        owner = row.frame,
-                        text = rowData.tooltip,
-                    } or nil
-                end)
-            elseif rowData.type == "icons" then
-                profitList:Add(function(row, columns)
-                    local nameColumn = columns[1]
-                    local valueColumn = columns[2]
-                    nameColumn.text:SetText(rowData.name)
+            -- Ensure hidden rows do not occupy list height.
+            if row.frame.SetHeight then
+                row.frame:SetHeight(show and ROW_HEIGHT or 0.001)
+            end
+
+            if row.columns and row.columns[2] then
+                local valueColumn = row.columns[2]
+                if show and rowData and rowData.type == "icons" then
                     valueColumn.text:SetText("")
                     for i = 1, MAX_RESULT_ICONS do
                         local icon = valueColumn["icon" .. i]
@@ -401,14 +385,63 @@ function CraftSim.RECIPE_INFO.UI:RenderCachedDisplay()
                             end
                         end
                     end
-                    row.tooltipOptions = {
-                        anchor = "ANCHOR_CURSOR",
-                        owner = row.frame,
-                        text = rowData.tooltip,
-                    }
-                end)
+                elseif valueColumn then
+                    for i = 1, MAX_RESULT_ICONS do
+                        if valueColumn["icon" .. i] then
+                            valueColumn["icon" .. i]:Hide()
+                        end
+                    end
+                end
             end
         end
+    end
+
+    profitList:UpdateDisplay()
+end
+
+---@param state table
+function CraftSim.RECIPE_INFO.UI:RebuildRowsFromState(state)
+    local recipeInfoFrame = self.module.frame
+    local profitList = recipeInfoFrame.content.profitList --[[@as GGUI.FrameList]]
+    profitList:Remove()
+
+    for _, rowData in ipairs(state.rows) do
+        profitList:Add(function(row, columns)
+            local nameColumn = columns[1]
+            local valueColumn = columns[2]
+            row.recipeInfoRowKey = rowData.rowKey
+            row.recipeInfoRowData = rowData
+
+            nameColumn.text:SetText(rowData.name)
+            row.tooltipOptions = rowData.tooltip and {
+                anchor = "ANCHOR_CURSOR",
+                owner = row.frame,
+                text = rowData.tooltip,
+            } or nil
+
+            if rowData.type == "text" then
+                valueColumn.text:SetText(rowData.value)
+                for i = 1, MAX_RESULT_ICONS do
+                    if valueColumn["icon" .. i] then
+                        valueColumn["icon" .. i]:Hide()
+                    end
+                end
+            elseif rowData.type == "icons" then
+                valueColumn.text:SetText("")
+                for i = 1, MAX_RESULT_ICONS do
+                    local icon = valueColumn["icon" .. i]
+                    if icon then
+                        local item = rowData.items and rowData.items[i]
+                        if item then
+                            icon:SetItem(item)
+                            icon:Show()
+                        else
+                            icon:Hide()
+                        end
+                    end
+                end
+            end
+        end)
     end
 
     profitList:UpdateDisplay()
@@ -417,7 +450,12 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param statWeights CraftSim.Statweights
 function CraftSim.RECIPE_INFO.UI:UpdateDisplay(recipeData, statWeights)
-    self.cachedDisplayState = self:BuildDisplayState(recipeData, statWeights)
+    local recipeInfoFrame = self.module.frame
+    local priceOverrideWarning = recipeInfoFrame.content.priceOverrideWarning --[[@as GGUI.Texture]]
+    priceOverrideWarning:SetVisible(recipeData.priceData:PriceOverridesActive())
+
+    local state = self:BuildDisplayState(recipeData, statWeights)
+    self:RebuildRowsFromState(state)
     self:RenderCachedDisplay()
 end
 
