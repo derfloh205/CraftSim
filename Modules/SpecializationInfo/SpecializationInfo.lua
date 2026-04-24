@@ -19,5 +19,5 @@ GUTIL:RegisterCustomEvents(CraftSim.SPECIALIZATION_INFO, {
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.SPECIALIZATION_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
-    self.UI:UpdateRecipeData(recipeData)
+    self.UI:Update(recipeData)
 end
