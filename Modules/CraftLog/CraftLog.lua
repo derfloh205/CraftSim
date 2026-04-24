@@ -45,7 +45,6 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG:SetCraftedRecipeData(recipeData)
-    Logger:LogDebug("OnCraftRecipe: " .. tostring(recipeData))
     CraftSim.CRAFT_LOG.currentRecipeData = recipeData
 end
 
