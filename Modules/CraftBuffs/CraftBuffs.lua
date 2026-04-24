@@ -7,7 +7,6 @@ local Logger = CraftSim.DEBUG:RegisterLogger("CraftBuffs")
 
 local L = CraftSim.LOCAL:GetLocalizer()
 
-
 ---@class CraftSim.CRAFT_BUFFS : CraftSim.Module
 CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "UNIT_AURA" })
 
