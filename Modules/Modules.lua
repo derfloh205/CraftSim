@@ -62,6 +62,7 @@ GUTIL:RegisterCustomEvents(CraftSim.MODULES, {
 	"CRAFTSIM_MODULE_CLOSED",
 	"CRAFTSIM_MODULE_MINIMIZED",
 	"CRAFTSIM_MODULE_MAXIMIZED",
+	"CRAFTSIM_RECIPE_DATA_MODIFIED",
 })
 
 local f = GUTIL:GetFormatter()
@@ -293,4 +294,19 @@ function CraftSim.MODULES:GetModuleFrameStateCallbacks(module)
 	end, function()
 		GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_MAXIMIZED", module.moduleID)
 	end
+end
+
+---@param recipeData CraftSim.RecipeData?
+function CraftSim.MODULES:CRAFTSIM_RECIPE_DATA_MODIFIED(recipeData)
+	local updatedRecipeData = recipeData
+	if not updatedRecipeData then
+		updatedRecipeData = self:GetRecipeDataFromVisibleRecipe()
+	end
+
+	if not updatedRecipeData then
+		return
+	end
+
+	self.recipeData = updatedRecipeData
+	GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", updatedRecipeData)
 end

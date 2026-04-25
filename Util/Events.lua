@@ -23,6 +23,10 @@
 --- args: none
 ---| "CRAFTSIM_SIMULATION_MODE_ALLOCATION_CHANGED"
 --- Fired when the active RecipeData should be re-evaluated by all listening modules (reagent change, concentration toggle, sim mode update, etc.).
+--- This is emitted by components that mutate recipe-relevant state.
+--- args: recipeData CraftSim.RecipeData?
+---| "CRAFTSIM_RECIPE_DATA_MODIFIED"
+--- Fired after CraftSim.MODULES relays CRAFTSIM_RECIPE_DATA_MODIFIED and has prepared the updated RecipeData for listeners.
 --- args: recipeData CraftSim.RecipeData?
 ---| "CRAFTSIM_RECIPE_DATA_UPDATED"
 --- Fired when the player clicks one of the profession frame tabs (Recipe, Spec, Crafting Orders).

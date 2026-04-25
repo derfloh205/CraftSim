@@ -180,11 +180,6 @@ function CraftSim.SPECIALIZATION_INFO.UI:Update(recipeData)
     content.simResetButton:SetVisible(simulationModeEnabled)
     content.simMaxButton:SetVisible(simulationModeEnabled)
 
-    -- Figure out why the updated specialization data is not being used in the UI
-    if simulationModeEnabled and CraftSim.SIMULATION_MODE.specializationData then
-        specializationData = CraftSim.SIMULATION_MODE.specializationData
-    end
-
     if not specializationData then
         return
     end

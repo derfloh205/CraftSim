@@ -262,7 +262,6 @@ function CraftSim.INIT:HookToEvents()
 		if recipeData then
 			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 		end
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
 	end
 
 	local function OpenRecipeInfoUpdated(self, recipeInfo)
