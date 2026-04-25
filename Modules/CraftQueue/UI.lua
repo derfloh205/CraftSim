@@ -1129,7 +1129,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                         end
                                     end
                                     ProfessionsFrame.OrdersPage:ViewOrder(orderForView)
-                                    CraftSim.MODULES:Update()
+                                    GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED", recipeData)
                                 else
                                     if not ProfessionsFrame.CraftingPage:IsVisible() then
                                         ProfessionsFrame:GetTabButton(1):Click()

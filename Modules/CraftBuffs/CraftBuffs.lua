@@ -747,7 +747,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
         self.activeBuffInstanceIds = newActiveIds
 
         if haveActiveBuffsChanged then
-            OnCraftSimTrackedPlayerBuffsChanged()
+            GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFT_BUFFS_UPDATED")
         end
         return
     end

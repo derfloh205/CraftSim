@@ -52,17 +52,20 @@ function CraftSim.DISENCHANT:LoadItems()
 end
 
 function CraftSim.DISENCHANT:BAG_UPDATE_DELAYED()
-    if not self.frame:IsVisible() then return end
+    local frame = self.frame
+    if not frame or not frame:IsVisible() then return end
     CraftSim.DISENCHANT.UI:Update()
 end
 
 function CraftSim.DISENCHANT:BANKFRAME_OPENED()
-    if not self.frame:IsVisible() then return end
+    local frame = self.frame
+    if not frame or not frame:IsVisible() then return end
     CraftSim.DISENCHANT.UI:Update()
 end
 
 function CraftSim.DISENCHANT:BANKFRAME_CLOSED()
-    if not self.frame:IsVisible() then return end
+    local frame = self.frame
+    if not frame or not frame:IsVisible() then return end
     RunNextFrame(function()
         CraftSim.DISENCHANT.UI:Update()
     end)

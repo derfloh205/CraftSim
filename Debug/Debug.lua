@@ -91,7 +91,12 @@ end
 
 function CraftSim.DEBUG:ProfilingUpdate(label)
     local time = debugprofilestop()
-    local diff = time - CraftSim.DEBUG.profilings[label]
+    local startTime = CraftSim.DEBUG.profilings[label]
+    if not startTime then
+        profiling:LogWarning("Util Profiling Label not found on Update: {label}", label)
+        return
+    end
+    local diff = time - startTime
     profiling:LogInfo("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
 end
 
