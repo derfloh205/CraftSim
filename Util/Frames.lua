@@ -42,8 +42,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-    local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
 
     infoFrame:RestoreSavedConfig(UIParent)
@@ -58,7 +56,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
     reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
-    reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
     local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)

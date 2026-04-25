@@ -7,12 +7,14 @@ local f = GUTIL:GetFormatter()
 local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.REAGENT_OPTIMIZATION.UI
+---@field module CraftSim.REAGENT_OPTIMIZATION
+---@field recipeData CraftSim.RecipeData?
+---@field Update fun(self: CraftSim.REAGENT_OPTIMIZATION.UI, recipeData: CraftSim.RecipeData)
+---@field UpdateReagentDisplay fun(self: CraftSim.REAGENT_OPTIMIZATION.UI, recipeData: CraftSim.RecipeData)
 CraftSim.REAGENT_OPTIMIZATION.UI = {}
 
 ---@type CraftSim.RecipeData
 CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = nil
-
-local Logger = CraftSim.DEBUG:RegisterLogger("ReagentOptimization.UI")
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local sizeX = 310
@@ -21,32 +23,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local offsetY = -125
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
-    local frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        anchorParent = ProfessionsFrame,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER,
-        title = CraftSim.LOCAL:GetText("REAGENT_OPTIMIZATION_TITLE") ..
-            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"), GUTIL.COLORS.GREY),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        anchorA = "BOTTOMLEFT",
-        anchorB = "BOTTOMRIGHT",
-        offsetX = offsetX,
-        offsetY = offsetY,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_REAGENT_OPTIMIZATION"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
-    local frameNO_WO = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+    local frame = GGUI.Frame({
+        parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
@@ -60,13 +40,17 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_REAGENT_OPTIMIZATION"),
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
+    CraftSim.REAGENT_OPTIMIZATION.frame = frame
+    self.module.frame = frame
 
     local function createContent(frame)
         frame.content.maxQualityDropdown = GGUI.Dropdown {
@@ -81,7 +65,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     maxOptimizationQualities[currentRecipeID] = value
                 end
 
-                CraftSim.MODULES:Update()
+                CraftSim.REAGENT_OPTIMIZATION:Update()
             end,
         }
 
@@ -95,7 +79,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             tooltip = "If enabled, all qualities up to the max quality will be optimized, and the one with the highest profit will be shown",
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED", checked)
-                CraftSim.MODULES:Update()
+                CraftSim.REAGENT_OPTIMIZATION:Update()
             end
         }
 
@@ -203,7 +187,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             sizeX = 70,
             sizeY = 20,
             clickCallback = function()
-                local reagentOptimizationFrame = CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
+                local reagentOptimizationFrame = CraftSim.REAGENT_OPTIMIZATION.UI.module.frame
                 if reagentOptimizationFrame then
                     local optimizeFinishingReagents = CraftSim.DB.OPTIONS:Get(
                         "REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS")
@@ -217,7 +201,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     advancedOptimizationButton:SetEnabled(false)
 
                     local function finalizeOptimization()
-                        CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(
+                        CraftSim.REAGENT_OPTIMIZATION.UI:Update(
                             CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
                         advancedOptimizationButton:SetEnabled(false) -- keep disabled until update from init
                         advancedOptimizationButton:SetText("Optimized")
@@ -310,7 +294,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_CONCENTRATION_VALUE", not value)
-                        CraftSim.MODULES:Update()
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
 
                 concentrationCB:SetTooltip(function(tooltip, elementDescription)
@@ -325,7 +309,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     end, function()
                         local value = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_FINISHING_REAGENTS", not value)
-                        CraftSim.MODULES:Update()
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
 
                 finishingReagentsCB:SetTooltip(function(tooltip, elementDescription)
@@ -344,7 +328,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             FA.SIMPLE
                         return algo ~= FA.PERMUTATION
                     end,
-                    function() CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM", FA.SIMPLE) end)
+                    function()
+                        CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM", FA.SIMPLE)
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
+                    end)
                 simpleRadio:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip, L("OPTIMIZATION_OPTIONS_FINISHING_REAGENTS_SIMPLE_TOOLTIP"))
                 end)
@@ -359,6 +346,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     function()
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM",
                             FA.PERMUTATION)
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
                 permutationRadio:SetTooltip(function(tooltip, _)
                     GameTooltip_AddInstructionLine(tooltip,
@@ -374,7 +362,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:Update()
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
 
                 finishingReagentsSoulboundCB:SetTooltip(function(tooltip, elementDescription)
@@ -393,7 +381,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                         CraftSim.DB.OPTIONS:Save(
                             "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:Update()
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
 
                 onlyHighestQualitySoulboundCB:SetTooltip(function(tooltip, elementDescription)
@@ -410,7 +398,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                             "REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS")
                         CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_OPTIMIZE_LOCKED_FINISHING_REAGENTS",
                             not value)
-                        CraftSim.MODULES:Update()
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
 
                 finishingReagentsLockedSlotsCB:SetTooltip(function(tooltip, elementDescription)
@@ -569,23 +557,17 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
         frame:Hide()
     end
 
-    createContent(frameNO_WO)
-    createContent(frameWO)
+    createContent(frame)
 end
 
-function CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        return GGUI:GetFrame(CraftSim.INIT.FRAMES,
-            CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
-    else
-        return GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-    end
+---@param recipeData CraftSim.RecipeData
+function CraftSim.REAGENT_OPTIMIZATION.UI:Update(recipeData)
+    self:UpdateReagentDisplay(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
-    local reagentOptimizationFrame = self:GetFrameByExportMode()
+    local reagentOptimizationFrame = self.module.frame
 
     if not reagentOptimizationFrame then return end
 
@@ -761,4 +743,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         end
     end
     reagentList:UpdateDisplay()
+end
+
+function CraftSim.REAGENT_OPTIMIZATION.UI:VisibleByContext()
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    local hasSchematicForm = CraftSim.UTIL:GetSchematicFormByContext()
+
+    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_REAGENT_OPTIMIZATION") and (isRecipeTab or isCraftingOrderTab) and
+        hasSchematicForm
 end

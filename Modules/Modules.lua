@@ -137,8 +137,6 @@ function CraftSim.MODULES:RestorePositions()
 	-- local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
 	-- local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
 	-- 	CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	-- local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-	-- 	CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	-- local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
 	-- local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
 
