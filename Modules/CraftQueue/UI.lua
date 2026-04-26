@@ -904,7 +904,6 @@ function CraftSim.CRAFTQ.UI:Init()
         onCollapseOpenCallback = onMax,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        hide = true,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
