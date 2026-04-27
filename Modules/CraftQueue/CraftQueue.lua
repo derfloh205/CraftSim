@@ -26,6 +26,19 @@ CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
 
+--- Queue recipe editor GGUI frame (same instance as `queueTab.content.editRecipeFrame` after UI init).
+---@return CraftSim.CRAFTQ.EditRecipeFrame?
+function CraftSim.CRAFTQ:GetEditRecipeFrame()
+    if not self.frame or not self.frame.content or not self.frame.content.queueTab then
+        return nil
+    end
+    local queueTab = self.frame.content.queueTab
+    if not queueTab.content then
+        return nil
+    end
+    return queueTab.content.editRecipeFrame
+end
+
 ---@type CraftSim.RecipeData | nil
 CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
 
@@ -1125,10 +1138,10 @@ end
 
 function CraftSim.CRAFTQ:OnRecipeEditSave()
     Logger:LogDebug("OnRecipeEditSave")
-    ---@type CraftSim.CRAFTQ.EditRecipeFrame
-    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
-
-    editRecipeFrame:Hide()
+    local editRecipeFrame = self:GetEditRecipeFrame()
+    if editRecipeFrame then
+        editRecipeFrame:Hide()
+    end
 end
 
 ---@param recipeID RecipeID

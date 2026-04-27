@@ -104,6 +104,32 @@ local CRAFT_QUEUE_RESULT_ICON_SLOTS = 4
 local CRAFT_QUEUE_RESULT_COLUMN_WIDTH =
     CRAFT_QUEUE_RESULT_ICON_SIZE * 4 + CRAFT_QUEUE_RESULT_ICON_SPACING * 3 + 16
 
+-- Edit popup layering:
+-- DIALOG keeps it above queue UI while still allowing MenuUtil context menus/submenus above it.
+local CRAFTQ_EDIT_FRAME_STRATA = "DIALOG"
+-- Selector popups (ItemSelector selection frames) should sit above edit popup content/backdrop.
+local CRAFTQ_EDIT_SELECTOR_STRATA = "FULLSCREEN_DIALOG"
+local CRAFTQ_EDIT_SELECTOR_FRAMELEVEL_OFFSET = 20
+
+---@param editRecipeFrame CraftSim.CRAFTQ.EditRecipeFrame
+---@param anchorA FramePoint?
+---@param anchorB FramePoint?
+---@param offsetX number?
+---@param offsetY number?
+local function BuildEditSelectorFrameOptions(editRecipeFrame, anchorA, anchorB, offsetX, offsetY)
+    return {
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        title = L("CRAFT_QUEUE_EDIT_RECIPE_REAGENTS_SELECT_LABEL"),
+        anchorA = anchorA,
+        anchorB = anchorB,
+        offsetX = offsetX,
+        offsetY = offsetY,
+        frameStrata = CRAFTQ_EDIT_SELECTOR_STRATA,
+        frameLevel = (editRecipeFrame.frame and editRecipeFrame.frame:GetFrameLevel() or 0) +
+            CRAFTQ_EDIT_SELECTOR_FRAMELEVEL_OFFSET,
+    }
+end
+
 ---@class CraftSim.CraftQueue.ResultColumnEntry
 ---@field kind "item"|"currency"|"firstcraft"
 ---@field item? ItemMixin
@@ -1159,10 +1185,7 @@ function CraftSim.CRAFTQ.UI:Init()
 
                                     rootDescription:CreateButton(L("CRAFT_QUEUE_BUTTON_EDIT"),
                                         function()
-                                            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
-                                            if not CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:IsVisible() then
-                                                CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:Show()
-                                            end
+                                            CraftSim.CRAFTQ.UI:OpenEditRecipeFrame(craftQueueItem)
                                         end)
                                     rootDescription:CreateButton(f.r("Remove"), function()
                                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
@@ -1895,7 +1918,8 @@ function CraftSim.CRAFTQ.UI:Init()
             justifyOptions = { type = "H", align = "RIGHT" }
         })
 
-        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(queueTab.content, frame.content)
+        -- Parent to UIParent so the editor stacks above ProfessionsFrame/schematic (same pattern as craft list popups).
+        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(UIParent, frame.frame)
 
         CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
 
@@ -3094,7 +3118,15 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         parent = parent, anchorParent = anchorParent,
         sizeX = editFrameX, sizeY = editFrameY, backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         title = L("CRAFT_QUEUE_EDIT_RECIPE_TITLE"),
-        frameStrata = "DIALOG", closeable = true, closeOnClickOutside = true, moveable = true, frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE,
+        -- Keep popup above module UI, but below MenuUtil context menus so submenus are not occluded.
+        frameStrata = CRAFTQ_EDIT_FRAME_STRATA,
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        raiseOnInteraction = true,
+        closeable = true,
+        -- Opening from a context menu counts as an "outside" click and would close immediately if true.
+        closeOnClickOutside = false,
+        moveable = true, frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     }
 
     ---@type CraftSim.CraftQueueItem?
@@ -3258,10 +3290,8 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             parent = parent, anchorParent = anchorParent, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
             offsetX = itemSelectorBaseOffsetX + itemSelectorSpacingX * numSelectors,
             offsetY = itemSelectorBaseOffsetY,
-            sizeX = itemSelectorSizeX, sizeY = itemSelectorSizeY, selectionFrameOptions = {
-            backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-            title = L("CRAFT_QUEUE_EDIT_RECIPE_REAGENTS_SELECT_LABEL"), anchorA = anchorA, anchorB = anchorB, offsetX = offsetX, offsetY = offsetY
-        },
+            sizeX = itemSelectorSizeX, sizeY = itemSelectorSizeY,
+            selectionFrameOptions = BuildEditSelectorFrameOptions(editRecipeFrame, anchorA, anchorB, offsetX, offsetY),
             emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD, isAtlas = true, onSelectCallback = onSelectCallback
         })
     end
@@ -3492,7 +3522,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     do
         local cbFrame = editRecipeFrame.content.concentrationCB.frame
         cbFrame:SetScript("OnEnter", function()
-            local frame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+            local frame = editRecipeFrame
             local craftQueueItem = frame.craftQueueItem
             if not craftQueueItem or not craftQueueItem.recipeData or not craftQueueItem.recipeData.supportsQualities then return end
             local recipeData = craftQueueItem.recipeData
@@ -3982,10 +4012,58 @@ function CraftSim.CRAFTQ.UI:Update()
     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
 end
 
+--- Opens the queue recipe editor: ensures the Queue tab is active (edit frame is parented there), refreshes data, then shows and raises the popup.
+---@param craftQueueItem CraftSim.CraftQueueItem
+function CraftSim.CRAFTQ.UI:OpenEditRecipeFrame(craftQueueItem)
+    local cqFrame = CraftSim.CRAFTQ.frame
+    if not cqFrame then
+        return
+    end
+    if not cqFrame.content then
+        return
+    end
+
+    local queueTab = cqFrame.content.queueTab
+
+    local function finishOpen()
+        local editRecipeFrame = queueTab and queueTab.content and queueTab.content.editRecipeFrame
+        if not editRecipeFrame then
+            return
+        end
+
+        local updateOk = pcall(function()
+            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
+        end)
+        if not updateOk then
+            Logger:LogDebug("OpenEditRecipeFrame: UpdateEditRecipeFrameDisplay failed")
+            return
+        end
+
+        editRecipeFrame:Show()
+        if editRecipeFrame.Raise then
+            editRecipeFrame:Raise()
+        end
+        local host = editRecipeFrame.frame
+        if host then
+            host:SetToplevel(true)
+            host:Raise()
+        end
+    end
+
+    if queueTab and queueTab.content and queueTab.button and not queueTab.content:IsShown() then
+        queueTab.button:Click()
+    end
+    -- One frame after tab switch / menu close so the dialog is not dismissed or obscured by the same interaction.
+    RunNextFrame(finishOpen)
+end
+
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
-    ---@type CraftSim.CRAFTQ.EditRecipeFrame
-    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame?
+    local editRecipeFrame = CraftSim.CRAFTQ:GetEditRecipeFrame()
+    if not editRecipeFrame then
+        return
+    end
     local recipeData = craftQueueItem.recipeData
     recipeData.reagentData:RefreshSlotStatus()
     recipeData:RefreshCooldownDataIfProfessionOpen()
