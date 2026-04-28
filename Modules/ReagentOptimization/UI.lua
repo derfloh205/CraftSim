@@ -13,7 +13,7 @@ local L = CraftSim.LOCAL:GetLocalizer()
 ---@field UpdateReagentDisplay fun(self: CraftSim.REAGENT_OPTIMIZATION.UI, recipeData: CraftSim.RecipeData)
 CraftSim.REAGENT_OPTIMIZATION.UI = {}
 
----@type CraftSim.RecipeData
+---@type CraftSim.RecipeData?
 CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = nil
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
