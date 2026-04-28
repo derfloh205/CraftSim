@@ -2123,7 +2123,7 @@ function CraftSim.CRAFTQ.UI:Init()
         end)
     end)
     CraftSim.CRAFTQ.frame:HookScript("OnHide", function()
-        GUTIL:TriggerCustomEvent("CRAFTQUEUE_FRAME_HIDDEN")
+        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_CRAFT_QUEUE")
     end)
 end
 

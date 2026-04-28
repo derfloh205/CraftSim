@@ -68,6 +68,3 @@
 --- Fired to open the queue recipe editor for a queue row (listener owns the editor frame).
 --- args: craftQueueItem CraftSim.CraftQueueItem
 ---| "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN"
---- Fired when the Craft Queue module window is hidden (editor should hide if shown).
---- args: none
----| "CRAFTQUEUE_FRAME_HIDDEN"

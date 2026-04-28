@@ -24,14 +24,18 @@ function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN(craftQue
     CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
 end
 
-function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_FRAME_HIDDEN()
-    CraftSim.CRAFTQ.EditRecipe.UI:HideIfCraftQueueHidden()
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CRAFTQ.EditRecipe:CRAFTSIM_MODULE_CLOSED(moduleID)
+    if moduleID ~= "MODULE_CRAFT_QUEUE" then
+        return
+    end
+    CraftSim.CRAFTQ.EditRecipe.UI:Hide()
 end
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ.EditRecipe, {
     "CRAFTQUEUE_EDIT_RECIPE_HOST_READY",
     "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN",
-    "CRAFTQUEUE_FRAME_HIDDEN",
+    "CRAFTSIM_MODULE_CLOSED",
 })
 
 -- Edit popup layering:
@@ -1007,8 +1011,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
     editRecipeFrame.content.concentrationCB:SetChecked(craftQueueItem.concentrating)
 end
 
---- Hides the editor when the craft queue module frame is hidden (editor is parented to UIParent).
-function CraftSim.CRAFTQ.EditRecipe.UI:HideIfCraftQueueHidden()
+function CraftSim.CRAFTQ.EditRecipe.UI:Hide()
     local editRecipeFrame = CraftSim.CRAFTQ.EditRecipe.editor
     if editRecipeFrame and editRecipeFrame:IsVisible() then
         editRecipeFrame:Hide()
