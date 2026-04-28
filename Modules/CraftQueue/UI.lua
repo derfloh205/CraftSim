@@ -2122,9 +2122,6 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         end)
     end)
-    CraftSim.CRAFTQ.frame:HookScript("OnHide", function()
-        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_CRAFT_QUEUE")
-    end)
 end
 
 ---@param craftListsTab CraftSim.CraftQueue.CraftListsTab
@@ -3085,7 +3082,6 @@ function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
         end,
     }
 end
-
 
 function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
