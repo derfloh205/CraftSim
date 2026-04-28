@@ -40,6 +40,7 @@ function CraftSim.CRAFT_LOG.UI:Init()
         onMaximizeCallback = onMaximizeCallback,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "DIALOG",
+        hide = true,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
