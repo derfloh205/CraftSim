@@ -62,3 +62,12 @@
 --- Fired when the set of active tracked craft buffs changes (buff added or removed).
 --- args: none
 ---| "CRAFTSIM_CRAFT_BUFFS_UPDATED"
+--- Fired once the Craft Queue module frame exists so the queue recipe editor can anchor and create its popup (parent/anchor only; no queue tab reference).
+--- args: parent frame, anchorParent Region (typically the Craft Queue GGUI frame's `.frame`)
+---| "CRAFTQUEUE_EDIT_RECIPE_HOST_READY"
+--- Fired to open the queue recipe editor for a queue row (listener owns the editor frame).
+--- args: craftQueueItem CraftSim.CraftQueueItem
+---| "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN"
+--- Fired when the Craft Queue module window is hidden (editor should hide if shown).
+--- args: none
+---| "CRAFTQUEUE_FRAME_HIDDEN"

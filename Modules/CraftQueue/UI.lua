@@ -1160,7 +1160,8 @@ function CraftSim.CRAFTQ.UI:Init()
 
                                     rootDescription:CreateButton(L("CRAFT_QUEUE_BUTTON_EDIT"),
                                         function()
-                                            CraftSim.CRAFTQ.UI:OpenEditRecipeFrame(craftQueueItem)
+                                            GUTIL:TriggerCustomEvent("CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN",
+                                                craftQueueItem)
                                         end)
                                     rootDescription:CreateButton(f.r("Remove"), function()
                                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
@@ -1894,7 +1895,7 @@ function CraftSim.CRAFTQ.UI:Init()
         })
 
         -- Parent to UIParent so the editor stacks above ProfessionsFrame/schematic (same pattern as craft list popups).
-        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(UIParent, frame.frame)
+        GUTIL:TriggerCustomEvent("CRAFTQUEUE_EDIT_RECIPE_HOST_READY", UIParent, frame.frame)
 
         CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
 
@@ -2122,7 +2123,7 @@ function CraftSim.CRAFTQ.UI:Init()
         end)
     end)
     CraftSim.CRAFTQ.frame:HookScript("OnHide", function()
-        CraftSim.CRAFTQ.EditRecipe.UI:HideIfCraftQueueHidden()
+        GUTIL:TriggerCustomEvent("CRAFTQUEUE_FRAME_HIDDEN")
     end)
 end
 
@@ -3445,25 +3446,6 @@ function CraftSim.CRAFTQ.UI:Update()
     CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
 end
-
---- Queue recipe editor: implementation in `EditRecipeUI.lua` (show/hide lifecycle, layering, popup UI).
----@param parent frame
----@param anchorParent Region
----@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
-function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
-    return CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
-end
-
----@param craftQueueItem CraftSim.CraftQueueItem
-function CraftSim.CRAFTQ.UI:OpenEditRecipeFrame(craftQueueItem)
-    CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
-end
-
----@param craftQueueItem CraftSim.CraftQueueItem
-function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
-    CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
-end
-
 
 ---@param row GGUI.FrameList.Row
 ---@param craftQueueItem CraftSim.CraftQueueItem

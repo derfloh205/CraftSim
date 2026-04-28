@@ -9,9 +9,30 @@ local f = GUTIL:GetFormatter()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueue.EditRecipe")
 
+---@class CraftSim.CRAFTQ.EditRecipe
+---@field editor CraftSim.CRAFTQ.EditRecipeFrame?
 CraftSim.CRAFTQ.EditRecipe = CraftSim.CRAFTQ.EditRecipe or {}
 ---@class CraftSim.CRAFTQ.EditRecipe.UI
 CraftSim.CRAFTQ.EditRecipe.UI = {}
+
+function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_EDIT_RECIPE_HOST_READY(parent, anchorParent)
+    CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
+end
+
+---@param craftQueueItem CraftSim.CraftQueueItem
+function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN(craftQueueItem)
+    CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
+end
+
+function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_FRAME_HIDDEN()
+    CraftSim.CRAFTQ.EditRecipe.UI:HideIfCraftQueueHidden()
+end
+
+GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ.EditRecipe, {
+    "CRAFTQUEUE_EDIT_RECIPE_HOST_READY",
+    "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN",
+    "CRAFTQUEUE_FRAME_HIDDEN",
+})
 
 -- Edit popup layering:
 -- DIALOG keeps it above queue UI while still allowing MenuUtil context menus/submenus above it.
@@ -131,6 +152,9 @@ end
 ---@param anchorParent Region
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
 function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
+    if CraftSim.CRAFTQ.EditRecipe.editor then
+        return CraftSim.CRAFTQ.EditRecipe.editor
+    end
     local editFrameX = 600
     local editFrameY = 350
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
@@ -672,6 +696,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
 
     RegisterEditRecipeFrameAutoHide(editRecipeFrame)
     editRecipeFrame:Hide()
+    CraftSim.CRAFTQ.EditRecipe.editor = editRecipeFrame
     return editRecipeFrame
 end
 
@@ -689,7 +714,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
     local queueTab = cqFrame.content.queueTab
 
     local function finishOpen()
-        local editRecipeFrame = queueTab and queueTab.content and queueTab.content.editRecipeFrame
+        local editRecipeFrame = CraftSim.CRAFTQ.EditRecipe.editor
         if not editRecipeFrame then
             return
         end
@@ -725,7 +750,7 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame?
-    local editRecipeFrame = CraftSim.CRAFTQ:GetEditRecipeFrame()
+    local editRecipeFrame = CraftSim.CRAFTQ.EditRecipe.editor
     if not editRecipeFrame then
         return
     end
@@ -984,7 +1009,7 @@ end
 
 --- Hides the editor when the craft queue module frame is hidden (editor is parented to UIParent).
 function CraftSim.CRAFTQ.EditRecipe.UI:HideIfCraftQueueHidden()
-    local editRecipeFrame = CraftSim.CRAFTQ:GetEditRecipeFrame()
+    local editRecipeFrame = CraftSim.CRAFTQ.EditRecipe.editor
     if editRecipeFrame and editRecipeFrame:IsVisible() then
         editRecipeFrame:Hide()
     end
