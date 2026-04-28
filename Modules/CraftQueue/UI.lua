@@ -1895,7 +1895,7 @@ function CraftSim.CRAFTQ.UI:Init()
         })
 
         -- Parent to UIParent so the editor stacks above ProfessionsFrame/schematic (same pattern as craft list popups).
-        GUTIL:TriggerCustomEvent("CRAFTQUEUE_EDIT_RECIPE_HOST_READY", UIParent, frame.frame)
+        CraftSim.CRAFTQ.EditRecipe.UI:Init(UIParent, frame.frame)
 
         CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, frame)
 

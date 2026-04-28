@@ -15,10 +15,6 @@ CraftSim.CRAFTQ.EditRecipe = CraftSim.CRAFTQ.EditRecipe or {}
 ---@class CraftSim.CRAFTQ.EditRecipe.UI
 CraftSim.CRAFTQ.EditRecipe.UI = {}
 
-function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_EDIT_RECIPE_HOST_READY(parent, anchorParent)
-    CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
-end
-
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function CraftSim.CRAFTQ.EditRecipe:CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN(craftQueueItem)
     CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
@@ -33,7 +29,6 @@ function CraftSim.CRAFTQ.EditRecipe:CRAFTSIM_MODULE_CLOSED(moduleID)
 end
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ.EditRecipe, {
-    "CRAFTQUEUE_EDIT_RECIPE_HOST_READY",
     "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN",
     "CRAFTSIM_MODULE_CLOSED",
 })
@@ -64,94 +59,6 @@ local function BuildEditSelectorFrameOptions(editRecipeFrame, anchorA, anchorB, 
     }
 end
 
---- Editor is parented to UIParent; hide it when the queue window hides and on left-click release outside
---- (GGUI `closeOnClickOutside` is off because it ignores ItemSelector popups and MenuUtil menus).
----@param editRecipeFrame CraftSim.CRAFTQ.EditRecipeFrame
-local function RegisterEditRecipeFrameAutoHide(editRecipeFrame)
-    editRecipeFrame.editOutsideCloseGraceUntil = 0
-    editRecipeFrame.editOutsideCloseArmed = false
-
-    local function mouseOverItemSelectorPopups()
-        local content = editRecipeFrame.content
-        if not content then
-            return false
-        end
-        local lists = {
-            content.optionalReagentSelectors,
-            content.finishingReagentSelectors,
-            content.requiredSelectableReagentSelectors,
-            content.professionGearSelectors,
-        }
-        for _, selectors in ipairs(lists) do
-            for _, sel in ipairs(selectors or {}) do
-                local sf = sel.selectionFrame
-                if sf and sf:IsVisible() and sf.frame and sf.frame:IsMouseOver() then
-                    return true
-                end
-            end
-        end
-        return false
-    end
-
-    local function mouseOverOpenBlizzardMenu()
-        if not Menu or not Menu.GetManager then
-            return false
-        end
-        local ok, hover = pcall(function()
-            local mgr = Menu.GetManager()
-            if not mgr or not mgr.GetOpenMenu then
-                return false
-            end
-            local open = mgr:GetOpenMenu()
-            if not open or not open.IsShown or not open:IsShown() then
-                return false
-            end
-            return open.IsMouseOver and open:IsMouseOver() or false
-        end)
-        return ok and hover or false
-    end
-
-    local function isDismissInteractionBlockedByHover()
-        local host = editRecipeFrame.frame
-        if host and host:IsMouseOver() then
-            return true
-        end
-        if mouseOverItemSelectorPopups() then
-            return true
-        end
-        if mouseOverOpenBlizzardMenu() then
-            return true
-        end
-        local cq = CraftSim.CRAFTQ.frame
-        if cq and cq.frame and cq.frame:IsVisible() and cq.frame:IsMouseOver() then
-            return true
-        end
-        return false
-    end
-
-    editRecipeFrame.frame:HookScript("OnUpdate", function()
-        if not editRecipeFrame:IsVisible() then
-            editRecipeFrame.editOutsideCloseArmed = false
-            return
-        end
-        if GetTime() < (editRecipeFrame.editOutsideCloseGraceUntil or 0) then
-            return
-        end
-        if not IsMouseButtonDown("LeftButton") then
-            if editRecipeFrame.editOutsideCloseArmed then
-                editRecipeFrame:Hide()
-                editRecipeFrame.editOutsideCloseArmed = false
-            end
-            return
-        end
-        if isDismissInteractionBlockedByHover() then
-            editRecipeFrame.editOutsideCloseArmed = false
-        else
-            editRecipeFrame.editOutsideCloseArmed = true
-        end
-    end)
-end
-
 ---@param parent frame
 ---@param anchorParent Region
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
@@ -162,8 +69,6 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
     local editFrameX = 600
     local editFrameY = 350
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
-    ---@field editOutsideCloseGraceUntil number
-    ---@field editOutsideCloseArmed boolean
     local editRecipeFrame = GGUI.Frame {
         parent = parent, anchorParent = anchorParent,
         sizeX = editFrameX, sizeY = editFrameY, backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -698,7 +603,6 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
         scale = 0.9,
     }
 
-    RegisterEditRecipeFrameAutoHide(editRecipeFrame)
     editRecipeFrame:Hide()
     CraftSim.CRAFTQ.EditRecipe.editor = editRecipeFrame
     return editRecipeFrame
@@ -740,8 +644,6 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Open(craftQueueItem)
             host:SetToplevel(true)
             host:Raise()
         end
-        editRecipeFrame.editOutsideCloseGraceUntil = GetTime() + 0.65
-        editRecipeFrame.editOutsideCloseArmed = false
     end
 
     if queueTab and queueTab.content and queueTab.button and not queueTab.content:IsShown() then
