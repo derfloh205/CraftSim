@@ -62,3 +62,6 @@
 --- Fired when the set of active tracked craft buffs changes (buff added or removed).
 --- args: none
 ---| "CRAFTSIM_CRAFT_BUFFS_UPDATED"
+--- Fired to open the queue recipe editor for a queue row (listener owns the editor frame).
+--- args: craftQueueItem CraftSim.CraftQueueItem
+---| "CRAFTQUEUE_EDIT_RECIPE_REQUEST_OPEN"

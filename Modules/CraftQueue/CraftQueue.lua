@@ -568,7 +568,8 @@ function CraftSim.CRAFTQ:AddRecipe(options)
     local function finalizeAdd()
         CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOW") then
-            CraftSim.DB.OPTIONS:Save("MODULE_CRAFT_QUEUE", true)
+            -- MODULES_ENABLED must match the frame; Save("MODULE_CRAFT_QUEUE") did not update it.
+            CraftSim.DB.OPTIONS:SetModuleEnabled("MODULE_CRAFT_QUEUE", true)
             CraftSim.CRAFTQ.frame:Show()
             CraftSim.CRAFTQ.frame:Raise()
         end
@@ -1121,14 +1122,6 @@ function CraftSim.CRAFTQ:QueueFirstCrafts()
             frameDistributor:Continue()
         end
     }:Continue()
-end
-
-function CraftSim.CRAFTQ:OnRecipeEditSave()
-    Logger:LogDebug("OnRecipeEditSave")
-    ---@type CraftSim.CRAFTQ.EditRecipeFrame
-    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
-
-    editRecipeFrame:Hide()
 end
 
 ---@param recipeID RecipeID
