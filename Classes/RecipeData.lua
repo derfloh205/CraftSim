@@ -2385,6 +2385,37 @@ function CraftSim.RecipeData:Craft(amount)
 end
 
 --- Returns wether the recipe can be crafted with the set reagents a specified amount of times
+---@return boolean isDisabled
+---@return string? disabledReason
+function CraftSim.RecipeData:GetLiveDisabledState()
+    if not self:IsCrafter() or not self:IsProfessionOpen() then
+        return false, nil
+    end
+
+    local requirements = C_TradeSkillUI.GetRecipeRequirements(self.recipeID) or {}
+    local unmetRequirements = {}
+    for _, requirement in ipairs(requirements) do
+        if requirement and requirement.met == false then
+            tinsert(unmetRequirements, requirement.requirementText or requirement.name or requirement.description)
+        end
+    end
+    if #unmetRequirements > 0 then
+        local requirementText = table.concat(unmetRequirements, ", ")
+        if requirementText ~= "" then
+            return true, requirementText
+        end
+        return true, "Missing required tools or location"
+    end
+
+    local liveRecipeInfo = C_TradeSkillUI.GetRecipeInfo(self.recipeID)
+    if liveRecipeInfo and liveRecipeInfo.disabled then
+        return true, liveRecipeInfo.disabledReason
+    end
+
+    return false, nil
+end
+
+--- Returns wether the recipe can be crafted with the set reagents a specified amount of times
 ---@param amount number
 ---@return boolean craftAble is the given amount craftable
 ---@return number canCraftAmount how many can be crafted
@@ -2409,6 +2440,10 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
+    local apiDisabled = self:GetLiveDisabledState()
+    if apiDisabled then
+        return false, craftAbleAmount
+    end
 
     -- CraftSim.DEBUG:SystemPrint("CanCraft")
     -- CraftSim.DEBUG:SystemPrint("hasEnoughReagents: " .. tostring(hasEnoughReagents))

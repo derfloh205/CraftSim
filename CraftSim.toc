@@ -112,6 +112,7 @@ Modules/CraftQueue/CraftLists.lua
 Modules/CraftQueue/EditRecipe.lua
 Modules/CraftQueue/UI.lua
 Modules/CraftQueue/PreCraftBuffGate.lua
+Modules/CraftQueue/PreCraftConditions.lua
 
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/UI.lua

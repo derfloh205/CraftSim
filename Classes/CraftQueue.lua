@@ -330,6 +330,16 @@ function CraftSim.CraftQueue:FilterSortByPriority()
                 return true
             elseif not a.allowedToCraft and b.allowedToCraft then
                 return false
+            elseif not a.allowedToCraft and not b.allowedToCraft then
+                local aTop = a:GetTopFailedCondition()
+                local bTop = b:GetTopFailedCondition()
+                local aPriority = aTop and aTop.priority or 0
+                local bPriority = bTop and bTop.priority or 0
+                if aPriority > bPriority then
+                    return true
+                elseif aPriority < bPriority then
+                    return false
+                end
             end
 
             if a.recipeData.subRecipeDepth > b.recipeData.subRecipeDepth then

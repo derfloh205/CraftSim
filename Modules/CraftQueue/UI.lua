@@ -9,6 +9,10 @@ CraftSim.CRAFTQ = CraftSim.CRAFTQ
 
 ---@class CraftSim.CRAFTQ.UI : CraftSim.Module.UI
 CraftSim.CRAFTQ.UI = {}
+CraftSim.CRAFTQ.UI._conditionEvalGeneration = 0
+CraftSim.CRAFTQ.UI._conditionEvalRunning = false
+CraftSim.CRAFTQ.UI._pendingQueueRender = false
+CraftSim.CRAFTQ.UI._conditionEvalBatchSize = 8
 
 local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
@@ -3083,6 +3087,61 @@ function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
     }
 end
 
+---@param craftQueue CraftSim.CraftQueue
+---@param onComplete fun()
+function CraftSim.CRAFTQ.UI:EvaluateQueueItemsInBatches(craftQueue, onComplete)
+    local rawItems = craftQueue.craftQueueItems or {}
+    --- Normalize to a dense array in case queue mutations left sparse indices.
+    local items = {}
+    for _, craftQueueItem in ipairs(rawItems) do
+        tinsert(items, craftQueueItem)
+    end
+    local total = #items
+    local index = 1
+
+    self._conditionEvalGeneration = (self._conditionEvalGeneration or 0) + 1
+    local generation = self._conditionEvalGeneration
+    self._conditionEvalRunning = true
+
+    local function finish()
+        if self._conditionEvalGeneration ~= generation then
+            return
+        end
+        self._conditionEvalRunning = false
+        onComplete()
+
+        if self._pendingQueueRender then
+            self._pendingQueueRender = false
+            self:Update()
+        end
+    end
+
+    local function step()
+        if self._conditionEvalGeneration ~= generation then
+            return
+        end
+
+        local processed = 0
+        while index <= total and processed < (self._conditionEvalBatchSize or 8) do
+            local craftQueueItem = items[index]
+            if craftQueueItem and craftQueueItem.CalculateCanCraft then
+                craftQueueItem:CalculateCanCraft()
+            end
+            index = index + 1
+            processed = processed + 1
+        end
+
+        if index <= total then
+            C_Timer.After(0, step)
+            return
+        end
+
+        finish()
+    end
+
+    step()
+end
+
 function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
@@ -3091,6 +3150,12 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 
+    if self._conditionEvalRunning then
+        self._pendingQueueRender = true
+        CraftSim.DEBUG:StopProfiling("FrameListUpdate")
+        return
+    end
+
     local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as GGUI.BlizzardTab]]
     local craftList = queueTab.content.craftList --[[@as GGUI.FrameList]]
 
@@ -3098,35 +3163,41 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     craftQueue:UpdateSubRecipes()
     craftQueue:RefreshQueuedRecipeCooldownData()
-    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
-        craftQueueItem:CalculateCanCraft()
+    local function finalizeQueueRender()
+        CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
+        craftQueue:FilterSortByPriority()
+        CraftSim.DEBUG:StopProfiling("- FrameListUpdate Sort Queue")
+
+        craftList:Remove()
+
+        CraftSim.DEBUG:StartProfiling("- FrameListUpdate Add Rows")
+        for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
+            craftList:Add(
+                function(row)
+                    self:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
+                end)
+        end
+
+        CraftSim.DEBUG:StopProfiling("- FrameListUpdate Add Rows")
+
+        --- sort by craftable status
+        craftList:UpdateDisplay()
+
+        self:UpdateCraftQueueTotalProfitDisplay()
+
+        craftQueue:CacheQueueItems()
+        CraftSim.DEBUG:StopProfiling("FrameListUpdate")
     end
 
-    CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
-    craftQueue:FilterSortByPriority()
-    CraftSim.DEBUG:StopProfiling("- FrameListUpdate Sort Queue")
-
-    craftList:Remove()
-
-    CraftSim.DEBUG:StartProfiling("- FrameListUpdate Add Rows")
-    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
-        craftList:Add(
-            function(row)
-                self:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
-            end)
+    local shouldBatch = #craftQueue.craftQueueItems > (self._conditionEvalBatchSize or 8)
+    if shouldBatch then
+        self:EvaluateQueueItemsInBatches(craftQueue, finalizeQueueRender)
+    else
+        for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
+            craftQueueItem:CalculateCanCraft()
+        end
+        finalizeQueueRender()
     end
-
-    CraftSim.DEBUG:StopProfiling("- FrameListUpdate Add Rows")
-
-    --- sort by craftable status
-    craftList:UpdateDisplay()
-
-    self:UpdateCraftQueueTotalProfitDisplay()
-
-    craftQueue:CacheQueueItems()
-
-
-    CraftSim.DEBUG:StopProfiling("FrameListUpdate")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -3380,6 +3451,12 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         -- set the craft next button to the same status as the button in the queue on pos 1
         -- if first item can be crafted (so if anything can be crafted cause the items are sorted by craftable status)
         local firstRow = queueTab.content.craftList.activeRows[1]
+        if not firstRow then
+            queueTab.content.craftNextButton:SetEnabled(false)
+            queueTab.content.craftNextButton:SetText(L("CRAFT_QUEUE_BUTTON_NOTHING_QUEUED"), 10, true)
+            CraftSim.CRAFTQ.itemCountCache = nil
+            return
+        end
         local craftButton = firstRow.columns[9].craftButton --[[@as GGUI.Button]]
         local button = craftButton.frame --[[@as Button]]
         queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
@@ -3710,33 +3787,15 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local statusColumnTooltip = ""
     local craftClickLocked = CraftSim.CRAFTQ:IsCraftClickLocked()
 
-    if not craftQueueItem.learned then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Not Learned")
-    end
-    if not craftQueueItem.notOnCooldown then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "On Cooldown")
-    end
-    if not craftQueueItem.isCrafter then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Alt Character")
-    end
-    if not craftQueueItem.canCraftOnce then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Missing Reagents")
-    end
-    if not craftQueueItem.gearEquipped then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession Tools")
-    end
-    if not craftQueueItem.correctProfessionOpen then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. "Wrong Profession")
-    end
-    if craftQueueItem.pcbgData.needsStep then
-        local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
-        statusColumnTooltip = statusColumnTooltip .. f.r(nL .. CraftQueueMidnightShatterStatusText(craftQueueItem))
+    for _, condition in ipairs(craftQueueItem:GetFailedConditions()) do
+        local reason = condition.reason
+        if condition.id == CraftSim.CraftQueueItem.CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
+            reason = CraftQueueMidnightShatterStatusText(craftQueueItem)
+        end
+        if reason and reason ~= "" then
+            local nL = (statusColumnTooltip ~= "" and "\n\n") or ""
+            statusColumnTooltip = statusColumnTooltip .. f.r(nL .. reason)
+        end
     end
 
     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
@@ -3821,11 +3880,21 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 craftButtonColumn.craftButton:SetEnabled(false)
                 craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
             else
-                craftButtonColumn.craftButton:SetEnabled(true)
+                local meetsMinQuality = true
+                if recipeData.orderData and recipeData.orderData.minQuality then
+                    meetsMinQuality = recipeData.resultData.expectedQuality >= recipeData.orderData.minQuality
+                end
+                local requiredAmount = math.max(1, math.min(craftQueueItem.amount or 1, 1))
+                local canClaimOrder = craftQueueItem:CanClaimWorkOrder() and
+                    (craftQueueItem.craftAbleAmount or 0) >= requiredAmount and meetsMinQuality
+
+                craftButtonColumn.craftButton:SetEnabled(canClaimOrder)
                 craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIM"))
-                craftButtonColumn.craftButton.clickCallback = function()
-                    C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
-                        recipeData.professionData.professionInfo.profession)
+                if canClaimOrder then
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
+                            recipeData.professionData.professionInfo.profession)
+                    end
                 end
             end
         else
