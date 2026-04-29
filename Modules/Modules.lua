@@ -264,7 +264,6 @@ function CraftSim.MODULES:UpdateUI()
 	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
 	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
-
 	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
 	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
 	CraftSim.CRAFT_LOG.logFrame:SetVisible(showCraftResults)
