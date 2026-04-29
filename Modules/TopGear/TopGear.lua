@@ -47,6 +47,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
     local availableModes = {}
+    local isNpcOrder = recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc
 
     table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)) -- profit should now also always be available since overwriting prices is always possible
 
@@ -54,7 +55,7 @@ function CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData
         table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
     end
 
-    if recipeData.supportsMulticraft then
+    if recipeData.supportsMulticraft and not isNpcOrder then
         table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT))
     end
 

@@ -29,7 +29,8 @@ end
 ---@return number expectedItems the average total yield of a multicraft proc (base + extra)
 ---@return number expectedExtraItems the average amount of extra items of a multicraft proc
 function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
-    if not recipeData.supportsMulticraft then
+    local isNpcOrder = recipeData.orderData and recipeData.orderData.orderType == Enum.CraftingOrderType.Npc
+    if not recipeData.supportsMulticraft or isNpcOrder then
         return recipeData.baseItemAmount, 0
     end
 
@@ -54,7 +55,8 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
             local itemID = recipeData:GetItemIDFromReagentInfo(reagentdata)
             if itemID then
                 local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false)
-                local quantity = reagentdata.reagentInfo and reagentdata.reagentInfo.quantity or reagentdata.quantity or 0
+                local quantity = reagentdata.reagentInfo and reagentdata.reagentInfo.quantity or reagentdata.quantity or
+                0
                 comissionProfit = comissionProfit + (quantity * price)
             end
         end
@@ -71,7 +73,8 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
             else
                 local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
                 if CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS[itemID] then
-                    comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
+                    comissionProfit = comissionProfit +
+                    CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
                 else
                     local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
                     price = price * CraftSim.CONST.AUCTION_HOUSE_CUT
