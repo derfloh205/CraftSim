@@ -9,7 +9,7 @@ local f = CraftSim.GUTIL:GetFormatter()
 ---@class CraftSim.RECIPE_SCAN
 CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 
----@class CraftSim.RECIPE_SCAN.UI
+---@class CraftSim.RECIPE_SCAN.UI : CraftSim.Module.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeScan.UI")
@@ -45,6 +45,9 @@ local function BuildRecipeTooltipText(recipeData, recipeLists)
 end
 
 function CraftSim.RECIPE_SCAN.UI:Init()
+    local onCloseCallback, onMinimizeCallback, onMaximizeCallback =
+        CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
+
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
     CraftSim.RECIPE_SCAN.frame = GGUI.Frame({
@@ -57,7 +60,9 @@ function CraftSim.RECIPE_SCAN.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_RECIPE_SCAN"),
+        onCloseCallback = onCloseCallback,
+        onCollapseCallback = onMinimizeCallback,
+        onCollapseOpenCallback = onMaximizeCallback,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -116,6 +121,23 @@ function CraftSim.RECIPE_SCAN.UI:Init()
 
     createContent(CraftSim.RECIPE_SCAN.frame)
     GGUI:EnableHyperLinksForFrameAndChilds(CraftSim.RECIPE_SCAN.frame.content)
+
+    self.module.frame = CraftSim.RECIPE_SCAN.frame
+end
+
+function CraftSim.RECIPE_SCAN.UI:Update()
+    if not self.module or not self.module.frame then
+        return
+    end
+    CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
+end
+
+function CraftSim.RECIPE_SCAN.UI:VisibleByContext()
+    local moduleEnabled = CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+    if not moduleEnabled then return false end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    return CraftSim.MODULES:VisibleByContext() and selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
 
 ---@param selectedRow CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
