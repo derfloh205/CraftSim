@@ -1345,7 +1345,9 @@ function CraftSim.CRAFTQ.UI:Init()
             label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             initialStatusID = "Ready",
             clickCallback = function()
-                CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                    CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                end
             end
         })
 
@@ -1356,7 +1358,29 @@ function CraftSim.CRAFTQ.UI:Init()
                 sizeX = fixedButtonWidth,
                 label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             },
+            {
+                statusID = "Queueing",
+                enabled = false,
+                sizeX = fixedButtonWidth,
+                label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
+            },
         }
+
+        queueTab.content.queueCraftListsCancelButton = CreateFrame("Button", nil, queueTab.content,
+            "UIPanelCloseButton")
+        queueTab.content.queueCraftListsCancelButton:SetSize(16, 16)
+        queueTab.content.queueCraftListsCancelButton:SetPoint("RIGHT", queueTab.content.queueCraftListsButton.frame,
+            "RIGHT", -6,
+            -1)
+        queueTab.content.queueCraftListsCancelButton:SetFrameStrata(queueTab.content.queueCraftListsButton.frame
+        :GetFrameStrata())
+        queueTab.content.queueCraftListsCancelButton:SetFrameLevel(queueTab.content.queueCraftListsButton.frame
+        :GetFrameLevel() + 20)
+        queueTab.content.queueCraftListsCancelButton:EnableMouse(true)
+        queueTab.content.queueCraftListsCancelButton:SetScript("OnClick", function()
+            CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
+        end)
+        queueTab.content.queueCraftListsCancelButton:Hide()
 
         queueTab.content.queueCraftListsButtonOptions = CraftSim.WIDGETS.OptionsButton {
             parent = queueTab.content,

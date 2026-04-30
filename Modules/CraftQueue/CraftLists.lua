@@ -12,6 +12,48 @@ CraftSim.CRAFT_LISTS = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
+CraftSim.CRAFT_LISTS.isQueueingSelectedLists = false
+
+function CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
+    self.isQueueingSelectedLists = false
+end
+
+---@param running boolean
+function CraftSim.CRAFT_LISTS:SetQueueCraftListsButtonState(running)
+    local queueListsButton = CraftSim.CRAFTQ.frame and
+        CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab and
+        CraftSim.CRAFTQ.frame.content.queueTab.content and
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
+    local queueListsCancelButton = CraftSim.CRAFTQ.frame and
+        CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab and
+        CraftSim.CRAFTQ.frame.content.queueTab.content and
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsCancelButton --[[@as Button?]]
+
+    if not queueListsButton then
+        return
+    end
+
+    if running then
+        queueListsButton:SetStatus("Queueing")
+    else
+        queueListsButton:SetStatus("Ready")
+    end
+
+    if queueListsCancelButton then
+        if running then
+            if queueListsButton and queueListsButton.frame then
+                queueListsCancelButton:SetFrameStrata(queueListsButton.frame:GetFrameStrata())
+                queueListsCancelButton:SetFrameLevel(queueListsButton.frame:GetFrameLevel() + 20)
+            end
+            queueListsCancelButton:Show()
+        else
+            queueListsCancelButton:Hide()
+        end
+    end
+end
+
 ---@param list CraftSim.CraftList
 ---@return CraftSim.CraftListRecipeEntry[]
 local function GetRecipeEntries(list)
@@ -350,6 +392,8 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
     Logger:LogDebug("QueueSelectedLists called with crafterUID: " .. crafterUID)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+    self.isQueueingSelectedLists = true
+    self:SetQueueCraftListsButtonState(true)
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
     local selectedLists = GUTIL:Filter(allLists, function(list)
@@ -357,35 +401,37 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     end)
 
     if #selectedLists == 0 then
+        self.isQueueingSelectedLists = false
+        self:SetQueueCraftListsButtonState(false)
         return
-    end
-
-    local queueListsButton = CraftSim.CRAFTQ.frame and
-        CraftSim.CRAFTQ.frame.content and
-        CraftSim.CRAFTQ.frame.content.queueTab and
-        CraftSim.CRAFTQ.frame.content.queueTab.content and
-        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
-
-    if queueListsButton then
-        queueListsButton:SetEnabled(false)
     end
 
     ---@type CraftSim.CRAFT_LISTS.ScanEntry[]
     local allScanEntries = {}
 
-    local function finishQueue()
+    ---@param cancelled boolean?
+    local function finishQueue(cancelled)
+        cancelled = cancelled == true
         -- Global triage: SBF allocation, cooldown triage, smart concentration, then queue.
-        CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
-        if queueListsButton then
-            queueListsButton:SetStatus("Ready")
+        if not cancelled then
+            CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
+        self.isQueueingSelectedLists = false
+        self:SetQueueCraftListsButtonState(false)
         CraftSim.CRAFTQ.UI:Update()
-        CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
+        if not cancelled then
+            CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
+        end
     end
 
     local listIndex = 1
 
     local function processNextList()
+        if not self.isQueueingSelectedLists then
+            finishQueue(true)
+            return
+        end
+
         if listIndex > #selectedLists then
             finishQueue()
             return
@@ -625,6 +671,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             optimizeGear = options.optimizeProfessionTools,
             optimizeFinishingReagentsOptions = finishingOptsWithSBF,
             finally = function()
+                if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                    frameDistributor:Break()
+                    return
+                end
+
                 -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
                 -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
                 -- again during TriageAndQueue before the entry is actually queued.
@@ -669,6 +720,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                         optimizeGear = options.optimizeProfessionTools,
                         optimizeFinishingReagentsOptions = finishingOptsNoSBF,
                         finally = function()
+                            if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                                frameDistributor:Break()
+                                return
+                            end
+
                             tinsert(allScanEntries, {
                                 list = list,
                                 options = options,
@@ -706,6 +762,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         end,
         continue = function(frameDistributor, _, recipeEntry)
             processRecipe(frameDistributor, recipeEntry)
+        end,
+        cancel = function()
+            return not CraftSim.CRAFT_LISTS.isQueueingSelectedLists
         end,
     }:Continue()
 end
