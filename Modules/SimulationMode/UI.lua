@@ -469,7 +469,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
             local timeValueText
-            if concentrationData:GetCurrentAmount() < cost then
+            if not concentrationData:CanAfford(cost) then
                 timeValueText = f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat))
             else
                 timeValueText = f.g("Ready")

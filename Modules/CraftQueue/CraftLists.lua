@@ -168,7 +168,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
                 if not concentrationGroups[key] then
                     concentrationGroups[key] = {
-                        currentAmount = (rd.concentrationData and rd.concentrationData:GetCurrentAmount()) or 0,
+                        currentAmount = (rd.concentrationData and rd.concentrationData:GetSpendableAmount()) or 0,
                         entries = {},
                     }
                 end
