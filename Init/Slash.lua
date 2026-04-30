@@ -66,9 +66,11 @@ function CraftSim.SLASH:CMD_pricedebug()
     end
 end
 
-function CraftSim.SLASH:CMD_news()
-    CraftSim.NEWS:ShowNews(true)
+function CraftSim.SLASH:CMD_patchnotes()
+    CraftSim.PATCH_NOTES:ShowPatchNotes(true)
 end
+
+CraftSim.SLASH.CMD_news = CraftSim.SLASH.CMD_patchnotes
 
 function CraftSim.SLASH:CMD_debug()
     CraftSim.DEBUG.frame:Show()
@@ -165,7 +167,7 @@ function CraftSim.SLASH:CMD_craftqueue(args)
     elseif arg1 == "clear" then
         CraftSim.CRAFTQ:ClearAll()
     elseif arg1 == "createshoppinglist" then
-        CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+        CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
     end
 end
 
@@ -177,7 +179,7 @@ function CraftSim.SLASH:CMD_resetdb()
 end
 
 function CraftSim.SLASH:CMD_quickbuy()
-    CraftSim.CRAFTQ:AuctionatorQuickBuy()
+    CraftSim.SHOPPING:AuctionatorQuickBuy()
 end
 
 function CraftSim.SLASH:CMD_collectmail()

@@ -383,7 +383,7 @@ function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
-function CraftSim.UTIL:GetSchematicFormByVisibility()
+function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
     elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
@@ -440,13 +440,6 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
         table.insert(linksByQuality, outputItemData.hyperlink)
     end
     return linksByQuality
-end
-
----@return fun(ID: CraftSim.LOCALIZATION_IDS | string): string
-function CraftSim.UTIL:GetLocalizer()
-    return function(ID)
-        return CraftSim.LOCAL:GetText(ID)
-    end
 end
 
 --- Clock icon + localized current/max charges. Same data path as Recipe Scan (`GetCooldownDataForRecipeCrafter`).
@@ -959,4 +952,28 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo, maxCount)
             end
         }:Continue()
     end)
+end
+
+---@return CraftSim.PROFESSIONS_TAB? selectedTab
+function CraftSim.UTIL:GetSelectedProfessionTab()
+    if not ProfessionsFrame:IsVisible() then
+        return nil
+    end
+
+    local selectedTabID = ProfessionsFrame.TabSystem.selectedTabID
+
+    local selectedTab
+    if selectedTabID == 1 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    elseif selectedTabID == 2 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO
+    elseif selectedTabID == 3 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    else
+        -- if its the first time opening after login/reload its nil
+        -- but also we can safely assume here its the recipe tab because its the default to open to
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    end
+
+    return selectedTab
 end

@@ -146,12 +146,15 @@ function CraftSim.LOCAL_PT:GetData()
             "So if we have one " ..
             f.bb("case A with chance 30%") ..
             " and profit " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " and a " ..
             f.bb("case B with chance 70%") ..
-            " and profit " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " then the expected profit of that is\n" ..
+            " and profit " ..
+            CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) ..
+            " then the expected profit of that is\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "which is " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
 
@@ -527,7 +530,7 @@ function CraftSim.LOCAL_PT:GetData()
             "Módulo que explana como o" .. f.l(" CraftSim") .. " calcula as coisas",
         CONTROL_PANEL_RESET_FRAMES = "Redefinir Janelas",
         CONTROL_PANEL_OPTIONS = "Ajustes",
-        CONTROL_PANEL_NEWS = "Novidades",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = " Exportar" .. f.l("Easycraft"),
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exportando",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -737,6 +740,7 @@ maior ou igual ao limite de taxa de venda configurado.
 
         -- frames
         FRAMES_RESETTING = "redefinir frameID: ",
+        PATCH_NOTES_TITLE = "Notas da atualização do CraftSim",
         FRAMES_WHATS_NEW = "O que há de Novo CraftSim?",
         FRAMES_JOIN_DISCORD = "Entre no Discord!",
         FRAMES_DONATE_KOFI = "Visite o CraftSim no Kofi",

@@ -5,30 +5,44 @@ CraftSim.LOCAL = {}
 CraftSim.LOCAL.LOCAL_CLIENT = {}
 CraftSim.LOCAL.LOCAL_EN = {}
 
+CraftSim.LOCAL.LOCALS = {
+    EN = "enUS",
+    DE = "deDE",
+    IT = "itIT",
+    RU = "ruRU",
+    PT = "ptBR",
+    ES = "esES",
+    FR = "frFR",
+    MX = "esMX",
+    KO = "koKR",
+    TW = "zhTW",
+    CN = "zhCN",
+}
+
 function CraftSim.LOCAL:Init()
     local currentLocale = GetLocale()
     CraftSim.LOCAL.LOCAL_EN = CraftSim.LOCAL_EN:GetData() -- always load english locals for fallback translations
-    if currentLocale == CraftSim.CONST.LOCALES.EN then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL.LOCAL_EN
-    elseif currentLocale == CraftSim.CONST.LOCALES.DE then
+    if currentLocale == CraftSim.LOCAL.LOCALS.EN then
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_EN
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.DE then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_DE:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.IT then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.IT then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_IT:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.RU then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.RU then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_RU:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.PT then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.PT then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_PT:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.ES then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.ES then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.FR then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.FR then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_FR:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.MX then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.MX then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_MX:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.KO then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.KO then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_KO:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.TW then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.TW then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_TW:GetData()
-    elseif currentLocale == CraftSim.CONST.LOCALES.CN then
+    elseif currentLocale == CraftSim.LOCAL.LOCALS.CN then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_CN:GetData()
     else
         error("CraftSim Error: Client not supported: " .. tostring(currentLocale))
@@ -69,3 +83,14 @@ function CraftSim.LOCAL:TranslateStatName(statName)
         return CraftSim.LOCAL:GetText("STAT_POTION_EXPERIMENTATION")
     end
 end
+
+CraftSim.LOCAL.L = nil
+---@return fun(ID: CraftSim.LOCALIZATION_IDS): string
+function CraftSim.LOCAL:GetLocalizer()
+    CraftSim.LOCAL.L = CraftSim.LOCAL.L or function(ID)
+        return CraftSim.LOCAL:GetText(ID)
+    end
+    return CraftSim.LOCAL.L
+end
+
+CraftSim.LOCAL:Init() -- all prerequisites loaded, .toc order important here

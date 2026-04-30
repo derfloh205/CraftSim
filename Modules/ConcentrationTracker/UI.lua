@@ -13,7 +13,7 @@ CraftSim.CONCENTRATION_TRACKER.frame = nil
 ---@type CraftSim.CONCENTRATION_TRACKER.TRACKER_FRAME
 CraftSim.CONCENTRATION_TRACKER.trackerFrame = nil
 
----@class CraftSim.CONCENTRATION_TRACKER.UI
+---@class CraftSim.CONCENTRATION_TRACKER.UI : CraftSim.Module.UI
 CraftSim.CONCENTRATION_TRACKER.UI = {}
 
 CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE = {
@@ -41,7 +41,7 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
 }
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationTracker.UI")
 
@@ -61,11 +61,11 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
         scale = 1,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        hide = true,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
     })
@@ -165,7 +165,6 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         scale = 0.9,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER_TRACKER_FRAME,
         title = L("CONCENTRATION_TRACKER_TITLE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -345,8 +344,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             rootDescription:CreateButton(formatModeLabel, function()
                 CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_FORMAT_MODE", formatModeOption)
                 dropdown:SetDefaultText(formatModeLabel)
-                CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                CraftSim.CONCENTRATION_TRACKER.UI:Update()
+                CraftSim.CRAFTQ.UI:Update()
                 if CraftSim.SIMULATION_MODE and CraftSim.SIMULATION_MODE.recipeData then
                     CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
                 end
@@ -359,6 +358,13 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
         text = L("CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT")
     }
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
+    -- only show for expansions DF and higher
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    return expansionID and expansionID >= CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
@@ -416,10 +422,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 local concentrationData = CraftSim.ConcentrationData:Deserialize(professionConcentrationData
                     .serializedData)
 
-                local currentConcentration = concentrationData:GetCurrentAmount()
+                local currentConcentration = concentrationData:GetSpendableAmount()
                 row.concentration = currentConcentration
 
-                concentrationColumn.text:SetText(math.floor(currentConcentration))
+                concentrationColumn.text:SetText(currentConcentration)
 
                 local maxedColumnText = ""
                 local concentrationFull = currentConcentration >= concentrationData.maxQuantity
@@ -475,14 +481,14 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end)
 end
 
-function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+function CraftSim.CONCENTRATION_TRACKER.UI:Update()
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     if not concentrationData or not concentrationData.currencyID then return end
 
     local content = CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT]]
 
-    local currentConcentration = concentrationData:GetCurrentAmount()
-    content.value:SetText(math.floor(currentConcentration))
+    local currentConcentration = concentrationData:GetSpendableAmount()
+    content.value:SetText(currentConcentration)
     content.maxValue:SetText(concentrationData.maxQuantity)
 
     if currentConcentration >= concentrationData.maxQuantity then

@@ -6,12 +6,12 @@ local GUTIL = CraftSim.GUTIL
 local LibGraph = CraftSim.LibGraph
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_LOG
 CraftSim.CRAFT_LOG = CraftSim.CRAFT_LOG
 
----@class CraftSim.CRAFT_LOG.UI
+---@class CraftSim.CRAFT_LOG.UI : CraftSim.Module.UI
 CraftSim.CRAFT_LOG.UI = {}
 
 CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
@@ -20,39 +20,41 @@ CraftSim.CRAFT_LOG.UI.STAT_COMPARISON_GRAPH_EXPECTED_LINE_COLOR = { 0.0, 1.0, 0.
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLog.UI")
 
 function CraftSim.CRAFT_LOG.UI:Init()
+    local onCloseCallback, onMinimizeCallback, onMaximizeCallback =
+        CraftSim.MODULES:GetModuleFrameStateCallbacks(CraftSim.CRAFT_LOG)
+
     ---@class CraftSim.CRAFT_LOG.LOG_FRAME : GGUI.Frame
-    local logFrame = GGUI.Frame({
+    CraftSim.CRAFT_LOG.frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = UIParent,
         anchorA = "RIGHT",
         anchorB = "RIGHT",
         sizeX = 260,
         sizeY = 340,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG_LOG_FRAME,
         title = L("CRAFT_LOG_TITLE"),
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_LOG"),
-        frameTable = CraftSim.INIT.FRAMES,
+        onCloseCallback = onCloseCallback,
+        onMinimizeCallback = onMinimizeCallback,
+        onMaximizeCallback = onMaximizeCallback,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "DIALOG",
+        hide = true,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     ---@class CraftSim.CRAFT_LOG.DETAILS_FRAME : GGUI.Frame
-    local advFrame = GGUI.Frame({
-        parent = logFrame.frame,
+    CraftSim.CRAFT_LOG.advFrame = GGUI.Frame({
+        parent = CraftSim.CRAFT_LOG.frame.frame,
         anchorParent = UIParent,
         anchorA = "BOTTOMRIGHT",
         anchorB = "BOTTOMRIGHT",
         sizeX = 720,
         sizeY = 340,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_LOG,
         title = L("CRAFT_LOG_ADV_TITLE"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "DIALOG",
         moveable = true,
@@ -65,9 +67,6 @@ function CraftSim.CRAFT_LOG.UI:Init()
         hide = not CraftSim.DB.OPTIONS:Get("CRAFT_LOG_SHOW_ADV_LOG"),
     })
 
-    CraftSim.CRAFT_LOG.logFrame = logFrame
-    CraftSim.CRAFT_LOG.advFrame = advFrame
-
     local hideBlizzardCraftingLog = CraftSim.DB.OPTIONS:Get("CRAFT_LOG_HIDE_BLIZZARD_CRAFTING_LOG")
 
     if hideBlizzardCraftingLog and ProfessionsFrame.CraftingPage.CraftingOutputLog then
@@ -75,8 +74,8 @@ function CraftSim.CRAFT_LOG.UI:Init()
         ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:UnregisterAllEvents()
     end
 
-    self:InitLogFrame(logFrame)
-    self:InitAdvancedLogFrame(advFrame)
+    self:InitLogFrame(CraftSim.CRAFT_LOG.frame)
+    self:InitAdvancedLogFrame(CraftSim.CRAFT_LOG.advFrame)
 end
 
 function CraftSim.CRAFT_LOG.UI:InitLogFrame(frame)
@@ -860,7 +859,7 @@ function CraftSim.CRAFT_LOG.UI:InitCalculationComparisonTab(calculationCompariso
 end
 
 function CraftSim.CRAFT_LOG.UI:UpdateResultItemLog()
-    local logFrame = CraftSim.CRAFT_LOG.logFrame
+    local logFrame = CraftSim.CRAFT_LOG.frame
     local craftedItemsList = logFrame.content.craftedItemsList --[[@as GGUI.FrameList]]
 
     -- total items
@@ -903,7 +902,7 @@ end
 ---@param craftResult CraftSim.CraftResult
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
-    local logFrame = CraftSim.CRAFT_LOG.logFrame
+    local logFrame = CraftSim.CRAFT_LOG.frame
     -- Session Profit Display
     do
         logFrame.content.sessionProfitValue:SetText(CraftSim.UTIL:FormatMoney(
@@ -920,7 +919,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
             for _, savedReagent in pairs(craftResult.savedReagents) do
                 if savedReagent:IsCurrency() then
                     local currencyLink = C_CurrencyInfo.GetCurrencyLink(savedReagent.currencyID) or
-                    savedReagent.currencyName
+                        savedReagent.currencyName
                     resourcesText = string.format("%s\n %dx %s", resourcesText, savedReagent.quantity, currencyLink or "")
                 else
                     local itemLink = savedReagent.item:GetItemLink()
@@ -961,7 +960,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateCraftLogDisplay(craftResult, recipeData)
         local commissionText = ""
         if craftResult.isWorkOrder then
             local commission = (tonumber(craftResult.orderData.tipAmount) or 0) -
-            (tonumber(craftResult.orderData.consortiumCut) or 0)
+                (tonumber(craftResult.orderData.consortiumCut) or 0)
             commissionText = CraftSim.UTIL:FormatMoney(commission, true)
         end
 
@@ -1244,7 +1243,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     if craftResultReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultReagent.currencyID)
                         row.itemColumn.text:SetText(currencyLink or craftResultReagent.currencyName or
-                        ("Currency:" .. tostring(craftResultReagent.currencyID)))
+                            ("Currency:" .. tostring(craftResultReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil
@@ -1281,7 +1280,7 @@ function CraftSim.CRAFT_LOG.UI:UpdateReagentDetails(craftRecipeData)
                     if craftResultSavedReagent:IsCurrency() then
                         local currencyLink = C_CurrencyInfo.GetCurrencyLink(craftResultSavedReagent.currencyID)
                         row.itemColumn.text:SetText(currencyLink or craftResultSavedReagent.currencyName or
-                        ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
+                            ("Currency:" .. tostring(craftResultSavedReagent.currencyID)))
                         row.countColumn.text:SetText(craftResultSavedReagent.quantity or 0)
                         row.costColumn.text:SetText(CraftSim.UTIL:FormatMoney(0, true))
                         row.tooltipOptions = nil
@@ -1498,4 +1497,8 @@ function CraftSim.CRAFT_LOG.UI:UpdateAdvancedCraftLogDisplay(recipeID)
     self:UpdateCalculationComparison(craftRecipeData, recipeData)
     self:UpdateReagentDetails(craftRecipeData)
     self:UpdateResultAnalysis(craftRecipeData)
+end
+
+function CraftSim.CRAFT_LOG.UI:VisibleByContext()
+    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end

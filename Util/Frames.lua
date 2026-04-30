@@ -37,33 +37,25 @@ end
 
 function CraftSim.FRAME:RestoreModulePositions()
     local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-    local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
     local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-    local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
     local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-    local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
 
     infoFrame:RestoreSavedConfig(UIParent)
     CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
+    CraftSim.CRAFT_LOG.frame:RestoreSavedConfig(UIParent)
     CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
-    specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
     averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
-    averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
     topgearFrame:RestoreSavedConfig(ProfessionsFrame)
     topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
     reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
-    reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
     local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
@@ -115,64 +107,6 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
     end
 
     return craftSimText
-end
-
-function CraftSim.FRAME:InitOneTimeNoteFrame()
-    local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
-
-    local f = GUTIL:GetFormatter()
-
-    local frame = GGUI.Frame({
-        parent = UIParent,
-        anchorParent = UIParent,
-        sizeX = 500,
-        sizeY = 300,
-        frameID = CraftSim.CONST.FRAMES.INFO,
-        closeable = true,
-        scrollableContent = true,
-        moveable = true,
-        title = GUTIL:ColorizeText(
-            CraftSim.LOCAL:GetText("FRAMES_WHATS_NEW") .. " (" .. currentVersion .. ")",
-            GUTIL.COLORS.GREEN),
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = "FULLSCREEN",
-    })
-
-    frame.content.discordBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", -120, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL,
-        function()
-            -- do not let the player remove the link
-            frame.content.discordBox:SetText(CraftSim.CONST.DISCORD_INVITE_URL)
-        end)
-    frame.content.discordBox:SetScale(0.75)
-    frame.content.discordBoxLabel = CraftSim.FRAME:CreateText(
-        CraftSim.LOCAL:GetText("FRAMES_JOIN_DISCORD"), frame.content, frame.content.discordBox,
-        "BOTTOM", "TOP", 0, 0, 0.75)
-
-    frame.content.donateBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.KOFI_URL, function()
-            -- do not let the player remove the link
-            frame.content.donateBox:SetText(CraftSim.CONST.KOFI_URL)
-        end)
-    frame.content.donateBox:SetScale(0.75)
-    frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-        f.patreon(CraftSim.LOCAL:GetText("FRAMES_DONATE_KOFI")), frame.content, frame.content
-        .donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
-
-    frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)
-    frame.content.infoText:SetText(CraftSim.LOCAL:GetText("FRAMES_NO_INFO"))
-    frame.content.infoText:SetJustifyH("LEFT")
-
-    frame.showInfo = function(infoText)
-        frame.content.infoText:SetText(infoText)
-        frame:Show()
-    end
-
-    GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
-    frame:Hide()
 end
 
 --> in GGUI.TextInput

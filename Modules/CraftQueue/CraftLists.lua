@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CRAFT_LISTS
@@ -168,7 +168,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
                 if not concentrationGroups[key] then
                     concentrationGroups[key] = {
-                        currentAmount = (rd.concentrationData and rd.concentrationData:GetCurrentAmount()) or 0,
+                        currentAmount = (rd.concentrationData and rd.concentrationData:GetSpendableAmount()) or 0,
                         entries = {},
                     }
                 end
@@ -307,7 +307,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
     end
 
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 --- Build a tooltip text string summarizing a craft list's optimization and restock options
@@ -379,8 +379,8 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         if queueListsButton then
             queueListsButton:SetStatus("Ready")
         end
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
-        CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+        CraftSim.CRAFTQ.UI:Update()
+        CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
     end
 
     local listIndex = 1
@@ -641,7 +641,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
                 Logger:LogDebug("maxQueueAmount for recipe " ..
-                recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                    recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

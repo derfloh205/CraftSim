@@ -4,8 +4,14 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.CONCENTRATION_TRACKER
+---@class CraftSim.CONCENTRATION_TRACKER : CraftSim.Module
 CraftSim.CONCENTRATION_TRACKER = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
+
+GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
+    "CRAFTSIM_PROFESSION_INITIALIZED",
+})
 
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
@@ -113,4 +119,8 @@ end
 function CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)
     local formatted = concentrationData:GetFormattedDateMax()
     return f.bb(formatted)
+end
+
+function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_INITIALIZED()
+    self.UI:Update()
 end

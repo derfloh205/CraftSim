@@ -74,7 +74,8 @@ function CraftSim.DB.LAST_CRAFTING_COST:Save(recipeData)
     local expectedCostsPerItem = recipeData.priceData and recipeData.priceData.expectedCostsPerItem or 0
     local timestamp = time()
 
-    Logger:LogDebug("Saving LastCraftingCost: " .. tostring(recipeData.recipeName) .. " q" .. tostring(expectedQuality) .. " crafter=" .. crafterUID)
+    Logger:LogDebug("Saving LastCraftingCost: " ..
+        tostring(recipeData.recipeName) .. " q" .. tostring(expectedQuality) .. " crafter=" .. crafterUID)
 
     CraftSimDB.lastCraftingCostDB.data[key] = CraftSimDB.lastCraftingCostDB.data[key] or {}
     CraftSimDB.lastCraftingCostDB.data[key][crafterUID] = {

@@ -6,10 +6,8 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.SPECIALIZATION_INFO.UI
+---@class CraftSim.SPECIALIZATION_INFO.UI : CraftSim.Module.UI
 CraftSim.SPECIALIZATION_INFO.UI = {}
-
-local Logger = CraftSim.DEBUG:RegisterLogger("SpecializationInfo.UI")
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290
@@ -19,37 +17,14 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
-    ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
-    local frameNO_WO = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.SPEC_INFO,
-        title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        anchorA = "BOTTOMLEFT",
-        anchorB = "BOTTOMRIGHT",
-        offsetX = offsetX,
-        offsetY = offsetY,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_SPEC_INFO"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
-    local frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+    local specFrame = GGUI.Frame({
+        parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.SPEC_INFO_WO,
         title = CraftSim.LOCAL:GetText("SPEC_INFO_TITLE"),
         collapseable = true,
         closeable = true,
@@ -59,8 +34,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_SPEC_INFO"),
-        frameTable = CraftSim.INIT.FRAMES,
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
@@ -169,19 +145,20 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         }
     end
 
-    createContent(frameWO)
-    createContent(frameNO_WO)
+    self.module.frame = specFrame
+
+    createContent(specFrame)
+
+    self:HookSpecNodeTooltips()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+function CraftSim.SPECIALIZATION_INFO.UI:Update(recipeData)
     ---@type CraftSim.SPEC_INFO.FRAME
-    local specInfoFrame
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO) --[[@as CraftSim.SPEC_INFO.FRAME]]
-    else
-        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO) --[[@as CraftSim.SPEC_INFO.FRAME]]
+    local specInfoFrame = self.module.frame --[[@as CraftSim.SPEC_INFO.FRAME]]
+
+    if not specInfoFrame then
+        return
     end
 
     local specializationData = recipeData.specializationData
@@ -199,12 +176,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         content.notImplementedText:Hide()
     end
 
-    content.simResetButton:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-    content.simMaxButton:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-
-    if CraftSim.SIMULATION_MODE.isActive then
-        specializationData = CraftSim.SIMULATION_MODE.specializationData
-    end
+    local simulationModeEnabled = CraftSim.SIMULATION_MODE.isActive
+    content.simResetButton:SetVisible(simulationModeEnabled)
+    content.simMaxButton:SetVisible(simulationModeEnabled)
 
     if not specializationData then
         return
@@ -223,10 +197,10 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
                 local rankColumn = columns[2]
 
                 nameColumn.iconTexture:SetTexture(nodeData:GetIcon())
-                rankColumn.text:SetVisible(not CraftSim.SIMULATION_MODE.isActive)
-                rankColumn.simText:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-                rankColumn.simInput:SetVisible(CraftSim.SIMULATION_MODE.isActive)
-                if CraftSim.SIMULATION_MODE.isActive then
+                rankColumn.text:SetVisible(not simulationModeEnabled)
+                rankColumn.simText:SetVisible(simulationModeEnabled)
+                rankColumn.simInput:SetVisible(simulationModeEnabled)
+                if simulationModeEnabled then
                     rankColumn.simInput.nodeData = nodeData
                     rankColumn.simInput.textInput:SetText(nodeData.rank)
                     if nodeData.active then
@@ -265,8 +239,8 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         end
     end
 
-    -- sort only if sim mode not active
-    if not CraftSim.SIMULATION_MODE.isActive then
+    -- sort only if sim mode UI not active
+    if not simulationModeEnabled then
         content.nodeList:UpdateDisplay(function(rowA, rowB)
             if rowA.active and not rowB.active then
                 return true
@@ -303,19 +277,27 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
 end
 
+function CraftSim.SPECIALIZATION_INFO.UI:VisibleByContext()
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    local hasSchematicForm = CraftSim.UTIL:GetSchematicFormByContext()
+
+    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_SPEC_INFO") and (isRecipeTab or isCraftingOrderTab) and
+        hasSchematicForm
+end
+
 local specNodeTooltipHooked = false
 
 function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
     if specNodeTooltipHooked then return end
     specNodeTooltipHooked = true
 
-    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(configID, pathID)
-        local nodeID = pathID
-
+    EventRegistry:RegisterCallback("ProfessionSpecs.SpecPathEntered", function(_, pathID)
         local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
 
         local label = CraftSim.LOCAL:GetText("SPECIALIZATION_INFO_TOOLTIP_LABEL")
-        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(nodeID, playerUID)
+        local crafterUIDRankMap = CraftSim.DB.CRAFTER:GetCrafterUIDsWithNodeActive(pathID, playerUID)
         if next(crafterUIDRankMap) then
             ---@type CrafterUID[]
             local orderedUIDs = {}

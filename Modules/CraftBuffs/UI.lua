@@ -4,10 +4,10 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
----@class CraftSim.CRAFT_BUFFS
+---@class CraftSim.CRAFT_BUFFS : CraftSim.Module
 CraftSim.CRAFT_BUFFS = CraftSim.CRAFT_BUFFS
 
----@class CraftSim.CRAFT_BUFFS.UI
+---@class CraftSim.CRAFT_BUFFS.UI : CraftSim.Module.UI
 CraftSim.CRAFT_BUFFS.UI = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftBuffs.UI")
@@ -22,9 +22,12 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
+    local onCloseCallback, onMinimizeCallback, onMaximizeCallback = CraftSim.MODULES:GetModuleFrameStateCallbacks(self
+        .module)
+
     ---@class CraftSim.CRAFT_BUFFS.FRAME : GGUI.Frame
     CraftSim.CRAFT_BUFFS.frame = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage,
+        parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         anchorA = "TOPLEFT",
         anchorB = "TOPLEFT",
@@ -32,156 +35,117 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         sizeY = sizeY,
         offsetY = offsetY,
         offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS,
         title = CraftSim.LOCAL:GetText("CRAFT_BUFFS_TITLE"),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_BUFFS"),
-        frameTable = CraftSim.INIT.FRAMES,
+        onCloseCallback = onCloseCallback,
+        onMinimizeCallback = onMinimizeCallback,
+        onMaximizeCallback = onMaximizeCallback,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
-    ---@class CraftSim.CRAFT_BUFFS.FRAME: GGUI.Frame
-    CraftSim.CRAFT_BUFFS.frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPLEFT",
-        sizeX = sizeX,
-        sizeY = sizeY,
-        offsetY = offsetY,
-        offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER,
-        title = CraftSim.LOCAL:GetText("CRAFT_BUFFS_TITLE") ..
-            " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
-                CraftSim.GUTIL.COLORS.GREY),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CRAFT_BUFFS"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        hide = true,
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 
-    local function createContent(frame)
-        ---@class CraftSim.CRAFT_BUFFS.FRAME
-        frame = frame
+    ---@class CraftSim.CRAFT_BUFFS.FRAME
+    local frame = CraftSim.CRAFT_BUFFS.frame
 
-        ---@class CraftSim.CRAFT_BUFFS.FRAME.CONTENT: Frame
-        frame.content = frame.content
+    ---@class CraftSim.CRAFT_BUFFS.FRAME.CONTENT: Frame
+    frame.content = frame.content
 
-        frame.content.simulateBuffSelector = GGUI.CheckboxSelector {
-            parent = frame.content, anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5 } },
-            sizeX = 30, sizeY = 25,
-            label = CraftSim.LOCAL:GetText("CRAFT_BUFFS_SIMULATE_BUTTON"),
-            savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
-            onSelectCallback = function()
-                CraftSim.MODULES:UpdateUI()
-            end,
-        }
+    frame.content.simulateBuffSelector = GGUI.CheckboxSelector {
+        parent = frame.content, anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5 } },
+        sizeX = 30, sizeY = 25,
+        label = CraftSim.LOCAL:GetText("CRAFT_BUFFS_SIMULATE_BUTTON"),
+        savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
+        onSelectCallback = function()
+            CraftSim.MODULES:Update()
+        end,
+    }
 
-        frame.content.simulateBuffSelector:SetEnabled(false)
+    frame.content.simulateBuffSelector:SetEnabled(false)
 
-        frame.content.buffList = GGUI.FrameList {
-            parent = frame.content, anchorParent = frame.content.simulateBuffSelector.frame, anchorA = "TOP", anchorB = "BOTTOM", sizeY = 127, offsetY = -5, showBorder = true,
-            offsetX = -10, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE }, rowHeight = 20,
-            columnOptions = {
-                {
-                    label = "", -- Buffstatus
-                    width = 30,
-                },
-                {
-                    label = "", -- Buffname
-                    width = 250,
-                },
+    frame.content.buffList = GGUI.FrameList {
+        parent = frame.content, anchorParent = frame.content.simulateBuffSelector.frame, anchorA = "TOP", anchorB = "BOTTOM", sizeY = 127, offsetY = -5, showBorder = true,
+        offsetX = -10, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE }, rowHeight = 20,
+        columnOptions = {
+            {
+                label = "", -- Buffstatus
+                width = 30,
             },
-            rowConstructor = function(columns)
-                ---@class CraftSim.CRAFT_BUFFS.buffList.statusColumn : Frame
-                local statusColumn = columns[1]
-                ---@class CraftSim.CRAFT_BUFFS.buffList.nameColumn : Frame
-                local nameColumn = columns[2]
+            {
+                label = "", -- Buffname
+                width = 250,
+            },
+        },
+        rowConstructor = function(columns)
+            ---@class CraftSim.CRAFT_BUFFS.buffList.statusColumn : Frame
+            local statusColumn = columns[1]
+            ---@class CraftSim.CRAFT_BUFFS.buffList.nameColumn : Frame
+            local nameColumn = columns[2]
 
-                statusColumn.active = false
+            statusColumn.active = false
 
-                local spellIconSize = 20
-                nameColumn.spellIcon = GGUI.SpellIcon {
-                    parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
-                    anchorA = "LEFT", anchorB = "LEFT", offsetX = 0,
-                }
+            local spellIconSize = 20
+            nameColumn.spellIcon = GGUI.SpellIcon {
+                parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
+                anchorA = "LEFT", anchorB = "LEFT", offsetX = 0,
+            }
 
-                nameColumn.itemIcon = GGUI.Icon {
-                    parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
-                    anchorA = "LEFT", anchorB = "LEFT", offsetX = 0, qualityIconScale = 1.2,
-                }
+            nameColumn.itemIcon = GGUI.Icon {
+                parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
+                anchorA = "LEFT", anchorB = "LEFT", offsetX = 0, qualityIconScale = 1.2,
+            }
 
-                function nameColumn:SetSpell(spellID)
-                    nameColumn.spellIcon:SetSpell(spellID)
-                    nameColumn.spellIcon:Show()
-                    nameColumn.itemIcon:Hide()
+            function nameColumn:SetSpell(spellID)
+                nameColumn.spellIcon:SetSpell(spellID)
+                nameColumn.spellIcon:Show()
+                nameColumn.itemIcon:Hide()
+            end
+
+            function nameColumn:SetItem(itemID)
+                nameColumn.itemIcon:SetItem(itemID)
+                nameColumn.itemIcon:Show()
+                nameColumn.spellIcon:Hide()
+            end
+
+            nameColumn.text = GGUI.Text {
+                parent = nameColumn, anchorParent = nameColumn.spellIcon.frame, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "RIGHT", text = "<buffname>", offsetX = 5,
+            }
+
+            local statusIconSize = 15
+            statusColumn.texture = GGUI.Texture {
+                parent = statusColumn, anchorParent = statusColumn, sizeX = statusIconSize, sizeY = statusIconSize,
+            }
+
+            statusColumn.SetActive = function(self, active)
+                self.active = active
+                if active then
+                    statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK)
+                    nameColumn.spellIcon:Saturate()
+                    nameColumn.itemIcon:Saturate()
+                    nameColumn.text:SetColor()
+                else
+                    statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CROSS)
+                    nameColumn.spellIcon:Desaturate()
+                    nameColumn.itemIcon:Desaturate()
+                    nameColumn.text:SetColor(GUTIL.COLORS.GREY)
                 end
-
-                function nameColumn:SetItem(itemID)
-                    nameColumn.itemIcon:SetItem(itemID)
-                    nameColumn.itemIcon:Show()
-                    nameColumn.spellIcon:Hide()
-                end
-
-                nameColumn.text = GGUI.Text {
-                    parent = nameColumn, anchorParent = nameColumn.spellIcon.frame, justifyOptions = { type = "H", align = "LEFT" },
-                    anchorA = "LEFT", anchorB = "RIGHT", text = "<buffname>", offsetX = 5,
-                }
-
-                local statusIconSize = 15
-                statusColumn.texture = GGUI.Texture {
-                    parent = statusColumn, anchorParent = statusColumn, sizeX = statusIconSize, sizeY = statusIconSize,
-                }
-
-                statusColumn.SetActive = function(self, active)
-                    self.active = active
-                    if active then
-                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CHECKMARK)
-                        nameColumn.spellIcon:Saturate()
-                        nameColumn.itemIcon:Saturate()
-                        nameColumn.text:SetColor()
-                    else
-                        statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CROSS)
-                        nameColumn.spellIcon:Desaturate()
-                        nameColumn.itemIcon:Desaturate()
-                        nameColumn.text:SetColor(GUTIL.COLORS.GREY)
-                    end
-                end
-            end,
-        }
-    end
-
-    createContent(CraftSim.CRAFT_BUFFS.frame)
-    createContent(CraftSim.CRAFT_BUFFS.frameWO)
+            end
+        end,
+    }
 end
 
 ---@type CraftSim.ProfessionStats
 local emptyStats = nil
 ---@param recipeData CraftSim.RecipeData
----@param exportMode CraftSim.EXPORT_MODE
-function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
+function CraftSim.CRAFT_BUFFS.UI:Update(recipeData)
     ---@type CraftSim.CRAFT_BUFFS.FRAME
-    local craftbuffsFrame
-
-    if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        craftbuffsFrame = CraftSim.CRAFT_BUFFS.frame
-    else
-        craftbuffsFrame = CraftSim.CRAFT_BUFFS.frameWO
-    end
-
-    if not craftbuffsFrame then return end
+    local craftbuffsFrame = CraftSim.CRAFT_BUFFS.frame
 
     ---@type CraftSim.CRAFT_BUFFS.FRAME.CONTENT
     local craftBuffsContent = craftbuffsFrame.content
@@ -261,4 +225,12 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
         }
         return checkboxItem
     end))
+end
+
+function CraftSim.CRAFT_BUFFS.UI:VisibleByContext()
+    local moduleEnabled = CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+    if not moduleEnabled then return false end
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+
+    return CraftSim.UTIL:IsWorkOrder() or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end

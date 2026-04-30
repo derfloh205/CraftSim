@@ -12,7 +12,7 @@ CraftSim.CUSTOMER_HISTORY.frame = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory.UI")
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 function CraftSim.CUSTOMER_HISTORY.UI:Init()
     local sizeX = 910

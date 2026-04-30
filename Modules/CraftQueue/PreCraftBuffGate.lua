@@ -2,12 +2,17 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local tinsert = tinsert or table.insert
 
 ---@class CraftSim.PRE_CRAFT_BUFF_GATE
 CraftSim.PRE_CRAFT_BUFF_GATE = {}
+
+GUTIL:RegisterCustomEvents(CraftSim.PRE_CRAFT_BUFF_GATE, {
+    "CRAFTSIM_CRAFT_BUFFS_UPDATED",
+})
+
 local PCBG = CraftSim.PRE_CRAFT_BUFF_GATE
 
 ---@alias CraftSim.PreCraftBuffGateId string
@@ -159,7 +164,7 @@ function PCBG:ScheduleQueueDisplayRefreshForDelayedCraftingState()
     self._refreshGen = (self._refreshGen or 0) + 1
     local gen = self._refreshGen
     local startTime = GetTimePreciseSec()
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 
     GUTIL:WaitFor(function()
         if self._refreshGen ~= gen then
@@ -183,7 +188,7 @@ function PCBG:ScheduleQueueDisplayRefreshForDelayedCraftingState()
     end, function()
         if self._refreshGen == gen then
             self.awaitingBuffApply = false
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end
     end, 0.05, 2)
 end
@@ -221,11 +226,7 @@ function PCBG:ShouldRefreshCraftQueueOnAura(craftQueue)
     return false
 end
 
----@param unitTarget string
-function PCBG:UNIT_AURA(unitTarget)
-    if unitTarget ~= "player" then
-        return
-    end
+function PCBG:CRAFTSIM_CRAFT_BUFFS_UPDATED()
     if not self:ShouldRefreshCraftQueueOnAura(CraftSim.CRAFTQ) then
         return
     end
@@ -233,7 +234,7 @@ function PCBG:UNIT_AURA(unitTarget)
     local gen = self._auraDebounceGen
     C_Timer.After(0.1, function()
         if gen == self._auraDebounceGen then
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end
     end)
 end
@@ -291,7 +292,8 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@return CraftSim.RecipeData?
 function PCBG:PrepareMidnightEnchantShatterRecipeData(crafterData)
-    return self:PrepareSalvageCastRecipeData(crafterData, CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER,
+    return self:PrepareSalvageCastRecipeData(crafterData,
+        CraftSim.CONST.QUICK_ACCESS_RECIPE_IDS.MIDNIGHT_ENCHANTING_SHATTER,
         CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_MIDNIGHT_SHATTER_MOTE_ITEMID)
 end
 
@@ -310,13 +312,13 @@ function PCBG:ShowSalvageMoteMenu(recipeData, optKey)
             return CraftSim.DB.OPTIONS:Get(optKey) == nil
         end, function()
             CraftSim.DB.OPTIONS:Save(optKey, nil)
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end)
         rootDescription:CreateRadio(L("CRAFT_QUEUE_SHATTER_MOTE_AUTOMATIC_OWNED"), function()
             return CraftSim.DB.OPTIONS:Get(optKey) == PCBG.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED
         end, function()
             CraftSim.DB.OPTIONS:Save(optKey, PCBG.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED)
-            CraftSim.CRAFTQ.UI:UpdateDisplay()
+            CraftSim.CRAFTQ.UI:Update()
         end)
         for _, item in ipairs(recipeData.reagentData.salvageReagentSlot.possibleItems) do
             local itemID = item:GetItemID()
@@ -326,7 +328,7 @@ function PCBG:ShowSalvageMoteMenu(recipeData, optKey)
                 return CraftSim.DB.OPTIONS:Get(optKey) == itemID
             end, function()
                 CraftSim.DB.OPTIONS:Save(optKey, itemID)
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                CraftSim.CRAFTQ.UI:Update()
             end)
             moteRadio:SetTooltip(function(tooltip, _)
                 if tooltip.SetItemByID then

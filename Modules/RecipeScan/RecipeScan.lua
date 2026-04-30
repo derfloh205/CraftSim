@@ -1,12 +1,22 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.RECIPE_SCAN
+---@class CraftSim.RECIPE_SCAN : CraftSim.Module
 CraftSim.RECIPE_SCAN = {}
 
 local GUTIL = CraftSim.GUTIL
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
+
+CraftSim.MODULES:RegisterModule("MODULE_RECIPE_SCAN", CraftSim.RECIPE_SCAN, {
+    label = L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.RECIPE_SCAN, {
+    "CRAFTSIM_PROFESSION_INITIALIZED",
+    "CRAFTSIM_PROFESSION_OPENED",
+})
 
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
@@ -46,9 +56,9 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(row, value)
     content.scanButton:SetEnabled(value)
     content.cancelScanButton:SetVisible(not value)
     if not value then
-        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCANNING") .. " 0%")
+        content.scanButton:SetText(L("RECIPE_SCAN_SCANNING") .. " 0%")
     else
-        content.scanButton:SetText(CraftSim.LOCAL:GetText("RECIPE_SCAN_SCAN_RECIPIES"))
+        content.scanButton:SetText(L("RECIPE_SCAN_SCAN_RECIPIES"))
     end
 
     -- if within professionscan always hide the cancel button in the scanning row
@@ -401,7 +411,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
     local globalOptimizeConcentration     = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.OPTIMIZE_CONCENTRATION,
         false)
     local globalOptimizeFinishingReagents = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS
-    .OPTIMIZE_FINISHING_REAGENTS, false)
+        .OPTIMIZE_FINISHING_REAGENTS, false)
     local globalFinishingAlgorithm        = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID,
         KEYS.FINISHING_REAGENTS_ALGORITHM, FA.SIMPLE)
     local globalReagentAllocation         = CraftSim.DB.OPTIMIZATION_OPTIONS:Get(OPT_ID, KEYS.REAGENT_ALLOCATION,
@@ -466,7 +476,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                         -- Apply TSM sale rate filter (after optimization)
                         if TSM_API and recipeData.resultData and recipeData.resultData.expectedItem then
                             local tsmSaleRateThreshold = CraftSim.DB.OPTIONS:Get(
-                            "RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
+                                "RECIPESCAN_SCAN_TSM_SALERATE_THRESHOLD")
                             if tsmSaleRateThreshold > 0 then
                                 local resultSaleRate = CraftSimTSM:GetItemSaleRate(recipeData.resultData.expectedItem
                                     :GetItemLink())
@@ -547,7 +557,8 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                     if globalReagentAllocation == RA.OPTIMIZE_MOST_PROFITABLE then
                         optimizeReagentOptions = { highestProfit = true }
                     else
-                        local targetQuality = tonumber(string.match(tostring(globalReagentAllocation), "^OPTIMIZE_TARGET_(%d+)$"))
+                        local targetQuality = tonumber(string.match(tostring(globalReagentAllocation),
+                            "^OPTIMIZE_TARGET_(%d+)$"))
                         if targetQuality then
                             optimizeReagentOptions = { maxQuality = targetQuality }
                         else
@@ -679,6 +690,9 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     GUTIL:WaitFor(function()
         local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
         local professionInfo = C_TradeSkillUI.GetBaseProfessionInfo()
+        if not professionInfo or not professionInfo.profession then
+            return false
+        end
         local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(playerCrafterUID, professionInfo.profession)
         return cachedRecipeIDs ~= nil
     end, update)
@@ -863,4 +877,18 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
             frameDistributor:Continue()
         end
     }:Continue()
+end
+
+function CraftSim.RECIPE_SCAN:CRAFTSIM_PROFESSION_INITIALIZED()
+    if self.UI then
+        self.UI:Update()
+    end
+end
+
+---@param _professionInfo ProfessionInfo
+---@param selectedTab CraftSim.PROFESSIONS_TAB
+function CraftSim.RECIPE_SCAN:CRAFTSIM_PROFESSION_OPENED(_professionInfo, selectedTab)
+    if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE and self.UI then
+        self.UI:Update()
+    end
 end

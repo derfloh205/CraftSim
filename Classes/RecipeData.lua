@@ -19,7 +19,7 @@ local function generateConcentrationCacheKey(recipeData)
     for reagentID, quantity in pairs(requiredTbl) do
         -- Handle case where quantity might be a table
         local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or
-        tostring(quantity)
+            tostring(quantity)
         table.insert(parts, reagentID .. ":" .. quantityStr)
     end
 
@@ -543,7 +543,7 @@ end
 
 function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
-    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
 
     if not schematicForm then
         return
@@ -653,7 +653,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
 end
 
 function CraftSim.RecipeData:SetConcentrationBySchematicForm()
-    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByContext()
     if not schematicForm then
         return
     end
@@ -1272,8 +1272,8 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                 local units = 1
 
                 Logger:LogDebug("- Converting " ..
-                math.min(best.available, units) ..
-                " x " .. best.reagent.items[1].item:GetItemLink() .. " It: #" .. currentIteration)
+                    math.min(best.available, units) ..
+                    " x " .. best.reagent.items[1].item:GetItemLink() .. " It: #" .. currentIteration)
                 applyConversion(best, units)
                 -- update recipe stats based on new skill from reagent allocation after conversion
                 -- so concentration costs are updated
@@ -1323,7 +1323,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
                     frameDistributor:Continue()
                 else
                     Logger:LogDebug(
-                    "- Upgrade crossed a concentration bracket boundary but did not improve concentration value, rolling back")
+                        "- Upgrade crossed a concentration bracket boundary but did not improve concentration value, rolling back")
                     Rollback()
                     frameDistributor:Break()
                 end
@@ -1335,7 +1335,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             -- or if the last possible upgrades are not enough to lessen concentration costs by at least 1
             if boughtConcentration < 1 then
                 Logger:LogDebug("- Upgrade did not decrease concentration cost, rolling back (Bought: " ..
-                boughtConcentration .. ")")
+                    boughtConcentration .. ")")
                 Rollback()
                 frameDistributor:Break()
                 return
@@ -1344,7 +1344,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
             -- if we did not increase the value, roll back
             if concentrationValue <= lastConcentrationValue then
                 Logger:LogDebug("- Upgrade did not increase concentration value, rolling back (Value: " ..
-                concentrationValue .. ", Last: " .. lastConcentrationValue .. ")")
+                    concentrationValue .. ", Last: " .. lastConcentrationValue .. ")")
                 Rollback()
                 frameDistributor:Break()
                 return
@@ -2021,7 +2021,7 @@ function CraftSim.RecipeData:Optimize(options)
             elseif optimizationTask == "FINISHING_REAGENTS" then
                 local finOpts = options.optimizeFinishingReagentsOptions
                 Logger:LogDebug("Optimizing Finishing Reagents.. (permutation: " ..
-                tostring(finOpts.permutationBased) .. ")")
+                    tostring(finOpts.permutationBased) .. ")")
                 Logger:LogDebug("- includeLocked: " .. tostring(finOpts.includeLocked))
                 Logger:LogDebug("- includeSoulbound: " .. tostring(finOpts.includeSoulbound))
                 Logger:LogDebug("- onlyHighestQualitySoulbound: " .. tostring(finOpts.onlyHighestQualitySoulbound))
@@ -2405,7 +2405,8 @@ function CraftSim.RecipeData:CanCraft(amount)
 
     local concentrationAmount = math.huge
     if self.concentrating and self.concentrationCost > 0 then
-        concentrationAmount = math.floor(self.concentrationData:GetCurrentAmount() / (self.concentrationCost * amount))
+        local cost = self.concentrationCost * amount
+        concentrationAmount = self.concentrationData:GetQueueableAmount(cost)
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
