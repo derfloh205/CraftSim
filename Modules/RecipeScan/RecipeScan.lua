@@ -1,12 +1,22 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.RECIPE_SCAN
+---@class CraftSim.RECIPE_SCAN : CraftSim.Module
 CraftSim.RECIPE_SCAN = {}
 
 local GUTIL = CraftSim.GUTIL
 
 local L = CraftSim.LOCAL:GetLocalizer()
+
+CraftSim.MODULES:RegisterModule("MODULE_RECIPE_SCAN", CraftSim.RECIPE_SCAN, {
+    label = L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.RECIPE_SCAN, {
+    "CRAFTSIM_PROFESSION_INITIALIZED",
+    "CRAFTSIM_PROFESSION_OPENED",
+})
 
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
@@ -680,6 +690,9 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     GUTIL:WaitFor(function()
         local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
         local professionInfo = C_TradeSkillUI.GetBaseProfessionInfo()
+        if not professionInfo or not professionInfo.profession then
+            return false
+        end
         local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(playerCrafterUID, professionInfo.profession)
         return cachedRecipeIDs ~= nil
     end, update)
@@ -864,4 +877,18 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
             frameDistributor:Continue()
         end
     }:Continue()
+end
+
+function CraftSim.RECIPE_SCAN:CRAFTSIM_PROFESSION_INITIALIZED()
+    if self.UI then
+        self.UI:Update()
+    end
+end
+
+---@param _professionInfo ProfessionInfo
+---@param selectedTab CraftSim.PROFESSIONS_TAB
+function CraftSim.RECIPE_SCAN:CRAFTSIM_PROFESSION_OPENED(_professionInfo, selectedTab)
+    if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE and self.UI then
+        self.UI:Update()
+    end
 end
