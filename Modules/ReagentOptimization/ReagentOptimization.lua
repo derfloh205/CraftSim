@@ -78,14 +78,39 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.REAGENT_OPTIMIZATION
+---@class CraftSim.REAGENT_OPTIMIZATION : CraftSim.Module
+---@field UI CraftSim.REAGENT_OPTIMIZATION.UI
 CraftSim.REAGENT_OPTIMIZATION = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_REAGENT_OPTIMIZATION", CraftSim.REAGENT_OPTIMIZATION, {
+    label = L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.REAGENT_OPTIMIZATION, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ReagentOptimization")
 
 local function translateLuaIndex(index)
     return index + 1
+end
+
+function CraftSim.REAGENT_OPTIMIZATION:Update()
+    if not self.recipeData then
+        return
+    end
+
+    self.UI:Update(self.recipeData)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.REAGENT_OPTIMIZATION:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    self.recipeData = recipeData
+    self:Update()
 end
 
 ---Returns the recipe weight for the reagent
