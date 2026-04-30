@@ -30,6 +30,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
 	"CRAFTSIM_PROFESSION_OPENED",
 	"CRAFTSIM_PROFESSION_TAB_CLICKED",
+	"CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
 	"CRAFTSIM_ORDER_VIEW_CLOSED",
 	"CRAFTSIM_CRAFT_BUFFS_UPDATED",
 })
@@ -508,6 +509,7 @@ end
 
 local professionFrameHooked = false
 local craftingOrdersPreloadedThisSession = {}
+local lastOrdersTabEnabled = nil
 function CraftSim.INIT:HookToProfessionsFrame()
 	if professionFrameHooked then
 		return
@@ -516,6 +518,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			lastOrdersTabEnabled = nil
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
 			--CraftSim.DEBUG:StartProfiling("Update Customer History")
@@ -573,6 +576,14 @@ function CraftSim.INIT:HookToProfessionsFrame()
 	if craftingOrdersTab then
 		craftingOrdersTab:HookScript("OnClick", refreshAddWorkOrdersButtonDeferred)
 	end
+
+	hooksecurefunc(ProfessionsFrame, "Update", function()
+		local currentOrdersTabEnabled = ProfessionsFrame.isCraftingOrdersTabEnabled == true
+		if lastOrdersTabEnabled == nil or lastOrdersTabEnabled ~= currentOrdersTabEnabled then
+			lastOrdersTabEnabled = currentOrdersTabEnabled
+			GUTIL:TriggerCustomEvent("CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED", currentOrdersTabEnabled)
+		end
+	end)
 
 	ProfessionsFrame.CraftingPage:HookScript("OnHide",
 		function()

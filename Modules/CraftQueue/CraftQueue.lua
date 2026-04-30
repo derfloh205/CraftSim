@@ -6,16 +6,19 @@ local GUTIL = CraftSim.GUTIL
 
 local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
+local TABLE_ACCESS_DEBUG = true
 
 
 ---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
-    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED" })
+    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED",
+    "CRAFTING_DETAILS_UPDATE", "UPDATE_SHAPESHIFT_FORM" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
+    "CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
 })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
@@ -861,6 +864,35 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
         if not CraftSim.TOPGEAR.IsEquipping then
             CraftSim.CRAFTQ.UI:Update()
         end
+    end
+end
+
+function CraftSim.CRAFTQ:CRAFTING_DETAILS_UPDATE()
+    if self.frame and self.frame:IsVisible() then
+        if TABLE_ACCESS_DEBUG and CraftSim.DEBUG and CraftSim.DEBUG.SystemPrint then
+            CraftSim.DEBUG:SystemPrint(
+                "[CraftQueue table debug] CRAFTING_DETAILS_UPDATE")
+        end
+        self.UI:Update()
+    end
+end
+
+function CraftSim.CRAFTQ:UPDATE_SHAPESHIFT_FORM()
+    CraftSim.PRE_CRAFT_CONDITIONS:InvalidateUserContext()
+    if self.frame and self.frame:IsVisible() then
+        self.UI:Update()
+    end
+end
+
+---@param ordersTabEnabled boolean
+function CraftSim.CRAFTQ:CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED(ordersTabEnabled)
+    if self.frame and self.frame:IsVisible() then
+        if TABLE_ACCESS_DEBUG and CraftSim.DEBUG and CraftSim.DEBUG.SystemPrint then
+            CraftSim.DEBUG:SystemPrint(
+                string.format("[CraftQueue table debug] CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED enabled=%s",
+                    tostring(ordersTabEnabled)))
+        end
+        self.UI:Update()
     end
 end
 
