@@ -13,7 +13,7 @@ local TABLE_ACCESS_DEBUG = true
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED",
-    "CRAFTING_DETAILS_UPDATE" })
+    "CRAFTING_DETAILS_UPDATE", "UPDATE_SHAPESHIFT_FORM" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
@@ -873,6 +873,13 @@ function CraftSim.CRAFTQ:CRAFTING_DETAILS_UPDATE()
             CraftSim.DEBUG:SystemPrint(
                 "[CraftQueue table debug] CRAFTING_DETAILS_UPDATE")
         end
+        self.UI:Update()
+    end
+end
+
+function CraftSim.CRAFTQ:UPDATE_SHAPESHIFT_FORM()
+    CraftSim.PRE_CRAFT_CONDITIONS:InvalidateUserContext()
+    if self.frame and self.frame:IsVisible() then
         self.UI:Update()
     end
 end

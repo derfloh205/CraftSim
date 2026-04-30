@@ -3,24 +3,20 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.PrecraftCondition
----@field id string
----@field priority number
----@field isMet boolean
----@field reason string?
----@field blocksCraft boolean
----@field blocksClaim boolean
-
 ---@class CraftSim.PreCraftConditions
 ---@field CONDITION_IDS table<string, string>
 ---@field CONDITION_PRIORITY table<string, number>
----@field AddCondition fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem, condition: CraftSim.PrecraftCondition)
+---@field AddEvaluatedCondition fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem, options: CraftSim.PrecraftCondition.Options)
 ---@field BuildFailedConditionCache fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
 ---@field AreConditionsMet fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem, conditionIDs: string[]): boolean
 ---@field GetConditionDebugSignature fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem): string
 ---@field DebugLogConditionStateIfChanged fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
 ---@field CanClaimWorkOrder fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem): boolean
 ---@field Evaluate fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
+---@field MarkQueueListEvaluate fun(self: CraftSim.PreCraftConditions)
+---@field InvalidateUserContext fun(self: CraftSim.PreCraftConditions)
+---@field EnsureUserContextForCurrentPass fun(self: CraftSim.PreCraftConditions)
+---@field userConditions CraftSim.PrecraftUserConditions
 CraftSim.PRE_CRAFT_CONDITIONS = CraftSim.PRE_CRAFT_CONDITIONS or {}
 
 ---@type CraftSim.PreCraftConditions
@@ -51,11 +47,58 @@ PCC.CONDITION_PRIORITY = {
     PRE_CRAFT_GATE = 30,
 }
 
+--- IDs whose evaluation reads CraftSim.PRE_CRAFT_CONDITIONS.userConditions (one Refresh per queue pass).
+PCC.USER_CONDITION_IDS = {
+    PCC.CONDITION_IDS.FORM_STATE,
+}
+
+--- Everything else is derived from the specific CraftSim.CraftQueueItem / RecipeData row.
+PCC.ITEM_CONDITION_IDS = {
+    PCC.CONDITION_IDS.IS_CRAFTER,
+    PCC.CONDITION_IDS.LEARNED,
+    PCC.CONDITION_IDS.COOLDOWN,
+    PCC.CONDITION_IDS.REAGENTS,
+    PCC.CONDITION_IDS.RECIPE_REQUIREMENTS,
+    PCC.CONDITION_IDS.PROFESSION_OPEN,
+    PCC.CONDITION_IDS.PROFESSION_TOOLS,
+    PCC.CONDITION_IDS.PRE_CRAFT_GATE,
+}
+
+--- Bump at the start of a full queue list evaluation so user-scoped context refreshes once before row work.
+function PCC:MarkQueueListEvaluate()
+    self.queueListEvaluatePassId = (self.queueListEvaluatePassId or 0) + 1
+end
+
+--- Clears user-context signature so the next refresh re-reads player state (e.g. shapeshift).
+function PCC:InvalidateUserContext()
+    if self.userConditions then
+        self.userConditions:GetContext():Invalidate()
+    end
+    self.userContextRefreshedThroughPassId = nil
+end
+
+--- Refreshes PrecraftUserConditions when the queue pass id has changed since the last refresh.
+--- When no pass has been marked (nil), refresh each call; PrecraftUserContext still skips work if inputs unchanged.
+function PCC:EnsureUserContextForCurrentPass()
+    self.userConditions = self.userConditions or CraftSim.PrecraftUserConditions()
+    local passId = self.queueListEvaluatePassId
+    if passId == nil then
+        self.userConditions:Refresh()
+        return
+    end
+    if self.userContextRefreshedThroughPassId == passId then
+        return
+    end
+    self.userConditions:Refresh()
+    self.userContextRefreshedThroughPassId = passId
+end
+
 ---@param craftQueueItem CraftSim.CraftQueueItem
----@param condition CraftSim.PrecraftCondition
-function PCC:AddCondition(craftQueueItem, condition)
-    tinsert(craftQueueItem.conditions, condition)
-    craftQueueItem.conditionMap[condition.id] = condition
+---@param options CraftSim.PrecraftCondition.Options
+function PCC:AddEvaluatedCondition(craftQueueItem, options)
+    local condition = CraftSim.PrecraftCondition(options)
+    condition:Evaluate(craftQueueItem)
+    craftQueueItem:AddCondition(condition)
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
@@ -95,10 +138,10 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function PCC:DebugLogConditionStateIfChanged(craftQueueItem)
     local signature = self:GetConditionDebugSignature(craftQueueItem)
-    if craftQueueItem._lastConditionDebugSignature == signature then
+    if craftQueueItem.lastPrecraftConditionDebugSignature == signature then
         return
     end
-    craftQueueItem._lastConditionDebugSignature = signature
+    craftQueueItem.lastPrecraftConditionDebugSignature = signature
 
     local top = craftQueueItem.topFailedCondition
     local topReason = top and (top.reason or top.id) or "none"
@@ -132,6 +175,8 @@ function PCC:Evaluate(craftQueueItem)
     local IDS = self.CONDITION_IDS
     local PRIORITY = self.CONDITION_PRIORITY
 
+    self:EnsureUserContextForCurrentPass()
+
     craftQueueItem.isCrafter = craftQueueItem:IsCrafter()
     craftQueueItem.learned = craftQueueItem.recipeData.learned
 
@@ -144,13 +189,16 @@ function PCC:Evaluate(craftQueueItem)
     CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(craftQueueItem)
 
     craftQueueItem:ResetConditions()
-    self:AddCondition(craftQueueItem, {
+
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.IS_CRAFTER,
         priority = PRIORITY.IS_CRAFTER,
-        isMet = craftQueueItem.isCrafter,
-        reason = "Alt Character",
         blocksCraft = true,
         blocksClaim = false,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.isCrafter
+            self.reason = self.isMet and nil or "Alt Character"
+        end,
     })
 
     if not craftQueueItem.isCrafter then
@@ -175,83 +223,86 @@ function PCC:Evaluate(craftQueueItem)
     craftQueueItem.correctProfessionOpen = craftQueueItem.recipeData:IsProfessionOpen() or false
     craftQueueItem.notOnCooldown = not craftQueueItem.recipeData:OnCooldown()
 
-    -- Shapeshift gating only applies to Druids. Calling GetShapeshiftForm can behave oddly
-    -- for other classes, so short-circuit early.
-    local crafterClass = craftQueueItem.crafterData and craftQueueItem.crafterData.class
-    local isDruid = crafterClass == "DRUID"
-    local formConditionMet = true
-    local formReason = rawget(_G, "ERR_CANT_DO_THAT_WHILE_SHAPESHIFTED") or "Must be in normal form"
-    if isDruid and GetShapeshiftForm then
-        -- In normal form GetShapeshiftForm() returns 0.
-        local formID = GetShapeshiftForm()
-        formConditionMet = formID == 0
-    else
-        formReason = "Not a Druid"
-    end
-
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.LEARNED,
         priority = PRIORITY.LEARNED,
-        isMet = craftQueueItem.learned,
-        reason = "Not Learned",
         blocksCraft = true,
         blocksClaim = true,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.learned
+            self.reason = self.isMet and nil or "Not Learned"
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.COOLDOWN,
         priority = PRIORITY.COOLDOWN,
-        isMet = craftQueueItem.notOnCooldown,
-        reason = "On Cooldown",
         blocksCraft = true,
         blocksClaim = true,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.notOnCooldown
+            self.reason = self.isMet and nil or "On Cooldown"
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.REAGENTS,
         priority = PRIORITY.REAGENTS,
-        isMet = craftQueueItem.canCraftOnce,
-        reason = "Missing Reagents",
         blocksCraft = true,
         blocksClaim = true,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.canCraftOnce
+            self.reason = self.isMet and nil or "Missing Reagents"
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.RECIPE_REQUIREMENTS,
         priority = PRIORITY.RECIPE_REQUIREMENTS,
-        isMet = not craftQueueItem.recipeDisabled,
-        reason = craftQueueItem.recipeDisabledReason or "Missing requirement",
         blocksCraft = true,
         blocksClaim = true,
+        evaluate = function(self, cqi)
+            self.isMet = not cqi.recipeDisabled
+            self.reason = self.isMet and nil or (cqi.recipeDisabledReason or "Missing requirement")
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.FORM_STATE,
         priority = PRIORITY.FORM_STATE,
-        isMet = formConditionMet,
-        reason = formReason,
         blocksCraft = true,
         blocksClaim = true,
+        evaluate = function(condition, cqi)
+            local ctx = CraftSim.PRE_CRAFT_CONDITIONS.userConditions:GetContext()
+            condition.isMet = ctx.formConditionMet
+            condition.reason = ctx.formFailureReason
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.PROFESSION_OPEN,
         priority = PRIORITY.PROFESSION_OPEN,
-        isMet = craftQueueItem.correctProfessionOpen,
-        reason = "Wrong Profession",
         blocksCraft = true,
         blocksClaim = false,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.correctProfessionOpen
+            self.reason = self.isMet and nil or "Wrong Profession"
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.PROFESSION_TOOLS,
         priority = PRIORITY.PROFESSION_TOOLS,
-        isMet = craftQueueItem.gearEquipped,
-        reason = "Wrong Profession Tools",
         blocksCraft = true,
         blocksClaim = false,
+        evaluate = function(self, cqi)
+            self.isMet = cqi.gearEquipped
+            self.reason = self.isMet and nil or "Wrong Profession Tools"
+        end,
     })
-    self:AddCondition(craftQueueItem, {
+    self:AddEvaluatedCondition(craftQueueItem, {
         id = IDS.PRE_CRAFT_GATE,
         priority = PRIORITY.PRE_CRAFT_GATE,
-        isMet = not craftQueueItem.pcbgData.needsStep,
-        reason = "Pre-craft action required",
         blocksCraft = true,
         blocksClaim = false,
+        evaluate = function(self, cqi)
+            self.isMet = not cqi.pcbgData.needsStep
+            self.reason = self.isMet and nil or "Pre-craft action required"
+        end,
     })
 
     self:BuildFailedConditionCache(craftQueueItem)

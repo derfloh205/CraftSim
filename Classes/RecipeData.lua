@@ -2402,14 +2402,21 @@ function CraftSim.RecipeData:GetLiveDisabledState()
     if #unmetRequirements > 0 then
         local requirementText = table.concat(unmetRequirements, ", ")
         if requirementText ~= "" then
-            return true, requirementText
+            return true, "Missing: " .. requirementText
         end
         return true, "Missing required tools or location"
     end
 
     local liveRecipeInfo = C_TradeSkillUI.GetRecipeInfo(self.recipeID)
     if liveRecipeInfo and liveRecipeInfo.disabled then
-        return true, liveRecipeInfo.disabledReason
+        local disabledReason = liveRecipeInfo.disabledReason
+        if disabledReason and disabledReason ~= "" then
+            if not string.find(disabledReason, "^Missing", 1) then
+                return true, "Missing: " .. disabledReason
+            end
+            return true, disabledReason
+        end
+        return true, "Missing requirement"
     end
 
     return false, nil

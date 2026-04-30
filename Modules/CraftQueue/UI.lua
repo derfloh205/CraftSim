@@ -9,10 +9,10 @@ CraftSim.CRAFTQ = CraftSim.CRAFTQ
 
 ---@class CraftSim.CRAFTQ.UI : CraftSim.Module.UI
 CraftSim.CRAFTQ.UI = {}
-CraftSim.CRAFTQ.UI._conditionEvalGeneration = 0
-CraftSim.CRAFTQ.UI._conditionEvalRunning = false
-CraftSim.CRAFTQ.UI._pendingQueueRender = false
-CraftSim.CRAFTQ.UI._conditionEvalBatchSize = 8
+CraftSim.CRAFTQ.UI.canCraftBatchGenerationId = 0
+CraftSim.CRAFTQ.UI.isCanCraftBatchEvaluationRunning = false
+CraftSim.CRAFTQ.UI.pendingQueueFullUpdateAfterCanCraftBatch = false
+CraftSim.CRAFTQ.UI.canCraftEvaluationBatchSize = 8
 
 local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
@@ -3099,30 +3099,30 @@ function CraftSim.CRAFTQ.UI:EvaluateQueueItemsInBatches(craftQueue, onComplete)
     local total = #items
     local index = 1
 
-    self._conditionEvalGeneration = (self._conditionEvalGeneration or 0) + 1
-    local generation = self._conditionEvalGeneration
-    self._conditionEvalRunning = true
+    self.canCraftBatchGenerationId = (self.canCraftBatchGenerationId or 0) + 1
+    local batchGenerationId = self.canCraftBatchGenerationId
+    self.isCanCraftBatchEvaluationRunning = true
 
     local function finish()
-        if self._conditionEvalGeneration ~= generation then
+        if self.canCraftBatchGenerationId ~= batchGenerationId then
             return
         end
-        self._conditionEvalRunning = false
+        self.isCanCraftBatchEvaluationRunning = false
         onComplete()
 
-        if self._pendingQueueRender then
-            self._pendingQueueRender = false
+        if self.pendingQueueFullUpdateAfterCanCraftBatch then
+            self.pendingQueueFullUpdateAfterCanCraftBatch = false
             self:Update()
         end
     end
 
     local function step()
-        if self._conditionEvalGeneration ~= generation then
+        if self.canCraftBatchGenerationId ~= batchGenerationId then
             return
         end
 
         local processed = 0
-        while index <= total and processed < (self._conditionEvalBatchSize or 8) do
+        while index <= total and processed < (self.canCraftEvaluationBatchSize or 8) do
             local craftQueueItem = items[index]
             if craftQueueItem and craftQueueItem.CalculateCanCraft then
                 craftQueueItem:CalculateCanCraft()
@@ -3150,8 +3150,8 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 
-    if self._conditionEvalRunning then
-        self._pendingQueueRender = true
+    if self.isCanCraftBatchEvaluationRunning then
+        self.pendingQueueFullUpdateAfterCanCraftBatch = true
         CraftSim.DEBUG:StopProfiling("FrameListUpdate")
         return
     end
@@ -3163,6 +3163,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     craftQueue:UpdateSubRecipes()
     craftQueue:RefreshQueuedRecipeCooldownData()
+    CraftSim.PRE_CRAFT_CONDITIONS:MarkQueueListEvaluate()
     local function finalizeQueueRender()
         CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
         craftQueue:FilterSortByPriority()
@@ -3189,7 +3190,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
         CraftSim.DEBUG:StopProfiling("FrameListUpdate")
     end
 
-    local shouldBatch = #craftQueue.craftQueueItems > (self._conditionEvalBatchSize or 8)
+    local shouldBatch = #craftQueue.craftQueueItems > (self.canCraftEvaluationBatchSize or 8)
     if shouldBatch then
         self:EvaluateQueueItemsInBatches(craftQueue, finalizeQueueRender)
     else

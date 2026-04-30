@@ -55,14 +55,16 @@ function CraftSim.CraftQueueItem:new(options)
     self.learned = false
     self.recipeDisabled = false
     self.recipeDisabledReason = nil
-    ---@type table[]
+    ---@type CraftSim.PrecraftCondition[]
     self.conditions = {}
-    ---@type table<string, table>
+    ---@type table<string, CraftSim.PrecraftCondition>
     self.conditionMap = {}
-    ---@type table[]
+    ---@type CraftSim.PrecraftCondition[]
     self.failedConditions = {}
-    ---@type table?
+    ---@type CraftSim.PrecraftCondition?
     self.topFailedCondition = nil
+    ---@type string?
+    self.lastPrecraftConditionDebugSignature = nil
     self.hasActiveSubRecipes = false
 
     --- important if the current character is not the crafter of the recipe
@@ -71,7 +73,7 @@ function CraftSim.CraftQueueItem:new(options)
     self.crafterData = options.recipeData:GetCrafterData()
 end
 
----@param condition table
+---@param condition CraftSim.PrecraftCondition
 function CraftSim.CraftQueueItem:AddCondition(condition)
     tinsert(self.conditions, condition)
     self.conditionMap[condition.id] = condition
@@ -84,18 +86,18 @@ function CraftSim.CraftQueueItem:ResetConditions()
     self.topFailedCondition = nil
 end
 
----@return table[]
+---@return CraftSim.PrecraftCondition[]
 function CraftSim.CraftQueueItem:GetFailedConditions()
     return self.failedConditions
 end
 
----@return table?
+---@return CraftSim.PrecraftCondition?
 function CraftSim.CraftQueueItem:GetTopFailedCondition()
     return self.topFailedCondition
 end
 
 ---@param conditionID string
----@return table?
+---@return CraftSim.PrecraftCondition?
 function CraftSim.CraftQueueItem:GetCondition(conditionID)
     return self.conditionMap[conditionID]
 end

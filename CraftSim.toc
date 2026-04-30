@@ -112,7 +112,6 @@ Modules/CraftQueue/CraftLists.lua
 Modules/CraftQueue/EditRecipe.lua
 Modules/CraftQueue/UI.lua
 Modules/CraftQueue/PreCraftBuffGate.lua
-Modules/CraftQueue/PreCraftConditions.lua
 
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/UI.lua
@@ -199,6 +198,10 @@ Data/SpecializationData/Midnight/Engineering.lua
 Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
+Classes/PrecraftCondition.lua
+Classes/PrecraftConditionSet.lua
+Classes/PrecraftUserContext.lua
+Classes/PrecraftUserConditions.lua
 Classes/OnCraftData.lua
 Classes/CooldownData.lua
 Classes/ProfessionData.lua
@@ -232,4 +235,5 @@ Classes/JSONBuilder.lua
 Classes/BuffData.lua
 Classes/Buff.lua
 Classes/CraftQueue.lua
+Modules/CraftQueue/PreCraftConditions.lua
 Classes/CraftQueueItem.lua

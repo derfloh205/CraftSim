@@ -232,6 +232,7 @@ function CraftSim.CraftQueue:RestoreFromDB()
     local dbCraftQueueItems = CraftSim.DB.CRAFT_QUEUE:GetAll()
     local function load()
         Logger:LogDebug("Loading CraftQueue from DB...")
+        CraftSim.PRE_CRAFT_CONDITIONS:MarkQueueListEvaluate()
         self.craftQueueItems = GUTIL:Map(dbCraftQueueItems, function(craftQueueItemSerialized)
             local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
             if craftQueueItem then
