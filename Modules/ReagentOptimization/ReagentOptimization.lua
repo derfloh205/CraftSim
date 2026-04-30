@@ -104,17 +104,11 @@ function CraftSim.REAGENT_OPTIMIZATION:Update()
         return
     end
 
-    if self.UI and self.UI.Update then
-        self.UI:Update(self.recipeData)
-    end
+    self.UI:Update(self.recipeData)
 end
 
----@param recipeData CraftSim.RecipeData?
+---@param recipeData CraftSim.RecipeData
 function CraftSim.REAGENT_OPTIMIZATION:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
-    if not recipeData then
-        return
-    end
-
     self.recipeData = recipeData
     self:Update()
 end

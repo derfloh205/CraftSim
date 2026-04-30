@@ -49,7 +49,6 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
-    CraftSim.REAGENT_OPTIMIZATION.frame = frame
     self.module.frame = frame
 
     local function createContent(frame)
@@ -201,8 +200,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     advancedOptimizationButton:SetEnabled(false)
 
                     local function finalizeOptimization()
-                        CraftSim.REAGENT_OPTIMIZATION.UI:Update(
-                            CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+                        CraftSim.REAGENT_OPTIMIZATION:Update()
                         advancedOptimizationButton:SetEnabled(false) -- keep disabled until update from init
                         advancedOptimizationButton:SetText("Optimized")
                     end
@@ -329,7 +327,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                         return algo ~= FA.PERMUTATION
                     end,
                     function()
-                        CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM", FA.SIMPLE)
+                        CraftSim.DB.OPTIONS:Save(
+                            "REAGENT_OPTIMIZATION_FINISHING_REAGENTS_ALGORITHM", FA.SIMPLE)
                         CraftSim.REAGENT_OPTIMIZATION:Update()
                     end)
                 simpleRadio:SetTooltip(function(tooltip, _)
@@ -746,11 +745,13 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_REAGENT_OPTIMIZATION") then
+        return false
+    end
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
     local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
-    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
-    local hasSchematicForm = CraftSim.UTIL:GetSchematicFormByContext()
-
-    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_REAGENT_OPTIMIZATION") and (isRecipeTab or isCraftingOrderTab) and
-        hasSchematicForm
+    return CraftSim.UTIL:IsWorkOrder() or isRecipeTab
 end
