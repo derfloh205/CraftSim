@@ -3531,15 +3531,14 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             concentrationData:Update() -- consider concentration usage on crafting before refresh
         end
         local concentrationCost = craftQueueItem.recipeData.concentrationCost * craftQueueItem.amount
-        local currentAmount = concentrationData:GetCurrentAmount()
-        if concentrationCost <= currentAmount then
+        if concentrationData:CanAfford(concentrationCost) then
             concentrationColumn.text:SetText(f.g(concentrationCost))
-        elseif craftQueueItem.recipeData.concentrationCost < currentAmount then
+        elseif concentrationData:CanAfford(craftQueueItem.recipeData.concentrationCost) then
             concentrationColumn.text:SetText(f.l(concentrationCost))
         else
             concentrationColumn.text:SetText(f.r(concentrationCost))
         end
-        if concentrationCost > currentAmount then
+        if not concentrationData:CanAfford(concentrationCost) then
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
             local estimatedText = concentrationData:GetEstimatedTimeUntilEnoughText(concentrationCost, useUSFormat)

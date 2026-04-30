@@ -489,7 +489,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
             end
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
-            if concentrationData:GetCurrentAmount() < cost then
+            if not concentrationData:CanAfford(cost) then
                 local estimatedText = concentrationData:GetEstimatedTimeUntilEnoughText(cost, useUSFormat)
                 if estimatedText then
                     GameTooltip:SetOwner(cbFrame, "ANCHOR_RIGHT")
@@ -697,7 +697,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
         local requiredAmount = recipeData.concentrationCost * craftQueueItem.amount
         local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
         local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
-        if concentrationData:GetCurrentAmount() < requiredAmount then
+        if not concentrationData:CanAfford(requiredAmount) then
             editRecipeFrame.content.concentrationDateTitle:SetVisible(true)
             editRecipeFrame.content.concentrationDateValue:SetText(f.bb(concentrationData:GetFormattedDateUntil(
                 requiredAmount, useUSFormat)))
