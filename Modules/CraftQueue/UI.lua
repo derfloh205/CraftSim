@@ -3901,5 +3901,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 end
 
 function CraftSim.CRAFTQ.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_CRAFT_QUEUE") then
+        return false
+    end
     return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end
