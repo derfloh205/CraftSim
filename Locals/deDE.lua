@@ -203,7 +203,7 @@ function CraftSim.LOCAL_DE:GetData()
         SPEC_INFO_WORK_IN_PROGRESS = "Spezialisierungsinfo\nIn Arbeit",
 
         -- Herstellungs-Ergebnisse-Fenster
-        CRAFT_LOG_TITLE = "CraftSim Herstellungsergebnisse",
+        CRAFT_LOG_TITLE = "CraftSim Ergebnisse",
         CRAFT_LOG_LOG = "Herstellungsprotokoll",
         CRAFT_LOG_LOG_1 = "Gewinn: ",
         CRAFT_LOG_LOG_2 = "Inspiriert!",
@@ -766,6 +766,8 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE = "Europa - Max Datum",
         CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE = "Amerika - Max Datum",
         CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT = "Verbleibende Stunden",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie: %s",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
 
         -- statische Popups
         STATIC_POPUPS_YES = "Ja",

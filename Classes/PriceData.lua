@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.PriceData : CraftSim.CraftSimObject
 CraftSim.PriceData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.RecipeData.PriceData")
+local Logger = CraftSim.DEBUG:RegisterLogger("PriceData")
 local f = GUTIL:GetFormatter()
 
 ---@param recipeData CraftSim.RecipeData
@@ -78,10 +78,10 @@ function CraftSim.PriceData:Update()
 
     local useSubRecipes = self.recipeData.subRecipeCostsEnabled
 
-    print("Update PriceData: " .. tostring(self.recipeData.recipeName), false, true)
-    print("Using subrecipes: " .. tostring(useSubRecipes))
+    Logger:LogDebug("Update PriceData: " .. tostring(self.recipeData.recipeName), false, true)
+    Logger:LogDebug("Using subrecipes: " .. tostring(useSubRecipes))
 
-    print("Calculating Crafting Costs: ")
+    Logger:LogDebug("Calculating Crafting Costs: ")
 
     local isWorkOrder = self.recipeData.orderData ~= 0
 
@@ -100,7 +100,7 @@ function CraftSim.PriceData:Update()
         end
     end
 
-    print("Summing reagents:")
+    Logger:LogDebug("Summing reagents:")
     for _, reagent in pairs(reagentData.requiredReagents) do
         local isOrderReagent = isWorkOrder and reagent:IsOrderReagentIn(self.recipeData)
         if reagent.hasQuality then
@@ -127,8 +127,8 @@ function CraftSim.PriceData:Update()
                 local reagentPriceInfoQ2 = self.reagentPriceInfos[itemIDQ2]
                 local reagentPriceInfoQ3 = itemIDQ3 and self.reagentPriceInfos[itemIDQ3] or nil
                 local cheapestItemPrice = reagentPriceInfoQ3 and
-                                            math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice, reagentPriceInfoQ3.itemPrice) or
-                                            math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice)
+                    math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice, reagentPriceInfoQ3.itemPrice) or
+                    math.min(reagentPriceInfoQ1.itemPrice, reagentPriceInfoQ2.itemPrice)
                 local reagentCosts = cheapestItemPrice * reagent.requiredQuantity
                 self.craftingCosts = self.craftingCosts + reagentCosts
                 if not isOrderReagent then
@@ -175,11 +175,12 @@ function CraftSim.PriceData:Update()
             quantityMap[reqSlot.activeReagent.item:GetItemID()] = reqSlot.maxQuantity
         end
     end
-    print("num active optionals: " .. #activeOptionalReagents)
+    Logger:LogDebug("num active optionals: " .. #activeOptionalReagents)
     for _, activeOptionalReagent in pairs(activeOptionalReagents) do
         if activeOptionalReagent and not activeOptionalReagent:IsCurrency() then
             local isOrderReagent = isWorkOrder and activeOptionalReagent:IsOrderReagentIn(self.recipeData)
-            print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
+            Logger:LogDebug("added optional reagent to crafting cost: " ..
+            tostring(activeOptionalReagent.item:GetItemLink()))
             local itemID = activeOptionalReagent.item:GetItemID()
             local reagentPriceInfo = self.reagentPriceInfos[itemID]
 
@@ -223,9 +224,10 @@ function CraftSim.PriceData:Update()
 
     local expectedYieldPerCraft = self.recipeData.resultData.expectedYieldPerCraft
     self.averageCraftingCosts = self.craftingCosts - self.resourcefulnessSavedCostsAverage
+    self.averageCraftingCostsNoOrderReagents = self.craftingCostsNoOrderReagents - self.resourcefulnessSavedCostsAverage
     self.expectedCostsPerItem = self.averageCraftingCosts / (expectedYieldPerCraft > 0 and expectedYieldPerCraft or 1)
 
-    print("calculated crafting costs: " .. tostring(self.craftingCosts))
+    Logger:LogDebug("calculated crafting costs: " .. tostring(self.craftingCosts))
 end
 
 --- updates self.reagentPriceInfos map

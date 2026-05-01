@@ -12,7 +12,7 @@ CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 ---@class CraftSim.RECIPE_SCAN.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeScan.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("RecipeScan.UI")
 
 --- Returns the craft lists that contain the given recipeID for the given crafter
 ---@param recipeData CraftSim.RecipeData
@@ -120,8 +120,8 @@ end
 
 ---@param selectedRow CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
 function CraftSim.RECIPE_SCAN.UI:OnProfessionRowSelected(selectedRow, userInput)
-    print("select row: " .. tostring(selectedRow.crafterData.name) .. ": " .. tostring(selectedRow.profession))
-    print("userInput: " .. tostring(userInput))
+    Logger:LogDebug("select row: " .. tostring(selectedRow.crafterData.name) .. ": " .. tostring(selectedRow.profession))
+    Logger:LogDebug("userInput: " .. tostring(userInput))
     -- hide all others except me
     for _, row in pairs(selectedRow.activeRows) do
         row.contentFrame:Hide()
@@ -147,7 +147,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
             content.cachedRecipesInfoHelpIcon:Hide()
         end
     else
-        print("trade skill not ready")
+        Logger:LogDebug("trade skill not ready")
         content.cachedRecipesInfo:SetText("")
         content.cachedRecipesInfoHelpIcon:Hide()
     end
@@ -415,7 +415,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
 end
 
 function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
-    print("update prof list display")
+    Logger:LogDebug("update prof list display")
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
     content.professionList:UpdateDisplay(

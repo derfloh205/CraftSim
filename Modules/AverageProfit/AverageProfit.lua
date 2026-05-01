@@ -9,7 +9,7 @@ CraftSim.AVERAGEPROFIT.frame = nil
 ---@type GGUI.Frame
 CraftSim.AVERAGEPROFIT.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.AverageProfit")
+local Logger = CraftSim.DEBUG:RegisterLogger("AverageProfit")
 
 local statIncreaseFactor = 5
 
@@ -89,10 +89,10 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Statweights statweightResult
 function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
-    print("Get Average Profit", false, true)
+    Logger:LogDebug("Get Average Profit", false, true)
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
-    print("calculate stat weights avg profit: " .. tostring(CraftSim.UTIL:FormatMoney(averageProfit, true)))
+    Logger:LogDebug("calculate stat weights avg profit: " .. tostring(CraftSim.UTIL:FormatMoney(averageProfit, true)))
 
     local multicraftWeight = CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, averageProfit)
     local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, averageProfit)

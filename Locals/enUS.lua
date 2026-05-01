@@ -295,6 +295,10 @@ function CraftSim.LOCAL_EN:GetData()
         RECIPE_INFO_OPTION_CONCENTRATION_COST = "Concentration Cost",
         RECIPE_INFO_OPTION_CONCENTRATION_COST_TOOLTIP =
         "Show the base Concentration point cost for one craft",
+        RECIPE_INFO_OPTION_PROFIT_PER_QUALITY = "Profit per Quality",
+        RECIPE_INFO_OPTION_PROFIT_PER_QUALITY_TOOLTIP =
+        "Show the estimated profit for each possible result quality (sell price minus crafting cost)",
+        RECIPE_INFO_QUALITY_PROFIT_LABEL = "Profit:",
 
         -- Cost Details Frame
         PRICING_TITLE = "CraftSim Pricing",
@@ -548,6 +552,8 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_GENERAL_CURRENT_INVENTORY_SOURCE = "Current Inventory Source: ",
         OPTIONS_GENERAL_NO_INVENTORY_SOURCE = "No Supported Inventory Addon loaded!",
         OPTIONS_GENERAL_SUPPORTED_INVENTORY_SOURCES = "Supported Inventory Sources:",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_CHECKBOX = "Show Module Tutorial Buttons",
+        OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_TOOLTIP = "Show tutorial buttons for each module",
         OPTIONS_PERFORMANCE_RAM = "Enable RAM cleanup while crafting",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "Crafts",
         OPTIONS_PERFORMANCE_RAM_TOOLTIP =
@@ -1067,6 +1073,8 @@ greater or equal the configured sale rate threshold.
         CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE = "European - Max Date",
         CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE = "American - Max Date",
         CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT = "Hours Left",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie: %s",
+        CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
         CONCENTRATION_TRACKER_PIN_TOOLTIP = "Pin Overview",
         CONCENTRATION_TRACKER_LIST_TAB_LABEL = "List",
         CONCENTRATION_TRACKER_LIST_TAB_REMOVE_AND_BLACKLIST = "Remove and Blacklist",

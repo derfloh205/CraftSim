@@ -62,12 +62,12 @@ CraftSim.TOOLENCHANTDATA = {
 		value = 115,
 	},
 	[7976] = {
-		name = "Enchant Tool - Amani Resourcfulness",
+		name = "Enchant Tool - Amani Resourcefulness",
 		stat = "resourcefulness",
 		value = 15,
 	},
 	[7977] = {
-		name = "Enchant Tool - Amani Resourcfulness",
+		name = "Enchant Tool - Amani Resourcefulness",
 		stat = "resourcefulness",
 		value = 30,
 	},

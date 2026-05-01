@@ -18,7 +18,7 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field nodeData table<number, CraftSim.RawPerkData>
 
 
-local print = CraftSim.DEBUG:RegisterDebugID("Data.SpecializationData")
+local Logger = CraftSim.DEBUG:RegisterLogger("SpecializationData.SpecializationData")
 
 ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.RawNodeData>>
 CraftSim.SPECIALIZATION_DATA.NODE_DATA = {

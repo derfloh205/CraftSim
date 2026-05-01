@@ -9,7 +9,7 @@ CraftSim.TOPGEAR = CraftSim.TOPGEAR
 ---@class CraftSim.TOPGEAR.UI
 CraftSim.TOPGEAR.UI = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.TopGear.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("TopGear.UI")
 
 function CraftSim.TOPGEAR.UI:Init()
     local sizeX = 270

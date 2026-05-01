@@ -505,7 +505,7 @@ local function SyncCraftQueueButtonDisabledTooltipProxy(gguiButton)
     end
 end
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueue.UI")
 
 local moxieAutoUpdateOptionKey = CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES
 
@@ -605,7 +605,8 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     end
 
     if changedAny then
-        print("CraftSim: Auto-updating " .. tostring(updateCount) .. " Moxie value(s) from current price source data")
+        Logger:LogDebug("CraftSim: Auto-updating " ..
+        tostring(updateCount) .. " Moxie value(s) from current price source data")
         SyncPatronMoxieInputsFromDB()
         CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     end
@@ -1345,7 +1346,9 @@ function CraftSim.CRAFTQ.UI:Init()
             label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             initialStatusID = "Ready",
             clickCallback = function()
-                CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                    CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                end
             end
         })
 
@@ -1356,7 +1359,29 @@ function CraftSim.CRAFTQ.UI:Init()
                 sizeX = fixedButtonWidth,
                 label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             },
+            {
+                statusID = "Queueing",
+                enabled = false,
+                sizeX = fixedButtonWidth,
+                label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
+            },
         }
+
+        queueTab.content.queueCraftListsCancelButton = CreateFrame("Button", nil, queueTab.content,
+            "UIPanelCloseButton")
+        queueTab.content.queueCraftListsCancelButton:SetSize(16, 16)
+        queueTab.content.queueCraftListsCancelButton:SetPoint("RIGHT", queueTab.content.queueCraftListsButton.frame,
+            "RIGHT", -6,
+            -1)
+        queueTab.content.queueCraftListsCancelButton:SetFrameStrata(queueTab.content.queueCraftListsButton.frame
+        :GetFrameStrata())
+        queueTab.content.queueCraftListsCancelButton:SetFrameLevel(queueTab.content.queueCraftListsButton.frame
+        :GetFrameLevel() + 20)
+        queueTab.content.queueCraftListsCancelButton:EnableMouse(true)
+        queueTab.content.queueCraftListsCancelButton:SetScript("OnClick", function()
+            CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
+        end)
+        queueTab.content.queueCraftListsCancelButton:Hide()
 
         queueTab.content.queueCraftListsButtonOptions = CraftSim.WIDGETS.OptionsButton {
             parent = queueTab.content,
@@ -1923,15 +1948,15 @@ function CraftSim.CRAFTQ.UI:Init()
             }
         end
 
-        frame.content.queueTutorialButton = GGUI.TutorialButton({
-            parent = frame.content,
+        queueTab.content.queueTutorialButton = GGUI.TutorialButton({
+            parent = queueTab.content,
             anchorPoints = {
                 {
-                    anchorParent = frame.content,
-                    anchorA = "TOPRIGHT",
-                    anchorB = "TOPRIGHT",
-                    offsetX = -70,
-                    offsetY = 5,
+                    anchorParent = frame.title.frame,
+                    anchorA = "RIGHT",
+                    anchorB = "LEFT",
+                    offsetX = -7,
+                    offsetY = 0,
                 },
             },
             scale = 0.7,
@@ -2028,6 +2053,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     auctionatorHelpPanelDef
                 },
             },
+            hide = not CraftSim.DB.OPTIONS:Get("SHOW_TUTORIAL_BUTTONS")
         })
     end
 
@@ -3278,7 +3304,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             elseif not selectedItem and itemSelector.slot:IsCurrency() then
                 itemSelector.slot:SetCurrencyReagent(nil)
             else
-                print("setting reagent: " .. tostring(selectedItem and selectedItem:GetItemLink()))
+                Logger:LogDebug("setting reagent: " .. tostring(selectedItem and selectedItem:GetItemLink()))
                 itemSelector.slot:SetReagent((selectedItem and selectedItem:GetItemID()) or nil)
             end
             editRecipeFrame.craftQueueItem.recipeData:Update()
@@ -3349,10 +3375,10 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     ---@param itemSelector CraftSim.CRAFTQ.EditRecipeFrame.ProfessionGearSelector
     ---@param item ItemMixin?
     local function OnSelectProfessionGear(itemSelector, item)
-        print("on select professiongear: " .. tostring(item and item:GetItemLink()))
+        Logger:LogDebug("on select professiongear: " .. tostring(item and item:GetItemLink()))
         if itemSelector and itemSelector.professionGear then
             if item then
-                print("setting gear: " .. tostring(item:GetItemLink()))
+                Logger:LogDebug("setting gear: " .. tostring(item:GetItemLink()))
                 item:ContinueOnItemLoad(function()
                     itemSelector.professionGear:SetItem(item:GetItemLink())
                     editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
@@ -3361,7 +3387,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
                     CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
                 end)
             else
-                print("setting gear to no gear")
+                Logger:LogDebug("setting gear to no gear")
                 itemSelector.professionGear:SetItem(nil)
                 editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
                 editRecipeFrame.craftQueueItem.recipeData:Update()
@@ -3627,7 +3653,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
-    print("CraftQueue Update List", false, true)
+    Logger:LogDebug("CraftQueue Update List", false, true)
 
     CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 

@@ -15,7 +15,7 @@ CraftSim.INVENTORY_APIS = {}
 CraftSimSYNDICATOR = { name = "Syndicator" }
 CraftSimINVENTORY_NONE = { name = "CraftSim" }
 
-local print = CraftSim.DEBUG:RegisterDebugID("Data.InventoryAPI")
+local Logger = CraftSim.DEBUG:RegisterLogger("InventorySource")
 
 function CraftSim.INVENTORY_API:InitInventorySource()
     local loadedSources = CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()
@@ -75,15 +75,116 @@ function CraftSimSYNDICATOR:IsAvailable()
     return Syndicator ~= nil and Syndicator.API ~= nil
 end
 
+---@alias SyndicatorBasicCacheInfo {itemID: string, itemLink: string, itemCount: number}
+
+---@alias SyndicatorCharacterInfo {auctions: SyndicatorBasicCacheInfo[], bags: SyndicatorBasicCacheInfo[][], bankTabs: {slots: SyndicatorBasicCacheInfo[]}[], equipped: number, mail: number, void: number, auctions: number}
+---@alias SyndicatorWarbandInfo {bank: {slots: SyndicatorBasicCacheInfo[]}[]}[]
+
+---@class SyndicatorData
+---@field Characters table<CrafterUID, SyndicatorCharacterInfo>
+---@field Guild table -- not relevant yet
+---@field Warband SyndicatorWarbandInfo
+
+---@param item ItemMixin
+---@param includeAlts boolean? default: false
+---@return number total, number warbank, table<CrafterUID, {bags: number, bank: number, auctions: number}> charMap
+function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
+    includeAlts = includeAlts or false
+    local quality = GUTIL:GetQualityIDFromLink(item:GetItemLink())
+    local itemID = item:GetItemID()
+    local totalCount = 0
+    local warbank = 0
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local sourceMap = {}
+
+    Logger:LogDebug("Syndicator GetGearInventoryCount: {itemLink}", item:GetItemLink())
+
+    ---@type SyndicatorData
+    local syndicatorData = SYNDICATOR_DATA
+
+    if not syndicatorData then
+        Logger:LogFatal("SYNDICATOR_DATA not available")
+    end
+
+    --- sum occurances in characters
+    for crafterUID, data in pairs(syndicatorData.Characters) do
+        sourceMap[crafterUID] = { bags = 0, bank = 0, auctions = 0 }
+        if includeAlts or crafterUID == playerCrafterUID then
+            for _, bags in ipairs(data.bags or {}) do
+                for _, invItem in pairs(bags or {}) do
+                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                        Logger:LogDebug("- Found in bags x{count}", invItem.itemCount)
+                        totalCount = totalCount + invItem.itemCount
+                        sourceMap[crafterUID].bags = sourceMap[crafterUID].bags + invItem.itemCount
+                    end
+                end
+            end
+
+            for _, invInfo in ipairs(data.bankTabs or {}) do
+                for _, invItem in pairs(invInfo.slots or {}) do
+                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                        Logger:LogDebug("- Found in bankTabs x{count}", invItem.itemCount)
+                        totalCount = totalCount + invItem.itemCount
+                        sourceMap[crafterUID].bank = sourceMap[crafterUID].bank + invItem.itemCount
+                    end
+                end
+            end
+
+            for _, invItem in ipairs(data.auctions or {}) do
+                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    Logger:LogDebug("- Found in auctions x{count}", invItem.itemCount)
+
+                    totalCount = totalCount + invItem.itemCount
+                    sourceMap[crafterUID].auctions = sourceMap[crafterUID].auctions + invItem.itemCount
+                end
+            end
+        end
+    end
+
+    for _, warbandInfo in ipairs(syndicatorData.Warband or {}) do
+        for _, invInfo in ipairs(warbandInfo.bank) do
+            for _, invItem in pairs(invInfo.slots) do
+                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    Logger:LogDebug("- Found in warband bank x{count}", invItem.itemCount)
+                    totalCount = totalCount + invItem.itemCount
+                    warbank = warbank + invItem.itemCount
+                end
+            end
+        end
+    end
+
+    Logger:LogDebug("Total count for itemID {itemLink}: {count}", item:GetItemLink(), totalCount)
+
+
+    return totalCount, warbank, sourceMap
+end
+
 --- TODO: when fetch by itemlink is fixed, use it
 --- Returns the total inventory count (bags + bank) for an itemID.
 --- Uses Syndicator's data to query current character inventory.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include all characters; if false/nil, only current player
----@return number count
+---@return number total
 function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
+
+    Logger:LogDebug("Syndicator GetInventoryCount called with {itemIDOrLink}, includeAlts={includeAlts}",
+        itemIDOrLink, tostring(includeAlts))
+
+    if type(itemIDOrLink) == "string" then
+        -- check if gear
+        local item = Item:CreateFromItemLink(itemIDOrLink)
+        if item then
+            if item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
+                Logger:LogDebug("Item is gear, using GetGearInventoryCount")
+                return select(1, CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts))
+            end
+        end
+    end
+
+    Logger:LogDebug("Item is not gear, using regular GetInventoryCount")
+
 
     ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
     local inventoryInfo
@@ -136,8 +237,36 @@ function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts
     if not self:IsAvailable() then return {} end
     if not itemIDOrLink then return {} end
 
-    ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
+    ---@type {characters: {character: string, realmNormalized: string, auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
     local inventoryInfo
+
+    if type(itemIDOrLink) == "string" then
+        -- check if gear
+        local item = Item:CreateFromItemLink(itemIDOrLink)
+        if item then
+            if item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
+                Logger:LogDebug("Item is gear, using GetGearInventoryCount for breakdown lines")
+                local total, warbank, sourceMap = CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
+                local lines = {}
+                for crafterUID, sources in pairs(sourceMap) do
+                    local charLabel = crafterUID
+                    if sources.bags > 0 then
+                        table.insert(lines, { label = charLabel .. " (bags)", count = sources.bags })
+                    end
+                    if sources.bank > 0 then
+                        table.insert(lines, { label = charLabel .. " (bank)", count = sources.bank })
+                    end
+                    if sources.auctions > 0 then
+                        table.insert(lines, { label = charLabel .. " (AH)", count = sources.auctions })
+                    end
+                end
+                if warbank > 0 then
+                    table.insert(lines, { label = "Warband", count = warbank })
+                end
+                return lines
+            end
+        end
+    end
 
     if Syndicator.API and Syndicator.API.GetInventoryInfo then
         if type(itemIDOrLink) == "string" then
@@ -160,10 +289,9 @@ function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts
     end
 
     for _, characterInfo in ipairs(inventoryInfo.characters) do
-        local charInfo = characterInfo.character
-        if includeAlts or (charInfo and charInfo.name == playerName and charInfo.realm == playerRealm) then
-            local charLabel = (charInfo and charInfo.name and charInfo.realm)
-                and (charInfo.name .. "-" .. charInfo.realm) or "Unknown"
+        if includeAlts or (characterInfo and characterInfo.character == playerName and characterInfo.realmNormalized == playerRealm) then
+            local charLabel = (characterInfo and characterInfo.character and characterInfo.realmNormalized)
+                and (characterInfo.character .. "-" .. characterInfo.realmNormalized) or "Unknown"
             local charInv = (characterInfo.bags or 0) + (characterInfo.bank or 0) +
                 (characterInfo.equipped or 0) + (characterInfo.mail or 0) + (characterInfo.void or 0)
             table.insert(lines, { label = charLabel .. " (inv)", count = charInv })
@@ -172,7 +300,7 @@ function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts
     end
 
     -- Warband always included
-    if inventoryInfo.warband and inventoryInfo.warband[1] then
+    if inventoryInfo.warband and inventoryInfo.warband[1] and inventoryInfo.warband[1] > 0 then
         table.insert(lines, { label = "Warband", count = inventoryInfo.warband[1] or 0 })
     end
 

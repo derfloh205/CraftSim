@@ -10,7 +10,49 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFT_LISTS
 CraftSim.CRAFT_LISTS = {}
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.CraftQueue.CraftLists")
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
+
+CraftSim.CRAFT_LISTS.isQueueingSelectedLists = false
+
+function CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
+    self.isQueueingSelectedLists = false
+end
+
+---@param running boolean
+function CraftSim.CRAFT_LISTS:SetQueueCraftListsButtonState(running)
+    local queueListsButton = CraftSim.CRAFTQ.frame and
+        CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab and
+        CraftSim.CRAFTQ.frame.content.queueTab.content and
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
+    local queueListsCancelButton = CraftSim.CRAFTQ.frame and
+        CraftSim.CRAFTQ.frame.content and
+        CraftSim.CRAFTQ.frame.content.queueTab and
+        CraftSim.CRAFTQ.frame.content.queueTab.content and
+        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsCancelButton --[[@as Button?]]
+
+    if not queueListsButton then
+        return
+    end
+
+    if running then
+        queueListsButton:SetStatus("Queueing")
+    else
+        queueListsButton:SetStatus("Ready")
+    end
+
+    if queueListsCancelButton then
+        if running then
+            if queueListsButton and queueListsButton.frame then
+                queueListsCancelButton:SetFrameStrata(queueListsButton.frame:GetFrameStrata())
+                queueListsCancelButton:SetFrameLevel(queueListsButton.frame:GetFrameLevel() + 20)
+            end
+            queueListsCancelButton:Show()
+        else
+            queueListsCancelButton:Hide()
+        end
+    end
+end
 
 ---@param list CraftSim.CraftList
 ---@return CraftSim.CraftListRecipeEntry[]
@@ -136,7 +178,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     for _, entry in ipairs(allScanEntries) do
         local sbfCrafts = entrySbfCrafts[entry] or 0
         if sbfCrafts > 0 then
-            entryEffectiveRD[entry] = entry.recipeData -- with SBF
+            entryEffectiveRD[entry] = entry.recipeData                          -- with SBF
         else
             entryEffectiveRD[entry] = entry.recipeDataNoSBF or entry.recipeData -- without SBF
         end
@@ -302,7 +344,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                     CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
                 end
             else
-                print("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
+                Logger:LogDebug("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
             end
         end
     end
@@ -348,8 +390,10 @@ end
 ---@param crafterUID? CrafterUID
 function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
-    print("QueueSelectedLists called with crafterUID: " .. crafterUID)
+    Logger:LogDebug("QueueSelectedLists called with crafterUID: " .. crafterUID)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+    self.isQueueingSelectedLists = true
+    self:SetQueueCraftListsButtonState(true)
 
     local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
     local selectedLists = GUTIL:Filter(allLists, function(list)
@@ -357,35 +401,37 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
     end)
 
     if #selectedLists == 0 then
+        self.isQueueingSelectedLists = false
+        self:SetQueueCraftListsButtonState(false)
         return
-    end
-
-    local queueListsButton = CraftSim.CRAFTQ.frame and
-        CraftSim.CRAFTQ.frame.content and
-        CraftSim.CRAFTQ.frame.content.queueTab and
-        CraftSim.CRAFTQ.frame.content.queueTab.content and
-        CraftSim.CRAFTQ.frame.content.queueTab.content.queueCraftListsButton --[[@as GGUI.Button?]]
-
-    if queueListsButton then
-        queueListsButton:SetEnabled(false)
     end
 
     ---@type CraftSim.CRAFT_LISTS.ScanEntry[]
     local allScanEntries = {}
 
-    local function finishQueue()
+    ---@param cancelled boolean?
+    local function finishQueue(cancelled)
+        cancelled = cancelled == true
         -- Global triage: SBF allocation, cooldown triage, smart concentration, then queue.
-        CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
-        if queueListsButton then
-            queueListsButton:SetStatus("Ready")
+        if not cancelled then
+            CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
+        self.isQueueingSelectedLists = false
+        self:SetQueueCraftListsButtonState(false)
         CraftSim.CRAFTQ.UI:UpdateDisplay()
-        CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+        if not cancelled then
+            CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+        end
     end
 
     local listIndex = 1
 
     local function processNextList()
+        if not self.isQueueingSelectedLists then
+            finishQueue(true)
+            return
+        end
+
         if listIndex > #selectedLists then
             finishQueue()
             return
@@ -394,7 +440,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         local list = selectedLists[listIndex]
         listIndex = listIndex + 1
 
-        print("Scanning list: " .. list.name)
+        Logger:LogDebug("Scanning list: " .. list.name)
 
         CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, processNextList)
     end
@@ -515,9 +561,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         if not recipeInfo or recipeInfo.isDummyRecipe or recipeInfo.isGatheringRecipe
             or recipeInfo.isRecraft or recipeInfo.isSalvageRecipe then
             if not recipeInfo then
-                print("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
+                Logger:LogDebug("Failed to get recipe info for recipeID: " .. recipeID, false, false, 1)
             else
-                print(
+                Logger:LogDebug(
                     "Skipping unsupported recipe (dummy/gathering/recraft/salvage): " ..
                     recipeInfo.name .. " (recipeID: " .. recipeID .. ")", false, false, 1)
             end
@@ -527,17 +573,17 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         -- Skip unlearned recipes unless enableUnlearned option is set
         if not options.enableUnlearned and not recipeInfo.learned then
-            print("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
+            Logger:LogDebug("Skipping unlearned recipe: " .. recipeInfo.name, false, false, 1)
             frameDistributor:Continue()
             return
         end
 
-        print("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
+        Logger:LogDebug("Processing recipe: " .. recipeInfo.name .. " (crafterUID: " .. crafterUID .. ")")
 
         local recipeData = CraftSim.RecipeData { recipeID = recipeID, crafterData = playerCrafterData }
 
         if not recipeData then
-            print("Failed to create RecipeData", false, false, 1)
+            Logger:LogDebug("Failed to create RecipeData", false, false, 1)
             frameDistributor:Continue()
             return
         end
@@ -564,12 +610,13 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         -- Derive reagent optimize options from the allocation mode
         -- OPTIMIZE_HIGHEST and legacy "OPTIMIZE" leave optimizeReagentOptions as nil (default: optimize to highest quality)
         local optimizeReagentOptions = nil
+        local targetQuality = nil
         if reagentAllocation == "OPTIMIZE_MOST_PROFITABLE" then
             optimizeReagentOptions = { highestProfit = true }
         else
-            local targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
+            targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
             if targetQuality then
-                optimizeReagentOptions = { maxQuality = targetQuality }
+                optimizeReagentOptions = { minQuality = targetQuality, maxQuality = targetQuality }
             end
         end
 
@@ -580,7 +627,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         -- check if recipeData is on cooldown, and skip if it is
         if recipeData:OnCooldown() then
-            print("Skipping recipe on cooldown: " .. recipeData.recipeName)
+            Logger:LogDebug("Skipping recipe on cooldown: " .. recipeData.recipeName)
             frameDistributor:Continue()
             return
         end
@@ -624,17 +671,28 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             optimizeGear = options.optimizeProfessionTools,
             optimizeFinishingReagentsOptions = finishingOptsWithSBF,
             finally = function()
+                if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                    frameDistributor:Break()
+                    return
+                end
+
                 -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
                 -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
                 -- again during TriageAndQueue before the entry is actually queued.
                 if options.onlyProfitable and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
-                    print("Skipping non-profitable recipe: " .. recipeData.recipeName)
+                    Logger:LogDebug("Skipping non-profitable recipe: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
 
+                if targetQuality and recipeData.resultData.expectedQuality < targetQuality then
+                    Logger:LogDebug("Skipping not targetQuality: " .. recipeData.recipeName)
+                    frameDistributor:Continue()
+                    return
+                end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
-                print("maxQueueAmount for recipe " .. recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                Logger:LogDebug("maxQueueAmount for recipe " ..
+                recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare
@@ -662,6 +720,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                         optimizeGear = options.optimizeProfessionTools,
                         optimizeFinishingReagentsOptions = finishingOptsNoSBF,
                         finally = function()
+                            if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                                frameDistributor:Break()
+                                return
+                            end
+
                             tinsert(allScanEntries, {
                                 list = list,
                                 options = options,
@@ -699,6 +762,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         end,
         continue = function(frameDistributor, _, recipeEntry)
             processRecipe(frameDistributor, recipeEntry)
+        end,
+        cancel = function()
+            return not CraftSim.CRAFT_LISTS.isQueueingSelectedLists
         end,
     }:Continue()
 end

@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeID: RecipeID): CraftSim.CooldownData
 CraftSim.CooldownData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.CooldownData")
+local Logger = CraftSim.DEBUG:RegisterLogger("CooldownData")
 
 ---@param recipeID RecipeID
 function CraftSim.CooldownData:new(recipeID)
@@ -44,13 +44,13 @@ function CraftSim.CooldownData:Update()
         return
     end
 
-    print("Update Recipe Cooldown: " .. tostring(self.recipeID))
+    Logger:LogDebug("Update Recipe Cooldown: " .. tostring(self.recipeID))
     self.currentCharges = tonumber(currentCharges) or 0
     self.maxCharges = maxCharges or 0
 
     -- daily cooldowns will be treated as cooldown recipes with 1 charge and a cooldown of 24h per charge
     if isDayCooldown or (self.maxCharges == 0 and currentCooldown > 0) then
-        print("Is Day Cooldown or other cooldown")
+        Logger:LogDebug("Is Day Cooldown or other cooldown")
         local spellCooldownInfo = C_Spell.GetSpellCooldown(self.recipeID)
         self.cooldownPerCharge = spellCooldownInfo.duration
         self.maxCharges = 1
@@ -62,7 +62,7 @@ function CraftSim.CooldownData:Update()
             self.startTime = self.startTimeCurrentCharge
         end
     else
-        print("not IsDayCooldown")
+        Logger:LogDebug("not IsDayCooldown")
         local spellCharges = C_Spell.GetSpellCharges(self.recipeID)
         self.cooldownPerCharge = (spellCharges and spellCharges.cooldownDuration) or 0
         local apiCharges = tonumber(currentCharges) or 0
@@ -100,7 +100,7 @@ function CraftSim.CooldownData:GetFormattedTimerNextCharge()
     if self.maxCharges > 0 then
         local charges = self:GetCurrentCharges()
 
-        print("GetFormattedTimerNextCharge", false, true)
+        Logger:LogDebug("GetFormattedTimerNextCharge", false, true)
 
         if charges == self.maxCharges then
             return "00:00:00", true

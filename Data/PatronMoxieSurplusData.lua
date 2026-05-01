@@ -26,7 +26,7 @@ local SURPLUS_BAG_ALCHEMY_HERBALISM = {
     { itemID = 236771, qty = 17.5 }, -- Sanguithorn Q2
     { itemID = 236775, qty = 17.5 }, -- Azeroot Q2
     { itemID = 236780, qty = 4.0 },  -- Nocturnal Lotus
-    { itemID = 251285, qty = 1 },    -- Petrified Root
+    { itemID = 251285, qty = 2 },    -- Petrified Root
 }
 
 local SURPLUS_BAG_BS_ENG_JC_MINING = {
@@ -34,39 +34,37 @@ local SURPLUS_BAG_BS_ENG_JC_MINING = {
     { itemID = 237363, qty = 25.0 }, -- Umbral Tin Ore Q2
     { itemID = 237365, qty = 25.0 }, -- Brilliant Silver Ore Q2
     { itemID = 237366, qty = 7.5 },  -- Dazzling Thorium
-    { itemID = 251285, qty = 1 },    -- Petrified Root
+    { itemID = 251285, qty = 2 },    -- Petrified Root
 }
 
 local SURPLUS_BAG_ENCHANTING = {
     { itemID = 243600, qty = 60.0 }, -- Eversinging Dust Q2
     { itemID = 243603, qty = 25.0 }, -- Radiant Shard Q2
     { itemID = 243606, qty = 7.5 },  -- Dawn Crystal Q2
-    { itemID = 251285, qty = 1 },    -- Petrified Root
+    { itemID = 251285, qty = 2 },    -- Petrified Root
 }
-
-local MAJESTIC_COUNT = 1.2 / 3
-local OTHER_COUNT = 5.8 / 3
 
 local SURPLUS_BAG_LW_SKINNING = {
     { itemID = 238512, qty = 35.2 },           -- Void-Tempered Leather Q2
     { itemID = 238514, qty = 35.2 },           -- Void-Tempered Scales Q2
     { itemID = 238519, qty = 4.5 },            -- Void-Tempered Hide Q2
     { itemID = 238521, qty = 4.5 },            -- Void-Tempered Plating Q2
-    -- One-of-three outcome groups: distribute expected quantity across options.
-    { itemID = 238528, qty = MAJESTIC_COUNT }, -- Majestic Claw (1.2 / 3)
-    { itemID = 238530, qty = MAJESTIC_COUNT }, -- Majestic Fin (1.2 / 3)
-    { itemID = 238529, qty = MAJESTIC_COUNT }, -- Majestic Hide (1.2 / 3)
-    { itemID = 238522, qty = OTHER_COUNT },    -- Peerless Plumage (5.8 / 3)
-    { itemID = 238525, qty = OTHER_COUNT },    -- Fantastic Fur (5.8 / 3)
-    { itemID = 238523, qty = OTHER_COUNT },    -- Carving Canine (5.8 / 3)
-    { itemID = 251285, qty = 1 },              -- Petrified Root
+    { itemID = 238528, qty = 1.2 }, -- Majestic Claw (1.2 / 3)
+    { itemID = 238530, qty = 1.2 }, -- Majestic Fin (1.2 / 3)
+    { itemID = 238529, qty = 1.2 }, -- Majestic Hide (1.2 / 3)
+    { itemID = 238522, qty = 5.8 },    -- Peerless Plumage (5.8 / 3)
+    { itemID = 238525, qty = 5.8 },    -- Fantastic Fur (5.8 / 3)
+    { itemID = 238523, qty = 5.8 },    -- Carving Canine (5.8 / 3)
+    { itemID = 251285, qty = 2 },              -- Petrified Root
 }
 
 local SURPLUS_BAG_TAILORING = {
-    { itemID = 237017, qty = 5.0 },  -- Arcanoweave Q2
-    { itemID = 237016, qty = 5.0 },  -- Sunfire Silk Q2
-    { itemID = 236965, qty = 12.5 }, -- Bright Linen Q2
-    { itemID = 251285, qty = 1.0 },  -- Petrified Root
+    { itemID = 237017, qty = 8.0 },  -- Arcanoweave Q2
+    { itemID = 237016, qty = 8.0 },  -- Sunfire Silk Q2
+    { itemID = 239200, qty = 3.0 },  -- Arcanoweave Bolt
+    { itemID = 239202, qty = 3.0 },  -- Sunfire Silk Bolt
+    { itemID = 236965, qty = 15.0 }, -- Bright Linen Q2
+    { itemID = 251285, qty = 2.0 },  -- Petrified Root
 }
 
 ---@type table<number, CraftSim.PatronMoxieSurplusEntry[]>

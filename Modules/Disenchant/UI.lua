@@ -10,7 +10,7 @@ CraftSim.DISENCHANT.UI = {}
 ---@type CraftSim.DISENCHANT.FRAME
 CraftSim.DISENCHANT.frame = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.Disenchant.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("Disenchant.UI")
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -34,6 +34,8 @@ function CraftSim.DISENCHANT.UI:Init()
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
         hide = true,
+        closeOnEscape = true,
+        globalName = "CraftSimDisenchantFrame",
     })
 
     ---@class CraftSim.DISENCHANT.FRAME.CONTENT : Frame
@@ -185,6 +187,11 @@ function CraftSim.DISENCHANT.UI:Init()
         macro = true,
         macroText = "",
     }
+
+    content.disenchantButton.button:HookScript("OnClick", function()
+        content.disenchantButton:SetMacroText("")
+        content.disenchantButton:SetEnabled(false)
+    end)
 end
 
 function CraftSim.DISENCHANT.UI:UpdateUI()

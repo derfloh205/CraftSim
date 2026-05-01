@@ -12,7 +12,7 @@ CraftSim.RECIPE_INFO.frame = nil
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frameWO = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.RecipeInfo")
+local Logger = CraftSim.DEBUG:RegisterLogger("RecipeInfo")
 
 local statIncreaseFactor = 5
 
@@ -34,6 +34,7 @@ CraftSim.RECIPE_INFO.DISPLAY_OPTIONS_DEFAULTS = {
     AVG_RESOURCEFULNESS_SAVED   = false,
     CONCENTRATION_PROFIT        = false,
     CONCENTRATION_COST          = false,
+    PROFIT_PER_QUALITY          = true,
 }
 
 --- Returns the display-options table, filling in any missing keys from defaults.
@@ -122,10 +123,10 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Statweights statweightResult
 function CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
-    print("Get Average Profit", false, true)
+    Logger:LogDebug("Get Average Profit", false, true)
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
-    print("calculate stat weights avg profit: " .. tostring(CraftSim.UTIL:FormatMoney(averageProfit, true)))
+    Logger:LogDebug("calculate stat weights avg profit: " .. tostring(CraftSim.UTIL:FormatMoney(averageProfit, true)))
 
     local multicraftWeight = CraftSim.RECIPE_INFO:GetMulticraftWeight(recipeData, averageProfit)
     local resourcefulnessWeight = CraftSim.RECIPE_INFO:GetResourcefulnessWeight(recipeData, averageProfit)

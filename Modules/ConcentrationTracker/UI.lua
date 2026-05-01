@@ -43,7 +43,7 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.ConcentrationTracker.UI")
+local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationTracker.UI")
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Init()
     local sizeX = 220
@@ -241,6 +241,13 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             local concentrationColumn = columns[2]
             local maxedColumn = columns[3]
 
+            local hlColor = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.CURRENT_PLAYER_LIGHT_YELLOW
+            row.characterHighlight = row.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+            row.characterHighlight:SetDrawLayer("BACKGROUND", -8)
+            row.characterHighlight:SetAllPoints(row.frame)
+            row.characterHighlight:SetColorTexture(hlColor[1], hlColor[2], hlColor[3], hlColor[4])
+            row.characterHighlight:Hide()
+
             crafterProfessionColumn.text = GGUI.Text {
                 parent = crafterProfessionColumn, anchorPoints = { { anchorParent = crafterProfessionColumn, anchorA = "LEFT", anchorB = "LEFT" } },
                 justifyOptions = { type = "H", align = "LEFT" }, scale = 1,
@@ -399,6 +406,11 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 row.crafterProfessionText = crafterProfessionText
                 row.crafterUID = crafterUID
                 row.profession = professionConcentrationData.profession
+                if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+                    row.characterHighlight:Show()
+                else
+                    row.characterHighlight:Hide()
+                end
                 crafterProfessionColumn.text:SetText(crafterProfessionText)
 
                 local concentrationData = CraftSim.ConcentrationData:Deserialize(professionConcentrationData
@@ -419,6 +431,21 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 end
 
                 maxedColumn.text:SetText(maxedColumnText)
+
+                local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID,
+                    professionConcentrationData.profession,
+                    professionConcentrationData.expansionID)
+                if hasMoxieCurrency then
+                    local moxieDisplay = moxieQty ~= nil and BreakUpLargeNumbers(moxieQty)
+                        or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+                    row.tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR",
+                        owner = row.frame,
+                        text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE"), moxieDisplay),
+                    }
+                else
+                    row.tooltipOptions = nil
+                end
             end)
         end
     end

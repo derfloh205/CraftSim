@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
 CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:RegisterDebugID("Classes.CraftQueue")
+local Logger = CraftSim.DEBUG:RegisterLogger("Classes.CraftQueue")
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
@@ -30,8 +30,8 @@ function CraftSim.CraftQueue:AddRecipe(options)
         return nil
     end
 
-    print("Adding Recipe to Queue: " .. recipeData.recipeName .. " x" .. amount, true)
-    print("concentrating: " .. tostring(recipeData.concentrating))
+    Logger:LogDebug("Adding Recipe to Queue: " .. recipeData.recipeName .. " x" .. amount, true)
+    Logger:LogDebug("concentrating: " .. tostring(recipeData.concentrating))
 
     local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
@@ -64,7 +64,8 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     -- queue recipeData
                     local subRecipe = recipeData.optimizedSubRecipes[itemID]
                     if subRecipe then
-                        print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName .. " q" .. qualityID)
+                        Logger:LogDebug("Found self crafted reagent: queue into cq: " ..
+                            subRecipe.recipeName .. " q" .. qualityID)
                         subRecipe:SetNonQualityReagentsMax()
 
                         -- its allocated but is it also necessary to craft? Or do I own enough?
@@ -96,7 +97,7 @@ function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
     relative = relative or false
     local craftQueueItem = self:FindRecipe(recipeData)
     if craftQueueItem then
-        print("Found craftQueueItem do decrement")
+        Logger:LogDebug("Found craftQueueItem do decrement")
         if relative then
             craftQueueItem.amount = craftQueueItem.amount + amount
         else
@@ -227,10 +228,10 @@ end
 
 function CraftSim.CraftQueue:RestoreFromDB()
     CraftSim.DEBUG:StartProfiling("CraftQueue Item Restoration")
-    print("Restore CraftQ From DB Start...")
+    Logger:LogDebug("Restore CraftQ From DB Start...")
     local dbCraftQueueItems = CraftSim.DB.CRAFT_QUEUE:GetAll()
     local function load()
-        print("Loading CraftQueue from DB...")
+        Logger:LogDebug("Loading CraftQueue from DB...")
         self.craftQueueItems = GUTIL:Map(dbCraftQueueItems, function(craftQueueItemSerialized)
             local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
             if craftQueueItem then
@@ -244,14 +245,14 @@ function CraftSim.CraftQueue:RestoreFromDB()
         -- at last restore subrecipes
         self:UpdateSubRecipes()
 
-        print("CraftQueue Restore Finished")
+        Logger:LogDebug("CraftQueue Restore Finished")
 
         CraftSim.DEBUG:StopProfiling("CraftQueue Item Restoration")
     end
 
     -- wait til necessary info is loaded, then put deserialized items into queue
     GUTIL:WaitFor(function()
-            print("Wait for professionInfo loaded or cached")
+            Logger:LogDebug("Wait for professionInfo loaded or cached")
             return GUTIL:Every(dbCraftQueueItems,
                 function(craftQueueItemSerialized)
                     local crafterUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)
@@ -382,11 +383,10 @@ end
 ---@return boolean HasActiveSubRecipes
 ---@return boolean HasActiveSubRecipesFromAlts
 function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
-    local print = CraftSim.DEBUG:RegisterDebugID("SUB_RECIPE_DATA")
     local activeSubRecipes = false
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
 
-    print("HasActiveSubRecipes? " .. recipeData:GetCrafterUID() .. "-" .. recipeData.recipeName)
+    Logger:LogDebug("HasActiveSubRecipes? " .. recipeData:GetCrafterUID() .. "-" .. recipeData.recipeName)
 
     local activeSubRecipesFromAlts = GUTIL:Some(recipeData.priceData.selfCraftedReagents, function(itemID)
         -- need to find the corresponding recipeData in the craftQueue since the optimized one referenced in the recipeData itself is not necessarily the same (due to serialization and AddRecipe adding amount)
@@ -397,16 +397,16 @@ function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
         local subRecipeData = craftQueueItem.recipeData
         local debugItem = tostring(select(1, C_Item.GetItemInfo(itemID)) or itemID) ..
             " q: " .. recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
-        print("checking item: " .. debugItem)
+        Logger:LogDebug("checking item: " .. debugItem)
         local quantity = recipeData:GetReagentQuantityByItemID(itemID)
         local hasQuantity = quantity > 0
         if hasQuantity then
-            print("item quantity: " .. quantity)
+            Logger:LogDebug("item quantity: " .. quantity)
             activeSubRecipes = true -- if we find at least one active then we have subrecipes
 
             local isAlt = subRecipeData:GetCrafterUID() ~= crafterUID
             if isAlt then
-                print("- has alt dep sub recipes")
+                Logger:LogDebug("- has alt dep sub recipes")
                 return true
             end
 
@@ -414,17 +414,17 @@ function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
             local _, subRecipeAltDependend = self:RecipeHasActiveSubRecipesInQueue(subRecipeData)
 
             if subRecipeAltDependend then
-                print("- has sub rep with alt dep")
+                Logger:LogDebug("- has sub rep with alt dep")
                 return true
             end
         end
 
-        print("- no quantity for item")
+        Logger:LogDebug("- no quantity for item")
 
         return false
     end)
 
-    print("return " .. tostring(activeSubRecipes) .. ", " .. tostring(activeSubRecipesFromAlts))
+    Logger:LogDebug("return " .. tostring(activeSubRecipes) .. ", " .. tostring(activeSubRecipesFromAlts))
 
     return activeSubRecipes, activeSubRecipesFromAlts
 end
@@ -499,7 +499,7 @@ end
 
 -- add subrecipes not yet existing
 function CraftSim.CraftQueue:UpdateSubRecipes()
-    print("Update Subrecipes")
+    Logger:LogDebug("Update Subrecipes")
     local maxDepth = self:GetMaxRecipeDepth()
     for depth = 0, maxDepth do
         for _, cqi in ipairs(self.craftQueueItems) do
@@ -515,7 +515,7 @@ end
 
 function CraftSim.CraftQueue:UpdateSubRecipesItemCount()
     local maxDepth = self:GetMaxRecipeDepth()
-    print("Update Sub Recipe Item Counts")
+    Logger:LogDebug("Update Sub Recipe Item Counts")
     for depth = 0, maxDepth do
         for _, cqi in ipairs(self.craftQueueItems) do
             if cqi.recipeData.subRecipeDepth == depth then
@@ -526,10 +526,10 @@ function CraftSim.CraftQueue:UpdateSubRecipesItemCount()
 end
 
 function CraftSim.CraftQueue:RemoveZeroCountSubRecipes()
-    print("Remove Zero Count")
+    Logger:LogDebug("Remove Zero Count")
     for _, cqi in ipairs(CopyTable(self.craftQueueItems, true)) do
         if cqi and cqi.recipeData.subRecipeDepth > 0 and cqi.amount <= 0 then
-            print("- Removing: " .. cqi.recipeData.recipeName)
+            Logger:LogDebug("- Removing: " .. cqi.recipeData.recipeName)
             self:Remove(cqi)
         end
     end

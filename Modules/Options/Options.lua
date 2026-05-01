@@ -36,6 +36,7 @@ function CraftSim.OPTIONS:Init()
             end,
             function(v)
                 CraftSim.DB.OPTIONS:Save(optKey, v)
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SETTINGS_UPDATED", optKey, v)
             end)
         if onChanged then
             s:SetValueChangedCallback(function(_, v)
@@ -60,6 +61,7 @@ function CraftSim.OPTIONS:Init()
             function(v)
                 local out = valueRoundDecimals and GUTIL:Round(v, valueRoundDecimals) or v
                 CraftSim.DB.OPTIONS:Save(optKey, out)
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SETTINGS_UPDATED", optKey, out)
             end)
         local opts = Settings.CreateSliderOptions(minV, maxV, step)
         if valueRoundDecimals ~= nil then
@@ -160,6 +162,9 @@ function CraftSim.OPTIONS:Init()
     proxyBool("CraftSimOpt_MONEY_FORMAT_USE_TEXTURES", GO.MONEY_FORMAT_USE_TEXTURES,
         L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX") .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
         L("OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP"))
+    proxyBool("CraftSimOpt_SHOW_TUTORIAL_BUTTONS", GO.SHOW_TUTORIAL_BUTTONS,
+        L("OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_CHECKBOX"),
+        L("OPTIONS_GENERAL_SHOW_TUTORIAL_BUTTONS_TOOLTIP"))
 
     -- Modules
     regSection(L("OPTIONS_MODULES_TAB"), nil)
