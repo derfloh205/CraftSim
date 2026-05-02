@@ -476,10 +476,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             queueAble = true
                                             if qualityWithoutConcentration < order.minQuality then
                                                 local concentrationData = recipeData.concentrationData
-                                                local currentAmount = concentrationData and
-                                                    concentrationData:GetCurrentAmount() or 0
                                                 if recipeData.concentrationCost <= 0 or
-                                                    currentAmount < recipeData.concentrationCost then
+                                                    (not concentrationData) or
+                                                    (not concentrationData:CanAfford(recipeData.concentrationCost)) then
                                                     queueAble = false
                                                     recipeData.concentrating = false
                                                     recipeData:Update()
@@ -652,7 +651,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
     local optimizedRecipes = {}
 
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    local currentConcentration = concentrationData and concentrationData:GetCurrentAmount() or 0
+    local currentConcentration = concentrationData and concentrationData:GetSpendableAmount() or 0
 
     local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
 
@@ -807,7 +806,7 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     frameDistributor:Break()
                     return
                 end
-                currentConcentration = concentrationData:GetCurrentAmount()
+                currentConcentration = concentrationData:GetSpendableAmount()
 
                 GUTIL.FrameDistributor {
                     iterationTable = recipeIDs,

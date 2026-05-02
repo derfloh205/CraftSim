@@ -422,10 +422,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 local concentrationData = CraftSim.ConcentrationData:Deserialize(professionConcentrationData
                     .serializedData)
 
-                local currentConcentration = concentrationData:GetCurrentAmount()
+                local currentConcentration = concentrationData:GetSpendableAmount()
                 row.concentration = currentConcentration
 
-                concentrationColumn.text:SetText(math.floor(currentConcentration))
+                concentrationColumn.text:SetText(currentConcentration)
 
                 local maxedColumnText = ""
                 local concentrationFull = currentConcentration >= concentrationData.maxQuantity
@@ -487,8 +487,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Update()
 
     local content = CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT]]
 
-    local currentConcentration = concentrationData:GetCurrentAmount()
-    content.value:SetText(math.floor(currentConcentration))
+    local currentConcentration = concentrationData:GetSpendableAmount()
+    content.value:SetText(currentConcentration)
     content.maxValue:SetText(concentrationData.maxQuantity)
 
     if currentConcentration >= concentrationData.maxQuantity then

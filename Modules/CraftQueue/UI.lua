@@ -1349,7 +1349,9 @@ function CraftSim.CRAFTQ.UI:Init()
             label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             initialStatusID = "Ready",
             clickCallback = function()
-                CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                    CraftSim.CRAFT_LISTS:QueueSelectedLists()
+                end
             end
         })
 
@@ -1360,7 +1362,29 @@ function CraftSim.CRAFTQ.UI:Init()
                 sizeX = fixedButtonWidth,
                 label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
             },
+            {
+                statusID = "Queueing",
+                enabled = false,
+                sizeX = fixedButtonWidth,
+                label = L("CRAFT_LISTS_QUEUE_BUTTON_LABEL"),
+            },
         }
+
+        queueTab.content.queueCraftListsCancelButton = CreateFrame("Button", nil, queueTab.content,
+            "UIPanelCloseButton")
+        queueTab.content.queueCraftListsCancelButton:SetSize(16, 16)
+        queueTab.content.queueCraftListsCancelButton:SetPoint("RIGHT", queueTab.content.queueCraftListsButton.frame,
+            "RIGHT", -6,
+            -1)
+        queueTab.content.queueCraftListsCancelButton:SetFrameStrata(queueTab.content.queueCraftListsButton.frame
+        :GetFrameStrata())
+        queueTab.content.queueCraftListsCancelButton:SetFrameLevel(queueTab.content.queueCraftListsButton.frame
+        :GetFrameLevel() + 20)
+        queueTab.content.queueCraftListsCancelButton:EnableMouse(true)
+        queueTab.content.queueCraftListsCancelButton:SetScript("OnClick", function()
+            CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
+        end)
+        queueTab.content.queueCraftListsCancelButton:Hide()
 
         queueTab.content.queueCraftListsButtonOptions = CraftSim.WIDGETS.OptionsButton {
             parent = queueTab.content,
@@ -3609,15 +3633,14 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             concentrationData:Update() -- consider concentration usage on crafting before refresh
         end
         local concentrationCost = craftQueueItem.recipeData.concentrationCost * craftQueueItem.amount
-        local currentAmount = concentrationData:GetCurrentAmount()
-        if concentrationCost <= currentAmount then
+        if concentrationData:CanAfford(concentrationCost) then
             concentrationColumn.text:SetText(f.g(concentrationCost))
-        elseif craftQueueItem.recipeData.concentrationCost < currentAmount then
+        elseif concentrationData:CanAfford(craftQueueItem.recipeData.concentrationCost) then
             concentrationColumn.text:SetText(f.l(concentrationCost))
         else
             concentrationColumn.text:SetText(f.r(concentrationCost))
         end
-        if concentrationCost > currentAmount then
+        if not concentrationData:CanAfford(concentrationCost) then
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
             local estimatedText = concentrationData:GetEstimatedTimeUntilEnoughText(concentrationCost, useUSFormat)
@@ -3948,5 +3971,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 end
 
 function CraftSim.CRAFTQ.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_CRAFT_QUEUE") then
+        return false
+    end
     return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end
