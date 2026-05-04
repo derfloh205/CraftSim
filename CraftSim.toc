@@ -30,6 +30,20 @@
 embeds.xml
 
 Init/GLibs.lua
+Media/Media.lua
+
+Locals/enUS.lua
+Locals/deDE.lua
+Locals/itIT.lua
+Locals/ruRU.lua
+Locals/ptBR.lua
+Locals/frFR.lua
+Locals/esES.lua
+Locals/esMX.lua
+Locals/koKR.lua
+Locals/zhTW.lua
+Locals/zhCN.lua
+Locals/Localization.lua
 
 Util/Const.lua
 
@@ -54,8 +68,6 @@ DB/priceOverrideDB.lua
 DB/craftListsDB.lua
 DB/lastCraftingCostDB.lua
 
-Media/Media.lua
-
 Util/Frames.lua
 Util/Widgets/ContextMenu.lua
 Util/Widgets/OptionsButton.lua
@@ -69,6 +81,7 @@ Util/ItemTooltips.lua
 Init/Init.lua
 Init/Slash.lua
 
+
 Pricing/ProfitCalculation.lua
 
 DataSource/PriceAPIs.lua
@@ -77,9 +90,13 @@ DataSource/InventorySource.lua
 
 Modules/Modules.lua
 
-Modules/ItemCount/ItemCount.lua
+Modules/ControlPanel/ControlPanel.lua
+Modules/ControlPanel/UI.lua
 
-Modules/PreCraftBuffGate/PreCraftBuffGate.lua
+Modules/PatchNotes/PatchNotes.lua
+Modules/PatchNotes/UI.lua
+
+Modules/ItemCount/ItemCount.lua
 
 Modules/Disenchant/Disenchant.lua
 Modules/Disenchant/UI.lua
@@ -87,9 +104,14 @@ Modules/Disenchant/UI.lua
 Modules/Explanations/Explanations.lua
 Modules/Explanations/UI.lua
 
+Modules/Shopping/Shopping.lua
+
 Modules/CraftQueue/CraftQueue.lua
+Modules/CraftQueue/Debug.lua
 Modules/CraftQueue/CraftLists.lua
+Modules/CraftQueue/EditRecipe.lua
 Modules/CraftQueue/UI.lua
+Modules/CraftQueue/PreCraftBuffGate.lua
 
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/UI.lua
@@ -106,9 +128,6 @@ Modules/CraftLog/UI.lua
 Modules/Pricing/Pricing.lua
 Modules/Pricing/UI.lua
 
-Modules/ControlPanel/ControlPanel.lua
-Modules/ControlPanel/UI.lua
-
 Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/UI.lua
 
@@ -116,6 +135,7 @@ Modules/Options/Options.lua
 Modules/Options/CraftSimOptionsTsm.xml
 
 Modules/SimulationMode/SimulationMode.lua
+Modules/SimulationMode/Debug.lua
 Modules/SimulationMode/UI.lua
 
 Modules/RecipeInfo/RecipeInfo.lua
@@ -139,26 +159,12 @@ Modules/CraftBuffs/UI.lua
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
 
-Locals/Localization.lua
-Locals/enUS.lua
-Locals/deDE.lua
-Locals/itIT.lua
-Locals/ruRU.lua
-Locals/ptBR.lua
-Locals/frFR.lua
-Locals/esES.lua
-Locals/esMX.lua
-Locals/koKR.lua
-Locals/zhTW.lua
-Locals/zhCN.lua
-
 Data/EnchantData.lua
 Data/ToolEnchantData.lua
 Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
-Data/News.lua
 Data/PatronMoxieSurplusData.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua

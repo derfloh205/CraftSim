@@ -1,11 +1,13 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
+
 CraftSim.LOCAL_EN = {}
 
 ---@return table<CraftSim.LOCALIZATION_IDS, string>
 function CraftSim.LOCAL_EN:GetData()
-    local f = CraftSim.GUTIL:GetFormatter()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     local shatter_post_login_tooltip = "\n\n" ..
         f.white("Cast Shatter once after login so CraftSim matches your buff.")
@@ -81,7 +83,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Simulation Mode
         SIMULATION_MODE_NONE = "None",
-        SIMULATION_MODE_LABEL = "Simulation Mode",
+        SIMULATION_MODE_LABEL = "Simulate",
         SIMULATION_MODE_TITLE = "CraftSim Simulation Mode",
         SIMULATION_MODE_TOOLTIP =
         "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
@@ -155,12 +157,13 @@ function CraftSim.LOCAL_EN:GetData()
             "So if we have one " ..
             f.bb("case A with chance 30%") ..
             " and profit " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " and a " ..
             f.bb("case B with chance 70%") ..
-            " and profit " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " then the expected profit of that is\n" ..
+            " and profit " ..
+            GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) .. " then the expected profit of that is\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "which is " .. GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
 
@@ -653,7 +656,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.l(" CraftSim") .. " calculates things",
         CONTROL_PANEL_RESET_FRAMES = "Reset Frame Positions",
         CONTROL_PANEL_OPTIONS = "Options",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "Exports",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exporting",
@@ -1089,6 +1092,7 @@ greater or equal the configured sale rate threshold.
 
         -- frames
         FRAMES_RESETTING = "resetting frameID: ",
+        PATCH_NOTES_TITLE = "CraftSim Patch Notes",
         FRAMES_WHATS_NEW = "CraftSim What's New?",
         FRAMES_JOIN_DISCORD = "Join the Discord!",
         FRAMES_DONATE_KOFI = "Visit CraftSim on Kofi",

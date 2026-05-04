@@ -154,13 +154,15 @@ function CraftSim.LOCAL_DE:GetData()
             "Wenn wir also einen " ..
             f.bb("Fall A mit einer Wahrscheinlichkeit von 30 %") ..
             " und einen Gewinn von " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " und einen\n" ..
             f.bb("Fall B mit einer Wahrscheinlichkeit von 70 %") ..
             " und einen Gewinn von " ..
-            CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " haben, dann beträgt der erwartete Gewinn\n" ..
+            CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) ..
+            " haben, dann beträgt der erwartete Gewinn\n" ..
             f.bb("\nE(X) = -100*0,3 + 300*0,7  ") ..
-            "was " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. " ergibt.\n" ..
+            "was " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. " ergibt.\n" ..
             "Du kannst alle Fälle für dein aktuelles Rezept im " .. f.bb("Statistik") .. " Fenster anzeigen!"
         ,
 
@@ -558,7 +560,7 @@ function CraftSim.LOCAL_DE:GetData()
             "Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
         CONTROL_PANEL_RESET_FRAMES = "Fensterpos. zurücksetzen",
         CONTROL_PANEL_OPTIONS = "Optionen",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Exportiere",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -775,6 +777,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
 
         -- frames
         FRAMES_RESETTING = "Zurücksetzen von Frame-ID: ",
+        PATCH_NOTES_TITLE = "CraftSim Patchnotizen",
         FRAMES_WHATS_NEW = "Was gibt's Neues bei CraftSim?",
         FRAMES_JOIN_DISCORD = "Tritt dem Discord bei!",
         FRAMES_DONATE_KOFI = "Besuche CraftSim auf Kofi",

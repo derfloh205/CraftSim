@@ -13,3 +13,4 @@ DevTools/DataMining/_Data/
 DevTools/DataMining/**/_Data/
 !**/*.py
 .github/agents/
+.cursor

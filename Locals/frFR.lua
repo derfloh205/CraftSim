@@ -146,12 +146,15 @@ function CraftSim.LOCAL_FR:GetData()
             "So if we have one " ..
             f.bb("case A with chance 30%") ..
             " and profit " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " and a " ..
             f.bb("case B with chance 70%") ..
-            " and profit " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " then the expected profit of that is\n" ..
+            " and profit " ..
+            CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) ..
+            " then the expected profit of that is\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "which is " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
 
@@ -537,7 +540,7 @@ function CraftSim.LOCAL_FR:GetData()
             "Module that shows you various explanations of how" .. f.l(" CraftSim") .. " calculates things",
         CONTROL_PANEL_RESET_FRAMES = "Réinit. Position fenêtres",
         CONTROL_PANEL_OPTIONS = "Options",
-        CONTROL_PANEL_NEWS = "News",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " Export",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "En cours...",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -772,6 +775,7 @@ function CraftSim.LOCAL_FR:GetData()
 
         -- frames
         FRAMES_RESETTING = "réinitialisation de frameID: ",
+        PATCH_NOTES_TITLE = "Notes de mise à jour CraftSim",
         FRAMES_WHATS_NEW = "Quoi de neuf dans CraftSim?",
         FRAMES_JOIN_DISCORD = "Rejoignez le Discord!",
         FRAMES_DONATE_KOFI = "Visitez CraftSim sur Kofi",

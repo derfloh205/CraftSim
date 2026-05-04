@@ -143,11 +143,12 @@ function CraftSim.LOCAL_CN:GetData()
             "这告诉我们机率分配 " .. f.l("X") .. " 的期望值 " .. f.l("E") .. " 是所有数值与其可能性的乘积的总和。\n" ..
             "所以如果我们有一个 " ..
             f.bb("情况 A 机率 30%") ..
-            " 利润 " .. CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            " 利润 " .. CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " 和一个" ..
-            f.bb("情况 B 机率 70%") .. " 利润 " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " 那该情况的期望利润就是\n" ..
+            f.bb("情况 B 机率 70%") ..
+            " 利润 " .. CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) .. " 那该情况的期望利润就是\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7 ") ..
-            " 是 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            " 是 " .. CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "你可以在" .. f.bb("统计数据") .. "窗口中查看当前配方的所有情况！"
         ,
 
@@ -556,7 +557,7 @@ function CraftSim.LOCAL_CN:GetData()
             "该模块向你展示" .. f.l(" CraftSim") .. " 是如何计算的",
         CONTROL_PANEL_RESET_FRAMES = "重置框架位置",
         CONTROL_PANEL_OPTIONS = "选项",
-        CONTROL_PANEL_NEWS = "更新信息",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "导出",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 导出",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "正在导出",
@@ -820,6 +821,7 @@ function CraftSim.LOCAL_CN:GetData()
 
         -- frames
         FRAMES_RESETTING = "正在重置框架ID： ",
+        PATCH_NOTES_TITLE = "CraftSim 更新说明",
         FRAMES_WHATS_NEW = "CraftSim 有什么新功能？",
         FRAMES_JOIN_DISCORD = "加入 Discord!",
         FRAMES_DONATE_KOFI = "在 Kofi 上访问 CraftSim",

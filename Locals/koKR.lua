@@ -145,11 +145,12 @@ function CraftSim.LOCAL_KO:GetData()
             "이 공식은 확률 분포 " .. f.l("X") .. "의 기댓값 " .. f.l("E") .. "가 모든 값에 각각의 확률을 곱한 것의 합임을 알려줍니다.\n" ..
             "만약 우리가 " ..
             f.bb("30% 확률의 사례 A") .. "에서 수익이 " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) .. "이고,\n" ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) .. "이고,\n" ..
             f.bb("70% 확률의 사례 B") .. "에서 수익이 " ..
-            CraftSim.UTIL:FormatMoney(300 * 10000, true) .. "라면, 예상 수익은 다음과 같습니다.\n" ..
+            CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) .. "라면, 예상 수익은 다음과 같습니다.\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "결과는 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "가 됩니다.\n" ..
+            "결과는 " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "가 됩니다.\n" ..
             "현재 제작법에 대한 모든 사례는 " .. f.bb("통계") .. " 창에서 확인하실 수 있습니다!"
         ,
 
@@ -527,7 +528,7 @@ function CraftSim.LOCAL_KO:GetData()
         CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP = f.l(" CraftSim") .. "의 각종 계산 방식을 설명해주는 모듈입니다.",
         CONTROL_PANEL_RESET_FRAMES = "창 위치 초기화",
         CONTROL_PANEL_OPTIONS = "옵션",
-        CONTROL_PANEL_NEWS = "새 소식",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EXPORTS = "내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 내보내기",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "내보내는 중",
@@ -845,6 +846,7 @@ function CraftSim.LOCAL_KO:GetData()
 
         -- frames (프레임)
         FRAMES_RESETTING = "프레임 ID 초기화 중: ",
+        PATCH_NOTES_TITLE = "CraftSim 패치 노트",
         FRAMES_WHATS_NEW = "CraftSim 새로운 소식",
         FRAMES_JOIN_DISCORD = "디스코드 참여하기",
         FRAMES_DONATE_KOFI = "Kofi를 통해 CraftSim 후원하기",

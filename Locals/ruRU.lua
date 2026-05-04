@@ -141,12 +141,13 @@ function CraftSim.LOCAL_RU:GetData()
             "Так что в " ..
             f.bb("случае A с шансом 30%") ..
             " и прибылью " ..
-            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            CraftSim.GUTIL:FormatMoney(-100 * 10000, true, 0, true, false, false) ..
             " и " ..
             f.bb("случае B с шансом 70%") ..
             " и прибылью " .. f.m(300 * 10000) .. " ожидаемая прибыль равна\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
-            "что равно " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "что равно " ..
+            CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
         ,
 
@@ -463,7 +464,7 @@ function CraftSim.LOCAL_RU:GetData()
             "Модуль, который показывает вам различные объяснения того, как" .. f.l(" CraftSim") .. " проводит вычисления",
         CONTROL_PANEL_RESET_FRAMES = "Сбросить позиции",
         CONTROL_PANEL_OPTIONS = "Параметры",
-        CONTROL_PANEL_NEWS = "Новости",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = "Экспорт " .. f.l("Easycraft"),
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "Экспорт",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND =
@@ -618,5 +619,6 @@ function CraftSim.LOCAL_RU:GetData()
         -- static popups
         STATIC_POPUPS_YES = "Да",
         STATIC_POPUPS_NO = "Нет",
+        PATCH_NOTES_TITLE = "Примечания к обновлению CraftSim",
     }
 end

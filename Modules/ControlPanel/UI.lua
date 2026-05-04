@@ -6,18 +6,17 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.CONTROL_PANEL
+---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
 
----@class CraftSim.CONTROL_PANEL.UI
+---@class CraftSim.CONTROL_PANEL.UI : CraftSim.Module.UI
 CraftSim.CONTROL_PANEL.UI = {}
 
 function CraftSim.CONTROL_PANEL.UI:Init()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
-    ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     local frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame.NineSlice.TopEdge,
@@ -27,14 +26,12 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         offsetY = -13,
         sizeX = 180,
         sizeY = 30,
-        frameID = CraftSim.CONST.FRAMES.CONTROL_PANEL,
-        --backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
+    ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     CraftSim.CONTROL_PANEL.frame = frame
 
     frame.content.controlPanelButton = CreateFrame("DropdownButton", nil, frame.content,
@@ -45,88 +42,47 @@ function CraftSim.CONTROL_PANEL.UI:Init()
 
     frame.content.controlPanelButton:HookScript("OnClick", function()
         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
-            local function addModuleCheckbox(label, moduleSV, moduleTooltip, optionalFrameToToggle)
+            ---@param moduleID CraftSim.ModuleID
+            ---@param data CraftSim.Module.ControlPanelData
+            local function addModuleCheckbox(moduleID, data)
+                local label = data.label
+                local tooltip = data.tooltip
+
                 local cb = rootDescription:CreateCheckbox(label, function()
-                    return CraftSim.DB.OPTIONS:Get(moduleSV)
+                    return CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
                 end, function()
-                    local checked = CraftSim.DB.OPTIONS:Get(moduleSV)
-                    CraftSim.DB.OPTIONS:Save(moduleSV, not checked)
-                    CraftSim.MODULES:UpdateUI()
-                    if optionalFrameToToggle then
-                        GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(not checked)
+                    local checked = CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
+                    if not checked then
+                        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_OPENED", moduleID)
+                    else
+                        GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", moduleID)
                     end
                 end)
-                cb:SetTooltip(function(tooltip, elementDescription)
-                    GameTooltip_AddInstructionLine(tooltip, moduleTooltip);
+                cb:SetTooltip(function(tt, _)
+                    GameTooltip_AddInstructionLine(tt, tooltip);
                 end);
             end
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
-                "MODULE_REAGENT_OPTIMIZATION",
-                L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"))
+            local controlPanelModules = GUTIL:Map(CraftSim.MODULES.modules, function(module, _)
+                if module.controlPanelData then
+                    return module
+                end
+                return nil
+            end)
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
-                "MODULE_AVERAGE_PROFIT",
-                L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"))
+            table.sort(controlPanelModules, function(a, b)
+                local aSort = a.controlPanelData.sortOrder or math.huge
+                local bSort = b.controlPanelData.sortOrder or math.huge
+                return aSort < bSort
+            end)
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),
-                "MODULE_TOP_GEAR",
-                L("CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP"))
+            for _, module in ipairs(controlPanelModules) do
+                addModuleCheckbox(
+                    module.moduleID,
+                    module.controlPanelData)
+            end
 
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL"),
-                "MODULE_CRAFT_QUEUE",
-                L("CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL"),
-                "MODULE_PRICING",
-                L("CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL"),
-                "MODULE_CRAFT_BUFFS",
-                L("CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
-                "MODULE_COOLDOWNS",
-                L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL"),
-                "MODULE_SPEC_INFO",
-                L("CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CRAFT_LOG_LABEL"),
-                "MODULE_CRAFT_LOG",
-                L("CONTROL_PANEL_MODULES_CRAFT_LOG_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),
-                "MODULE_STATISTICS",
-                L("CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL"),
-                "MODULE_RECIPE_SCAN",
-                L("CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP"))
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
-                "MODULE_CUSTOMER_HISTORY",
-                L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
-                CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-
-            addModuleCheckbox(
-                L("CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL"),
-                "MODULE_EXPLANATIONS",
-                L("CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP"),
-                CraftSim.CONST.FRAMES.EXPLANATIONS)
+            rootDescription:CreateDivider()
 
             local exports = rootDescription:CreateButton(L("CONTROL_PANEL_EXPORTS"))
 
@@ -150,8 +106,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
                 Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
             end)
 
-            rootDescription:CreateButton(f.bb(L("CONTROL_PANEL_NEWS")), function()
-                CraftSim.NEWS:ShowNews(true)
+            rootDescription:CreateButton(f.bb(L("CONTROL_PANEL_PATCH_NOTES")), function()
+                CraftSim.PATCH_NOTES:ShowPatchNotes(true)
             end)
 
             rootDescription:CreateButton(f.grey(L("CONTROL_PANEL_DEBUG")), function()
@@ -161,4 +117,33 @@ function CraftSim.CONTROL_PANEL.UI:Init()
     end)
 
     frame:Hide()
+
+    -- Simulation Mode Toggle Button
+    frame.content.simulateToggle = GGUI.ToggleButton({
+        parent = frame.content,
+        anchorParent = frame.content.controlPanelButton,
+        adjustWidth = true,
+        sizeX = 15,
+        sizeY = 20,
+        anchorA = "LEFT",
+        anchorB = "RIGHT",
+        offsetX = 5,
+        label = L("SIMULATION_MODE_LABEL"),
+        tooltipOptions = {
+            anchor = "ANCHOR_TOP",
+            text = L("SIMULATION_MODE_TOOLTIP"),
+        },
+        onToggleCallback = function(_, value)
+            CraftSim.SIMULATION_MODE.isActive = not value
+            if CraftSim.SIMULATION_MODE.isActive then
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ENABLED")
+            else
+                GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_DISABLED")
+            end
+        end
+    })
+end
+
+function CraftSim.CONTROL_PANEL.UI:Update()
+
 end

@@ -56,6 +56,24 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         } },
         sizeX = 160, sizeY = 23,
         menuUtilCallback = function(ownerRegion, rootDescription)
+            for moduleID, module in pairs(CraftSim.MODULES.modules) do
+                local moduleLabel = (module.DEBUG and module.DEBUG.label) or moduleID
+                local moduleDebugButton = rootDescription:CreateButton(moduleLabel)
+                moduleDebugButton:CreateButton("Inspect Module Table", function()
+                    CraftSim.DEBUG:InspectTable(module, moduleLabel, true)
+                end)
+                if module.DEBUG then
+                    for label, debugFunction in pairs(module.DEBUG) do
+                        if type(debugFunction) == "function" then
+                            local title = string.gsub(label, "_", " ")
+                            moduleDebugButton:CreateButton(title, debugFunction)
+                        end
+                    end
+                end
+            end
+
+            rootDescription:CreateDivider()
+
             local main = rootDescription:CreateButton("Main")
             main:CreateButton("Inspect CraftSim Addon Table", function()
                 CraftSim.DEBUG:InspectTable(CraftSim, "CraftSim", true)
@@ -98,21 +116,6 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
                 end
             end)
 
-            local craftQueue = rootDescription:CreateButton("CraftQueue")
-
-            craftQueue:CreateButton("Inspect CraftQueueItems", function()
-                local nameMap = {}
-                for index, cqi in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-                    nameMap["[" .. index .. "] " .. cqi.recipeData:GetCrafterUID() .. "-" .. cqi.recipeData.recipeName] =
-                        cqi
-                end
-                CraftSim.DEBUG:InspectTable(nameMap, "CraftQueueItems", true)
-            end)
-
-            craftQueue:CreateButton("Inspect CraftQueue.QuickBuyCache", function()
-                CraftSim.DEBUG:InspectTable(CraftSim.CRAFTQ.quickBuyCache, "QuickBuyCache", true)
-            end)
-
             local craftLog = rootDescription:CreateButton("CraftLog")
 
             craftLog:CreateButton("Inspect CraftSessionData", function()
@@ -123,8 +126,8 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
 
             craftLog:CreateButton("Inspect Open CraftRecipeData", function()
                 if CraftSim.CRAFT_LOG.currentSessionData and CraftSim.MODULES.recipeData then
-                    local craftRecipeData = CraftSim.CRAFT_LOG.currentSessionData:GetCraftRecipeData(CraftSim.INIT
-                        .currentRecipeData.recipeID)
+                    local craftRecipeData = CraftSim.CRAFT_LOG.currentSessionData:GetCraftRecipeData(CraftSim.MODULES
+                        .recipeData.recipeID)
                     if craftRecipeData then
                         CraftSim.DEBUG:InspectTable(craftRecipeData,
                             string.format("CraftRecipeData (%s)", CraftSim.MODULES.recipeData.recipeName), true)
@@ -142,36 +145,15 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
         } },
         sizeX = 160, sizeY = 23,
         menuUtilCallback = function(ownerRegion, rootDescription)
-            local clearDBs = rootDescription:CreateButton("Clear Database")
-            clearDBs:CreateButton("User Configurations", function()
-                CraftSim.DB.OPTIONS:ClearAll()
-            end)
-
-            clearDBs:CreateButton("Crafter Data", function()
-                CraftSim.DB.CRAFTER:ClearAll()
-            end)
-
-            clearDBs:CreateButton("Customer History", function()
-                CraftSim.DB.CUSTOMER_HISTORY:ClearAll()
-            end)
-
-            clearDBs:CreateButton("Item Count Cache", function()
-                CraftSim.DB.ITEM_COUNT:ClearAll()
-            end)
-
-            clearDBs:CreateButton("Price Overrides", function()
-                CraftSim.DB.PRICE_OVERRIDE:ClearAll()
-            end)
-
-            clearDBs:CreateButton("Recipe Sub Crafter Data", function()
-                CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()
-            end)
-
+            local clearDBs = rootDescription:CreateButton("Wipe Database")
             local resetDBVersions = rootDescription:CreateButton("Reset DB Versions")
             local repositories = CraftSim.DB.repositories
             for _, repository in ipairs(repositories) do
                 local version = repository.db.version
                 if version > 0 then
+                    clearDBs:CreateButton(repository.name, function()
+                        repository:ClearAll()
+                    end)
                     resetDBVersions:CreateButton(
                         repository.name .. " " .. repository.db.version .. " -> " .. (repository.db.version - 1),
                         function()
@@ -218,6 +200,14 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
             anchorParent = content.logTools.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
         } },
         menuUtilCallback = function(ownerRegion, rootDescription)
+            rootDescription:CreateCheckbox("Log Events to DevTool", function()
+                return CraftSim.DB.OPTIONS:Get("EVENT_DEV_TOOL_LOGGING_ENABLED")
+            end, function()
+                local newValue = not CraftSim.DB.OPTIONS:Get("EVENT_DEV_TOOL_LOGGING_ENABLED")
+                CraftSim.DB.OPTIONS:Save("EVENT_DEV_TOOL_LOGGING_ENABLED", newValue)
+                GUTIL:SetEventDevToolLogging(newValue)
+            end)
+
             ---@type table<number, string>
             local logLevelsSorted = {}
             for key, value in pairs(CraftSim.LibLog.LogLevel) do
