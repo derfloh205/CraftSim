@@ -6,8 +6,6 @@ local GUTIL = CraftSim.GUTIL
 
 local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
-local TABLE_ACCESS_DEBUG = true
-
 
 ---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
@@ -868,10 +866,6 @@ end
 
 function CraftSim.CRAFTQ:CRAFTING_DETAILS_UPDATE()
     if self.frame and self.frame:IsVisible() then
-        if TABLE_ACCESS_DEBUG and CraftSim.DEBUG and CraftSim.DEBUG.SystemPrint then
-            CraftSim.DEBUG:SystemPrint(
-                "[CraftQueue table debug] CRAFTING_DETAILS_UPDATE")
-        end
         self.UI:Update()
     end
 end
@@ -886,11 +880,6 @@ end
 ---@param ordersTabEnabled boolean
 function CraftSim.CRAFTQ:CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED(ordersTabEnabled)
     if self.frame and self.frame:IsVisible() then
-        if TABLE_ACCESS_DEBUG and CraftSim.DEBUG and CraftSim.DEBUG.SystemPrint then
-            CraftSim.DEBUG:SystemPrint(
-                string.format("[CraftQueue table debug] CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED enabled=%s",
-                    tostring(ordersTabEnabled)))
-        end
         self.UI:Update()
     end
 end
