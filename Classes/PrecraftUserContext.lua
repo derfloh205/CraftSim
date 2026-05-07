@@ -25,7 +25,7 @@ function CraftSim.PrecraftUserContext:Refresh(force)
     local uid = CraftSim.UTIL:GetPlayerCrafterUID()
     local classFile = select(2, UnitClass("player"))
     local formToken = ""
-    if classFile == "DRUID" and GetShapeshiftForm then
+    if classFile == "DRUID" then
         formToken = tostring(GetShapeshiftForm())
     end
     local signature = table.concat({ uid, tostring(classFile), formToken }, "\0")
@@ -44,13 +44,8 @@ function CraftSim.PrecraftUserContext:Refresh(force)
         return
     end
 
-    if GetShapeshiftForm then
-        local formID = GetShapeshiftForm()
-        self.formConditionMet = formID == 0
-        self.formFailureReason = self.formConditionMet and nil or
-            (rawget(_G, "ERR_CANT_DO_THAT_WHILE_SHAPESHIFTED") or "Must be in normal form")
-    else
-        self.formConditionMet = true
-        self.formFailureReason = nil
-    end
+    local formID = GetShapeshiftForm()
+    self.formConditionMet = formID == 0
+    self.formFailureReason = self.formConditionMet and nil or
+        (rawget(_G, "ERR_CANT_DO_THAT_WHILE_SHAPESHIFTED") or "Must be in normal form")
 end

@@ -2,17 +2,12 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
----@type CraftSim.PreCraftConditions
-local PRE_CRAFT_CONDITIONS = CraftSim.PRE_CRAFT_CONDITIONS
 
 ---@class CraftSim.CraftQueueItem : CraftSim.CraftSimObject
 ---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueueItem")
-
-CraftSim.CraftQueueItem.CONDITION_IDS = PRE_CRAFT_CONDITIONS.CONDITION_IDS
-CraftSim.CraftQueueItem.CONDITION_PRIORITY = PRE_CRAFT_CONDITIONS.CONDITION_PRIORITY
 
 ---@class CraftSim.CraftQueueItem.Options
 ---@field recipeData CraftSim.RecipeData
@@ -55,16 +50,8 @@ function CraftSim.CraftQueueItem:new(options)
     self.learned = false
     self.recipeDisabled = false
     self.recipeDisabledReason = nil
-    ---@type CraftSim.PrecraftCondition[]
-    self.conditions = {}
-    ---@type table<string, CraftSim.PrecraftCondition>
-    self.conditionMap = {}
-    ---@type CraftSim.PrecraftCondition[]
-    self.failedConditions = {}
-    ---@type CraftSim.PrecraftCondition?
-    self.topFailedCondition = nil
-    ---@type string?
-    self.lastPrecraftConditionDebugSignature = nil
+    ---@type CraftSim.PrecraftConditionSet
+    self.precraftConditionData = CraftSim.PrecraftConditionSet()
     self.hasActiveSubRecipes = false
 
     --- important if the current character is not the crafter of the recipe
@@ -75,55 +62,42 @@ end
 
 ---@param condition CraftSim.PrecraftCondition
 function CraftSim.CraftQueueItem:AddCondition(condition)
-    tinsert(self.conditions, condition)
-    self.conditionMap[condition.id] = condition
+    self.precraftConditionData:appendStoredCondition(condition)
 end
 
 function CraftSim.CraftQueueItem:ResetConditions()
-    wipe(self.conditions)
-    wipe(self.conditionMap)
-    wipe(self.failedConditions)
-    self.topFailedCondition = nil
+    self.precraftConditionData:clearStoredConditions()
 end
 
 ---@return CraftSim.PrecraftCondition[]
 function CraftSim.CraftQueueItem:GetFailedConditions()
-    return self.failedConditions
+    return self.precraftConditionData:GetFailedConditions()
 end
 
 ---@return CraftSim.PrecraftCondition?
 function CraftSim.CraftQueueItem:GetTopFailedCondition()
-    return self.topFailedCondition
+    return self.precraftConditionData:GetTopFailedCondition()
 end
 
 ---@param conditionID string
 ---@return CraftSim.PrecraftCondition?
 function CraftSim.CraftQueueItem:GetCondition(conditionID)
-    return self.conditionMap[conditionID]
+    return self.precraftConditionData:GetCondition(conditionID)
 end
 
 ---@param conditionIDs string[]
 ---@return boolean
 function CraftSim.CraftQueueItem:AreConditionsMet(conditionIDs)
-    return PRE_CRAFT_CONDITIONS:AreConditionsMet(self, conditionIDs)
+    return CraftSim.PRE_CRAFT_CONDITIONS:AreConditionsMet(self, conditionIDs)
 end
 
 function CraftSim.CraftQueueItem:BuildFailedConditionCache()
-    PRE_CRAFT_CONDITIONS:BuildFailedConditionCache(self)
-end
-
----@return string
-function CraftSim.CraftQueueItem:GetConditionDebugSignature()
-    return PRE_CRAFT_CONDITIONS:GetConditionDebugSignature(self)
-end
-
-function CraftSim.CraftQueueItem:DebugLogConditionStateIfChanged()
-    PRE_CRAFT_CONDITIONS:DebugLogConditionStateIfChanged(self)
+    CraftSim.PRE_CRAFT_CONDITIONS:BuildFailedConditionCache(self)
 end
 
 ---@return boolean
 function CraftSim.CraftQueueItem:CanClaimWorkOrder()
-    return PRE_CRAFT_CONDITIONS:CanClaimWorkOrder(self)
+    return CraftSim.PRE_CRAFT_CONDITIONS:CanClaimWorkOrder(self)
 end
 
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
@@ -132,7 +106,7 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
 
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
-    PRE_CRAFT_CONDITIONS:Evaluate(self)
+    CraftSim.PRE_CRAFT_CONDITIONS:Evaluate(self)
     CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 

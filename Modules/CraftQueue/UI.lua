@@ -3120,9 +3120,6 @@ function CraftSim.CRAFTQ.UI:EvaluateQueueItemsInBatches(craftQueue, onComplete)
     for _, craftQueueItem in ipairs(rawItems) do
         tinsert(items, craftQueueItem)
     end
-    local total = #items
-    local index = 1
-
     self.canCraftBatchGenerationId = (self.canCraftBatchGenerationId or 0) + 1
     local batchGenerationId = self.canCraftBatchGenerationId
     self.isCanCraftBatchEvaluationRunning = true
@@ -3140,30 +3137,21 @@ function CraftSim.CRAFTQ.UI:EvaluateQueueItemsInBatches(craftQueue, onComplete)
         end
     end
 
-    local function step()
-        if self.canCraftBatchGenerationId ~= batchGenerationId then
-            return
-        end
-
-        local processed = 0
-        while index <= total and processed < (self.canCraftEvaluationBatchSize or 8) do
-            local craftQueueItem = items[index]
+    GUTIL.FrameDistributor {
+        iterationTable = items,
+        iterationsPerFrame = self.canCraftEvaluationBatchSize or 8,
+        continue = function(distributor, _, craftQueueItem, _, _)
+            if self.canCraftBatchGenerationId ~= batchGenerationId then
+                distributor:Break()
+                return
+            end
             if craftQueueItem and craftQueueItem.CalculateCanCraft then
                 craftQueueItem:CalculateCanCraft()
             end
-            index = index + 1
-            processed = processed + 1
-        end
-
-        if index <= total then
-            C_Timer.After(0, step)
-            return
-        end
-
-        finish()
-    end
-
-    step()
+            distributor:Continue()
+        end,
+        finally = finish,
+    }:Continue()
 end
 
 function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
@@ -3813,7 +3801,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     for _, condition in ipairs(craftQueueItem:GetFailedConditions()) do
         local reason = condition.reason
-        if condition.id == CraftSim.CraftQueueItem.CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
+        if condition.id == CraftSim.PRE_CRAFT_CONDITIONS.CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
             reason = CraftQueueMidnightShatterStatusText(craftQueueItem)
         end
         if reason and reason ~= "" then

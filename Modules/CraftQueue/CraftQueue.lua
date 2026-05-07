@@ -11,12 +11,14 @@ local f = GUTIL:GetFormatter()
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED",
-    "CRAFTING_DETAILS_UPDATE", "UPDATE_SHAPESHIFT_FORM" })
+    "UPDATE_SHAPESHIFT_FORM" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
     "CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
+    "CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED",
+    "CRAFTSIM_PROFESSION_OPENED",
 })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
@@ -226,6 +228,7 @@ end
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
+    self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
     local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
     if not profession or not CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton() then
         CraftSim.CRAFTQ.queuingWorkOrders = false
@@ -450,7 +453,12 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                     end
 
                                     local function queueRecipe()
-                                        local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                                        local craftQueue = CraftSim.CRAFTQ.craftQueue
+                                        if not craftQueue then
+                                            distributor:Continue()
+                                            return
+                                        end
+                                        local isAlreadyQueued = craftQueue:FindRecipe(recipeData) ~= nil
                                         if isAlreadyQueued then
                                             Logger:LogDebug("Work order is already queued, skipping")
                                             distributor:Continue()
@@ -864,21 +872,25 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     end
 end
 
-function CraftSim.CRAFTQ:CRAFTING_DETAILS_UPDATE()
-    if self.frame and self.frame:IsVisible() then
-        self.UI:Update()
-    end
-end
-
 function CraftSim.CRAFTQ:UPDATE_SHAPESHIFT_FORM()
     CraftSim.PRE_CRAFT_CONDITIONS:InvalidateUserContext()
-    if self.frame and self.frame:IsVisible() then
-        self.UI:Update()
-    end
+    GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
 end
 
 ---@param ordersTabEnabled boolean
 function CraftSim.CRAFTQ:CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED(ordersTabEnabled)
+    GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
+end
+
+---@param professionInfo ProfessionInfo
+---@param selectedTab CraftSim.PROFESSIONS_TAB
+---@param isLogin boolean
+---@param isReload boolean
+function CraftSim.CRAFTQ:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, isLogin, isReload)
+    GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
+end
+
+function CraftSim.CRAFTQ:CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED()
     if self.frame and self.frame:IsVisible() then
         self.UI:Update()
     end

@@ -9,8 +9,6 @@ local GUTIL = CraftSim.GUTIL
 ---@field AddEvaluatedCondition fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem, options: CraftSim.PrecraftCondition.Options)
 ---@field BuildFailedConditionCache fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
 ---@field AreConditionsMet fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem, conditionIDs: string[]): boolean
----@field GetConditionDebugSignature fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem): string
----@field DebugLogConditionStateIfChanged fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
 ---@field CanClaimWorkOrder fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem): boolean
 ---@field Evaluate fun(self: CraftSim.PreCraftConditions, craftQueueItem: CraftSim.CraftQueueItem)
 ---@field MarkQueueListEvaluate fun(self: CraftSim.PreCraftConditions)
@@ -21,7 +19,6 @@ CraftSim.PRE_CRAFT_CONDITIONS = CraftSim.PRE_CRAFT_CONDITIONS or {}
 
 ---@type CraftSim.PreCraftConditions
 local PCC = CraftSim.PRE_CRAFT_CONDITIONS
-local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueue.PreCraftConditions")
 
 PCC.CONDITION_IDS = {
     LEARNED = "LEARNED",
@@ -103,58 +100,14 @@ end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function PCC:BuildFailedConditionCache(craftQueueItem)
-    craftQueueItem.failedConditions = GUTIL:Filter(craftQueueItem.conditions, function(condition)
-        return not condition.isMet
-    end)
-    table.sort(craftQueueItem.failedConditions, function(a, b)
-        return (a.priority or 0) > (b.priority or 0)
-    end)
-    craftQueueItem.topFailedCondition = craftQueueItem.failedConditions[1]
+    craftQueueItem.precraftConditionData:BuildFailedConditionCache()
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@param conditionIDs string[]
 ---@return boolean
 function PCC:AreConditionsMet(craftQueueItem, conditionIDs)
-    return GUTIL:Every(conditionIDs, function(conditionID)
-        local condition = craftQueueItem.conditionMap[conditionID]
-        return condition and condition.isMet or false
-    end)
-end
-
----@param craftQueueItem CraftSim.CraftQueueItem
----@return string
-function PCC:GetConditionDebugSignature(craftQueueItem)
-    local failed = GUTIL:Map(craftQueueItem.failedConditions, function(condition)
-        return string.format("%s(%s)", tostring(condition.id), tostring(condition.reason or ""))
-    end)
-    return table.concat({
-        tostring(craftQueueItem.allowedToCraft),
-        tostring(craftQueueItem.craftAbleAmount),
-        table.concat(failed, "|"),
-    }, "::")
-end
-
----@param craftQueueItem CraftSim.CraftQueueItem
-function PCC:DebugLogConditionStateIfChanged(craftQueueItem)
-    local signature = self:GetConditionDebugSignature(craftQueueItem)
-    if craftQueueItem.lastPrecraftConditionDebugSignature == signature then
-        return
-    end
-    craftQueueItem.lastPrecraftConditionDebugSignature = signature
-
-    local top = craftQueueItem.topFailedCondition
-    local topReason = top and (top.reason or top.id) or "none"
-    local topID = top and top.id or "none"
-    local msg = string.format(
-        "[PrecraftCondition] %s | allowed=%s | craftAbleAmount=%s | topFail=%s (%s)",
-        tostring(craftQueueItem.recipeData.recipeName),
-        tostring(craftQueueItem.allowedToCraft),
-        tostring(craftQueueItem.craftAbleAmount),
-        tostring(topID),
-        tostring(topReason)
-    )
-    Logger:LogDebug(msg)
+    return craftQueueItem.precraftConditionData:AreConditionsMet(conditionIDs)
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
@@ -211,7 +164,6 @@ function PCC:Evaluate(craftQueueItem)
         craftQueueItem.notOnCooldown = true
         craftQueueItem.allowedToCraft = false
         self:BuildFailedConditionCache(craftQueueItem)
-        self:DebugLogConditionStateIfChanged(craftQueueItem)
         return
     end
 
@@ -306,8 +258,7 @@ function PCC:Evaluate(craftQueueItem)
     })
 
     self:BuildFailedConditionCache(craftQueueItem)
-    craftQueueItem.allowedToCraft = GUTIL:Every(craftQueueItem.conditions, function(condition)
+    craftQueueItem.allowedToCraft = GUTIL:Every(craftQueueItem.precraftConditionData:GetConditionList(), function(condition)
         return (not condition.blocksCraft) or condition.isMet
     end)
-    self:DebugLogConditionStateIfChanged(craftQueueItem)
 end
