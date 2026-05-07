@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CONCENTRATION_TRACKER : CraftSim.Module
-CraftSim.CONCENTRATION_TRACKER = {}
+CraftSim.CONCENTRATION_TRACKER = GUTIL:CreateRegistreeForEvents({ "CURRENCY_DISPLAY_UPDATE" })
 
 CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
 
@@ -15,6 +15,20 @@ GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
 
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
+
+---@param profession Enum.Profession
+---@return CraftSim.EXPANSION_IDS
+local function GetMoxieExpansionForProfession(profession)
+    -- Manu Moxie currently belongs to Midnight professions.
+    return CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
+end
+
+function CraftSim.CONCENTRATION_TRACKER:SnapshotAllPlayerMoxie()
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    for profession, _ in pairs(CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION) do
+        self:SnapshotMoxieForProfession(playerCrafterUID, profession, GetMoxieExpansionForProfession(profession))
+    end
+end
 
 ---@param crafterUID CrafterUID
 ---@param profession Enum.Profession
@@ -67,6 +81,19 @@ function CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, prof
     return CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansionID), true
 end
 
+---@param currencyID number?
+function CraftSim.CONCENTRATION_TRACKER:CURRENCY_DISPLAY_UPDATE(currencyID)
+    if currencyID and not tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, currencyID) then
+        return
+    end
+
+    self:SnapshotAllPlayerMoxie()
+
+    if self.trackerFrame and self.trackerFrame:IsVisible() then
+        self.UI:UpdateTrackerDisplay()
+    end
+end
+
 ---@return CraftSim.ConcentrationData?
 function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
@@ -89,7 +116,9 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             profession,
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             cached)
-        CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        if profession then
+            CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        end
 
         return cached
     end
@@ -106,7 +135,9 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             profession,
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             concentrationData)
-        CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        if profession then
+            CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        end
         CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = concentrationData
         return concentrationData
     end

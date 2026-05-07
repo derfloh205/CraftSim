@@ -9,6 +9,12 @@ local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
 
+---@param realm string?
+---@return string
+local function ResolveCrafterRealm(realm)
+    return realm or GetNormalizedRealmName() or GetRealmName() or ""
+end
+
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
@@ -2384,7 +2390,7 @@ function CraftSim.RecipeData:Craft(amount)
     end
 end
 
---- Returns wether the recipe can be crafted with the set reagents a specified amount of times
+--- Returns whether the live recipe is currently disabled for the active crafter/profession context.
 ---@return boolean isDisabled
 ---@return string? disabledReason
 function CraftSim.RecipeData:GetLiveDisabledState()
@@ -2619,7 +2625,8 @@ end
 
 ---@return CrafterUID
 function CraftSim.RecipeData:GetCrafterUID()
-    local crafterUID = self.crafterData.name .. "-" .. self.crafterData.realm --[[@as CrafterUID]]
+    local crafterName = self.crafterData.name or UnitNameUnmodified("player") or ""
+    local crafterUID = crafterName .. "-" .. ResolveCrafterRealm(self.crafterData.realm) --[[@as CrafterUID]]
     return crafterUID
 end
 
@@ -2832,7 +2839,8 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     local crafterData = self:GetCrafterData()
     local classColor = C_ClassColor.GetClassColor(crafterData.class)
     if includeRealm then
-        finalText = finalText .. " " .. classColor:WrapTextInColorCode(crafterData.name .. "-" .. crafterData.realm)
+        finalText = finalText .. " " ..
+            classColor:WrapTextInColorCode((crafterData.name or "") .. "-" .. ResolveCrafterRealm(crafterData.realm))
     else
         finalText = finalText .. " " .. classColor:WrapTextInColorCode(crafterData.name)
     end

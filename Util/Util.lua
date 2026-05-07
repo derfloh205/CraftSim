@@ -278,7 +278,7 @@ function CraftSim.UTIL:GetPlayerCrafterData()
     if playerCrafterDataCached then return playerCrafterDataCached end
 
     local name, realm = UnitNameUnmodified("player")
-    realm = realm or GetNormalizedRealmName()
+    realm = realm or GetNormalizedRealmName() or GetRealmName() or ""
     ---@type CraftSim.CrafterData
     local crafterData = {
         name = name,
@@ -294,7 +294,9 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@return string crafterUID
 function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
-    return crafterData.name .. "-" .. crafterData.realm
+    local name = (crafterData and crafterData.name) or UnitNameUnmodified("player") or ""
+    local realm = (crafterData and crafterData.realm) or GetNormalizedRealmName() or GetRealmName() or ""
+    return name .. "-" .. realm
 end
 
 --- Player name cannot contain '-'; realm may contain hyphens. Split on the first '-' only.
