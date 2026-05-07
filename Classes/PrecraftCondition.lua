@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.PrecraftCondition.Options
----@field id string
+---@field id CraftSim.PRE_CRAFT_CONDITION_IDS
 ---@field priority number
 ---@field blocksCraft boolean
 ---@field blocksClaim boolean

@@ -873,7 +873,6 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
 end
 
 function CraftSim.CRAFTQ:UPDATE_SHAPESHIFT_FORM()
-    CraftSim.PRE_CRAFT_CONDITIONS:InvalidateUserContext()
     GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
 end
 

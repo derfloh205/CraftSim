@@ -51,7 +51,7 @@ function CraftSim.CraftQueueItem:new(options)
     self.recipeDisabled = false
     self.recipeDisabledReason = nil
     ---@type CraftSim.PrecraftConditionSet
-    self.precraftConditionData = CraftSim.PrecraftConditionSet()
+    self.precraftConditionData = CraftSim.PrecraftConditionSet(self)
     self.hasActiveSubRecipes = false
 
     --- important if the current character is not the crafter of the recipe
@@ -88,16 +88,16 @@ end
 ---@param conditionIDs string[]
 ---@return boolean
 function CraftSim.CraftQueueItem:AreConditionsMet(conditionIDs)
-    return CraftSim.PRE_CRAFT_CONDITIONS:AreConditionsMet(self, conditionIDs)
+    return self.precraftConditionData:AreConditionsMet(conditionIDs)
 end
 
 function CraftSim.CraftQueueItem:BuildFailedConditionCache()
-    CraftSim.PRE_CRAFT_CONDITIONS:BuildFailedConditionCache(self)
+    self.precraftConditionData:BuildFailedConditionCache()
 end
 
 ---@return boolean
 function CraftSim.CraftQueueItem:CanClaimWorkOrder()
-    return CraftSim.PRE_CRAFT_CONDITIONS:CanClaimWorkOrder(self)
+    return self.precraftConditionData:CanClaimWorkOrder()
 end
 
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
@@ -106,7 +106,7 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
 
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
-    CraftSim.PRE_CRAFT_CONDITIONS:Evaluate(self)
+    self.precraftConditionData:Evaluate()
     CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 
@@ -271,7 +271,8 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
 
     self.amount = minimumCrafts
 
-    Logger:LogDebug("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+    Logger:LogDebug("Updated amount for " ..
+        tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
         .amount)
     Logger:LogDebug("parentCraftQueueItems: " .. #parentCraftQueueItems)
     Logger:LogDebug("totalCount: " .. totalCount)

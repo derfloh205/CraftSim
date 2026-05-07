@@ -3175,7 +3175,6 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     craftQueue:UpdateSubRecipes()
     craftQueue:RefreshQueuedRecipeCooldownData()
-    CraftSim.PRE_CRAFT_CONDITIONS:MarkQueueListEvaluate()
     local function finalizeQueueRender()
         CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
         craftQueue:FilterSortByPriority()
@@ -3801,7 +3800,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     for _, condition in ipairs(craftQueueItem:GetFailedConditions()) do
         local reason = condition.reason
-        if condition.id == CraftSim.PRE_CRAFT_CONDITIONS.CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
+        if condition.id == CraftSim.PRE_CRAFT_CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
             reason = CraftQueueMidnightShatterStatusText(craftQueueItem)
         end
         if reason and reason ~= "" then
