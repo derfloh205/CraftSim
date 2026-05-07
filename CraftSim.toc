@@ -198,6 +198,8 @@ Data/SpecializationData/Midnight/Engineering.lua
 Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
+Classes/PrecraftCondition.lua
+Classes/PrecraftConditionSet.lua
 Classes/OnCraftData.lua
 Classes/CooldownData.lua
 Classes/ProfessionData.lua
@@ -231,4 +233,5 @@ Classes/JSONBuilder.lua
 Classes/BuffData.lua
 Classes/Buff.lua
 Classes/CraftQueue.lua
+Modules/CraftQueue/PreCraftConditions.lua
 Classes/CraftQueueItem.lua

@@ -48,6 +48,10 @@ function CraftSim.CraftQueueItem:new(options)
     self.notOnCooldown = true
     self.isCrafter = false
     self.learned = false
+    self.recipeDisabled = false
+    self.recipeDisabledReason = nil
+    ---@type CraftSim.PrecraftConditionSet
+    self.precraftConditionData = CraftSim.PrecraftConditionSet(self)
     self.hasActiveSubRecipes = false
 
     --- important if the current character is not the crafter of the recipe
@@ -56,34 +60,53 @@ function CraftSim.CraftQueueItem:new(options)
     self.crafterData = options.recipeData:GetCrafterData()
 end
 
+---@param condition CraftSim.PrecraftCondition
+function CraftSim.CraftQueueItem:AddCondition(condition)
+    self.precraftConditionData:appendStoredCondition(condition)
+end
+
+function CraftSim.CraftQueueItem:ResetConditions()
+    self.precraftConditionData:clearStoredConditions()
+end
+
+---@return CraftSim.PrecraftCondition[]
+function CraftSim.CraftQueueItem:GetFailedConditions()
+    return self.precraftConditionData:GetFailedConditions()
+end
+
+---@return CraftSim.PrecraftCondition?
+function CraftSim.CraftQueueItem:GetTopFailedCondition()
+    return self.precraftConditionData:GetTopFailedCondition()
+end
+
+---@param conditionID string
+---@return CraftSim.PrecraftCondition?
+function CraftSim.CraftQueueItem:GetCondition(conditionID)
+    return self.precraftConditionData:GetCondition(conditionID)
+end
+
+---@param conditionIDs string[]
+---@return boolean
+function CraftSim.CraftQueueItem:AreConditionsMet(conditionIDs)
+    return self.precraftConditionData:AreConditionsMet(conditionIDs)
+end
+
+function CraftSim.CraftQueueItem:BuildFailedConditionCache()
+    self.precraftConditionData:BuildFailedConditionCache()
+end
+
+---@return boolean
+function CraftSim.CraftQueueItem:CanClaimWorkOrder()
+    return self.precraftConditionData:CanClaimWorkOrder()
+end
+
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
 function CraftSim.CraftQueueItem:CalculateCanCraft()
     CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
-    local _, craftAbleAmount = self.recipeData:CanCraft(1)
-    self.craftAbleAmount = craftAbleAmount
-    self.canCraftOnce = craftAbleAmount > 0
-    self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
-    self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
-    self.notOnCooldown = not self.recipeData:OnCooldown()
-    self.isCrafter = self:IsCrafter()
-    self.learned = self.recipeData.learned
 
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
-
-    self.pcbgData.gateId = nil
-    self.pcbgData.needsStep = false
-    self.pcbgData.canCast = false
-    self.pcbgData.dueToLoginStale = false
-    self.pcbgData.dueToMissingBuff = false
-    self.pcbgData.recipeData = nil
-
-    -- Pre-craft buff gates: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
-    -- C_TradeSkillUI.GetProfessionChildSkillLineID().
-    CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(self)
-
-    self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
-        self.isCrafter and self.learned and not self.pcbgData.needsStep
+    self.precraftConditionData:Evaluate()
     CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 
@@ -248,7 +271,8 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
 
     self.amount = minimumCrafts
 
-    Logger:LogDebug("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+    Logger:LogDebug("Updated amount for " ..
+        tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
         .amount)
     Logger:LogDebug("parentCraftQueueItems: " .. #parentCraftQueueItems)
     Logger:LogDebug("totalCount: " .. totalCount)

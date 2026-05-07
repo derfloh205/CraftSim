@@ -9,6 +9,12 @@ local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
 
+---@param realm string?
+---@return string
+local function ResolveCrafterRealm(realm)
+    return realm or GetNormalizedRealmName() or GetRealmName() or ""
+end
+
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
@@ -2384,6 +2390,44 @@ function CraftSim.RecipeData:Craft(amount)
     end
 end
 
+--- Returns whether the live recipe is currently disabled for the active crafter/profession context.
+---@return boolean isDisabled
+---@return string? disabledReason
+function CraftSim.RecipeData:GetLiveDisabledState()
+    if not self:IsCrafter() or not self:IsProfessionOpen() then
+        return false, nil
+    end
+
+    local requirements = C_TradeSkillUI.GetRecipeRequirements(self.recipeID) or {}
+    local unmetRequirements = {}
+    for _, requirement in ipairs(requirements) do
+        if requirement and requirement.met == false then
+            tinsert(unmetRequirements, requirement.requirementText or requirement.name or requirement.description)
+        end
+    end
+    if #unmetRequirements > 0 then
+        local requirementText = table.concat(unmetRequirements, ", ")
+        if requirementText ~= "" then
+            return true, "Missing: " .. requirementText
+        end
+        return true, "Missing required tools or location"
+    end
+
+    local liveRecipeInfo = C_TradeSkillUI.GetRecipeInfo(self.recipeID)
+    if liveRecipeInfo and liveRecipeInfo.disabled then
+        local disabledReason = liveRecipeInfo.disabledReason
+        if disabledReason and disabledReason ~= "" then
+            if not string.find(disabledReason, "^Missing", 1) then
+                return true, "Missing: " .. disabledReason
+            end
+            return true, disabledReason
+        end
+        return true, "Missing requirement"
+    end
+
+    return false, nil
+end
+
 --- Returns wether the recipe can be crafted with the set reagents a specified amount of times
 ---@param amount number
 ---@return boolean craftAble is the given amount craftable
@@ -2410,6 +2454,10 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
+    local apiDisabled = self:GetLiveDisabledState()
+    if apiDisabled then
+        return false, craftAbleAmount
+    end
 
     -- CraftSim.DEBUG:SystemPrint("CanCraft")
     -- CraftSim.DEBUG:SystemPrint("hasEnoughReagents: " .. tostring(hasEnoughReagents))
@@ -2577,7 +2625,8 @@ end
 
 ---@return CrafterUID
 function CraftSim.RecipeData:GetCrafterUID()
-    local crafterUID = self.crafterData.name .. "-" .. self.crafterData.realm --[[@as CrafterUID]]
+    local crafterName = self.crafterData.name or UnitNameUnmodified("player") or ""
+    local crafterUID = crafterName .. "-" .. ResolveCrafterRealm(self.crafterData.realm) --[[@as CrafterUID]]
     return crafterUID
 end
 
@@ -2790,7 +2839,8 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     local crafterData = self:GetCrafterData()
     local classColor = C_ClassColor.GetClassColor(crafterData.class)
     if includeRealm then
-        finalText = finalText .. " " .. classColor:WrapTextInColorCode(crafterData.name .. "-" .. crafterData.realm)
+        finalText = finalText .. " " ..
+            classColor:WrapTextInColorCode((crafterData.name or "") .. "-" .. ResolveCrafterRealm(crafterData.realm))
     else
         finalText = finalText .. " " .. classColor:WrapTextInColorCode(crafterData.name)
     end

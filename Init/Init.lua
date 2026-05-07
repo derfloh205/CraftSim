@@ -12,6 +12,18 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.LOCAL:GetLocalizer()
+local lastOrdersTabEnabled = nil
+
+local function emitOrdersTabAvailabilityChanged()
+	if not ProfessionsFrame then
+		return
+	end
+	local currentOrdersTabEnabled = ProfessionsFrame.isCraftingOrdersTabEnabled == true
+	if lastOrdersTabEnabled == nil or lastOrdersTabEnabled ~= currentOrdersTabEnabled then
+		lastOrdersTabEnabled = currentOrdersTabEnabled
+		GUTIL:TriggerCustomEvent("CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED", currentOrdersTabEnabled)
+	end
+end
 
 ---@class CraftSim.INIT : Frame
 CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
@@ -30,6 +42,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
 	"CRAFTSIM_PROFESSION_OPENED",
 	"CRAFTSIM_PROFESSION_TAB_CLICKED",
+	"CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
 	"CRAFTSIM_ORDER_VIEW_CLOSED",
 	"CRAFTSIM_CRAFT_BUFFS_UPDATED",
 })
@@ -141,6 +154,7 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, i
 		profession, selectedTab, isLogin, isReload)
 
 	CraftSim.DEBUG:StopProfiling("TradeSkill Opening Load")
+	emitOrdersTabAvailabilityChanged()
 end
 
 ---@param recipeInfo TradeSkillRecipeInfo?
@@ -516,6 +530,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			lastOrdersTabEnabled = nil
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
 			--CraftSim.DEBUG:StartProfiling("Update Customer History")
@@ -560,6 +575,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
 				CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 			end
+			emitOrdersTabAvailabilityChanged()
 		end)
 	end
 
