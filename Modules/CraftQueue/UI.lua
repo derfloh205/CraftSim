@@ -3111,49 +3111,6 @@ function CraftSim.CRAFTQ.UI:InitializeQuickAccessBar(frame)
     }
 end
 
----@param craftQueue CraftSim.CraftQueue
----@param onComplete fun()
-function CraftSim.CRAFTQ.UI:EvaluateQueueItemsInBatches(craftQueue, onComplete)
-    local rawItems = craftQueue.craftQueueItems or {}
-    --- Normalize to a dense array in case queue mutations left sparse indices.
-    local items = {}
-    for _, craftQueueItem in ipairs(rawItems) do
-        tinsert(items, craftQueueItem)
-    end
-    self.canCraftBatchGenerationId = (self.canCraftBatchGenerationId or 0) + 1
-    local batchGenerationId = self.canCraftBatchGenerationId
-    self.isCanCraftBatchEvaluationRunning = true
-
-    local function finish()
-        if self.canCraftBatchGenerationId ~= batchGenerationId then
-            return
-        end
-        self.isCanCraftBatchEvaluationRunning = false
-        onComplete()
-
-        if self.pendingQueueFullUpdateAfterCanCraftBatch then
-            self.pendingQueueFullUpdateAfterCanCraftBatch = false
-            self:Update()
-        end
-    end
-
-    GUTIL.FrameDistributor {
-        iterationTable = items,
-        iterationsPerFrame = self.canCraftEvaluationBatchSize or 8,
-        continue = function(distributor, _, craftQueueItem, _, _)
-            if self.canCraftBatchGenerationId ~= batchGenerationId then
-                distributor:Break()
-                return
-            end
-            if craftQueueItem and craftQueueItem.CalculateCanCraft then
-                craftQueueItem:CalculateCanCraft()
-            end
-            distributor:Continue()
-        end,
-        finally = finish,
-    }:Continue()
-end
-
 function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
@@ -3201,15 +3158,59 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
         CraftSim.DEBUG:StopProfiling("FrameListUpdate")
     end
 
-    local shouldBatch = #craftQueue.craftQueueItems > (self.canCraftEvaluationBatchSize or 8)
-    if shouldBatch then
-        self:EvaluateQueueItemsInBatches(craftQueue, finalizeQueueRender)
-    else
-        for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
-            craftQueueItem:CalculateCanCraft()
+    local rawItems = craftQueue.craftQueueItems or {}
+    --- Dense array — queue mutations may leave craftQueueItems sparse; FrameDistributor uses `next`.
+    local items = {}
+    for _, craftQueueItem in ipairs(rawItems) do
+        tinsert(items, craftQueueItem)
+    end
+
+    --- Same cap as FrameDistributor — only spread across frames when there are more items than this per frame.
+    local iterationsPerFrame = self.canCraftEvaluationBatchSize or 8
+    local shouldBatch = #items > iterationsPerFrame
+
+    if not shouldBatch then
+        for _, craftQueueItem in ipairs(items) do
+            if craftQueueItem and craftQueueItem.CalculateCanCraft then
+                craftQueueItem:CalculateCanCraft()
+            end
         end
         finalizeQueueRender()
+        return
     end
+
+    self.canCraftBatchGenerationId = (self.canCraftBatchGenerationId or 0) + 1
+    local batchGenerationId = self.canCraftBatchGenerationId
+    self.isCanCraftBatchEvaluationRunning = true
+
+    local function finishCanCraftEvaluation()
+        if self.canCraftBatchGenerationId ~= batchGenerationId then
+            return
+        end
+        self.isCanCraftBatchEvaluationRunning = false
+        finalizeQueueRender()
+
+        if self.pendingQueueFullUpdateAfterCanCraftBatch then
+            self.pendingQueueFullUpdateAfterCanCraftBatch = false
+            self:Update()
+        end
+    end
+
+    GUTIL.FrameDistributor {
+        iterationTable = items,
+        iterationsPerFrame = iterationsPerFrame,
+        continue = function(distributor, _, craftQueueItem, _, _)
+            if self.canCraftBatchGenerationId ~= batchGenerationId then
+                distributor:Break()
+                return
+            end
+            if craftQueueItem and craftQueueItem.CalculateCanCraft then
+                craftQueueItem:CalculateCanCraft()
+            end
+            distributor:Continue()
+        end,
+        finally = finishCanCraftEvaluation,
+    }:Continue()
 end
 
 ---@param recipeData CraftSim.RecipeData
