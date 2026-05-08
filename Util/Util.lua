@@ -278,7 +278,7 @@ function CraftSim.UTIL:GetPlayerCrafterData()
     if playerCrafterDataCached then return playerCrafterDataCached end
 
     local name, realm = UnitNameUnmodified("player")
-    realm = realm or GetNormalizedRealmName() or GetRealmName() or ""
+    realm = self:NormalizeRealmKey(realm or GetNormalizedRealmName() or GetRealmName() or "")
     ---@type CraftSim.CrafterData
     local crafterData = {
         name = name,
@@ -295,8 +295,19 @@ end
 ---@return string crafterUID
 function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
     local name = (crafterData and crafterData.name) or UnitNameUnmodified("player") or ""
-    local realm = (crafterData and crafterData.realm) or GetNormalizedRealmName() or GetRealmName() or ""
+    local realm = self:NormalizeRealmKey((crafterData and crafterData.realm) or GetNormalizedRealmName() or
+        GetRealmName() or "")
     return name .. "-" .. realm
+end
+
+--- Normalize realm key formatting to match GetNormalizedRealmName()-style storage keys.
+---@param realm string?
+---@return string normalizedRealm
+function CraftSim.UTIL:NormalizeRealmKey(realm)
+    if type(realm) ~= "string" then
+        return ""
+    end
+    return (realm:gsub("[%s%-']", ""))
 end
 
 --- Player name cannot contain '-'; realm may contain hyphens. Split on the first '-' only.
@@ -317,6 +328,24 @@ function CraftSim.UTIL:SplitCrafterUID(crafterUID)
         return nil, nil
     end
     return name, realm
+end
+
+--- Normalize a crafter UID (Name-Realm) to Name-NormalizedRealm.
+---@param crafterUID string?
+---@return CrafterUID? normalizedCrafterUID
+function CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+    if type(crafterUID) ~= "string" then
+        return nil
+    end
+    local name, realm = self:SplitCrafterUID(crafterUID)
+    if not name or not realm then
+        return nil
+    end
+    local normalizedRealm = self:NormalizeRealmKey(realm)
+    if normalizedRealm == "" then
+        return nil
+    end
+    return (name .. "-" .. normalizedRealm) --[[@as CrafterUID]]
 end
 
 --- How many times each character name appears (case-insensitive), for Name-Realm UIDs only.
@@ -382,7 +411,8 @@ end
 
 ---@return string crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
-    return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
+    local rawUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
+    return CraftSim.UTIL:NormalizeCrafterUIDKey(rawUID) or rawUID
 end
 
 function CraftSim.UTIL:GetSchematicFormByContext()

@@ -140,3 +140,25 @@ function CraftSim.DB.ITEM_COUNT.MIGRATION:M_2_3_Remove_fishing_from_concentratio
         characters = {}
     }
 end
+
+function CraftSim.DB.ITEM_COUNT.MIGRATION:M_3_4_Normalize_crafterUID_keys()
+    CraftSimDB.itemCountDB.data.characters = CraftSimDB.itemCountDB.data.characters or {}
+    local normalizedCharacters = {}
+    for crafterUID, charData in pairs(CraftSimDB.itemCountDB.data.characters) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            local merged = normalizedCharacters[normalizedCrafterUID] or { bank = {}, inventory = {} }
+            normalizedCharacters[normalizedCrafterUID] = merged
+            merged.bank = merged.bank or {}
+            merged.inventory = merged.inventory or {}
+
+            for itemID, count in pairs((charData and charData.inventory) or {}) do
+                merged.inventory[itemID] = math.max(merged.inventory[itemID] or 0, count or 0)
+            end
+            for itemID, count in pairs((charData and charData.bank) or {}) do
+                merged.bank[itemID] = math.max(merged.bank[itemID] or 0, count or 0)
+            end
+        end
+    end
+    CraftSimDB.itemCountDB.data.characters = normalizedCharacters
+end

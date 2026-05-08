@@ -673,6 +673,51 @@ end
 
 --- Migrations
 
+---@param t table
+---@return boolean
+local function IsArrayTable(t)
+    if type(t) ~= "table" then
+        return false
+    end
+    local maxIndex = 0
+    local count = 0
+    for k, _ in pairs(t) do
+        if type(k) ~= "number" or k < 1 or k % 1 ~= 0 then
+            return false
+        end
+        count = count + 1
+        if k > maxIndex then
+            maxIndex = k
+        end
+    end
+    if count == 0 then
+        return true
+    end
+    return maxIndex == count
+end
+
+---@param target table
+---@param source table
+local function MergePreserveData(target, source)
+    if IsArrayTable(target) and IsArrayTable(source) then
+        for _, value in ipairs(source) do
+            if not tContains(target, value) then
+                tinsert(target, value)
+            end
+        end
+        return
+    end
+
+    for key, sourceValue in pairs(source) do
+        local targetValue = target[key]
+        if targetValue == nil then
+            target[key] = sourceValue
+        elseif type(targetValue) == "table" and type(sourceValue) == "table" then
+            MergePreserveData(targetValue, sourceValue)
+        end
+    end
+end
+
 function CraftSim.DB.CRAFTER.MIGRATION.M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
     if CraftSimRecipeDataCache then
@@ -795,4 +840,24 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_6_7_Normalize_shared_cooldown_storage()
             end
         end
     end
+end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_7_8_Normalize_crafterUID_keys()
+    ---@type table<CrafterUID, CraftSim.DB.CrafterDBData>
+    local normalizedData = {}
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedData[normalizedCrafterUID] = normalizedData[normalizedCrafterUID] or {}
+            MergePreserveData(normalizedData[normalizedCrafterUID], crafterData)
+        end
+    end
+    CraftSimDB.crafterDB.data = normalizedData
+end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_8_9_Normalize_crafterUID_keys_for_cooldown_data()
+    -- Re-run crafterUID key normalization for installs that already passed 7->8
+    -- before this migration existed. This ensures cooldown lists and other crafter-
+    -- keyed data use canonical Name-NormalizedRealm keys.
+    CraftSim.DB.CRAFTER.MIGRATION.M_7_8_Normalize_crafterUID_keys()
 end
