@@ -658,7 +658,14 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             finally = queueRecipe,
                                         }
                                     else
-                                        queueRecipe()
+                                        -- No target quality, but still run gear optimization so the queued
+                                        -- entry uses TopGear's recommendation (and benefits from the
+                                        -- multicraft-tool demotion for orders) instead of whatever was
+                                        -- equipped when the RecipeData was constructed.
+                                        recipeData:Optimize {
+                                            optimizeGear = true,
+                                            finally = queueRecipe,
+                                        }
                                     end
                                 else
                                     distributor:Continue()
