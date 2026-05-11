@@ -219,7 +219,7 @@ function CraftSim.PrecraftConditionSet:Evaluate()
         return
     end
 
-    ev.recipeDisabled, ev.recipeDisabledReason = craftQueueItem.recipeData:GetLiveDisabledState()
+    ev.recipeDisabled, ev.recipeDisabledReason = craftQueueItem.recipeData:GetTradeSkillDisabledRecipeState()
     local _, craftAbleAmount = craftQueueItem.recipeData:CanCraft(1)
     ev.craftAbleAmount = craftAbleAmount
     ev.canCraftOnce = craftAbleAmount > 0

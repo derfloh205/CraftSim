@@ -2384,10 +2384,13 @@ function CraftSim.RecipeData:Craft(amount)
     end
 end
 
---- Returns whether the live recipe is currently disabled for the active crafter/profession context.
+--- Whether Blizzard currently blocks crafting this recipe via trade skill data (unmet
+--- `C_TradeSkillUI.GetRecipeRequirements`, or `GetRecipeInfo(...).disabled` / `disabledReason`).
+--- Only evaluated when this `recipeData` is for the logged-in player and the matching profession
+--- is open (`IsCrafter` + `IsProfessionOpen`); otherwise returns `false, nil` (API is not reliable then).
 ---@return boolean isDisabled
 ---@return string? disabledReason
-function CraftSim.RecipeData:GetLiveDisabledState()
+function CraftSim.RecipeData:GetTradeSkillDisabledRecipeState()
     if not self:IsCrafter() or not self:IsProfessionOpen() then
         return false, nil
     end
@@ -2448,14 +2451,10 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
-    local apiDisabled = self:GetLiveDisabledState()
+    local apiDisabled = self:GetTradeSkillDisabledRecipeState()
     if apiDisabled then
         return false, craftAbleAmount
     end
-
-    -- CraftSim.DEBUG:SystemPrint("CanCraft")
-    -- CraftSim.DEBUG:SystemPrint("hasEnoughReagents: " .. tostring(hasEnoughReagents))
-    -- CraftSim.DEBUG:SystemPrint("craftAbleAmount: " .. tostring(craftAbleAmount))
 
 
     if not isChargeRecipe then
