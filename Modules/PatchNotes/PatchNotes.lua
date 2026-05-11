@@ -25,6 +25,10 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.7"),
+        f.P .. f.bb("Work Order Queuing"),
+        f.a .. "- Fixed a bug where gear optimization chose mc for work orders",
+        collab(CraftSim.NEWS.GITHUB_COLLABS.AVILENE),
         newP("26.1.6"),
         f.PG .. f.g("New Slash Commands"),
         f.a .. "- " .. f.l("/craftsim bruto") .. " - Summon Brutosaur Mount",

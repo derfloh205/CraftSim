@@ -17,7 +17,7 @@
 ## Notes-zhCN: 根据您的专业统计数据和其他工具计算平均利润
 ## Notes-zhTW: 根據您的專業技能統計資料和其他工具計算平均利潤
 ## Author: genju
-## Version: 26.1.6
+## Version: 26.1.7
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
