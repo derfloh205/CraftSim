@@ -8,7 +8,9 @@ CraftSim.PRE_CRAFT_CONDITION_IDS = {
     IS_CRAFTER = "IS_CRAFTER",
     REAGENTS = "REAGENTS",
     RECIPE_REQUIREMENTS = "RECIPE_REQUIREMENTS",
-    FORM_STATE = "FORM_STATE",
+    --- Druid (and similar): must be in caster/humanoid form to craft; other classes always pass.
+    SHAPESHIFT = "SHAPESHIFT",
+    WORK_ORDER_MIN_QUALITY = "WORK_ORDER_MIN_QUALITY",
     PROFESSION_OPEN = "PROFESSION_OPEN",
     PROFESSION_TOOLS = "PROFESSION_TOOLS",
     PRE_CRAFT_GATE = "PRE_CRAFT_GATE",
@@ -16,7 +18,7 @@ CraftSim.PRE_CRAFT_CONDITION_IDS = {
 
 ---@class CraftSim.PreCraftConditions
 ---@field CONDITION_PRIORITY table<CraftSim.PRE_CRAFT_CONDITION_IDS, number>
----@field GetFormStateStatus fun(self: CraftSim.PreCraftConditions): boolean, string?
+---@field GetShapeshiftCraftingStatus fun(self: CraftSim.PreCraftConditions): boolean, string?
 CraftSim.PRE_CRAFT_CONDITIONS = CraftSim.PRE_CRAFT_CONDITIONS or {}
 
 ---@type CraftSim.PreCraftConditions
@@ -28,17 +30,18 @@ PCC.CONDITION_PRIORITY = {
     LEARNED = 900,
     COOLDOWN = 800,
     RECIPE_REQUIREMENTS = 100,
-    FORM_STATE = 95,
+    WORK_ORDER_MIN_QUALITY = 99,
+    SHAPESHIFT = 95,
     REAGENTS = 90,
     PROFESSION_OPEN = 50,
     PROFESSION_TOOLS = 40,
     PRE_CRAFT_GATE = 30,
 }
 
---- Evaluates the single player-scoped form condition directly from live API state.
+--- Evaluates `PRE_CRAFT_CONDITION_IDS.SHAPESHIFT` from live API state (druid shapeshift).
 ---@return boolean isMet
 ---@return string? reason
-function PCC:GetFormStateStatus()
+function PCC:GetShapeshiftCraftingStatus()
     local classFile = select(2, UnitClass("player"))
     if classFile ~= "DRUID" then
         return true, nil

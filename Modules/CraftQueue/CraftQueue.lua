@@ -455,7 +455,6 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                     local function queueRecipe()
                                         local craftQueue = CraftSim.CRAFTQ.craftQueue
                                         if not craftQueue then
-                                            distributor:Continue()
                                             return
                                         end
                                         local isAlreadyQueued = craftQueue:FindRecipe(recipeData) ~= nil

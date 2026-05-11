@@ -62,11 +62,11 @@ end
 
 ---@param condition CraftSim.PrecraftCondition
 function CraftSim.CraftQueueItem:AddCondition(condition)
-    self.precraftConditionData:appendStoredCondition(condition)
+    self.precraftConditionData:appendCondition(condition)
 end
 
 function CraftSim.CraftQueueItem:ResetConditions()
-    self.precraftConditionData:clearStoredConditions()
+    self.precraftConditionData:clearConditions()
 end
 
 ---@return CraftSim.PrecraftCondition[]

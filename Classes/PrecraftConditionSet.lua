@@ -12,31 +12,28 @@ function CraftSim.PrecraftConditionSet:new(craftQueueItem)
     ---@type CraftSim.CraftQueueItem?
     self.craftQueueItem = craftQueueItem
     ---@type CraftSim.PrecraftCondition[]
-    self.storedConditions = {}
+    self.conditions = {}
     ---@type table<string, CraftSim.PrecraftCondition>
     self.conditionMap = {}
-    ---@type CraftSim.PrecraftCondition[]
-    self.failedConditions = {}
     ---@type CraftSim.PrecraftCondition?
     self.topFailedCondition = nil
 end
 
 ---@param condition CraftSim.PrecraftCondition
-function CraftSim.PrecraftConditionSet:appendStoredCondition(condition)
-    tinsert(self.storedConditions, condition)
+function CraftSim.PrecraftConditionSet:appendCondition(condition)
+    tinsert(self.conditions, condition)
     self.conditionMap[condition.id] = condition
 end
 
-function CraftSim.PrecraftConditionSet:clearStoredConditions()
-    wipe(self.storedConditions)
+function CraftSim.PrecraftConditionSet:clearConditions()
+    wipe(self.conditions)
     wipe(self.conditionMap)
-    wipe(self.failedConditions)
     self.topFailedCondition = nil
 end
 
 ---@return CraftSim.PrecraftCondition[]
-function CraftSim.PrecraftConditionSet:GetConditionList()
-    return self.storedConditions
+function CraftSim.PrecraftConditionSet:GetConditions()
+    return self.conditions
 end
 
 ---@param conditionID CraftSim.PRE_CRAFT_CONDITION_IDS
@@ -46,18 +43,28 @@ function CraftSim.PrecraftConditionSet:GetCondition(conditionID)
 end
 
 function CraftSim.PrecraftConditionSet:BuildFailedConditionCache()
-    self.failedConditions = CraftSim.GUTIL:Filter(self.storedConditions, function(condition)
-        return not condition.isMet
-    end)
-    table.sort(self.failedConditions, function(a, b)
-        return (a.priority or 0) > (b.priority or 0)
-    end)
-    self.topFailedCondition = self.failedConditions[1]
+    local top, topPri = nil, nil
+    for _, condition in ipairs(self.conditions) do
+        if not condition.isMet then
+            local p = condition.priority or 0
+            if not topPri or p > topPri then
+                topPri = p
+                top = condition
+            end
+        end
+    end
+    self.topFailedCondition = top
 end
 
 ---@return CraftSim.PrecraftCondition[]
 function CraftSim.PrecraftConditionSet:GetFailedConditions()
-    return self.failedConditions
+    local failed = CraftSim.GUTIL:Filter(self.conditions, function(condition)
+        return not condition.isMet
+    end)
+    table.sort(failed, function(a, b)
+        return (a.priority or 0) > (b.priority or 0)
+    end)
+    return failed
 end
 
 ---@return CraftSim.PrecraftCondition?
@@ -78,7 +85,7 @@ end
 function CraftSim.PrecraftConditionSet:AddEvaluatedCondition(options)
     local condition = CraftSim.PrecraftCondition(options)
     condition:Evaluate(self.craftQueueItem)
-    self:appendStoredCondition(condition)
+    self:appendCondition(condition)
 end
 
 ---@return boolean
@@ -89,7 +96,8 @@ function CraftSim.PrecraftConditionSet:CanClaimWorkOrder()
         IDS.COOLDOWN,
         IDS.REAGENTS,
         IDS.RECIPE_REQUIREMENTS,
-        IDS.FORM_STATE,
+        IDS.WORK_ORDER_MIN_QUALITY,
+        IDS.SHAPESHIFT,
     })
 end
 
@@ -114,7 +122,7 @@ function CraftSim.PrecraftConditionSet:Evaluate()
     craftQueueItem.pcbgData.recipeData = nil
     CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(craftQueueItem)
 
-    self:clearStoredConditions()
+    self:clearConditions()
 
     self:AddEvaluatedCondition({
         id = IDS.IS_CRAFTER,
@@ -189,12 +197,28 @@ function CraftSim.PrecraftConditionSet:Evaluate()
         end,
     })
     self:AddEvaluatedCondition({
-        id = IDS.FORM_STATE,
-        priority = PRIORITY.FORM_STATE,
+        id = IDS.WORK_ORDER_MIN_QUALITY,
+        priority = PRIORITY.WORK_ORDER_MIN_QUALITY,
+        blocksCraft = true,
+        blocksClaim = true,
+        evaluate = function(condition, cqi)
+            local orderData = cqi.recipeData.orderData
+            if not orderData or not orderData.minQuality then
+                condition.isMet = true
+                condition.reason = nil
+            else
+                condition.isMet = cqi.recipeData.resultData.expectedQuality >= orderData.minQuality
+                condition.reason = condition.isMet and nil or "Below minimum quality"
+            end
+        end,
+    })
+    self:AddEvaluatedCondition({
+        id = IDS.SHAPESHIFT,
+        priority = PRIORITY.SHAPESHIFT,
         blocksCraft = true,
         blocksClaim = true,
         evaluate = function(condition, _)
-            condition.isMet, condition.reason = PCC:GetFormStateStatus()
+            condition.isMet, condition.reason = PCC:GetShapeshiftCraftingStatus()
         end,
     })
     self:AddEvaluatedCondition({
@@ -229,8 +253,7 @@ function CraftSim.PrecraftConditionSet:Evaluate()
     })
 
     self:BuildFailedConditionCache()
-    craftQueueItem.allowedToCraft = CraftSim.GUTIL:Every(self:GetConditionList(), function(condition)
+    craftQueueItem.allowedToCraft = CraftSim.GUTIL:Every(self:GetConditions(), function(condition)
         return (not condition.blocksCraft) or condition.isMet
     end)
 end
-

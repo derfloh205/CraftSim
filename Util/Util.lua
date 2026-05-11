@@ -1009,3 +1009,10 @@ function CraftSim.UTIL:GetSelectedProfessionTab()
 
     return selectedTab
 end
+
+--- Realm suffix for crafter UID keys; prefers normalized realm when available.
+---@param realm string?
+---@return string
+function CraftSim.UTIL:ResolveCrafterRealm(realm)
+    return realm or GetNormalizedRealmName() or GetRealmName() or ""
+end

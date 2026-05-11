@@ -9,12 +9,6 @@ local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
 
----@param realm string?
----@return string
-local function ResolveCrafterRealm(realm)
-    return realm or GetNormalizedRealmName() or GetRealmName() or ""
-end
-
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
@@ -2626,7 +2620,7 @@ end
 ---@return CrafterUID
 function CraftSim.RecipeData:GetCrafterUID()
     local crafterName = self.crafterData.name or UnitNameUnmodified("player") or ""
-    local crafterUID = crafterName .. "-" .. ResolveCrafterRealm(self.crafterData.realm) --[[@as CrafterUID]]
+    local crafterUID = crafterName .. "-" .. CraftSim.UTIL:ResolveCrafterRealm(self.crafterData.realm) --[[@as CrafterUID]]
     return crafterUID
 end
 
@@ -2840,7 +2834,7 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     local classColor = C_ClassColor.GetClassColor(crafterData.class)
     if includeRealm then
         finalText = finalText .. " " ..
-            classColor:WrapTextInColorCode((crafterData.name or "") .. "-" .. ResolveCrafterRealm(crafterData.realm))
+            classColor:WrapTextInColorCode((crafterData.name or "") .. "-" .. CraftSim.UTIL:ResolveCrafterRealm(crafterData.realm))
     else
         finalText = finalText .. " " .. classColor:WrapTextInColorCode(crafterData.name)
     end
