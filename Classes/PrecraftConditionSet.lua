@@ -97,7 +97,6 @@ function CraftSim.PrecraftConditionSet:CanClaimWorkOrder()
         IDS.REAGENTS,
         IDS.RECIPE_REQUIREMENTS,
         IDS.WORK_ORDER_MIN_QUALITY,
-        IDS.SHAPESHIFT,
     })
 end
 
@@ -210,15 +209,6 @@ function CraftSim.PrecraftConditionSet:Evaluate()
                 condition.isMet = cqi.recipeData.resultData.expectedQuality >= orderData.minQuality
                 condition.reason = condition.isMet and nil or "Below minimum quality"
             end
-        end,
-    })
-    self:AddEvaluatedCondition({
-        id = IDS.SHAPESHIFT,
-        priority = PRIORITY.SHAPESHIFT,
-        blocksCraft = true,
-        blocksClaim = true,
-        evaluate = function(condition, _)
-            condition.isMet, condition.reason = PCC:GetShapeshiftCraftingStatus()
         end,
     })
     self:AddEvaluatedCondition({
