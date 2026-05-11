@@ -279,7 +279,7 @@ function CraftSim.CraftQueue:FilterSortByPriority()
         local noActiveSubRecipes = not cqi.hasActiveSubRecipes
         local noSubRecipeFromAlts = not cqi.hasActiveSubRecipesFromAlts
         local validSubRecipeStatus = noActiveSubRecipes or noSubRecipeFromAlts
-        return validSubRecipeStatus and cqi.isCrafter
+        return validSubRecipeStatus and cqi:IsCrafter()
     end)
     local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
         function(a, b)
@@ -297,9 +297,9 @@ function CraftSim.CraftQueue:FilterSortByPriority()
                 return false
             end
 
-            if a.correctProfessionOpen and not b.correctProfessionOpen then
+            if a.precraftConditionData:IsCorrectProfessionOpen() and not b.precraftConditionData:IsCorrectProfessionOpen() then
                 return true
-            elseif not a.correctProfessionOpen and b.correctProfessionOpen then
+            elseif not a.precraftConditionData:IsCorrectProfessionOpen() and b.precraftConditionData:IsCorrectProfessionOpen() then
                 return false
             end
 
@@ -326,11 +326,11 @@ function CraftSim.CraftQueue:FilterSortByPriority()
                 end
             end
 
-            if a.allowedToCraft and not b.allowedToCraft then
+            if a.precraftConditionData:IsAllowedToCraft() and not b.precraftConditionData:IsAllowedToCraft() then
                 return true
-            elseif not a.allowedToCraft and b.allowedToCraft then
+            elseif not a.precraftConditionData:IsAllowedToCraft() and b.precraftConditionData:IsAllowedToCraft() then
                 return false
-            elseif not a.allowedToCraft and not b.allowedToCraft then
+            elseif not a.precraftConditionData:IsAllowedToCraft() and not b.precraftConditionData:IsAllowedToCraft() then
                 local aTop = a:GetTopFailedCondition()
                 local bTop = b:GetTopFailedCondition()
                 local aPriority = aTop and aTop.priority or 0

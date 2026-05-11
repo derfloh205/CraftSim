@@ -22,11 +22,6 @@ function CraftSim.CraftQueueItem:new(options)
     self.amount = options.amount or 1
     self.concentrating = self.recipeData.concentrating
 
-    -- canCraft caches
-    self.allowedToCraft = false
-    self.canCraftOnce = false
-    self.gearEquipped = false
-    self.correctProfessionOpen = false
     --- Pre-craft buff gate (e.g. Midnight / TWW Shattering Essence): cast this before Craft.
     ---@class CraftSim.CraftQueueItem.PcbgData
     ---@field gateId CraftSim.PreCraftBuffGateId?
@@ -44,12 +39,6 @@ function CraftSim.CraftQueueItem:new(options)
         dueToMissingBuff = false,
         recipeData = nil,
     }
-    self.craftAbleAmount = 0
-    self.notOnCooldown = true
-    self.isCrafter = false
-    self.learned = false
-    self.recipeDisabled = false
-    self.recipeDisabledReason = nil
     ---@type CraftSim.PrecraftConditionSet
     self.precraftConditionData = CraftSim.PrecraftConditionSet(self)
     self.hasActiveSubRecipes = false
@@ -100,7 +89,7 @@ function CraftSim.CraftQueueItem:CanClaimWorkOrder()
     return self.precraftConditionData:CanClaimWorkOrder()
 end
 
---- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
+--- Runs precraft evaluation; craftability state lives on `precraftConditionData` (`evalContext`, `IsAllowedToCraft`).
 function CraftSim.CraftQueueItem:CalculateCanCraft()
     CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 
@@ -263,7 +252,7 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
     end)
 
     -- if I am the crafter also use warbank count otherwise not
-    local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), itemID, true, self.isCrafter)
+    local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), itemID, true, self:IsCrafter())
 
     local restCount = math.max(0, totalCount - inventoryCount)
 

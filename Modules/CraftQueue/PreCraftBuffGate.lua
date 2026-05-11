@@ -425,7 +425,7 @@ function PCBG:ApplyGatesToCraftQueueItem(craftQueueItem)
     }
 
     local rd = craftQueueItem.recipeData
-    if not craftQueueItem.isCrafter or not craftQueueItem.correctProfessionOpen then
+    if not craftQueueItem:IsCrafter() or not craftQueueItem.recipeData:IsProfessionOpen() then
         return
     end
 
