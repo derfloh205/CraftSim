@@ -91,12 +91,9 @@ end
 
 --- Runs precraft evaluation; craftability state lives on `precraftConditionData` (`evalContext`, `IsAllowedToCraft`).
 function CraftSim.CraftQueueItem:CalculateCanCraft()
-    CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
-
     self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
         :RecipeHasActiveSubRecipesInQueue(self.recipeData)
     self.precraftConditionData:Evaluate()
-    CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
 end
 
 ---@class CraftSim.CraftQueueItem.Serialized

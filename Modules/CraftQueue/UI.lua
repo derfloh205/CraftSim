@@ -3116,8 +3116,6 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
-    Logger:LogDebug("CraftQueue Update List", false, true)
-
     CraftSim.DEBUG:StartProfiling("CraftQueue.FrameListUpdate")
 
     if self.isCanCraftBatchEvaluationRunning then
@@ -3532,8 +3530,6 @@ end
 function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
     local recipeData = craftQueueItem.recipeData
     local pc = craftQueueItem.precraftConditionData
-    local profilingID = "- CraftQueue.FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
-    CraftSim.DEBUG:StartProfiling(profilingID)
     local columns = row.columns
     local crafterColumn = columns[1] --[[@as CraftSim.CraftQueue.CraftList.CrafterColumn]]
     local recipeColumn = columns[2] --[[@as CraftSim.CraftQueue.CraftList.RecipeColumn]]
@@ -3951,8 +3947,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             statusColumnTooltip, craftQueueItem.recipeData.professionGearSet)
     end
     SyncCraftQueueButtonDisabledTooltipProxy(craftBtn)
-
-    CraftSim.DEBUG:StopProfiling(profilingID)
 end
 
 function CraftSim.CRAFTQ.UI:VisibleByContext()
