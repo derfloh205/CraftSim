@@ -5,7 +5,7 @@ import shutil
 
 wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSpellSlot", "SpellEffect", "CraftingData", "CraftingDataItemQuality", "ItemSparse"]
 ALCHEMY_PROFESSION_ENUM = 3
-CAULDRON_KEYWORD = "cauldron"
+CAULDRON_KEYWORD = "Cauldron"
 
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/multicraftSupportData.lua", "../../Data/multicraftSupportData.lua")
