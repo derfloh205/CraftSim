@@ -61,7 +61,6 @@ DB/craftQueueDB.lua
 DB/itemRecipeDB.lua
 DB/itemOptimizedCostsDB.lua
 DB/recipeSubCrafterDB.lua
-DB/multicraftPreloadDB.lua
 DB/customerHistoryDB.lua
 DB/crafterDB.lua
 DB/priceOverrideDB.lua

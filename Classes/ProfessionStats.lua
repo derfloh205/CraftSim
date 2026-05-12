@@ -39,6 +39,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 	self.skill.value = (operationInfo.baseSkill or 0) + (operationInfo.bonusSkill or 0)
 	self.recipeDifficulty.value = operationInfo.baseDifficulty or 0
 	local bonusStats = operationInfo.bonusStats or {}
+	local apiReportsMulticraftYield = false
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
 		-- check each stat individually to consider localization
@@ -55,8 +56,10 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 				hasYield = true
 			end
 			if hasYield then
+				-- supportsMulticraft is derived statically from schematicInfo in RecipeData;
+				-- this branch only forwards the player's current multicraft rating from operationInfo.
 				self.multicraft.value = statInfo.bonusStatValue
-				recipeData.supportsMulticraft = true
+				apiReportsMulticraftYield = true
 			end
 		elseif statName == resourcefulness then
 			self.resourcefulness.value = statInfo.bonusStatValue
@@ -65,6 +68,18 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 			self.ingenuity.value = statInfo.bonusStatValue
 			recipeData.supportsIngenuity = true
 		end
+	end
+
+	-- Audit: compare static multicraft predicate against the live operation-info answer
+	-- so we can spot exceptions (stackable items that don't multicraft, or vice versa)
+	-- before fully trusting the heuristic. Work orders force supportsMulticraft = false,
+	-- so skip them. Recipes with 0 multicraft rating from operation info also have no
+	-- yield entry, which is expected (a freshly-trained char has 0 multicraft).
+	if not recipeData.orderData and recipeData.supportsMulticraft ~= apiReportsMulticraftYield then
+		Logger:LogDebug(string.format(
+			"multicraft heuristic mismatch: recipeID=%s name=%s static=%s api=%s",
+			tostring(recipeData.recipeID), tostring(recipeData.recipeName),
+			tostring(recipeData.supportsMulticraft), tostring(apiReportsMulticraftYield)))
 	end
 end
 

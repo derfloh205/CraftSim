@@ -81,6 +81,14 @@ function CraftSim.DB:PostInitCleanUp()
     if _G["CraftSimDebugData"] then
         _G["CraftSimDebugData"] = nil
     end
+
+    -- The multicraft preload DB was replaced by RecipeData:DeriveStaticSupportsMulticraft;
+    -- drop the orphan SavedVariable so it doesn't bloat the profile.
+    -- String index avoids triggering a static-analysis warning about the now-undeclared field.
+    local craftSimDB = _G["CraftSimDB"]
+    if craftSimDB and craftSimDB["multicraftPreloadDB"] then
+        craftSimDB["multicraftPreloadDB"] = nil
+    end
 end
 
 function CraftSim.DB:ClearAll()

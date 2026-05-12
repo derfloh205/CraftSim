@@ -74,12 +74,6 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.INIT.initialLogin = initialLogin
 	CraftSim.INIT.isReloadingUI = isReloadingUI
 
-	-- for any processes that may only happen once a session e.g.
-	if initialLogin then
-		-- clear post loaded multicraft professions
-		CraftSim.DB.MULTICRAFT_PRELOAD:ClearAll()
-	end
-
 	local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
 	CraftSim.PRE_CRAFT_BUFF_GATE:OnPlayerEnteringWorld(initialLogin, isReloadingUI)
 
@@ -124,22 +118,9 @@ function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
 	end
 
 
-	local alreadyPreloaded = CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionInfo.profession)
-	if not alreadyPreloaded then
-		local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-		CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
-		CraftSim.DEBUG:StartProfiling("CRAFTING_DETAILS_UPDATE CALLS")
-		GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
-			Logger:LogInfo("CRAFTING_DETAILS_UPDATE -> {profession}", professionInfo.professionName)
-			CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionInfo.profession, true)
-			GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab,
-				CraftSim.INIT.initialLogin,
-				CraftSim.INIT.isReloadingUI)
-		end, 0.2, true)
-	else
-		CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionInfo.profession, true)
-		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab, CraftSim.INIT.initialLogin,
-			CraftSim.INIT.isReloadingUI)
+	if professionInfo then
+		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab,
+			CraftSim.INIT.initialLogin, CraftSim.INIT.isReloadingUI)
 	end
 end
 
@@ -671,36 +652,12 @@ function CraftSim.INIT:InitializeMinimapButton()
 	end)
 end
 
---- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
---- trigger it for all recipes on purpose when the profession is opened the first time in this session
-function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
-	if not professionID then return end
-	if CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionID) then return end
-	if not professionRecipeIDs then
-		return
-	end
-	Logger:LogInfo("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
-
-	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
-	for _, recipeID in ipairs(professionRecipeIDs) do
-		local concentrating = false
-		C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, nil, concentrating)
-	end
-
-	Logger:LogInfo("Trigger operationInfo prefetch completed for: " .. #professionRecipeIDs .. " recipes")
-
-	CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
-
-	CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionID, true)
-end
-
 function CraftSim.INIT:IsProfessionReady()
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local profession = professionInfo and professionInfo.profession or nil
 	local profession_available = profession ~= nil
 	local tradeSkillRdy = C_TradeSkillUI.IsTradeSkillReady()
-	local operationInfosPreloaded = profession_available and CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession)
-	return profession_available and tradeSkillRdy and operationInfosPreloaded
+	return profession_available and tradeSkillRdy
 end
 
 function CraftSim.INIT:CRAFTSIM_ORDER_VIEW_CLOSED()

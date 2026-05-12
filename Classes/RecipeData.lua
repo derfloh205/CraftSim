@@ -9,6 +9,42 @@ local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
 
+-- Session-scoped multicraft static derivation caches.
+-- stackableItemCache: outputItemID -> bool (resolved stack > 1)
+-- pendingMulticraftItemRecipes: outputItemID -> list of RecipeData waiting for the item info to load
+local stackableItemCache = {}
+---@type table<number, CraftSim.RecipeData[]>
+local pendingMulticraftItemRecipes = {}
+
+---@param itemID number
+local function resolveStackableItemForPendingRecipes(itemID)
+    local recipeDatas = pendingMulticraftItemRecipes[itemID]
+    pendingMulticraftItemRecipes[itemID] = nil
+    if not recipeDatas then
+        return
+    end
+
+    local stackCount = select(8, C_Item.GetItemInfo(itemID))
+    if not stackCount then
+        -- Should not happen after ContinueOnItemLoad fires, but defensively bail.
+        return
+    end
+
+    local isStackable = stackCount > 1
+    stackableItemCache[itemID] = isStackable
+
+    for _, recipeData in ipairs(recipeDatas) do
+        -- Work-order recipes are forced to false elsewhere; never flip them back to true here.
+        local newSupport = isStackable and (not recipeData.orderData)
+        if recipeData.supportsMulticraft ~= newSupport then
+            recipeData.supportsMulticraft = newSupport
+            if CraftSim.MODULES and CraftSim.MODULES.recipeData == recipeData then
+                GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
+            end
+        end
+    end
+end
+
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
 local function generateConcentrationCacheKey(recipeData)
@@ -71,6 +107,56 @@ end
 -- Function to get cache statistics
 function CraftSim.RecipeData.GetConcentrationCacheStats()
     return concentrationCacheStats
+end
+
+--- Deterministic static predicate for whether a recipe supports multicraft.
+--- Replaces the operation-info preload: a recipe supports multicraft iff
+--- (a) it is not an excluded recipe type (enchanting, salvage, recraft, work order,
+---     quest, alchemical experimentation), and
+--- (b) it has a known output item whose stack size is greater than 1.
+---
+--- Requires the constructor-stage flags (isEnchantingRecipe, isSalvageRecipe,
+--- isRecraft, isBaseRecraftRecipe, orderData, isQuestRecipe,
+--- isAlchemicalExperimentation) to already be assigned on self.
+---
+--- Handles cold item cache via Item:CreateFromItemID(...):ContinueOnItemLoad:
+--- if the item info is not yet cached, the method registers the recipeData
+--- as a pending listener and returns false; supportsMulticraft is patched
+--- (and CRAFTSIM_RECIPE_DATA_UPDATED is fired for the visible recipe) once
+--- the item finishes loading.
+---@param schematicInfo CraftingRecipeSchematic
+---@return boolean
+function CraftSim.RecipeData:DeriveStaticSupportsMulticraft(schematicInfo)
+    if self.isEnchantingRecipe or self.isSalvageRecipe then return false end
+    if self.isRecraft or self.isBaseRecraftRecipe then return false end
+    if self.orderData then return false end
+    if self.isQuestRecipe or self.isAlchemicalExperimentation then return false end
+
+    local outputItemID = schematicInfo and schematicInfo.outputItemID
+    if not outputItemID then return false end
+
+    local cached = stackableItemCache[outputItemID]
+    if cached ~= nil then
+        return cached
+    end
+
+    local stackCount = select(8, C_Item.GetItemInfo(outputItemID))
+    if stackCount then
+        local isStackable = stackCount > 1
+        stackableItemCache[outputItemID] = isStackable
+        return isStackable
+    end
+
+    local list = pendingMulticraftItemRecipes[outputItemID]
+    if not list then
+        list = {}
+        pendingMulticraftItemRecipes[outputItemID] = list
+        Item:CreateFromItemID(outputItemID):ContinueOnItemLoad(function()
+            resolveStackableItemForPendingRecipes(outputItemID)
+        end)
+    end
+    table.insert(list, self)
+    return false
 end
 
 -- Function to report cache diagnostics
@@ -267,6 +353,11 @@ function CraftSim.RecipeData:new(options)
         return
     end
 
+    -- Static multicraft support derivation (no GetCraftingOperationInfo priming required).
+    -- Work-order recipes are still forced to false later in ApplyBaseProfessionStatsFromOperationInfo
+    -- because orderData is only assigned by SetOrder, which runs below.
+    self.supportsMulticraft = self:DeriveStaticSupportsMulticraft(schematicInfo)
+
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
@@ -367,7 +458,8 @@ function CraftSim.RecipeData:ApplyBaseProfessionStatsFromOperationInfo(forceCach
     end
     forceCache = forceCache or false
 
-    self.supportsMulticraft = false
+    -- supportsMulticraft is derived statically from schematicInfo in the constructor
+    -- (and re-derived by SetOrder when orderData changes), so we no longer reset it here.
     self.supportsResourcefulness = false
     self.supportsIngenuity = false
 
