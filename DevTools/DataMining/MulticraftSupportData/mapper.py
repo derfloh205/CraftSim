@@ -6,6 +6,7 @@ import shutil
 wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSpellSlot", "SpellEffect", "CraftingData", "CraftingDataItemQuality", "ItemSparse"]
 ALCHEMY_PROFESSION_ENUM = 3
 CAULDRON_KEYWORD = "Cauldron"
+CAULDRON_KEYWORD_LOWER = CAULDRON_KEYWORD.lower()
 
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/multicraftSupportData.lua", "../../Data/multicraftSupportData.lua")
@@ -85,7 +86,8 @@ def map(buildVersion):
         stackableByItemID[itemID] = int(itemSparseData["Stackable"])
         # Display_lang can contain extra data after a "|" separator in extracted DB2 text.
         # The first segment is the item name.
-        itemNameByID[itemID] = itemSparseData.get("Display_lang", "").split("|")[0].strip().lower()
+        itemName = itemSparseData.get("Display_lang") or itemSparseData.get("Name_lang", "")
+        itemNameByID[itemID] = itemName.split("|")[0].strip().lower()
 
     craftingDataIDsBySpellID = {}
     for spellEffectData in spellEffectTable:
@@ -124,7 +126,7 @@ def map(buildVersion):
                 craftedItemIDs.add(qualityItemID)
 
             if professionEnum == ALCHEMY_PROFESSION_ENUM and any(
-                CAULDRON_KEYWORD.lower() in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
+                CAULDRON_KEYWORD_LOWER in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
             ):
                 continue
 
