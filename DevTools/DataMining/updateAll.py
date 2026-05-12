@@ -7,8 +7,8 @@ import wagoTools
 import requests
 
 # Debug
-debugBuild = None
-debugModule = None
+debugBuild = "12.0.5.67451"
+debugModule = "MulticraftSupportData"
 
 dataScripts = ["ToolEnchantData", "ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData", "MulticraftSupportData", "SpecializationData"]
 
