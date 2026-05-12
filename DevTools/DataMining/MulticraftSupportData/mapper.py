@@ -69,7 +69,8 @@ def map(buildVersion):
         if professionEnum:
             spellIDInt = int(spellID)
             spellToProfession[spellIDInt] = professionEnum
-            tradeSkillCategoryBySpellID[spellIDInt] = int(skillLineAbilityData.get("TradeSkillCategoryID", "0") or "0")
+            tradeSkillCategoryID = skillLineAbilityData.get("TradeSkillCategoryID")
+            tradeSkillCategoryBySpellID[spellIDInt] = int(tradeSkillCategoryID) if tradeSkillCategoryID else 0
 
     craftingDataByID = {}
     for craftingData in craftingDataTable:
@@ -90,7 +91,7 @@ def map(buildVersion):
 
     cauldronCategoryIDs = set()
     for tradeSkillCategoryData in tradeSkillCategoryTable:
-        categoryName = tradeSkillCategoryData["Name_lang"].split("|")[0].strip()
+        categoryName = tradeSkillCategoryData.get("Name_lang", "").split("|")[0].strip()
         if (
             tradeSkillCategoryData["SkillLineID"] == str(ALCHEMY_SKILL_LINE_ID)
             and categoryName == CAULDRON_CATEGORY_NAME
