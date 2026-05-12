@@ -9,7 +9,8 @@ local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
-    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
+    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIM_ORDER_RESPONSE",
+    "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
     "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
@@ -200,6 +201,83 @@ function CraftSim.CRAFTQ:ShowMidnightEnchantShatterMoteMenu(recipeData)
 end
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueue.CraftQueue")
+
+--- Normalize order id from events or CraftingOrderInfo (BigUInteger vs number).
+---@param orderID any
+---@return number?
+local function NormalizeCraftingOrderID(orderID)
+    if orderID == nil then
+        return nil
+    end
+    local n = tonumber(orderID)
+    if n and n > 0 then
+        return n
+    end
+    return nil
+end
+
+--- Do not drop queue rows on these claim failures; user can retry after refresh/cooldown/cap change.
+local CLAIM_FAILURE_QUEUE_RETAIN_RESULTS = {
+    [Enum.CraftingOrderResult.ThrottleViolation] = true,
+    [Enum.CraftingOrderResult.Timeout] = true,
+    [Enum.CraftingOrderResult.ServerIsNotAvailable] = true,
+    [Enum.CraftingOrderResult.OutOfPublicOrderCapacity] = true,
+    [Enum.CraftingOrderResult.CannotClaim] = true,
+}
+
+---@param result Enum.CraftingOrderResult
+---@param orderID BigUInteger
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIM_ORDER_RESPONSE(result, orderID)
+    if result == Enum.CraftingOrderResult.Ok then
+        return
+    end
+    if CLAIM_FAILURE_QUEUE_RETAIN_RESULTS[result] then
+        Logger:LogDebug("CRAFTINGORDERS_CLAIM_ORDER_RESPONSE retain queue: result=" ..
+            tostring(result) .. " orderID=" .. tostring(orderID))
+        return
+    end
+
+    local targetID = NormalizeCraftingOrderID(orderID)
+    if not targetID then
+        Logger:LogDebug("CRAFTINGORDERS_CLAIM_ORDER_RESPONSE: unparseable orderID=" .. tostring(orderID))
+        return
+    end
+
+    local cq = self.craftQueue
+    if not cq or not cq.craftQueueItems then
+        return
+    end
+
+    local toRemove = {}
+    for _, cqi in ipairs(cq.craftQueueItems) do
+        local od = cqi.recipeData and cqi.recipeData.orderData
+        if od and od.orderID then
+            local rowID = NormalizeCraftingOrderID(od.orderID)
+            if rowID and rowID == targetID then
+                tinsert(toRemove, cqi)
+            end
+        end
+    end
+
+    if #toRemove == 0 then
+        Logger:LogDebug("CRAFTINGORDERS_CLAIM_ORDER_RESPONSE: no queue row for orderID=" .. tostring(targetID) ..
+            " result=" .. tostring(result))
+        return
+    end
+
+    Logger:LogDebug("CRAFTINGORDERS_CLAIM_ORDER_RESPONSE remove " .. #toRemove ..
+        " row(s) orderID=" .. tostring(targetID) .. " result=" .. tostring(result))
+
+    local isCrafting = C_TradeSkillUI.IsCrafting and C_TradeSkillUI.IsCrafting()
+    if not isCrafting then
+        self:EndCraftClickLock()
+    end
+    self:ClearPendingWorkOrderSubmit(targetID)
+    for _, cqi in ipairs(toRemove) do
+        cq:Remove(cqi)
+    end
+    self.UI:Update()
+end
 
 ---@param queueType "WORK_ORDERS"|"FIRST_CRAFTS"|"CRAFT_LISTS"
 function CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent(queueType)
