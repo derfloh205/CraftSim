@@ -71,7 +71,10 @@ def map(buildVersion):
             spellIDInt = int(spellID)
             spellToProfession[spellIDInt] = professionEnum
             tradeSkillCategoryID = skillLineAbilityData.get("TradeSkillCategoryID")
-            tradeSkillCategoryBySpellID[spellIDInt] = int(tradeSkillCategoryID) if tradeSkillCategoryID is not None and tradeSkillCategoryID != "" else 0
+            try:
+                tradeSkillCategoryBySpellID[spellIDInt] = int(tradeSkillCategoryID) if tradeSkillCategoryID is not None else 0
+            except ValueError:
+                tradeSkillCategoryBySpellID[spellIDInt] = 0
 
     craftingDataByID = {}
     for craftingData in craftingDataTable:
