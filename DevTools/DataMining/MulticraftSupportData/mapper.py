@@ -3,10 +3,10 @@ sys.path.append('../')
 import wagoTools
 import shutil
 
-wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSpellSlot", "SpellEffect", "CraftingData", "CraftingDataItemQuality", "ItemSparse"]
+wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSpellSlot", "SpellEffect", "CraftingData", "CraftingDataItemQuality", "ItemSparse", "TradeSkillCategory"]
 ALCHEMY_PROFESSION_ENUM = 3
-CAULDRON_KEYWORD = "Cauldron"
-CAULDRON_KEYWORD_LOWER = CAULDRON_KEYWORD.lower()
+ALCHEMY_SKILL_LINE_ID = 171
+CAULDRON_CATEGORY_NAME = "Cauldrons"
 
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/multicraftSupportData.lua", "../../Data/multicraftSupportData.lua")
@@ -21,6 +21,7 @@ def map(buildVersion):
     craftingDataTable = csvTables[5]
     craftingDataItemQualityTable = csvTables[6]
     itemSparseTable = csvTables[7]
+    tradeSkillCategoryTable = csvTables[8]
 
     professionByRootSkillLine = {}
     for professionData in professionTable:
@@ -57,6 +58,7 @@ def map(buildVersion):
             recipeSpellIDs.add(spellID)
 
     spellToProfession = {}
+    tradeSkillCategoryBySpellID = {}
     for skillLineAbilityData in skillLineAbilityTable:
         spellID = skillLineAbilityData["Spell"]
         if spellID not in recipeSpellIDs:
@@ -65,7 +67,9 @@ def map(buildVersion):
         rootSkillLineID = getRootSkillLine(skillLineAbilityData["SkillLine"])
         professionEnum = professionByRootSkillLine.get(rootSkillLineID)
         if professionEnum:
-            spellToProfession[int(spellID)] = professionEnum
+            spellIDInt = int(spellID)
+            spellToProfession[spellIDInt] = professionEnum
+            tradeSkillCategoryBySpellID[spellIDInt] = int(skillLineAbilityData.get("TradeSkillCategoryID", "0") or "0")
 
     craftingDataByID = {}
     for craftingData in craftingDataTable:
@@ -80,17 +84,18 @@ def map(buildVersion):
         qualityItemIDsByCraftingDataID[craftingDataID].add(itemID)
 
     stackableByItemID = {}
-    itemNameByID = {}
     for itemSparseData in itemSparseTable:
         itemID = int(itemSparseData["ID"])
         stackableByItemID[itemID] = int(itemSparseData["Stackable"])
-        # Display_lang can contain extra data after a "|" separator in extracted DB2 text.
-        # The first segment is the item name.
-        displayItemName = itemSparseData.get("Display_lang")
-        itemName = displayItemName if displayItemName is not None else itemSparseData.get("Name_lang", "")
-        normalizedItemName = itemName.split("|")[0].strip().lower() if itemName else ""
-        if normalizedItemName:
-            itemNameByID[itemID] = normalizedItemName
+
+    cauldronCategoryIDs = set()
+    for tradeSkillCategoryData in tradeSkillCategoryTable:
+        categoryName = tradeSkillCategoryData["Name_lang"].split("|")[0].strip()
+        if (
+            tradeSkillCategoryData["SkillLineID"] == str(ALCHEMY_SKILL_LINE_ID)
+            and categoryName == CAULDRON_CATEGORY_NAME
+        ):
+            cauldronCategoryIDs.add(int(tradeSkillCategoryData["ID"]))
 
     craftingDataIDsBySpellID = {}
     for spellEffectData in spellEffectTable:
@@ -128,8 +133,9 @@ def map(buildVersion):
             for qualityItemID in qualityItemIDsByCraftingDataID.get(craftingDataID, set()):
                 craftedItemIDs.add(qualityItemID)
 
-            if professionEnum == ALCHEMY_PROFESSION_ENUM and any(
-                CAULDRON_KEYWORD_LOWER in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
+            if (
+                professionEnum == ALCHEMY_PROFESSION_ENUM
+                and tradeSkillCategoryBySpellID.get(spellID) in cauldronCategoryIDs
             ):
                 continue
 
