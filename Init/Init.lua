@@ -117,12 +117,8 @@ function CraftSim.INIT:TRADE_SKILL_DATA_SOURCE_CHANGED()
 		selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 	end
 
-	GUTIL:WaitFor(function()
-		return CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionInfo.profession)
-	end, function()
-		GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab, CraftSim.INIT.initialLogin,
-			CraftSim.INIT.isReloadingUI)
-	end)
+	GUTIL:TriggerCustomEvent("CRAFTSIM_PROFESSION_OPENED", professionInfo, selectedTab, CraftSim.INIT.initialLogin,
+		CraftSim.INIT.isReloadingUI)
 end
 
 ---@param professionInfo ProfessionInfo
