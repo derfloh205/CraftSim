@@ -7,6 +7,7 @@ wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSp
 ALCHEMY_PROFESSION_ENUM = 3
 ALCHEMY_SKILL_LINE_ID = 171
 CAULDRON_CATEGORY_NAME = "Cauldrons"
+CAULDRON_CATEGORY_NAME_LOWER = CAULDRON_CATEGORY_NAME.lower()
 
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/multicraftSupportData.lua", "../../Data/multicraftSupportData.lua")
@@ -70,7 +71,7 @@ def map(buildVersion):
             spellIDInt = int(spellID)
             spellToProfession[spellIDInt] = professionEnum
             tradeSkillCategoryID = skillLineAbilityData.get("TradeSkillCategoryID")
-            tradeSkillCategoryBySpellID[spellIDInt] = int(tradeSkillCategoryID) if tradeSkillCategoryID else 0
+            tradeSkillCategoryBySpellID[spellIDInt] = int(tradeSkillCategoryID) if tradeSkillCategoryID is not None and tradeSkillCategoryID != "" else 0
 
     craftingDataByID = {}
     for craftingData in craftingDataTable:
@@ -91,10 +92,10 @@ def map(buildVersion):
 
     cauldronCategoryIDs = set()
     for tradeSkillCategoryData in tradeSkillCategoryTable:
-        categoryName = tradeSkillCategoryData.get("Name_lang", "").split("|")[0].strip()
+        categoryName = tradeSkillCategoryData.get("Name_lang", "").split("|")[0].strip().lower()
         if (
             tradeSkillCategoryData["SkillLineID"] == str(ALCHEMY_SKILL_LINE_ID)
-            and categoryName == CAULDRON_CATEGORY_NAME
+            and categoryName == CAULDRON_CATEGORY_NAME_LOWER
         ):
             cauldronCategoryIDs.add(int(tradeSkillCategoryData["ID"]))
 
