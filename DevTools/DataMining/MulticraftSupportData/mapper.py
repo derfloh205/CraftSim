@@ -4,6 +4,7 @@ import wagoTools
 import shutil
 
 wagoTables = ["Profession", "SkillLine", "SkillLineAbility", "ModifiedCraftingSpellSlot", "SpellEffect", "CraftingData", "CraftingDataItemQuality", "ItemSparse"]
+ALCHEMY_PROFESSION_ENUM = 3
 
 def copy(buildVersion):
     shutil.copy(f"_Result/{buildVersion}/multicraftSupportData.lua", "../../Data/multicraftSupportData.lua")
@@ -77,8 +78,11 @@ def map(buildVersion):
         qualityItemIDsByCraftingDataID[craftingDataID].add(itemID)
 
     stackableByItemID = {}
+    itemNameByID = {}
     for itemSparseData in itemSparseTable:
-        stackableByItemID[int(itemSparseData["ID"])] = int(itemSparseData["Stackable"])
+        itemID = int(itemSparseData["ID"])
+        stackableByItemID[itemID] = int(itemSparseData["Stackable"])
+        itemNameByID[itemID] = itemSparseData.get("Display_lang", "").split("|")[0].strip().lower()
 
     craftingDataIDsBySpellID = {}
     for spellEffectData in spellEffectTable:
@@ -115,6 +119,11 @@ def map(buildVersion):
 
             for qualityItemID in qualityItemIDsByCraftingDataID.get(craftingDataID, set()):
                 craftedItemIDs.add(qualityItemID)
+
+            if professionEnum == ALCHEMY_PROFESSION_ENUM and any(
+                "cauldron" in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
+            ):
+                continue
 
             if any(stackableByItemID.get(itemID, 0) > 1 for itemID in craftedItemIDs):
                 supportsMulticraft = True
