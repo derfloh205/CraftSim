@@ -124,7 +124,7 @@ def map(buildVersion):
                 craftedItemIDs.add(qualityItemID)
 
             if professionEnum == ALCHEMY_PROFESSION_ENUM and any(
-                CAULDRON_KEYWORD in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
+                CAULDRON_KEYWORD.lower() in itemNameByID.get(itemID, "") for itemID in craftedItemIDs
             ):
                 continue
 
