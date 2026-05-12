@@ -86,8 +86,11 @@ def map(buildVersion):
         stackableByItemID[itemID] = int(itemSparseData["Stackable"])
         # Display_lang can contain extra data after a "|" separator in extracted DB2 text.
         # The first segment is the item name.
-        itemName = itemSparseData.get("Display_lang") or itemSparseData.get("Name_lang", "")
-        itemNameByID[itemID] = itemName.split("|")[0].strip().lower()
+        displayItemName = itemSparseData.get("Display_lang")
+        itemName = displayItemName if displayItemName is not None else itemSparseData.get("Name_lang", "")
+        normalizedItemName = itemName.split("|")[0].strip().lower() if itemName else ""
+        if normalizedItemName:
+            itemNameByID[itemID] = normalizedItemName
 
     craftingDataIDsBySpellID = {}
     for spellEffectData in spellEffectTable:
