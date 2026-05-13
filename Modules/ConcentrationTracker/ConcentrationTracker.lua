@@ -83,11 +83,26 @@ end
 
 ---@param currencyID number?
 function CraftSim.CONCENTRATION_TRACKER:CURRENCY_DISPLAY_UPDATE(currencyID)
-    if currencyID and not tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, currencyID) then
+    local moxieUpdate = not currencyID or tContains(CraftSim.CONST.MOXIE_CURRENCY_IDS, currencyID)
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local concCurrencyID = (skillLineID and skillLineID > 0) and
+        C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID) or nil
+    local concentrationUpdate = not currencyID or (concCurrencyID and currencyID == concCurrencyID)
+
+    if not moxieUpdate and not concentrationUpdate then
         return
     end
 
-    self:SnapshotAllPlayerMoxie()
+    if moxieUpdate then
+        self:SnapshotAllPlayerMoxie()
+    end
+
+    if concentrationUpdate then
+        local concFrame = CraftSim.CONCENTRATION_TRACKER.frame
+        if concFrame and concFrame:IsVisible() and self.UI and self.UI.Update then
+            self.UI:Update()
+        end
+    end
 
     if self.trackerFrame and self.trackerFrame:IsVisible() then
         self.UI:UpdateTrackerDisplay()
@@ -107,7 +122,13 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     -- if not shown profession's expac dont show
     if not expansionID or expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then return end
 
+    local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID)
+
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
+    if cached and cached.currencyID and currencyID and cached.currencyID ~= currencyID then
+        CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = nil
+        cached = nil
+    end
     if cached and cached.currencyID then
         cached:Update()
 
@@ -120,11 +141,11 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
         return cached
     end
 
-    local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID)
-    local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
-    local professionID = professionInfo and professionInfo.profession
-    if currencyID and skillLineID > 0 and C_ProfSpecs.SkillLineHasSpecialization(skillLineID)
-        and not CraftSim.CONST.GATHERING_PROFESSIONS[professionID] then
+    -- Use concentration currency from the trade skill API. Do not require
+    -- C_ProfSpecs.SkillLineHasSpecialization: Midnight (and some builds) can expose
+    -- concentration while that call is false, which left the compact display at 0/0.
+    local isGathering = profession and CraftSim.CONST.GATHERING_PROFESSIONS[profession]
+    if currencyID and skillLineID > 0 and not isGathering then
         local concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB
