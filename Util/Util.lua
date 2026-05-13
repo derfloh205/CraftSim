@@ -261,6 +261,22 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+---@param skillLineID number
+---@return Enum.Profession? profession
+function CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+    local skillLineIDMap = CraftSim.CONST.TRADESKILLLINEIDS
+
+    for profession, expansionData in pairs(skillLineIDMap) do
+        for _, _skillLineID in pairs(expansionData) do
+            if _skillLineID == skillLineID then
+                return profession
+            end
+        end
+    end
+
+    return nil -- sometimes happens if not yet initialized
+end
+
 ---@param recipeExpansionID CraftSim.EXPANSION_IDS?
 ---@param itemID number?
 ---@param context string? debug context

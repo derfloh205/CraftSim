@@ -165,6 +165,7 @@ Data/ReagentWeightData.lua
 Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/OptionalCurrencyReagentData.lua
+Data/multicraftSupportData.lua
 Data/PatronMoxieSurplusData.lua
 
 Data/SpecializationData/Dragonflight/Alchemy.lua

@@ -147,3 +147,7 @@ end
 function CraftSim.CONTROL_PANEL.UI:Update()
 
 end
+
+function CraftSim.CONTROL_PANEL.UI:VisibleByContext()
+    return true
+end
