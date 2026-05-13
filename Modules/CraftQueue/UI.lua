@@ -3792,7 +3792,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     for _, condition in ipairs(craftQueueItem:GetFailedConditions()) do
         local reason = condition.reason
-        if condition.id == CraftSim.PRE_CRAFT_CONDITION_IDS.PRE_CRAFT_GATE and craftQueueItem.pcbgData.needsStep then
+        if condition.id == CraftSim.PRE_CRAFT_CONDITION_IDS.PRE_CRAFT_ACTION and craftQueueItem.pcbgData.needsStep then
             reason = CraftQueueMidnightShatterStatusText(craftQueueItem)
         end
         if reason and reason ~= "" then

@@ -116,9 +116,6 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             profession,
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             cached)
-        if profession then
-            CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
-        end
 
         return cached
     end
@@ -135,9 +132,6 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             profession,
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             concentrationData)
-        if profession then
-            CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
-        end
         CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = concentrationData
         return concentrationData
     end

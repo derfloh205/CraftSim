@@ -304,8 +304,8 @@ function CraftSim.PrecraftConditionSet:Evaluate()
         end,
     })
     self:AddEvaluatedCondition({
-        id = IDS.PRE_CRAFT_GATE,
-        priority = PRIORITY.PRE_CRAFT_GATE,
+        id = IDS.PRE_CRAFT_ACTION,
+        priority = PRIORITY.PRE_CRAFT_ACTION,
         blocksCraft = true,
         blocksClaim = false,
         evaluate = function(condition, cqi)

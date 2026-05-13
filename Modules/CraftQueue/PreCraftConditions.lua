@@ -11,7 +11,7 @@ CraftSim.PRE_CRAFT_CONDITION_IDS = {
     WORK_ORDER_MIN_QUALITY = "WORK_ORDER_MIN_QUALITY",
     PROFESSION_OPEN = "PROFESSION_OPEN",
     PROFESSION_TOOLS = "PROFESSION_TOOLS",
-    PRE_CRAFT_GATE = "PRE_CRAFT_GATE",
+    PRE_CRAFT_ACTION = "PRE_CRAFT_ACTION",
 }
 
 ---@class CraftSim.PreCraftConditions
@@ -31,7 +31,7 @@ PCC.CONDITION_PRIORITY = {
     REAGENTS = 90,
     PROFESSION_OPEN = 50,
     PROFESSION_TOOLS = 40,
-    PRE_CRAFT_GATE = 30,
+    PRE_CRAFT_ACTION = 30,
 }
 
 -- Per-item condition evaluation lives in CraftSim.PrecraftConditionSet (attached to CraftQueueItem).

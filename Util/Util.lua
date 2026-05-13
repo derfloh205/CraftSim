@@ -73,6 +73,51 @@ function CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton()
     return CraftSim.UTIL:GetProfessionsFrameProfession() ~= nil
 end
 
+---@param t table
+---@return boolean
+function CraftSim.UTIL:IsArrayTable(t)
+    if type(t) ~= "table" then
+        return false
+    end
+    local maxIndex = 0
+    local count = 0
+    for k, _ in pairs(t) do
+        if type(k) ~= "number" or k < 1 or k % 1 ~= 0 then
+            return false
+        end
+        count = count + 1
+        if k > maxIndex then
+            maxIndex = k
+        end
+    end
+    if count == 0 then
+        return true
+    end
+    return maxIndex == count
+end
+
+---@param target table
+---@param source table
+function CraftSim.UTIL:MergePreserveData(target, source)
+    if self:IsArrayTable(target) and self:IsArrayTable(source) then
+        for _, value in ipairs(source) do
+            if not tContains(target, value) then
+                tinsert(target, value)
+            end
+        end
+        return
+    end
+
+    for key, sourceValue in pairs(source) do
+        local targetValue = target[key]
+        if targetValue == nil then
+            target[key] = sourceValue
+        elseif type(targetValue) == "table" and type(sourceValue) == "table" then
+            self:MergePreserveData(targetValue, sourceValue)
+        end
+    end
+end
+
 -- thx ketho forum guy
 function CraftSim.UTIL:ShowTextCopyBox(text)
     if not KethoEditBox then

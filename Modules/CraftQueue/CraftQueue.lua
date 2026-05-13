@@ -40,6 +40,7 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- used to cache player item counts during sorting and recalculation of craft queue
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
+CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
 
 --- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
 ---@type table<number, number>
@@ -871,8 +872,15 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     if qFrame and qFrame:IsVisible() then
         CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         -- Equip / unequip updates inventory after a delay; refresh queue gear state unless mid Equip() sequence.
-        if not CraftSim.TOPGEAR.IsEquipping then
-            CraftSim.CRAFTQ.UI:Update()
+        if not CraftSim.TOPGEAR.IsEquipping and not CraftSim.CRAFTQ.pendingBagUpdateRefresh then
+            CraftSim.CRAFTQ.pendingBagUpdateRefresh = true
+            RunNextFrame(function()
+                CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
+                local frame = CraftSim.CRAFTQ.frame
+                if frame and frame:IsVisible() and not CraftSim.TOPGEAR.IsEquipping then
+                    CraftSim.CRAFTQ.UI:Update()
+                end
+            end)
         end
     end
 end
