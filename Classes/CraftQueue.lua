@@ -121,6 +121,21 @@ function CraftSim.CraftQueue:FindRecipe(recipeData)
     return craftQueueItem
 end
 
+---@param orderID number
+---@return CraftSim.CraftQueueItem?
+function CraftSim.CraftQueue:FindRecipeByOrderID(orderID)
+    if not orderID then
+        return nil
+    end
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        local orderData = craftQueueItem.recipeData.orderData
+        if orderData and orderData.orderID == orderID then
+            return craftQueueItem
+        end
+    end
+    return nil
+end
+
 ---@param craftQueueItem CraftSim.CraftQueueItem
 ---@param removeParentSubcraftInformation boolean?
 function CraftSim.CraftQueue:Remove(craftQueueItem, removeParentSubcraftInformation)
@@ -445,27 +460,34 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
     CraftSim.PRE_CRAFT_BUFF_GATE:ClearStaleIfCraftedRecipeMatches(recipeData.recipeID)
 
     local craftQueueItem = self:FindRecipe(recipeData)
+    if not craftQueueItem and recipeData.orderData and recipeData.orderData.orderID then
+        craftQueueItem = self:FindRecipeByOrderID(recipeData.orderData.orderID)
+    end
 
     if not craftQueueItem then
         -- Salvage crafts (e.g. Midnight Shatter) are not queued; the row is the enchant. Buff often applies after this event.
         if recipeData.isSalvageRecipe then
             CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
+        elseif recipeData.orderData then
+            CraftSim.CRAFTQ.UI:Update()
         end
         return
     end
 
-    -- if found only recognize as same crafted if concentration status and more is the same
+    local isWorkOrder = craftQueueItem.recipeData.orderData ~= nil
 
-    if craftQueueItem.recipeData.concentrating ~= recipeData.concentrating then return end
-
-    if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
+    -- Non-work-order crafts: require matching concentration/reagents before decrementing amount.
+    if not isWorkOrder then
+        if craftQueueItem.recipeData.concentrating ~= recipeData.concentrating then return end
+        if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
+    end
 
     if recipeData.concentrating and recipeData.concentrationData then
         recipeData.concentrationData:Update()
     end
 
     -- decrement by one and refresh list (only when not work order recipe and when not ignoring ingenuity)
-    if not craftQueueItem.recipeData.orderData then
+    if not isWorkOrder then
         local ignoreIngenuityProc = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_IGNORE_INGENUITY_PROCS") and
             craftingItemResultData.hasIngenuityProc
         local autoRemoveConcentrationUsedUp = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED")

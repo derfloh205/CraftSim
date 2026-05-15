@@ -31,6 +31,10 @@ CraftSim.CRAFTQ.craftQueue = nil
 ---@type CraftSim.RecipeData | nil
 CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
 
+--- Queue row RecipeData while CraftQueue initiates a craft (avoids hook snapshot / FindRecipe mismatch).
+---@type CraftSim.RecipeData | nil
+CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = nil
+
 --- used to check if CraftSim was the one calling the C_TradeSkillUI.CraftRecipe api function
 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 -- if craftqueue craftlisted recipe was crafted via queue, need to remember for auto decrement and recognition
@@ -112,6 +116,7 @@ function CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
             local expiry = self.pendingWorkOrderSubmit[orderID]
             if expiry and GetTime() >= expiry then
                 self.pendingWorkOrderSubmit[orderID] = nil
+                self:SyncPendingWorkOrderSubmitState()
                 if self.frame and self.frame:IsVisible() then
                     self.UI:Update()
                 end
@@ -864,6 +869,10 @@ function CraftSim.CRAFTQ:SetCraftedRecipeData(recipeData, amount, enchantItemTar
             return
         end
     end
+    if CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData then
+        CraftSim.CRAFTQ.currentlyCraftedRecipeData = CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData
+        return
+    end
     CraftSim.CRAFTQ.currentlyCraftedRecipeData = recipeData
 end
 
@@ -907,12 +916,29 @@ end
 ---@param craftingItemResultData CraftingItemResultData
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
     CraftSim.CRAFTQ:EndCraftClickLock()
+    local craftedOrderID = CraftSim.CRAFTQ.currentlyCraftedRecipeData and
+        CraftSim.CRAFTQ.currentlyCraftedRecipeData.orderData and
+        CraftSim.CRAFTQ.currentlyCraftedRecipeData.orderData.orderID
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
         local orderData = CraftSim.CRAFTQ.currentlyCraftedRecipeData.orderData
         if orderData and orderData.orderID then
             CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderData.orderID)
         end
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
+    end
+    CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
+    CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = nil
+    local function refreshQueueAfterWorkOrderCraft()
+        self:SyncPendingWorkOrderSubmitState()
+        local qFrame = self.frame
+        if qFrame and qFrame:IsVisible() then
+            self.UI:Update()
+        end
+    end
+    refreshQueueAfterWorkOrderCraft()
+    if craftedOrderID then
+        RunNextFrame(refreshQueueAfterWorkOrderCraft)
+        C_Timer.After(0.25, refreshQueueAfterWorkOrderCraft)
     end
 end
 

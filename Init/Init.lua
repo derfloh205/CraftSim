@@ -334,6 +334,27 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
+	---@param orderID number?
+	---@return CraftingOrderInfo?
+	local function GetCraftingOrderInfoForOrderID(orderID)
+		if not orderID then
+			return nil
+		end
+		local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+		if claimedOrder and claimedOrder.orderID == orderID then
+			return claimedOrder
+		end
+		local crafterOrders = C_CraftingOrders.GetCrafterOrders()
+		if crafterOrders then
+			for _, order in ipairs(crafterOrders) do
+				if order.orderID == orderID then
+					return order
+				end
+			end
+		end
+		return nil
+	end
+
 	---@param onCraftData CraftSim.OnCraftData
 	local function OnCraft(onCraftData)
 		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
@@ -342,9 +363,9 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 
 		---@type CraftSim.RecipeData
 		local recipeData
-		-- if craftsim did not call the api and we do not have reagents, use the one from the gui
-		-- still need to check if craft comes from different source (other addons for example)
-		if not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.recipeID == onCraftData.recipeID then
+		if CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData then
+			recipeData = CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData
+		elseif not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe and CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.recipeID == onCraftData.recipeID then
 			-- craft was most probably started via default gui craft button
 			Logger:LogDebug("api was called via default gui")
 			recipeData = CraftSim.MODULES.recipeData:Copy()
@@ -366,7 +387,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 				amount = amount or 1,
 				craftingReagentInfoTbl = craftingReagentInfoTbl or {},
 				recipeLevel = recipeLevel,
-				orderData = orderID and C_CraftingOrders.GetClaimedOrder(),
+				orderData = GetCraftingOrderInfoForOrderID(orderID),
 				concentrating = concentrating,
 				callerData = {
 					api = "CraftRecipe",

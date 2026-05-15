@@ -3889,9 +3889,14 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         -- Mark immediately to block double-craft clicks before crafted-result event arrives.
                         CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
                         CraftSim.CRAFTQ:BeginCraftClickLock()
+                        if currentClaimedOrder then
+                            recipeData:SetOrder(currentClaimedOrder)
+                        end
+                        CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = recipeData
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                         recipeData:Craft(math.min(pc:GetCraftAbleAmount(), craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                        CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = nil
                         CraftSim.CRAFTQ.UI:Update()
                     end
                 else
@@ -3939,11 +3944,13 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         return
                     end
                     CraftSim.CRAFTQ:BeginCraftClickLock()
+                    CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = craftQueueItem.recipeData
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                     CraftSim.CRAFTQ.currentlyCraftedCraftListID = craftQueueItem.recipeData.craftListID
                     recipeData:Craft(math.min(pc:GetCraftAbleAmount(), craftQueueItem.amount))
                     CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                    CraftSim.CRAFTQ.currentlyCraftedQueueRecipeData = nil
                     CraftSim.CRAFTQ.UI:Update()
                 end
             end
