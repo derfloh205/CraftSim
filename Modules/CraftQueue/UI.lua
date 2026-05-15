@@ -3154,6 +3154,9 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
         self:UpdateCraftQueueTotalProfitDisplay()
 
         craftQueue:CacheQueueItems()
+        -- Craft-next must run after the list exists; UpdateFrameListByCraftQueue often returns
+        -- before this point while batched can-craft evaluation is still running.
+        self:UpdateCraftNextButtonFromQueueList()
         CraftSim.DEBUG:StopProfiling("CraftQueue.FrameListUpdate")
     end
 
@@ -3442,24 +3445,19 @@ function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
     buttonList:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
-    --- use a cache to prevent multiple redundant calls of ItemCount thus increasing performance
-    CraftSim.CRAFTQ.itemCountCache = {}
-
-    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+--- Sync the Craft Next control with row 1 after the queue list has been rebuilt.
+function CraftSim.CRAFTQ.UI:UpdateCraftNextButtonFromQueueList()
     local craftQueueFrame = CraftSim.CRAFTQ.frame
+    if not craftQueueFrame or not craftQueueFrame.content or not craftQueueFrame.content.queueTab then
+        return
+    end
     local queueTab = craftQueueFrame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
-
-    --- update craft next button
     local itemsPresent = CraftSim.CRAFTQ.craftQueue and #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0
     if itemsPresent then
-        -- set the craft next button to the same status as the button in the queue on pos 1
-        -- if first item can be crafted (so if anything can be crafted cause the items are sorted by craftable status)
         local firstRow = queueTab.content.craftList.activeRows[1]
         if not firstRow then
             queueTab.content.craftNextButton:SetEnabled(false)
             queueTab.content.craftNextButton:SetText(L("CRAFT_QUEUE_BUTTON_NOTHING_QUEUED"), 10, true)
-            CraftSim.CRAFTQ.itemCountCache = nil
             return
         end
         local craftButton = firstRow.columns[9].craftButton --[[@as GGUI.Button]]
@@ -3487,6 +3485,21 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     else
         queueTab.content.craftNextButton:SetEnabled(false)
         queueTab.content.craftNextButton:SetText(L("CRAFT_QUEUE_BUTTON_NOTHING_QUEUED"), 10, true)
+    end
+end
+
+function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+    --- use a cache to prevent multiple redundant calls of ItemCount thus increasing performance
+    CraftSim.CRAFTQ.itemCountCache = {}
+
+    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+    local craftQueueFrame = CraftSim.CRAFTQ.frame
+    local queueTab = craftQueueFrame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
+
+    -- When the queue is non-empty, UpdateFrameListByCraftQueue may return before the FrameList
+    -- is rebuilt (batched can-craft). Craft next is refreshed from finalizeQueueRender instead.
+    if not self.isCanCraftBatchEvaluationRunning then
+        self:UpdateCraftNextButtonFromQueueList()
     end
 
     if queueTab.content.createAuctionatorShoppingList then
