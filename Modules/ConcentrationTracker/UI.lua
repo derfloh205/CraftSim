@@ -74,6 +74,23 @@ local function GetTrackerRowKey(crafterUID, profession)
     return crafterUID .. ":" .. profession
 end
 
+---@param moxieIcon GGUI.Icon
+---@param profession Enum.Profession
+---@param moxieQty number?
+local function ApplyConcentrationTrackerMoxieIcon(moxieIcon, profession, moxieQty)
+    local moxieCurrencyID = CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION[profession]
+    if not moxieCurrencyID then
+        moxieIcon:SetCurrency(nil)
+        moxieIcon:SetItem(nil)
+        moxieIcon.frame:Hide()
+        return
+    end
+    moxieIcon:SetCurrency(moxieCurrencyID)
+    moxieIcon.frame:Show()
+    local meetsThreshold = moxieQty and moxieQty > MOXIE_ICON_THRESHOLD
+    moxieIcon.frame:SetAlpha(meetsThreshold and MOXIE_ICON_ALPHA_ACTIVE or MOXIE_ICON_ALPHA_FADED)
+end
+
 ---@param row GGUI.FrameList.Row
 ---@param trackerRowData { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }
 ---@param showMoxieColumn boolean
@@ -149,23 +166,6 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieCol
     else
         row.tooltipOptions = nil
     end
-end
-
----@param moxieIcon GGUI.Icon
----@param profession Enum.Profession
----@param moxieQty number?
-local function ApplyConcentrationTrackerMoxieIcon(moxieIcon, profession, moxieQty)
-    local moxieCurrencyID = CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION[profession]
-    if not moxieCurrencyID then
-        moxieIcon:SetCurrency(nil)
-        moxieIcon:SetItem(nil)
-        moxieIcon.frame:Hide()
-        return
-    end
-    moxieIcon:SetCurrency(moxieCurrencyID)
-    moxieIcon.frame:Show()
-    local meetsThreshold = moxieQty and moxieQty > MOXIE_ICON_THRESHOLD
-    moxieIcon.frame:SetAlpha(meetsThreshold and MOXIE_ICON_ALPHA_ACTIVE or MOXIE_ICON_ALPHA_FADED)
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Init()
