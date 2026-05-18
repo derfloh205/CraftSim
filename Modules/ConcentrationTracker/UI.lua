@@ -46,8 +46,9 @@ local L = CraftSim.LOCAL:GetLocalizer()
 local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationTracker.UI")
 
 local MOXIE_ICON_THRESHOLD = 600
-local MOXIE_ICON_ALPHA_ACTIVE = 1
-local MOXIE_ICON_ALPHA_FADED = 0.2
+local ACUITY_ICON_THRESHOLD = 600
+local REWARD_ICON_ALPHA_ACTIVE = 1
+local REWARD_ICON_ALPHA_FADED = 0.2
 
 --- Midnight gathering professions with moxie but no concentration on the tracker list.
 local MOXIE_GATHERING_PROFESSIONS = {
@@ -88,14 +89,24 @@ local function ApplyConcentrationTrackerMoxieIcon(moxieIcon, profession, moxieQt
     moxieIcon:SetCurrency(moxieCurrencyID)
     moxieIcon.frame:Show()
     local meetsThreshold = moxieQty and moxieQty > MOXIE_ICON_THRESHOLD
-    moxieIcon.frame:SetAlpha(meetsThreshold and MOXIE_ICON_ALPHA_ACTIVE or MOXIE_ICON_ALPHA_FADED)
+    moxieIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
+end
+
+---@param acuityIcon GGUI.Icon
+---@param acuityQty number?
+local function ApplyConcentrationTrackerAcuityIcon(acuityIcon, acuityQty)
+    acuityIcon:SetCurrency(nil)
+    acuityIcon:SetItem(CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY)
+    acuityIcon.frame:Show()
+    local meetsThreshold = acuityQty and acuityQty > ACUITY_ICON_THRESHOLD
+    acuityIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
 end
 
 ---@param row GGUI.FrameList.Row
 ---@param trackerRowData { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }
----@param showMoxieColumn boolean
+---@param rewardColumnMode "moxie"|"acuity"|nil
 ---@param noConcentrationText string
-local function PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieColumn, noConcentrationText)
+local function PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
     local crafterUID = trackerRowData.crafterUID
     local profession = trackerRowData.profession
     local expansionID = trackerRowData.expansionID
@@ -110,9 +121,6 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieCol
     local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession]
     local crafterProfessionText = GUTIL:IconToText(professionIcon, 15, 15) ..
         " " .. f.class(crafterUID, crafterClass)
-
-    local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, profession,
-        expansionID)
 
     row.crafterProfessionText = crafterProfessionText
     row.crafterUID = crafterUID
@@ -144,15 +152,13 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieCol
         maxedColumn.text:SetText(noConcentrationText)
     end
 
-    moxieColumn:SetShown(showMoxieColumn)
-    if showMoxieColumn then
+    local showRewardColumn = rewardColumnMode ~= nil
+    moxieColumn:SetShown(showRewardColumn)
+    if rewardColumnMode == "moxie" then
+        local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, profession,
+            expansionID)
         if hasMoxieCurrency then
             ApplyConcentrationTrackerMoxieIcon(moxieColumn.icon, profession, moxieQty)
-        else
-            ApplyConcentrationTrackerMoxieIcon(moxieColumn.icon, profession, nil)
-        end
-
-        if hasMoxieCurrency then
             local moxieDisplay = moxieQty ~= nil and BreakUpLargeNumbers(moxieQty)
                 or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
             row.tooltipOptions = {
@@ -161,8 +167,19 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieCol
                 text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE"), moxieDisplay),
             }
         else
+            ApplyConcentrationTrackerMoxieIcon(moxieColumn.icon, profession, nil)
             row.tooltipOptions = nil
         end
+    elseif rewardColumnMode == "acuity" then
+        local acuityQty = CraftSim.CONCENTRATION_TRACKER:GetListRowAcuityQuantity(crafterUID, expansionID)
+        ApplyConcentrationTrackerAcuityIcon(moxieColumn.icon, acuityQty)
+        local acuityDisplay = acuityQty ~= nil and BreakUpLargeNumbers(acuityQty)
+            or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+        row.tooltipOptions = {
+            anchor = "ANCHOR_CURSOR",
+            owner = row.frame,
+            text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_ACUITY"), acuityDisplay),
+        }
     else
         row.tooltipOptions = nil
     end
@@ -520,13 +537,18 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     local trackerRows = {}
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local openExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
-    local showMoxieColumn = openExpansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT
+    local rewardColumnMode = nil
+    if openExpansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
+        rewardColumnMode = "moxie"
+    elseif openExpansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+        rewardColumnMode = "acuity"
+    end
     local blacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
     local noConcentrationText = L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
 
-    local moxieHeaderColumn = concentrationList.headerColumns and concentrationList.headerColumns[4]
-    if moxieHeaderColumn then
-        moxieHeaderColumn:SetShown(showMoxieColumn)
+    local rewardHeaderColumn = concentrationList.headerColumns and concentrationList.headerColumns[4]
+    if rewardHeaderColumn then
+        rewardHeaderColumn:SetShown(rewardColumnMode ~= nil)
     end
 
     ---@type table<string, boolean>
@@ -549,7 +571,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
             end
         end
 
-        if showMoxieColumn then
+        if rewardColumnMode == "moxie" then
             for profession in pairs(MOXIE_GATHERING_PROFESSIONS) do
                 if not tContains(crafterBlacklist, profession) and CrafterHasGatheringProfession(crafterUID, profession) then
                     local rowData = {
@@ -577,10 +599,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
             return row.crafterUID == trackerRowData.crafterUID and row.profession == trackerRowData.profession
         end)
         if existingRow then
-            PopulateConcentrationTrackerRow(existingRow, trackerRowData, showMoxieColumn, noConcentrationText)
+            PopulateConcentrationTrackerRow(existingRow, trackerRowData, rewardColumnMode, noConcentrationText)
         else
             concentrationList:Add(function(row)
-                PopulateConcentrationTrackerRow(row, trackerRowData, showMoxieColumn, noConcentrationText)
+                PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
             end)
         end
     end

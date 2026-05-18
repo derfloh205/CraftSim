@@ -769,6 +769,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE = "Amerika - Max Datum",
         CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT = "Verbleibende Stunden",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie: %s",
+        CONCENTRATION_TRACKER_LIST_ROW_ACUITY = "Acuity: %s",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
 
         -- statische Popups

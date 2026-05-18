@@ -732,6 +732,7 @@ maior ou igual ao limite de taxa de venda configurado.
         CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE = "Americano - Data Máxima",
         CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT = "Horas Restantes",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie: %s",
+        CONCENTRATION_TRACKER_LIST_ROW_ACUITY = "Acuity: %s",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
 
         -- static popups
