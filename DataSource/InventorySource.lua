@@ -211,9 +211,8 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
             playerRealm = playerRealm or GetNormalizedRealmName()
         end
         for _, characterInfo in ipairs(inventoryInfo.characters) do
-            local charInfo = characterInfo.character
             -- Match by both name and realm to handle same-name characters on different realms
-            if includeAlts or (charInfo and charInfo.name == playerName and charInfo.realm == playerRealm) then
+            if includeAlts or (characterInfo and characterInfo.character == playerName and characterInfo.realmNormalized == playerRealm) then
                 total = total + (characterInfo.bags or 0) + (characterInfo.bank or 0) +
                     (characterInfo.equipped or 0) + (characterInfo.mail or 0) +
                     (characterInfo.void or 0) + (characterInfo.auctions or 0)
