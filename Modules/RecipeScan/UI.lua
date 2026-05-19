@@ -137,7 +137,7 @@ function CraftSim.RECIPE_SCAN.UI:VisibleByContext()
     if not moduleEnabled then return false end
 
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
-    return CraftSim.MODULES:VisibleByContext() and selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
 
 ---@param selectedRow CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW

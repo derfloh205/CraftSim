@@ -1,17 +1,16 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.PRICING
+---@class CraftSim.PRICING : CraftSim.Module
 CraftSim.PRICING = CraftSim.PRICING
 
----@class CraftSim.PRICING.UI
+---@class CraftSim.PRICING.UI : CraftSim.Module.UI
 CraftSim.PRICING.UI = {}
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 CraftSim.PRICING.frame = nil
-CraftSim.PRICING.frameWO = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Pricing.UI")
 local f = CraftSim.GUTIL:GetFormatter()
@@ -24,9 +23,10 @@ function CraftSim.PRICING.UI:Init()
     local offsetY = -120
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
     CraftSim.PRICING.frame = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
         anchorB = "BOTTOM",
@@ -40,30 +40,9 @@ function CraftSim.PRICING.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_PRICING"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
-    CraftSim.PRICING.frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        anchorA = "BOTTOM",
-        anchorB = "BOTTOM",
-        sizeX = sizeX,
-        sizeY = sizeY,
-        offsetY = offsetY,
-        offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
-        title = L("PRICING_TITLE") .. " " ..
-            f.grey(L("SOURCE_COLUMN_WO")),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_PRICING"),
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -100,7 +79,7 @@ function CraftSim.PRICING.UI:Init()
             menu = function(ownerRegion, rootDescription)
                 rootDescription:CreateButton(f.r(L("PRICING_DELETE_ALL_OVERRIDES")), function()
                     CraftSim.DB.PRICE_OVERRIDE:ClearAll()
-                    CraftSim.MODULES:Update()
+                    GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED")
                 end)
             end
         }
@@ -181,14 +160,14 @@ function CraftSim.PRICING.UI:Init()
                                     recipeID = recipeID,
                                     qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(item:GetItemID())
                                 })
-                                CraftSim.MODULES:Update()
+                                GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED")
                             end)
 
                             if priceOverrideData then
                                 rootDescription:CreateButton(f.l("Delete Price Override"),
                                     function()
                                         CraftSim.DB.PRICE_OVERRIDE:DeleteGlobalOverride(item:GetItemID())
-                                        CraftSim.MODULES:Update()
+                                        GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED")
                                     end)
                             end
                         end)
@@ -351,14 +330,14 @@ function CraftSim.PRICING.UI:Init()
                                     price = tonumber(inputValue),
                                     qualityID = qualityID,
                                 })
-                                CraftSim.MODULES:Update()
+                                GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED")
                             end)
 
                             if priceOverrideData then
                                 rootDescription:CreateButton(f.l("Delete Price Override"),
                                     function()
                                         CraftSim.DB.PRICE_OVERRIDE:DeleteResultOverride(recipeID, qualityID)
-                                        CraftSim.MODULES:Update()
+                                        GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_MODIFIED")
                                     end)
                             end
                         end)
@@ -456,25 +435,19 @@ function CraftSim.PRICING.UI:Init()
     end
 
     createContent(CraftSim.PRICING.frame)
-    createContent(CraftSim.PRICING.frameWO)
+    self.module.frame = CraftSim.PRICING.frame
 end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PRICING:UpdateDisplay(recipeData)
-    local costOptimizationFrame = nil
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costOptimizationFrame = CraftSim.PRICING.frameWO
-    else
-        costOptimizationFrame = CraftSim.PRICING.frame
-    end
+    local pricingFrame = CraftSim.PRICING.frame
 
     Logger:LogDebug("Pricing - Reagent List Update", false, true)
 
-    costOptimizationFrame.content.craftingCostsValue:SetText(CraftSim.UTIL:FormatMoney(
+    pricingFrame.content.craftingCostsValue:SetText(CraftSim.UTIL:FormatMoney(
         recipeData.priceData.craftingCosts))
 
-    local reagentList = costOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentList = pricingFrame.content.reagentList --[[@as GGUI.FrameList]]
     reagentList:Remove()
 
     ---@type ItemMixin[]
@@ -642,4 +615,23 @@ end
 
 function CraftSim.PRICING.UI:RestoreFrameConfig()
     CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
+end
+
+function CraftSim.PRICING.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    if not (isRecipeTab or isCraftingOrderTab) then
+        return false
+    end
+
+    return true
 end
