@@ -1378,9 +1378,9 @@ function CraftSim.CRAFTQ.UI:Init()
             "RIGHT", -6,
             -1)
         queueTab.content.queueCraftListsCancelButton:SetFrameStrata(queueTab.content.queueCraftListsButton.frame
-        :GetFrameStrata())
+            :GetFrameStrata())
         queueTab.content.queueCraftListsCancelButton:SetFrameLevel(queueTab.content.queueCraftListsButton.frame
-        :GetFrameLevel() + 20)
+            :GetFrameLevel() + 20)
         queueTab.content.queueCraftListsCancelButton:EnableMouse(true)
         queueTab.content.queueCraftListsCancelButton:SetScript("OnClick", function()
             CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
@@ -3967,4 +3967,9 @@ function CraftSim.CRAFTQ.UI:VisibleByContext()
         return false
     end
     return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+end
+
+function CraftSim.CRAFTQ.UI:RestoreFrameConfig()
+    CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.CRAFTQ.patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
 end

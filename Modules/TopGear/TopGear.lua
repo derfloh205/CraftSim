@@ -2,13 +2,23 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.TOPGEAR
+---@class CraftSim.TOPGEAR : CraftSim.Module
 CraftSim.TOPGEAR = {}
 CraftSim.TOPGEAR.IsEquipping = false
 CraftSim.TOPGEAR.EMPTY_SLOT = "EMPTY_SLOT"
 
 local Logger = CraftSim.DEBUG:RegisterLogger("TopGear")
+
+CraftSim.MODULES:RegisterModule("MODULE_TOP_GEAR", CraftSim.TOPGEAR, {
+    label = L("CONTROL_PANEL_MODULES_TOP_GEAR_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.TOPGEAR, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 CraftSim.TOPGEAR.SIM_MODES = {
     PROFIT = "TOP_GEAR_SIM_MODES_PROFIT",
@@ -17,6 +27,11 @@ CraftSim.TOPGEAR.SIM_MODES = {
     RESOURCEFULNESS = "TOP_GEAR_SIM_MODES_RESOURCEFULNESS",
     CRAFTING_SPEED = "TOP_GEAR_SIM_MODES_CRAFTING_SPEED"
 }
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.TOPGEAR:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    self.UI:Update(recipeData)
+end
 
 function CraftSim.TOPGEAR:GetSimMode(simMode)
     return CraftSim.LOCAL:GetText(simMode)
@@ -32,13 +47,7 @@ function CraftSim.TOPGEAR:UnequipProfessionItems(professionID)
 end
 
 function CraftSim.TOPGEAR:EquipTopGear()
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-    else
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    end
+    local topGearFrame = CraftSim.TOPGEAR.frame
     if topGearFrame.currentTopResult then
         topGearFrame.currentTopResult.professionGearSet:Equip()
     end

@@ -1,15 +1,30 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.STATISTICS
+local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
+
+---@class CraftSim.STATISTICS : CraftSim.Module
 CraftSim.STATISTICS = {}
 
+CraftSim.MODULES:RegisterModule("MODULE_STATISTICS", CraftSim.STATISTICS, {
+    label = L("CONTROL_PANEL_MODULES_STATISTICS_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.STATISTICS, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
+
 ---@type GGUI.Frame
-CraftSim.STATISTICS.frameNO_WO = nil
----@type GGUI.Frame
-CraftSim.STATISTICS.frameWO = nil
+CraftSim.STATISTICS.frame = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Statistics")
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.STATISTICS:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    self.UI:Update(recipeData)
+end
 
 -- https://math.stackexchange.com/questions/888165/abramowitz-and-stegun-approximation-for-cumulative-normal-distribution
 function CraftSim.STATISTICS:CDF(q, mu, sd)

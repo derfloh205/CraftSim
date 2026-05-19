@@ -225,4 +225,6 @@ function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
             end
         end
     }
+
+    debugFrame:RestoreSavedConfig(UIParent)
 end

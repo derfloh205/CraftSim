@@ -464,14 +464,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 
 		CraftSim.MODULES:Init()
 
-		-- CraftSim.EXPLANATIONS.UI:Init()
-		-- CraftSim.TOPGEAR.UI:Init()
-		-- CraftSim.STATISTICS.UI:Init()
-		-- CraftSim.CUSTOMER_HISTORY.UI:Init()
-		-- CraftSim.CUSTOMER_HISTORY:Init()
-		-- CraftSim.PRICING.UI:Init()
-		-- CraftSim.SUPPORTERS.UI:Init()
-
 		CraftSim.INIT:HookToEvents()
 		CraftSim.INIT:HookToProfessionsFrame()
 		CraftSim.INIT:HookToConcentrationButtons()
@@ -485,8 +477,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:InitStaticPopups()
 
 		CraftSim.OPTIONS:Init()
-
-		CraftSim.MODULES:RestorePositions()
 	end
 end
 

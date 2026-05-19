@@ -1499,3 +1499,8 @@ end
 function CraftSim.CRAFT_LOG.UI:VisibleByContext()
     return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end
+
+function CraftSim.CRAFT_LOG.UI:RestoreFrameConfig()
+    CraftSim.CRAFT_LOG.frame:RestoreSavedConfig(UIParent)
+    CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
+end
