@@ -208,7 +208,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
 
     -- Category filter: per-profession per-expansion category toggles (default: all categories enabled)
     local filteredCategories = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_CATEGORIES")
-    local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, professionInfo.profession)
+    local crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, professionInfo.profession)
     local expansionCategoryFilter = filteredCategories and filteredCategories[crafterProfessionUID]
         and filteredCategories[crafterProfessionUID][expansionID] or nil
 
@@ -653,18 +653,11 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
     end
 end
 
----@param crafterUID string -  <name>-<NormalizedRealm>
----@param profession Enum.Profession
----@return string crafterProfessionUID <Name>-<NormalizedRealm>:<ProfessionID>
-function CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
-    return tostring(crafterUID) .. ":" .. tostring(profession)
-end
-
 function CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
     local currentProfessionInfo = C_TradeSkillUI
         .GetBaseProfessionInfo()
     if currentProfessionInfo then
-        return self:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(),
+        return CraftSim.UTIL:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(),
             currentProfessionInfo.profession)
     end
     return ""
@@ -677,7 +670,7 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     -- capture profession UID before the async wait so we can detect changes
     local professionInfoAtCall = C_TradeSkillUI.GetBaseProfessionInfo()
     local professionUIDAtCall = professionInfoAtCall and
-        CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall
+        CraftSim.UTIL:GetCrafterProfessionUID(CraftSim.UTIL:GetPlayerCrafterUID(), professionInfoAtCall
             .profession) or ""
 
     local function update()

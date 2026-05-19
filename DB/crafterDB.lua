@@ -483,6 +483,28 @@ function CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansi
 end
 
 ---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@param quantity number
+function CraftSim.DB.CRAFTER:SaveCrafterAcuityData(crafterUID, expansionID, quantity)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData = CraftSimDB.crafterDB.data[crafterUID].acuityData or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData[expansionID] = quantity
+end
+
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@return number?
+function CraftSim.DB.CRAFTER:GetCrafterAcuityData(crafterUID, expansionID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData = CraftSimDB.crafterDB.data[crafterUID].acuityData or {}
+    local amount = CraftSimDB.crafterDB.data[crafterUID].acuityData[expansionID]
+    if amount == nil then
+        return nil
+    end
+    return amount
+end
+
+---@param crafterUID CrafterUID
 ---@param profession Enum.Profession
 ---@param expansionID CraftSim.EXPANSION_IDS
 ---@return CraftSim.ConcentrationData?
