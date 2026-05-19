@@ -1003,6 +1003,14 @@ CraftSim.CONST.GATHERING_PROFESSIONS = {
     [Enum.Profession.Skinning] = true,
 }
 
+--- Gathering professions shown on the concentration tracker for moxie (Midnight; excludes Fishing).
+---@type table<Enum.Profession, boolean>
+CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS = {
+    [Enum.Profession.Herbalism] = true,
+    [Enum.Profession.Mining] = true,
+    [Enum.Profession.Skinning] = true,
+}
+
 ---@enum CraftSim.SHARED_PROFESSION_COOLDOWNS
 CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS = {
     DF_ALCHEMY_TRANSMUTATIONS = "DF_ALCHEMY_TRANSMUTATIONS",

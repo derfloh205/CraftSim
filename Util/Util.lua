@@ -399,6 +399,13 @@ function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return string crafterProfessionUID
+function CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
+    return tostring(crafterUID) .. ":" .. tostring(profession)
+end
+
 function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
@@ -660,6 +667,17 @@ function CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
         end
     end
     return nil
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return boolean
+function CraftSim.UTIL:CrafterHasProfession(crafterUID, profession)
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        return CraftSim.UTIL:IsProfessionLearned(profession)
+    end
+    local cachedRecipes = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
+    return cachedRecipes ~= nil and #cachedRecipes > 0
 end
 
 ---@param profession Enum.Profession

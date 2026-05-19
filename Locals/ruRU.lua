@@ -614,6 +614,7 @@ function CraftSim.LOCAL_RU:GetData()
 
         CONCENTRATION_TRACKER_TITLE = "Концентрация CraftSim",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE = "Moxie: %s",
+        CONCENTRATION_TRACKER_LIST_ROW_ACUITY = "Acuity: %s",
         CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN = "-",
 
         -- static popups
