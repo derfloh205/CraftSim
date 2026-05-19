@@ -234,3 +234,7 @@ function CraftSim.CRAFT_BUFFS.UI:VisibleByContext()
 
     return CraftSim.UTIL:IsWorkOrder() or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
+
+function CraftSim.CRAFT_BUFFS.UI:RestoreFrameConfig()
+    CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+end

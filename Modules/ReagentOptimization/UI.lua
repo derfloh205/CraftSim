@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.REAGENT_OPTIMIZATION.UI
+---@class CraftSim.REAGENT_OPTIMIZATION.UI : CraftSim.Module.UI
 ---@field module CraftSim.REAGENT_OPTIMIZATION
 ---@field recipeData CraftSim.RecipeData?
 ---@field Update fun(self: CraftSim.REAGENT_OPTIMIZATION.UI, recipeData: CraftSim.RecipeData)
@@ -754,4 +754,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:VisibleByContext()
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
     local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
     return CraftSim.UTIL:IsWorkOrder() or isRecipeTab
+end
+
+function CraftSim.REAGENT_OPTIMIZATION.UI:RestoreFrameConfig()
+    CraftSim.REAGENT_OPTIMIZATION.frame:RestoreSavedConfig(ProfessionsFrame)
 end

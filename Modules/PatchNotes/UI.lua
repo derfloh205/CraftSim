@@ -79,3 +79,7 @@ end
 function CraftSim.PATCH_NOTES.UI:Update()
 
 end
+
+function CraftSim.PATCH_NOTES.UI:RestoreFrameConfig()
+    CraftSim.PATCH_NOTES.frame:RestoreSavedConfig(UIParent)
+end

@@ -639,3 +639,7 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
         resultItemsList:UpdateDisplay()
     end)
 end
+
+function CraftSim.PRICING.UI:RestoreFrameConfig()
+    CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
+end

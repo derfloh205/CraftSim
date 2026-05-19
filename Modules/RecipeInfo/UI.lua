@@ -421,3 +421,7 @@ function CraftSim.RECIPE_INFO.UI:VisibleByContext()
 
     return CraftSim.UTIL:IsWorkOrder() or selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
+
+function CraftSim.RECIPE_INFO.UI:RestoreFrameConfig()
+    CraftSim.RECIPE_INFO.frame:RestoreSavedConfig(ProfessionsFrame)
+end

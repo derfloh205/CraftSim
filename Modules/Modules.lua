@@ -38,6 +38,7 @@ CraftSim.MODULES = {}
 ---@field Init fun(self: CraftSim.Module.UI)
 ---@field Update fun(self: CraftSim.Module.UI, ...: any)
 ---@field VisibleByContext? fun(self: CraftSim.Module.UI): boolean -- if not provided, true
+---@field RestoreFrameConfig? fun(self: CraftSim.Module.UI) -- if provided, will be called on module init to restore frame position and other settings
 
 ---@class CraftSim.Module.Debug
 ---@field module CraftSim.Module
@@ -95,6 +96,11 @@ function CraftSim.MODULES:Init()
 		if module.UI then
 			module.UI.module = module
 			module.UI:Init()
+
+			-- restore ggui frame config
+			if module.UI.RestoreFrameConfig then
+				module.UI:RestoreFrameConfig()
+			end
 		end
 
 		if module.DEBUG then
@@ -123,68 +129,6 @@ function CraftSim.MODULES:UpdateVisibilityByContext()
 	for _, module in pairs(CraftSim.MODULES.modules) do
 		self:UpdateModuleVisibility(module)
 	end
-end
-
--- TODO MODULE REFACTOR
----@deprecated
-function CraftSim.MODULES:RestorePositions()
-	-- local specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
-	-- local specInfoFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	-- local averageProfitFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT)
-	-- local averageProfitFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-	-- 	CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
-	-- local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-	-- local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	-- local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-	-- 	CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	-- local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
-	-- local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
-
-	-- infoFrame:RestoreSavedConfig(UIParent)
-	-- debugFrame:RestoreSavedConfig(UIParent)
-	-- CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
-	-- CraftSim.CRAFT_LOG.logFrame:RestoreSavedConfig(UIParent)
-	-- CraftSim.CRAFT_LOG.advFrame:RestoreSavedConfig(UIParent)
-	-- CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
-	-- specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
-	-- specInfoFrameWO:RestoreSavedConfig(ProfessionsFrame)
-	-- averageProfitFrame:RestoreSavedConfig(ProfessionsFrame)
-	-- averageProfitFrameWO:RestoreSavedConfig(ProfessionsFrame)
-	-- topgearFrame:RestoreSavedConfig(ProfessionsFrame)
-	-- topgearFrameWO:RestoreSavedConfig(ProfessionsFrame)
-	-- CraftSim.PRICING.frame:RestoreSavedConfig(ProfessionsFrame)
-	-- CraftSim.PRICING.frameWO:RestoreSavedConfig(ProfessionsFrame)
-	-- reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
-	-- reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
-	-- CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
-	-- local patronRewardValuesFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
-	-- 	CraftSim.CONST.FRAMES.CRAFTQUEUE_PATRON_REWARD_VALUES)
-	-- if patronRewardValuesFrame then
-	-- 	patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
-	-- end
-
-	-- CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
-	-- CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
-	-- CraftSim.STATISTICS.frameNO_WO:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
-	-- CraftSim.STATISTICS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
-	-- CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
-	-- CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
-
-	-- CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
-end
-
---- Shows recipe-independent modules based on saved options.
---- Called from ProfessionsFrame OnShow to ensure modules are visible even when
---- SchematicForm:Init or tab OnClick does not fire (e.g. opening on the Crafting Orders tab).
----@deprecated
-function CraftSim.MODULES:ShowRecipeIndependentModules()
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		return
-	end
-
-	CraftSim.CONTROL_PANEL.frame:Show()
-
-	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 end
 
 --- Updates only the Craft Queue "add work orders" enabled state (near table or Crafting Orders tab available).

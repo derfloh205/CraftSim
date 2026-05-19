@@ -1533,3 +1533,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
         end)
     resultList:UpdateDisplay()
 end
+
+function CraftSim.RECIPE_SCAN.UI:RestoreFrameConfig()
+    CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
+end

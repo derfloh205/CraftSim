@@ -51,3 +51,7 @@ function CraftSim.EXPLANATIONS.UI:Init()
 
     createContent(CraftSim.EXPLANATIONS.frame)
 end
+
+function CraftSim.EXPLANATIONS.UI:RestoreFrameConfig()
+    CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
+end

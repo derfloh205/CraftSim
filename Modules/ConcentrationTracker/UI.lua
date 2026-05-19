@@ -631,3 +631,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Update()
         CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end
 end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:RestoreFrameConfig()
+    CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
+end
