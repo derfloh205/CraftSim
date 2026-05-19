@@ -17,9 +17,7 @@ GUTIL:RegisterCustomEvents(CraftSim.STATISTICS, {
 })
 
 ---@type GGUI.Frame
-CraftSim.STATISTICS.frameNO_WO = nil
----@type GGUI.Frame
-CraftSim.STATISTICS.frameWO = nil
+CraftSim.STATISTICS.frame = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Statistics")
 

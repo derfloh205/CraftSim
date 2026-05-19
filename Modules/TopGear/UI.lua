@@ -173,22 +173,9 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.TOPGEAR.UI:Update(recipeData)
-    if not recipeData then
+    if not recipeData or not recipeData.supportsCraftingStats then
         return
     end
-
-    local topGearFrame = self.module.frame
-    if not topGearFrame then
-        return
-    end
-
-    local showTopGear = self:VisibleByContext() and recipeData.supportsCraftingStats
-    topGearFrame:SetVisible(showTopGear)
-
-    if not showTopGear then
-        return
-    end
-
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     self:UpdateModeDropdown(recipeData, exportMode)
     if CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE") then
@@ -199,14 +186,7 @@ function CraftSim.TOPGEAR.UI:Update(recipeData)
 end
 
 function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)
-    local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-        return
-    elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    else
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-    end
+    local topGearFrame = self.module.frame
 
     local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData)
     CraftSim.TOPGEAR.UI:UpdateCombinationIcons(emptyProfessionGearSet, exportMode)
@@ -230,17 +210,9 @@ end
 ---@param exportMode number
 ---@param gIconsOverride? table
 function CraftSim.TOPGEAR.UI:UpdateCombinationIcons(professionGearSet, exportMode, gIconsOverride)
-    local topGearFrame
-    local gIcons
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-        gIcons = { topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon }
-    elseif exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-        gIcons = { topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon }
-    end
-
-    gIcons = gIconsOverride or gIcons
+    local topGearFrame = self.module.frame
+    local gIcons = gIconsOverride or
+        { topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon }
 
     for _, button in pairs(gIcons) do
         button:Hide() -- only to consider cooking ...
@@ -262,14 +234,7 @@ end
 ---@param topGearMode string
 ---@param exportMode number
 function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
-    local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-        return
-    elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    else
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-    end
+    local topGearFrame = self.module.frame
     local topResult = results[1] -- as they are already sorted
     CraftSim.TOPGEAR.UI:UpdateCombinationIcons(topResult.professionGearSet, exportMode)
     if not CraftSim.TOPGEAR.IsEquipping then
@@ -320,12 +285,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 function CraftSim.TOPGEAR.UI:UpdateModeDropdown(recipeData, exportMode)
-    local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    else
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
-    end
+    local topGearFrame = self.module.frame
 
     local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
     local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
@@ -359,5 +319,8 @@ function CraftSim.TOPGEAR.UI:VisibleByContext()
     end
 
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
-    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    return (isRecipeTab or isCraftingOrderTab) and
+        CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.supportsCraftingStats
 end

@@ -90,7 +90,7 @@ end
 ---@param customerHistory CraftSim.DB.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
     CraftSim.DB.CUSTOMER_HISTORY:Delete(customerHistory)
-    CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
+    CraftSim.CUSTOMER_HISTORY.UI:Update()
     if row == CraftSim.CUSTOMER_HISTORY.frame.content.customerList.selectedRow then
         CraftSim.CUSTOMER_HISTORY.frame.content.customerList:SelectRow(1)
     end

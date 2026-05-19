@@ -53,7 +53,6 @@ function CraftSim.EXPLANATIONS.UI:Init()
     end
 
     createContent(CraftSim.EXPLANATIONS.frame)
-    self.module.frame = CraftSim.EXPLANATIONS.frame
 end
 
 function CraftSim.EXPLANATIONS.UI:RestoreFrameConfig()
@@ -65,12 +64,5 @@ function CraftSim.EXPLANATIONS.UI:VisibleByContext()
         return false
     end
 
-    if not CraftSim.UTIL:GetSchematicFormByContext() then
-        return false
-    end
-
-    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
-    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
-    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
-    return isRecipeTab or isCraftingOrderTab
+    return CraftSim.MODULES:VisibleByContext()
 end
