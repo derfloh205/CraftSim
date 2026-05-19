@@ -503,3 +503,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedTimeString(timestamp)
     local date = date("*t", timestamp)
     return string.format("%02d:%02d:%02d", date.hour, date.min, date.sec)
 end
+
+function CraftSim.CUSTOMER_HISTORY.UI:RestoreFrameConfig()
+    CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
+end

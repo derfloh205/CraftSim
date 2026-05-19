@@ -819,3 +819,7 @@ end
 function CraftSim.COOLDOWNS.UI:VisibleByContext()
     return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end
+
+function CraftSim.COOLDOWNS.UI:RestoreFrameConfig()
+    CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
+end

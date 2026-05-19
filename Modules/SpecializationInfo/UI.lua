@@ -318,3 +318,7 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
         end
     end)
 end
+
+function CraftSim.SPECIALIZATION_INFO.UI:RestoreFrameConfig()
+    CraftSim.SPECIALIZATION_INFO.frame:RestoreSavedConfig(ProfessionsFrame)
+end
