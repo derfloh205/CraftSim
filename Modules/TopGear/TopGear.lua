@@ -47,7 +47,7 @@ function CraftSim.TOPGEAR:UnequipProfessionItems(professionID)
 end
 
 function CraftSim.TOPGEAR:EquipTopGear()
-    local topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
+    local topGearFrame = CraftSim.TOPGEAR.frame
     if topGearFrame.currentTopResult then
         topGearFrame.currentTopResult.professionGearSet:Equip()
     end

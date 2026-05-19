@@ -440,14 +440,14 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PRICING:UpdateDisplay(recipeData)
-    local costOptimizationFrame = CraftSim.PRICING.frame
+    local pricingFrame = CraftSim.PRICING.frame
 
     Logger:LogDebug("Pricing - Reagent List Update", false, true)
 
-    costOptimizationFrame.content.craftingCostsValue:SetText(CraftSim.UTIL:FormatMoney(
+    pricingFrame.content.craftingCostsValue:SetText(CraftSim.UTIL:FormatMoney(
         recipeData.priceData.craftingCosts))
 
-    local reagentList = costOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentList = pricingFrame.content.reagentList --[[@as GGUI.FrameList]]
     reagentList:Remove()
 
     ---@type ItemMixin[]

@@ -517,5 +517,5 @@ function CraftSim.CUSTOMER_HISTORY.UI:VisibleByContext()
     end
 
     local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
-    return CraftSim.MODULES:VisibleByContext() and selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end

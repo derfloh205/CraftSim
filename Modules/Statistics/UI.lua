@@ -97,14 +97,6 @@ function CraftSim.STATISTICS.UI:Init()
     self.module.frame = CraftSim.STATISTICS.frame
 end
 
----@param recipeData CraftSim.RecipeData
-function CraftSim.STATISTICS.UI:Update(recipeData)
-    if not recipeData or not recipeData.supportsCraftingStats then
-        return
-    end
-    self:UpdateDisplay(recipeData)
-end
-
 ---@param tab CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB
 function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
     ---@class CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB
@@ -163,7 +155,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
             if not recipeData then
                 return
             end
-            CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
+            CraftSim.STATISTICS.UI:Update(recipeData)
         end
     })
 
@@ -338,7 +330,11 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
+function CraftSim.STATISTICS.UI:Update(recipeData)
+    if not recipeData or not recipeData.supportsCraftingStats then
+        return
+    end
+
     local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
