@@ -60,6 +60,5 @@ function CraftSim.EXPLANATIONS.UI:RestoreFrameConfig()
 end
 
 function CraftSim.EXPLANATIONS.UI:VisibleByContext()
-    local isModuleEnabled = CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
-    return isModuleEnabled
+    return CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
 end
