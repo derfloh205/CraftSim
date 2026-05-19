@@ -50,31 +50,6 @@ local ACUITY_ICON_THRESHOLD = 600
 local REWARD_ICON_ALPHA_ACTIVE = 1
 local REWARD_ICON_ALPHA_FADED = 0.2
 
---- Midnight gathering professions with moxie but no concentration on the tracker list.
-local MOXIE_GATHERING_PROFESSIONS = {
-    [Enum.Profession.Herbalism] = true,
-    [Enum.Profession.Mining] = true,
-    [Enum.Profession.Skinning] = true,
-}
-
----@param crafterUID CrafterUID
----@param profession Enum.Profession
----@return boolean
-local function CrafterHasGatheringProfession(crafterUID, profession)
-    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
-        return CraftSim.UTIL:IsProfessionLearned(profession)
-    end
-    local cachedRecipes = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
-    return cachedRecipes ~= nil and #cachedRecipes > 0
-end
-
----@param crafterUID CrafterUID
----@param profession Enum.Profession
----@return string
-local function GetTrackerRowKey(crafterUID, profession)
-    return crafterUID .. ":" .. profession
-end
-
 ---@param moxieIcon GGUI.Icon
 ---@param profession Enum.Profession
 ---@param moxieQty number?
@@ -552,7 +527,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end
 
     ---@type table<string, boolean>
-    local desiredRowKeys = {}
+    local validRowKeys = {}
 
     for _, crafterUID in ipairs(crafterUIDs) do
         local crafterBlacklist = blacklist[crafterUID] or {}
@@ -566,21 +541,21 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                     expansionID = openExpansionID,
                     serializedData = serializedData,
                 }
-                desiredRowKeys[GetTrackerRowKey(crafterUID, profession)] = true
+                validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
                 tinsert(trackerRows, rowData)
             end
         end
 
         if rewardColumnMode == "moxie" then
-            for profession in pairs(MOXIE_GATHERING_PROFESSIONS) do
-                if not tContains(crafterBlacklist, profession) and CrafterHasGatheringProfession(crafterUID, profession) then
+            for profession in pairs(CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS) do
+                if not tContains(crafterBlacklist, profession) and CraftSim.UTIL:CrafterHasProfession(crafterUID, profession) then
                     local rowData = {
                         crafterUID = crafterUID,
                         profession = profession,
                         expansionID = openExpansionID,
                         serializedData = nil,
                     }
-                    desiredRowKeys[GetTrackerRowKey(crafterUID, profession)] = true
+                    validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
                     tinsert(trackerRows, rowData)
                 end
             end
@@ -591,7 +566,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
         if not row.crafterUID or not row.profession then
             return true
         end
-        return not desiredRowKeys[GetTrackerRowKey(row.crafterUID, row.profession)]
+        return not validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(row.crafterUID, row.profession)]
     end)
 
     for _, trackerRowData in ipairs(trackerRows) do

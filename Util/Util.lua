@@ -669,6 +669,17 @@ function CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
     return nil
 end
 
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return boolean
+function CraftSim.UTIL:CrafterHasProfession(crafterUID, profession)
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        return CraftSim.UTIL:IsProfessionLearned(profession)
+    end
+    local cachedRecipes = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
+    return cachedRecipes ~= nil and #cachedRecipes > 0
+end
+
 ---@param profession Enum.Profession
 function CraftSim.UTIL:IsProfessionLearned(profession)
     local learnedProfessions = { GetProfessions() };
