@@ -3,10 +3,10 @@ local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
 
----@class CraftSim.TOP_GEAR
+---@class CraftSim.TOP_GEAR : CraftSim.Module
 CraftSim.TOPGEAR = CraftSim.TOPGEAR
 
----@class CraftSim.TOPGEAR.UI
+---@class CraftSim.TOPGEAR.UI : CraftSim.Module.UI
 CraftSim.TOPGEAR.UI = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("TopGear.UI")
@@ -18,6 +18,7 @@ function CraftSim.TOPGEAR.UI:Init()
     local offsetY = 3
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
     CraftSim.TOPGEAR.frame = CraftSim.GGUI.Frame({
         parent = ProfessionsFrame,
@@ -34,13 +35,17 @@ function CraftSim.TOPGEAR.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_TOP_GEAR"),
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
+
+    self.module.frame = CraftSim.TOPGEAR.frame
 
     local function createContent(frame)
         local contentOffsetY = -40
@@ -164,6 +169,33 @@ function CraftSim.TOPGEAR.UI:Init()
     end
 
     createContent(CraftSim.TOPGEAR.frame)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.TOPGEAR.UI:Update(recipeData)
+    if not recipeData then
+        return
+    end
+
+    local topGearFrame = self.module.frame
+    if not topGearFrame then
+        return
+    end
+
+    local showTopGear = self:VisibleByContext() and recipeData.supportsCraftingStats
+    topGearFrame:SetVisible(showTopGear)
+
+    if not showTopGear then
+        return
+    end
+
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    self:UpdateModeDropdown(recipeData, exportMode)
+    if CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE") then
+        CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
+    else
+        self:ClearTopGearDisplay(recipeData, true, exportMode)
+    end
 end
 
 function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)
@@ -315,4 +347,17 @@ end
 
 function CraftSim.TOPGEAR.UI:RestoreFrameConfig()
     CraftSim.TOPGEAR.frame:RestoreSavedConfig(ProfessionsFrame)
+end
+
+function CraftSim.TOPGEAR.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end

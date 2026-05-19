@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CUSTOMER_HISTORY.UI
+---@class CraftSim.CUSTOMER_HISTORY.UI : CraftSim.Module.UI
 CraftSim.CUSTOMER_HISTORY.UI = {}
 
 ---@type CraftSim.CUSTOMER_HISTORY.FRAME
@@ -17,6 +17,7 @@ local L = CraftSim.LOCAL:GetLocalizer()
 function CraftSim.CUSTOMER_HISTORY.UI:Init()
     local sizeX = 910
     local sizeY = 270
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
     ---@class CraftSim.CUSTOMER_HISTORY.FRAME : GGUI.Frame
     CraftSim.CUSTOMER_HISTORY.frame = GGUI.Frame({
         parent = ProfessionsFrame,
@@ -29,7 +30,9 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_CUSTOMER_HISTORY"),
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -363,6 +366,11 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
     end
 
     createContent(CraftSim.CUSTOMER_HISTORY.frame)
+    self.module.frame = CraftSim.CUSTOMER_HISTORY.frame
+end
+
+function CraftSim.CUSTOMER_HISTORY.UI:Update()
+    self:UpdateDisplay()
 end
 
 function CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
@@ -506,4 +514,19 @@ end
 
 function CraftSim.CUSTOMER_HISTORY.UI:RestoreFrameConfig()
     CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
+end
+
+function CraftSim.CUSTOMER_HISTORY.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    return isRecipeTab or isCraftingOrderTab
 end
