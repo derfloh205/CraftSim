@@ -30,5 +30,6 @@ function CraftSim.LOCAL_MX:GetData()
         RECIPE_DIFFICULTY_LABEL = "Dificultad de la receta: ",
         MULTICRAFT_LABEL = "Fabricación múltiple: ",
         RESOURCEFULNESS_LABEL = "Inventiva: ",
+        PATCH_NOTES_TITLE = "Notas del parche de CraftSim",
     }
 end

@@ -15,7 +15,7 @@ local function generateSkillCacheKey(recipeData, requiredTbl)
     for reagentID, quantity in pairs(requiredTbl) do
         -- Handle case where quantity might be a table
         local quantityStr = (type(quantity) == "table") and tostring(quantity.quantity or quantity[1] or "0") or
-        tostring(quantity)
+            tostring(quantity)
         table.insert(parts, reagentID .. ":" .. quantityStr)
     end
 
@@ -87,7 +87,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     for _, reagentSlotSchematic in pairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = reagentSlotSchematic.reagentType
         local hasCurrencyReagent = reagentSlotSchematic.reagents[1] and
-        reagentSlotSchematic.reagents[1].currencyID ~= nil
+            reagentSlotSchematic.reagents[1].currencyID ~= nil
 
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
@@ -778,18 +778,18 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         if self.requiredSelectableReagentSlot.activeReagent then
             if self.requiredSelectableReagentSlot:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.requiredSelectableReagentSlot.activeReagent
-                .currencyID)
+                    .currencyID)
                 if currencyInfo then
                     local currencyID = self.requiredSelectableReagentSlot.activeReagent.currencyID
                     local currencyData = CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA and
-                    CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
+                        CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
                     local isCrestCurrency = (currencyData and currencyData.name and string.find(string.lower(currencyData.name), "crest", 1, true)) ~=
-                    nil
+                        nil
                     local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
                     text = text .. inlineIcon
                     local requiredQuantity = self.requiredSelectableReagentSlot.maxQuantity * multiplier
                     local isOrderReagent = self.requiredSelectableReagentSlot.activeReagent:IsOrderReagentIn(self
-                    .recipeData)
+                        .recipeData)
                     local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(currencyInfo.quantity) .. ")")
                     if currencyInfo.quantity >= requiredQuantity or isOrderReagent then
                         quantityText = f.g(tostring(requiredQuantity))
@@ -843,9 +843,9 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 if currencyInfo then
                     local currencyID = optionalReagentSlot.activeReagent.currencyID
                     local currencyData = CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA and
-                    CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
+                        CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[currencyID]
                     local isCrestCurrency = (currencyData and currencyData.name and string.find(string.lower(currencyData.name), "crest", 1, true)) ~=
-                    nil
+                        nil
                     local inlineIcon = GUTIL:IconToText(currencyInfo.iconFileID, iconSize, iconSize)
                     text = text .. inlineIcon
                     local qualityID = optionalReagentSlot.activeReagent.qualityID or 0

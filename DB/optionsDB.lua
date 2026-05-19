@@ -57,6 +57,22 @@ function CraftSim.DB.OPTIONS:Save(option, value)
     CraftSimDB.optionsDB.data[option] = value
 end
 
+---@param moduleID CraftSim.ModuleID
+---@return boolean isEnabled
+function CraftSim.DB.OPTIONS:IsModuleEnabled(moduleID)
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] = CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] or
+        CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["MODULES_ENABLED"]
+    return CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"][moduleID]
+end
+
+---@param moduleID CraftSim.ModuleID
+---@param enabled boolean
+function CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, enabled)
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] = CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"] or
+        CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["MODULES_ENABLED"]
+    CraftSim.DB.OPTIONS.db.data["MODULES_ENABLED"][moduleID] = enabled
+end
+
 --- Migrations
 
 function CraftSim.DB.OPTIONS.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
@@ -324,6 +340,22 @@ function CraftSim.DB.OPTIONS.MIGRATION:M_15_16_Rename_CraftQueue_Auto_Shopping_L
     CraftSimDB.optionsDB.data[oldKey] = nil
 end
 
-function CraftSim.DB.OPTIONS.MIGRATION:M_16_17_Remove_DebugID_SavedVariable()
+function CraftSim.DB.OPTIONS.MIGRATION:M_16_17_Migrate_Module_Visibility_Options()
+    local modulesEnabled = CraftSim.DB.OPTIONS:Get("MODULES_ENABLED")
+    local options = CraftSim.DB.OPTIONS.db.data
+    for moduleID, _ in pairs(modulesEnabled) do
+        local oldOption = options[moduleID]
+        if oldOption ~= nil then
+            modulesEnabled[moduleID] = oldOption
+        end
+
+        options[moduleID] = nil
+    end
+
+    modulesEnabled["MODULE_RECIPE_INFO"] = options["MODULE_AVERAGE_PROFIT"]
+    options["MODULE_AVERAGE_PROFIT"] = nil
+end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_17_18_Remove_DebugID_SavedVariable()
     CraftSimDB.optionsDB.data["DEBUG_IDS"] = nil
 end

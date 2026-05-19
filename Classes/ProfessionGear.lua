@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
@@ -111,7 +111,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 			end
 		end
 	end
-	
+
 	if parsedSkill > 0 then
 		self.professionStats.skill.value = parsedSkill
 	end

@@ -1,8 +1,19 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.CONTROL_PANEL
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.CONTROL_PANEL : CraftSim.Module
 CraftSim.CONTROL_PANEL = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_CONTROL_PANEL", CraftSim.CONTROL_PANEL)
+
+GUTIL:RegisterCustomEvents(CraftSim.CONTROL_PANEL, {
+    "CRAFTSIM_SIMULATION_MODE_DISABLED",
+    "CRAFTSIM_RECIPE_INFO_INITIALIZED",
+    "CRAFTSIM_MODULE_CLOSED",
+    "CRAFTSIM_MODULE_OPENED"
+})
 
 local GUTIL = CraftSim.GUTIL
 
@@ -252,4 +263,29 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
         -- CraftSim.CONTROL_PANEL.frame.content.exportEasycraftButton:SetEnabled(false)
         mapRecipe()
     end
+end
+
+function CraftSim.CONTROL_PANEL:CRAFTSIM_SIMULATION_MODE_DISABLED()
+    -- since the sim mode can be disabled somewhere else then the toggle button we need to adapt the toggle button state here
+    -- also note: its inverted
+    self.frame.content.simulateToggle:SetToggle(true)
+end
+
+---@param recipeInfo TradeSkillRecipeInfo
+function CraftSim.CONTROL_PANEL:CRAFTSIM_RECIPE_INFO_INITIALIZED(recipeInfo)
+    -- disable simulateToggle button for salvage and recraft recipes since they are not supported in sim mode
+    local supported = not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft
+    self.frame.content.simulateToggle:SetEnabled(supported)
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CONTROL_PANEL:CRAFTSIM_MODULE_CLOSED(moduleID)
+    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, false)
+    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CONTROL_PANEL:CRAFTSIM_MODULE_OPENED(moduleID)
+    CraftSim.DB.OPTIONS:SetModuleEnabled(moduleID, true)
+    CraftSim.MODULES:UpdateModuleVisibility(CraftSim.MODULES.modules[moduleID])
 end

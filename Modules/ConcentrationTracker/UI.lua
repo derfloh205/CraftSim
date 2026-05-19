@@ -13,7 +13,7 @@ CraftSim.CONCENTRATION_TRACKER.frame = nil
 ---@type CraftSim.CONCENTRATION_TRACKER.TRACKER_FRAME
 CraftSim.CONCENTRATION_TRACKER.trackerFrame = nil
 
----@class CraftSim.CONCENTRATION_TRACKER.UI
+---@class CraftSim.CONCENTRATION_TRACKER.UI : CraftSim.Module.UI
 CraftSim.CONCENTRATION_TRACKER.UI = {}
 
 CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE = {
@@ -41,9 +41,124 @@ CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
 }
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ConcentrationTracker.UI")
+
+local MOXIE_ICON_THRESHOLD = 600
+local ACUITY_ICON_THRESHOLD = 600
+local REWARD_ICON_ALPHA_ACTIVE = 1
+local REWARD_ICON_ALPHA_FADED = 0.2
+
+---@param moxieIcon GGUI.Icon
+---@param profession Enum.Profession
+---@param moxieQty number?
+local function ApplyConcentrationTrackerMoxieIcon(moxieIcon, profession, moxieQty)
+    local moxieCurrencyID = CraftSim.CONST.MOXIE_CURRENCY_ID_BY_PROFESSION[profession]
+    if not moxieCurrencyID then
+        moxieIcon:SetCurrency(nil)
+        moxieIcon:SetItem(nil)
+        moxieIcon.frame:Hide()
+        return
+    end
+    moxieIcon:SetCurrency(moxieCurrencyID)
+    moxieIcon.frame:Show()
+    local meetsThreshold = moxieQty and moxieQty > MOXIE_ICON_THRESHOLD
+    moxieIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
+end
+
+---@param acuityIcon GGUI.Icon
+---@param acuityQty number?
+local function ApplyConcentrationTrackerAcuityIcon(acuityIcon, acuityQty)
+    acuityIcon:SetCurrency(nil)
+    acuityIcon:SetItem(CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY)
+    acuityIcon.frame:Show()
+    local meetsThreshold = acuityQty and acuityQty > ACUITY_ICON_THRESHOLD
+    acuityIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
+end
+
+---@param row GGUI.FrameList.Row
+---@param trackerRowData { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }
+---@param rewardColumnMode "moxie"|"acuity"|nil
+---@param noConcentrationText string
+local function PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
+    local crafterUID = trackerRowData.crafterUID
+    local profession = trackerRowData.profession
+    local expansionID = trackerRowData.expansionID
+    local serializedData = trackerRowData.serializedData
+
+    local crafterProfessionColumn = row.columns[1]
+    local concentrationColumn = row.columns[2]
+    local maxedColumn = row.columns[3]
+    local moxieColumn = row.columns[4]
+
+    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+    local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession]
+    local crafterProfessionText = GUTIL:IconToText(professionIcon, 15, 15) ..
+        " " .. f.class(crafterUID, crafterClass)
+
+    row.crafterProfessionText = crafterProfessionText
+    row.crafterUID = crafterUID
+    row.profession = profession
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        row.characterHighlight:Show()
+    else
+        row.characterHighlight:Hide()
+    end
+    crafterProfessionColumn.text:SetText(crafterProfessionText)
+
+    if serializedData then
+        local concentrationData = CraftSim.ConcentrationData:Deserialize(serializedData)
+        local currentConcentration = concentrationData:GetSpendableAmount()
+        row.concentration = currentConcentration
+        concentrationColumn.text:SetText(currentConcentration)
+
+        local maxedColumnText = ""
+        local concentrationFull = currentConcentration >= concentrationData.maxQuantity
+        if concentrationFull then
+            maxedColumnText = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_MAX")
+        else
+            maxedColumnText = f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
+        end
+        maxedColumn.text:SetText(maxedColumnText)
+    else
+        row.concentration = -1
+        concentrationColumn.text:SetText(noConcentrationText)
+        maxedColumn.text:SetText(noConcentrationText)
+    end
+
+    local showRewardColumn = rewardColumnMode ~= nil
+    moxieColumn:SetShown(showRewardColumn)
+    if rewardColumnMode == "moxie" then
+        local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, profession,
+            expansionID)
+        if hasMoxieCurrency then
+            ApplyConcentrationTrackerMoxieIcon(moxieColumn.icon, profession, moxieQty)
+            local moxieDisplay = moxieQty ~= nil and BreakUpLargeNumbers(moxieQty)
+                or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+            row.tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                owner = row.frame,
+                text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE"), moxieDisplay),
+            }
+        else
+            ApplyConcentrationTrackerMoxieIcon(moxieColumn.icon, profession, nil)
+            row.tooltipOptions = nil
+        end
+    elseif rewardColumnMode == "acuity" then
+        local acuityQty = CraftSim.CONCENTRATION_TRACKER:GetListRowAcuityQuantity(crafterUID, expansionID)
+        ApplyConcentrationTrackerAcuityIcon(moxieColumn.icon, acuityQty)
+        local acuityDisplay = acuityQty ~= nil and BreakUpLargeNumbers(acuityQty)
+            or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+        row.tooltipOptions = {
+            anchor = "ANCHOR_CURSOR",
+            owner = row.frame,
+            text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_ACUITY"), acuityDisplay),
+        }
+    else
+        row.tooltipOptions = nil
+    end
+end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Init()
     local sizeX = 220
@@ -61,11 +176,11 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
         scale = 1,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        hide = true,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
     })
@@ -149,7 +264,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
-    local sizeX = 390
+    local sizeX = 410
     local sizeY = 400
     local offsetX = 0
     local offsetY = -15
@@ -165,7 +280,6 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         scale = 0.9,
         offsetX = offsetX,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER_TRACKER_FRAME,
         title = L("CONCENTRATION_TRACKER_TITLE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -215,7 +329,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
 
     GGUI.BlizzardTabSystem { content.listTab, content.optionsTab }
 
-    -- LIST TAB
+    -- LIST TAB (padding: 12 sides, 26 top, 16 bottom, 25 header, 30 scrollbar)
+    local listPad = 12
+    local listSizeX = sizeX - (listPad * 2) - 30
+    local listSizeY = sizeY - 67
 
     content.listTab.content.concentrationList = GGUI.FrameList {
         columnOptions = {
@@ -232,14 +349,22 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                 label = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_LABEL_MAX"),
                 width = 90,
                 justifyOptions = { type = "H", align = "CENTER" },
-            }
+            },
+            {
+                width = 22,
+                justifyOptions = { type = "H", align = "CENTER" },
+            },
         },
-        rowHeight = 20, sizeY = 300,
-        parent = content.listTab.content, anchorPoints = { { anchorParent = content.listTab.content, anchorA = "TOP", anchorB = "TOP", offsetY = -30, offsetX = -10 } },
+        rowHeight = 20,
+        sizeX = listSizeX,
+        sizeY = listSizeY,
+        headerOffsetX = 0,
+        parent = content.listTab.content, anchorPoints = { { anchorParent = content.listTab.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -26, offsetX = listPad } },
         rowConstructor = function(columns, row)
             local crafterProfessionColumn = columns[1]
             local concentrationColumn = columns[2]
             local maxedColumn = columns[3]
+            local moxieColumn = columns[4]
 
             local hlColor = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.CURRENT_PLAYER_LIGHT_YELLOW
             row.characterHighlight = row.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
@@ -267,6 +392,14 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                     fontFile = CraftSim.CONST.FONT_FILES.MONOSPACE,
                     height = 12,
                 },
+            }
+            moxieColumn.icon = GGUI.Icon {
+                parent = moxieColumn,
+                anchorParent = moxieColumn,
+                anchorA = "CENTER",
+                anchorB = "CENTER",
+                sizeX = 18,
+                sizeY = 18,
             }
         end,
         selectionOptions = {
@@ -345,8 +478,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             rootDescription:CreateButton(formatModeLabel, function()
                 CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_FORMAT_MODE", formatModeOption)
                 dropdown:SetDefaultText(formatModeLabel)
-                CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
-                CraftSim.CRAFTQ.UI:UpdateDisplay()
+                CraftSim.CONCENTRATION_TRACKER.UI:Update()
+                CraftSim.CRAFTQ.UI:Update()
                 if CraftSim.SIMULATION_MODE and CraftSim.SIMULATION_MODE.recipeData then
                     CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
                 end
@@ -361,98 +494,97 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     }
 end
 
+function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
+    -- only show for expansions DF and higher
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    return expansionID and expansionID >= CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+end
+
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     local trackerFrame = CraftSim.CONCENTRATION_TRACKER.trackerFrame
 
     local content = trackerFrame.content.listTab.content
-    content.concentrationList:Remove()
+    local concentrationList = content.concentrationList
 
     local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
-    local crafterConcentrationTable = {}
+    ---@type { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
+    local trackerRows = {}
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local openExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    local rewardColumnMode = nil
+    if openExpansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
+        rewardColumnMode = "moxie"
+    elseif openExpansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+        rewardColumnMode = "acuity"
+    end
     local blacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+    local noConcentrationText = L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+
+    local rewardHeaderColumn = concentrationList.headerColumns and concentrationList.headerColumns[4]
+    if rewardHeaderColumn then
+        rewardHeaderColumn:SetShown(rewardColumnMode ~= nil)
+    end
+
+    ---@type table<string, boolean>
+    local validRowKeys = {}
 
     for _, crafterUID in ipairs(crafterUIDs) do
         local crafterBlacklist = blacklist[crafterUID] or {}
-        local professionDataList = CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID,
-            openExpansionID)
-        for profession, serializedData in pairs(professionDataList) do
-            if not tContains(crafterBlacklist, profession) then
-                crafterConcentrationTable[crafterUID] = crafterConcentrationTable[crafterUID] or {}
 
-                if serializedData then
-                    tinsert(crafterConcentrationTable[crafterUID], {
+        for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID,
+            openExpansionID)) do
+            if not tContains(crafterBlacklist, profession) and serializedData then
+                local rowData = {
+                    crafterUID = crafterUID,
+                    profession = profession,
+                    expansionID = openExpansionID,
+                    serializedData = serializedData,
+                }
+                validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
+                tinsert(trackerRows, rowData)
+            end
+        end
+
+        if rewardColumnMode == "moxie" then
+            for profession in pairs(CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS) do
+                if not tContains(crafterBlacklist, profession) and CraftSim.UTIL:CrafterHasProfession(crafterUID, profession) then
+                    local rowData = {
+                        crafterUID = crafterUID,
                         profession = profession,
                         expansionID = openExpansionID,
-                        serializedData = serializedData
-                    })
+                        serializedData = nil,
+                    }
+                    validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
+                    tinsert(trackerRows, rowData)
                 end
             end
         end
     end
 
-    for crafterUID, professionConcentrationDataList in pairs(crafterConcentrationTable) do
-        for _, professionConcentrationData in ipairs(professionConcentrationDataList) do
-            content.concentrationList:Add(function(row, columns)
-                local crafterProfessionColumn = columns[1]
-                local concentrationColumn = columns[2]
-                local maxedColumn = columns[3]
+    concentrationList:Remove(function(row)
+        if not row.crafterUID or not row.profession then
+            return true
+        end
+        return not validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(row.crafterUID, row.profession)]
+    end)
 
-                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-                local professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionConcentrationData.profession]
-                local crafterProfessionText = GUTIL:IconToText(professionIcon, 15, 15) ..
-                    " " .. f.class(crafterUID, crafterClass)
-                row.crafterProfessionText = crafterProfessionText
-                row.crafterUID = crafterUID
-                row.profession = professionConcentrationData.profession
-                if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
-                    row.characterHighlight:Show()
-                else
-                    row.characterHighlight:Hide()
-                end
-                crafterProfessionColumn.text:SetText(crafterProfessionText)
-
-                local concentrationData = CraftSim.ConcentrationData:Deserialize(professionConcentrationData
-                    .serializedData)
-
-                local currentConcentration = concentrationData:GetCurrentAmount()
-                row.concentration = currentConcentration
-
-                concentrationColumn.text:SetText(math.floor(currentConcentration))
-
-                local maxedColumnText = ""
-                local concentrationFull = currentConcentration >= concentrationData.maxQuantity
-
-                if concentrationFull then
-                    maxedColumnText = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_MAX")
-                else
-                    maxedColumnText = f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
-                end
-
-                maxedColumn.text:SetText(maxedColumnText)
-
-                local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID,
-                    professionConcentrationData.profession,
-                    professionConcentrationData.expansionID)
-                if hasMoxieCurrency then
-                    local moxieDisplay = moxieQty ~= nil and BreakUpLargeNumbers(moxieQty)
-                        or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
-                    row.tooltipOptions = {
-                        anchor = "ANCHOR_CURSOR",
-                        owner = row.frame,
-                        text = string.format(L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE"), moxieDisplay),
-                    }
-                else
-                    row.tooltipOptions = nil
-                end
+    for _, trackerRowData in ipairs(trackerRows) do
+        local existingRow = concentrationList:GetRow(function(row)
+            return row.crafterUID == trackerRowData.crafterUID and row.profession == trackerRowData.profession
+        end)
+        if existingRow then
+            PopulateConcentrationTrackerRow(existingRow, trackerRowData, rewardColumnMode, noConcentrationText)
+        else
+            concentrationList:Add(function(row)
+                PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
             end)
         end
     end
 
     local sortMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_SORT_MODE")
 
-    content.concentrationList:UpdateDisplay(function(rowA, rowB)
+    concentrationList:UpdateDisplay(function(rowA, rowB)
         if sortMode == CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE.CHARACTER then
             if rowA.crafterUID > rowB.crafterUID then
                 return true
@@ -475,14 +607,14 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end)
 end
 
-function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+function CraftSim.CONCENTRATION_TRACKER.UI:Update()
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     if not concentrationData or not concentrationData.currencyID then return end
 
     local content = CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT]]
 
-    local currentConcentration = concentrationData:GetCurrentAmount()
-    content.value:SetText(math.floor(currentConcentration))
+    local currentConcentration = concentrationData:GetSpendableAmount()
+    content.value:SetText(currentConcentration)
     content.maxValue:SetText(concentrationData.maxQuantity)
 
     if currentConcentration >= concentrationData.maxQuantity then
@@ -498,4 +630,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
         CraftSim.CONCENTRATION_TRACKER.trackerFrame:SetVisible(true)
         CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     end
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:RestoreFrameConfig()
+    CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
 end

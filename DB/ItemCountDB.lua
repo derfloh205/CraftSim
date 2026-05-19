@@ -125,11 +125,11 @@ end
 
 function CraftSim.DB.ITEM_COUNT.MIGRATION:M_1_2_Remove_colored_crafter_names()
     -- remove any crafter entries with colored names...
-        for crafterUID, _ in pairs(CraftSimDB.itemCountDB.data or {}) do
-            if string.find(crafterUID, '\124c') then
-                CraftSimDB.itemCountDB.data[crafterUID] = nil
-            end
+    for crafterUID, _ in pairs(CraftSimDB.itemCountDB.data or {}) do
+        if string.find(crafterUID, '\124c') then
+            CraftSimDB.itemCountDB.data[crafterUID] = nil
         end
+    end
 end
 
 function CraftSim.DB.ITEM_COUNT.MIGRATION:M_2_3_Remove_fishing_from_concentrationData()

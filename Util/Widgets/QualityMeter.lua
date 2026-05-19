@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 CraftSim.WIDGETS = CraftSim.WIDGETS or {}
@@ -212,7 +212,8 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         local fillX = math.max(barWidth * fillFraction, 0)
 
         self.frame.currentSkillText:ClearAllPoints()
-        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT", fillX, BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
+        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT", fillX,
+            BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
 
         -- Update bottom labels
@@ -236,7 +237,8 @@ function CraftSim.WIDGETS.QualityMeter:Update(recipeData, thresholds)
         local fillX = math.max(barWidth * fillFraction, 0)
 
         self.frame.currentSkillText:ClearAllPoints()
-        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT", fillX, BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
+        self.frame.currentSkillText:SetPoint("BOTTOM", self.frame.bar, "BOTTOMLEFT", fillX,
+            BAR_HEIGHT + SKILL_TEXT_OFFSET_Y)
         self.frame.currentSkillText:SetText(f.l(currentSkill))
 
         self.frame.neededSkillText:SetText("")

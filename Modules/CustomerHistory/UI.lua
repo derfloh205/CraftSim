@@ -12,7 +12,7 @@ CraftSim.CUSTOMER_HISTORY.frame = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory.UI")
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 function CraftSim.CUSTOMER_HISTORY.UI:Init()
     local sizeX = 910
@@ -502,4 +502,8 @@ end
 function CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedTimeString(timestamp)
     local date = date("*t", timestamp)
     return string.format("%02d:%02d:%02d", date.hour, date.min, date.sec)
+end
+
+function CraftSim.CUSTOMER_HISTORY.UI:RestoreFrameConfig()
+    CraftSim.CUSTOMER_HISTORY.frame:RestoreSavedConfig(ProfessionsFrame)
 end

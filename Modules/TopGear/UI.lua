@@ -19,33 +19,8 @@ function CraftSim.TOPGEAR.UI:Init()
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
 
-    local frameWO = CraftSim.GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent = ProfessionsFrame,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER,
-        title = CraftSim.LOCAL:GetText("TOP_GEAR_TITLE") ..
-            " " ..
-            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"),
-                CraftSim.GUTIL.COLORS.GREY),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        anchorA = "TOPLEFT",
-        anchorB = "TOPRIGHT",
-        offsetX = offsetX,
-        offsetY = offsetY,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_TOP_GEAR"),
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
-    local frameNO_WO = CraftSim.GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+    CraftSim.TOPGEAR.frame = CraftSim.GGUI.Frame({
+        parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
@@ -188,8 +163,7 @@ function CraftSim.TOPGEAR.UI:Init()
         frame:Hide()
     end
 
-    createContent(frameNO_WO)
-    createContent(frameWO)
+    createContent(CraftSim.TOPGEAR.frame)
 end
 
 function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)
@@ -272,7 +246,7 @@ function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMo
 
     if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE") ..
-        CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
+            CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_MUTLICRAFT") ..
             CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
@@ -337,4 +311,8 @@ function CraftSim.TOPGEAR.UI:UpdateModeDropdown(recipeData, exportMode)
         initialValue = topGearMode,
         initialLabel = topGearMode
     })
+end
+
+function CraftSim.TOPGEAR.UI:RestoreFrameConfig()
+    CraftSim.TOPGEAR.frame:RestoreSavedConfig(ProfessionsFrame)
 end

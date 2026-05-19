@@ -464,8 +464,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
 
 
         if recipeData.concentrating and recipeData.concentrationData and autoRemoveConcentrationUsedUp then
-            local remainingConcentration = recipeData.concentrationData:GetCurrentAmount()
-            concentrationUsedUp = remainingConcentration < recipeData.concentrationCost
+            concentrationUsedUp = not recipeData.concentrationData:CanAfford(recipeData.concentrationCost)
         end
 
         if concentrationUsedUp then
@@ -483,7 +482,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData, craftingItemResultData)
             end
         end
     end
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 ---@return number maxDepth

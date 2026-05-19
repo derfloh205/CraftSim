@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.STATISTICS
@@ -493,4 +493,8 @@ end
 function CraftSim.STATISTICS.UI:SetVisible(showModule, exportMode)
     CraftSim.STATISTICS.frameWO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
     CraftSim.STATISTICS.frameNO_WO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+end
+
+function CraftSim.STATISTICS.UI:RestoreFrameConfig()
+    CraftSim.STATISTICS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
 end

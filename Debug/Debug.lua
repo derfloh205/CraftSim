@@ -19,7 +19,7 @@ local LibLog = CraftSim.LibLog
 local systemPrint = print
 
 function CraftSim.DEBUG:Init()
-    GUTIL:SetEventLogger(self:RegisterLogger("CraftSim Events"))
+    GUTIL:SetEventLogger(self:RegisterLogger("CraftSim Events"), 3)
 
     -- need to safely fetch the minimum log level due to db module initialized after debug
 
@@ -35,6 +35,15 @@ function CraftSim.DEBUG:Init()
     end
 
     self:SetMinimumLogLevel(minimumLogLevel)
+
+    local eventDevLogging = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS["EVENT_DEV_TOOL_LOGGING_ENABLED"]
+    if optionsDB then
+        local data = optionsDB.data
+        if data then
+            eventDevLogging = data["EVENT_DEV_TOOL_LOGGING_ENABLED"] or eventDevLogging
+        end
+    end
+    GUTIL:SetEventDevToolLogging(eventDevLogging)
 end
 
 ---@param logLevel LibLog-1.0.LogLevel
@@ -49,6 +58,7 @@ end
 function CraftSim.DEBUG:RegisterLogger(loggerID)
     local newLogger = { name = loggerID }
     LibLog:Embed(newLogger)
+    newLogger:SetLogLevel(2)
     table.insert(self.registeredLogger, newLogger)
     return newLogger
 end
@@ -81,8 +91,13 @@ end
 
 function CraftSim.DEBUG:ProfilingUpdate(label)
     local time = debugprofilestop()
-    local diff = time - CraftSim.DEBUG.profilings[label]
-    profiling:LogDebug("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
+    local startTime = CraftSim.DEBUG.profilings[label]
+    if not startTime then
+        profiling:LogWarning("Util Profiling Label not found on Update: {label}", label)
+        return
+    end
+    local diff = time - startTime
+    profiling:LogInfo("{label}: {diff} ms (u)", label, CraftSim.GUTIL:Round(diff))
 end
 
 ---@param label string
@@ -96,7 +111,7 @@ end
 function CraftSim.DEBUG:StopProfiling(label)
     local startTime = CraftSim.DEBUG.profilings[label]
     if not startTime then
-        profiling:LogError("Util Profiling Label not found on Stop: {label}", label)
+        profiling:LogWarning("Util Profiling Label not found on Stop: {label}", label)
         return 0
     end
     local time = debugprofilestop()
