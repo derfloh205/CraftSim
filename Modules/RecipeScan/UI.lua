@@ -422,7 +422,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     for crafterUID, crafterDBData in pairs(crafterDBDataMap) do
         local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs or {}
         for profession, _ in pairs(cachedProfessionRecipeIDs) do
-            local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+            local crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
             local alreadyListed = GUTIL:Some(activeRows, function(activeRow)
                 return activeRow.crafterProfessionUID == crafterProfessionUID
             end)
@@ -448,9 +448,9 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
             local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
             local crafterUIDA = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowA.crafterData)
             local crafterUIDB = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowB.crafterData)
-            local playerCrafterProfessionUIDA = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUIDA, rowA
+            local playerCrafterProfessionUIDA = CraftSim.UTIL:GetCrafterProfessionUID(crafterUIDA, rowA
                 .profession)
-            local playerCrafterProfessionUIDB = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUIDB, rowB
+            local playerCrafterProfessionUIDB = CraftSim.UTIL:GetCrafterProfessionUID(crafterUIDB, rowB
                 .profession)
 
             -- current character and current profession always on top
@@ -1268,7 +1268,7 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
         ---@type string
         row.crafterUID = crafterUID
         ---@type string
-        row.crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+        row.crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
 
         ---@type CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW[]
         row.activeRows = content.professionList.activeRows
@@ -1304,7 +1304,7 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
         ---@type CraftSim.RecipeData[]
         row.currentResults = {}
 
-        local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+        local crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
 
         local isChecked = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDED_PROFESSIONS")[crafterProfessionUID]
 

@@ -399,6 +399,13 @@ function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return string crafterProfessionUID
+function CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
+    return tostring(crafterUID) .. ":" .. tostring(profession)
+end
+
 function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
