@@ -131,6 +131,20 @@ function CraftSim.MODULES:UpdateVisibilityByContext()
 	end
 end
 
+--- Shows recipe-independent UI when the professions frame opens (e.g. Crafting Orders tab where
+--- SchematicForm:Init may not run yet).
+function CraftSim.MODULES:ShowRecipeIndependentModules()
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		return
+	end
+
+	if CraftSim.CONTROL_PANEL.frame then
+		CraftSim.CONTROL_PANEL.frame:Show()
+	end
+
+	CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+end
+
 --- Updates only the Craft Queue "add work orders" enabled state (near table or Crafting Orders tab available).
 function CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
 	-- do not alter state if we are currently in a queueing process

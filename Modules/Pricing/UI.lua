@@ -441,6 +441,9 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PRICING:UpdateDisplay(recipeData)
     local pricingFrame = CraftSim.PRICING.frame
+    if not pricingFrame then
+        return
+    end
 
     Logger:LogDebug("Pricing - Reagent List Update", false, true)
 
@@ -540,13 +543,17 @@ function CraftSim.PRICING:UpdateDisplay(recipeData)
     end
 
     reagentList:UpdateDisplay()
-    CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
+    CraftSim.PRICING.UI:UpdateResultItemsList(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param costOptimizationFrame GGUI.Frame
-function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationFrame)
-    local resultItemsList = costOptimizationFrame.content.resultItemsList --[[@as GGUI.FrameList]]
+function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData)
+    local pricingFrame = CraftSim.PRICING.frame
+    if not pricingFrame then
+        return
+    end
+
+    local resultItemsList = pricingFrame.content.resultItemsList --[[@as GGUI.FrameList]]
     resultItemsList:Remove()
 
     local priceData = recipeData.priceData
