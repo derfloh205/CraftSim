@@ -1,16 +1,24 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
+local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.RECIPE_INFO
+---@class CraftSim.RECIPE_INFO : CraftSim.Module
 CraftSim.RECIPE_INFO = {}
 
--- Backward compatibility alias
-CraftSim.AVERAGEPROFIT = CraftSim.RECIPE_INFO
+CraftSim.MODULES:RegisterModule("MODULE_RECIPE_INFO", CraftSim.RECIPE_INFO, {
+    label = L("CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.RECIPE_INFO, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 ---@type GGUI.Frame
 CraftSim.RECIPE_INFO.frame = nil
----@type GGUI.Frame
-CraftSim.RECIPE_INFO.frameWO = nil
+---@type CraftSim.RecipeData?
+CraftSim.RECIPE_INFO.currentRecipeData = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeInfo")
 
@@ -20,21 +28,21 @@ local statIncreaseFactor = 5
 --- Keys that are true are shown by default; false keys must be toggled on by the user.
 CraftSim.RECIPE_INFO.DISPLAY_OPTIONS_DEFAULTS = {
     -- Stat-weight rows: on by default
-    AVG_PROFIT             = true,
-    MULTICRAFT_WEIGHT      = true,
-    RESOURCEFULNESS_WEIGHT = true,
-    CONCENTRATION_WEIGHT   = true,
+    AVG_PROFIT                = true,
+    MULTICRAFT_WEIGHT         = true,
+    RESOURCEFULNESS_WEIGHT    = true,
+    CONCENTRATION_WEIGHT      = true,
     -- Extra rows: off by default
-    CRAFTING_COST               = false,
-    AVG_CRAFTING_COST           = false,
-    RESULT_ICONS                = false,
-    KNOWLEDGE_POINTS            = false,
-    AVG_YIELD                   = false,
-    AVG_MULTICRAFT_ITEMS        = false,
-    AVG_RESOURCEFULNESS_SAVED   = false,
-    CONCENTRATION_PROFIT        = false,
-    CONCENTRATION_COST          = false,
-    PROFIT_PER_QUALITY          = true,
+    CRAFTING_COST             = false,
+    AVG_CRAFTING_COST         = false,
+    RESULT_ICONS              = false,
+    KNOWLEDGE_POINTS          = false,
+    AVG_YIELD                 = false,
+    AVG_MULTICRAFT_ITEMS      = false,
+    AVG_RESOURCEFULNESS_SAVED = false,
+    CONCENTRATION_PROFIT      = false,
+    CONCENTRATION_COST        = false,
+    PROFIT_PER_QUALITY        = true,
 }
 
 --- Returns the display-options table, filling in any missing keys from defaults.
@@ -52,7 +60,7 @@ function CraftSim.RECIPE_INFO:GetQualityThresholds(maxQuality, recipeDifficulty,
     if maxQuality == 1 then
         return {}
     elseif maxQuality == 2 then
-        return {recipeDifficulty + offset}
+        return { recipeDifficulty + offset }
     elseif maxQuality == 3 then
         return { recipeDifficulty * 0.5 + offset, recipeDifficulty + offset }
     elseif maxQuality == 5 then
@@ -84,7 +92,7 @@ function CraftSim.RECIPE_INFO:GetMulticraftWeight(recipeData, baseAverageProfit)
     local statWeight = CraftSim.RECIPE_INFO:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.multicraft:subtractValue(statIncreaseFactor)
-    recipeData:Update() -- needed to update professionStats after reverting - or else CraftSim.MODULES.recipeData is invalid
+    recipeData:Update() -- needed to refresh profession stats after reverting modifier changes
     return statWeight
 end
 
@@ -100,7 +108,7 @@ function CraftSim.RECIPE_INFO:GetResourcefulnessWeight(recipeData, baseAveragePr
     local statWeight = CraftSim.RECIPE_INFO:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.resourcefulness:subtractValue(statIncreaseFactor)
-    recipeData:Update() -- needed to update professionStats after reverting - or else CraftSim.MODULES.recipeData is invalid
+    recipeData:Update() -- needed to refresh profession stats after reverting modifier changes
     return statWeight
 end
 
@@ -133,6 +141,18 @@ function CraftSim.RECIPE_INFO:CalculateStatWeights(recipeData)
     local concentrationValue = recipeData:GetConcentrationValue()
 
     return CraftSim.Statweights(averageProfit, multicraftWeight, resourcefulnessWeight, concentrationValue)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_INFO:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not recipeData then
+        return
+    end
+
+    self.currentRecipeData = recipeData
+
+    local statWeights = self:CalculateStatWeights(recipeData)
+    self.UI:UpdateDisplay(recipeData, statWeights)
 end
 
 --- Returns allocated and maximum knowledge points for this recipe from spec data

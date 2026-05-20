@@ -5,8 +5,6 @@ CraftSim.MEDIA = {}
 
 CraftSim.MEDIA.BASE_PATH = "Interface/Addons/CraftSim/Media/Images/"
 
-local Logger = CraftSim.DEBUG:RegisterLogger("Media")
-
 function CraftSim.MEDIA:GetAsTextIcon(image, scale)
     if tContains(CraftSim.MEDIA.IMAGES, image) then
         scale = scale or 1

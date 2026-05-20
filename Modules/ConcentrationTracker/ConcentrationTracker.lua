@@ -4,8 +4,14 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.CONCENTRATION_TRACKER
+---@class CraftSim.CONCENTRATION_TRACKER : CraftSim.Module
 CraftSim.CONCENTRATION_TRACKER = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENTRATION_TRACKER)
+
+GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
+    "CRAFTSIM_PROFESSION_INITIALIZED",
+})
 
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
@@ -37,6 +43,33 @@ function CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(crafterUID, p
     local info = C_CurrencyInfo.GetCurrencyInfo(moxieCurrencyID)
     local quantity = (info and info.quantity) or 0
     CraftSim.DB.CRAFTER:SaveCrafterMoxieData(crafterUID, profession, expansionID, quantity)
+end
+
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+function CraftSim.CONCENTRATION_TRACKER:SnapshotAcuityForCrafter(crafterUID, expansionID)
+    if not expansionID then
+        return
+    end
+    local acuityItemID = CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY
+    local quantity = C_Item.GetItemCount(acuityItemID, true, false, true, true) or 0
+    CraftSim.DB.CRAFTER:SaveCrafterAcuityData(crafterUID, expansionID, quantity)
+end
+
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@return number? quantity nil when unknown for other characters
+function CraftSim.CONCENTRATION_TRACKER:GetListRowAcuityQuantity(crafterUID, expansionID)
+    local acuityItemID = CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        local liveQuantity = C_Item.GetItemCount(acuityItemID, true, false, true, true) or 0
+        local storedQuantity = CraftSim.DB.CRAFTER:GetCrafterAcuityData(crafterUID, expansionID)
+        if storedQuantity ~= liveQuantity then
+            CraftSim.DB.CRAFTER:SaveCrafterAcuityData(crafterUID, expansionID, liveQuantity)
+        end
+        return liveQuantity
+    end
+    return CraftSim.DB.CRAFTER:GetCrafterAcuityData(crafterUID, expansionID)
 end
 
 ---@param crafterUID CrafterUID
@@ -84,6 +117,9 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             cached)
         CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        if expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+            CraftSim.CONCENTRATION_TRACKER:SnapshotAcuityForCrafter(playerCrafterUID, expansionID)
+        end
 
         return cached
     end
@@ -101,6 +137,9 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
             CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID),
             concentrationData)
         CraftSim.CONCENTRATION_TRACKER:SnapshotMoxieForProfession(playerCrafterUID, profession, expansionID)
+        if expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+            CraftSim.CONCENTRATION_TRACKER:SnapshotAcuityForCrafter(playerCrafterUID, expansionID)
+        end
         CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = concentrationData
         return concentrationData
     end
@@ -113,4 +152,8 @@ end
 function CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)
     local formatted = concentrationData:GetFormattedDateMax()
     return f.bb(formatted)
+end
+
+function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_INITIALIZED()
+    self.UI:Update()
 end

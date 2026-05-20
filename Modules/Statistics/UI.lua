@@ -4,13 +4,13 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.STATISTICS
+---@class CraftSim.STATISTICS : CraftSim.Module
 CraftSim.STATISTICS = CraftSim.STATISTICS
 
----@class CraftSim.STATISTICS.UI
+---@class CraftSim.STATISTICS.UI : CraftSim.Module.UI
 CraftSim.STATISTICS.UI = {}
 
 CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
@@ -22,9 +22,10 @@ function CraftSim.STATISTICS.UI:Init()
     local sizeY = 400
 
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
 
-    CraftSim.STATISTICS.frameNO_WO = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+    CraftSim.STATISTICS.frame = GGUI.Frame({
+        parent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.STATISTICS,
@@ -35,31 +36,13 @@ function CraftSim.STATISTICS.UI:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_STATISTICS"),
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel
     })
-
-    CraftSim.STATISTICS.frameWO = GGUI.Frame({
-        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        sizeX = sizeX,
-        sizeY = sizeY,
-        frameID = CraftSim.CONST.FRAMES.STATISTICS_WORKORDER,
-        title = L("STATISTICS_TITLE") ..
-            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SOURCE_COLUMN_WO"), GUTIL.COLORS.GREY),
-        collapseable = true,
-        closeable = true,
-        moveable = true,
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_STATISTICS"),
-        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        raiseOnInteraction = true,
-        frameLevel = frameLevel
-    })
-
 
     local function createContent(frame)
         frame:Hide()
@@ -110,8 +93,8 @@ function CraftSim.STATISTICS.UI:Init()
         GGUI.BlizzardTabSystem { frame.content.probabilityTableTab, frame.content.concentrationTab }
     end
 
-    createContent(CraftSim.STATISTICS.frameNO_WO)
-    createContent(CraftSim.STATISTICS.frameWO)
+    createContent(CraftSim.STATISTICS.frame)
+    self.module.frame = CraftSim.STATISTICS.frame
 end
 
 ---@param tab CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB
@@ -172,7 +155,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
             if not recipeData then
                 return
             end
-            CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
+            CraftSim.STATISTICS.UI:Update(recipeData)
         end
     })
 
@@ -347,8 +330,12 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
-    local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
+function CraftSim.STATISTICS.UI:Update(recipeData)
+    if not recipeData or not recipeData.supportsCraftingStats then
+        return
+    end
+
+    local statisticsFrame = CraftSim.STATISTICS.frame
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
     if not statisticsFrame then return end
@@ -490,7 +477,24 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
     end
 end
 
-function CraftSim.STATISTICS.UI:SetVisible(showModule, exportMode)
-    CraftSim.STATISTICS.frameWO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-    CraftSim.STATISTICS.frameNO_WO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+function CraftSim.STATISTICS.UI:RestoreFrameConfig()
+    CraftSim.STATISTICS.frame:RestoreSavedConfig(ProfessionsFrame)
+end
+
+function CraftSim.STATISTICS.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    if not (isRecipeTab or isCraftingOrderTab) then
+        return false
+    end
+    return CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.supportsCraftingStats
 end

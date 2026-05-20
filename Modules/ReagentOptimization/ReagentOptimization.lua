@@ -2,7 +2,7 @@
 
     This following logic executes a combinatorial optimization for a modified version of the knapsack
     problem for recipes with quality-rated, required reagents, referred to now simply as reagents.
-    
+
     These crafting equations are used to prepare the data for the optimization.
 
     -----------------------------------------------------------------------------------------------
@@ -78,14 +78,39 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.REAGENT_OPTIMIZATION
+---@class CraftSim.REAGENT_OPTIMIZATION : CraftSim.Module
+---@field UI CraftSim.REAGENT_OPTIMIZATION.UI
 CraftSim.REAGENT_OPTIMIZATION = {}
+
+CraftSim.MODULES:RegisterModule("MODULE_REAGENT_OPTIMIZATION", CraftSim.REAGENT_OPTIMIZATION, {
+    label = L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.REAGENT_OPTIMIZATION, {
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
+})
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ReagentOptimization")
 
 local function translateLuaIndex(index)
     return index + 1
+end
+
+function CraftSim.REAGENT_OPTIMIZATION:Update()
+    if not self.recipeData then
+        return
+    end
+
+    self.UI:Update(self.recipeData)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.REAGENT_OPTIMIZATION:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    self.recipeData = recipeData
+    self:Update()
 end
 
 ---Returns the recipe weight for the reagent
@@ -176,8 +201,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do next weights
     for i = 1, numReagents, 1 do
-        for k = 0, maxQualityFactor * ks[i].numReq, 1 do   -- for each weight and value in reagent(i)
-            for j = 0, maxWeight, 1 do -- for each possible weight value
+        for k = 0, maxQualityFactor * ks[i].numReq, 1 do -- for each weight and value in reagent(i)
+            for j = 0, maxWeight, 1 do                   -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
                     -- we know it is reachable
@@ -240,8 +265,9 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
             -- create the list of reagents that represent optimization for target BP
             for i = numReagents, 0, -1 do
-                k = c[i][j]                  -- the index into V and W for minValue > target
-                local composition = ks[i].compositions[k] -- to work around the single composition of patron order reagents
+                k = c[i][j] -- the index into V and W for minValue > target
+                local composition = ks[i].compositions
+                    [k]     -- to work around the single composition of patron order reagents
                 if composition then
                     --Logger:LogDebug("current matstring: " .. tostring(matString))
                     --Logger:LogDebug("name: " .. ks[i].name)
@@ -565,7 +591,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, max
     Logger:LogDebug("skillWithoutReagentIncrease" .. tostring(skillWithoutReagentIncrease))
 
 
-    local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData,
+    local expectedQualityWithoutReagents = CraftSim.RECIPE_INFO:GetExpectedQualityBySkill(recipeData,
         skillWithoutReagentIncrease)
 
     Logger:LogDebug("expectedQualityWithoutReagents: " .. tostring(expectedQualityWithoutReagents))

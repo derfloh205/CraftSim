@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = CraftSim.GUTIL:GetFormatter()
 
 ---@class CraftSim.ITEM_TOOLTIPS
