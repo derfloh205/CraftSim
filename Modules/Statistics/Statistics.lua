@@ -23,6 +23,7 @@ local Logger = CraftSim.DEBUG:RegisterLogger("Statistics")
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.STATISTICS:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.moduleID) then return end
     self.UI:Update(recipeData)
 end
 

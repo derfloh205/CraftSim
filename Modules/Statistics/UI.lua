@@ -335,7 +335,7 @@ function CraftSim.STATISTICS.UI:Update(recipeData)
         return
     end
 
-    local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
+    local statisticsFrame = CraftSim.STATISTICS.frame
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
     if not statisticsFrame then return end
