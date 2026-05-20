@@ -115,3 +115,21 @@ end
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS.MIGRATION:M_3_4_ClearAll()
     CraftSim.DB.ITEM_OPTIMIZED_COSTS:ClearAll()
 end
+
+function CraftSim.DB.ITEM_OPTIMIZED_COSTS.MIGRATION:M_4_5_Normalize_crafterUID_keys()
+    for itemID, crafterMap in pairs(CraftSimDB.itemOptimizedCostsDB.data or {}) do
+        if type(crafterMap) == "table" then
+            local normalizedMap = {}
+            for crafterUID, value in pairs(crafterMap) do
+                local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+                if normalizedCrafterUID then
+                    normalizedMap[normalizedCrafterUID] = normalizedMap[normalizedCrafterUID] or value
+                    if type(value) == "table" then
+                        value.crafter = normalizedCrafterUID
+                    end
+                end
+            end
+            CraftSimDB.itemOptimizedCostsDB.data[itemID] = normalizedMap
+        end
+    end
+end

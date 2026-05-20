@@ -38,12 +38,20 @@ end
 ---@param profession Enum.Profession
 ---@param preloaded boolean
 function CraftSim.DB.MULTICRAFT_PRELOAD:Save(profession, preloaded)
+    if not profession then
+        return
+    end
+    CraftSimDB.multicraftPreloadDB.data = CraftSimDB.multicraftPreloadDB.data or {}
     CraftSimDB.multicraftPreloadDB.data[profession] = preloaded
 end
 
 ---@param profession Enum.Profession
 ---@return boolean preloaded
 function CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession)
+    if not profession then
+        return false
+    end
+    CraftSimDB.multicraftPreloadDB.data = CraftSimDB.multicraftPreloadDB.data or {}
     return CraftSimDB.multicraftPreloadDB.data[profession] == true -- to convert to boolean
 end
 

@@ -7,7 +7,6 @@ local GUTIL = CraftSim.GUTIL
 local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
-
 ---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
@@ -16,6 +15,9 @@ CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RES
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
     "CRAFTSIM_CRAFTING_ORDERS_PRELOADED",
+    "CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
+    "CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED",
+    "CRAFTSIM_PROFESSION_OPENED",
 })
 
 CraftSim.MODULES:RegisterModule("MODULE_CRAFT_QUEUE", CraftSim.CRAFTQ, {
@@ -38,6 +40,7 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- used to cache player item counts during sorting and recalculation of craft queue
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
+CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
 
 --- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
 ---@type table<number, number>
@@ -225,6 +228,7 @@ end
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
+    self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
     local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
     if not profession or not CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton() then
         CraftSim.CRAFTQ.queuingWorkOrders = false
@@ -449,7 +453,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                     end
 
                                     local function queueRecipe()
-                                        local isAlreadyQueued = CraftSim.CRAFTQ.craftQueue:FindRecipe(recipeData) ~= nil
+                                        local craftQueue = CraftSim.CRAFTQ.craftQueue
+                                        if not craftQueue then
+                                            return
+                                        end
+                                        local isAlreadyQueued = craftQueue:FindRecipe(recipeData) ~= nil
                                         if isAlreadyQueued then
                                             Logger:LogDebug("Work order is already queued, skipping")
                                             distributor:Continue()
@@ -864,9 +872,35 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     if qFrame and qFrame:IsVisible() then
         CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         -- Equip / unequip updates inventory after a delay; refresh queue gear state unless mid Equip() sequence.
-        if not CraftSim.TOPGEAR.IsEquipping then
-            CraftSim.CRAFTQ.UI:Update()
+        if not CraftSim.TOPGEAR.IsEquipping and not CraftSim.CRAFTQ.pendingBagUpdateRefresh then
+            CraftSim.CRAFTQ.pendingBagUpdateRefresh = true
+            RunNextFrame(function()
+                CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
+                local frame = CraftSim.CRAFTQ.frame
+                if frame and frame:IsVisible() and not CraftSim.TOPGEAR.IsEquipping then
+                    CraftSim.CRAFTQ.UI:Update()
+                end
+            end)
         end
+    end
+end
+
+---@param ordersTabEnabled boolean
+function CraftSim.CRAFTQ:CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED(ordersTabEnabled)
+    GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
+end
+
+---@param professionInfo ProfessionInfo
+---@param selectedTab CraftSim.PROFESSIONS_TAB
+---@param isLogin boolean
+---@param isReload boolean
+function CraftSim.CRAFTQ:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, isLogin, isReload)
+    GUTIL:TriggerCustomEvent("CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED")
+end
+
+function CraftSim.CRAFTQ:CRAFTSIM_PRECRAFT_CONDITIONS_UPDATED()
+    if self.frame and self.frame:IsVisible() then
+        self.UI:Update()
     end
 end
 
