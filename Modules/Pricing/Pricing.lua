@@ -18,5 +18,8 @@ GUTIL:RegisterCustomEvents(CraftSim.PRICING, {
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PRICING:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.moduleID) then
+        return
+    end
     self:UpdateDisplay(recipeData)
 end
