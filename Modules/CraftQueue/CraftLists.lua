@@ -246,15 +246,28 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             end
 
             if not picked and queueableAmount > 0 then
-                -- Cap SBF crafts to the concentration-limited amount.
-                local sbfCrafts = entrySbfCrafts[entry] or 0
-                if sbfCrafts > queueableAmount then
-                    entrySbfCrafts[entry] = queueableAmount
+                local offsetAmount = tonumber(entry.options.offsetQueueAmount) or 0
+                local totalQueueAmount = queueableAmount + offsetAmount
+
+                if entry.maxQueueAmount then
+                    totalQueueAmount = math.min(totalQueueAmount, entry.maxQueueAmount)
                 end
-                entryOverrideAmount[entry] = queueableAmount
+
+                -- Cap SBF crafts to the final queued amount.
+                local sbfCrafts = entrySbfCrafts[entry] or 0
+                if sbfCrafts > totalQueueAmount then
+                    entrySbfCrafts[entry] = totalQueueAmount
+                end
+
+                entryOverrideAmount[entry] = totalQueueAmount
+
+                -- Only subtract the real calculated concentration crafts.
+                -- The offset crafts are extra buffer for Ingenuity procs.
                 currentConcentration = currentConcentration - (concentrationCost * queueableAmount)
+
                 picked = true
             else
+
                 -- smartConcentrationQueuing: only one recipe per profession gets queued.
                 skipEntry[entry] = true
             end
