@@ -655,25 +655,28 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             queueAble = true
                                         end
 
-                                        if (forceConcentration or allowConcentration) and hasMinQualityRequirement and
+                                        if hasMinQualityRequirement and
                                             recipeData.resultData.expectedQualityConcentration >= minQuality then
-                                            recipeData.concentrating = true
-                                            recipeData:Update()
-                                            queueAble = true
-                                            if qualityWithoutConcentration < minQuality then
-                                                local concentrationData = recipeData.concentrationData
-                                                local currentAmount = concentrationData and
-                                                    concentrationData:GetCurrentAmount() or 0
-                                                if recipeData.concentrationCost <= 0 or
-                                                    currentAmount < recipeData.concentrationCost then
-                                                    queueAble = false
-                                                    recipeData.concentrating = false
-                                                    recipeData:Update()
-                                                    logSkippedWorkOrder(order, "concentration not affordable",
-                                                        "need {concentrationCost}, minQuality {minQuality}, expectedQ {expectedQ}, concQ {concQ}",
-                                                        recipeData.concentrationCost, minQuality,
-                                                        qualityWithoutConcentration,
-                                                        recipeData.resultData.expectedQualityConcentration)
+                                            local needsConcentration = qualityWithoutConcentration < minQuality
+                                            if forceConcentration or (allowConcentration and needsConcentration) then
+                                                recipeData.concentrating = true
+                                                recipeData:Update()
+                                                queueAble = true
+                                                if needsConcentration then
+                                                    local concentrationData = recipeData.concentrationData
+                                                    local currentAmount = concentrationData and
+                                                        concentrationData:GetCurrentAmount() or 0
+                                                    if recipeData.concentrationCost <= 0 or
+                                                        currentAmount < recipeData.concentrationCost then
+                                                        queueAble = false
+                                                        recipeData.concentrating = false
+                                                        recipeData:Update()
+                                                        logSkippedWorkOrder(order, "concentration not affordable",
+                                                            "need {concentrationCost}, minQuality {minQuality}, expectedQ {expectedQ}, concQ {concQ}",
+                                                            recipeData.concentrationCost, minQuality,
+                                                            qualityWithoutConcentration,
+                                                            recipeData.resultData.expectedQualityConcentration)
+                                                    end
                                                 end
                                             end
                                         end
