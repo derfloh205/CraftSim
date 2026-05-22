@@ -5,6 +5,34 @@ CraftSim.CALC = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("ProfitCalculation")
 
+--- Returns the effective result item price for profit calculation.
+--- If the cheapest-quality option is enabled for gear, returns the minimum price
+--- across all quality tiers from expectedQuality upward (skipping tiers with no AH data).
+---@param priceData CraftSim.PriceData
+---@param recipeData CraftSim.RecipeData
+---@return number effectivePrice
+---@return number usedQuality
+local function GetEffectiveResultPrice(priceData, recipeData)
+    local expectedQ = recipeData.resultData.expectedQuality
+    local ql = priceData.qualityPriceList
+
+    if not (recipeData.isGear and recipeData.supportsQualities) then
+        return ql[expectedQ] or 0, expectedQ
+    end
+    if not CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY_PRICE") then
+        return ql[expectedQ] or 0, expectedQ
+    end
+
+    local minPrice, minQ = ql[expectedQ] or 0, expectedQ
+    for q = expectedQ + 1, #ql do
+        local p = ql[q] or 0
+        if p > 0 and (minPrice == 0 or p < minPrice) then
+            minPrice, minQ = p, q
+        end
+    end
+    return minPrice, minQ
+end
+
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
     local priceData = recipeData.priceData
@@ -131,6 +159,10 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
     local comissionProfit = self:CalculateCommissionProfit(recipeData)
 
+    -- Determine effective result price (may use cheapest quality tier for gear)
+    local effectiveResultPrice, effectiveQuality = GetEffectiveResultPrice(priceData, recipeData)
+    priceData.effectiveResultQuality = effectiveQuality
+
     -- for work orders we do not consider item amount or auction house cut, just the comissionProfit
     ---@param value number
     local function adaptResultValue(value)
@@ -183,11 +215,9 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
             -- if mc
             if MC then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
-                    expectedItems)
+                resultValue = adaptResultValue(effectiveResultPrice * expectedItems)
             elseif not MC then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
-                    recipeData.baseItemAmount)
+                resultValue = adaptResultValue(effectiveResultPrice * recipeData.baseItemAmount)
             end
 
             combinationProfit = resultValue - craftingCosts - expectedDeposit
@@ -244,8 +274,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             local combinationProfit = 0
             local resultValue = 0
 
-            resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
-                recipeData.baseItemAmount)
+            resultValue = adaptResultValue(effectiveResultPrice * recipeData.baseItemAmount)
 
             combinationProfit = resultValue - craftingCosts - expectedDeposit
             --Logger:LogDebug(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))

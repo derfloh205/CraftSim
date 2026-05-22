@@ -502,6 +502,9 @@ function CraftSim.LOCAL_DE:GetData()
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT = "Einfallsreichtumskonstante",
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =
         "Standard: 0.3\n\nHerstellungsdaten von verschiedenen Datensammlern in der Beta und im frühen Dragonflight deuten darauf hin,\ndass die durchschnittlich eingesparte Menge an Gegenständen 30 % der erforderlichen Menge beträgt.\nWenn du möchtest, kannst du diesen Wert hier ändern.",
+        OPTIONS_PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY = "Günstigsten Qualitätspreis für Ausrüstung verwenden",
+        OPTIONS_PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY_TOOLTIP =
+            "Für Ausrüstungs-Rezepte (z.B. Schürhaken) den niedrigsten Auktionshauspreis über alle Qualitätsstufen ab der erwarteten Qualität hinweg verwenden. Die Rentabilität eines 3-Sterne-Schürhakens berücksichtigt auch 4- und 5-Sterne-Preise, wenn diese günstiger sind.",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX = "Zeige " .. f.bb("News") .. " Popup",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP = "Zeige das " ..
             f.bb("News") .. " Popup für neue " .. f.l("CraftSim") .. " Update-Informationen beim Einloggen ins Spiel",
@@ -788,6 +791,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         SOURCE_COLUMN_AH = "AH",
         SOURCE_COLUMN_OVERRIDE = "ÜS",
         SOURCE_COLUMN_WO = "WO",
+        SOURCE_COLUMN_CHEAPEST_QUALITY = "GQ",
 
     }
 end

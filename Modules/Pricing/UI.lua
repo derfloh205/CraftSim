@@ -594,8 +594,13 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 local priceOverride = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(recipeData.recipeID, qualityID)
                 local price = priceOverride or CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink)
 
-                priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price) ..
-                    ((priceOverride and f.l(" (OR)")) or ""))
+                local priceSuffix = ""
+                if priceOverride then
+                    priceSuffix = f.l(" (OR)")
+                elseif CraftSim.PRICING:GetCheapestQualitySuffix(qualityID, resultData, priceData) then
+                    priceSuffix = f.g(" (CQ)")
+                end
+                priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price) .. priceSuffix)
 
                 local avgCraftingCost = priceData.averageCraftingCosts
                 local averageYield = resultData.expectedYieldPerCraft
@@ -624,6 +629,9 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
                 if priceOverride then
                     tooltipText = tooltipText ..
                         f.l(" (" .. L("SOURCE_COLUMN_OVERRIDE") .. ")")
+                elseif CraftSim.PRICING:GetCheapestQualitySuffix(qualityID, resultData, priceData) then
+                    tooltipText = tooltipText ..
+                        f.g(" (" .. L("SOURCE_COLUMN_CHEAPEST_QUALITY") .. ")")
                 end
                 tooltipText = tooltipText .. "\n" ..
                     f.white(L("PRICING_AVG_CRAFTING_COST") .. ": " .. CraftSim.UTIL:FormatMoney(avgCraftingCostPerItem))
@@ -638,4 +646,38 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData, costOptimizationF
 
         resultItemsList:UpdateDisplay()
     end)
+end
+
+--- Returns true if the given quality tier should show the cheapest-quality indicator.
+--- This happens when the option is enabled, the recipe is gear with qualities, and this
+--- quality tier's price is the minimum across all tiers from expectedQuality upward.
+---@param qualityID number
+---@param resultData CraftSim.ResultData
+---@param priceData CraftSim.PriceData
+---@return boolean
+function CraftSim.PRICING:GetCheapestQualitySuffix(qualityID, resultData, priceData)
+    if not CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY_PRICE") then
+        return false
+    end
+    if qualityID == resultData.expectedQuality then
+        return false
+    end
+
+    local expectedQ = resultData.expectedQuality
+    local ql = priceData.qualityPriceList
+    local thisPrice = ql[qualityID] or 0
+    if thisPrice == 0 then
+        return false
+    end
+
+    -- Check if this quality is the cheapest from expectedQ upward
+    for q = expectedQ, #ql do
+        if q ~= qualityID then
+            local p = ql[q] or 0
+            if p > 0 and p < thisPrice then
+                return false
+            end
+        end
+    end
+    return true
 end
