@@ -545,7 +545,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
         ---@param requiredReagent CraftSim.Reagent
         function(requiredReagent)
             if requiredReagent:IsOrderReagentIn(self.recipeData) then
-                return true
+                if multiplier <= 1 then
+                    return true
+                end
+                return requiredReagent:HasItems(multiplier - 1, crafterUID)
             end
             return requiredReagent:HasItems(multiplier, crafterUID)
         end)
