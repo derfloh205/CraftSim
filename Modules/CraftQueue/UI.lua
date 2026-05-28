@@ -3830,7 +3830,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 local belowClaimedMinQuality = (woMinQCond and not woMinQCond.isMet)
                     or (claimedOrder.minQuality and
                         craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality)
-                if claimedOrder.isFulfillable then
+                local isPersonalOrder = recipeData.orderData and
+                    recipeData.orderData.orderType == Enum.CraftingOrderType.Personal
+                local canPreferSubmit = claimedOrder.isFulfillable and
+                    (not isPersonalOrder or pendingSubmit or not pc:IsAllowedToCraft())
+                if canPreferSubmit then
                     CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_SUBMIT"))
@@ -3852,7 +3856,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         self:Update()
                     end
                 elseif pendingSubmit then
-                    craftButtonColumn.craftButton:SetEnabled(true)
+                    -- Crafted just happened; wait for claimed-order state to flip to fulfillable.
+                    -- Keep button non-clickable here to avoid a "Craft" button without an action.
+                    craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
                 elseif belowClaimedMinQuality then
                     craftButtonColumn.craftButton:SetEnabled(false)

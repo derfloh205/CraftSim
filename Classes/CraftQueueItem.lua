@@ -6,6 +6,12 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueueItem : CraftSim.CraftSimObject
 ---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
+CraftSim.CraftQueueItem.QUEUE_ACTION_RANK = {
+    CRAFTABLE = 1,
+    EQUIP_TOOLS_ONLY = 2,
+    PRE_CRAFT_READY = 3,
+    BLOCKED = 4,
+}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueueItem")
 
@@ -87,6 +93,11 @@ end
 ---@return boolean
 function CraftSim.CraftQueueItem:CanClaimWorkOrder()
     return self.precraftConditionData:CanClaimWorkOrder()
+end
+
+---@return number
+function CraftSim.CraftQueueItem:GetQueueActionRank()
+    return self.precraftConditionData:GetQueueActionRank()
 end
 
 --- Runs precraft evaluation; craftability state lives on `precraftConditionData` (`evalContext`, `IsAllowedToCraft`).

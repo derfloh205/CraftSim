@@ -326,11 +326,13 @@ function CraftSim.CraftQueue:FilterSortByPriority()
                 end
             end
 
-            if a.precraftConditionData:IsAllowedToCraft() and not b.precraftConditionData:IsAllowedToCraft() then
+            local aQueueActionRank = a:GetQueueActionRank()
+            local bQueueActionRank = b:GetQueueActionRank()
+            if aQueueActionRank < bQueueActionRank then
                 return true
-            elseif not a.precraftConditionData:IsAllowedToCraft() and b.precraftConditionData:IsAllowedToCraft() then
+            elseif aQueueActionRank > bQueueActionRank then
                 return false
-            elseif not a.precraftConditionData:IsAllowedToCraft() and not b.precraftConditionData:IsAllowedToCraft() then
+            elseif aQueueActionRank == CraftSim.CraftQueueItem.QUEUE_ACTION_RANK.BLOCKED then
                 local aTop = a:GetTopFailedCondition()
                 local bTop = b:GetTopFailedCondition()
                 local aPriority = aTop and aTop.priority or 0

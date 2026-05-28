@@ -91,6 +91,39 @@ function CraftSim.PrecraftConditionSet:IsAllowedToCraft()
     return self.allowedToCraft
 end
 
+---@return number
+function CraftSim.PrecraftConditionSet:GetQueueActionRank()
+    local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
+    local cqi = self.craftQueueItem
+
+    if self:IsAllowedToCraft() then
+        return 1
+    end
+
+    if not cqi or not cqi:IsCrafter() or not self:IsCorrectProfessionOpen() then
+        return 4
+    end
+
+    local failedConditions = self:GetFailedConditions()
+    if #failedConditions ~= 1 then
+        return 4
+    end
+
+    local topFailed = failedConditions[1]
+    if topFailed.id == IDS.PROFESSION_TOOLS and not self:IsProfessionGearEquipped() then
+        return 2
+    end
+
+    if topFailed.id == IDS.PRE_CRAFT_ACTION then
+        local pcbgData = cqi.pcbgData
+        if pcbgData and pcbgData.needsStep and pcbgData.canCast and pcbgData.recipeData then
+            return 3
+        end
+    end
+
+    return 4
+end
+
 ---@param condition CraftSim.PrecraftCondition
 function CraftSim.PrecraftConditionSet:appendCondition(condition)
     tinsert(self.conditions, condition)
