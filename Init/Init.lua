@@ -12,6 +12,27 @@ local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
 local L = CraftSim.LOCAL:GetLocalizer()
+local lastOrdersTabEnabled = nil
+
+local function emitOrdersTabAvailabilityChanged()
+	if not ProfessionsFrame then
+		return
+	end
+	local currentOrdersTabEnabled = ProfessionsFrame.isCraftingOrdersTabEnabled == true
+	if lastOrdersTabEnabled == nil or lastOrdersTabEnabled ~= currentOrdersTabEnabled then
+		lastOrdersTabEnabled = currentOrdersTabEnabled
+		GUTIL:TriggerCustomEvent("CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED", currentOrdersTabEnabled)
+	end
+end
+
+local function refreshAddWorkOrdersButtonDeferred()
+	RunNextFrame(function()
+		if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
+			CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
+		end
+		emitOrdersTabAvailabilityChanged()
+	end)
+end
 
 ---@class CraftSim.INIT : Frame
 CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
@@ -30,6 +51,7 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 	"CRAFTSIM_RECIPE_INFO_INITIALIZED",
 	"CRAFTSIM_PROFESSION_OPENED",
 	"CRAFTSIM_PROFESSION_TAB_CLICKED",
+	"CRAFTSIM_ORDERS_TAB_AVAILABILITY_CHANGED",
 	"CRAFTSIM_ORDER_VIEW_CLOSED",
 	"CRAFTSIM_CRAFT_BUFFS_UPDATED",
 	"CRAFTSIM_AUCTIONATOR_DB_UPDATED",
@@ -132,6 +154,7 @@ function CraftSim.INIT:CRAFTSIM_PROFESSION_OPENED(professionInfo, selectedTab, i
 		profession, selectedTab, isLogin, isReload)
 
 	CraftSim.DEBUG:StopProfiling("TradeSkill Opening Load")
+	refreshAddWorkOrdersButtonDeferred()
 end
 
 ---@param recipeInfo TradeSkillRecipeInfo?
@@ -146,6 +169,7 @@ end
 ---@param tab CraftSim.PROFESSIONS_TAB
 function CraftSim.INIT:CRAFTSIM_PROFESSION_TAB_CLICKED(tab)
 	CraftSim.MODULES:UpdateVisibilityByContext()
+	refreshAddWorkOrdersButtonDeferred()
 
 	-- if recipe/crafting order tab was clicked, the Init hook will trigger and any recipedata update will fire automatically
 	-- so we just need to tend to the module visibilities
@@ -476,6 +500,13 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			lastOrdersTabEnabled = nil
+			CraftSim.MODULES:ShowRecipeIndependentModules()
+
+			--CraftSim.DEBUG:StartProfiling("Update Customer History")
+			--CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
+			--CraftSim.DEBUG:StopProfiling("Update Customer History")
+			--CraftSim.CRAFTQ.UI:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()
@@ -509,23 +540,10 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			end)
 		end)
 
-	local function refreshAddWorkOrdersButtonDeferred()
-		RunNextFrame(function()
-			if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
-				CraftSim.MODULES:RefreshAddWorkOrdersButtonState()
-			end
-		end)
-	end
-
 	if ProfessionsFrame.OrdersPage then
-		ProfessionsFrame.OrdersPage:HookScript("OnShow", refreshAddWorkOrdersButtonDeferred)
 		ProfessionsFrame.OrdersPage.OrderView:HookScript("OnHide", function()
 			GUTIL:TriggerCustomEvent("CRAFTSIM_ORDER_VIEW_CLOSED")
 		end)
-	end
-	local craftingOrdersTab = ProfessionsFrame.TabSystem and ProfessionsFrame.TabSystem.tabs[3]
-	if craftingOrdersTab then
-		craftingOrdersTab:HookScript("OnClick", refreshAddWorkOrdersButtonDeferred)
 	end
 
 	ProfessionsFrame.CraftingPage:HookScript("OnHide",

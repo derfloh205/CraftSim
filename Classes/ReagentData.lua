@@ -557,9 +557,6 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
 
-    -- CraftSim.DEBUG:SystemPrint("Has Enough:")
-    -- CraftSim.DEBUG:SystemPrint("hasRequiredReagents: " .. tostring(hasRequiredReagents))
-    -- CraftSim.DEBUG:SystemPrint("hasOptionalReagents: " .. tostring(hasOptionalReagents))
     local hasrequiredSelectableReagent = true
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot

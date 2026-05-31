@@ -173,3 +173,27 @@ function CraftSim.DB.LAST_CRAFTING_COST.MIGRATION:M_0_1_Clear_Non_Per_Crafter_Da
     -- Cannot migrate since old entries have no crafter info - clear all
     wipe(CraftSimDB.lastCraftingCostDB.data)
 end
+
+function CraftSim.DB.LAST_CRAFTING_COST.MIGRATION:M_1_2_Normalize_crafterUID_keys()
+    for itemKey, crafterMap in pairs(CraftSimDB.lastCraftingCostDB.data or {}) do
+        if type(crafterMap) == "table" then
+            local normalizedMap = {}
+            for crafterUID, data in pairs(crafterMap) do
+                local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+                if normalizedCrafterUID then
+                    local existing = normalizedMap[normalizedCrafterUID]
+                    if not existing then
+                        normalizedMap[normalizedCrafterUID] = data
+                    else
+                        local existingTs = tonumber(existing.timestamp) or 0
+                        local candidateTs = tonumber((data and data.timestamp) or 0) or 0
+                        if candidateTs > existingTs then
+                            normalizedMap[normalizedCrafterUID] = data
+                        end
+                    end
+                end
+            end
+            CraftSimDB.lastCraftingCostDB.data[itemKey] = normalizedMap
+        end
+    end
+end
