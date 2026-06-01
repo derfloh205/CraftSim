@@ -511,7 +511,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_CRAFTLISTS_NO_LISTS = f.grey("暂无制造列表"),
         CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER = f.bb("选项") .. "：",
         CRAFT_LISTS_OPTIONS_TOOLTIP_RESTOCK_HEADER = f.bb("补货选项") .. "：",
-        CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE = "仅限可获利",
+        CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE = "仅限正利润",
 
         -- Recipe Top Gear
         TOP_GEAR_TITLE = "CraftSim最佳装备",
@@ -730,7 +730,7 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_CHECKBOX = "允许使用" .. f.gold("专注"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_ALLOW_CONCENTRATION_TOOLTIP =
             "如果无法达到最低品质，则尽可能使用" .. f.l("专注"),
-        CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "仅限" .. f.g("可获利"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "仅限" .. f.g("正利润"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "仅添加预期利润为正的制造订单到队列",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "制造订单类型",
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_CHECKBOX = f.g("自动添加") .. f.bb("制造订单"),
