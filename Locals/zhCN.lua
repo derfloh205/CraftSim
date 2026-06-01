@@ -148,7 +148,7 @@ function CraftSim.LOCAL_CN:GetData()
             "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
             "这个公式说明概率分布" ..
             f.l("X") ..
-            "的期望值 " ..
+            "的期望值" ..
             f.l("E") .. "等于所有可能值乘以对应概率的总和。\n" ..
             "所以如果有一个" ..
             f.bb("情况A的概率为30%") ..
@@ -713,7 +713,7 @@ function CraftSim.LOCAL_CN:GetData()
         CUSTOMER_HISTORY_CATEGORY_AUTO_REMOVAL = "自动移除",
         CUSTOMER_HISTORY_CATEGORY_REMOVE_BELOW_THRESHOLD = f.l("移除低于阈值"),
         CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMERS = f.r("移除所有客户"),
-        CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA = f.r("确定移除所有客户数据？"),
+        CUSTOMER_HISTORY_CATEGORY_REMOVE_ALL_CUSTOMER_DATA = f.r("确定要删除所有客户数据？"),
         CUSTOMER_HISTORY_CATEGORY_DELETE_CUSTOMER = "删除客户",
 
         -- Craft Queue
