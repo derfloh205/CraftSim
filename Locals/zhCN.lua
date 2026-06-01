@@ -745,7 +745,7 @@ function CraftSim.LOCAL_CN:GetData()
             "添加到队列的公开订单最大数量，按利润从高到低排序。\n\n设置为" ..
             f.bb("0") .. "将使用当前可用的公开次数。",
         CRAFT_QUEUE_GUILD_ORDERS_ALTS_ONLY_CHECKBOX = f.r("仅限") .. "小号角色",
-        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_CHECKBOX = f.r("强制使用") .. f.gold("专注"),
+        CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_CHECKBOX = f.r("强制") .. f.gold("使用专注"),
         CRAFT_QUEUE_PATRON_ORDERS_FORCE_CONCENTRATION_TOOLTIP =
         "尽可能强制为所有客人订单使用专注",
         CRAFT_QUEUE_PATRON_ORDERS_SPARK_RECIPES_CHECKBOX = "包含" .. f.e("火花") .. "配方",
@@ -766,8 +766,8 @@ function CraftSim.LOCAL_CN:GetData()
             f.bb("材料包奖励") .. "的价值计算到利润中。\n\n格式：",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX = "将" .. f.bb("匠人之魄") .. "计算到预期利润",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP = "启用后，" ..
-            f.bb("客人") ..
-            "订单和首次制造奖励的" ..
+            f.bb("客人订单") ..
+            "和首次制造奖励的" ..
             f.bb("匠人之魄") ..
             "将根据下方设置的价值添加到预期利润中。禁用后仅显示为提示信息。",
         CRAFT_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES_CHECKBOX = "自动更新匠人之魄价值",
@@ -833,8 +833,8 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP_TITLE = "首次制造",
         CRAFT_QUEUE_RESULT_FIRST_CRAFT_TOOLTIP =
             "首次制造此配方时增加1点专业知识。（仅" ..
-            f.bb("客人") ..
-            "订单奖励的匠人之魄才会在启用" ..
+            f.bb("客人订单") ..
+            "奖励的匠人之魄才会在启用" ..
             f.bb("将匠人之魄计算到预期利润") ..
             "后用于计算预期利润。）",
         CRAFT_QUEUE_FIRST_CRAFT_MOXIE_GOLD_TOOLTIP = "同时获得10个匠人之魄（价值%s）",
@@ -937,24 +937,24 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION = f.gold("专注") .. "耗尽时" .. f.r("移除"),
         CRAFT_QUEUE_MENU_DEQUEUE_CONCENTRATION_TOOLTIP =
         "剩余专注无法继续制造时，自动移除已制作的配方。",
-        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("强制要求") .. "至暗之夜" ..
+        CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF = f.gold("强制") .. "至暗之夜" ..
             f.bb("碎裂精华") .. "增益",
         CRAFT_QUEUE_MENU_MIDNIGHT_SHATTER_FORCE_BUFF_TOOLTIP = "启用后，CraftSim将要求在制造附魔配方前激活" ..
             f.bb("碎裂精华") .. "增益。\n\n" ..
             "粉碎按钮将显示在按钮序列中，优化配方时会假设此增益已激活。\n\n" ..
             "禁用后，完全跳过粉碎步骤，优化时不考虑此增益。",
-        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("强制要求") ..
-            "地心之战附魔" ..
-            f.bb("碎裂精华") .. "增益",
+        CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF = f.gold("强制") ..
+            "地心之战" ..
+            f.bb("碎裂精华") .. "附魔增益",
         CRAFT_QUEUE_MENU_TWW_ENCHANT_SHATTER_FORCE_BUFF_TOOLTIP = "启用后，CraftSim将要求在制造地心之战附魔配方前激活" ..
             f.bb("碎裂精华") .. "增益。\n\n" ..
             "粉碎按钮将显示在按钮序列中，优化配方时会假设此增益已激活。\n\n" ..
             "禁用后，完全跳过粉碎步骤，优化时不考虑此增益。",
-        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("强制模拟") .. "地心之战锻造" ..
-            f.bb("永燃点火装置") .. "增益",
-        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "启用后，玩家未激活" ..
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF = f.gold("强制") .. "地心之战" ..
+            f.bb("永燃点火装置") .. "锻造增益",
+        CRAFT_QUEUE_MENU_EVERBURNING_IGNITION_FORCE_BUFF_TOOLTIP = "启用后，CraftSim将在优化地心之战锻造配方时始终假设" ..
             f.bb("永燃点火装置") ..
-            "时，CraftSim将在属性优化时假设此增益已激活。\n\n" ..
+            "增益已激活。\n\n" ..
             "不会在队列中添加类似粉碎的前置条件。",
         CRAFT_QUEUE_TUTORIAL_QUEUE_LIST_TOOLTIP =
         "这里显示队列中的配方。\n左键点击跳转配方\n右键点击显示菜单\n中键点击删除配方",
