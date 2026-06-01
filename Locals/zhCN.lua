@@ -327,7 +327,7 @@ function CraftSim.LOCAL_CN:GetData()
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES = "包含冷却配方",
         COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP = "启用后，计算自制材料时 " ..
             f.l("CraftSim") .. "将忽略配方的冷却时间。",
-        COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "选择配方工匠",
+        COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER = "选择配方制作者",
         PRICING_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT = "拍卖行价格：",
         PRICING_REAGENT_LIST_OVERRIDE = "\n\n手动定价",
         PRICING_REAGENT_LIST_EXPECTED_COSTS_TOOLTIP = "\n\n正在制造 ",
@@ -394,7 +394,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP = "优化每个配方的专业工具以获取最大利润\n\n",
         RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING =
         "如果背包中有很多工具\n扫描期间可能会降低游戏性能",
-        RECIPE_SCAN_CRAFTER_HEADER = "工匠",
+        RECIPE_SCAN_CRAFTER_HEADER = "制作者",
         RECIPE_SCAN_RECIPE_HEADER = "配方",
         RECIPE_SCAN_LEARNED_HEADER = "已学习",
         RECIPE_SCAN_RESULT_HEADER = "制作成品",
@@ -441,7 +441,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_OPTIMIZE_SUBRECIPES = "优化子配方" .. f.bb("（实验性）"),
         RECIPE_SCAN_OPTIMIZE_SUBRECIPES_TOOLTIP = "启用后，" ..
             f.l("CraftSim") .. "还会优化已扫描配方中记录的材料配方，\n并使用其" ..
-            f.bb("预期成本") .. "来计算最终成品的制作成本。\n\n" ..
+            f.bb("预期成本") .. "来计算最终成品的制造成本。\n\n" ..
             f.r("警告：可能会降低扫描性能"),
         RECIPE_SCAN_CACHED_RECIPES = "已扫描的配方：",
         RECIPE_SCAN_ENABLE_CONCENTRATION = f.bb("启用") .. f.gold("专注"),
@@ -491,7 +491,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_SORT_ASCENDING = "升序",
         RECIPE_SCAN_REMOVE_FAVORITE = f.r("移除") .. "偏好",
         RECIPE_SCAN_ADD_FAVORITE = f.g("设置") .. "偏好",
-        RECIPE_SCAN_FAVORITES_CRAFTER_ONLY = f.r("偏好只能由工匠修改"),
+        RECIPE_SCAN_FAVORITES_CRAFTER_ONLY = f.r("偏好只能由制作者修改"),
         RECIPE_SCAN_QUEUE_HINT = "点击" ..
             CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift 将选中的配方添加到" ..
             f.bb("制造队列"),
@@ -501,8 +501,8 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_USE_TSM_RESTOCK = "使用" .. f.bb("TSM") .. "补货表达式",
         RECIPE_SCAN_TSM_SALE_RATE_THRESHOLD = f.bb("TSM") .. "售出率阈值：",
         RECIPE_SCAN_AUTOSELECT_OPEN_PROFESSION = "自动选择" .. f.bb("打开的专业"),
-        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST = "更新" .. f.bb("上次制造成本") .. "数据库",
-        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "启用后，" .. f.bb("上次制造成本") ..
+        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST = "更新" .. f.bb("最低制造成本") .. "数据库",
+        RECIPE_SCAN_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "启用后，" .. f.bb("最低制造成本") ..
             "数据库会更新每个扫描的配方。\n\n将允许通过CraftSim API查询每个物品的最新平均制造成本。",
         RECIPE_SCAN_ONLY_CRAFTLISTS_BUTTON = "仅限制造列表",
         RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP =
@@ -584,7 +584,7 @@ function CraftSim.LOCAL_CN:GetData()
         OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT = "每位客户的历史消息条数",
         OPTIONS_PROFIT_CALCULATION_OFFSET = "技能临界点+1",
         OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP =
-        "材料组合建议将尝试达到临界点+1，而不是刚好符合所需的技能点数",
+        "材料组合建议将尝试达到临界点+1，而不是刚好满足所需的技能点数",
         OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT = "产能常数",
         OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION =
         "默认：2.5\n\n由测试服和巨龙时代早期的不同玩家收集的制造数据得出。\n单次产能触发所能获得的最大额外物品数量为1+C*y。\n其中y是单次制造的基础物品数量，C为2.5。\n有需要可以修改此常数。",
@@ -601,12 +601,12 @@ function CraftSim.LOCAL_CN:GetData()
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "使用硬币图标显示金钱",
         OPTIONS_SETTINGS_COIN_TEXTURES_LABEL = "使用硬币图标显示金钱",
         OPTIONS_TOOLTIP_TAB = "提示信息",
-        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "在物品提示中显示已登记工匠",
+        OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "在物品提示中显示可制造的制作者",
         OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP =
-        "启用后，物品提示中将列出CraftSim记录中拥有此配方的角色（以及任何拥有此物品最近制造数据的角色）。",
-        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX = "显示的工匠上限",
+        "启用后，物品提示中将列出CraftSim记录中已学习此配方的角色（以及任何拥有此物品最近制造数据的角色）。",
+        OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX = "显示的制作者上限",
         OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL =
-        "超出上限的工匠数量将显示在名字列表之后。",
+        "超出上限的制作者将在名字列表后显示为数量。",
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "制造队列",
@@ -826,7 +826,7 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN = "冷却中",
         RECIPE_COOLDOWN_CHARGES_INLINE = "（%d/%d）",
         RECIPE_COOLDOWN_CHARGES_TOOLTIP = "冷却充能：%d/%d",
-        CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER = "工匠不符",
+        CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER = "制作者不符",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER = "状态",
         CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP = "必须满足所有条件才能制作配方",
         CRAFT_QUEUE_STATUS_CANNOT_CRAFT_FALLBACK = "无法制造",
@@ -887,12 +887,12 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_EDIT_RECIPE_SPARK_LABEL = "必须",
         CRAFT_QUEUE_EDIT_RECIPE_PROFESSION_GEAR_LABEL = "专业装备",
         CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON = "优化",
-        CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL = "制作成本：",
+        CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL = "制造成本：",
         CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL = "平均利润：",
         CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL = "制作成品",
         CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX = "专注",
         CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX = "每个角色",
-        CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP = "为每个工匠分别创建一份" ..
+        CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP = "为每个制作者分别创建一份" ..
             f.bb("Auctionator购物清单") .. "，\n而非共享同一份购物清单。",
         CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX = "仅限指定",
         CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP = "仅为指定配方创建一份 " ..
@@ -902,7 +902,7 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_STATUSBAR_COOLDOWN = f.white("未处于冷却状态"),
         CRAFT_QUEUE_STATUSBAR_REAGENTS = f.white("材料可用"),
         CRAFT_QUEUE_STATUSBAR_GEAR = f.white("已装备专业装备"),
-        CRAFT_QUEUE_STATUSBAR_CRAFTER = f.white("工匠符合"),
+        CRAFT_QUEUE_STATUSBAR_CRAFTER = f.white("制作者符合"),
         CRAFT_QUEUE_STATUSBAR_PROFESSION = f.white("已打开专业"),
         CRAFT_QUEUE_BUTTON_EDIT = "编辑",
         CRAFT_QUEUE_BUTTON_CRAFT = "制造",
@@ -1008,7 +1008,7 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_LISTS_OPTIONS_USE_TSM_RESTOCK = "使用" .. f.bb("TSM") .. "补货表达式",
         CRAFT_LISTS_OPTIONS_TSM_EXPRESSION = "表达式：",
         CRAFT_LISTS_OPTIONS_USE_CURRENT_CHARACTER = "当前角色制造",
-        CRAFT_LISTS_OPTIONS_FIXED_CRAFTER = "固定工匠：",
+        CRAFT_LISTS_OPTIONS_FIXED_CRAFTER = "固定制作者：",
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "补货数量：",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "额外队列次数：",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "添加到队列时始终增加指定的额外次数",
@@ -1019,8 +1019,8 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "启用后，补货目标也会减去小号库存中的已有数量。",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "添加到队列后自动创建购物清单",
-        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "更新" .. f.bb("上次制造成本") .. "数据库",
-        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "启用后，" .. f.bb("上次制造成本") ..
+        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "更新" .. f.bb("最低制造成本") .. "数据库",
+        CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "启用后，" .. f.bb("最低制造成本") ..
             "数据库会更新每个添加到队列的配方。\n\n将允许通过CraftSim API查询每个物品的最新平均制造成本。",
         CRAFT_LISTS_NO_LIST_SELECTED = f.grey("未选择列表"),
         CRAFT_LISTS_SELECT_LIST_HINT = f.grey("选择一个列表查看配方"),
@@ -1042,7 +1042,7 @@ function CraftSim.LOCAL_CN:GetData()
         CONTROL_PANEL_MODULES_COOLDOWNS_LABEL = "专业冷却",
         CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP = "显示账号中的所有" ..
             f.bb("专业冷却"),
-        COOLDOWNS_CRAFTER_HEADER = "工匠",
+        COOLDOWNS_CRAFTER_HEADER = "制作者",
         COOLDOWNS_RECIPE_HEADER = "配方",
         COOLDOWNS_CHARGES_HEADER = "充能",
         COOLDOWNS_NEXT_HEADER = "下次充能",
@@ -1059,7 +1059,7 @@ function CraftSim.LOCAL_CN:GetData()
         -- concentration module
 
         CONCENTRATION_TRACKER_TITLE = "CraftSim专注",
-        CONCENTRATION_TRACKER_LABEL_CRAFTER = "工匠",
+        CONCENTRATION_TRACKER_LABEL_CRAFTER = "制作者",
         CONCENTRATION_TRACKER_LABEL_CURRENT = "当前",
         CONCENTRATION_TRACKER_LABEL_MAX = "满",
         CONCENTRATION_TRACKER_MAX = f.g("MAX"),
@@ -1099,10 +1099,10 @@ function CraftSim.LOCAL_CN:GetData()
 
         -- last crafting cost tooltip
         LAST_CRAFTING_COST_TOOLTIP_HEADER = f.l("CraftSim"),
-        LAST_CRAFTING_COST_TOOLTIP_LABEL = f.white("上次平均制造成本："),
-        LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.white("工匠："),
-        LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.white("更新："),
-        REGISTERED_CRAFTERS_ITEM_TOOLTIP_LABEL = f.white("登记工匠："),
+        LAST_CRAFTING_COST_TOOLTIP_LABEL = f.white("最低制造成本："),
+        LAST_CRAFTING_COST_TOOLTIP_CRAFTER = f.white("制作者："),
+        LAST_CRAFTING_COST_TOOLTIP_UPDATED = f.white("更新于："),
+        REGISTERED_CRAFTERS_ITEM_TOOLTIP_LABEL = f.white("可制造："),
         REGISTERED_CRAFTERS_ITEM_TOOLTIP_MORE = "+%d更多",
 
         -- columns
