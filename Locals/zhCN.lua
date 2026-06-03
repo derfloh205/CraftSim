@@ -542,7 +542,7 @@ function CraftSim.LOCAL_CN:GetData()
         OPTIONS_GENERAL_CURRENT_PRICE_SOURCE = "当前价格来源：",
         OPTIONS_GENERAL_NO_PRICE_SOURCE = "未加载支持的价格来源插件！",
         OPTIONS_GENERAL_SHOW_PROFIT = "显示利润百分比",
-        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP = "在金钱旁显示利润占制造成本的百分比。",
+        OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP = "在金币旁显示利润占制造成本的百分比。",
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE = "记住上次的配方",
         OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP = "打开制造窗口时，选择上次的配方。",
         OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES = "支持的价格来源：",
@@ -598,8 +598,8 @@ function CraftSim.LOCAL_CN:GetData()
         OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP = "启用后隐藏" ..
             f.l("CraftSim") .. "小地图按钮",
         OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX = "使用硬币图标：",
-        OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "使用硬币图标显示金钱",
-        OPTIONS_SETTINGS_COIN_TEXTURES_LABEL = "使用硬币图标显示金钱",
+        OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP = "使用硬币图标显示金币",
+        OPTIONS_SETTINGS_COIN_TEXTURES_LABEL = "使用硬币图标显示金币",
         OPTIONS_TOOLTIP_TAB = "提示信息",
         OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS = "在物品提示中显示可制造的制作者",
         OPTIONS_TOOLTIP_SHOW_REGISTERED_CRAFTERS_HELP =
