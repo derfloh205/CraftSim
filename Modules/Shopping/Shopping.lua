@@ -5,6 +5,7 @@ local addonName = select(1, ...)
 local Auctionator = Auctionator
 
 local GUTIL = CraftSim.GUTIL
+local GGUI = CraftSim.GGUI
 
 local f = GUTIL:GetFormatter()
 
@@ -19,9 +20,40 @@ CraftSim.SHOPPING = CraftSim.SHOPPING or GUTIL:CreateRegistreeForEvents({
 
 GUTIL:RegisterCustomEvents(CraftSim.SHOPPING, {
     "CRAFTSIM_CRAFTQUEUE_QUEUE_PROCESS_FINISHED",
+    "CRAFTSIM_MODULE_OPENED",
 })
 
-CraftSim.MODULES:RegisterModule("MODULE_SHOPPING", CraftSim.SHOPPING)
+local L = CraftSim.LOCAL:GetLocalizer()
+
+CraftSim.MODULES:RegisterModule("MODULE_SHOPPING", CraftSim.SHOPPING, {
+    label = L("CONTROL_PANEL_MODULES_SHOPPING_LIST_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_SHOPPING_LIST_TOOLTIP"),
+})
+
+---@class CraftSim.SHOPPING.UI : CraftSim.Module.UI
+CraftSim.SHOPPING.UI = {}
+
+function CraftSim.SHOPPING.UI:Init()
+    -- frame is created lazily on first open; nothing to do here
+end
+
+function CraftSim.SHOPPING.UI:Update()
+    if CraftSim.SHOPPING.shoppingListViewFrame and CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
+        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
+    end
+end
+
+function CraftSim.SHOPPING.UI:VisibleByContext()
+    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_SHOPPING")
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.SHOPPING:CRAFTSIM_MODULE_OPENED(moduleID)
+    if moduleID ~= "MODULE_SHOPPING" then
+        return
+    end
+    self:ShowShoppingListView()
+end
 
 ---@enum CraftSim.SHOPPING.QB_STATUS
 local QB_STATUS = {
@@ -89,6 +121,149 @@ function CraftSim.SHOPPING:DeleteAllCraftSimShoppingLists()
     end
 end
 
+---@class CraftSim.Shopping.ShoppingListEntry
+---@field itemID number
+---@field itemName string
+---@field qualityID number
+---@field quantity number
+
+---@param includeSoulboundWithoutAlternative boolean? when true, keep soulbound items that have no auctionable mapping
+---@return CraftSim.Shopping.ShoppingListEntry[]
+function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWithoutAlternative)
+    local craftQueue = CraftSim.CRAFTQ and CraftSim.CRAFTQ.craftQueue
+    if not craftQueue then
+        return {}
+    end
+
+    ---@type table<number, { itemName: string, qualityID: number?, quantity: number }>
+    local reagentMap = {}
+
+    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
+        local recipeData = craftQueueItem.recipeData
+        local reagentData = recipeData and recipeData.reagentData
+        if reagentData then
+            local requiredReagents = reagentData.requiredReagents
+            for _, reagent in pairs(requiredReagents) do
+                if not reagent:IsOrderReagentIn(recipeData) then
+                    if reagent.hasQuality then
+                        for qualityID, reagentItem in pairs(reagent.items) do
+                            local itemID = reagentItem.item:GetItemID()
+                            local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
+                            if not isSelfCrafted then
+                                reagentMap[itemID] = reagentMap[itemID] or {
+                                    itemName = reagentItem.item:GetItemName(),
+                                    qualityID = nil,
+                                    quantity = 0,
+                                }
+                                reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                                    (reagentItem.quantity * craftQueueItem.amount)
+                                reagentMap[itemID].qualityID = qualityID
+                            end
+                        end
+                    else
+                        local reagentItem = reagent.items[1]
+                        local itemID = reagentItem.item:GetItemID()
+                        local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
+                        if not isSelfCrafted then
+                            reagentMap[itemID] = reagentMap[itemID] or {
+                                itemName = reagentItem.item:GetItemName(),
+                                qualityID = nil,
+                                quantity = 0,
+                            }
+                            reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                                (reagentItem.quantity * craftQueueItem.amount)
+                        end
+                    end
+                end
+            end
+
+            local activeReagents = reagentData:GetActiveOptionalReagents()
+            local quantityMap = {}
+
+            if recipeData:HasRequiredSelectableReagent() then
+                local slot = reagentData.requiredSelectableReagentSlot
+                if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
+                    tinsert(activeReagents, slot.activeReagent)
+                    quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
+                end
+            end
+
+            for _, optionalReagent in pairs(activeReagents) do
+                if not optionalReagent:IsCurrency() then
+                    local itemID = optionalReagent.item:GetItemID()
+                    local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
+                    local isOrderReagent = optionalReagent:IsOrderReagentIn(recipeData)
+                    local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
+
+                    if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                        local allocatedQuantity = quantityMap[itemID] or 1
+                        reagentMap[itemID] = reagentMap[itemID] or {
+                            itemName = optionalReagent.item:GetItemName(),
+                            qualityID = qualityID,
+                            quantity = 0,
+                        }
+                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                            allocatedQuantity * craftQueueItem.amount
+                    end
+                end
+            end
+        end
+    end
+
+    local crafterUIDs = GUTIL:Map(craftQueue.craftQueueItems, function(cqi)
+        return cqi.recipeData:GetCrafterUID()
+    end)
+    crafterUIDs = GUTIL:ToSet(crafterUIDs)
+
+    ---@type CraftSim.Shopping.ShoppingListEntry[]
+    local entries = {}
+    for itemID, info in pairs(reagentMap) do
+        local purchaseItemID = getNonSoulboundAlternativeItemID(itemID)
+        if not purchaseItemID and includeSoulboundWithoutAlternative then
+            purchaseItemID = itemID
+        end
+        if purchaseItemID then
+            local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
+                local itemCountForCrafter =
+                    CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, purchaseItemID)
+                return itemCount + (itemCountForCrafter or 0)
+            end)
+
+            local missingQuantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0)
+            if missingQuantity > 0 then
+                local itemName = info.itemName
+                if purchaseItemID ~= itemID then
+                    local altItem = Item:CreateFromItemID(purchaseItemID)
+                    if altItem then
+                        local name = altItem:GetItemName()
+                        if name then
+                            itemName = name
+                        end
+                    end
+                end
+
+                tinsert(entries, {
+                    itemID = purchaseItemID,
+                    itemName = itemName,
+                    qualityID = info.qualityID,
+                    quantity = missingQuantity,
+                })
+            end
+        end
+    end
+
+    table.sort(entries, function(a, b)
+        local nameA = a.itemName or ""
+        local nameB = b.itemName or ""
+        if nameA == nameB then
+            return (a.qualityID or 0) > (b.qualityID or 0)
+        end
+        return nameA < nameB
+    end)
+
+    return entries
+end
+
 function CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
     local craftQueue = CraftSim.CRAFTQ and CraftSim.CRAFTQ.craftQueue
     if not craftQueue then
@@ -101,108 +276,30 @@ function CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
     self:ResetQuickBuyCache()
 
     CraftSim.DEBUG:StartProfiling("CreateAuctionatorShopping")
-    local reagentMap = {}
-    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
-        local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
-        for _, reagent in pairs(requiredReagents) do
-            if not reagent:IsOrderReagentIn(craftQueueItem.recipeData) then
-                if reagent.hasQuality then
-                    for qualityID, reagentItem in pairs(reagent.items) do
-                        local itemID = reagentItem.item:GetItemID()
-                        Logger:LogVerbose("Shopping List Creation: Item: {item}", reagentItem.item:GetItemLink())
-                        local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                        if not isSelfCrafted then
-                            reagentMap[itemID] = reagentMap[itemID] or {
-                                itemName = reagentItem.item:GetItemName(),
-                                qualityID = nil,
-                                quantity = 0
-                            }
-                            reagentMap[itemID].quantity = reagentMap[itemID]
-                                .quantity + (reagentItem.quantity * craftQueueItem.amount)
-                            reagentMap[itemID].qualityID = qualityID
-                        end
-                    end
-                else
-                    local reagentItem = reagent.items[1]
-                    local itemID = reagentItem.item:GetItemID()
-                    local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                    if not isSelfCrafted then
-                        reagentMap[itemID] = reagentMap[itemID] or {
-                            itemName = reagentItem.item:GetItemName(),
-                            qualityID = nil,
-                            quantity = 0
-                        }
-                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                            (reagentItem.quantity * craftQueueItem.amount)
-                        Logger:LogVerbose("reagentMap Build: Item: {item}", reagentItem.item:GetItemLink() or "")
-                        Logger:LogVerbose("quantity: {quantity}", reagentMap[itemID].quantity)
-                    end
-                end
-            end
-        end
-        local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
-        local quantityMap = {}
-        if craftQueueItem.recipeData:HasRequiredSelectableReagent() then
-            local slot = craftQueueItem.recipeData.reagentData.requiredSelectableReagentSlot
-            if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(craftQueueItem.recipeData) then
-                tinsert(activeReagents, slot.activeReagent)
-                quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
-            end
-        end
-        for _, optionalReagent in pairs(activeReagents) do
-            if not optionalReagent:IsCurrency() then
-                local itemID = optionalReagent.item:GetItemID()
-                local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
-                local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
-                if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
-                    local allocatedQuantity = quantityMap[itemID] or 1
-                    reagentMap[itemID] = reagentMap[itemID] or {
-                        itemName = optionalReagent.item:GetItemName(),
-                        qualityID = qualityID,
-                        quantity = 0
-                    }
-                    reagentMap[itemID].quantity = reagentMap[itemID]
-                        .quantity + allocatedQuantity * craftQueueItem.amount
-                end
-            end
-        end
-    end
-
-    local crafterUIDs = GUTIL:Map(craftQueue.craftQueueItems, function(cqi)
-        return cqi.recipeData:GetCrafterUID()
-    end)
-
-    crafterUIDs = GUTIL:ToSet(crafterUIDs)
-
-    local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
-        itemID = getNonSoulboundAlternativeItemID(itemID)
-        if not itemID then
+    -- Keep Auctionator behavior unchanged: do not include soulbound-only reagents.
+    local entries = self:GetMissingReagentsFromCraftQueue(false)
+    local searchStrings = GUTIL:Map(entries, function(e)
+        if e.quantity <= 0 then
             return nil
         end
-        local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
-            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
-            return itemCount + itemCountForCrafter
-        end)
-
         local searchTerm = {
-            searchString = info.itemName,
-            tier = info.qualityID,
-            quantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0),
+            searchString = e.itemName,
+            tier = e.qualityID,
+            quantity = e.quantity,
             isExact = true,
-            debug = tostring(info.quantity) .. " - " .. tostring((tonumber(totalItemCount) or 0)),
         }
-        if searchTerm.quantity == 0 then
-            return nil
-        end
-        local searchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerm)
-        return searchString
+        return Auctionator.API.v1.ConvertToSearchString(addonName, searchTerm)
     end)
 
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
 
-    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List"))
-
+    local listCreatedMessage = f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List")
+    if #searchStrings > 0 then
+        listCreatedMessage = listCreatedMessage .. " " .. f.g("(new items added)")
+    else
+        listCreatedMessage = listCreatedMessage .. " " .. f.r("(no items added)")
+    end
+    CraftSim.DEBUG:SystemPrint(listCreatedMessage)
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end
 
@@ -502,4 +599,187 @@ end
 function CraftSim.SHOPPING:CRAFTSIM_CRAFTQUEUE_QUEUE_PROCESS_FINISHED()
     -- create shopping list
     CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
+    if CraftSim.SHOPPING.shoppingListViewFrame and CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
+        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
+    end
+end
+
+function CraftSim.SHOPPING:CreateShoppingListViewFrameIfNeeded()
+    if self.shoppingListViewFrame then
+        return
+    end
+
+    local onClose = CraftSim.MODULES:GetModuleFrameStateCallbacks(CraftSim.SHOPPING)
+
+    local frame = GGUI.Frame({
+        parent = UIParent,
+        anchorParent = UIParent,
+        sizeX = 520,
+        sizeY = 280,
+        title = "Shopping List",
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        raiseOnInteraction = true,
+        closeOnEscape = true,
+        onCloseCallback = onClose,
+    })
+
+    self.shoppingListViewFrame = frame
+    -- wire into module system so VisibleByContext and frame toggling works
+    CraftSim.SHOPPING.frame = frame
+
+    local content = frame.content
+    local listPad = 12
+    local scrollbarWidth = 30
+    local listSizeX = 520 - (listPad * 2) - scrollbarWidth
+    local listSizeY = 280 - 72
+
+    content.reagentList = GGUI.FrameList({
+        parent = content,
+        anchorParent = content,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPLEFT",
+        offsetX = listPad,
+        offsetY = -28,
+        sizeX = listSizeX,
+        sizeY = listSizeY,
+        rowHeight = 18,
+        showBorder = true,
+        hideScrollbar = false,
+        columnOptions = {
+            {
+                label = "Item",
+                width = 360,
+            },
+            {
+                label = "Qty",
+                width = 70,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            },
+        },
+        rowConstructor = function(columns)
+            local itemCol = columns[1]
+            local qtyCol = columns[2]
+
+            itemCol.icon = GGUI.Icon({
+                parent = itemCol,
+                anchorParent = itemCol,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 2,
+                sizeX = 16,
+                sizeY = 16,
+                qualityIconScale = 1,
+            })
+            itemCol.name = GGUI.Text({
+                parent = itemCol,
+                anchorParent = itemCol,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 40,
+                scale = 0.85,
+                wrap = true,
+                fixedWidth = 315,
+                justifyOptions = { type = "H", align = "LEFT" },
+            })
+
+            itemCol.quality = GGUI.Text({
+                parent = itemCol,
+                anchorParent = itemCol,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 20,
+                scale = 0.9,
+                justifyOptions = { type = "H", align = "LEFT" },
+            })
+
+            qtyCol.text = GGUI.Text({
+                parent = qtyCol,
+                anchorParent = qtyCol,
+                anchorA = "RIGHT",
+                anchorB = "RIGHT",
+                scale = 0.9,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            })
+
+        end,
+    })
+
+    frame:Hide()
+end
+
+function CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
+    self:CreateShoppingListViewFrameIfNeeded()
+
+    local frame = self.shoppingListViewFrame
+    if not frame or not frame.content or not frame.content.reagentList then
+        return
+    end
+
+    -- In the internal view, still show soulbound reagents even when no auctionable alternative exists.
+    local entries = self:GetMissingReagentsFromCraftQueue(true)
+    local list = frame.content.reagentList --[[@as GGUI.FrameList]]
+    list:Remove()
+
+    for _, entry in ipairs(entries) do
+        list:Add(function(row, columns)
+            local itemCol = columns[1]
+            local qtyCol = columns[2]
+
+            local itemMixin = Item:CreateFromItemID(entry.itemID)
+            if itemMixin then
+                itemCol.icon:SetItem(itemMixin)
+            else
+                itemCol.icon:SetItem(nil)
+            end
+
+            itemCol.name:SetText(entry.itemName)
+            qtyCol.text:SetText(tostring(entry.quantity))
+
+            if entry.qualityID and entry.qualityID > 0 then
+                itemCol.quality:SetText(GUTIL:GetQualityIconStringSimplified(entry.qualityID, 14, 14) or "")
+            else
+                itemCol.quality:SetText("")
+            end
+
+            row.entry = entry
+            row.tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                owner = row.frame,
+                text = f.white(itemMixin and itemMixin:GetItemLink() or entry.itemName),
+            }
+        end)
+    end
+
+    list:UpdateDisplay()
+end
+
+function CraftSim.SHOPPING:ShowShoppingListView()
+    CraftSim.DB.OPTIONS:SetModuleEnabled("MODULE_SHOPPING", true)
+    self:CreateShoppingListViewFrameIfNeeded()
+    self:UpdateShoppingListViewDisplay()
+    local frame = self.shoppingListViewFrame
+    if frame then
+        frame:Show()
+        frame:Raise()
+    end
+end
+
+function CraftSim.SHOPPING:HideShoppingListView()
+    GUTIL:TriggerCustomEvent("CRAFTSIM_MODULE_CLOSED", "MODULE_SHOPPING")
+end
+
+function CraftSim.SHOPPING:ToggleShoppingListView()
+    self:CreateShoppingListViewFrameIfNeeded()
+    local frame = self.shoppingListViewFrame
+    if frame and frame:IsVisible() then
+        self:HideShoppingListView()
+        return
+    end
+    self:ShowShoppingListView()
 end

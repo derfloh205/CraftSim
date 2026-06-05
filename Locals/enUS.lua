@@ -994,13 +994,27 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "Import Craft List",
         CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "Enable Concentration",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize Concentration",
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. "Concentration" .. f.bb(" Queueing"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP =
-        "Queue recipes in order of most concentration value per point, spending all available concentration",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION_TOOLTIP =
+            "Upgrade reagents to maximize profit per concentration point spent",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION = f.gold("Concentration"),
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED = "Disabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED_TOOLTIP =
+            "Do not use concentration when scanning or queuing this list",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED = "Enabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED_TOOLTIP =
+            "Use concentration for optimization; queue full restock amounts without limiting to your current pool",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE = "Single Best",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE_TOOLTIP =
+            "Queue only the recipe with the highest concentration value per profession, limited to available concentration",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI = "Multi-Recipe",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI_TOOLTIP =
+            "Queue multiple recipes in concentration value order until all available concentration is used",
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset Concentration" .. f.bb(" Queue Amount"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP =
             "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
             f.bb("Ingenuity"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_POOL_ONLY =
+            "Only applies to " .. f.bb("Single Best") .. " and " .. f.bb("Multi-Recipe"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "Optimize Profession Tools",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "Autoselect Top Profit Quality",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "Optimize Finishing Reagents",
@@ -1019,7 +1033,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
-        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
+        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nRecipes already at or above the restock target are always skipped.\n\nTurn off to queue up to the full target when below cap (for example, queue 20 when you have 5 but not when you already have 20).",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "When enabled, alt characters' inventory is also subtracted from the restock target.",
@@ -1118,6 +1132,11 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_WO = "WO",
 
         -- disenchant
+        CONTROL_PANEL_MODULES_DISENCHANT_LABEL = "Disenchanting",
+        CONTROL_PANEL_MODULES_DISENCHANT_TOOLTIP = "Open the " .. f.bb("Disenchanting") .. " helper window",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_LABEL = "Shopping List",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_TOOLTIP = "Open the " .. f.bb("Shopping List") ..
+            " to see what reagents you need to buy for your queued crafts",
         DISENCHANT_TITLE = "CraftSim Disenchanting",
         DISENCHANT_BUTTON = "Disenchant Next",
         DISENCHANT_OPTIONS_MIN_ILVL = "Minimum Item Level: ",

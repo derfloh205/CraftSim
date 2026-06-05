@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.CraftList.Options
 ---@field enableConcentration boolean
 ---@field optimizeConcentration boolean
----@field smartConcentrationQueuing boolean
+---@field concentrationAllocationMode string one of OFF, SINGLE, MULTI
 ---@field offsetConcentrationCraftAmount boolean
 ---@field optimizeProfessionTools boolean
 ---@field optimizeFinishingReagents boolean
@@ -49,7 +49,7 @@ local function DefaultOptions()
     return {
         enableConcentration = true,
         optimizeConcentration = true,
-        smartConcentrationQueuing = false,
+        concentrationAllocationMode = "OFF",
         offsetConcentrationCraftAmount = false,
         optimizeProfessionTools = true,
         optimizeFinishingReagents = false,
@@ -71,6 +71,27 @@ end
 
 CraftSim.DB.CRAFT_LISTS.DefaultOptions = DefaultOptions
 
+---@param options CraftSim.CraftList.Options?
+---@return CraftSim.CraftList.Options
+local function NormalizeListOptions(options)
+    options = options or DefaultOptions()
+    if options.smartConcentrationQueuing ~= nil then
+        if options.smartConcentrationQueuing then
+            options.concentrationAllocationMode = options.concentrationAllocationMode or "SINGLE"
+        elseif not options.concentrationAllocationMode then
+            options.concentrationAllocationMode = "OFF"
+        end
+        options.smartConcentrationQueuing = nil
+    end
+    options.concentrationAllocationMode = options.concentrationAllocationMode or "OFF"
+    if not options.enableConcentration then
+        options.concentrationAllocationMode = "OFF"
+    end
+    return options
+end
+
+CraftSim.DB.CRAFT_LISTS.NormalizeListOptions = NormalizeListOptions
+
 ---@param recipeID RecipeID
 ---@return CraftSim.CraftListRecipeEntry
 local function CreateDefaultRecipeEntry(recipeID)
@@ -86,7 +107,7 @@ local function NormalizeListRecipes(list)
 
     list.recipeEntries = list.recipeEntries or {}
     list.recipeIDs = list.recipeIDs or {}
-    list.options = list.options or DefaultOptions()
+    list.options = NormalizeListOptions(list.options or DefaultOptions())
 
     if #list.recipeEntries == 0 and #list.recipeIDs > 0 then
         for _, recipeID in ipairs(list.recipeIDs) do
@@ -372,8 +393,8 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                 if CraftSimDB.optionsDB and CraftSimDB.optionsDB.data then
                     local od = CraftSimDB.optionsDB.data
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] ~= nil then
-                        options.smartConcentrationQueuing = od
-                            ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
+                        options.concentrationAllocationMode = od
+                            ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] and "SINGLE" or "OFF"
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"] ~= nil then
                         options.offsetConcentrationCraftAmount = od
@@ -437,4 +458,21 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_1_2_Normalize_crafterUID_keys()
 
     CraftSimDB.craftListsDB.characterLists = normalizedCharacterLists
     CraftSimDB.craftListsDB.selectedForQueue = normalizedSelectedForQueue
+end
+
+function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_2_3_Concentration_allocation_mode()
+    local function migrateList(list)
+        if list and list.options then
+            list.options = NormalizeListOptions(list.options)
+        end
+    end
+
+    for _, list in pairs(CraftSimDB.craftListsDB.globalLists or {}) do
+        migrateList(list)
+    end
+    for _, listMap in pairs(CraftSimDB.craftListsDB.characterLists or {}) do
+        for _, list in pairs(listMap or {}) do
+            migrateList(list)
+        end
+    end
 end
