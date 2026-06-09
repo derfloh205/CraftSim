@@ -606,7 +606,7 @@ function CraftSim.LOCAL_CN:GetData()
         "启用后，物品提示中将列出CraftSim记录中已学习此配方的角色（以及任何拥有此物品最近制造数据的角色）。",
         OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX = "显示的制作者上限",
         OPTIONS_TOOLTIP_REGISTERED_CRAFTERS_MAX_SUBLABEL =
-        "超出上限的制作者将在名字列表后显示为数量。",
+        "超出上限的制作者将在列表后显示为数量。",
 
         -- Control Panel
         CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "制造队列",
