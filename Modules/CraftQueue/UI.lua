@@ -2080,6 +2080,30 @@ function CraftSim.CRAFTQ.UI:Init()
         end,
     }
 
+    -- Note-style indicator: current recipe is present in one or more craft lists.
+    CraftSim.CRAFTQ.queueRecipeListIcon = GGUI.Icon {
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent = CraftSim.CRAFTQ.queueRecipeButton.frame,
+        anchorA = "RIGHT", anchorB = "LEFT",
+        offsetX = -6, offsetY = 0,
+        qualityIconScale = 1,
+        sizeX = 15, sizeY = 15,
+    }
+    CraftSim.CRAFTQ.queueRecipeListIcon.frame:SetNormalAtlas(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.CRAFTER.texture)
+    CraftSim.CRAFTQ.queueRecipeListIcon.frame:Hide()
+    CraftSim.CRAFTQ.queueRecipeListIcon.frame:SetScript("OnEnter", function(frame)
+        local labels = CraftSim.CRAFTQ.queueRecipeListIconLabels or {}
+        if #labels == 0 then return end
+        GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L("RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER"), 1, 1, 1, true)
+        for _, name in ipairs(labels) do
+            GameTooltip:AddLine("  - " .. name, 1, 1, 1, true)
+        end
+        GameTooltip:Show()
+    end)
+    CraftSim.CRAFTQ.queueRecipeListIcon.frame:SetScript("OnLeave", GameTooltip_Hide)
+
     CraftSim.CRAFTQ.queueRecipeButtonOptions = CraftSim.WIDGETS.OptimizationOptions {
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorPoints = { {
@@ -2116,6 +2140,30 @@ function CraftSim.CRAFTQ.UI:Init()
             CraftSim.CRAFTQ:QueueOpenRecipe()
         end,
     }
+
+    -- Same indicator for work-order schematic recipes.
+    CraftSim.CRAFTQ.queueRecipeListIconWO = GGUI.Icon {
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorParent = CraftSim.CRAFTQ.queueRecipeButtonWO.frame,
+        anchorA = "RIGHT", anchorB = "LEFT",
+        offsetX = -6, offsetY = 0,
+        qualityIconScale = 1,
+        sizeX = 15, sizeY = 15,
+    }
+    CraftSim.CRAFTQ.queueRecipeListIconWO.frame:SetNormalAtlas(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.CRAFTER.texture)
+    CraftSim.CRAFTQ.queueRecipeListIconWO.frame:Hide()
+    CraftSim.CRAFTQ.queueRecipeListIconWO.frame:SetScript("OnEnter", function(frame)
+        local labels = CraftSim.CRAFTQ.queueRecipeListIconWOLabels or {}
+        if #labels == 0 then return end
+        GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L("RECIPE_SCAN_CRAFT_LISTS_TOOLTIP_HEADER"), 1, 1, 1, true)
+        for _, name in ipairs(labels) do
+            GameTooltip:AddLine("  - " .. name, 1, 1, 1, true)
+        end
+        GameTooltip:Show()
+    end)
+    CraftSim.CRAFTQ.queueRecipeListIconWO.frame:SetScript("OnLeave", GameTooltip_Hide)
 
     CraftSim.CRAFTQ.queueRecipeButtonOptionsWO = CraftSim.WIDGETS.OptimizationOptions {
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
@@ -3162,6 +3210,26 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
     local buttonOptionsWO = CraftSim.CRAFTQ.queueRecipeButtonOptionsWO
 
+    local function getCraftListLabelsForRecipe()
+        if not recipeData or not recipeData.recipeID then return {} end
+        local crafterUID = recipeData:GetCrafterUID()
+        local allLists = CraftSim.DB.CRAFT_LISTS:GetAllLists(crafterUID)
+        local labels = {}
+        local seen = {}
+        for _, list in ipairs(allLists) do
+            if tContains(list.recipeIDs or {}, recipeData.recipeID) then
+                if not seen[list.name] then
+                    seen[list.name] = true
+                    tinsert(labels, list.name)
+                end
+            end
+        end
+        table.sort(labels)
+        return labels
+    end
+
+    local craftListLabels = getCraftListLabelsForRecipe()
+
     local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
         not C_TradeSkillUI.IsTradeSkillLinked() and not C_TradeSkillUI.IsNPCCrafting() and
@@ -3183,6 +3251,26 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     buttonWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
     buttonOptionsWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and
         exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+
+    -- Indicator icon visibility is based on craft-list membership + the button being visible.
+    if CraftSim.CRAFTQ.queueRecipeListIcon then
+        CraftSim.CRAFTQ.queueRecipeListIconLabels = craftListLabels
+        local shouldShow = isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER and #craftListLabels > 0
+        if shouldShow then
+            CraftSim.CRAFTQ.queueRecipeListIcon.frame:Show()
+        else
+            CraftSim.CRAFTQ.queueRecipeListIcon.frame:Hide()
+        end
+    end
+    if CraftSim.CRAFTQ.queueRecipeListIconWO then
+        CraftSim.CRAFTQ.queueRecipeListIconWOLabels = craftListLabels
+        local shouldShow = isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and #craftListLabels > 0
+        if shouldShow then
+            CraftSim.CRAFTQ.queueRecipeListIconWO.frame:Show()
+        else
+            CraftSim.CRAFTQ.queueRecipeListIconWO.frame:Hide()
+        end
+    end
 end
 
 function CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
