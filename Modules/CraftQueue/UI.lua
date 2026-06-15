@@ -1538,6 +1538,34 @@ function CraftSim.CRAFTQ.UI:Init()
                         L("CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP"))
                 end);
 
+                local optimizeFinishingCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS", not value)
+                    end)
+
+                optimizeFinishingCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_TOOLTIP"))
+                end);
+
+                local includeSoulboundFinishingCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND", not value)
+                    end)
+
+                includeSoulboundFinishingCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_TOOLTIP"))
+                end);
+
                 local orderTypeSubMenu = rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON"))
 
                 orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_PATRON_ORDERS_BUTTON"), function()
