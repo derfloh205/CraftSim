@@ -104,7 +104,8 @@ function CraftSim.DISENCHANT.UI:Init()
             hoverRGBA = { 0, 1, 0, 0.1 },
 
             selectionCallback = function(row, userInput, alreadySelected)
-                if userInput and IsMouseButtonDown("MiddleButton") then
+                local isBlacklistClick = IsMouseButtonDown("MiddleButton") or IsMouseButtonDown("RightButton")
+                if userInput and isBlacklistClick then
                     local itemLink = row.item:GetItemLink()
                     if IsShiftKeyDown() then
                         local blackList = CraftSim.DB.OPTIONS:Get("DISENCHANT_BLACKLIST")

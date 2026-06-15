@@ -1147,9 +1147,9 @@ greater or equal the configured sale rate threshold.
         DISENCHANT_TITLE = "CraftSim Disenchanting",
         DISENCHANT_BUTTON = "Disenchant Next",
         DISENCHANT_OPTIONS_MIN_ILVL = "Minimum Item Level: ",
-        DISENCHANT_INFO_TOOLTIP = f.bb("MMB") ..
+        DISENCHANT_INFO_TOOLTIP = f.bb("MMB / RMB") ..
             f.white(" .. Blacklist Item for Session\n") ..
-            f.bb("Shift + MMB") .. f.white(" .. Blacklist Item Permanently"),
+            f.bb("Shift + MMB / RMB") .. f.white(" .. Blacklist Item Permanently"),
 
         -- banking
         OPTIONS_BANKING_TAB = "Banking",
