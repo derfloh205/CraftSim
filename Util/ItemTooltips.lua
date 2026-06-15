@@ -58,15 +58,16 @@ end
 --- Uses full list for duplicate-name detection; only the first maxShown names are listed.
 ---@param crafterUIDs CrafterUID[]
 ---@param maxShown number?
+---@param showAllRealms boolean?
 ---@return string
-local function FormatRegisteredCraftersList(crafterUIDs, maxShown)
+local function FormatRegisteredCraftersList(crafterUIDs, maxShown, showAllRealms)
     maxShown = math.max(1, math.min(50, math.floor(tonumber(maxShown) or 5)))
     local nameCounts = CraftSim.UTIL:CountCrafterNamesByUIDList(crafterUIDs)
     local limit = math.min(#crafterUIDs, maxShown)
     local parts = {}
     for i = 1, limit do
         local uid = crafterUIDs[i]
-        local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(uid, nameCounts)
+        local display = CraftSim.UTIL:FormatCrafterUIDForPeerList(uid, nameCounts, showAllRealms)
         tinsert(parts, CraftSim.UTIL:ColorizeCrafterNameByUID(uid, display))
     end
     local text = table.concat(parts, ", ")
@@ -81,8 +82,9 @@ end
 --- Character list labels are prefixed with the crafter display name to disambiguate.
 ---@param recipeID RecipeID?
 ---@param crafterUIDs CrafterUID[]
+---@param showAllRealms boolean?
 ---@return string[]
-local function GetCraftListLabelsForRecipe(recipeID, crafterUIDs)
+local function GetCraftListLabelsForRecipe(recipeID, crafterUIDs, showAllRealms)
     if not recipeID or #crafterUIDs == 0 then
         return {}
     end
@@ -92,7 +94,7 @@ local function GetCraftListLabelsForRecipe(recipeID, crafterUIDs)
     local labels = {}
 
     for _, uid in ipairs(crafterUIDs) do
-        local crafterDisplay = CraftSim.UTIL:FormatCrafterUIDForPeerList(uid, nameCounts)
+        local crafterDisplay = CraftSim.UTIL:FormatCrafterUIDForPeerList(uid, nameCounts, showAllRealms)
         local lists = CraftSim.DB.CRAFT_LISTS:GetAllLists(uid)
         for _, list in ipairs(lists) do
             if GUTIL:Find(list.recipeEntries or {}, function(entry) return entry.recipeID == recipeID end) then
@@ -139,9 +141,10 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             and GetRegisteredCrafterUIDsForItem(itemID, itemLink)
             or {}
         local showRegistered = #registeredUIDs > 0
+        local showAllRealms = IsShiftKeyDown()
 
         local itemRecipeData = CraftSim.DB.ITEM_RECIPE:Get(itemID)
-        local craftListLabels = showRegistered and GetCraftListLabelsForRecipe(itemRecipeData and itemRecipeData.recipeID, registeredUIDs) or
+        local craftListLabels = showRegistered and GetCraftListLabelsForRecipe(itemRecipeData and itemRecipeData.recipeID, registeredUIDs, showAllRealms) or
             {}
         local showCraftLists = #craftListLabels > 0
 
@@ -181,7 +184,7 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
             local timeText = FormatTimestamp(timestamp)
             tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_LABEL"), costText)
             if crafterUID then
-                local crafterDisplay = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
+                local crafterDisplay = CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts, showAllRealms)
                 tooltip:AddDoubleLine(L("LAST_CRAFTING_COST_TOOLTIP_CRAFTER"),
                     CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, crafterDisplay))
             end
@@ -191,7 +194,8 @@ function CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
         if showRegistered then
             tooltip:AddDoubleLine(L("REGISTERED_CRAFTERS_ITEM_TOOLTIP_LABEL"), FormatRegisteredCraftersList(
                 registeredUIDs,
-                CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX)))
+                CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.REGISTERED_CRAFTERS_ITEM_TOOLTIP_MAX),
+                showAllRealms))
         end
 
         if showCraftLists then
