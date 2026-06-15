@@ -164,7 +164,8 @@ end
 
 ---@return CraftSim.RecipeData? recipeData
 function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.initialRecipeID)
+	local initialRecipeID = tonumber(CraftSim.INIT.initialRecipeID)
+	local recipeInfo = initialRecipeID and initialRecipeID > 0 and C_TradeSkillUI.GetRecipeInfo(initialRecipeID) or nil
 
 	if not recipeInfo then
 		return nil
@@ -177,7 +178,7 @@ function CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
 	end
 
 	-- On cold profession open, visibleRecipeID can lag behind the actually selected schematic recipe.
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.initialRecipeID)
+	recipeInfo = initialRecipeID and initialRecipeID > 0 and C_TradeSkillUI.GetRecipeInfo(initialRecipeID) or nil
 	if not recipeInfo then
 		recipeInfo = schematicForm:GetRecipeInfo()
 	end
