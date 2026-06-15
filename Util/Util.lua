@@ -352,17 +352,18 @@ end
 --- Name only if unique in the peer list; Name-Realm when the same name appears on multiple characters.
 ---@param crafterUID CrafterUID
 ---@param nameCounts table<string, number> from CountCrafterNamesByUIDList
+---@param showAllRealms boolean? when true, always include the realm suffix
 ---@return string
-function CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts)
+function CraftSim.UTIL:FormatCrafterUIDForPeerList(crafterUID, nameCounts, showAllRealms)
     local name, realm = self:SplitCrafterUID(crafterUID)
     if not name or not realm then
         return crafterUID
     end
     local key = string.lower(name)
-    if (nameCounts[key] or 0) <= 1 then
-        return name
+    if showAllRealms or (nameCounts[key] or 0) > 1 then
+        return name .. "-" .. realm
     end
-    return name .. "-" .. realm
+    return name
 end
 
 --- Class-colored display text, or grey if class is unknown.
