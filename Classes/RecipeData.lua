@@ -1380,7 +1380,9 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
     end
 
     for _, slot in ipairs(reagentData.finishingReagentSlots) do
-        slot:SetReagent(nil)
+        if not slot:IsOrderReagentIn(self) then
+            slot:SetReagent(nil)
+        end
     end
     self:Update()
 
@@ -1411,6 +1413,11 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
         continue = function(frameDistributor, _, slot, _, _)
             ---@type CraftSim.OptionalReagentSlot
             local slot = slot
+
+            if slot:IsOrderReagentIn(self) then
+                frameDistributor:Continue()
+                return
+            end
 
             if not options.includeLocked and slot.locked then
                 frameDistributor:Continue()
@@ -1590,75 +1597,79 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
     local crafterUID = self:GetCrafterUID()
     local slotCandidates = {}
     for _, slot in ipairs(slots) do
-        local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
+        if slot:IsOrderReagentIn(self) and slot.activeReagent then
+            table.insert(slotCandidates, { slot.activeReagent })
+        else
+            local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
 
-        if options.includeLocked or not slot.locked then
-            -- When onlyHighestQualitySoulbound is set, pre-compute the max stat value among
-            -- soulbound reagents in this slot that the player owns.
+            if options.includeLocked or not slot.locked then
+                -- When onlyHighestQualitySoulbound is set, pre-compute the max stat value among
+                -- soulbound reagents in this slot that the player owns.
 
-            local possibleReagents = slot.possibleReagents
-            if options.includeSoulbound and options.onlyHighestQualitySoulbound then
-                -- fetch highest soulbounds per stat
-                local reagentStatMap = {}
-                for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
-                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
-                            local currentBest = reagentStatMap[stat.name]
-                            local statValue = stat.value
-                            if not currentBest or statValue > currentBest.value then
-                                reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
+                local possibleReagents = slot.possibleReagents
+                if options.includeSoulbound and options.onlyHighestQualitySoulbound then
+                    -- fetch highest soulbounds per stat
+                    local reagentStatMap = {}
+                    for _, reagent in ipairs(possibleReagents) do
+                        if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                            for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                                local currentBest = reagentStatMap[stat.name]
+                                local statValue = stat.value
+                                if not currentBest or statValue > currentBest.value then
+                                    reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
+                                end
                             end
                         end
                     end
-                end
 
-                -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
-                local filteredReagents = {}
-                for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
-                        local isHighest = false
-                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
-                            local bestForStat = reagentStatMap[stat.name]
-                            if bestForStat and bestForStat.reagent == reagent then
-                                isHighest = true
-                                break
+                    -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
+                    local filteredReagents = {}
+                    for _, reagent in ipairs(possibleReagents) do
+                        if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                            local isHighest = false
+                            for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                                local bestForStat = reagentStatMap[stat.name]
+                                if bestForStat and bestForStat.reagent == reagent then
+                                    isHighest = true
+                                    break
+                                end
                             end
-                        end
-                        if isHighest then
+                            if isHighest then
+                                table.insert(filteredReagents, reagent)
+                            end
+                        else
                             table.insert(filteredReagents, reagent)
                         end
-                    else
-                        table.insert(filteredReagents, reagent)
                     end
+
+                    possibleReagents = filteredReagents
                 end
 
-                possibleReagents = filteredReagents
-            end
-
-            for _, reagent in ipairs(possibleReagents) do
-                local isViable = false
-                if reagent:IsCurrency() then
-                    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
-                    isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
-                else
-                    local itemID = reagent.item:GetItemID()
-                    local isSoulbound = GUTIL:isItemSoulbound(itemID)
-                    if isSoulbound then
-                        if options.includeSoulbound then
-                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
-                            isViable = count and count > 0
+                for _, reagent in ipairs(possibleReagents) do
+                    local isViable = false
+                    if reagent:IsCurrency() then
+                        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
+                        isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
+                    else
+                        local itemID = reagent.item:GetItemID()
+                        local isSoulbound = GUTIL:isItemSoulbound(itemID)
+                        if isSoulbound then
+                            if options.includeSoulbound then
+                                local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                                isViable = count and count > 0
+                            end
+                        else
+                            isViable = true
                         end
-                    else
-                        isViable = true
+                    end
+                    if isViable then
+                        table.insert(candidates, reagent)
                     end
                 end
-                if isViable then
-                    table.insert(candidates, reagent)
-                end
             end
-        end
 
-        table.insert(slotCandidates, candidates)
+            table.insert(slotCandidates, candidates)
+        end
     end
 
     -- Generate the cartesian product of all slot candidate lists.

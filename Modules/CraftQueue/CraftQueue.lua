@@ -511,6 +511,21 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                         distributor:Continue()
                                     end
+                                    local iconSize = 15
+                                    local finishingOpts = CraftSim.DB.OPTIONS:Get(
+                                        "CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS") and {
+                                        includeLocked = false,
+                                        includeSoulbound = CraftSim.DB.OPTIONS:Get(
+                                            "CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND"),
+                                        progressUpdateCallback = function(frProgress)
+                                            queueWorkOrdersButton:SetText(string.format("%s - %.0f%% %s - %.0f%%",
+                                                orderTypeText,
+                                                progress,
+                                                CreateAtlasMarkup("Banker", iconSize, iconSize),
+                                                frProgress))
+                                        end,
+                                    } or nil
+
                                     -- try to optimize for target quality
                                     if order.minQuality and order.minQuality > 0 then
                                         local maxQuality = (isPatronOrder and
@@ -521,6 +536,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             optimizeReagentOptions = {
                                                 maxQuality = maxQuality,
                                             },
+                                            optimizeFinishingReagentsOptions = finishingOpts,
                                             finally = queueRecipe,
                                         }
                                     else
@@ -530,6 +546,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         -- equipped when the RecipeData was constructed.
                                         recipeData:Optimize {
                                             optimizeGear = true,
+                                            optimizeFinishingReagentsOptions = finishingOpts,
                                             finally = queueRecipe,
                                         }
                                     end
