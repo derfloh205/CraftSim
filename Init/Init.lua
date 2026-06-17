@@ -42,7 +42,8 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents {
 	"TRADE_SKILL_FAVORITES_CHANGED",
 	"TRADE_SKILL_DATA_SOURCE_CHANGED",
 	"TRADE_SKILL_SHOW",
-	"CRAFTING_DETAILS_UPDATE"
+	"CRAFTING_DETAILS_UPDATE",
+	"CRAFTINGORDERS_CAN_REQUEST",
 }
 
 GUTIL:RegisterCustomEvents(CraftSim.INIT, {
@@ -63,6 +64,60 @@ CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Init")
+
+local professionFrameHooked = false
+local craftingOrdersPreloadedThisSession = {}
+---@type number?
+local craftingOrdersPreloadPendingProfessionID = nil
+local craftingOrdersCanRequest = false
+---@type table?
+local craftingOrdersPreloadFallbackTimer = nil
+
+local function cancelCraftingOrdersPreloadFallback()
+	if craftingOrdersPreloadFallbackTimer then
+		craftingOrdersPreloadFallbackTimer:Cancel()
+		craftingOrdersPreloadFallbackTimer = nil
+	end
+end
+
+local function emitCraftingOrdersPreloaded()
+	cancelCraftingOrdersPreloadFallback()
+	craftingOrdersPreloadPendingProfessionID = nil
+	local ms = CraftSim.DEBUG:StopProfiling("Preload Crafting Orders")
+	Logger:LogDebug("Crafting orders preload ready in " .. tostring(ms) .. " ms")
+	-- Let Blizzard's in-flight preload callback finish before CraftSim queues work orders.
+	RunNextFrame(function()
+		RunNextFrame(function()
+			if ProfessionsFrame and ProfessionsFrame:IsVisible() then
+				GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFTING_ORDERS_PRELOADED")
+			end
+		end)
+	end)
+end
+
+local function tryEmitCraftingOrdersPreloaded()
+	local professionID = craftingOrdersPreloadPendingProfessionID
+	if not professionID then
+		return
+	end
+	if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+		craftingOrdersPreloadPendingProfessionID = nil
+		cancelCraftingOrdersPreloadFallback()
+		return
+	end
+	if not craftingOrdersCanRequest then
+		return
+	end
+	if not CraftSim.INIT:IsProfessionReady() then
+		return
+	end
+	emitCraftingOrdersPreloaded()
+end
+
+function CraftSim.INIT:CRAFTINGORDERS_CAN_REQUEST()
+	craftingOrdersCanRequest = true
+	tryEmitCraftingOrdersPreloaded()
+end
 
 function CraftSim.INIT:TRADE_SKILL_FAVORITES_CHANGED(isFavoriteNow, recipeID)
 	-- adapt cached values
@@ -200,6 +255,7 @@ end
 
 function CraftSim.INIT:CRAFTSIM_PROFESSION_INITIALIZED()
 	CraftSim.MODULES:UpdateVisibilityByContext()
+	tryEmitCraftingOrdersPreloaded()
 
 	-- Poll until current recipe info of RecipeID is available, then trigger event for all listeners
 	GUTIL:WaitFor(function()
@@ -490,8 +546,6 @@ function CraftSim.INIT:HandleAuctionatorHooks()
 	end
 end
 
-local professionFrameHooked = false
-local craftingOrdersPreloadedThisSession = {}
 function CraftSim.INIT:HookToProfessionsFrame()
 	if professionFrameHooked then
 		return
@@ -520,25 +574,38 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 			-- Force-load crafting orders on the first ProfessionFrame open after login.
 			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click).
-			-- Clicking tab 3 then immediately back to tab 1 within the same RunNextFrame
+			-- CRAFTSIM_CRAFTING_ORDERS_PRELOADED fires once CRAFTINGORDERS_CAN_REQUEST and profession data are ready.
 			RunNextFrame(function()
 				local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 				local professionID = professionInfo and professionInfo.professionID or nil
-				-- triggers the server request without any visible UI flicker.
 				if professionID and (not craftingOrdersPreloadedThisSession[professionID]
 						and C_CraftingOrders.ShouldShowCraftingOrderTab()
 						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
 					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
 						craftingOrdersPreloadedThisSession[professionID] = true
+						craftingOrdersPreloadPendingProfessionID = professionID
+						craftingOrdersCanRequest = false
+						cancelCraftingOrdersPreloadFallback()
+						craftingOrdersPreloadFallbackTimer = C_Timer.NewTimer(12, function()
+							craftingOrdersPreloadFallbackTimer = nil
+							if craftingOrdersPreloadPendingProfessionID == professionID then
+								Logger:LogDebug("Crafting orders preload fallback timeout for profession " .. professionID)
+								emitCraftingOrdersPreloaded()
+							end
+						end)
 						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
+						tryEmitCraftingOrdersPreloaded()
 					end
-					local ms = CraftSim.DEBUG:StopProfiling("Preload Crafting Orders")
-					Logger:LogDebug("Preloaded crafting orders in " .. ms .. " ms")
-					GUTIL:TriggerCustomEvent("CRAFTSIM_CRAFTING_ORDERS_PRELOADED")
 				end
 			end)
 		end)
+
+	ProfessionsFrame:HookScript("OnHide", function()
+		craftingOrdersPreloadPendingProfessionID = nil
+		craftingOrdersCanRequest = false
+		cancelCraftingOrdersPreloadFallback()
+	end)
 
 	if ProfessionsFrame.OrdersPage then
 		ProfessionsFrame.OrdersPage.OrderView:HookScript("OnHide", function()

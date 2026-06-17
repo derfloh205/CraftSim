@@ -402,7 +402,81 @@ function CraftSim.RecipeData:ApplyBaseProfessionStatsFromOperationInfo(forceCach
     if self.orderData then
         self.supportsMulticraft = false
         self.baseProfessionStats.multicraft:Clear()
+        self:RefreshWorkOrderProcStatSupport()
     end
+end
+
+--- Order operation info omits proc stats; infer resourcefulness from the personal recipe (multicraft never applies).
+function CraftSim.RecipeData:RefreshWorkOrderProcStatSupport()
+    if not self.orderData or not self.supportsCraftingStats then
+        return
+    end
+
+    self.supportsMulticraft = false
+
+    if not self.supportsResourcefulness then
+        local reagentTbl = self.reagentData and self.reagentData:GetCraftingReagentInfoTbl() or {}
+        local refOpInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, reagentTbl, self.allocationItemGUID,
+                false)
+            or C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID, false)
+        local resourcefulness = string.lower(CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS"))
+        for _, statInfo in pairs((refOpInfo and refOpInfo.bonusStats) or {}) do
+            if string.lower(statInfo.bonusStatName or "") == resourcefulness then
+                self.supportsResourcefulness = true
+                break
+            end
+        end
+    end
+
+    -- Work orders never benefit from multicraft; default crafting-stat orders to resourcefulness.
+    if not self.supportsResourcefulness then
+        self.supportsResourcefulness = true
+    end
+end
+
+---@return string topGearMode localized mode string for CraftSim.TOPGEAR:OptimizeTopGear
+function CraftSim.RecipeData:GetOptimizeGearMode()
+    if self.orderData then
+        self:RefreshWorkOrderProcStatSupport()
+        if self.supportsCraftingStats then
+            return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS)
+        end
+    end
+    return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)
+end
+
+--- Work orders should pick tools after reagents/finishing so resourcefulness savings reflect real costs.
+---@param options CraftSim.RecipeData.Optimize.Options
+---@return string[]
+function CraftSim.RecipeData:BuildOptimizationTaskList(options)
+    options = options or {}
+    -- When using permutation-based finishing reagent optimisation, reagent and concentration
+    -- optimisation run per-permutation inside OptimizeFinishingReagentsPermutation, so we
+    -- must skip them here to avoid running them twice.
+    local usePermutation = options.optimizeFinishingReagentsOptions and
+        options.optimizeFinishingReagentsOptions.permutationBased
+    local gearLast = self.orderData ~= nil and options.optimizeGear
+
+    local tasks = {}
+    local function add(task)
+        if task then
+            tinsert(tasks, task)
+        end
+    end
+
+    if not gearLast then
+        add(options.optimizeGear and "GEAR")
+    end
+    add((not usePermutation) and options.optimizeReagentOptions and "REAGENTS")
+    add((not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and
+        "CONCENTRATION")
+    add(options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS")
+    add(options.optimizeSubRecipesOptions and "SUB_RECIPES")
+    if gearLast then
+        add("GEAR")
+    end
+
+    return tasks
 end
 
 ---@param orderData CraftingOrderInfo
@@ -1930,6 +2004,9 @@ end
 ---Optimizes the recipeData's professionGearSet by the given mode.
 ---@param topGearMode string
 function CraftSim.RecipeData:OptimizeGear(topGearMode)
+    if self.orderData then
+        topGearMode = self:GetOptimizeGearMode()
+    end
     local optimizedGear = CraftSim.TOPGEAR:OptimizeTopGear(self, topGearMode)
     local bestResult = optimizedGear[1]
     if bestResult then
@@ -1962,7 +2039,7 @@ end
 function CraftSim.RecipeData:OptimizeProfit(options)
     options = options or {}
     if options.optimizeGear then
-        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+        self:OptimizeGear(self:GetOptimizeGearMode())
     end
     if options.optimizeReagentOptions then
         self:OptimizeReagents(options.optimizeReagentOptions)
@@ -1987,20 +2064,7 @@ end
 function CraftSim.RecipeData:Optimize(options)
     options = options or {}
 
-    -- When using permutation-based finishing reagent optimisation, reagent and concentration
-    -- optimisation run per-permutation inside OptimizeFinishingReagentsPermutation, so we
-    -- must skip them here to avoid running them twice.
-    local usePermutation = options.optimizeFinishingReagentsOptions and
-        options.optimizeFinishingReagentsOptions.permutationBased
-
-    local optimizationTaskList = {
-        options.optimizeGear and "GEAR",
-        (not usePermutation) and options.optimizeReagentOptions and "REAGENTS",
-        (not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and
-        "CONCENTRATION",
-        options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
-        options.optimizeSubRecipesOptions and "SUB_RECIPES",
-    }
+    local optimizationTaskList = self:BuildOptimizationTaskList(options)
 
     GUTIL.FrameDistributor {
         iterationTable = optimizationTaskList,
@@ -2010,7 +2074,7 @@ function CraftSim.RecipeData:Optimize(options)
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
                 Logger:LogDebug("Optimizing Gear..")
-                self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+                self:OptimizeGear(self:GetOptimizeGearMode())
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "REAGENTS" then
                 Logger:LogDebug("Optimizing Reagents..")
