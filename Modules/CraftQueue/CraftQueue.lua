@@ -11,7 +11,9 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFTQ : CraftSim.Module
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
-    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED" })
+    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE",
+    "BAG_UPDATE_DELAYED", "UNIT_SPELLCAST_SUCCEEDED",
+    "CRAFTINGORDERS_CAN_REQUEST" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
@@ -43,6 +45,15 @@ CraftSim.CRAFTQ.itemCountCache = nil
 ---@type table<number, number>
 CraftSim.CRAFTQ.pendingWorkOrderSubmit = {}
 CraftSim.CRAFTQ.pendingWorkOrderSubmitLockSeconds = 1.0
+
+--- Last claimed order ID seen from Blizzard; used to remove the queue row on release/fulfill without re-fetching all order lists.
+---@type number?
+CraftSim.CRAFTQ.lastClaimedOrderID = nil
+
+--- Server allows crafting-order list requests after this event; cleared while a request is in flight.
+CraftSim.CRAFTQ.craftingOrdersCanRequest = false
+CraftSim.CRAFTQ.craftingOrdersRequestRetriesMax = 3
+CraftSim.CRAFTQ.craftingOrdersRequestRetryDelaySeconds = 0.75
 
 --- Generic anti-spam lock for queue craft actions (work orders and normal queue crafts).
 CraftSim.CRAFTQ.craftClickLockUntil = 0
@@ -209,6 +220,10 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
     if not isCrafting then
         self:EndCraftClickLock()
     end
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if claimedOrder then
+        self.lastClaimedOrderID = claimedOrder.orderID
+    end
     self:SyncPendingWorkOrderSubmitState()
     self.UI:Update()
 end
@@ -219,7 +234,191 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
         self:EndCraftClickLock()
     end
     self:SyncPendingWorkOrderSubmitState()
-    self.UI:Update()
+    self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
+    if self.lastClaimedOrderID then
+        self.craftQueue:RemoveWorkOrdersByOrderID(self.lastClaimedOrderID)
+        self.lastClaimedOrderID = nil
+    end
+    if self.frame and self.frame:IsVisible() then
+        self.UI:Update()
+    end
+end
+
+---@param result Enum.CraftingOrderResult
+---@param orderID number
+function CraftSim.CRAFTQ:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result, orderID)
+    self:EndCraftClickLock()
+    if result == Enum.CraftingOrderResult.Ok and orderID then
+        self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
+        self.craftQueue:RemoveWorkOrdersByOrderID(orderID)
+    end
+    if self.frame and self.frame:IsVisible() then
+        self.UI:Update()
+    end
+end
+
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CAN_REQUEST()
+    self.craftingOrdersCanRequest = true
+end
+
+---@param callback function
+---@param timeoutSeconds? number
+function CraftSim.CRAFTQ:WhenCraftingOrdersCanRequest(callback, timeoutSeconds)
+    if self.craftingOrdersCanRequest then
+        RunNextFrame(callback)
+        return
+    end
+
+    local done = false
+    local function finish()
+        if done then
+            return
+        end
+        done = true
+        callback()
+    end
+
+    GUTIL:WaitForEvent("CRAFTINGORDERS_CAN_REQUEST", function()
+        self.craftingOrdersCanRequest = true
+        finish()
+    end, timeoutSeconds or 8)
+end
+
+---@param request table
+---@param onResult fun(result: Enum.CraftingOrderResult)
+---@param retriesLeft? number
+function CraftSim.CRAFTQ:RequestCrafterOrdersWithRetry(request, onResult, retriesLeft)
+    retriesLeft = retriesLeft or self.craftingOrdersRequestRetriesMax
+
+    self:WhenCraftingOrdersCanRequest(function()
+        self.craftingOrdersCanRequest = false
+        request.callback = C_FunctionContainers.CreateCallback(function(result)
+            if result == Enum.CraftingOrderResult.Ok then
+                onResult(result)
+                return
+            end
+
+            local isRetryable = result == Enum.CraftingOrderResult.ThrottleViolation
+                or result == Enum.CraftingOrderResult.Timeout
+            if isRetryable and retriesLeft > 0 then
+                Logger:LogDebug("RequestCrafterOrders throttled ({result}), retries left: {retries}",
+                    result, retriesLeft)
+                C_Timer.After(self.craftingOrdersRequestRetryDelaySeconds, function()
+                    self:RequestCrafterOrdersWithRetry(request, onResult, retriesLeft - 1)
+                end)
+                return
+            end
+
+            Logger:LogDebug("RequestCrafterOrders failed: {result}", result)
+            onResult(result)
+        end)
+        C_CraftingOrders.RequestCrafterOrders(request)
+    end, 8)
+end
+
+---@return Enum.CraftingOrderType[]
+function CraftSim.CRAFTQ:GetEnabledWorkOrderTypes()
+    return {
+        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
+        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS") and Enum.CraftingOrderType.Guild,
+        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS") and Enum.CraftingOrderType.Personal,
+        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS") and Enum.CraftingOrderType.Public,
+    }
+end
+
+---@param orderIDs table<number, boolean>
+function CraftSim.CRAFTQ:AccumulateWorkOrderIDs(orderIDs)
+    local orders = C_CraftingOrders.GetCrafterOrders() or {}
+    for _, order in ipairs(orders) do
+        orderIDs[order.orderID] = true
+    end
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if claimedOrder then
+        orderIDs[claimedOrder.orderID] = true
+    end
+end
+
+---@param profession Enum.Profession
+---@return table
+function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType)
+    return {
+        orderType = orderType,
+        searchFavorites = false,
+        initialNonPublicSearch = false,
+        primarySort = {
+            sortType = Enum.CraftingOrderSortType.ItemName,
+            reversed = false,
+        },
+        secondarySort = {
+            sortType = Enum.CraftingOrderSortType.MaxTip,
+            reversed = false,
+        },
+        forCrafter = true,
+        offset = 0,
+        profession = profession,
+    }
+end
+
+---@class CraftSim.CRAFTQ.WorkOrderCollectResult
+---@field orderIDs table<number, boolean>
+---@field fetchedOrderTypes table<Enum.CraftingOrderType, boolean>
+---@field hadSuccessfulFetch boolean
+
+---@param profession Enum.Profession
+---@param onComplete fun(collectResult: CraftSim.CRAFTQ.WorkOrderCollectResult)
+function CraftSim.CRAFTQ:CollectAvailableWorkOrderIDs(profession, onComplete)
+    local workOrderTypes = self:GetEnabledWorkOrderTypes()
+    local orderIDs = {}
+    local fetchedOrderTypes = {}
+    local hadSuccessfulFetch = false
+
+    GUTIL.FrameDistributor {
+        iterationTable = workOrderTypes,
+        iterationsPerFrame = 1,
+        maxIterations = 10,
+        finally = function()
+            onComplete({
+                orderIDs = orderIDs,
+                fetchedOrderTypes = fetchedOrderTypes,
+                hadSuccessfulFetch = hadSuccessfulFetch,
+            })
+        end,
+        continue = function(frameDistributor, _, workOrderType)
+            local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
+            if not orderType then
+                frameDistributor:Continue()
+                return
+            end
+            local request = self:CreateWorkOrderListRequest(profession, orderType)
+            self:RequestCrafterOrdersWithRetry(request, function(result)
+                if result == Enum.CraftingOrderResult.Ok then
+                    hadSuccessfulFetch = true
+                    fetchedOrderTypes[orderType] = true
+                    self:AccumulateWorkOrderIDs(orderIDs)
+                end
+                frameDistributor:Continue()
+            end)
+        end,
+    }:Continue()
+end
+
+---@param profession Enum.Profession
+---@param onComplete? fun(removedCount: number)
+function CraftSim.CRAFTQ:PruneStaleWorkOrdersForProfession(profession, onComplete)
+    self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
+    self:CollectAvailableWorkOrderIDs(profession, function(collectResult)
+        local removed = 0
+        if collectResult.hadSuccessfulFetch then
+            removed = self.craftQueue:RemoveStaleWorkOrders(
+                collectResult.orderIDs, profession, collectResult.fetchedOrderTypes)
+        end
+        if self.frame and self.frame:IsVisible() then
+            self.UI:Update()
+        end
+        if onComplete then
+            onComplete(removed)
+        end
+    end)
 end
 
 function CraftSim.CRAFTQ:QueueWorkOrders()
@@ -239,12 +438,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
     local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
 
-    local workOrderTypes = {
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS") and Enum.CraftingOrderType.Guild,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS") and Enum.CraftingOrderType.Personal,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS") and Enum.CraftingOrderType.Public,
-    }
+    local workOrderTypes = self:GetEnabledWorkOrderTypes()
+    local availableOrderIDs = {}
+    local fetchedOrderTypes = {}
+    local hadSuccessfulOrderFetch = false
     local queueWorkOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
         .addWorkOrdersButton --[[@as GGUI.Button]]
 
@@ -255,9 +452,15 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         iterationsPerFrame = 1,
         maxIterations = 10,
         finally = function()
+            if hadSuccessfulOrderFetch then
+                self.craftQueue:RemoveStaleWorkOrders(availableOrderIDs, profession, fetchedOrderTypes)
+            end
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
             CraftSim.CRAFTQ.queuingWorkOrders = false
+            if self.frame and self.frame:IsVisible() then
+                self.UI:Update()
+            end
             self:TriggerQueueProcessFinishedEvent("work_orders")
         end,
         continue = function(frameDistributor, _, workOrderType, _, progress)
@@ -266,25 +469,16 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 frameDistributor:Continue()
                 return
             end
-            local request = {
-                orderType = orderType,
-                searchFavorites = false,
-                initialNonPublicSearch = false,
-                primarySort = {
-                    sortType = Enum.CraftingOrderSortType.ItemName,
-                    reversed = false,
-                },
-                secondarySort = {
-                    sortType = Enum.CraftingOrderSortType.MaxTip,
-                    reversed = false,
-                },
-                forCrafter = true,
-                offset = 0,
-                profession = profession,
-                ---@diagnostic disable-next-line: redundant-parameter
-                callback = C_FunctionContainers.CreateCallback(function(result)
-                    if result == Enum.CraftingOrderResult.Ok then
-                        local orders = C_CraftingOrders.GetCrafterOrders()
+            local request = self:CreateWorkOrderListRequest(profession, orderType)
+            self:RequestCrafterOrdersWithRetry(request, function(result)
+                if result ~= Enum.CraftingOrderResult.Ok then
+                    frameDistributor:Continue()
+                    return
+                end
+                hadSuccessfulOrderFetch = true
+                fetchedOrderTypes[orderType] = true
+                self:AccumulateWorkOrderIDs(availableOrderIDs)
+                local orders = C_CraftingOrders.GetCrafterOrders()
                         local claimedOrder = C_CraftingOrders.GetClaimedOrder()
                         if claimedOrder then
                             tinsert(orders, claimedOrder)
@@ -538,10 +732,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 end
                             end
                         }:Continue()
-                    end
-                end),
-            }
-            C_CraftingOrders.RequestCrafterOrders(request)
+            end)
         end
     }:Continue()
 end
@@ -877,8 +1068,12 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
         local orderData = CraftSim.CRAFTQ.currentlyCraftedRecipeData.orderData
         if orderData and orderData.orderID then
             CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderData.orderID)
+            CraftSim.CRAFTQ:SyncPendingWorkOrderSubmitState()
         end
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
+    end
+    if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
+        CraftSim.CRAFTQ.UI:Update()
     end
 end
 
@@ -1148,9 +1343,29 @@ function CraftSim.CRAFTQ:NEW_RECIPE_LEARNED(recipeID)
 end
 
 function CraftSim.CRAFTQ:CRAFTSIM_CRAFTING_ORDERS_PRELOADED()
-    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
-        RunNextFrame(function() self:QueueWorkOrders() end)
+    if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_AUTO_QUEUE") then
+        return
     end
+
+    local function startAutoQueue()
+        if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+            return
+        end
+        -- Brief delay so Top Gear / recipe data can initialize before order-list API traffic.
+        C_Timer.After(1, function()
+            if ProfessionsFrame and ProfessionsFrame:IsVisible() then
+                self:QueueWorkOrders()
+            end
+        end)
+    end
+
+    if not CraftSim.INIT:IsProfessionReady() then
+        GUTIL:WaitFor(function()
+            return CraftSim.INIT:IsProfessionReady()
+        end, startAutoQueue)
+        return
+    end
+    startAutoQueue()
 end
 
 ---@param optionID CraftSim.GENERAL_OPTIONS

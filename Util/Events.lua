@@ -35,7 +35,7 @@
 --- Fired immediately after CraftRecipe / SalvageRecipe is called and CraftSim has built the RecipeData for the craft in progress.
 --- args: recipeData CraftSim.RecipeData
 ---| "CRAFTSIM_CRAFT_RECIPE_DATA_PREPARED"
---- Fired once crafting orders for the current profession have been silently preloaded in the background.
+--- Fired once crafting orders for the current profession are ready to query (CRAFTINGORDERS_CAN_REQUEST + profession initialized).
 --- args: none
 ---| "CRAFTSIM_CRAFTING_ORDERS_PRELOADED"
 --- Fired when the crafting-orders OrderView panel is hidden.
