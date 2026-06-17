@@ -1077,6 +1077,9 @@ end
 
 function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
     local qFrame = CraftSim.CRAFTQ.frame
+    local editRecipe = CraftSim.CRAFTQ.EditRecipe
+    local editCraftQueueItem = editRecipe and editRecipe:GetOpenCraftQueueItem()
+
     if qFrame and qFrame:IsVisible() then
         CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
         -- Equip / unequip updates inventory after a delay; refresh queue gear state unless mid Equip() sequence.
@@ -1088,8 +1091,19 @@ function CraftSim.CRAFTQ:BAG_UPDATE_DELAYED()
                 if frame and frame:IsVisible() and not CraftSim.TOPGEAR.IsEquipping then
                     CraftSim.CRAFTQ.UI:Update()
                 end
+                local openItem = editRecipe and editRecipe:GetOpenCraftQueueItem()
+                if openItem then
+                    CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(openItem)
+                end
             end)
         end
+    elseif editCraftQueueItem then
+        RunNextFrame(function()
+            local openItem = editRecipe and editRecipe:GetOpenCraftQueueItem()
+            if openItem then
+                CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(openItem)
+            end
+        end)
     end
 end
 
