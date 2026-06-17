@@ -145,7 +145,7 @@ function CraftSim.ProfessionGear:GetMulticraftValue()
 	return 0
 end
 
---- True when the tool's primary proc stat is multicraft (multicraft does not apply to work orders).
+--- True when the tool's primary proc stat is multicraft (multicraft does not apply to work orders or non-multicraft recipes).
 ---@return boolean
 function CraftSim.ProfessionGear:IsMulticraftOnlyTool()
 	if not self.item then

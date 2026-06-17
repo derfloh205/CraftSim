@@ -434,13 +434,19 @@ function CraftSim.RecipeData:RefreshWorkOrderProcStatSupport()
     end
 end
 
+--- True when multicraft-only tools should be excluded (work orders or recipes without multicraft).
+---@return boolean
+function CraftSim.RecipeData:ShouldAvoidMulticraftOnlyTools()
+    return self.orderData ~= nil or not self.supportsMulticraft
+end
+
 ---@return string topGearMode localized mode string for CraftSim.TOPGEAR:OptimizeTopGear
 function CraftSim.RecipeData:GetOptimizeGearMode()
     if self.orderData then
         self:RefreshWorkOrderProcStatSupport()
-        if self.supportsCraftingStats then
-            return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS)
-        end
+    end
+    if self:ShouldAvoidMulticraftOnlyTools() and self.supportsResourcefulness and self.supportsCraftingStats then
+        return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS)
     end
     return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)
 end

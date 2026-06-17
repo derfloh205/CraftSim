@@ -190,27 +190,24 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param forceCache? boolean
+---@param forceCache? boolean when true, return DB snapshot only (alt crafter / deserialized queue items)
 ---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
     local crafterUID = recipeData:GetCrafterUID()
     local profession = recipeData.professionData.professionInfo.profession
-    local useCache = forceCache
-        or not recipeData:IsCrafter()
-        or CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
 
-    if useCache then
+    if not recipeData:IsCrafter() or forceCache then
         recipeData.professionGearCached = CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
-
         return CraftSim.DB.CRAFTER:GetProfessionGearAvailable(crafterUID, profession)
     end
 
-    -- Clear Cache and rescan bags
+    -- Player crafter: always rescan bags so selectors / TopGear see current inventory.
     CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID, profession)
     local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
     Logger:LogDebug("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
     local inventoryGear = {}
     local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
+    local pendingItemLoads = false
 
     for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
@@ -219,6 +216,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                 local isCached = C_Item.IsItemDataCached(itemLoc)
                 if not isCached then
                     C_Item.RequestLoadItemData(itemLoc)
+                    pendingItemLoads = true
                 end
 
                 local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
@@ -242,16 +240,24 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
                             end
                         end
                     end
+                elseif not isCached then
+                    pendingItemLoads = true
                 end
             end
         end
     end
-    CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, profession)
-    recipeData.professionGearCached = true
+
+    if pendingItemLoads then
+        recipeData.professionGearCached = false
+    else
+        CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, profession)
+        recipeData.professionGearCached = true
+    end
+
     return inventoryGear
 end
 
---- Multicraft does not apply to work orders; keep resourcefulness tools and drop multicraft-only tools.
+--- Multicraft does not apply to work orders or non-multicraft recipes; keep resourcefulness tools and drop multicraft-only tools.
 ---@param uniqueGear CraftSim.ProfessionGear[]
 ---@param defaultToolSlotItems (CraftSim.ProfessionGear|string)[]
 ---@return CraftSim.ProfessionGear[]
@@ -359,7 +365,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local toolSlotItems = getHighestItemLevelPerUniqueCategory(GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType end), true)
 
-    if recipeData.orderData then
+    if recipeData:ShouldAvoidMulticraftOnlyTools() then
         toolSlotItems = CraftSim.TOPGEAR:GetWorkOrderToolSlotItems(uniqueGear, toolSlotItems)
     end
 
@@ -523,7 +529,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS) then
         Logger:LogDebug("Top Gear Mode: Resourcefulness")
-        if recipeData.orderData then
+        if recipeData:ShouldAvoidMulticraftOnlyTools() then
             local unfiltered = results
             results = GUTIL:Filter(results, function(result)
                 local tool = result.professionGearSet.tool
