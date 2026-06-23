@@ -159,6 +159,9 @@ Modules/CraftBuffs/UI.lua
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
 
+Modules/WorkOrderTracker/WorkOrderTracker.lua
+Modules/WorkOrderTracker/UI.lua
+
 Data/EnchantData.lua
 Data/ToolEnchantData.lua
 Data/ReagentWeightData.lua

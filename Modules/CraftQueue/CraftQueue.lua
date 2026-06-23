@@ -441,6 +441,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
     local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+    local maxPatronDurationHours = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS")
 
     local workOrderTypes = self:GetEnabledWorkOrderTypes()
     local availableOrderIDs = {}
@@ -488,6 +489,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                             tinsert(orders, claimedOrder)
                         end
 
+                        if orderType == Enum.CraftingOrderType.Npc and CraftSim.WORK_ORDER_TRACKER then
+                            CraftSim.WORK_ORDER_TRACKER:StagePatronOrdersFromQueue(orders, profession)
+                        end
+
                         local isPublicOrder = orderType == Enum.CraftingOrderType.Public
                         local publicOrderCandidates = {}
 
@@ -520,6 +525,16 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
                                 local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
                                 local knowledgePointsRewarded = 0
+
+                                if isPatronOrder and maxPatronDurationHours > 0 then
+                                    local isClaimed = claimedOrder ~= nil and order.orderID == claimedOrder.orderID
+                                    local endTime = isClaimed and order.claimEndTime or order.expirationTime
+                                    local remaining = CraftSim.WORK_ORDER_TRACKER:GetOrderRemainingSeconds(endTime)
+                                    if remaining > maxPatronDurationHours * 3600 then
+                                        distributor:Continue()
+                                        return
+                                    end
+                                end
 
                                 if isGuildOrder then
                                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
