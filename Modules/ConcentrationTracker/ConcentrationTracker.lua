@@ -125,10 +125,10 @@ function CraftSim.CONCENTRATION_TRACKER:CURRENCY_DISPLAY_UPDATE(currencyID)
     end
 
     if concentrationUpdate then
-        local concFrame = CraftSim.CONCENTRATION_TRACKER.frame
-        if concFrame and concFrame:IsVisible() and self.UI and self.UI.Update then
+        if self.UI and self.UI.Update then
             self.UI:Update()
         end
+        CraftSim.MODULES:UpdateModuleVisibility(self)
     end
 
     if self.trackerFrame and self.trackerFrame:IsVisible() then
@@ -196,4 +196,5 @@ end
 
 function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_INITIALIZED()
     self.UI:Update()
+    CraftSim.MODULES:UpdateModuleVisibility(self)
 end

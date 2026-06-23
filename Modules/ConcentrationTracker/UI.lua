@@ -118,7 +118,7 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumn
         if concentrationFull then
             maxedColumnText = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_MAX")
         else
-            maxedColumnText = f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
+            maxedColumnText = CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)
         end
         maxedColumn.text:SetText(maxedColumnText)
     else
@@ -260,6 +260,12 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
     end
 
     createContent(CraftSim.CONCENTRATION_TRACKER.frame)
+    self.module.frame = CraftSim.CONCENTRATION_TRACKER.frame
+
+    CraftSim.CONCENTRATION_TRACKER.frame:HookScript("OnShow", function()
+        CraftSim.CONCENTRATION_TRACKER.UI:Update()
+    end)
+
     self:InitTrackerFrame()
 end
 
@@ -380,18 +386,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
             concentrationColumn.text = GGUI.Text {
                 parent = concentrationColumn, anchorPoints = { { anchorParent = concentrationColumn, anchorA = "CENTER", anchorB = "CENTER" } },
                 justifyOptions = { type = "H", align = "CENTER" }, scale = 1, fixedWidth = 70,
-                fontOptions = {
-                    fontFile = CraftSim.CONST.FONT_FILES.MONOSPACE,
-                    height = 12,
-                },
             }
             maxedColumn.text = GGUI.Text {
                 parent = maxedColumn, anchorPoints = { { anchorParent = maxedColumn, anchorA = "CENTER", anchorB = "CENTER" } },
                 justifyOptions = { type = "H", align = "CENTER" }, scale = 1, fixedWidth = 90,
-                fontOptions = {
-                    fontFile = CraftSim.CONST.FONT_FILES.MONOSPACE,
-                    height = 12,
-                },
             }
             moxieColumn.icon = GGUI.Icon {
                 parent = moxieColumn,
@@ -495,10 +493,23 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    if selectedTab ~= CraftSim.CONST.PROFESSIONS_TAB.RECIPE then
+        return false
+    end
+
     -- only show for expansions DF and higher
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
-    return expansionID and expansionID >= CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+    if not expansionID or expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then
+        return false
+    end
+
+    return CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData() ~= nil
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
@@ -620,7 +631,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Update()
     if currentConcentration >= concentrationData.maxQuantity then
         content.maxTimer:SetText(CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_FULL"))
     else
-        content.maxTimer:SetText(f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)))
+        content.maxTimer:SetText(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
     end
 
     local isPinned = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")

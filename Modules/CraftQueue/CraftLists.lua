@@ -185,6 +185,45 @@ local function sortRecipeDataBySmartPriority(aRd, bRd)
     end
 end
 
+--- Re-assign how many crafts of an entry use soulbound finishing reagents after the
+--- final queue amount is known (concentration / cooldown triage). Step 1 only sees
+--- maxQueueAmount or 1, so MULTI concentration can commit far more crafts than SBF
+--- allocation initially granted.
+---@param entry CraftSim.CRAFT_LISTS.ScanEntry
+---@param committedAmount number
+---@param entrySbfCrafts table<CraftSim.CRAFT_LISTS.ScanEntry, number>
+---@param sbfAvailable table<string, number>
+---@param entryEffectiveRD table<CraftSim.CRAFT_LISTS.ScanEntry, CraftSim.RecipeData>
+local function realignSbfCraftsForAmount(entry, committedAmount, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
+    committedAmount = math.max(0, committedAmount or 0)
+
+    if not entry.options.includeSoulboundFinishingReagents then
+        local sbfCrafts = entrySbfCrafts[entry] or 0
+        if sbfCrafts > committedAmount then
+            entrySbfCrafts[entry] = committedAmount
+        end
+        return
+    end
+
+    local sbfItemID = entry.recipeData:GetSoulboundFinishingReagentInfo()
+    if not sbfItemID then
+        return
+    end
+
+    local key = entry.crafterUID .. ":" .. sbfItemID
+    local previousSbf = entrySbfCrafts[entry] or 0
+    local pool = (sbfAvailable[key] or 0) + previousSbf
+    local newSbfCrafts = math.min(pool, committedAmount)
+    entrySbfCrafts[entry] = newSbfCrafts
+    sbfAvailable[key] = pool - newSbfCrafts
+
+    if newSbfCrafts > 0 then
+        entryEffectiveRD[entry] = entry.recipeData
+    else
+        entryEffectiveRD[entry] = entry.recipeDataNoSBF or entry.recipeData
+    end
+end
+
 --- Performs global triage of all scan entries collected across every selected craft list,
 --- then queues the winning combinations.
 ---
@@ -315,11 +354,8 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             local queueableAmount = getConcentrationQueueableAmount(rd, entry, currentConcentration)
 
             local function allocateEntry()
-                local sbfCrafts = entrySbfCrafts[entry] or 0
-                if sbfCrafts > queueableAmount then
-                    entrySbfCrafts[entry] = queueableAmount
-                end
                 entryOverrideAmount[entry] = queueableAmount
+                realignSbfCraftsForAmount(entry, queueableAmount, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
                 local concentrationCost = rd.concentrationCost
                 if entry.options.offsetConcentrationCraftAmount then
                     local ingenuityChance = rd.professionStats.ingenuity:GetPercent(true)
@@ -386,8 +422,9 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 availableCharges = availableCharges - assigned
                 if assigned == 0 then
                     skipEntry[entry] = true
-                elseif assigned < committed then
+                else
                     entryOverrideAmount[entry] = assigned
+                    realignSbfCraftsForAmount(entry, assigned, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
                 end
             end
         end
