@@ -228,6 +228,20 @@ local function FormatQualityTooltipLine(label, quality)
     return "\n" .. label .. ": " .. GUTIL:GetQualityIconString(quality, 15, 15)
 end
 
+---@param lastSnapshotAt number?
+---@return string
+local function FormatLastSnapshotAge(lastSnapshotAt)
+    if not lastSnapshotAt or lastSnapshotAt <= 0 then
+        return ""
+    end
+    local secondsAgo = math.max(GetTime() - lastSnapshotAt, 0)
+    local timeText = SecondsToTime(secondsAgo, false, false, 1)
+    if secondsAgo < 1 or timeText == nil or timeText == "" then
+        timeText = "0 Sec"
+    end
+    return string.format(L("WORK_ORDER_TRACKER_LAST_SNAPSHOT_FMT"), timeText)
+end
+
 ---@param row GGUI.FrameList.Row
 ---@param rowData { crafterUID: CrafterUID, profession: Enum.Profession, orderSnapshot: CraftSim.PatronWorkOrderSnapshot, lastSnapshotAt: number }
 local function PopulateWorkOrderTrackerRow(row, rowData)
@@ -282,11 +296,7 @@ local function PopulateWorkOrderTrackerRow(row, rowData)
     local statusText = FormatCraftabilityText(orderSnapshot.craftability)
     statusColumn.text:SetText(CraftabilityColorPrefix(orderSnapshot.craftability)(statusText))
 
-    local snapshotAge = ""
-    if lastSnapshotAt and lastSnapshotAt > 0 then
-        local secondsAgo = math.max(GetTime() - lastSnapshotAt, 0)
-        snapshotAge = string.format(L("WORK_ORDER_TRACKER_LAST_SNAPSHOT_FMT"), SecondsToTime(secondsAgo, false, false, 1))
-    end
+    local snapshotAge = FormatLastSnapshotAge(lastSnapshotAt)
 
     local detailLine = ""
     if ShouldShowCraftabilityDetail(orderSnapshot.craftability, orderSnapshot.craftabilityDetail) then
