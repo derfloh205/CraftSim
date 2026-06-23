@@ -30,6 +30,25 @@ local Logger = CraftSim.DEBUG:RegisterLogger("crafterDB")
 ---@field favoriteRecipes table<Enum.Profession, RecipeID[]>
 ---@field midnightShatterStaleAfterLogin boolean? legacy; migrated to preCraftBuffStale["midnight_enchant_shatter"]
 ---@field preCraftBuffStale table<string, boolean>? pre-craft buff gate ids -> post-login stale until cast
+---@field patronWorkOrders table<Enum.Profession, CraftSim.PatronWorkOrderProfessionSnapshot>
+
+---@class CraftSim.PatronWorkOrderSnapshot
+---@field orderID number
+---@field spellID number
+---@field recipeName string
+---@field profession Enum.Profession
+---@field expansionID CraftSim.EXPANSION_IDS
+---@field minQuality number?
+---@field expirationTime number
+---@field claimEndTime number?
+---@field isClaimed boolean
+---@field craftability string
+---@field craftabilityDetail string?
+---@field expectedQuality number?
+
+---@class CraftSim.PatronWorkOrderProfessionSnapshot
+---@field lastSnapshotAt number
+---@field orders table<number, CraftSim.PatronWorkOrderSnapshot>
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -607,6 +626,69 @@ function CraftSim.DB.CRAFTER:UpdateFavoriteRecipe(crafterUID, profession, recipe
         if index then
             tremove(currentFavorites, index)
             self:SaveFavoriteRecipes(crafterUID, profession, currentFavorites)
+        end
+    end
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param snapshot CraftSim.PatronWorkOrderProfessionSnapshot
+function CraftSim.DB.CRAFTER:SavePatronWorkOrders(crafterUID, profession, snapshot)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders = CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders or {}
+    CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders[profession] = snapshot
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.PatronWorkOrderProfessionSnapshot?
+function CraftSim.DB.CRAFTER:GetPatronWorkOrdersForProfession(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local patronWorkOrders = CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders
+    if not patronWorkOrders then
+        return nil
+    end
+    return patronWorkOrders[profession]
+end
+
+---@return { crafterUID: CrafterUID, profession: Enum.Profession, snapshot: CraftSim.PatronWorkOrderProfessionSnapshot }[]
+function CraftSim.DB.CRAFTER:GetAllPatronWorkOrderSnapshots()
+    local results = {}
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data) do
+        for profession, snapshot in pairs(crafterData.patronWorkOrders or {}) do
+            if snapshot and snapshot.orders then
+                tinsert(results, {
+                    crafterUID = crafterUID,
+                    profession = profession,
+                    snapshot = snapshot,
+                })
+            end
+        end
+    end
+    return results
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+function CraftSim.DB.CRAFTER:ClearPatronWorkOrdersForProfession(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local patronWorkOrders = CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders
+    if patronWorkOrders then
+        patronWorkOrders[profession] = nil
+    end
+end
+
+---@param crafterUID CrafterUID
+---@param orderID number
+function CraftSim.DB.CRAFTER:RemovePatronWorkOrder(crafterUID, orderID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local patronWorkOrders = CraftSimDB.crafterDB.data[crafterUID].patronWorkOrders
+    if not patronWorkOrders then
+        return
+    end
+    for _, professionSnapshot in pairs(patronWorkOrders) do
+        if professionSnapshot.orders then
+            professionSnapshot.orders[orderID] = nil
         end
     end
 end

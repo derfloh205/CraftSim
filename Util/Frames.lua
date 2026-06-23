@@ -65,6 +65,9 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.STATISTICS.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.COOLDOWNS.frame:RestoreSavedConfig(ProfessionsFrame)
+    if CraftSim.WORK_ORDER_TRACKER.frame then
+        CraftSim.WORK_ORDER_TRACKER.frame:RestoreSavedConfig(ProfessionsFrame)
+    end
 
     CraftSim.CONCENTRATION_TRACKER.trackerFrame:RestoreSavedConfig(CraftSim.CONCENTRATION_TRACKER.frame.frame)
 end
