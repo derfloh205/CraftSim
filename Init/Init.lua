@@ -328,6 +328,8 @@ function CraftSim.INIT:HookToEvents()
 	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified,
 		OpenRecipeAllocationUpdated)
 
+	CraftSim.RECIPE_ACQUISITION:Init()
+
 	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
 	local specTab = ProfessionsFrame.TabSystem.tabs[2]
 	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]

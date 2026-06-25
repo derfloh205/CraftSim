@@ -45,6 +45,10 @@ local Logger = CraftSim.DEBUG:RegisterLogger("crafterDB")
 ---@field craftability string
 ---@field craftabilityDetail string?
 ---@field expectedQuality number?
+---@field acquisitionHint string?
+---@field acquisitionKind string?
+---@field specTabID number?
+---@field specPathID number?
 
 ---@class CraftSim.PatronWorkOrderProfessionSnapshot
 ---@field lastSnapshotAt number

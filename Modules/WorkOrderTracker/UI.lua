@@ -242,6 +242,55 @@ local function FormatLastSnapshotAge(lastSnapshotAt)
     return string.format(L("WORK_ORDER_TRACKER_LAST_SNAPSHOT_FMT"), timeText)
 end
 
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@return string
+local function FormatExpirationTooltipLine(orderSnapshot)
+    local endTime = orderSnapshot.isClaimed and orderSnapshot.claimEndTime or orderSnapshot.expirationTime
+    if not endTime or endTime <= 0 then
+        return ""
+    end
+    local formatted = CraftSim.CooldownData.FormatLocalDateTime(endTime)
+    local labelKey = orderSnapshot.isClaimed and "WORK_ORDER_TRACKER_TOOLTIP_CLAIM_ENDS"
+        or "WORK_ORDER_TRACKER_TOOLTIP_EXPIRES"
+    return "\n" .. string.format(L(labelKey), formatted)
+end
+
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@return string
+local function FormatAcquisitionTooltipLine(orderSnapshot)
+    if not orderSnapshot.acquisitionHint or orderSnapshot.acquisitionHint == "" then
+        return ""
+    end
+
+    local CRAFT = CraftSim.WORK_ORDER_TRACKER.CRAFTABILITY
+    local label
+    if orderSnapshot.craftability == CRAFT.NEEDS_QUALITY then
+        label = L("WORK_ORDER_TRACKER_TOOLTIP_SUGGESTED_SPEC")
+    else
+        label = L("WORK_ORDER_TRACKER_TOOLTIP_RECIPE_SOURCE")
+    end
+
+    return "\n" .. label .. ": " .. orderSnapshot.acquisitionHint
+end
+
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@return string
+local function GetAcquisitionButtonTooltip(orderSnapshot)
+    if not orderSnapshot.acquisitionHint or orderSnapshot.acquisitionHint == "" then
+        return L("WORK_ORDER_TRACKER_HINT_UNAVAILABLE")
+    end
+
+    if orderSnapshot.acquisitionKind == CraftSim.RECIPE_ACQUISITION.KIND.SPEC then
+        return L("WORK_ORDER_TRACKER_HINT_OPEN_SPEC") .. "\n" .. orderSnapshot.acquisitionHint
+    end
+
+    if orderSnapshot.acquisitionKind == CraftSim.RECIPE_ACQUISITION.KIND.DROP then
+        return L("WORK_ORDER_TRACKER_HINT_ADD_TO_SHOPPING_LIST") .. "\n" .. orderSnapshot.acquisitionHint
+    end
+
+    return L("WORK_ORDER_TRACKER_HINT_VIEW_RECIPE_SOURCE") .. "\n" .. orderSnapshot.acquisitionHint
+end
+
 ---@param row GGUI.FrameList.Row
 ---@param rowData { crafterUID: CrafterUID, profession: Enum.Profession, orderSnapshot: CraftSim.PatronWorkOrderSnapshot, lastSnapshotAt: number }
 local function PopulateWorkOrderTrackerRow(row, rowData)
@@ -296,6 +345,30 @@ local function PopulateWorkOrderTrackerRow(row, rowData)
     local statusText = FormatCraftabilityText(orderSnapshot.craftability)
     statusColumn.text:SetText(CraftabilityColorPrefix(orderSnapshot.craftability)(statusText))
 
+    local isCurrentPlayer = crafterUID == CraftSim.UTIL:GetPlayerCrafterUID()
+    local showHintButton = isCurrentPlayer
+        and orderSnapshot.acquisitionHint
+        and orderSnapshot.acquisitionHint ~= ""
+        and (orderSnapshot.craftability == CraftSim.WORK_ORDER_TRACKER.CRAFTABILITY.NEEDS_RECIPE
+            or orderSnapshot.craftability == CraftSim.WORK_ORDER_TRACKER.CRAFTABILITY.NEEDS_QUALITY)
+
+    if showHintButton then
+        CraftSim.RECIPE_ACQUISITION:UpdateAcquisitionButton(
+            statusColumn.hintButton,
+            { sourceKind = orderSnapshot.acquisitionKind },
+            function()
+                CraftSim.WORK_ORDER_TRACKER:NavigateToAcquisitionHint(orderSnapshot, profession, orderSnapshot.expansionID)
+            end,
+            function(btn)
+                GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(GetAcquisitionButtonTooltip(orderSnapshot), 1, 1, 1, true)
+                GameTooltip:Show()
+            end)
+    else
+        CraftSim.RECIPE_ACQUISITION:UpdateAcquisitionButton(statusColumn.hintButton, nil, nil)
+    end
+
     local snapshotAge = FormatLastSnapshotAge(lastSnapshotAt)
 
     local detailLine = ""
@@ -310,8 +383,10 @@ local function PopulateWorkOrderTrackerRow(row, rowData)
             "\n" .. orderSnapshot.recipeName ..
             "\n" .. L("WORK_ORDER_TRACKER_TOOLTIP_STATUS") .. ": " .. FormatCraftabilityText(orderSnapshot.craftability) ..
             detailLine ..
+            FormatAcquisitionTooltipLine(orderSnapshot) ..
             FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_QUALITY"), orderSnapshot.minQuality) ..
             FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_QUALITY"), orderSnapshot.expectedQuality) ..
+            FormatExpirationTooltipLine(orderSnapshot) ..
             "\n" .. snapshotAge,
     }
 end
@@ -498,10 +573,13 @@ function CraftSim.WORK_ORDER_TRACKER.UI:Init()
             }
             statusColumn.text = GGUI.Text {
                 parent = statusColumn,
-                anchorPoints = { { anchorParent = statusColumn, anchorA = "LEFT", anchorB = "LEFT" } },
+                anchorPoints = { { anchorParent = statusColumn, anchorA = "LEFT", anchorB = "LEFT", offsetX = 0 } },
                 justifyOptions = { type = "H", align = "LEFT" },
                 scale = 1,
+                fixedWidth = 100,
             }
+            statusColumn.hintButton = CraftSim.RECIPE_ACQUISITION:CreateIconButton(
+                statusColumn, statusColumn, "RIGHT", "RIGHT", 0, 0, 20)
         end,
         selectionOptions = {
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,

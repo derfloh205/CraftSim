@@ -1116,6 +1116,8 @@ greater or equal the configured sale rate threshold.
         WORK_ORDER_TRACKER_TOOLTIP_STATUS = "Status",
         WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_QUALITY = "Required quality",
         WORK_ORDER_TRACKER_TOOLTIP_QUALITY = "Expected quality",
+        WORK_ORDER_TRACKER_TOOLTIP_EXPIRES = "Expires: %s",
+        WORK_ORDER_TRACKER_TOOLTIP_CLAIM_ENDS = "Claim ends: %s",
         WORK_ORDER_TRACKER_OPTION_AUTO_SNAPSHOT = "Auto-snapshot when opening profession orders",
         WORK_ORDER_TRACKER_OPTION_USE_CONCENTRATION = "Use concentration for quality evaluation",
         WORK_ORDER_TRACKER_OPTION_SORT_MODE = "Sort Mode: ",
@@ -1133,6 +1135,13 @@ greater or equal the configured sale rate threshold.
         WORK_ORDER_TRACKER_CRAFTABILITY_IN_PROGRESS = f.bb("Claimed"),
         WORK_ORDER_TRACKER_CRAFTABILITY_BLOCKED = f.r("Blocked"),
         WORK_ORDER_TRACKER_CRAFTABILITY_READY_TO_CRAFT = "Ready to craft",
+        WORK_ORDER_TRACKER_TOOLTIP_RECIPE_SOURCE = "Recipe source",
+        WORK_ORDER_TRACKER_TOOLTIP_SUGGESTED_SPEC = "Suggested spec",
+        WORK_ORDER_TRACKER_HINT_OPEN_SPEC = "Open specialization",
+        WORK_ORDER_TRACKER_HINT_VIEW_RECIPE_SOURCE = "View recipe source",
+        WORK_ORDER_TRACKER_HINT_ADD_TO_SHOPPING_LIST = "Add recipe to Auctionator shopping list",
+        WORK_ORDER_TRACKER_HINT_UNAVAILABLE = "Open profession to see source",
+        RECIPE_ACQUISITION_ADDED_TO_SHOPPING_LIST = "Added %s to Auctionator shopping list",
 
         -- static popups
         STATIC_POPUPS_YES = "Yes",

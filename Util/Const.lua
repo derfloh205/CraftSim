@@ -970,6 +970,9 @@ CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME = 'CraftSim CraftQueue'
 
 CraftSim.CONST.ATLAS_TEXTURES = {
     TRADESKILL_ICON_ADD = 'tradeskills-icon-add',
+    ACQUISITION_SPEC = 'talents-button-undo',
+    ACQUISITION_RECIPE = 'tradeskills-icon-add',
+    ACQUISITION_SHOPPING = 'loottoast-arrow-green',
     CHECKMARK = 'UI-QuestTracker-Tracker-Check',
     CROSS = 'UI-QuestTracker-Objective-Fail',
     UPGRADE_ARROW = 'CovenantSanctum-Upgrade-Icon-Available',

@@ -916,7 +916,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
     local columnOptions = {
         {
             --label = L("RECIPE_SCAN_LEARNED_HEADER"),
-            width = 15,
+            width = 32,
             justifyOptions = { type = "H", align = "CENTER" }
         },
         {
@@ -1074,7 +1074,10 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             learnedColumn.text = GGUI.Text({
                 parent = learnedColumn,
                 anchorParent = learnedColumn,
-                justifyOptions = { type = "H", align = "CENTER" },
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 0,
+                justifyOptions = { type = "H", align = "LEFT" },
                 offsetY = -1,
                 tooltipOptions = {
                     owner = learnedColumn,
@@ -1082,6 +1085,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     text = notLearnedIcon .. " .. not learned\n" .. learnedIcon .. " .. learned"
                 },
             })
+
+            learnedColumn.acquisitionButton = CraftSim.RECIPE_ACQUISITION:CreateIconButton(
+                learnedColumn, learnedColumn, "RIGHT", "RIGHT", 0, 0, 18)
 
             function learnedColumn:SetLearned(learned, isFavorite)
                 -- if its favorite it has to be learned
@@ -1425,6 +1431,12 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 recipeData.recipeName .. "|r" .. cooldownInfoText .. firstCraftInfoText)
 
             learnedColumn:SetLearned(recipeData.learned, isFavorite)
+            CraftSim.RECIPE_ACQUISITION:UpdateListRowAcquisitionButton(
+                learnedColumn,
+                recipeData.recipeID,
+                recipeData.recipeName,
+                recipeData.learned,
+                recipeData.professionData.skillLineID)
 
             if enableConcentration then
                 expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemConcentration)

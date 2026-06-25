@@ -51,6 +51,7 @@ Debug/Debug.lua
 Debug/UI.lua
 
 Util/Util.lua
+Util/RecipeAcquisition.lua
 
 DB/DB.lua
 DB/optionsDB.lua
