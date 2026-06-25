@@ -157,6 +157,16 @@ function CraftSim.WORK_ORDER_TRACKER:TryOpenPatronOrder(orderID, profession)
     return true
 end
 
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@param profession Enum.Profession
+---@param expansionID CraftSim.EXPANSION_IDS
+function CraftSim.WORK_ORDER_TRACKER:NavigateToAcquisitionHint(orderSnapshot, profession, expansionID)
+    if not orderSnapshot or not orderSnapshot.acquisitionHint then
+        return
+    end
+    CraftSim.RECIPE_ACQUISITION:NavigateFromSnapshot(orderSnapshot, profession, expansionID)
+end
+
 ---@param order CraftingOrderInfo
 ---@param profession Enum.Profession
 ---@param expansionID CraftSim.EXPANSION_IDS
@@ -169,7 +179,8 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
     ---@param craftability string
     ---@param craftabilityDetail string?
     ---@param expectedQuality number?
-    local function buildSnapshot(craftability, craftabilityDetail, expectedQuality)
+    ---@param recipeData CraftSim.RecipeData?
+    local function buildSnapshot(craftability, craftabilityDetail, expectedQuality, recipeData)
         ---@type CraftSim.PatronWorkOrderSnapshot
         local snapshot = {
             orderID = order.orderID,
@@ -185,11 +196,19 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
             craftabilityDetail = craftabilityDetail,
             expectedQuality = expectedQuality,
         }
+
+        if craftability == self.CRAFTABILITY.NEEDS_RECIPE then
+            CraftSim.RECIPE_ACQUISITION:EnrichSnapshotForNeedsRecipe(
+                snapshot, order.spellID, recipeName, profession, expansionID)
+        elseif craftability == self.CRAFTABILITY.NEEDS_QUALITY and recipeData then
+            CraftSim.RECIPE_ACQUISITION:EnrichSnapshotForNeedsQuality(snapshot, recipeData)
+        end
+
         onComplete(snapshot)
     end
 
     if not recipeInfo or not recipeInfo.learned then
-        buildSnapshot(self.CRAFTABILITY.NEEDS_RECIPE, "Not Learned", nil)
+        buildSnapshot(self.CRAFTABILITY.NEEDS_RECIPE, "Not Learned", nil, nil)
         return
     end
 
@@ -234,21 +253,21 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
 
         if isClaimed then
             if craftQueueItem.precraftConditionData:IsAllowedToCraft() then
-                buildSnapshot(self.CRAFTABILITY.IN_PROGRESS, L("WORK_ORDER_TRACKER_CRAFTABILITY_READY_TO_CRAFT"), expectedQuality)
+                buildSnapshot(self.CRAFTABILITY.IN_PROGRESS, L("WORK_ORDER_TRACKER_CRAFTABILITY_READY_TO_CRAFT"), expectedQuality, recipeData)
             else
                 local failed = craftQueueItem:GetTopFailedCondition()
-                buildSnapshot(self.CRAFTABILITY.BLOCKED, failed and failed.reason or nil, expectedQuality)
+                buildSnapshot(self.CRAFTABILITY.BLOCKED, failed and failed.reason or nil, expectedQuality, recipeData)
             end
             return
         end
 
         if not meetsMinQuality() then
-            buildSnapshot(self.CRAFTABILITY.NEEDS_QUALITY, "Below minimum quality", expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.NEEDS_QUALITY, "Below minimum quality", expectedQuality, recipeData)
             return
         end
 
         if craftQueueItem:CanClaimWorkOrder() then
-            buildSnapshot(self.CRAFTABILITY.READY, nil, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.READY, nil, expectedQuality, recipeData)
             return
         end
 
@@ -257,15 +276,15 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
         local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
 
         if failedID == IDS.LEARNED then
-            buildSnapshot(self.CRAFTABILITY.NEEDS_RECIPE, failed.reason, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.NEEDS_RECIPE, failed.reason, expectedQuality, recipeData)
         elseif failedID == IDS.WORK_ORDER_MIN_QUALITY then
-            buildSnapshot(self.CRAFTABILITY.NEEDS_QUALITY, failed.reason, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.NEEDS_QUALITY, failed.reason, expectedQuality, recipeData)
         elseif failedID == IDS.REAGENTS then
-            buildSnapshot(self.CRAFTABILITY.NEEDS_REAGENTS, failed.reason, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.NEEDS_REAGENTS, failed.reason, expectedQuality, recipeData)
         elseif failedID == IDS.COOLDOWN then
-            buildSnapshot(self.CRAFTABILITY.ON_COOLDOWN, failed.reason, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.ON_COOLDOWN, failed.reason, expectedQuality, recipeData)
         else
-            buildSnapshot(self.CRAFTABILITY.BLOCKED, failed and failed.reason or nil, expectedQuality)
+            buildSnapshot(self.CRAFTABILITY.BLOCKED, failed and failed.reason or nil, expectedQuality, recipeData)
         end
     end
 
