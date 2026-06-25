@@ -174,12 +174,9 @@ function CraftSim.SHOPPING:AddRecipeToShoppingList(recipeID, recipeName, sourceT
     ---@type table
     local searchTerm = {
         searchString = shoppingSearch.itemName,
-        isExact = true,
+        isExact = false,
         quantity = 1,
     }
-    if shoppingSearch.qualityID then
-        searchTerm.tier = shoppingSearch.qualityID
-    end
 
     if not self:AddSearchTermToShoppingList(searchTerm) then
         return false

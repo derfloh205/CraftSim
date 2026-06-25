@@ -225,7 +225,19 @@ local function FormatQualityTooltipLine(label, quality)
     if not quality then
         return ""
     end
-    return "\n" .. label .. ": " .. GUTIL:GetQualityIconString(quality, 15, 15)
+    return label .. " " .. GUTIL:GetQualityIconString(quality, 15, 15)
+end
+
+---@param sections string[]
+---@return string
+local function JoinTooltipSections(sections)
+    local parts = {}
+    for _, section in ipairs(sections) do
+        if section and section ~= "" then
+            tinsert(parts, section)
+        end
+    end
+    return table.concat(parts, "\n\n")
 end
 
 ---@param lastSnapshotAt number?
@@ -244,7 +256,7 @@ end
 
 ---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
 ---@return string
-local function FormatExpirationTooltipLine(orderSnapshot)
+local function FormatExpirationTooltipText(orderSnapshot)
     local endTime = orderSnapshot.isClaimed and orderSnapshot.claimEndTime or orderSnapshot.expirationTime
     if not endTime or endTime <= 0 then
         return ""
@@ -252,12 +264,12 @@ local function FormatExpirationTooltipLine(orderSnapshot)
     local formatted = CraftSim.CooldownData.FormatLocalDateTime(endTime)
     local labelKey = orderSnapshot.isClaimed and "WORK_ORDER_TRACKER_TOOLTIP_CLAIM_ENDS"
         or "WORK_ORDER_TRACKER_TOOLTIP_EXPIRES"
-    return "\n" .. string.format(L(labelKey), formatted)
+    return string.format(L(labelKey), formatted)
 end
 
 ---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
 ---@return string
-local function FormatAcquisitionTooltipLine(orderSnapshot)
+local function FormatAcquisitionTooltipText(orderSnapshot)
     if not orderSnapshot.acquisitionHint or orderSnapshot.acquisitionHint == "" then
         return ""
     end
@@ -270,7 +282,69 @@ local function FormatAcquisitionTooltipLine(orderSnapshot)
         label = L("WORK_ORDER_TRACKER_TOOLTIP_RECIPE_SOURCE")
     end
 
-    return "\n" .. label .. ": " .. orderSnapshot.acquisitionHint
+    return f.grey(label .. ": ") .. orderSnapshot.acquisitionHint
+end
+
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@return string
+local function FormatQualityTooltipSection(orderSnapshot)
+    local parts = {}
+    local required = FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_SHORT"), orderSnapshot.minQuality)
+    local expected = FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_EXPECTED_SHORT"), orderSnapshot.expectedQuality)
+    if required ~= "" then
+        tinsert(parts, required)
+    end
+    if expected ~= "" then
+        tinsert(parts, expected)
+    end
+    if #parts == 0 then
+        return ""
+    end
+    return table.concat(parts, "  ·  ")
+end
+
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@return string
+local function FormatStatusTooltipSection(orderSnapshot)
+    local status = CraftabilityColorPrefix(orderSnapshot.craftability)(FormatCraftabilityText(orderSnapshot.craftability))
+    local lines = { L("WORK_ORDER_TRACKER_TOOLTIP_STATUS") .. ": " .. status }
+    if ShouldShowCraftabilityDetail(orderSnapshot.craftability, orderSnapshot.craftabilityDetail) then
+        tinsert(lines, f.grey(orderSnapshot.craftabilityDetail))
+    end
+    return table.concat(lines, "\n")
+end
+
+---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
+---@param crafterProfessionText string
+---@param timeBucket string
+---@param lastSnapshotAt number?
+---@return string
+local function BuildWorkOrderTooltipText(orderSnapshot, crafterProfessionText, timeBucket, lastSnapshotAt)
+    local title = f.bb(orderSnapshot.recipeName)
+    if orderSnapshot.isClaimed then
+        title = title .. f.grey(" (" .. L("WORK_ORDER_TRACKER_CLAIMED") .. ")")
+    end
+
+    local bucketLabel = TimeBucketColorPrefix(timeBucket)(CraftSim.WORK_ORDER_TRACKER:GetTimeBucketLabel(timeBucket))
+    local subtitle = crafterProfessionText .. f.grey("  ·  ") .. bucketLabel
+
+    local footerLines = {}
+    local expirationText = FormatExpirationTooltipText(orderSnapshot)
+    if expirationText ~= "" then
+        tinsert(footerLines, f.grey(expirationText))
+    end
+    local snapshotAge = FormatLastSnapshotAge(lastSnapshotAt)
+    if snapshotAge ~= "" then
+        tinsert(footerLines, f.grey(snapshotAge))
+    end
+
+    return JoinTooltipSections({
+        title .. "\n" .. subtitle,
+        FormatStatusTooltipSection(orderSnapshot),
+        FormatAcquisitionTooltipText(orderSnapshot),
+        FormatQualityTooltipSection(orderSnapshot),
+        #footerLines > 0 and table.concat(footerLines, "\n") or "",
+    })
 end
 
 ---@param orderSnapshot CraftSim.PatronWorkOrderSnapshot
@@ -369,25 +443,11 @@ local function PopulateWorkOrderTrackerRow(row, rowData)
         CraftSim.RECIPE_ACQUISITION:UpdateAcquisitionButton(statusColumn.hintButton, nil, nil)
     end
 
-    local snapshotAge = FormatLastSnapshotAge(lastSnapshotAt)
-
-    local detailLine = ""
-    if ShouldShowCraftabilityDetail(orderSnapshot.craftability, orderSnapshot.craftabilityDetail) then
-        detailLine = "\n" .. orderSnapshot.craftabilityDetail
-    end
-
     row.tooltipOptions = {
         anchor = "ANCHOR_CURSOR",
         owner = row.frame,
-        text = crafterProfessionText ..
-            "\n" .. orderSnapshot.recipeName ..
-            "\n" .. L("WORK_ORDER_TRACKER_TOOLTIP_STATUS") .. ": " .. FormatCraftabilityText(orderSnapshot.craftability) ..
-            detailLine ..
-            FormatAcquisitionTooltipLine(orderSnapshot) ..
-            FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_QUALITY"), orderSnapshot.minQuality) ..
-            FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_QUALITY"), orderSnapshot.expectedQuality) ..
-            FormatExpirationTooltipLine(orderSnapshot) ..
-            "\n" .. snapshotAge,
+        textWrap = true,
+        text = BuildWorkOrderTooltipText(orderSnapshot, crafterProfessionText, bucket, lastSnapshotAt),
     }
 end
 

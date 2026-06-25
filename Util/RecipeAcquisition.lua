@@ -86,6 +86,165 @@ local function WalkSpecPaths(skillLineID, pathID, visited, visit)
     end
 end
 
+---@param rootPathID number?
+---@return table<number, number?> parents
+---@return table<number, number> depths
+---@return table<number, boolean> inTree
+local function BuildPathHierarchy(rootPathID)
+    local parents = {}
+    local depths = {}
+    local inTree = {}
+
+    local function walk(pathID, depth, parentID)
+        inTree[pathID] = true
+        parents[pathID] = parentID
+        depths[pathID] = depth
+        for _, childID in ipairs(C_ProfSpecs.GetChildrenForPath(pathID) or {}) do
+            walk(childID, depth + 1, pathID)
+        end
+    end
+
+    if rootPathID then
+        walk(rootPathID, 0, nil)
+    end
+
+    return parents, depths, inTree
+end
+
+---@param pathID number?
+---@param parents table<number, number?>
+---@return number[]
+local function GetPathChain(pathID, parents)
+    local chain = {}
+    local current = pathID
+    while current do
+        tinsert(chain, 1, current)
+        current = parents[current]
+    end
+    return chain
+end
+
+---@param pathID number
+---@param recipeName string?
+---@return number score
+local function ScorePathForRecipeUnlock(pathID, recipeName)
+    local normalizedRecipeName = NormalizeForMatch(recipeName)
+    local bestScore = 0
+
+    if C_ProfSpecs.GetDescriptionForPath then
+        local pathDescription = NormalizeForMatch(C_ProfSpecs.GetDescriptionForPath(pathID))
+        if pathDescription ~= "" and normalizedRecipeName ~= "" then
+            if normalizedRecipeName:find(pathDescription, 1, true)
+                or pathDescription:find(normalizedRecipeName, 1, true) then
+                bestScore = math.max(bestScore, 85)
+            end
+        end
+    end
+
+    local perkInfos = C_ProfSpecs.GetPerksForPath(pathID) or {}
+    for _, perkInfo in ipairs(perkInfos) do
+        local perkID = perkInfo.perkID
+        if perkID then
+            local description = C_ProfSpecs.GetDescriptionForPerk(perkID)
+            local normalizedDescription = NormalizeForMatch(description)
+            if normalizedDescription ~= "" then
+                if normalizedRecipeName ~= "" and normalizedDescription:find(normalizedRecipeName, 1, true) then
+                    bestScore = math.max(bestScore, 100)
+                elseif normalizedDescription:find("unlock", 1, true)
+                    and normalizedDescription:find("recipe", 1, true) then
+                    bestScore = math.max(bestScore, 10)
+                end
+            end
+        end
+    end
+
+    return bestScore
+end
+
+---@param bestPathID number?
+---@param bestScore number
+---@param bestDepth number
+---@param pathID number
+---@param score number
+---@param depth number
+---@return number? pathID
+---@return number score
+---@return number depth
+local function ConsiderPathCandidate(bestPathID, bestScore, bestDepth, pathID, score, depth)
+    if score <= 0 then
+        return bestPathID, bestScore, bestDepth
+    end
+    if score > bestScore or (score == bestScore and depth > bestDepth) then
+        return pathID, score, depth
+    end
+    return bestPathID, bestScore, bestDepth
+end
+
+---@param skillLineID number
+---@param recipeID number
+---@param inTree table<number, boolean>
+---@param depths table<number, number>
+---@return table<number, number> pathNodeID -> score
+local function GetRecipeMappingPathScores(skillLineID, recipeID, inTree, depths)
+    local scores = {}
+    local profession = CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    if not profession or not expansionID then
+        return scores
+    end
+
+    local expansionData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    local professionData = expansionData and expansionData[profession]
+    local mappingList = professionData and professionData.recipeMapping and professionData.recipeMapping[recipeID]
+    if not mappingList or not professionData.nodeData then
+        return scores
+    end
+
+    for _, perkKey in ipairs(mappingList) do
+        local rawPerkData = professionData.nodeData[perkKey]
+        local pathNodeID = rawPerkData and rawPerkData.nodeID
+        if pathNodeID and inTree[pathNodeID] then
+            scores[pathNodeID] = (scores[pathNodeID] or 0) + 1
+        end
+    end
+
+    for pathNodeID, count in pairs(scores) do
+        local depth = depths[pathNodeID] or 0
+        scores[pathNodeID] = 60 + depth * 5 + count * 3
+    end
+
+    return scores
+end
+
+---@param skillLineID number
+---@param tabID number?
+---@param pathID number?
+---@return number? navigationPathID
+function CraftSim.RECIPE_ACQUISITION:ResolveSpecNavigationPath(skillLineID, tabID, pathID)
+    if not pathID or not tabID then
+        return pathID
+    end
+
+    local rootPathID = C_ProfSpecs.GetRootPathForTab(tabID)
+    local _, _, inTree = BuildPathHierarchy(rootPathID)
+    if inTree[pathID] then
+        return pathID
+    end
+
+    local profession = CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    local professionData = profession and expansionID
+        and CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+        and CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][profession]
+    local rawPerkData = professionData and professionData.nodeData and professionData.nodeData[pathID]
+    local mappedPathID = rawPerkData and rawPerkData.nodeID
+    if mappedPathID and inTree[mappedPathID] then
+        return mappedPathID
+    end
+
+    return pathID
+end
+
 ---@param skillLineID number
 ---@param pathID number
 ---@return number?
@@ -140,42 +299,38 @@ function CraftSim.RECIPE_ACQUISITION:FindRecipeUnlockSpecPath(skillLineID, recip
         return nil, nil
     end
 
-    local normalizedRecipeName = NormalizeForMatch(recipeName)
     local tabIDs = C_ProfSpecs.GetSpecTabIDsForSkillLine(skillLineID) or {}
+    local globalBestTabID, globalBestPathID, globalBestScore, globalBestDepth = nil, nil, 0, -1
 
     for _, tabID in ipairs(tabIDs) do
         local rootPathID = C_ProfSpecs.GetRootPathForTab(tabID)
         if rootPathID then
-            local matchedPathID
-            WalkSpecPaths(skillLineID, rootPathID, {}, function(pathID)
-                if matchedPathID then
-                    return
-                end
-                local perkInfos = C_ProfSpecs.GetPerksForPath(pathID) or {}
-                for _, perkInfo in ipairs(perkInfos) do
-                    local perkID = perkInfo.perkID
-                    if perkID then
-                        local description = C_ProfSpecs.GetDescriptionForPerk(perkID)
-                        local normalizedDescription = NormalizeForMatch(description)
-                        if normalizedDescription ~= "" then
-                            if normalizedRecipeName ~= "" and normalizedDescription:find(normalizedRecipeName, 1, true) then
-                                matchedPathID = pathID
-                                return
-                            end
-                            if normalizedDescription:find("unlock", 1, true)
-                                and normalizedDescription:find("recipe", 1, true) then
-                                matchedPathID = pathID
-                                return
-                            end
-                        end
-                    end
-                end
-            end)
-            if matchedPathID then
-                unlockPathCache[cacheKey] = { tabID = tabID, pathID = matchedPathID }
-                return tabID, matchedPathID
+            local _, depths, inTree = BuildPathHierarchy(rootPathID)
+            local mappingScores = GetRecipeMappingPathScores(skillLineID, recipeID, inTree, depths)
+            local tabBestPathID, tabBestScore, tabBestDepth = nil, 0, -1
+
+            for pathID in pairs(inTree) do
+                local score = math.max(
+                    ScorePathForRecipeUnlock(pathID, recipeName),
+                    mappingScores[pathID] or 0)
+                local depth = depths[pathID] or 0
+                tabBestPathID, tabBestScore, tabBestDepth = ConsiderPathCandidate(
+                    tabBestPathID, tabBestScore, tabBestDepth, pathID, score, depth)
+            end
+
+            if tabBestPathID and (tabBestScore > globalBestScore
+                or (tabBestScore == globalBestScore and tabBestDepth > globalBestDepth)) then
+                globalBestTabID = tabID
+                globalBestPathID = tabBestPathID
+                globalBestScore = tabBestScore
+                globalBestDepth = tabBestDepth
             end
         end
+    end
+
+    if globalBestTabID and globalBestPathID then
+        unlockPathCache[cacheKey] = { tabID = globalBestTabID, pathID = globalBestPathID }
+        return globalBestTabID, globalBestPathID
     end
 
     unlockPathCache[cacheKey] = false
@@ -339,13 +494,32 @@ function CraftSim.RECIPE_ACQUISITION:EnrichSnapshotForNeedsQuality(snapshot, rec
 
     snapshot.acquisitionHint = suggestion.nodeName
     snapshot.acquisitionKind = CraftSim.RECIPE_ACQUISITION.KIND.SPEC
-    snapshot.specTabID = suggestion.tabID
-    snapshot.specPathID = suggestion.pathID
+    local skillLineID = recipeData.professionData.skillLineID
+    local tabID = suggestion.tabID or self:FindSpecTabForPath(skillLineID, suggestion.pathID)
+    snapshot.specTabID = tabID
+    snapshot.specPathID = self:ResolveSpecNavigationPath(skillLineID, tabID, suggestion.pathID)
+end
+
+---@param pathChain number[]
+---@param index number?
+local function TriggerPathChainSequential(pathChain, index)
+    index = index or 1
+    if index > #pathChain then
+        return
+    end
+
+    EventRegistry:TriggerEvent("ProfessionsSpecializations.PathSelected", pathChain[index], true)
+    if index < #pathChain then
+        RunNextFrame(function()
+            TriggerPathChainSequential(pathChain, index + 1)
+        end)
+    end
 end
 
 ---@param tabID number?
 ---@param pathID number?
-local function ApplySpecNavigation(tabID, pathID)
+---@param skillLineID number?
+local function ApplySpecNavigation(tabID, pathID, skillLineID)
     if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
         return
     end
@@ -357,15 +531,29 @@ local function ApplySpecNavigation(tabID, pathID)
         ProfessionsFrame:GetTabButton(2):Click()
     end
 
+    local pathChain = pathID and { pathID } or {}
+    if tabID and pathID then
+        local rootPathID = C_ProfSpecs.GetRootPathForTab(tabID)
+        local parents = BuildPathHierarchy(rootPathID)
+        pathChain = GetPathChain(pathID, parents)
+    end
+
+    if tabID and pathID and g_professionsSpecsSelectedPaths then
+        g_professionsSpecsSelectedPaths[tabID] = pathID
+    end
+
+    local professionInfo = skillLineID and C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
+    if tabID and professionInfo and g_professionsSpecsSelectedTabs then
+        g_professionsSpecsSelectedTabs[professionInfo.professionID] = tabID
+    end
+
     RunNextFrame(function()
         if tabID then
             EventRegistry:TriggerEvent("ProfessionsSpecializations.TabSelected", tabID)
         end
-        if pathID then
-            RunNextFrame(function()
-                EventRegistry:TriggerEvent("ProfessionsSpecializations.PathSelected", pathID)
-            end)
-        end
+        RunNextFrame(function()
+            TriggerPathChainSequential(pathChain)
+        end)
     end)
 end
 
@@ -382,7 +570,7 @@ function CraftSim.RECIPE_ACQUISITION:NavigateToSpec(skillLineID, tabID, pathID)
 
     local function navigateWhenReady()
         C_TradeSkillUI.SetProfessionChildSkillLineID(skillLineID)
-        ApplySpecNavigation(tabID, pathID)
+        ApplySpecNavigation(tabID, pathID, skillLineID)
     end
 
     if ProfessionsFrame and ProfessionsFrame:IsVisible() then
@@ -551,7 +739,8 @@ function CraftSim.RECIPE_ACQUISITION:NavigateFromHint(hint, recipeID, skillLineI
         and hint.specPathID
         and skillLineID then
         local tabID = hint.specTabID or self:FindSpecTabForPath(skillLineID, hint.specPathID)
-        self:NavigateToSpec(skillLineID, tabID, hint.specPathID)
+        local navPathID = self:ResolveSpecNavigationPath(skillLineID, tabID, hint.specPathID)
+        self:NavigateToSpec(skillLineID, tabID, navPathID)
         return
     end
 

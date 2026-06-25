@@ -1116,6 +1116,8 @@ greater or equal the configured sale rate threshold.
         WORK_ORDER_TRACKER_TOOLTIP_STATUS = "Status",
         WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_QUALITY = "Required quality",
         WORK_ORDER_TRACKER_TOOLTIP_QUALITY = "Expected quality",
+        WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_SHORT = "Req.",
+        WORK_ORDER_TRACKER_TOOLTIP_EXPECTED_SHORT = "Exp.",
         WORK_ORDER_TRACKER_TOOLTIP_EXPIRES = "Expires: %s",
         WORK_ORDER_TRACKER_TOOLTIP_CLAIM_ENDS = "Claim ends: %s",
         WORK_ORDER_TRACKER_OPTION_AUTO_SNAPSHOT = "Auto-snapshot when opening profession orders",
