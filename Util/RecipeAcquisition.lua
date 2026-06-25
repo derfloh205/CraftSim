@@ -658,6 +658,31 @@ local RECIPE_ITEM_PREFIXES = {
     "Technique: ",
 }
 
+---@param itemName string
+---@return string
+local function StripRecipeItemPrefix(itemName)
+    for _, prefix in ipairs(RECIPE_ITEM_PREFIXES) do
+        if itemName:find("^" .. prefix, 1, true) then
+            return itemName:sub(#prefix + 1)
+        end
+    end
+    return itemName
+end
+
+local recipeShoppingCategoryKey
+
+--- Auctionator categoryKey for Enum.ItemClass.Recipe (localized, e.g. "Recipe").
+---@return string?
+local function GetRecipeShoppingCategoryKey()
+    if recipeShoppingCategoryKey == nil then
+        recipeShoppingCategoryKey = C_Item.GetItemClassInfo(Enum.ItemClass.Recipe) or false
+    end
+    if recipeShoppingCategoryKey == false then
+        return nil
+    end
+    return recipeShoppingCategoryKey
+end
+
 ---@param sourceText string?
 ---@return string? itemName
 ---@return number? qualityID
@@ -683,6 +708,7 @@ end
 ---@class CraftSim.RecipeShoppingSearch
 ---@field itemName string
 ---@field qualityID number?
+---@field categoryKey string? Auctionator item-class filter (localized Recipe class name)
 
 ---@param recipeID number
 ---@param recipeName string?
@@ -695,24 +721,13 @@ function CraftSim.RECIPE_ACQUISITION:GetRecipeShoppingSearch(recipeID, recipeNam
     end
 
     if not itemName and recipeName and recipeName ~= "" then
-        local hasPrefix = false
-        for _, prefix in ipairs(RECIPE_ITEM_PREFIXES) do
-            if recipeName:find("^" .. prefix, 1, true) then
-                hasPrefix = true
-                break
-            end
-        end
-        if hasPrefix then
-            itemName = recipeName
-        else
-            itemName = "Recipe: " .. recipeName
-        end
+        itemName = recipeName
     end
 
     if not itemName then
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
         if recipeInfo and recipeInfo.name and recipeInfo.name ~= "" then
-            itemName = "Recipe: " .. recipeInfo.name
+            itemName = recipeInfo.name
         end
     end
 
@@ -721,8 +736,9 @@ function CraftSim.RECIPE_ACQUISITION:GetRecipeShoppingSearch(recipeID, recipeNam
     end
 
     return {
-        itemName = itemName,
+        itemName = StripRecipeItemPrefix(itemName),
         qualityID = qualityID,
+        categoryKey = GetRecipeShoppingCategoryKey(),
     }
 end
 

@@ -139,6 +139,7 @@ function CraftSim.SHOPPING:AddSearchTermToShoppingList(searchTerm, listName)
         return terms
             and terms.searchString == searchTerm.searchString
             and (terms.tier or 0) == (searchTerm.tier or 0)
+            and (terms.categoryKey or "") == (searchTerm.categoryKey or "")
     end)
 
     if oldSearchString then
@@ -177,6 +178,9 @@ function CraftSim.SHOPPING:AddRecipeToShoppingList(recipeID, recipeName, sourceT
         isExact = false,
         quantity = 1,
     }
+    if shoppingSearch.categoryKey then
+        searchTerm.categoryKey = shoppingSearch.categoryKey
+    end
 
     if not self:AddSearchTermToShoppingList(searchTerm) then
         return false
