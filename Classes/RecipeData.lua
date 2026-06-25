@@ -1777,7 +1777,8 @@ end
 --- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
 --- (and currencies) may still be used even if not fully owned, as they can be bought.
 ---@param amount number number of crafts that will be queued
-function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
+---@param availableOverride number? when set, use this item count instead of bag count for soulbound availability
+function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount, availableOverride)
     amount = amount or 0
     if amount <= 0 then return end
 
@@ -1791,7 +1792,9 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
         if active and not active:IsCurrency() and active.item then
             local itemID = active.item:GetItemID()
             if GUTIL:isItemSoulbound(itemID) then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
+                local owned = availableOverride
+                    or CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                    or 0
                 local perCraft = slot.maxQuantity or 1
                 local neededTotal = perCraft * amount
 
