@@ -544,6 +544,12 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasRequiredReagents = GUTIL:Every(self.requiredReagents,
         ---@param requiredReagent CraftSim.Reagent
         function(requiredReagent)
+            if requiredReagent:IsOrderReagentIn(self.recipeData) then
+                if multiplier <= 1 then
+                    return true
+                end
+                return requiredReagent:HasItems(multiplier - 1, crafterUID)
+            end
             return requiredReagent:HasItems(multiplier, crafterUID)
         end)
 
@@ -554,6 +560,9 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             if optionalReagentSlot.locked then
                 return optionalReagentSlot.activeReagent == nil
             end
+            if optionalReagentSlot:IsOrderReagentIn(self.recipeData) then
+                return true
+            end
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
 
@@ -562,6 +571,8 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
         local slot = self.requiredSelectableReagentSlot
         if slot.locked then
             hasrequiredSelectableReagent = slot.activeReagent == nil
+        elseif slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
+            hasrequiredSelectableReagent = true
         else
             hasrequiredSelectableReagent = slot:HasItem(multiplier, crafterUID)
         end

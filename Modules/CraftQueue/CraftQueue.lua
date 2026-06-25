@@ -424,13 +424,98 @@ function CraftSim.CRAFTQ:PruneStaleWorkOrdersForProfession(profession, onComplet
     end)
 end
 
+--- Lazy-init pool of remaining soulbound finishing reagent uses (in crafts) while queuing work orders.
+--- Subtracts soulbound finishing reagents already committed in the craft queue.
+---@param crafterUID CrafterUID
+---@param sbfItemID number
+---@param perCraft number?
+---@return number
+function CraftSim.CRAFTQ:GetWorkOrderSoulboundPoolAvailable(crafterUID, sbfItemID, perCraft)
+    local key = crafterUID .. ":" .. sbfItemID
+    if self.workOrderSbfPool[key] ~= nil then
+        return self.workOrderSbfPool[key]
+    end
+
+    local owned = self:GetItemCountFromCraftQueueCache(crafterUID, sbfItemID, true) or 0
+    local available = math.floor(owned / (perCraft or 1))
+
+    local craftQueue = self.craftQueue
+    if craftQueue then
+        for _, queueItem in ipairs(craftQueue.craftQueueItems) do
+            local queuedRecipeData = queueItem.recipeData
+            if queuedRecipeData:IsUsingSoulboundFinishingReagent() then
+                local queuedSbfItemID = queuedRecipeData:GetSoulboundFinishingReagentInfo()
+                if queuedSbfItemID == sbfItemID and queuedRecipeData:GetCrafterUID() == crafterUID then
+                    available = math.max(0, available - queueItem.amount)
+                end
+            end
+        end
+    end
+
+    self.workOrderSbfPool[key] = available
+    return available
+end
+
+function CraftSim.CRAFTQ:InitWorkOrderSoulboundPool()
+    ---@type table<string, number>
+    self.workOrderSbfPool = {}
+end
+
+--- Picks with- or without-soulbound finishing reagents for a work order based on the shared pool.
+---@param recipeData CraftSim.RecipeData
+---@param includeSoulbound boolean
+---@return CraftSim.RecipeData
+function CraftSim.CRAFTQ:ResolveWorkOrderRecipeData(recipeData, includeSoulbound)
+    if not includeSoulbound or not recipeData:IsUsingSoulboundFinishingReagent() then
+        return recipeData
+    end
+
+    local sbfItemID, perCraft = recipeData:GetSoulboundFinishingReagentInfo()
+    if not sbfItemID then
+        return recipeData
+    end
+
+    local crafterUID = recipeData:GetCrafterUID()
+    local key = crafterUID .. ":" .. sbfItemID
+    local available = self:GetWorkOrderSoulboundPoolAvailable(crafterUID, sbfItemID, perCraft)
+
+    if available >= 1 then
+        self.workOrderSbfPool[key] = available - 1
+        return recipeData
+    end
+
+    local recipeDataNoSBF = recipeData:Copy()
+    recipeDataNoSBF:AdjustSoulboundFinishingForAmount(1, 0)
+    return recipeDataNoSBF
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param order CraftingOrderInfo
+---@return boolean
+function CraftSim.CRAFTQ:WorkOrderMeetsMinQuality(recipeData, order)
+    if not order.minQuality or order.minQuality <= 0 then
+        return true
+    end
+    if recipeData.resultData.expectedQuality >= order.minQuality then
+        return true
+    end
+    if recipeData.concentrating and recipeData.resultData.expectedQualityConcentration >= order.minQuality then
+        return true
+    end
+    return false
+end
+
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
     self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
+    self:InitWorkOrderSoulboundPool()
+    local includeSoulboundFinishing = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS")
+        and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
     local profession = CraftSim.UTIL:GetProfessionsFrameProfession()
     if not profession or not CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton() then
         CraftSim.CRAFTQ.queuingWorkOrders = false
+        self.workOrderSbfPool = nil
         return
     end
     local normalizedRealmName = GetNormalizedRealmName()
@@ -463,6 +548,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
             CraftSim.CRAFTQ.queuingWorkOrders = false
+            CraftSim.CRAFTQ.workOrderSbfPool = nil
             if self.frame and self.frame:IsVisible() then
                 self.UI:Update()
             end
@@ -511,7 +597,12 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         maxCount = (claimInfo and claimInfo.claimsRemaining) or 0
                                     end
                                     for i = 1, math.min(maxCount, #publicOrderCandidates) do
-                                        CraftSim.CRAFTQ:AddRecipe { recipeData = publicOrderCandidates[i].recipeData }
+                                        local candidate = publicOrderCandidates[i]
+                                        local resolvedRecipeData = CraftSim.CRAFTQ:ResolveWorkOrderRecipeData(
+                                            candidate.recipeData, includeSoulboundFinishing)
+                                        if CraftSim.CRAFTQ:WorkOrderMeetsMinQuality(resolvedRecipeData, candidate.order) then
+                                            CraftSim.CRAFTQ:AddRecipe { recipeData = resolvedRecipeData }
+                                        end
                                     end
                                 end
                                 frameDistributor:Continue()
@@ -552,6 +643,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 if recipeInfo and recipeInfo.learned then
                                     local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
+                                    recipeData:SetOrder(order)
+
                                     if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
                                         if recipeData:HasRequiredSelectableReagent() then
                                             local slot = recipeData.reagentData.requiredSelectableReagentSlot
@@ -564,8 +657,6 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             end
                                         end
                                     end
-
-                                    recipeData:SetOrder(order)
 
                                     if recipeData.orderData and isPatronOrder then
                                         local rewardAllowed = GUTIL:Every(recipeData.orderData.npcOrderRewards,
@@ -678,24 +769,31 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         local forceConcentration = CraftSim.DB.OPTIONS:Get(
                                             "CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                                         local qualityWithoutConcentration = recipeData.resultData.expectedQuality
+                                        local minQuality = order.minQuality
+                                        local hasMinQualityRequirement = minQuality and minQuality > 0
                                         local queueAble = false
-                                        if recipeData.resultData.expectedQuality >= order.minQuality then
+                                        if not hasMinQualityRequirement or
+                                            recipeData.resultData.expectedQuality >= minQuality then
                                             queueAble = true
                                         end
 
-                                        if (forceConcentration or allowConcentration) and order.minQuality and
-                                            recipeData.resultData.expectedQualityConcentration == order.minQuality then
-                                            recipeData.concentrating = true
-                                            recipeData:Update()
-                                            queueAble = true
-                                            if qualityWithoutConcentration < order.minQuality then
-                                                local concentrationData = recipeData.concentrationData
-                                                if recipeData.concentrationCost <= 0 or
-                                                    (not concentrationData) or
-                                                    (not concentrationData:CanAfford(recipeData.concentrationCost)) then
-                                                    queueAble = false
-                                                    recipeData.concentrating = false
-                                                    recipeData:Update()
+                                        if hasMinQualityRequirement and
+                                            recipeData.resultData.expectedQualityConcentration >= minQuality then
+                                            local needsConcentration = qualityWithoutConcentration < minQuality
+                                            if forceConcentration or (allowConcentration and needsConcentration) then
+                                                recipeData.concentrating = true
+                                                recipeData:Update()
+                                                queueAble = true
+                                                if needsConcentration then
+                                                    local concentrationData = recipeData.concentrationData
+                                                    local currentAmount = concentrationData and
+                                                        concentrationData:GetCurrentAmount() or 0
+                                                    if recipeData.concentrationCost <= 0 or
+                                                        currentAmount < recipeData.concentrationCost then
+                                                        queueAble = false
+                                                        recipeData.concentrating = false
+                                                        recipeData:Update()
+                                                    end
                                                 end
                                             end
                                         end
@@ -703,12 +801,16 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                         if queueAble then
                                             if isPublicOrder then
                                                 if order.isFulfillable == false then
-                                                    distributor:Continue()
-                                                    return
+                                                    local canCraft, craftableAmount = recipeData:CanCraft(1)
+                                                    if not canCraft and craftableAmount < 1 then
+                                                        distributor:Continue()
+                                                        return
+                                                    end
                                                 end
                                                 if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_ONLY_PROFITABLE") or recipeData.averageProfitCached > 0 then
                                                     tinsert(publicOrderCandidates, {
                                                         recipeData = recipeData,
+                                                        order = order,
                                                         averageProfit = recipeData.averageProfitCached,
                                                     })
                                                 end
@@ -721,7 +823,11 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                                     recipeData.averageProfitCached <= 0 and not isKPOrderWithinRange then
                                                     -- skip: not profitable and not a KP order within range
                                                 elseif isWithinKPCost and isWithinMaxCost then
-                                                    CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                                    local resolvedRecipeData = CraftSim.CRAFTQ:ResolveWorkOrderRecipeData(
+                                                        recipeData, includeSoulboundFinishing)
+                                                    if CraftSim.CRAFTQ:WorkOrderMeetsMinQuality(resolvedRecipeData, order) then
+                                                        CraftSim.CRAFTQ:AddRecipe { recipeData = resolvedRecipeData }
+                                                    end
                                                 end
                                             end
                                         end
