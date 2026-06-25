@@ -65,6 +65,83 @@ end
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
+---@param recipeData CraftSim.RecipeData
+---@return number
+local function GetEffectiveExpectedQuality(recipeData)
+    if recipeData.concentrating and recipeData.resultData.expectedQualityConcentration then
+        return recipeData.resultData.expectedQualityConcentration
+    end
+    return recipeData.resultData.expectedQuality
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@return boolean
+local function RecipeMeetsSupportedQualities(recipeData, recipeEntry)
+    if not recipeData.isGear or not recipeData.supportsQualities then
+        return true
+    end
+    local supported = recipeEntry and recipeEntry.supportedQualities
+    if not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+        return true
+    end
+    return CraftSim.DB.CRAFT_LISTS.IsQualitySupported(GetEffectiveExpectedQuality(recipeData), supported)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@param includeAltInventory boolean?
+---@return number
+local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
+    local supported = recipeEntry and recipeEntry.supportedQualities
+    if not recipeData.isGear
+        or not recipeData.supportsQualities
+        or not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+        local expectedItem = recipeData.resultData.expectedItem
+        if not expectedItem then
+            return 0
+        end
+        return CraftSim.INVENTORY_SOURCE:GetInventoryCount(
+            expectedItem:GetItemLink() or expectedItem:GetItemID(),
+            includeAltInventory) or 0
+    end
+
+    local owned = 0
+    for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
+        if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
+            owned = owned + (CraftSim.INVENTORY_SOURCE:GetInventoryCount(
+                item:GetItemLink() or item:GetItemID(),
+                includeAltInventory) or 0)
+        end
+    end
+    return owned
+end
+
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@param recipeData CraftSim.RecipeData
+---@param optimizeReagentOptions table?
+---@return table?
+local function ApplySupportedQualitiesToOptimizeOptions(recipeEntry, recipeData, optimizeReagentOptions)
+    if not recipeData.isGear or not recipeData.supportsQualities then
+        return optimizeReagentOptions
+    end
+    local supported = recipeEntry and recipeEntry.supportedQualities
+    if not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+        return optimizeReagentOptions
+    end
+    local minQ, maxQ = nil, nil
+    for qualityID = 1, recipeData.maxQuality do
+        if supported[qualityID] then
+            minQ = minQ and math.min(minQ, qualityID) or qualityID
+            maxQ = maxQ and math.max(maxQ, qualityID) or qualityID
+        end
+    end
+    if not minQ or not maxQ then
+        return optimizeReagentOptions
+    end
+    return { minQuality = minQ, maxQuality = maxQ }
+end
+
 CraftSim.CRAFT_LISTS.isQueueingSelectedLists = false
 
 ---@param progress { total: number, count: number }?
@@ -442,32 +519,36 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 or effectiveRD.averageProfitCached > 0
 
             if profitableOk then
-                local sbfCrafts = entrySbfCrafts[entry] or 0
-                local totalAmount = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
-                if totalAmount <= 0 then
-                    Logger:LogDebug("Skipping recipe with no queue amount: " .. effectiveRD.recipeName)
+                if not RecipeMeetsSupportedQualities(effectiveRD, entry.recipeEntry) then
+                    Logger:LogDebug("Skipping unsupported gear quality at queue time: " .. effectiveRD.recipeName)
                 else
-                    local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
+                    local sbfCrafts = entrySbfCrafts[entry] or 0
+                    local totalAmount = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
+                    if totalAmount <= 0 then
+                        Logger:LogDebug("Skipping recipe with no queue amount: " .. effectiveRD.recipeName)
+                    else
+                        local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
 
-                    -- Queue the with-SBF portion.
-                    if sbfCrafts > 0 then
-                        CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                            recipeData = entry.recipeData,
-                            amount = sbfCrafts,
-                        })
-                    end
+                        -- Queue the with-SBF portion.
+                        if sbfCrafts > 0 then
+                            CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                                recipeData = entry.recipeData,
+                                amount = sbfCrafts,
+                            })
+                        end
 
-                    -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
-                    if noSbfCrafts > 0 then
-                        local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
-                        CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                            recipeData = noSbfRD,
-                            amount = noSbfCrafts,
-                        })
-                    end
+                        -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
+                        if noSbfCrafts > 0 then
+                            local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
+                            CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                                recipeData = noSbfRD,
+                                amount = noSbfCrafts,
+                            })
+                        end
 
-                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                        CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                            CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                        end
                     end
                 end
             else
@@ -684,13 +765,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             return nil
         end
 
-        local itemID = recipeData.resultData.expectedItem:GetItemID()
-        local itemLink = recipeData.resultData.expectedItem:GetItemLink()
-        local owned = 0
-        if itemID or itemLink then
-            owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID,
-                options.includeAltInventory) or 0
-        end
+        local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, options.includeAltInventory)
 
         -- Already at or above restock target: skip queuing this recipe.
         if owned >= recipeMaxQueueAmount then
@@ -793,6 +868,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 optimizeReagentOptions = { minQuality = targetQuality, maxQuality = targetQuality }
             end
         end
+        optimizeReagentOptions = ApplySupportedQualitiesToOptimizeOptions(recipeEntry, recipeData, optimizeReagentOptions)
 
         if recipeData.supportsQualities and options.enableConcentration then
             recipeData.concentrating = true
@@ -863,6 +939,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
                 if targetQuality and recipeData.resultData.expectedQuality < targetQuality then
                     Logger:LogDebug("Skipping not targetQuality: " .. recipeData.recipeName)
+                    frameDistributor:Continue()
+                    return
+                end
+                if not RecipeMeetsSupportedQualities(recipeData, recipeEntry) then
+                    Logger:LogDebug("Skipping unsupported gear quality: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
                 end
