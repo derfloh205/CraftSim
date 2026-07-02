@@ -22,6 +22,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.9"),
+        f.p .. "DB2 Data Update for 12.0.7.68256",
+        newP("26.1.8"),
+        f.p .. "TOC bump for 12.0.7",
         newP("26.1.7"),
         f.P .. f.bb("Work Order Queuing"),
         f.a .. "- Fixed a bug where gear optimization chose mc for work orders",
