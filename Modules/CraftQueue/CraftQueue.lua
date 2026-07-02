@@ -1253,7 +1253,13 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
     end)
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
 
-    CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List"))
+    local listCreatedMessage = f.l("CraftSim: ") .. f.bb("Created Auctionator Shopping List")
+    if #searchStrings > 0 then
+        listCreatedMessage = listCreatedMessage .. " " .. f.g("(new items added)")
+    else
+        listCreatedMessage = listCreatedMessage .. " " .. f.r("(no items added)")
+    end
+    CraftSim.DEBUG:SystemPrint(listCreatedMessage)
 
     CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end
