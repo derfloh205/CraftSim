@@ -16,12 +16,18 @@ local Logger = CraftSim.DEBUG:RegisterLogger("News")
 local function newP(v) return f.l("\nPatch Notes " .. v .. "\n") end
 local function collab(gl) return f.a .. "- Thanks to " .. f.bb(gl) end
 
+local function data(v) return f.p .. "DB2 Data Update for " .. v end
+
 ---@param itemMap table<string, ItemMixin>
 function CraftSim.NEWS:GET_NEWS(itemMap)
     local supporterListUpdate = f.p .. f.patreon("Supporter List Update ") ..
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.10"),
+        data("12.0.7.68367"),
+        f.p .. "QOL Output text added for shopping list creation",
+        collab("https://github.com/dilelu94"),
         newP("26.1.9"),
         f.p .. "DB2 Data Update for 12.0.7.68256",
         newP("26.1.8"),
