@@ -73,7 +73,7 @@ function CraftSim.LOCAL_CN:GetData()
         MULTICRAFT_EXPLANATION_TOOLTIP =
         "产能会有概率在制作配方时获得比通常更多的物品。\n\n额外数量通常在1到2.5y之间\ny = 单次制造的基础物品数量。",
         REAGENTSKILL_EXPLANATION_TOOLTIP =
-        "材料品质最多可以提供基础配方难度的40%作为技能加成。\n\n全部1星材料：0%加成\n全部2星材料：20%加成\n全部3星材料：40%加成\n\n技能加成根据不同品质的材料数量，结合其品质权重计算得出\n每种带品质的材料都有独特的权重值。\n\n再造有所不同。材料品质加成的最大值取决于\n最初制造物品所使用的材料品质。\n确切的运作方式尚不清楚。\n不过CraftSim内部会将实际达到的技能与全3星进行比较，\n并计算出加成的的最大值。",
+        "材料品质最多可以提供基础配方难度的40%作为技能加成。\n\n全部1星材料：0%加成\n全部2星材料：20%加成\n全部3星材料：40%加成\n\n技能加成根据不同品质的材料数量，结合其品质权重计算得出\n每种带品质的材料都有独特的权重值。\n\n再造有所不同。材料品质加成的最大值取决于\n最初制造物品所使用的材料品质。\n确切的运作方式尚不清楚。\n不过CraftSim内部会将实际达到的技能和全3星进行比较，\n并计算出加成的的最大值。",
         REAGENTFACTOR_EXPLANATION_TOOLTIP =
         "大部分情况下材料可以提供基础配方难度的40%作为技能加成。\n\n在再造的情况下，这个数值取决于之前制造所使用的材料品质。",
 
@@ -149,7 +149,7 @@ function CraftSim.LOCAL_CN:GetData()
             "这个公式说明概率分布" ..
             f.l("X") ..
             "的期望值" ..
-            f.l("E") .. "等于所有可能值乘以各自概率的总和。\n" ..
+            f.l("E") .. "等于所有可能值乘各自概率的总和。\n" ..
             "假设" ..
             f.bb("情况A的概率为30%") ..
             "且利润为" ..
@@ -391,7 +391,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_INCLUDE_GEAR = "包含装备",
         RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP = "配方扫描时包含所有种类装备的配方",
         RECIPE_SCAN_OPTIMIZE_TOOLS = "优化专业工具",
-        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP = "优化每个配方的专业工具以获取最大利润\n\n",
+        RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP = "优化每个配方的专业工具用于获取最大利润\n\n",
         RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING =
         "如果背包中有很多工具\n扫描期间可能会降低游戏性能",
         RECIPE_SCAN_CRAFTER_HEADER = "制作者",
@@ -493,7 +493,7 @@ function CraftSim.LOCAL_CN:GetData()
         RECIPE_SCAN_ADD_FAVORITE = f.g("设置") .. "偏好",
         RECIPE_SCAN_FAVORITES_CRAFTER_ONLY = f.r("偏好只能由制作者修改"),
         RECIPE_SCAN_QUEUE_HINT = "点击" ..
-            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift 将选中的配方添加到" ..
+            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + Shift 将配方添加到" ..
             f.bb("制造队列"),
         RECIPE_SCAN_REMOVE_CACHED_DATA = f.r("移除"),
         RECIPE_SCAN_REMOVE_CACHED_DATA_TOOLTIP = f.r("移除") ..
@@ -506,7 +506,7 @@ function CraftSim.LOCAL_CN:GetData()
             "数据库会更新每个扫描的配方。\n\n将允许通过CraftSim API查询每个物品的最新平均制造成本。",
         RECIPE_SCAN_ONLY_CRAFTLISTS_BUTTON = "仅限制造列表",
         RECIPE_SCAN_ONLY_CRAFTLISTS_TOOLTIP =
-        "启用后，仅扫描选中的制造列表，忽略其他过滤器。",
+        "启用后，仅扫描所选制造列表，忽略其他过滤器。",
         RECIPE_SCAN_CRAFTLISTS_SELECT_TITLE = "选择需要扫描的制造列表：",
         RECIPE_SCAN_CRAFTLISTS_NO_LISTS = f.grey("暂无制造列表"),
         CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER = f.bb("选项") .. "：",
@@ -555,7 +555,7 @@ function CraftSim.LOCAL_CN:GetData()
         OPTIONS_PERFORMANCE_RAM = "制造时启用内存清理",
         OPTIONS_PERFORMANCE_RAM_CRAFTS = "制造",
         OPTIONS_PERFORMANCE_RAM_TOOLTIP =
-        "启用后，CraftSim将在每隔指定次数的制造后清除内存中未使用的数据，以防止内存堆积。\n内存堆积也有可能是其他插件引起，而非CraftSim。\n清理操作会影响整个魔兽的内存占用。",
+        "启用后，CraftSim将在每隔指定次数的制造后清除内存中未使用的数据，防止内存堆积。\n内存堆积也有可能是其他插件引起，而非CraftSim。\n清理操作会影响整个魔兽的内存占用。",
         OPTIONS_MODULES_TAB = "模块",
         OPTIONS_PROFIT_CALCULATION_TAB = "利润计算",
         OPTIONS_CRAFTING_TAB = "制造",
@@ -621,7 +621,7 @@ function CraftSim.LOCAL_CN:GetData()
         "根据专业属性和每金币利润属性权重，显示平均利润。",
         CONTROL_PANEL_MODULES_RECIPE_INFO_LABEL = "配方信息",
         CONTROL_PANEL_MODULES_RECIPE_INFO_TOOLTIP =
-        "显示配方数据，包括平均利润、属性权重以及可通过右键菜单自定义的附加信息。",
+        "显示配方数据，包含平均利润、属性权重以及可以通过右键菜单自定义的附加信息。",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL = "材料优化",
         CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP =
         "提供最便宜材料组合达到目标品质的建议。",
@@ -918,9 +918,9 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_QUEUE_STATUS_SHATTER_AFTER_LOGIN = "登陆后需要重新粉碎",
         CRAFT_QUEUE_SHATTER_TOOLTIP_AFTER_LOGIN = shatter_post_login_tooltip,
         CRAFT_QUEUE_SHATTER_TOOLTIP_MISSING_BUFF = "\n\n" ..
-            f.white("施放粉碎以获得碎裂精华。"),
+            f.white("施放粉碎获得碎裂精华。"),
         CRAFT_QUEUE_SHATTER_TOOLTIP_STALE_AND_MISSING = "\n\n" ..
-            f.white("未激活碎裂精华。请施放粉碎以激活并同步登录状态。"),
+            f.white("未激活碎裂精华。请施放粉碎激活并同步登录状态。"),
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL = "忽略匠人之敏配方",
         CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP =
             "不要把首次制造需要" .. f.bb("匠人之敏") .. "的配方添加到制造队列",
@@ -1027,7 +1027,7 @@ function CraftSim.LOCAL_CN:GetData()
         CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "补货：",
         CRAFT_LISTS_RECIPE_RESTOCK_TAG = "补货",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "补货目标（0 = 关闭）",
-        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("设置为0可禁用此配方的补货"),
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("设置为0可以禁用此配方的补货"),
 
         -- craft buffs
 
