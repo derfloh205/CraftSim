@@ -1750,6 +1750,23 @@ function CraftSim.CRAFTQ.UI:Init()
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
 
+                local skipOwnedMaterialCostsCB = patronOrderOptions:CreateCheckbox(
+                    L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                        CraftSim.DB.OPTIONS:Save(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS", not value)
+                    end)
+
+                skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"));
+                end);
+
                 patronOrderOptions:CreateDivider()
 
                 local includeMoxieProfitCB = patronOrderOptions:CreateCheckbox(
@@ -2837,6 +2854,18 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 end)
             includeAltInvCB:SetTooltip(function(tooltip, _)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP"))
+            end)
+
+            local skipOwnedMaterialCostsCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL"),
+                function()
+                    return opts.skipOwnedMaterialCosts
+                end,
+                function()
+                    opts.skipOwnedMaterialCosts = not opts.skipOwnedMaterialCosts
+                end)
+            skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"))
             end)
 
             -- Queue options

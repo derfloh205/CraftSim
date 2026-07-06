@@ -25,6 +25,7 @@ CraftSim.DB = CraftSim.DB
 ---@field tsmRestockExpression string TSM expression for restock quantity (per-list)
 ---@field subtractInventory boolean if true, subtract inventory from restock amount
 ---@field includeAltInventory boolean if true, include alt characters' inventory when subtracting from restock amount
+---@field skipOwnedMaterialCosts boolean if true, treat owned reagents as zero cost for profit checks (shared pool per queue batch)
 ---@field onlyProfitable boolean if true, only queue profitable recipes
 
 ---@class CraftSim.CraftList
@@ -66,6 +67,7 @@ local function DefaultOptions()
         tsmRestockExpression = "1",
         subtractInventory = false,
         includeAltInventory = false,
+        skipOwnedMaterialCosts = false,
         onlyProfitable = false,
     }
 end

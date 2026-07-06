@@ -514,9 +514,17 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             local effectiveRD = entryEffectiveRD[entry]
 
             -- Apply onlyProfitable filter against the *effective* (post-SBF) version.
-            local profitableOk = not opts.onlyProfitable
-                or not effectiveRD.averageProfitCached
-                or effectiveRD.averageProfitCached > 0
+            local profitableOk = true
+            if opts.onlyProfitable then
+                local profit = effectiveRD.averageProfitCached
+                if opts.skipOwnedMaterialCosts then
+                    profit = select(1, CraftSim.CRAFTQ:GetProfitWithOwnedMaterials(
+                        effectiveRD,
+                        entryOverrideAmount[entry] or entry.maxQueueAmount or 1,
+                        { includeAlts = opts.includeAltInventory, consume = false }))
+                end
+                profitableOk = not profit or profit > 0
+            end
 
             if profitableOk then
                 if not RecipeMeetsSupportedQualities(effectiveRD, entry.recipeEntry) then
@@ -535,6 +543,10 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                                 recipeData = entry.recipeData,
                                 amount = sbfCrafts,
                             })
+                            if opts.skipOwnedMaterialCosts then
+                                CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
+                                    entry.crafterUID, entry.recipeData, sbfCrafts, opts.includeAltInventory)
+                            end
                         end
 
                         -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
@@ -544,6 +556,10 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                                 recipeData = noSbfRD,
                                 amount = noSbfCrafts,
                             })
+                            if opts.skipOwnedMaterialCosts then
+                                CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
+                                    entry.crafterUID, noSbfRD, noSbfCrafts, opts.includeAltInventory)
+                            end
                         end
 
                         if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
@@ -608,6 +624,8 @@ function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT") .. f.bb(tostring(options.restockAmount or 1)))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED") .. ": " .. yn(options.enableUnlearned))
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ONLY_PROFITABLE") .. ": " .. yn(options.onlyProfitable))
+    table.insert(lines,
+        "  " .. L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL") .. ": " .. yn(options.skipOwnedMaterialCosts))
 
     return f.white(table.concat(lines, "\n"))
 end
@@ -637,6 +655,14 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         return
     end
 
+    local useOwnedReagentPool = GUTIL:Some(selectedLists, function(list)
+        local opts = CraftSim.DB.CRAFT_LISTS.NormalizeListOptions(list.options)
+        return opts.skipOwnedMaterialCosts
+    end)
+    if useOwnedReagentPool then
+        CraftSim.CRAFTQ:InitOwnedReagentPool()
+    end
+
     ---@type { total: number, count: number }
     local recipeQueueProgress = { total = 0, count = 0 }
     for _, list in ipairs(selectedLists) do
@@ -655,6 +681,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         end
         self.isQueueingSelectedLists = false
         self:SetQueueCraftListsButtonState(false)
+        CraftSim.CRAFTQ:ClearOwnedReagentPool()
         CraftSim.CRAFTQ.UI:Update()
         if not cancelled then
             CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
@@ -931,7 +958,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
                 -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
                 -- again during TriageAndQueue before the entry is actually queued.
-                if options.onlyProfitable and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
+                -- When skipOwnedMaterialCosts is on, onlyProfitable is deferred to triage (pool order unknown here).
+                if options.onlyProfitable and not options.skipOwnedMaterialCosts
+                    and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
                     Logger:LogDebug("Skipping non-profitable recipe: " .. recipeData.recipeName)
                     frameDistributor:Continue()
                     return
