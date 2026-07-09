@@ -12,8 +12,8 @@ CraftSim.SPECIALIZATION_INFO.UI = {}
 local Logger = CraftSim.DEBUG:RegisterLogger("SpecializationInfo.UI")
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
-    local sizeX = 290
-    local sizeY = 370
+    local sizeX = 390
+    local sizeY = 420
     local offsetX = 260
     local offsetY = 341
 
@@ -75,16 +75,57 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
         frame:Hide()
 
+        -- ── Onglets WoW natifs (PanelTopTabButtonTemplate) ──────────────
+        local infoTab = GGUI.BlizzardTab({
+            buttonOptions = {
+                parent = frame.content,
+                anchorParent = frame.content,
+                offsetY = -2,
+                label = "Info",
+            },
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = sizeX,
+            sizeY = sizeY,
+            canBeEnabled = true,
+            offsetY = -30,
+            initialTab = true,
+            top = true,
+        })
+        -- Compat ascendante : UpdateInfo() lit frame.content.infoContent
+        frame.content.infoContent = infoTab.content
+
+        local optimizeTab = GGUI.BlizzardTab({
+            buttonOptions = {
+                parent = frame.content,
+                anchorParent = infoTab.button,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                label = "Optimize",
+            },
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = sizeX,
+            sizeY = sizeY,
+            canBeEnabled = true,
+            offsetY = -30,
+            top = true,
+        })
+        -- Compat ascendante : GetOptimizeContent() lit frame.content.optimizeContent
+        frame.content.optimizeContent = optimizeTab.content
+
+        -- ── Widgets de l'onglet Info ─────────────────────────────────────
+        local ic = infoTab.content
+
         frame.content.notImplementedText = CraftSim.FRAME:CreateText(
             GUTIL:ColorizeText(CraftSim.LOCAL:GetText("SPEC_INFO_WORK_IN_PROGRESS"),
                 GUTIL.COLORS.LEGENDARY),
-            frame.content, frame.content, "CENTER", "CENTER", 0, 0)
-
+            ic, ic, "CENTER", "CENTER", 0, 0)
         frame.content.notImplementedText:Hide()
 
         frame.content.statsText = GGUI.Text({
-            parent = frame.content,
-            anchorParent = frame.content,
+            parent = ic,
+            anchorParent = ic,
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
             text = "",
@@ -95,24 +136,15 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         })
 
         frame.content.nodeList = GGUI.FrameList {
-            parent = frame.content, anchorParent = frame.content.statsText.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-            hideScrollbar = true, sizeY = 250, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
+            parent = ic, anchorParent = frame.content.statsText.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+            hideScrollbar = true, sizeY = 260, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
             rowHeight = 20, offsetX = -5, offsetY = 0, scale = 1,
             columnOptions = {
-                {
-                    label = "", -- node name
-                    width = 180,
-                },
-                {
-                    label = "", -- node ranks
-                    width = 60,
-                }
+                { label = "", width = 250 },
+                { label = "", width = 100 },
             },
             rowConstructor = function(columns)
-                ---@class CraftSim.SPEC_INFO.NODE_LIST.NAME_COLUMN : Frame
                 local nameColumn = columns[1]
-
-                ---@class CraftSim.SPEC_INFO.NODE_LIST.RANK_COLUMN : Frame
                 local rankColumn = columns[2]
 
                 local specIconSize = 20
@@ -122,14 +154,12 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 }
                 nameColumn.text = GGUI.Text {
                     parent = nameColumn, anchorParent = nameColumn.iconTexture.frame, justifyOptions = { type = "H", align = "LEFT" },
-                    anchorA = "LEFT", anchorB = "RIGHT", offsetX = 2,
-                    fixedWidth = 170,
+                    anchorA = "LEFT", anchorB = "RIGHT", offsetX = 2, fixedWidth = 240,
                 }
 
                 rankColumn.text = GGUI.Text {
                     parent = rankColumn, anchorParent = rankColumn,
                 }
-
                 rankColumn.simInput = GGUI.NumericInput {
                     parent = rankColumn, anchorParent = rankColumn,
                     sizeX = 25, sizeY = 25, minValue = -1, anchorA = "LEFT", anchorB = "LEFT",
@@ -138,7 +168,6 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                         CraftSim.SIMULATION_MODE:OnSpecModified(true, input)
                     end
                 }
-
                 rankColumn.simText = GGUI.Text {
                     parent = rankColumn, anchorParent = rankColumn.simInput.textInput.frame,
                     anchorA = "LEFT", anchorB = "RIGHT", offsetX = 1, offsetY = 1
@@ -147,26 +176,155 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         }
 
         frame.content.simResetButton = GGUI.Button {
-            parent = frame.content, anchorPoints = { { anchorParent = frame.content.nodeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetY = -3, offsetX = -3 } },
-            labelTextureOptions = {
-                atlas = "talents-button-undo"
-            },
+            parent = ic,
+            anchorPoints = { { anchorParent = frame.content.nodeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetY = -3, offsetX = -3 } },
+            labelTextureOptions = { atlas = "talents-button-undo" },
             sizeX = 23, sizeY = 23,
-            clickCallback = function()
-                CraftSim.SIMULATION_MODE:ResetSpecData()
-            end
+            clickCallback = function() CraftSim.SIMULATION_MODE:ResetSpecData() end,
+        }
+        frame.content.simMaxButton = GGUI.Button {
+            parent = ic,
+            anchorPoints = { { anchorParent = frame.content.simResetButton.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -1 } },
+            labelTextureOptions = { atlas = "LevelUp-Icon-Arrow" },
+            sizeX = 23, sizeY = 23,
+            clickCallback = function() CraftSim.SIMULATION_MODE:MaxSpecData() end,
         }
 
-        frame.content.simMaxButton = GGUI.Button {
-            parent = frame.content, anchorPoints = { { anchorParent = frame.content.simResetButton.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -1 } },
-            labelTextureOptions = {
-                atlas = "LevelUp-Icon-Arrow"
-            },
-            sizeX = 23, sizeY = 23,
-            clickCallback = function()
-                CraftSim.SIMULATION_MODE:MaxSpecData()
-            end
+        -- ── Widgets de l'onglet Optimize ─────────────────────────────────
+        ---@class CraftSim.SPEC_INFO.FRAME.OPTIMIZE_CONTENT : Frame
+        local oc = optimizeTab.content
+
+        oc.modeText = GGUI.Text {
+            parent = oc, anchorParent = oc,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            text = f.l("Select an action below"), justifyOptions = { type = "H", align = "LEFT" },
+            offsetX = 15, offsetY = -32,
         }
+
+        -- KP label + input : même ligne que les boutons, côté gauche
+        oc.pointsLabel = GGUI.Text {
+            parent = oc, anchorParent = oc,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            text = f.white("KP:"), justifyOptions = { type = "H", align = "LEFT" },
+            offsetX = 15, offsetY = -58,
+        }
+        -- GGUI.NumericInput utilise anchorParent/anchorA/anchorB (pas anchorPoints)
+        oc.pointsInput = GGUI.NumericInput {
+            parent = oc,
+            anchorParent = oc.pointsLabel.frame,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 4,
+            sizeX = 38, sizeY = 22,
+            minValue = 1, maxValue = 999,
+            initialValue = 5,
+            borderAdjustWidth = 1.5,
+        }
+
+        -- Boutons alignés à droite, même ligne que KP:
+        oc.fullScanButton = GGUI.Button {
+            parent = oc,
+            anchorPoints = { { anchorParent = oc, anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", offsetX = -10, offsetY = -54 } },
+            label = "Full Scan", sizeX = 80, sizeY = 22,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                text = f.white("Full Scan") .. "\n" ..
+                    "Calculates ROI per knowledge point for every node\n" ..
+                    "across all your cached recipes in this profession.\n\n" ..
+                    f.grey("Use once to build the value table.\n" ..
+                    "Processing is spread across multiple frames."),
+            },
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartFullScan(oc)
+            end,
+        }
+
+        oc.optimizeButton = GGUI.Button {
+            parent = oc,
+            anchorPoints = { { anchorParent = oc.fullScanButton.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -3 } },
+            label = "Optimize", sizeX = 80, sizeY = 22,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                text = f.white("Optimize") .. "\n" ..
+                    "Runs a full scan then greedily picks the highest-ROI\n" ..
+                    "node at each step to build an optimal spending path.\n\n" ..
+                    f.l("KP input") .. ": how many points to plan.\n" ..
+                    "Auto-detected from your unspent points (falls back to 5).\n\n" ..
+                    f.grey("The result is saved and can be reloaded instantly\n" ..
+                    "with " .. f.white("Load Plan") .. " without recalculating."),
+            },
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath(oc)
+            end,
+        }
+
+        oc.weeklyButton = GGUI.Button {
+            parent = oc,
+            anchorPoints = { { anchorParent = oc.optimizeButton.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -3 } },
+            label = "Load Plan", sizeX = 70, sizeY = 22,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                text = f.white("Load Plan") .. "\n" ..
+                    "Displays the last saved plan instantly (no recalculation).\n\n" ..
+                    "If no plan has been saved yet, runs " .. f.white("Optimize") .. " automatically.\n\n" ..
+                    f.grey("Typical workflow:\n" ..
+                    "1. Click Optimize once per week.\n" ..
+                    "2. Use Load Plan to quickly review the saved path."),
+            },
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan(oc)
+            end,
+        }
+
+        oc.summaryText = GGUI.Text {
+            parent = oc, anchorParent = oc,
+            anchorA = "BOTTOMLEFT", anchorB = "BOTTOMLEFT",
+            justifyOptions = { type = "H", align = "LEFT" },
+            offsetX = 15, offsetY = 8, scale = 0.9,
+        }
+
+        oc.nodeList = GGUI.FrameList {
+            parent = oc, anchorParent = oc,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            hideScrollbar = false, sizeY = 272,
+            selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
+            rowHeight = 26, offsetX = 10, offsetY = -103, scale = 1,
+            columnOptions = {
+                { label = "Node",    width = 165 },
+                { label = "Rank",    width = 70,  justifyOptions = { type = "H", align = "CENTER" } },
+                { label = "ROI/Pt",  width = 105, justifyOptions = { type = "H", align = "RIGHT" } },
+            },
+            showHeaderLine = true,
+            rowConstructor = function(columns)
+                local nameCol  = columns[1]
+                local rankCol  = columns[2]
+                local roiCol   = columns[3]
+
+                nameCol.icon = GGUI.Texture {
+                    parent = nameCol, anchorParent = nameCol, anchorA = "LEFT", anchorB = "LEFT",
+                    sizeX = 20, sizeY = 20,
+                }
+                nameCol.text = GGUI.Text {
+                    parent = nameCol, anchorParent = nameCol.icon.frame,
+                    justifyOptions = { type = "H", align = "LEFT" },
+                    anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3, fixedWidth = 138,
+                }
+                rankCol.text = GGUI.Text { parent = rankCol, anchorParent = rankCol }
+                roiCol.text = GGUI.Text {
+                    parent = roiCol, anchorParent = roiCol,
+                    anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -5,
+                    justifyOptions = { type = "H", align = "RIGHT" },
+                }
+                local rowFrame = nameCol:GetParent()
+                local bg = rowFrame:CreateTexture(nil, "BACKGROUND")
+                bg:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+                bg:SetAllPoints(rowFrame)
+                bg:SetAlpha(0)
+                rowFrame.roiBg = bg
+            end,
+        }
+
+        GGUI.BlizzardTabSystem { infoTab, optimizeTab }
     end
 
     createContent(frameWO)
@@ -301,6 +459,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         filteredMaxStats.ingenuity:Clear()
     end
     specInfoFrame.content.statsText:SetText(filteredStats:GetTooltipText(filteredMaxStats))
+
+    -- Keep Optimize tab content up-to-date with single-recipe values
+    CraftSim.KNOWLEDGE_POINT_VALUE.UI:UpdateDisplay(recipeData)
 end
 
 local specNodeTooltipHooked = false
@@ -332,6 +493,28 @@ function CraftSim.SPECIALIZATION_INFO.UI:HookSpecNodeTooltips()
                 GameTooltip:AddLine(CraftSim.UTIL:ColorizeCrafterNameByUID(crafterUID, display) .. ": " .. rank)
             end
 
+            GameTooltip:Show()
+        end
+
+        -- Knowledge Point Value tooltip injection
+        local roiEntry = CraftSim.DB.KNOWLEDGE_POINT_VALUE:Get(playerUID, nodeID)
+        if roiEntry and roiEntry.roiPerPoint ~= 0 then
+            GameTooltip:AddLine(" ")
+            local roiColor = roiEntry.roiPerPoint > 0 and "|cff00ff00" or "|cffff4444"
+            GameTooltip:AddLine(roiColor .. "Knowledge Point Value: " .. CraftSim.UTIL:FormatMoney(roiEntry.roiPerPoint, true) .. " / pt|r")
+            if roiEntry.totalRemainingROI and roiEntry.totalRemainingROI ~= 0 then
+                GameTooltip:AddLine(roiColor .. "Total remaining: " .. CraftSim.UTIL:FormatMoney(roiEntry.totalRemainingROI, true) .. "|r")
+            end
+            if roiEntry.affectedRecipes and #roiEntry.affectedRecipes > 0 then
+                local topCount = math.min(3, #roiEntry.affectedRecipes)
+                for j = 1, topCount do
+                    local impact = roiEntry.affectedRecipes[j]
+                    if impact and impact.recipeName then
+                        GameTooltip:AddLine("|cffaaaaaa  " .. impact.recipeName .. ": " ..
+                            CraftSim.UTIL:FormatMoney(impact.profitDelta, true) .. "|r")
+                    end
+                end
+            end
             GameTooltip:Show()
         end
     end)
