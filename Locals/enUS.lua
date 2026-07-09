@@ -593,6 +593,9 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT = "Resourcefulness Constant",
         OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION =
         "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
+        OPTIONS_PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY = "Use Cheapest Quality Price for Gear",
+        OPTIONS_PROFIT_CALCULATION_GEAR_CHEAPEST_QUALITY_TOOLTIP =
+            "For gear recipes (e.g. mining picks), use the minimum AH price across all quality tiers from the expected quality and above. A 3-star pick's profitability will consider 4-star and 5-star prices if they're cheaper.",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX = "Show " .. f.bb("News") .. " Popup",
         OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP = "Show the " ..
             f.bb("News") .. " Popup for new " .. f.l("CraftSim") .. " Update Information when logging into the game",
@@ -1111,6 +1114,7 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_AH = "AH",
         SOURCE_COLUMN_OVERRIDE = "OR",
         SOURCE_COLUMN_WO = "WO",
+        SOURCE_COLUMN_CHEAPEST_QUALITY = "CQ",
 
         -- disenchant
         DISENCHANT_TITLE = "CraftSim Disenchanting",
