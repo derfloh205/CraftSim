@@ -102,7 +102,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
             return 0
         end
         return CraftSim.INVENTORY_SOURCE:GetInventoryCount(
-            expectedItem:GetItemLink() or expectedItem:GetItemID(),
+            expectedItem:GetItemID() or expectedItem:GetItemLink(),
             includeAltInventory) or 0
     end
 
@@ -110,7 +110,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
             owned = owned + (CraftSim.INVENTORY_SOURCE:GetInventoryCount(
-                item:GetItemLink() or item:GetItemID(),
+                item:GetItemID() or item:GetItemLink(),
                 includeAltInventory) or 0)
         end
     end

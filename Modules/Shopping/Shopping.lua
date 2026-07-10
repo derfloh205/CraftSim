@@ -220,6 +220,7 @@ function CraftSim.SHOPPING:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
 end
 
 function CraftSim.SHOPPING:COMMODITY_PURCHASE_SUCCEEDED()
+    CraftSim.INVENTORY_SOURCE:ClearInventoryCache()
     if self.quickBuyCache.purchasePending and self.purchasedItem and self.purchasedItem.item then
         self.purchasedItem.item:ContinueOnItemLoad(function()
             CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
