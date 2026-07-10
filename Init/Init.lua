@@ -532,6 +532,10 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			lastOrdersTabEnabled = nil
+			CraftSim.MODULES:UpdateVisibilityByContext()
+			CraftSim.MODULES:ShowRecipeIndependentModules()
+
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()
