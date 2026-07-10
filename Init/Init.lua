@@ -557,6 +557,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 	ProfessionsFrame:HookScript("OnShow",
 		function()
 			lastOrdersTabEnabled = nil
+			CraftSim.MODULES:UpdateVisibilityByContext()
 			CraftSim.MODULES:ShowRecipeIndependentModules()
 
 			--CraftSim.DEBUG:StartProfiling("Update Customer History")
