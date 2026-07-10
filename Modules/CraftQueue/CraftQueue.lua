@@ -43,6 +43,7 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
+CraftSim.CRAFTQ.pendingCraftResultUIRefresh = false
 
 --- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
 ---@type table<number, number>
@@ -68,6 +69,24 @@ CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
 --- Shattering Essence often appears a few frames after TRADE_SKILL_ITEM_CRAFTED_RESULT; refresh until buff state matches.
 function CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
     CraftSim.PRE_CRAFT_BUFF_GATE:ScheduleQueueDisplayRefreshForDelayedCraftingState()
+end
+
+--- Coalesce burst craft-result UI refreshes to at most one per frame.
+function CraftSim.CRAFTQ:RequestDeferredCraftResultUIUpdate()
+    if not self.frame or not self.frame:IsVisible() then
+        return
+    end
+    if self.pendingCraftResultUIRefresh then
+        return
+    end
+    self.pendingCraftResultUIRefresh = true
+    RunNextFrame(function()
+        self.pendingCraftResultUIRefresh = false
+        local frame = self.frame
+        if frame and frame:IsVisible() then
+            self.UI:Update()
+        end
+    end)
 end
 
 function CraftSim.CRAFTQ:BeginCraftClickLock()
@@ -1462,7 +1481,7 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end
     if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
-        CraftSim.CRAFTQ.UI:Update()
+        CraftSim.CRAFTQ:RequestDeferredCraftResultUIUpdate()
     end
 end
 
