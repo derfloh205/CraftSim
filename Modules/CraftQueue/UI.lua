@@ -3826,9 +3826,8 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
             #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0)
     end
 
-    if CraftSim.SHOPPING and CraftSim.SHOPPING.shoppingListViewFrame and
-        CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
-        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
+    if CraftSim.SHOPPING and CraftSim.SHOPPING.UI then
+        CraftSim.SHOPPING.UI:Update()
     end
 
     --- disable cache

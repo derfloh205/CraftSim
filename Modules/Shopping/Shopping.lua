@@ -16,6 +16,8 @@ CraftSim.SHOPPING = CraftSim.SHOPPING or GUTIL:CreateRegistreeForEvents({
     "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY",
+    "BAG_UPDATE_DELAYED",
+    "BANKFRAME_OPENED",
 })
 
 GUTIL:RegisterCustomEvents(CraftSim.SHOPPING, {
@@ -38,9 +40,7 @@ function CraftSim.SHOPPING.UI:Init()
 end
 
 function CraftSim.SHOPPING.UI:Update()
-    if CraftSim.SHOPPING.shoppingListViewFrame and CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
-        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
-    end
+    CraftSim.SHOPPING:UpdateShoppingListViewDisplayIfVisible()
 end
 
 function CraftSim.SHOPPING.UI:VisibleByContext()
@@ -425,6 +425,7 @@ end
 
 function CraftSim.SHOPPING:COMMODITY_PURCHASE_SUCCEEDED()
     CraftSim.INVENTORY_SOURCE:ClearInventoryCache()
+    self:RequestDeferredShoppingListUpdate()
     if self.quickBuyCache.purchasePending and self.purchasedItem and self.purchasedItem.item then
         self.purchasedItem.item:ContinueOnItemLoad(function()
             CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") ..
@@ -707,9 +708,30 @@ end
 function CraftSim.SHOPPING:CRAFTSIM_CRAFTQUEUE_QUEUE_PROCESS_FINISHED()
     -- create shopping list
     CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
-    if CraftSim.SHOPPING.shoppingListViewFrame and CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
-        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
+    CraftSim.SHOPPING:UpdateShoppingListViewDisplayIfVisible()
+end
+
+--- Coalesce burst inventory refreshes to at most one per frame.
+function CraftSim.SHOPPING:RequestDeferredShoppingListUpdate()
+    if not self.shoppingListViewFrame or not self.shoppingListViewFrame:IsVisible() then
+        return
     end
+    if self.pendingShoppingListRefresh then
+        return
+    end
+    self.pendingShoppingListRefresh = true
+    RunNextFrame(function()
+        self.pendingShoppingListRefresh = false
+        self:UpdateShoppingListViewDisplayIfVisible()
+    end)
+end
+
+function CraftSim.SHOPPING:BAG_UPDATE_DELAYED()
+    self:RequestDeferredShoppingListUpdate()
+end
+
+function CraftSim.SHOPPING:BANKFRAME_OPENED()
+    self:RequestDeferredShoppingListUpdate()
 end
 
 function CraftSim.SHOPPING:CreateShoppingListViewFrameIfNeeded()
@@ -819,6 +841,13 @@ function CraftSim.SHOPPING:CreateShoppingListViewFrameIfNeeded()
     })
 
     frame:Hide()
+end
+
+function CraftSim.SHOPPING:UpdateShoppingListViewDisplayIfVisible()
+    if not self.shoppingListViewFrame or not self.shoppingListViewFrame:IsVisible() then
+        return
+    end
+    self:UpdateShoppingListViewDisplay()
 end
 
 function CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
