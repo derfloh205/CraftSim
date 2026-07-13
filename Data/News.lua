@@ -24,6 +24,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("26.1.11"),
+        data("12.0.7.68453"),
+        f.a .. "- This includes Jewelcrafting Spec Updates",
         newP("26.1.10"),
         data("12.0.7.68367"),
         f.p .. "QOL Output text added for shopping list creation",
