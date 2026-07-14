@@ -50,6 +50,26 @@ local ACUITY_ICON_THRESHOLD = 600
 local REWARD_ICON_ALPHA_ACTIVE = 1
 local REWARD_ICON_ALPHA_FADED = 0.2
 
+local MINIMIZED_TITLE_HEIGHT = 40
+local MINIMIZED_ROW_HEIGHT = 18
+local MINIMIZED_PAD_X = 10
+local MINIMIZED_PAD_Y = 6
+local MINIMIZED_WIDTH = 250
+
+---@return CraftSim.EXPANSION_IDS?
+---@return "moxie"|"acuity"|nil
+local function GetTrackerExpansionContext()
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local openExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    local rewardColumnMode = nil
+    if openExpansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
+        rewardColumnMode = "moxie"
+    elseif openExpansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+        rewardColumnMode = "acuity"
+    end
+    return openExpansionID, rewardColumnMode
+end
+
 ---@param moxieIcon GGUI.Icon
 ---@param profession Enum.Profession
 ---@param moxieQty number?
@@ -158,6 +178,185 @@ local function PopulateConcentrationTrackerRow(row, trackerRowData, rewardColumn
     else
         row.tooltipOptions = nil
     end
+end
+
+---@param row GGUI.FrameList.Row
+---@param trackerRowData { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }
+---@param rewardColumnMode "moxie"|"acuity"|nil
+---@param noConcentrationText string
+local function PopulateConcentrationTrackerMinimizedRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
+    local crafterUID = trackerRowData.crafterUID
+    local profession = trackerRowData.profession
+    local expansionID = trackerRowData.expansionID
+    local serializedData = trackerRowData.serializedData
+
+    local professionColumn = row.columns[1]
+    local concentrationColumn = row.columns[2]
+    local rewardColumn = row.columns[3]
+
+    local professionIcon = CraftSim.CONST.PROFESSION_ICONS[profession]
+    professionColumn.text:SetText(GUTIL:IconToText(professionIcon, 15, 15))
+    row.profession = profession
+
+    local concentrationText = noConcentrationText
+    if serializedData then
+        local concentrationData = CraftSim.ConcentrationData:Deserialize(serializedData)
+        concentrationText = tostring(concentrationData:GetSpendableAmount())
+    end
+    concentrationColumn.text:SetText(concentrationText)
+
+    local showRewardColumn = rewardColumnMode ~= nil
+    rewardColumn:SetShown(showRewardColumn)
+    local tooltipLines = { concentrationText }
+    if rewardColumnMode == "moxie" then
+        local moxieQty, hasMoxieCurrency = CraftSim.CONCENTRATION_TRACKER:GetListRowMoxieQuantity(crafterUID, profession,
+            expansionID)
+        if hasMoxieCurrency then
+            ApplyConcentrationTrackerMoxieIcon(rewardColumn.icon, profession, moxieQty)
+            local moxieDisplay = moxieQty ~= nil and BreakUpLargeNumbers(moxieQty)
+                or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+            rewardColumn.text:SetText(moxieDisplay)
+            tinsert(tooltipLines, string.format(L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE"), moxieDisplay))
+        else
+            ApplyConcentrationTrackerMoxieIcon(rewardColumn.icon, profession, nil)
+            rewardColumn.text:SetText("")
+        end
+    elseif rewardColumnMode == "acuity" then
+        local acuityQty = CraftSim.CONCENTRATION_TRACKER:GetListRowAcuityQuantity(crafterUID, expansionID)
+        ApplyConcentrationTrackerAcuityIcon(rewardColumn.icon, acuityQty)
+        local acuityDisplay = acuityQty ~= nil and BreakUpLargeNumbers(acuityQty)
+            or L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+        rewardColumn.text:SetText(acuityDisplay)
+        tinsert(tooltipLines, string.format(L("CONCENTRATION_TRACKER_LIST_ROW_ACUITY"), acuityDisplay))
+    else
+        rewardColumn.text:SetText("")
+    end
+
+    row.tooltipOptions = {
+        anchor = "ANCHOR_CURSOR",
+        owner = row.frame,
+        text = table.concat(tooltipLines, "\n"),
+    }
+end
+
+---@param crafterUIDFilter CrafterUID?
+---@return { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
+---@return CraftSim.EXPANSION_IDS?
+---@return "moxie"|"acuity"|nil
+function CraftSim.CONCENTRATION_TRACKER.UI:CollectTrackerRowData(crafterUIDFilter)
+    local openExpansionID, rewardColumnMode = GetTrackerExpansionContext()
+    if not openExpansionID then
+        return {}, openExpansionID, rewardColumnMode
+    end
+
+    ---@type { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
+    local trackerRows = {}
+    local crafterUIDs = crafterUIDFilter and { crafterUIDFilter } or CraftSim.DB.CRAFTER:GetCrafterUIDs()
+    local blacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+
+    for _, crafterUID in ipairs(crafterUIDs) do
+        local crafterBlacklist = blacklist[crafterUID] or {}
+
+        for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID,
+            openExpansionID)) do
+            if not tContains(crafterBlacklist, profession) and serializedData then
+                tinsert(trackerRows, {
+                    crafterUID = crafterUID,
+                    profession = profession,
+                    expansionID = openExpansionID,
+                    serializedData = serializedData,
+                })
+            end
+        end
+
+        if rewardColumnMode == "moxie" then
+            for profession in pairs(CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS) do
+                if not tContains(crafterBlacklist, profession) and CraftSim.UTIL:CrafterHasProfession(crafterUID, profession) then
+                    tinsert(trackerRows, {
+                        crafterUID = crafterUID,
+                        profession = profession,
+                        expansionID = openExpansionID,
+                        serializedData = nil,
+                    })
+                end
+            end
+        end
+    end
+
+    return trackerRows, openExpansionID, rewardColumnMode
+end
+
+---@return { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
+---@return CraftSim.EXPANSION_IDS?
+---@return "moxie"|"acuity"|nil
+function CraftSim.CONCENTRATION_TRACKER.UI:CollectCurrentPlayerMinimizedRowData()
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local openExpansionID, rewardColumnMode = GetTrackerExpansionContext()
+    if not openExpansionID then
+        return {}, openExpansionID, rewardColumnMode
+    end
+
+    local blacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+    local crafterBlacklist = blacklist[playerCrafterUID] or {}
+
+    ---@type table<Enum.Profession, string?>
+    local professionDataByProfession = {}
+    ---@type table<Enum.Profession, true>
+    local professionsToShow = {}
+
+    local function markProfession(profession, serializedData)
+        professionsToShow[profession] = true
+        if serializedData then
+            professionDataByProfession[profession] = serializedData
+        end
+    end
+
+    for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(playerCrafterUID,
+        openExpansionID)) do
+        if not tContains(crafterBlacklist, profession) and serializedData then
+            markProfession(profession, serializedData)
+        end
+    end
+
+    local liveConcentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
+    if liveConcentrationData then
+        local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+        local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
+        local openProfession = professionInfo and professionInfo.profession
+        if openProfession and not tContains(crafterBlacklist, openProfession) then
+            markProfession(openProfession, liveConcentrationData:Serialize())
+        end
+    end
+
+    local craftingProfessions = CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA[openExpansionID] or {}
+    for _, profession in ipairs(craftingProfessions) do
+        if not tContains(crafterBlacklist, profession)
+            and CraftSim.UTIL:CrafterHasProfession(playerCrafterUID, profession) then
+            markProfession(profession, professionDataByProfession[profession])
+        end
+    end
+
+    if rewardColumnMode == "moxie" then
+        for profession in pairs(CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS) do
+            if not tContains(crafterBlacklist, profession)
+                and CraftSim.UTIL:CrafterHasProfession(playerCrafterUID, profession) then
+                markProfession(profession, professionDataByProfession[profession])
+            end
+        end
+    end
+
+    ---@type { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
+    local trackerRows = {}
+    for profession in pairs(professionsToShow) do
+        tinsert(trackerRows, {
+            crafterUID = playerCrafterUID,
+            profession = profession,
+            expansionID = openExpansionID,
+            serializedData = professionDataByProfession[profession],
+        })
+    end
+
+    return trackerRows, openExpansionID, rewardColumnMode
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Init()
@@ -274,6 +473,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     local sizeY = 400
     local offsetX = 0
     local offsetY = -15
+    local UI = CraftSim.CONCENTRATION_TRACKER.UI
 
     ---@class CraftSim.CONCENTRATION_TRACKER.TRACKER_FRAME : GGUI.Frame
     CraftSim.CONCENTRATION_TRACKER.trackerFrame = GGUI.Frame({
@@ -287,13 +487,21 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         offsetX = offsetX,
         offsetY = offsetY,
         title = L("CONCENTRATION_TRACKER_TITLE"),
+        frameID = "CONCENTRATION_TRACKER_OVERVIEW",
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "TOOLTIP",
         frameLevel = 99,
         moveable = true,
+        collapseable = true,
         hide = true,
+        onCollapseCallback = function(gFrame)
+            UI:OnTrackerCollapsed(gFrame)
+        end,
+        onCollapseOpenCallback = function(gFrame)
+            UI:OnTrackerExpanded(gFrame)
+        end,
     })
 
     ---@class CraftSim.CONCENTRATION_TRACKER.TRACKER_FRAME.CONTENT : Frame
@@ -490,6 +698,156 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
         text = L("CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT")
     }
+
+    UI:InitTrackerMinimizedContent(CraftSim.CONCENTRATION_TRACKER.trackerFrame)
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:InitTrackerMinimizedContent(trackerFrame)
+    local minimizedContent = CreateFrame("Frame", nil, trackerFrame.frame)
+    minimizedContent:SetPoint("TOPLEFT", trackerFrame.frame, "TOPLEFT", MINIMIZED_PAD_X, -MINIMIZED_TITLE_HEIGHT)
+    minimizedContent:SetPoint("BOTTOMRIGHT", trackerFrame.frame, "BOTTOMRIGHT", -MINIMIZED_PAD_X, MINIMIZED_PAD_Y)
+    minimizedContent:SetFrameStrata(trackerFrame.frame:GetFrameStrata())
+    minimizedContent:SetFrameLevel(trackerFrame.frame:GetFrameLevel() + 5)
+    minimizedContent:Hide()
+    trackerFrame.minimizedContent = minimizedContent
+
+    local listSizeX = MINIMIZED_WIDTH - (MINIMIZED_PAD_X * 2)
+    minimizedContent.list = GGUI.FrameList {
+        columnOptions = {
+            {
+                label = "",
+                width = 34,
+            },
+            {
+                label = CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_LABEL_CURRENT"),
+                width = 70,
+                justifyOptions = { type = "H", align = "CENTER" },
+            },
+            {
+                label = "",
+                width = 110,
+                justifyOptions = { type = "H", align = "RIGHT" },
+            },
+        },
+        rowHeight = MINIMIZED_ROW_HEIGHT,
+        sizeX = listSizeX,
+        sizeY = MINIMIZED_ROW_HEIGHT * 6,
+        autoAdjustHeight = true,
+        hideScrollbar = true,
+        showBorder = false,
+        parent = minimizedContent,
+        anchorPoints = { { anchorParent = minimizedContent, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -2 } },
+        autoAdjustHeightCallback = function()
+            if trackerFrame.collapsed then
+                CraftSim.CONCENTRATION_TRACKER.UI:ResizeTrackerForMinimized(trackerFrame,
+                    trackerFrame.minimizedRowCount or 0)
+            end
+        end,
+        rowConstructor = function(columns)
+            local professionColumn = columns[1]
+            local concentrationColumn = columns[2]
+            local rewardColumn = columns[3]
+
+            professionColumn.text = GGUI.Text {
+                parent = professionColumn,
+                anchorPoints = { { anchorParent = professionColumn, anchorA = "LEFT", anchorB = "LEFT" } },
+                justifyOptions = { type = "H", align = "LEFT" },
+                scale = 1,
+            }
+            concentrationColumn.text = GGUI.Text {
+                parent = concentrationColumn,
+                anchorPoints = { { anchorParent = concentrationColumn, anchorA = "CENTER", anchorB = "CENTER" } },
+                justifyOptions = { type = "H", align = "CENTER" },
+                scale = 1,
+                fixedWidth = 70,
+            }
+            rewardColumn.icon = GGUI.Icon {
+                parent = rewardColumn,
+                anchorParent = rewardColumn,
+                anchorA = "RIGHT",
+                anchorB = "RIGHT",
+                offsetX = -52,
+                sizeX = 18,
+                sizeY = 18,
+            }
+            rewardColumn.text = GGUI.Text {
+                parent = rewardColumn,
+                anchorParent = rewardColumn,
+                anchorA = "RIGHT",
+                anchorB = "RIGHT",
+                justifyOptions = { type = "H", align = "RIGHT" },
+                scale = 0.9,
+                fixedWidth = 48,
+            }
+        end,
+    }
+
+    if minimizedContent.list.header then
+        minimizedContent.list.header:Hide()
+    end
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:OnTrackerCollapsed(trackerFrame)
+    self:UpdateMinimizedDisplay()
+    if trackerFrame.minimizedContent then
+        trackerFrame.minimizedContent:Show()
+    end
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:OnTrackerExpanded(trackerFrame)
+    if trackerFrame.minimizedContent then
+        trackerFrame.minimizedContent:Hide()
+    end
+    self:UpdateTrackerDisplay()
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:ResizeTrackerForMinimized(trackerFrame, rowCount)
+    local list = trackerFrame.minimizedContent and trackerFrame.minimizedContent.list
+    local listHeight = list and list.frame and list.frame:GetHeight()
+        or (math.max(rowCount, 1) * MINIMIZED_ROW_HEIGHT + 10)
+    local height = MINIMIZED_TITLE_HEIGHT + MINIMIZED_PAD_Y + listHeight + MINIMIZED_PAD_Y
+    trackerFrame.frame:SetSize(MINIMIZED_WIDTH, height)
+    if trackerFrame.frame.hookFrame then
+        trackerFrame.frame.hookFrame:SetSize(MINIMIZED_WIDTH, height)
+    end
+end
+
+function CraftSim.CONCENTRATION_TRACKER.UI:UpdateMinimizedDisplay()
+    local trackerFrame = CraftSim.CONCENTRATION_TRACKER.trackerFrame
+    if not trackerFrame or not trackerFrame.minimizedContent or not trackerFrame.minimizedContent.list then
+        return
+    end
+
+    local trackerRows, _, rewardColumnMode = self:CollectCurrentPlayerMinimizedRowData()
+    local noConcentrationText = L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
+    local minimizedList = trackerFrame.minimizedContent.list --[[@as GGUI.FrameList]]
+
+    minimizedList:Remove()
+    for _, trackerRowData in ipairs(trackerRows) do
+        minimizedList:Add(function(row)
+            PopulateConcentrationTrackerMinimizedRow(row, trackerRowData, rewardColumnMode, noConcentrationText)
+        end)
+    end
+
+    local rewardHeaderColumn = minimizedList.headerColumns and minimizedList.headerColumns[3]
+    if rewardHeaderColumn then
+        rewardHeaderColumn:SetShown(rewardColumnMode ~= nil)
+    end
+
+    minimizedList:UpdateDisplay(function(rowA, rowB)
+        return rowA.profession and rowB.profession and rowA.profession < rowB.profession
+    end)
+
+    trackerFrame.minimizedRowCount = #trackerRows
+    if trackerFrame.collapsed then
+        if trackerFrame.minimizedContent then
+            trackerFrame.minimizedContent:Show()
+        end
+        if minimizedList.frame then
+            minimizedList.frame:Show()
+        end
+        self:ResizeTrackerForMinimized(trackerFrame, #trackerRows)
+    end
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:VisibleByContext()
@@ -514,22 +872,19 @@ end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
     local trackerFrame = CraftSim.CONCENTRATION_TRACKER.trackerFrame
+    if trackerFrame and trackerFrame.collapsed then
+        self:UpdateMinimizedDisplay()
+        return
+    end
 
     local content = trackerFrame.content.listTab.content
     local concentrationList = content.concentrationList
 
-    local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
-    ---@type { crafterUID: CrafterUID, profession: Enum.Profession, expansionID: CraftSim.EXPANSION_IDS, serializedData: string? }[]
-    local trackerRows = {}
-    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-    local openExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
-    local rewardColumnMode = nil
-    if openExpansionID == CraftSim.CONST.EXPANSION_IDS.MIDNIGHT then
-        rewardColumnMode = "moxie"
-    elseif openExpansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
-        rewardColumnMode = "acuity"
+    local trackerRows, openExpansionID, rewardColumnMode = self:CollectTrackerRowData()
+    if not openExpansionID then
+        return
     end
-    local blacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+
     local noConcentrationText = L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
 
     local rewardHeaderColumn = concentrationList.headerColumns and concentrationList.headerColumns[4]
@@ -539,38 +894,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
 
     ---@type table<string, boolean>
     local validRowKeys = {}
-
-    for _, crafterUID in ipairs(crafterUIDs) do
-        local crafterBlacklist = blacklist[crafterUID] or {}
-
-        for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID,
-            openExpansionID)) do
-            if not tContains(crafterBlacklist, profession) and serializedData then
-                local rowData = {
-                    crafterUID = crafterUID,
-                    profession = profession,
-                    expansionID = openExpansionID,
-                    serializedData = serializedData,
-                }
-                validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
-                tinsert(trackerRows, rowData)
-            end
-        end
-
-        if rewardColumnMode == "moxie" then
-            for profession in pairs(CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS) do
-                if not tContains(crafterBlacklist, profession) and CraftSim.UTIL:CrafterHasProfession(crafterUID, profession) then
-                    local rowData = {
-                        crafterUID = crafterUID,
-                        profession = profession,
-                        expansionID = openExpansionID,
-                        serializedData = nil,
-                    }
-                    validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)] = true
-                    tinsert(trackerRows, rowData)
-                end
-            end
-        end
+    for _, trackerRowData in ipairs(trackerRows) do
+        validRowKeys[CraftSim.UTIL:GetCrafterProfessionUID(trackerRowData.crafterUID, trackerRowData.profession)] = true
     end
 
     concentrationList:Remove(function(row)
