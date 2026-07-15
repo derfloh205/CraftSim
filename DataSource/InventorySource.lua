@@ -111,6 +111,53 @@ local function CopyInventoryBreakdownLines(lines)
     return copy
 end
 
+---@param itemLoc ItemLocationMixin
+---@param query CraftSim.InventoryQueryInput
+---@return boolean
+local function ItemLocationMatchesInventoryQuery(itemLoc, query)
+    if not itemLoc:IsValid() then
+        return false
+    end
+    local locItemID = C_Item.GetItemID(itemLoc)
+    if not locItemID or locItemID ~= query.itemID then
+        return false
+    end
+    if query.qualityID > 0 then
+        local locLink = C_Item.GetItemLink(itemLoc)
+        if not locLink then
+            return false
+        end
+        return (GUTIL:GetQualityIDFromLink(locLink) or 0) == query.qualityID
+    end
+    return true
+end
+
+--- Count unbound item stacks in the current character's bags, bank, and warband bank.
+---@param query CraftSim.InventoryQueryInput
+---@return number
+local function CountUnboundInPlayerInventory(query)
+    local count = 0
+    local bagRanges = {
+        { Enum.BagIndex.Backpack, Enum.BagIndex.Bag_4 },
+        { Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 },
+        { Enum.BagIndex.AccountBankTab_1, Enum.BagIndex.AccountBankTab_5 },
+    }
+
+    for _, range in ipairs(bagRanges) do
+        for bag = range[1], range[2] do
+            for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
+                if itemLoc:IsValid() and not C_Item.IsBound(itemLoc)
+                    and ItemLocationMatchesInventoryQuery(itemLoc, query) then
+                    count = count + (C_Item.GetStackCount(itemLoc) or 1)
+                end
+            end
+        end
+    end
+
+    return count
+end
+
 function CraftSim.INVENTORY_API:InitInventorySource()
     local loadedSources = CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()
 
@@ -736,6 +783,49 @@ function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
         count = CraftSim.INVENTORY_API:GetInventoryCount(backendArg, includeAlts) or 0
     else
         count = CraftSimINVENTORY_NONE:GetInventoryCount(backendArg) or 0
+    end
+
+    SetInventorySourceCacheEntry(cacheKey, count)
+    return count
+end
+
+--- Returns inventory that counts toward restock targets: unbound bags/bank on the current
+--- character plus AH listings. Soulbound items in bags/bank are excluded.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alt characters' tradable inventory and AH
+---@return number count
+function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts)
+    if not itemIDOrLink then
+        return 0
+    end
+
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then
+        return 0
+    end
+
+    local cacheKey = BuildInventorySourceCacheKey("tradable", "CraftSim", query, includeAlts)
+    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.count)
+    if hit then
+        return cached or 0
+    end
+
+    local count = CountUnboundInPlayerInventory(query)
+
+    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
+        local tsmStr = ToTSMItemString(query.itemID)
+        local _, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+        count = count + (numAuctions or 0)
+        if includeAlts then
+            count = count + (numAltAuctions or 0)
+            if not GUTIL:isItemSoulbound(query.itemID) then
+                count = count + (numAlts or 0)
+            end
+        end
+    elseif includeAlts and not GUTIL:isItemSoulbound(query.itemID) then
+        local total = self:GetInventoryCount(itemIDOrLink, true)
+        local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
+        count = count + math.max(0, total - playerTotal)
     end
 
     SetInventorySourceCacheEntry(cacheKey, count)
