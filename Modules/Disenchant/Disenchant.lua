@@ -7,7 +7,12 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.DISENCHANT : CraftSim.Module
 CraftSim.DISENCHANT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED", "BANKFRAME_CLOSED" })
 
-CraftSim.MODULES:RegisterModule("MODULE_DISENCHANT", CraftSim.DISENCHANT)
+local L = CraftSim.LOCAL:GetLocalizer()
+
+CraftSim.MODULES:RegisterModule("MODULE_DISENCHANT", CraftSim.DISENCHANT, {
+    label = L("CONTROL_PANEL_MODULES_DISENCHANT_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_DISENCHANT_TOOLTIP"),
+})
 
 ---@type table<string, boolean>
 CraftSim.DISENCHANT.sessionBlacklist = {}
