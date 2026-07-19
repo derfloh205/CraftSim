@@ -1,4 +1,4 @@
-## Interface: 120000, 120001, 120005
+## Interface: 120000, 120001, 120005, 120007
 ## DefaultState: enabled
 
 ## Title: CraftSim
@@ -51,6 +51,7 @@ Debug/Debug.lua
 Debug/UI.lua
 
 Util/Util.lua
+Util/RecipeAcquisition.lua
 
 DB/DB.lua
 DB/optionsDB.lua
@@ -158,6 +159,9 @@ Modules/CraftBuffs/UI.lua
 
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
+
+Modules/WorkOrderTracker/WorkOrderTracker.lua
+Modules/WorkOrderTracker/UI.lua
 
 Data/EnchantData.lua
 Data/ToolEnchantData.lua

@@ -1724,6 +1724,49 @@ function CraftSim.CRAFTQ.UI:Init()
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST_INPUT")
 
+                local maxDurationOptionKey = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"),
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get(maxDurationOptionKey),
+                        borderAdjustWidth = 1.32,
+                        minValue = 0,
+                        tooltipOptions = {
+                            anchor = "ANCHOR_TOP",
+                            owner = frame,
+                            text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_TOOLTIP")),
+                        },
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey,
+                                tonumber(input.currentValue) or 0)
+                        end,
+                    }
+                    frame.resetButton = GGUI.Button {
+                        parent = frame,
+                        anchorParent = frame.input.frame,
+                        anchorA = "RIGHT",
+                        anchorB = "LEFT",
+                        offsetX = -2,
+                        sizeX = 12,
+                        sizeY = 20,
+                        adjustWidth = true,
+                        label = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET"),
+                        clickCallback = function()
+                            local defaultValue = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS[maxDurationOptionKey]
+                            frame.input:SetValue(defaultValue)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey, defaultValue)
+                        end,
+                    }
+                end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_INPUT")
+
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
