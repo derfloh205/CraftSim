@@ -1750,6 +1750,23 @@ function CraftSim.CRAFTQ.UI:Init()
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
 
+                local skipOwnedMaterialCostsCB = patronOrderOptions:CreateCheckbox(
+                    L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                        CraftSim.DB.OPTIONS:Save(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS", not value)
+                    end)
+
+                skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"));
+                end);
+
                 patronOrderOptions:CreateDivider()
 
                 local includeMoxieProfitCB = patronOrderOptions:CreateCheckbox(
@@ -2428,7 +2445,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                         content.selectedListID,
                         crafterUID,
                         row.recipeID)
-                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                    local menuItems = {
                         {
                             type = "custom",
                             build = function(rootDescription)
@@ -2466,19 +2483,63 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                     content.selectedListID .. ":" .. row.recipeID)
                             end
                         },
-                        {
-                            type = "button",
-                            label = f.r("Remove Recipe"),
-                            onClick = function()
-                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                                    content.selectedListID,
-                                    crafterUID,
-                                    row.recipeID)
-                                CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                    }
+
+                    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(row.recipeID)
+                    if CraftSim.UTIL:IsGearRecipe(row.recipeID, recipeInfo) and recipeInfo.supportsQualities then
+                        local maxQuality = recipeInfo.maxQuality or 5
+                        local qualityChildren = {}
+                        for qualityID = 1, maxQuality do
+                            local q = qualityID
+                            local qualityLabel = GUTIL:GetQualityIconString(q, 20, 20)
+                            if q <= 2 then
+                                qualityLabel = qualityLabel .. " | " .. GUTIL:GetQualityIconStringSimplified(q, 20, 20)
                             end
-                        },
+                            table.insert(qualityChildren, {
+                                type = "checkbox",
+                                label = qualityLabel,
+                                get = function()
+                                    local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
+                                        content.selectedListID, crafterUID, row.recipeID)
+                                    return entry and entry.supportedQualities and entry.supportedQualities[q] == true
+                                end,
+                                set = function()
+                                    local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
+                                        content.selectedListID, crafterUID, row.recipeID)
+                                    local enabled = not (entry and entry.supportedQualities and entry.supportedQualities[q])
+                                    CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(
+                                        content.selectedListID,
+                                        crafterUID,
+                                        row.recipeID,
+                                        q,
+                                        enabled)
+                                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                                end,
+                                tooltip = function(tooltip)
+                                    GameTooltip_SetTitle(tooltip, L("CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP"))
+                                end,
+                            })
+                        end
+                        table.insert(menuItems, {
+                            type = "submenu",
+                            label = L("CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES"),
+                            children = qualityChildren,
+                        })
+                    end
+
+                    table.insert(menuItems, {
+                        type = "button",
+                        label = f.r("Remove Recipe"),
+                        onClick = function()
+                            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                                content.selectedListID,
+                                crafterUID,
+                                row.recipeID)
+                            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                        end,
                     })
+
+                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, menuItems)
                 end
             end,
         },
@@ -2795,6 +2856,18 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP"))
             end)
 
+            local skipOwnedMaterialCostsCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL"),
+                function()
+                    return opts.skipOwnedMaterialCosts
+                end,
+                function()
+                    opts.skipOwnedMaterialCosts = not opts.skipOwnedMaterialCosts
+                end)
+            skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"))
+            end)
+
             -- Queue options
             GUTIL:CreateReuseableMenuUtilContextMenuFrame(restockingButton, function(frame)
                 frame.label = GGUI.Text {
@@ -2967,6 +3040,20 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local target = math.max(0, tonumber(entry.restockMaxAmount) or 0)
             if target > 0 then
                 restockText = " " .. f.l("[" .. tostring(target) .. "]")
+            end
+            if CraftSim.UTIL:IsGearRecipe(id, recipeInfo) and recipeInfo and recipeInfo.supportsQualities then
+                local supported = entry.supportedQualities
+                if CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+                    local qualityIcons = ""
+                    for qualityID = 1, (recipeInfo.maxQuality or 5) do
+                        if supported[qualityID] then
+                            qualityIcons = qualityIcons .. GUTIL:GetQualityIconString(qualityID, 14, 14)
+                        end
+                    end
+                    if qualityIcons ~= "" then
+                        restockText = restockText .. " " .. qualityIcons
+                    end
+                end
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
 

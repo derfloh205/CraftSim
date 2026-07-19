@@ -25,6 +25,7 @@ CraftSim.DB = CraftSim.DB
 ---@field tsmRestockExpression string TSM expression for restock quantity (per-list)
 ---@field subtractInventory boolean if true, subtract inventory from restock amount
 ---@field includeAltInventory boolean if true, include alt characters' inventory when subtracting from restock amount
+---@field skipOwnedMaterialCosts boolean if true, treat owned reagents as zero cost for profit checks (shared pool per queue batch)
 ---@field onlyProfitable boolean if true, only queue profitable recipes
 
 ---@class CraftSim.CraftList
@@ -38,6 +39,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.CraftListRecipeEntry
 ---@field recipeID RecipeID
 ---@field restockMaxAmount number target stock when > 0 (restock); 0 = use normal queue amount (TSM / 1 + offset)
+---@field supportedQualities table<number, boolean>? gear output qualities to restock/queue; none checked = all qualities
 
 ---@class CraftSim.DB.CRAFT_LISTS : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_LISTS = CraftSim.DB:RegisterRepository("CraftListsDB")
@@ -65,6 +67,7 @@ local function DefaultOptions()
         tsmRestockExpression = "1",
         subtractInventory = false,
         includeAltInventory = false,
+        skipOwnedMaterialCosts = false,
         onlyProfitable = false,
     }
 end
@@ -92,12 +95,43 @@ end
 
 CraftSim.DB.CRAFT_LISTS.NormalizeListOptions = NormalizeListOptions
 
+---@param supportedQualities table<number, boolean>?
+---@return table<number, boolean>
+local function NormalizeSupportedQualities(supportedQualities)
+    local normalized = {}
+    for qualityID, enabled in pairs(supportedQualities or {}) do
+        local q = tonumber(qualityID)
+        if q and q >= 1 and q <= 5 then
+            normalized[q] = enabled == true
+        end
+    end
+    return normalized
+end
+
+---@param supportedQualities table<number, boolean>?
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supportedQualities)
+    return GUTIL:Some(NormalizeSupportedQualities(supportedQualities), function(v) return v end)
+end
+
+---@param qualityID number
+---@param supportedQualities table<number, boolean>?
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supportedQualities)
+    if not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supportedQualities) then
+        return true
+    end
+    supportedQualities = NormalizeSupportedQualities(supportedQualities)
+    return supportedQualities[qualityID] == true
+end
+
 ---@param recipeID RecipeID
 ---@return CraftSim.CraftListRecipeEntry
 local function CreateDefaultRecipeEntry(recipeID)
     return {
         recipeID = recipeID,
         restockMaxAmount = 0,
+        supportedQualities = {},
     }
 end
 
@@ -120,6 +154,7 @@ local function NormalizeListRecipes(list)
     local normalizedRecipeIDs = {}
     for _, entry in ipairs(list.recipeEntries) do
         entry.restockMaxAmount = math.max(0, tonumber(entry.restockMaxAmount) or 0)
+        entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
         if not tContains(normalizedRecipeIDs, entry.recipeID) then
             tinsert(normalizedRecipeIDs, entry.recipeID)
         end
@@ -315,6 +350,33 @@ function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, crafterUID, recipeI
         if not entry then return end
     end
     entry.restockMaxAmount = math.max(0, tonumber(restockMaxAmount) or 0)
+    NormalizeListRecipes(list)
+end
+
+---@param id number
+---@param crafterUID? CrafterUID
+---@param recipeID RecipeID
+---@param qualityID number
+---@param enabled boolean
+function CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(id, crafterUID, recipeID, qualityID, enabled)
+    local list = self:GetList(id, crafterUID)
+    if not list then return end
+    local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+    if not entry then
+        self:AddRecipe(id, crafterUID, recipeID)
+        entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+        if not entry then return end
+    end
+    entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
+    qualityID = tonumber(qualityID)
+    if not qualityID or qualityID < 1 or qualityID > 5 then
+        return
+    end
+    if enabled then
+        entry.supportedQualities[qualityID] = true
+    else
+        entry.supportedQualities[qualityID] = nil
+    end
     NormalizeListRecipes(list)
 end
 

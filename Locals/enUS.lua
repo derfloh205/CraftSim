@@ -769,6 +769,11 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE = f.bb("Reagent Bag") .. " Value: ",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " ..
             f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_CHECKBOX = "Skip costs for " .. f.g("owned") .. " materials",
+        CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP = "When enabled, " ..
+            f.bb("patron order") .. " profit, max-cost, and knowledge-point cost checks treat reagents you already have in " ..
+            f.bb("bags, bank, and warbank") .. " as zero gold cost.\n\n" ..
+            "Materials are tracked across all patron orders queued in the same batch so the same stack is not counted twice.",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX = "Include " .. f.bb("Moxie") .. " in expected profit",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP = "When enabled, " ..
             f.bb("NPC (patron)") ..
@@ -1037,6 +1042,12 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "When enabled, alt characters' inventory is also subtracted from the restock target.",
+        CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL = "Skip costs for " .. f.g("owned") .. " materials",
+        CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP = "When enabled, " ..
+            f.bb("only profitable") .. " and related profit checks treat reagents you already have as zero gold cost.\n\n" ..
+            "Uses " .. f.bb("bags, bank, and warbank") .. " for the crafter. If " ..
+            f.bb("Include Alt Inventory") .. " is enabled, alt characters are included too.\n\n" ..
+            "Materials are shared across all craft lists queued together so the same stack is not counted twice.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after queueing",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
@@ -1047,6 +1058,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RECIPE_RESTOCK_TAG = "Restock",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "Restock target (0 = off)",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("0 disables restock for this recipe."),
+        CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES = "Supported Qualities",
+        CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP =
+            "Only queue and count inventory for checked gear qualities.\n\nIf none are checked, any quality is allowed.",
 
         -- craft buffs
 
