@@ -10,6 +10,59 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.CRAFT_LISTS
 CraftSim.CRAFT_LISTS = {}
 
+---@class CraftSim.CRAFT_LISTS.CONCENTRATION_ALLOCATION
+CraftSim.CRAFT_LISTS.CONCENTRATION_ALLOCATION = {
+    OFF = "OFF",
+    SINGLE = "SINGLE",
+    MULTI = "MULTI",
+}
+
+--- Unified concentration setting for craft list UI (maps to enableConcentration + concentrationAllocationMode).
+---@class CraftSim.CRAFT_LISTS.CONCENTRATION_MODE
+CraftSim.CRAFT_LISTS.CONCENTRATION_MODE = {
+    DISABLED = "DISABLED",
+    ENABLED = "ENABLED",
+    SINGLE = "SINGLE",
+    MULTI = "MULTI",
+}
+
+local CONC = CraftSim.CRAFT_LISTS.CONCENTRATION_ALLOCATION
+local CONC_MODE = CraftSim.CRAFT_LISTS.CONCENTRATION_MODE
+
+---@param options CraftSim.CraftList.Options?
+---@return string
+function CraftSim.CRAFT_LISTS:GetConcentrationMode(options)
+    options = CraftSim.DB.CRAFT_LISTS.NormalizeListOptions(options)
+    if not options.enableConcentration then
+        return CONC_MODE.DISABLED
+    end
+    local allocationMode = options.concentrationAllocationMode or CONC.OFF
+    if allocationMode == CONC.SINGLE then
+        return CONC_MODE.SINGLE
+    elseif allocationMode == CONC.MULTI then
+        return CONC_MODE.MULTI
+    end
+    return CONC_MODE.ENABLED
+end
+
+---@param options CraftSim.CraftList.Options
+---@param mode string
+function CraftSim.CRAFT_LISTS:SetConcentrationMode(options, mode)
+    if mode == CONC_MODE.DISABLED then
+        options.enableConcentration = false
+        options.concentrationAllocationMode = CONC.OFF
+    elseif mode == CONC_MODE.ENABLED then
+        options.enableConcentration = true
+        options.concentrationAllocationMode = CONC.OFF
+    elseif mode == CONC_MODE.SINGLE then
+        options.enableConcentration = true
+        options.concentrationAllocationMode = CONC.SINGLE
+    elseif mode == CONC_MODE.MULTI then
+        options.enableConcentration = true
+        options.concentrationAllocationMode = CONC.MULTI
+    end
+end
+
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
 CraftSim.CRAFT_LISTS.isQueueingSelectedLists = false
@@ -98,6 +151,29 @@ end
 ---@param aRd CraftSim.RecipeData
 ---@param bRd CraftSim.RecipeData
 ---@return boolean aBeforeB
+---@param rd CraftSim.RecipeData
+---@param entry CraftSim.CRAFT_LISTS.ScanEntry
+---@param currentConcentration number
+---@return number queueableAmount
+local function getConcentrationQueueableAmount(rd, entry, currentConcentration)
+    local concentrationCost = rd.concentrationCost
+    if entry.options.offsetConcentrationCraftAmount then
+        local ingenuityChance = rd.professionStats.ingenuity:GetPercent(true)
+        local ingenuityRefund = 0.5 + rd.professionStats.ingenuity:GetExtraValue()
+        concentrationCost = concentrationCost -
+            (concentrationCost * ingenuityChance * ingenuityRefund)
+    end
+    local queueableAmount = math.floor(currentConcentration / concentrationCost)
+    -- Full cost required for at least one craft; adjusted cost is only for expected count.
+    if currentConcentration < rd.concentrationCost then
+        queueableAmount = 0
+    end
+    if entry.maxQueueAmount then
+        queueableAmount = math.min(queueableAmount, entry.maxQueueAmount)
+    end
+    return queueableAmount
+end
+
 local function sortRecipeDataBySmartPriority(aRd, bRd)
     if aRd.concentrating ~= bRd.concentrating then
         return aRd.concentrating -- true sorts before false
@@ -109,6 +185,45 @@ local function sortRecipeDataBySmartPriority(aRd, bRd)
     end
 end
 
+--- Re-assign how many crafts of an entry use soulbound finishing reagents after the
+--- final queue amount is known (concentration / cooldown triage). Step 1 only sees
+--- maxQueueAmount or 1, so MULTI concentration can commit far more crafts than SBF
+--- allocation initially granted.
+---@param entry CraftSim.CRAFT_LISTS.ScanEntry
+---@param committedAmount number
+---@param entrySbfCrafts table<CraftSim.CRAFT_LISTS.ScanEntry, number>
+---@param sbfAvailable table<string, number>
+---@param entryEffectiveRD table<CraftSim.CRAFT_LISTS.ScanEntry, CraftSim.RecipeData>
+local function realignSbfCraftsForAmount(entry, committedAmount, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
+    committedAmount = math.max(0, committedAmount or 0)
+
+    if not entry.options.includeSoulboundFinishingReagents then
+        local sbfCrafts = entrySbfCrafts[entry] or 0
+        if sbfCrafts > committedAmount then
+            entrySbfCrafts[entry] = committedAmount
+        end
+        return
+    end
+
+    local sbfItemID = entry.recipeData:GetSoulboundFinishingReagentInfo()
+    if not sbfItemID then
+        return
+    end
+
+    local key = entry.crafterUID .. ":" .. sbfItemID
+    local previousSbf = entrySbfCrafts[entry] or 0
+    local pool = (sbfAvailable[key] or 0) + previousSbf
+    local newSbfCrafts = math.min(pool, committedAmount)
+    entrySbfCrafts[entry] = newSbfCrafts
+    sbfAvailable[key] = pool - newSbfCrafts
+
+    if newSbfCrafts > 0 then
+        entryEffectiveRD[entry] = entry.recipeData
+    else
+        entryEffectiveRD[entry] = entry.recipeDataNoSBF or entry.recipeData
+    end
+end
+
 --- Performs global triage of all scan entries collected across every selected craft list,
 --- then queues the winning combinations.
 ---
@@ -117,12 +232,12 @@ end
 --- Pass order:
 ---   1. Global SBF allocation – for each SBF item, entries are sorted by their WITH-SBF
 ---      priority and SBF uses are assigned to the highest-value recipes across all lists.
----   2. Global smart concentration queueing – for entries in lists that have
----      smartConcentrationQueuing enabled, entries are grouped by crafter+profession and
----      sorted by the *effective* (post-SBF) concentration value.  Only the top-ranked
----      recipe per group receives concentration; all others in the group are dropped.
----      This step runs BEFORE cooldown triage so that concentration-limited craft counts
----      (stored in entryOverrideAmount) are known when cooldown charges are distributed.
+---   2. Global concentration allocation – for entries in lists with concentrationAllocationMode
+---      SINGLE or MULTI, entries are grouped by crafter+profession and sorted by the *effective*
+---      (post-SBF) concentration value. SINGLE queues only the first affordable recipe;
+---      MULTI greedily queues multiple recipes until the pool is exhausted. OFF skips this step.
+---      Runs BEFORE cooldown triage so concentration-limited craft counts (entryOverrideAmount)
+---      are known when cooldown charges are distributed.
 ---   3. Cooldown triage – cooldown-recipe entries are sorted and capped to available
 ---      charges.  Because concentration limits are already reflected in entryOverrideAmount,
 ---      any charges freed by concentration can be redistributed to lower-priority entries
@@ -198,14 +313,11 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     ---@type table<CraftSim.CRAFT_LISTS.ScanEntry, number>
     local entryOverrideAmount = {}
 
-    -- ── Step 2: Global Smart Concentration Queueing ──────────────────────────
+    -- ── Step 2: Global Concentration Allocation ───────────────────────────────
     -- Runs BEFORE cooldown triage so that concentration-limited craft counts are
     -- already in entryOverrideAmount when the cooldown step distributes charges.
-    -- This ensures charges freed by concentration limits (e.g. a concentrating entry
-    -- can only use 3 of 5 available cooldown charges) are redistributed to other
-    -- entries sharing the same cooldown instead of being silently discarded.
     --
-    -- Only applies to entries from lists that have smartConcentrationQueuing enabled.
+    -- Only applies to entries from lists with concentrationAllocationMode SINGLE or MULTI.
     -- Entries are grouped globally by crafterUID:professionSkillLineID so that
     -- concentration is shared across craft lists (not allocated per-list).
     ---@type table<string, { currentAmount: number, entries: { entry: CraftSim.CRAFT_LISTS.ScanEntry, rd: CraftSim.RecipeData }[] }>
@@ -213,7 +325,8 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
 
     for _, entry in ipairs(allScanEntries) do
         local opts = entry.options
-        if opts.enableConcentration and opts.smartConcentrationQueuing then
+        local allocationMode = opts.concentrationAllocationMode or CONC.OFF
+        if opts.enableConcentration and allocationMode ~= CONC.OFF then
             local rd = entryEffectiveRD[entry]
             if rd.concentrating and rd.concentrationCost and rd.concentrationCost > 0 then
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
@@ -229,43 +342,43 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     end
 
     for _, group in pairs(concentrationGroups) do
-        -- Sort by effective concentration value (post SBF allocation).
         table.sort(group.entries, function(a, b)
             return a.rd:GetConcentrationValue() > b.rd:GetConcentrationValue()
         end)
         local currentConcentration = group.currentAmount
-        local picked = false
+        local singleAllocated = false
         for _, item in ipairs(group.entries) do
             local entry = item.entry
             local rd = item.rd
-            local concentrationCost = rd.concentrationCost
-            if entry.options.offsetConcentrationCraftAmount then
-                local ingenuityChance = rd.professionStats.ingenuity:GetPercent(true)
-                local ingenuityRefund = 0.5 + rd.professionStats.ingenuity:GetExtraValue()
-                concentrationCost = concentrationCost -
-                    (concentrationCost * ingenuityChance * ingenuityRefund)
-            end
-            local queueableAmount = math.floor(currentConcentration / concentrationCost)
-            -- Full cost required for at least one craft; adjusted cost is only for expected count.
-            if currentConcentration < rd.concentrationCost then
-                queueableAmount = 0
-            end
-            if entry.maxQueueAmount then
-                queueableAmount = math.min(queueableAmount, entry.maxQueueAmount)
+            local allocationMode = entry.options.concentrationAllocationMode or CONC.OFF
+            local queueableAmount = getConcentrationQueueableAmount(rd, entry, currentConcentration)
+
+            local function allocateEntry()
+                entryOverrideAmount[entry] = queueableAmount
+                realignSbfCraftsForAmount(entry, queueableAmount, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
+                local concentrationCost = rd.concentrationCost
+                if entry.options.offsetConcentrationCraftAmount then
+                    local ingenuityChance = rd.professionStats.ingenuity:GetPercent(true)
+                    local ingenuityRefund = 0.5 + rd.professionStats.ingenuity:GetExtraValue()
+                    concentrationCost = concentrationCost -
+                        (concentrationCost * ingenuityChance * ingenuityRefund)
+                end
+                currentConcentration = currentConcentration - (concentrationCost * queueableAmount)
             end
 
-            if not picked and queueableAmount > 0 then
-                -- Cap SBF crafts to the concentration-limited amount.
-                local sbfCrafts = entrySbfCrafts[entry] or 0
-                if sbfCrafts > queueableAmount then
-                    entrySbfCrafts[entry] = queueableAmount
+            if allocationMode == CONC.MULTI then
+                if queueableAmount > 0 then
+                    allocateEntry()
+                else
+                    skipEntry[entry] = true
                 end
-                entryOverrideAmount[entry] = queueableAmount
-                currentConcentration = currentConcentration - (concentrationCost * queueableAmount)
-                picked = true
-            else
-                -- smartConcentrationQueuing: only one recipe per profession gets queued.
-                skipEntry[entry] = true
+            elseif allocationMode == CONC.SINGLE then
+                if singleAllocated or queueableAmount <= 0 then
+                    skipEntry[entry] = true
+                else
+                    allocateEntry()
+                    singleAllocated = true
+                end
             end
         end
     end
@@ -309,8 +422,9 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 availableCharges = availableCharges - assigned
                 if assigned == 0 then
                     skipEntry[entry] = true
-                elseif assigned < committed then
+                else
                     entryOverrideAmount[entry] = assigned
+                    realignSbfCraftsForAmount(entry, assigned, entrySbfCrafts, sbfAvailable, entryEffectiveRD)
                 end
             end
         end
@@ -330,27 +444,31 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             if profitableOk then
                 local sbfCrafts = entrySbfCrafts[entry] or 0
                 local totalAmount = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
-                local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
+                if totalAmount <= 0 then
+                    Logger:LogDebug("Skipping recipe with no queue amount: " .. effectiveRD.recipeName)
+                else
+                    local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
 
-                -- Queue the with-SBF portion.
-                if sbfCrafts > 0 then
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                        recipeData = entry.recipeData,
-                        amount = sbfCrafts,
-                    })
-                end
+                    -- Queue the with-SBF portion.
+                    if sbfCrafts > 0 then
+                        CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                            recipeData = entry.recipeData,
+                            amount = sbfCrafts,
+                        })
+                    end
 
-                -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
-                if noSbfCrafts > 0 then
-                    local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                        recipeData = noSbfRD,
-                        amount = noSbfCrafts,
-                    })
-                end
+                    -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
+                    if noSbfCrafts > 0 then
+                        local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
+                        CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                            recipeData = noSbfRD,
+                            amount = noSbfCrafts,
+                        })
+                    end
 
-                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                    CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                        CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                    end
                 end
             else
                 Logger:LogDebug("Skipping non-profitable recipe: " .. effectiveRD.recipeName)
@@ -361,18 +479,41 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     CraftSim.CRAFTQ.UI:Update()
 end
 
+---@param mode string
+---@return string
+function CraftSim.CRAFT_LISTS:GetConcentrationModeLabel(mode)
+    if mode == CONC_MODE.DISABLED then
+        return L("CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED")
+    elseif mode == CONC_MODE.SINGLE then
+        return L("CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE")
+    elseif mode == CONC_MODE.MULTI then
+        return L("CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI")
+    end
+    return L("CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED")
+end
+
 --- Build a tooltip text string summarizing a craft list's optimization and restock options
 ---@param list CraftSim.CraftList
 ---@return string
 function CraftSim.CRAFT_LISTS:BuildOptionsTooltipText(list)
-    local options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+    local options = CraftSim.DB.CRAFT_LISTS.NormalizeListOptions(list.options)
     local lines = {}
     local function yn(v) return v and f.g("Yes") or f.r("No") end
 
     table.insert(lines, L("CRAFT_LISTS_OPTIONS_TOOLTIP_HEADER"))
-    table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION") .. ": " .. yn(options.enableConcentration))
+    local concentrationMode = self:GetConcentrationMode(options)
     table.insert(lines,
-        "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
+        "  " ..
+        L("CRAFT_LISTS_OPTIONS_CONCENTRATION") ..
+        ": " .. f.bb(self:GetConcentrationModeLabel(concentrationMode)))
+    if concentrationMode ~= CONC_MODE.DISABLED then
+        table.insert(lines,
+            "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION") .. ": " .. yn(options.optimizeConcentration))
+        if concentrationMode == CONC_MODE.SINGLE or concentrationMode == CONC_MODE.MULTI then
+            table.insert(lines,
+                "  " .. L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION") .. ": " .. yn(options.offsetConcentrationCraftAmount))
+        end
+    end
     table.insert(lines, "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS") .. ": " .. yn(options.optimizeProfessionTools))
     table.insert(lines,
         "  " .. L("CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING") .. ": " .. yn(options.optimizeFinishingReagents))
@@ -539,22 +680,29 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 maxRestockAmount
         end
 
-        -- baseline the queue amount is the maximum possible
-        queueAmount = recipeMaxQueueAmount
-
-        -- reduce queue amount by current inventory if option is set
-        -- (this subtracts the number of RESULT items already owned, not reagents)
-        if options.subtractInventory then
-            local itemID = recipeData.resultData.expectedItem:GetItemID()
-            local itemLink = recipeData.resultData.expectedItem:GetItemLink()
-            if itemID or itemLink then
-                local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID,
-                    options.includeAltInventory) or 0
-                queueAmount = math.max(0, queueAmount - owned)
-            end
+        if not recipeMaxQueueAmount then
+            return nil
         end
 
-        return queueAmount
+        local itemID = recipeData.resultData.expectedItem:GetItemID()
+        local itemLink = recipeData.resultData.expectedItem:GetItemLink()
+        local owned = 0
+        if itemID or itemLink then
+            owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID,
+                options.includeAltInventory) or 0
+        end
+
+        -- Already at or above restock target: skip queuing this recipe.
+        if owned >= recipeMaxQueueAmount then
+            return 0
+        end
+
+        -- Optional: queue only the deficit up to the target (subtractInventory list option).
+        if options.subtractInventory then
+            return math.max(0, recipeMaxQueueAmount - owned)
+        end
+
+        return recipeMaxQueueAmount
     end
 
     ---@param frameDistributor GUTIL.FrameDistributor
@@ -721,6 +869,12 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
                 Logger:LogDebug("maxQueueAmount for recipe " ..
                     recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+
+                if maxQueueAmount ~= nil and maxQueueAmount <= 0 then
+                    Logger:LogDebug("Skipping recipe at or above restock cap: " .. recipeData.recipeName)
+                    frameDistributor:Continue()
+                    return
+                end
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

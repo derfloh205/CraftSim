@@ -994,13 +994,27 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "Import Craft List",
         CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "Enable Concentration",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize Concentration",
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. "Concentration" .. f.bb(" Queueing"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP =
-        "Queue recipes in order of most concentration value per point, spending all available concentration",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION_TOOLTIP =
+            "Upgrade reagents to maximize profit per concentration point spent",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION = f.gold("Concentration"),
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED = "Disabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED_TOOLTIP =
+            "Do not use concentration when scanning or queuing this list",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED = "Enabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED_TOOLTIP =
+            "Use concentration for optimization; queue full restock amounts without limiting to your current pool",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE = "Single Best",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE_TOOLTIP =
+            "Queue only the recipe with the highest concentration value per profession, limited to available concentration",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI = "Multi-Recipe",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI_TOOLTIP =
+            "Queue multiple recipes in concentration value order until all available concentration is used",
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset Concentration" .. f.bb(" Queue Amount"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP =
             "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
             f.bb("Ingenuity"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_POOL_ONLY =
+            "Only applies to " .. f.bb("Single Best") .. " and " .. f.bb("Multi-Recipe"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "Optimize Profession Tools",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "Autoselect Top Profit Quality",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "Optimize Finishing Reagents",
