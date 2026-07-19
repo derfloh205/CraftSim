@@ -17,6 +17,147 @@ CraftSimINVENTORY_NONE = { name = "CraftSim" }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("InventorySource")
 
+--- Shared short-lived cache for all inventory sources (TSM, Syndicator, fallback).
+---@type table<string, { value: any, t: number }>
+local inventorySourceCache = {}
+local INVENTORY_SOURCE_CACHE_TTL = {
+    count = 1.0,
+    breakdown = 1.0,
+    auction = 2.0,
+}
+
+---@param value any
+---@return boolean
+local function IsSecretValue(value)
+    return issecretvalue ~= nil and issecretvalue(value)
+end
+
+---@class CraftSim.InventoryQueryInput
+---@field itemID number
+---@field itemIDOrLink number | string
+---@field qualityID number
+
+---@param itemIDOrLink number | string
+---@return CraftSim.InventoryQueryInput?
+local function ResolveInventoryQueryInput(itemIDOrLink)
+    if not itemIDOrLink then
+        return nil
+    end
+    if type(itemIDOrLink) == "number" then
+        return { itemID = itemIDOrLink, itemIDOrLink = itemIDOrLink, qualityID = 0 }
+    end
+    if type(itemIDOrLink) ~= "string" or IsSecretValue(itemIDOrLink) then
+        return nil
+    end
+
+    local itemID = GUTIL:GetItemIDByLink(itemIDOrLink)
+    if not itemID then
+        return nil
+    end
+
+    local qualityID = 0
+    local item = Item:CreateFromItemLink(itemIDOrLink)
+    if item and item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
+        qualityID = GUTIL:GetQualityIDFromLink(itemIDOrLink) or 0
+        return { itemID = itemID, itemIDOrLink = itemIDOrLink, qualityID = qualityID }
+    end
+
+    return { itemID = itemID, itemIDOrLink = itemID, qualityID = 0 }
+end
+
+---@param query CraftSim.InventoryQueryInput
+---@return number | string
+local function InventoryBackendArg(query)
+    if query.qualityID > 0 then
+        return query.itemIDOrLink
+    end
+    return query.itemID
+end
+
+---@param kind "count"|"breakdown"|"auction"
+---@param apiName string
+---@param query CraftSim.InventoryQueryInput
+---@param includeAlts boolean?
+---@return string
+local function BuildInventorySourceCacheKey(kind, apiName, query, includeAlts)
+    return string.format("%s|%s|%s|%d|%d", kind, apiName, tostring(includeAlts), query.itemID, query.qualityID)
+end
+
+---@param key string
+---@param ttl number
+---@return any value
+---@return boolean hit
+local function GetInventorySourceCacheEntry(key, ttl)
+    local entry = inventorySourceCache[key]
+    if entry and (GetTime() - entry.t) < ttl then
+        return entry.value, true
+    end
+    return nil, false
+end
+
+---@param key string
+---@param value any
+local function SetInventorySourceCacheEntry(key, value)
+    inventorySourceCache[key] = { value = value, t = GetTime() }
+end
+
+---@param lines {label: string, count: number}[]
+---@return {label: string, count: number}[]
+local function CopyInventoryBreakdownLines(lines)
+    local copy = {}
+    for i, line in ipairs(lines) do
+        copy[i] = { label = line.label, count = line.count }
+    end
+    return copy
+end
+
+---@param itemLoc ItemLocationMixin
+---@param query CraftSim.InventoryQueryInput
+---@return boolean
+local function ItemLocationMatchesInventoryQuery(itemLoc, query)
+    if not itemLoc:IsValid() then
+        return false
+    end
+    local locItemID = C_Item.GetItemID(itemLoc)
+    if not locItemID or locItemID ~= query.itemID then
+        return false
+    end
+    if query.qualityID > 0 then
+        local locLink = C_Item.GetItemLink(itemLoc)
+        if not locLink then
+            return false
+        end
+        return (GUTIL:GetQualityIDFromLink(locLink) or 0) == query.qualityID
+    end
+    return true
+end
+
+--- Count unbound item stacks in the current character's bags, bank, and warband bank.
+---@param query CraftSim.InventoryQueryInput
+---@return number
+local function CountUnboundInPlayerInventory(query)
+    local count = 0
+    local bagRanges = {
+        { Enum.BagIndex.Backpack, Enum.BagIndex.Bag_4 },
+        { Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 },
+        { Enum.BagIndex.AccountBankTab_1, Enum.BagIndex.AccountBankTab_5 },
+    }
+
+    for _, range in ipairs(bagRanges) do
+        for bag = range[1], range[2] do
+            for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
+                if itemLoc:IsValid() and not C_Item.IsBound(itemLoc)
+                    and ItemLocationMatchesInventoryQuery(itemLoc, query) then
+                    count = count + (C_Item.GetStackCount(itemLoc) or 1)
+                end
+            end
+        end
+    end
+
+    return count
+end
+
 function CraftSim.INVENTORY_API:InitInventorySource()
     local loadedSources = CraftSim.INVENTORY_APIS:GetAvailableInventoryAddons()
 
@@ -169,22 +310,15 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    Logger:LogDebug("Syndicator GetInventoryCount called with {itemIDOrLink}, includeAlts={includeAlts}",
-        itemIDOrLink, tostring(includeAlts))
-
-    if type(itemIDOrLink) == "string" then
+    if type(itemIDOrLink) == "string" and not IsSecretValue(itemIDOrLink) then
         -- check if gear
         local item = Item:CreateFromItemLink(itemIDOrLink)
         if item then
             if item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
-                Logger:LogDebug("Item is gear, using GetGearInventoryCount")
                 return select(1, CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts))
             end
         end
     end
-
-    Logger:LogDebug("Item is not gear, using regular GetInventoryCount")
-
 
     ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
     local inventoryInfo
@@ -341,6 +475,137 @@ end
 -- CraftSimTSM: Inventory (extends existing CraftSimTSM)
 -- ---------------------------------------------------------------------------
 
+--- Short-lived cache to collapse burst TSM_API calls during queue/UI refreshes.
+---@type table<string, { value: any, t: number }>
+local tsmInventoryCache = {}
+local TSM_INVENTORY_CACHE_TTL = {
+    inv = 1.0,
+    breakdown = 1.0,
+    ah = 2.0,
+}
+local tsmInventoryCacheStats = { hits = 0, misses = 0 }
+
+---@param itemIDOrLink ItemID | string
+---@return number? itemID
+local function ResolveTSMItemID(itemIDOrLink)
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if query then
+        return query.itemID
+    end
+    if type(itemIDOrLink) == "string" and not IsSecretValue(itemIDOrLink) and TSM_API and TSM_API.ToItemString then
+        local tsmStr = TSM_API.ToItemString(itemIDOrLink)
+        if tsmStr and not IsSecretValue(tsmStr) then
+            return tonumber(tsmStr:match("^i:(%d+)"))
+        end
+    end
+    return nil
+end
+
+---@param itemID number
+---@return string
+local function ToTSMItemString(itemID)
+    return "i:" .. itemID
+end
+
+---@param tsmStr string
+---@return number? numPlayer
+---@return number? numAlts
+---@return number? numAuctions
+---@return number? numAltAuctions
+local function SafeTSMGetPlayerTotals(tsmStr)
+    local ok, numPlayer, numAlts, numAuctions, numAltAuctions = pcall(TSM_API.GetPlayerTotals, tsmStr)
+    if not ok then
+        Logger:LogWarning("TSM GetPlayerTotals failed for {tsmStr}: {err}", tsmStr, tostring(numPlayer))
+        return 0, 0, 0, 0
+    end
+    return numPlayer, numAlts, numAuctions, numAltAuctions
+end
+
+---@param tsmStr string
+---@return number
+local function SafeTSMGetWarbankQuantity(tsmStr)
+    if not TSM_API.GetWarbankQuantity then
+        return 0
+    end
+    local ok, quantity = pcall(TSM_API.GetWarbankQuantity, tsmStr)
+    if not ok then
+        Logger:LogWarning("TSM GetWarbankQuantity failed for {tsmStr}: {err}", tsmStr, tostring(quantity))
+        return 0
+    end
+    return quantity or 0
+end
+
+---@param tsmStr string
+---@return number?
+local function SafeTSMGetAuctionQuantity(tsmStr)
+    local ok, quantity = pcall(TSM_API.GetAuctionQuantity, tsmStr)
+    if not ok then
+        Logger:LogWarning("TSM GetAuctionQuantity failed for {tsmStr}: {err}", tsmStr, tostring(quantity))
+        return nil
+    end
+    return quantity
+end
+
+---@param includeAlts boolean?
+---@return boolean shouldIncludeAlts
+---@return boolean shouldIncludeWarbank
+local function GetTSMInventoryIncludeModes(includeAlts)
+    local shouldIncludeAlts = includeAlts ~= nil and includeAlts or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    local shouldIncludeWarbank = includeAlts ~= nil or
+        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK")
+    return shouldIncludeAlts, shouldIncludeWarbank
+end
+
+---@param kind "inv"|"breakdown"|"ah"
+---@param itemID number
+---@param includeAlts boolean?
+---@return string
+local function BuildTSMInventoryCacheKey(kind, itemID, includeAlts)
+    if kind == "ah" then
+        return kind .. "|" .. itemID
+    end
+    local shouldIncludeAlts, shouldIncludeWarbank = GetTSMInventoryIncludeModes(includeAlts)
+    return string.format("%s|%d|alts:%s|warbank:%s", kind, itemID, tostring(shouldIncludeAlts),
+        tostring(shouldIncludeWarbank))
+end
+
+---@param key string
+---@param ttl number
+---@return any value
+---@return boolean hit
+local function GetTSMInventoryCacheEntry(key, ttl)
+    local entry = tsmInventoryCache[key]
+    if entry and (GetTime() - entry.t) < ttl then
+        tsmInventoryCacheStats.hits = tsmInventoryCacheStats.hits + 1
+        return entry.value, true
+    end
+    tsmInventoryCacheStats.misses = tsmInventoryCacheStats.misses + 1
+    return nil, false
+end
+
+---@param key string
+---@param value any
+local function SetTSMInventoryCacheEntry(key, value)
+    tsmInventoryCache[key] = { value = value, t = GetTime() }
+end
+
+---@param lines {label: string, count: number}[]
+---@return {label: string, count: number}[]
+local function CopyTSMInventoryBreakdownLines(lines)
+    return CopyInventoryBreakdownLines(lines)
+end
+
+--- Invalidate cached TSM inventory totals (bag/craft/purchase events).
+function CraftSimTSM:ClearInventoryCache()
+    wipe(tsmInventoryCache)
+end
+
+---@return { hits: number, misses: number }
+function CraftSimTSM:GetInventoryCacheStats()
+    return tsmInventoryCacheStats
+end
+
 --- Returns the total inventory count (bags + bank + optionally AH) for an itemID via TSM.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include alts; if false, exclude alts; if nil, use global setting
@@ -349,31 +614,32 @@ function CraftSimTSM:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    local tsmStr = ""
-    if type(itemIDOrLink) == "string" then
-        tsmStr = TSM_API.ToItemString(itemIDOrLink)
-    else
-        tsmStr = "i:" .. itemIDOrLink
+    local itemID = ResolveTSMItemID(itemIDOrLink)
+    if not itemID then return 0 end
+
+    local tsmStr = ToTSMItemString(itemID)
+    local cacheKey = BuildTSMInventoryCacheKey("inv", itemID, includeAlts)
+    local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.inv)
+    if hit then
+        return cached or 0
     end
 
-    local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
+    local numPlayer, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
     local total = (numPlayer or 0) + (numAuctions or 0)
 
     -- includeAlts=true/false overrides the global alts setting; nil falls back to it
-    local shouldIncludeAlts = includeAlts ~= nil and includeAlts or
-        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    local shouldIncludeAlts, shouldIncludeWarbank = GetTSMInventoryIncludeModes(includeAlts)
     if shouldIncludeAlts then
         total = total + (numAlts or 0) + (numAltAuctions or 0)
     end
 
     -- Warband is always included when called from a craft-list context (includeAlts ~= nil).
     -- For other callers (includeAlts == nil) fall back to the global warbank setting.
-    local shouldIncludeWarbank = includeAlts ~= nil or
-        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK")
     if shouldIncludeWarbank then
-        total = total + (TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0)
+        total = total + SafeTSMGetWarbankQuantity(tsmStr)
     end
 
+    SetTSMInventoryCacheEntry(cacheKey, total)
     return total
 end
 
@@ -385,14 +651,19 @@ function CraftSimTSM:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return {} end
     if not itemIDOrLink then return {} end
 
-    local tsmStr = type(itemIDOrLink) == "string" and TSM_API.ToItemString(itemIDOrLink) or ("i:" .. itemIDOrLink)
+    local itemID = ResolveTSMItemID(itemIDOrLink)
+    if not itemID then return {} end
 
-    local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
+    local tsmStr = ToTSMItemString(itemID)
+    local cacheKey = BuildTSMInventoryCacheKey("breakdown", itemID, includeAlts)
+    local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.breakdown)
+    if hit then
+        return CopyTSMInventoryBreakdownLines(cached or {})
+    end
 
-    local shouldIncludeAlts = includeAlts ~= nil and includeAlts or
-        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
-    local shouldIncludeWarbank = includeAlts ~= nil or
-        CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK")
+    local numPlayer, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+
+    local shouldIncludeAlts, shouldIncludeWarbank = GetTSMInventoryIncludeModes(includeAlts)
 
     local lines = {}
     table.insert(lines, { label = "Player", count = numPlayer or 0 })
@@ -402,10 +673,10 @@ function CraftSimTSM:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
         table.insert(lines, { label = "Alt AH", count = numAltAuctions or 0 })
     end
     if shouldIncludeWarbank then
-        local warbank = TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0
-        table.insert(lines, { label = "Warband", count = warbank })
+        table.insert(lines, { label = "Warband", count = SafeTSMGetWarbankQuantity(tsmStr) })
     end
 
+    SetTSMInventoryCacheEntry(cacheKey, CopyTSMInventoryBreakdownLines(lines))
     return lines
 end
 
@@ -415,19 +686,36 @@ function CraftSimTSM:GetAuctionAmount(idOrLink)
     if not idOrLink then
         return
     end
-    if type(idOrLink) == 'number' then
-        return CraftSimTSM:GetAuctionAmountByItemID(idOrLink)
-    else
-        return CraftSimTSM:GetAuctionAmountByItemLink(idOrLink)
+    local itemID = ResolveTSMItemID(idOrLink)
+    if not itemID then
+        return nil
     end
+    return CraftSimTSM:GetAuctionAmountByItemID(itemID)
 end
 
+---@param itemID number
+---@return number? auctionAmount
 function CraftSimTSM:GetAuctionAmountByItemID(itemID)
-    return TSM_API.GetAuctionQuantity("i:" .. itemID)
+    if not self:IsAvailable() then return nil end
+    local tsmStr = ToTSMItemString(itemID)
+    local cacheKey = BuildTSMInventoryCacheKey("ah", itemID)
+    local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.ah)
+    if hit then
+        return cached
+    end
+    local amount = SafeTSMGetAuctionQuantity(tsmStr)
+    SetTSMInventoryCacheEntry(cacheKey, amount)
+    return amount
 end
 
+---@param itemLink string
+---@return number? auctionAmount
 function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
-    return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
+    local itemID = ResolveTSMItemID(itemLink)
+    if not itemID then
+        return nil
+    end
+    return CraftSimTSM:GetAuctionAmountByItemID(itemID)
 end
 
 -- ---------------------------------------------------------------------------
@@ -478,10 +766,70 @@ CraftSim.INVENTORY_SOURCE = {}
 ---@return number count
 function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
     if not itemIDOrLink then return 0 end
-    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryCount then
-        return CraftSim.INVENTORY_API:GetInventoryCount(itemIDOrLink, includeAlts) or 0
+
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then return 0 end
+
+    local apiName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or CraftSimINVENTORY_NONE.name
+    local cacheKey = BuildInventorySourceCacheKey("count", apiName, query, includeAlts)
+    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.count)
+    if hit then
+        return cached or 0
     end
-    return CraftSimINVENTORY_NONE:GetInventoryCount(itemIDOrLink)
+
+    local backendArg = InventoryBackendArg(query)
+    local count = 0
+    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryCount then
+        count = CraftSim.INVENTORY_API:GetInventoryCount(backendArg, includeAlts) or 0
+    else
+        count = CraftSimINVENTORY_NONE:GetInventoryCount(backendArg) or 0
+    end
+
+    SetInventorySourceCacheEntry(cacheKey, count)
+    return count
+end
+
+--- Returns inventory that counts toward restock targets: unbound bags/bank on the current
+--- character plus AH listings. Soulbound items in bags/bank are excluded.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, include alt characters' tradable inventory and AH
+---@return number count
+function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts)
+    if not itemIDOrLink then
+        return 0
+    end
+
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then
+        return 0
+    end
+
+    local cacheKey = BuildInventorySourceCacheKey("tradable", "CraftSim", query, includeAlts)
+    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.count)
+    if hit then
+        return cached or 0
+    end
+
+    local count = CountUnboundInPlayerInventory(query)
+
+    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
+        local tsmStr = ToTSMItemString(query.itemID)
+        local _, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+        count = count + (numAuctions or 0)
+        if includeAlts then
+            count = count + (numAltAuctions or 0)
+            if not GUTIL:isItemSoulbound(query.itemID) then
+                count = count + (numAlts or 0)
+            end
+        end
+    elseif includeAlts and not GUTIL:isItemSoulbound(query.itemID) then
+        local total = self:GetInventoryCount(itemIDOrLink, true)
+        local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
+        count = count + math.max(0, total - playerTotal)
+    end
+
+    SetInventorySourceCacheEntry(cacheKey, count)
+    return count
 end
 
 --- Returns the count of items currently posted on the AH using the active inventory addon.
@@ -491,10 +839,24 @@ end
 function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink)
     if not itemIDOrLink then return nil end
 
-    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
-        return CraftSim.INVENTORY_API:GetAuctionAmount(itemIDOrLink)
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then return nil end
+
+    local apiName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or CraftSimINVENTORY_NONE.name
+    local cacheKey = BuildInventorySourceCacheKey("auction", apiName, query, nil)
+    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.auction)
+    if hit then
+        return cached
     end
-    return nil
+
+    local backendArg = InventoryBackendArg(query)
+    local amount = nil
+    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
+        amount = CraftSim.INVENTORY_API:GetAuctionAmount(backendArg)
+    end
+
+    SetInventorySourceCacheEntry(cacheKey, amount)
+    return amount
 end
 
 --- Returns a per-source inventory breakdown list for tooltip display.
@@ -503,8 +865,39 @@ end
 ---@return {label: string, count: number}[] lines
 function CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
     if not itemIDOrLink then return {} end
-    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryBreakdownLines then
-        return CraftSim.INVENTORY_API:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
+
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then return {} end
+
+    local apiName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or CraftSimINVENTORY_NONE.name
+    local cacheKey = BuildInventorySourceCacheKey("breakdown", apiName, query, includeAlts)
+    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.breakdown)
+    if hit then
+        return CopyInventoryBreakdownLines(cached or {})
     end
-    return CraftSimINVENTORY_NONE:GetInventoryBreakdownLines(itemIDOrLink)
+
+    local backendArg = InventoryBackendArg(query)
+    local lines = {}
+    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryBreakdownLines then
+        lines = CraftSim.INVENTORY_API:GetInventoryBreakdownLines(backendArg, includeAlts)
+    else
+        lines = CraftSimINVENTORY_NONE:GetInventoryBreakdownLines(backendArg)
+    end
+
+    lines = CopyInventoryBreakdownLines(lines)
+    SetInventorySourceCacheEntry(cacheKey, lines)
+    return lines
+end
+
+--- Clears short-lived inventory caches when bag/bank/craft state changes.
+function CraftSim.INVENTORY_SOURCE:ClearInventoryCache()
+    wipe(inventorySourceCache)
+    if CraftSimTSM and CraftSimTSM.ClearInventoryCache then
+        CraftSimTSM:ClearInventoryCache()
+    end
+end
+
+---@deprecated Use ClearInventoryCache
+function CraftSim.INVENTORY_SOURCE:ClearTSMInventoryCacheIfLoaded()
+    self:ClearInventoryCache()
 end

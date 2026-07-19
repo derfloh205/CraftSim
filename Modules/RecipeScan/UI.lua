@@ -1502,7 +1502,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 local itemLink = resultItem:GetItemLink()
                 if itemID or itemLink then
                     breakdownLines = CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(
-                        itemLink or itemID, includeAlts)
+                        itemID or itemLink, includeAlts)
                     for _, line in ipairs(breakdownLines) do
                         totalCount = totalCount + line.count
                     end

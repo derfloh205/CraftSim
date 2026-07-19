@@ -854,7 +854,7 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                 local itemID = recipeData.resultData.expectedItem:GetItemID()
                 local itemLink = recipeData.resultData.expectedItem:GetItemLink()
                 if itemID or itemLink then
-                    local owned = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink or itemID) or 0
+                    local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemID or itemLink) or 0
                     restockAmount = math.max(0, restockAmount - owned)
                 end
             end
