@@ -1118,6 +1118,11 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_WO = "WO",
 
         -- disenchant
+        CONTROL_PANEL_MODULES_DISENCHANT_LABEL = "Disenchanting",
+        CONTROL_PANEL_MODULES_DISENCHANT_TOOLTIP = "Open the " .. f.bb("Disenchanting") .. " helper window",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_LABEL = "Shopping List",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_TOOLTIP = "Open the " .. f.bb("Shopping List") ..
+            " to see what reagents you need to buy for your queued crafts",
         DISENCHANT_TITLE = "CraftSim Disenchanting",
         DISENCHANT_BUTTON = "Disenchant Next",
         DISENCHANT_OPTIONS_MIN_ILVL = "Minimum Item Level: ",

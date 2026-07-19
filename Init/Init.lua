@@ -594,9 +594,24 @@ function CraftSim.INIT:InitializeMinimapButton()
 		label = "CraftSim",
 		tocname = "CraftSim",
 		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
-		OnClick = function()
-			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
-			Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
+		OnClick = function(_, button)
+			if button == "RightButton" then
+				CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
+					rootDescription:CreateTitle("CraftSim")
+					rootDescription:CreateButton("Shopping List", function()
+						if CraftSim.SHOPPING and CraftSim.SHOPPING.ToggleShoppingListView then
+							CraftSim.SHOPPING:ToggleShoppingListView()
+						end
+					end)
+					rootDescription:CreateButton("Disenchanting", function()
+						if CraftSim.DISENCHANT and CraftSim.DISENCHANT.UI and CraftSim.DISENCHANT.UI.ShowAndLoad then
+							CraftSim.DISENCHANT.UI:ShowAndLoad()
+						end
+					end)
+				end)
+			else
+				Settings.OpenToCategory(CraftSim.OPTIONS.category:GetID())
+			end
 		end,
 	})
 
