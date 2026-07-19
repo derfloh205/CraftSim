@@ -18,6 +18,8 @@ CraftSim.MODULES:RegisterModule("MODULE_TOP_GEAR", CraftSim.TOPGEAR, {
 
 GUTIL:RegisterCustomEvents(CraftSim.TOPGEAR, {
     "CRAFTSIM_RECIPE_DATA_UPDATED",
+    "BAG_UPDATE_DELAYED",
+    "PLAYER_ENTERING_WORLD",
 })
 
 CraftSim.TOPGEAR.SIM_MODES = {
@@ -31,6 +33,78 @@ CraftSim.TOPGEAR.SIM_MODES = {
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.TOPGEAR:CRAFTSIM_RECIPE_DATA_UPDATED(recipeData)
     self.UI:Update(recipeData)
+end
+
+function CraftSim.TOPGEAR:BAG_UPDATE_DELAYED()
+    CraftSim.DB.CRAFTER:InvalidateProfessionGearCache(CraftSim.UTIL:GetPlayerCrafterUID())
+end
+
+function CraftSim.TOPGEAR:PLAYER_ENTERING_WORLD()
+    CraftSim.DB.CRAFTER:InvalidateProfessionGearCache(CraftSim.UTIL:GetPlayerCrafterUID())
+end
+
+---@param professionGears CraftSim.ProfessionGear[]
+---@param includeUncategorized boolean? when true, keeps the highest-ilvl item without a unique category
+---@return CraftSim.ProfessionGear[]
+local function getHighestItemLevelPerUniqueCategory(professionGears, includeUncategorized)
+    ---@type table<number, CraftSim.ProfessionGear>
+    local highestItemLevels = {}
+    ---@type CraftSim.ProfessionGear?
+    local highestUncategorized = nil
+
+    for _, professionGear in pairs(professionGears) do
+        local uniqueCategoryID = select(4, C_Item.GetItemUniquenessByID(professionGear.item:GetItemID()))
+        local itemLevel = professionGear:GetItemLevel() or 0
+
+        if uniqueCategoryID then
+            local current = highestItemLevels[uniqueCategoryID]
+            local currentItemLevel = current and current:GetItemLevel() or 0
+            if not current or currentItemLevel < itemLevel then
+                highestItemLevels[uniqueCategoryID] = professionGear
+            end
+        elseif includeUncategorized then
+            local currentItemLevel = highestUncategorized and highestUncategorized:GetItemLevel() or 0
+            if not highestUncategorized or currentItemLevel < itemLevel then
+                highestUncategorized = professionGear
+            end
+        end
+    end
+
+    ---@type CraftSim.ProfessionGear[]
+    local result = {}
+    for _, professionGear in pairs(highestItemLevels) do
+        table.insert(result, professionGear)
+    end
+    if includeUncategorized and highestUncategorized then
+        table.insert(result, highestUncategorized)
+    end
+    return result
+end
+
+---@param combo (CraftSim.ProfessionGear|string)[]
+---@param isCooking boolean
+---@return string comboKey
+local function getComboKey(combo, isCooking)
+    local EMPTY = CraftSim.TOPGEAR.EMPTY_SLOT
+
+    local function gearKey(gear)
+        if gear == EMPTY or not gear or not gear.item then
+            return ""
+        end
+        return gear.item:GetItemLink():gsub("Player.-:", "")
+    end
+
+    local toolKey = gearKey(combo[1])
+    if isCooking then
+        return toolKey .. "|" .. gearKey(combo[2])
+    end
+
+    local gearKeyA = gearKey(combo[2])
+    local gearKeyB = gearKey(combo[3])
+    if gearKeyA > gearKeyB then
+        gearKeyA, gearKeyB = gearKeyB, gearKeyA
+    end
+    return toolKey .. "|" .. gearKeyA .. "|" .. gearKeyB
 end
 
 function CraftSim.TOPGEAR:GetSimMode(simMode)
@@ -102,66 +176,12 @@ end
 
 function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCooking)
     local uniqueCombos = {}
-    local EMPTY = CraftSim.TOPGEAR.EMPTY_SLOT
+    local seenKeys = {}
 
     for _, comboA in pairs(totalCombos) do
-        -- combination can have 3 entry where each is either empty or a professionGear
-        local toolA = comboA[1]
-        local gear1A = comboA[2]
-        local gear2A = comboA[3]
-
-        local inserted = GUTIL:Find(uniqueCombos, function(comboB)
-            if not isCooking then
-                local toolB = comboB[1]
-                local gear1B = comboB[2]
-                local gear2B = comboB[3]
-
-                local existsGear1 = gear1A == EMPTY and (gear1B == EMPTY or gear2B == EMPTY)
-                if not existsGear1 then
-                    existsGear1 = (gear1B ~= EMPTY and gear1B:Equals(gear1A)) or
-                        (gear2B ~= EMPTY and gear2B:Equals(gear1A))
-                end
-
-                local existsGear2 = gear2A == EMPTY and (gear1B == EMPTY or gear2B == EMPTY)
-                if not existsGear2 then
-                    existsGear2 = (gear1B ~= EMPTY and gear1B:Equals(gear2A)) or
-                        (gear2B ~= EMPTY and gear2B:Equals(gear2A))
-                end
-
-                local existsTool = toolA == EMPTY and toolB == EMPTY
-                if not existsTool then
-                    existsTool = toolB ~= EMPTY and toolB:Equals(toolA)
-                end
-
-                if existsGear1 and existsGear2 and existsTool then
-                    -- Logger:LogDebug("found matching combo..")
-                    return true
-                end
-
-                return false
-            else
-                local toolB = comboB[1]
-                local gear1B = comboB[2]
-
-                local existsGear = gear1A == EMPTY and gear1B == EMPTY
-                if not existsGear then
-                    existsGear = gear1B ~= EMPTY and gear1B:Equals(gear1A)
-                end
-
-                local existsTool = toolA == EMPTY and toolB == EMPTY
-                if not existsTool then
-                    existsTool = toolB ~= EMPTY and toolB:Equals(toolA)
-                end
-
-                if existsGear and existsTool then
-                    return true
-                end
-
-                return false
-            end
-        end)
-
-        if not inserted then
+        local comboKey = getComboKey(comboA, isCooking)
+        if not seenKeys[comboKey] then
+            seenKeys[comboKey] = true
             table.insert(uniqueCombos, comboA)
         end
     end
@@ -170,62 +190,139 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param forceCache? boolean
+---@param forceCache? boolean when true, return DB snapshot only (alt crafter / deserialized queue items)
 ---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
     local crafterUID = recipeData:GetCrafterUID()
-    if recipeData:IsCrafter() and not forceCache then
-        -- Clear Cache
-        CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID,
-            recipeData.professionData.professionInfo.profession)
-        local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
-        Logger:LogDebug("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
-        local inventoryGear = {}
-        local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
+    local profession = recipeData.professionData.professionInfo.profession
 
-        for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
-            for slot = 1, C_Container.GetContainerNumSlots(bag) do
-                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
-                if itemLoc:IsValid() then
-                    local isCached = C_Item.IsItemDataCached(itemLoc)
-                    if not isCached then
-                        C_Item.RequestLoadItemData(itemLoc)
-                    end
+    if not recipeData:IsCrafter() or forceCache then
+        recipeData.professionGearCached = CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
+        return CraftSim.DB.CRAFTER:GetProfessionGearAvailable(crafterUID, profession)
+    end
 
-                    local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
-                    if itemLink ~= nil then
-                        local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
-                        if itemSubType == currentProfession and
-                            (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
-                            -- Only exclude items that are definitively from an older expansion.
-                            if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
-                                -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
-                                if not isCached or C_Item.IsBound(itemLoc) then
-                                    local professionGear = CraftSim.ProfessionGear()
-                                    professionGear:SetItem(itemLink)
-                                    table.insert(inventoryGear, professionGear)
+    -- Player crafter: always rescan bags so selectors / TopGear see current inventory.
+    CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID, profession)
+    local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
+    Logger:LogDebug("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
+    local inventoryGear = {}
+    local recipeExpansionID = recipeData.professionData and recipeData.professionData.expansionID
+    local pendingItemLoads = false
 
-                                    CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(
-                                        crafterUID,
-                                        recipeData.professionData.professionInfo.profession,
-                                        professionGear
-                                    )
-                                end
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
+            if itemLoc:IsValid() then
+                local isCached = C_Item.IsItemDataCached(itemLoc)
+                if not isCached then
+                    C_Item.RequestLoadItemData(itemLoc)
+                    pendingItemLoads = true
+                end
+
+                local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
+                if itemLink ~= nil then
+                    local itemID, _, itemSubType, itemEquipLoc = C_Item.GetItemInfoInstant(itemLink)
+                    if itemSubType == currentProfession and
+                        (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
+                        -- Only exclude items that are definitively from an older expansion.
+                        if CraftSim.UTIL:IsItemExpansionCompatible(recipeExpansionID, itemID, "TopGearInventory") then
+                            -- Ignore tradeable bag/bank pieces (e.g. fresh crafts); equipped set is added elsewhere.
+                            if not isCached or C_Item.IsBound(itemLoc) then
+                                local professionGear = CraftSim.ProfessionGear()
+                                professionGear:SetItem(itemLink)
+                                table.insert(inventoryGear, professionGear)
+
+                                CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(
+                                    crafterUID,
+                                    profession,
+                                    professionGear
+                                )
                             end
                         end
                     end
+                elseif not isCached then
+                    pendingItemLoads = true
                 end
             end
         end
-        CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, recipeData.professionData.professionInfo.profession)
-        return inventoryGear
-    else
-        recipeData.professionGearCached = CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID,
-            recipeData.professionData.professionInfo.profession)
-
-        return CraftSim.DB.CRAFTER:GetProfessionGearAvailable(crafterUID,
-            recipeData.professionData.professionInfo.profession)
     end
+
+    if pendingItemLoads then
+        recipeData.professionGearCached = false
+    else
+        CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, profession)
+        recipeData.professionGearCached = true
+    end
+
+    return inventoryGear
+end
+
+--- Multicraft does not apply to work orders or non-multicraft recipes; keep resourcefulness tools and drop multicraft-only tools.
+---@param uniqueGear CraftSim.ProfessionGear[]
+---@param defaultToolSlotItems (CraftSim.ProfessionGear|string)[]
+---@return CraftSim.ProfessionGear[]
+function CraftSim.TOPGEAR:GetWorkOrderToolSlotItems(uniqueGear, defaultToolSlotItems)
+    local tools = GUTIL:Filter(uniqueGear, function(gear)
+        return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
+    end)
+
+    local bestResTool ---@type CraftSim.ProfessionGear?
+    for _, tool in ipairs(tools) do
+        local res = tool:GetResourcefulnessValue()
+        if res > 0 and (not bestResTool or res > bestResTool:GetResourcefulnessValue()) then
+            bestResTool = tool
+        end
+    end
+
+    local result = GUTIL:Filter(defaultToolSlotItems, function(gear)
+        if gear == CraftSim.TOPGEAR.EMPTY_SLOT then
+            return true
+        end
+        return not gear:IsMulticraftOnlyTool()
+    end)
+
+    if bestResTool and not GUTIL:Find(result, function(gear)
+            return gear ~= CraftSim.TOPGEAR.EMPTY_SLOT and gear:Equals(bestResTool)
+        end) then
+        tinsert(result, bestResTool)
+    end
+
+    if #result == 0 then
+        tinsert(result, CraftSim.TOPGEAR.EMPTY_SLOT)
+    end
+
+    return result
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param results CraftSim.TopGearResult[]
+---@return CraftSim.TopGearResult[]
+function CraftSim.TOPGEAR:FilterResultsByWorkOrderMinQuality(recipeData, results)
+    if not recipeData.orderData then
+        return results
+    end
+    local minQuality = recipeData.orderData.minQuality
+    if not minQuality or minQuality <= 0 or not recipeData.supportsQualities then
+        return results
+    end
+
+    local filtered = GUTIL:Filter(results, function(result)
+        return result.expectedQuality >= minQuality
+    end)
+
+    if #filtered > 0 then
+        return filtered
+    end
+
+    -- No set meets min quality: prefer highest achievable quality (skill over useless mc tools).
+    return GUTIL:Sort(results, function(resultA, resultB)
+        if resultA.expectedQuality ~= resultB.expectedQuality then
+            return resultA.expectedQuality > resultB.expectedQuality
+        end
+        local resA = resultA.professionGearSet.professionStats.resourcefulness.value
+        local resB = resultB.professionGearSet.professionStats.resourcefulness.value
+        return resA > resB
+    end)
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -263,27 +360,14 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     local accessoryItems = GUTIL:Filter(uniqueGear,
         function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType end)
 
-    -- for each unique eqipped C_Item.GetItemUniquenessByID choose the highest item level
-    ---@type table<number, CraftSim.ProfessionGear>
-    local highestItemLevels = {}
-    for _, professionGear in pairs(accessoryItems) do
-        Logger:LogDebug("Checking UniquenessIlvls: " .. professionGear.item:GetItemLink())
-        local uniqueCategoryID = select(4, C_Item.GetItemUniquenessByID(professionGear.item:GetItemID()))
-        local itemLevel = professionGear:GetItemLevel()
+    local gearSlotItems = getHighestItemLevelPerUniqueCategory(accessoryItems, false)
 
-        if uniqueCategoryID and (not highestItemLevels[uniqueCategoryID] or highestItemLevels[uniqueCategoryID]:GetItemLevel() < itemLevel) then
-            highestItemLevels[uniqueCategoryID] = professionGear
-        end
+    local toolSlotItems = getHighestItemLevelPerUniqueCategory(GUTIL:Filter(uniqueGear,
+        function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType end), true)
+
+    if recipeData:ShouldAvoidMulticraftOnlyTools() then
+        toolSlotItems = CraftSim.TOPGEAR:GetWorkOrderToolSlotItems(uniqueGear, toolSlotItems)
     end
-
-    ---@type CraftSim.ProfessionGear[]
-    local gearSlotItems = {}
-    for _, professionGear in pairs(highestItemLevels) do
-        table.insert(gearSlotItems, professionGear)
-    end
-
-    local toolSlotItems = GUTIL:Filter(uniqueGear,
-        function(gear) return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType end)
 
     -- if it is not possible to fill all slots, add an empty slot for permutation calculation
     if #gearSlotItems < 2 then
@@ -388,16 +472,19 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
     local combinations = CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
 
     local previousGear = recipeData.professionGearSet
-    local averageProfitPreviousGear = CraftSim.CALC:GetAverageProfit(recipeData)
-    local concentrationValuePreviousGear = recipeData:GetConcentrationValue()
+    local averageProfitPreviousGear = recipeData.averageProfitCached or CraftSim.CALC:GetAverageProfit(recipeData)
+    local needsConcentrationValue = topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)
+        and recipeData.concentrating
+        and recipeData.supportsQualities
+    local concentrationValuePreviousGear = needsConcentrationValue and recipeData:GetConcentrationValue() or 0
 
     -- convert to top gear results
     ---@type CraftSim.TopGearResult[]
     local results = GUTIL:Map(combinations, function(professionGearSet)
         recipeData.professionGearSet = professionGearSet
         recipeData:Update()
-        local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
-        local concentrationValue = recipeData:GetConcentrationValue()
+        local averageProfit = recipeData.averageProfitCached or CraftSim.CALC:GetAverageProfit(recipeData)
+        local concentrationValue = needsConcentrationValue and recipeData:GetConcentrationValue() or 0
         local relativeProfit = averageProfit - averageProfitPreviousGear
         local relativeConcentrationValue = concentrationValue - concentrationValuePreviousGear
         local relativeStats = professionGearSet.professionStats:Copy()
@@ -442,12 +529,41 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS) then
         Logger:LogDebug("Top Gear Mode: Resourcefulness")
-        results = GUTIL:Filter(results, function(result)
-            return result.relativeStats.resourcefulness.value > 0
-        end)
+        if recipeData:ShouldAvoidMulticraftOnlyTools() then
+            local unfiltered = results
+            results = GUTIL:Filter(results, function(result)
+                local tool = result.professionGearSet.tool
+                if tool and tool:IsMulticraftOnlyTool() then
+                    return false
+                end
+                local res = result.professionGearSet.professionStats.resourcefulness.value
+                return res > 0 or result.relativeStats.resourcefulness.value > 0
+            end)
+            if #results == 0 then
+                results = GUTIL:Filter(unfiltered, function(result)
+                    local tool = result.professionGearSet.tool
+                    return not tool or not tool:IsMulticraftOnlyTool()
+                end)
+            end
+        else
+            results = GUTIL:Filter(results, function(result)
+                return result.relativeStats.resourcefulness.value > 0
+            end)
+        end
         results = GUTIL:Sort(results, function(resultA, resultB)
-            return resultA.professionGearSet.professionStats.resourcefulness.value >
-                resultB.professionGearSet.professionStats.resourcefulness.value
+            local resA = resultA.professionGearSet.professionStats.resourcefulness.value
+            local resB = resultB.professionGearSet.professionStats.resourcefulness.value
+            if resA ~= resB then
+                return resA > resB
+            end
+            if recipeData.orderData and recipeData.orderData.minQuality and recipeData.supportsQualities then
+                local skillA = resultA.professionGearSet.professionStats.skill.value
+                local skillB = resultB.professionGearSet.professionStats.skill.value
+                if skillA ~= skillB then
+                    return skillA > skillB
+                end
+            end
+            return resultA.averageProfit > resultB.averageProfit
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.CRAFTING_SPEED) then
         Logger:LogDebug("Top Gear Mode: Craftingspeed")
@@ -467,7 +583,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         end)
     end
 
-    return results
+    return self:FilterResultsByWorkOrderMinQuality(recipeData, results)
 end
 
 function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)

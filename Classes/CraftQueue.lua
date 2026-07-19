@@ -189,6 +189,62 @@ function CraftSim.CraftQueue:Remove(craftQueueItem, removeParentSubcraftInformat
     end
 end
 
+---@param validOrderIDs table<number, boolean> orderIDs currently available from C_CraftingOrders
+---@param profession Enum.Profession
+---@param fetchedOrderTypes? table<Enum.CraftingOrderType, boolean> only prune types we successfully refreshed
+---@return number removedCount
+function CraftSim.CraftQueue:RemoveStaleWorkOrders(validOrderIDs, profession, fetchedOrderTypes)
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    local toRemove = {}
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        local recipeData = craftQueueItem.recipeData
+        local orderData = recipeData.orderData
+        if recipeData:IsWorkOrder()
+            and craftQueueItem:IsCrafter()
+            and orderData
+            and recipeData.professionData
+            and recipeData.professionData.professionInfo
+            and recipeData.professionData.professionInfo.profession == profession
+            and not (claimedOrder and claimedOrder.orderID == orderData.orderID)
+            and (not fetchedOrderTypes or fetchedOrderTypes[orderData.orderType])
+            and not validOrderIDs[orderData.orderID] then
+            tinsert(toRemove, craftQueueItem)
+        end
+    end
+
+    for _, craftQueueItem in ipairs(toRemove) do
+        self:Remove(craftQueueItem, true)
+    end
+
+    if #toRemove > 0 then
+        self:CacheQueueItems()
+        Logger:LogDebug("Removed {count} stale work orders from queue", #toRemove)
+    end
+
+    return #toRemove
+end
+
+---@param orderID number
+---@return number removedCount
+function CraftSim.CraftQueue:RemoveWorkOrdersByOrderID(orderID)
+    local toRemove = GUTIL:Filter(self.craftQueueItems, function(craftQueueItem)
+        local orderData = craftQueueItem.recipeData.orderData
+        return craftQueueItem.recipeData:IsWorkOrder()
+            and orderData
+            and orderData.orderID == orderID
+    end)
+
+    for _, craftQueueItem in ipairs(toRemove) do
+        self:Remove(craftQueueItem, true)
+    end
+
+    if #toRemove > 0 then
+        self:CacheQueueItems()
+    end
+
+    return #toRemove
+end
+
 ---@param prI CraftSim.RecipeData.ParentRecipeInfo
 ---@return CraftSim.CraftQueueItem | nil
 function CraftSim.CraftQueue:FindRecipeByParentRecipeInfo(prI)
