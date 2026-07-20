@@ -1069,10 +1069,13 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RECIPE_RESTOCK_SET_MAX = "Restock: ",
         CRAFT_LISTS_RECIPE_RESTOCK_TAG = "Restock",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "Restock target (0 = off)",
-        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("0 disables restock for this recipe."),
+        CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey(
+            "0 disables restock for this recipe. With supported qualities checked, this target is per quality."),
         CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES = "Supported Qualities",
         CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP =
-            "Only queue and count inventory for checked gear qualities.\n\nIf none are checked, any quality is allowed.",
+            "Only queue and count inventory/AH for checked gear qualities.\n\n"
+            .. "Restock targets apply per checked quality (e.g. restock 1 with Q4+Q5 needs one of each).\n\n"
+            .. "If none are checked, any quality is allowed.",
 
         -- craft buffs
 

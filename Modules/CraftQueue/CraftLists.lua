@@ -101,7 +101,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
         if not expectedItem then
             return 0
         end
-        return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
+        return CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
             expectedItem:GetItemID() or expectedItem:GetItemLink(),
             includeAltInventory) or 0
     end
@@ -109,12 +109,76 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     local owned = 0
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
-            owned = owned + (CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
-                item:GetItemID() or item:GetItemLink(),
-                includeAltInventory) or 0)
+            owned = owned + (CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
+                item:GetItemLink() or item:GetItemID(),
+                includeAltInventory,
+                qualityID) or 0)
         end
     end
     return owned
+end
+
+--- Restock target is per selected gear quality. Returns crafts still needed across those qualities.
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@param includeAltInventory boolean?
+---@param restockPerQuality number
+---@param subtractInventory boolean?
+---@return number
+local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, includeAltInventory, restockPerQuality,
+                                                  subtractInventory)
+    local supported = recipeEntry and recipeEntry.supportedQualities
+    local useQualitySplit = recipeData.isGear
+        and recipeData.supportsQualities
+        and CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported)
+
+    if not useQualitySplit then
+        local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
+        if owned >= restockPerQuality then
+            return 0
+        end
+        if subtractInventory then
+            return math.max(0, restockPerQuality - owned)
+        end
+        return restockPerQuality
+    end
+
+    local queueAmount = 0
+    local qualityOwnedTotal = 0
+    local supportedCount = 0
+    local sharedItemID = nil
+    for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
+        if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
+            supportedCount = supportedCount + 1
+            sharedItemID = item:GetItemID() or sharedItemID
+            local owned = CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
+                item:GetItemLink() or item:GetItemID(),
+                includeAltInventory,
+                qualityID) or 0
+            qualityOwnedTotal = qualityOwnedTotal + owned
+            if owned < restockPerQuality then
+                if subtractInventory then
+                    queueAmount = queueAmount + (restockPerQuality - owned)
+                else
+                    queueAmount = queueAmount + restockPerQuality
+                end
+            end
+        end
+    end
+
+    -- If quality-tagged AH/bag counts found nothing, fall back to unscoped AH for the item ID
+    -- so restock still respects posts when Syndicator links lack quality info.
+    if queueAmount > 0 and qualityOwnedTotal == 0 and sharedItemID and supportedCount > 0 then
+        local unscopedAH = CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(
+            sharedItemID, includeAltInventory) or 0
+        local needed = supportedCount * restockPerQuality
+        if unscopedAH >= needed then
+            return 0
+        end
+        return math.max(0, needed - unscopedAH)
+    end
+
+    return queueAmount
 end
 
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
@@ -792,19 +856,12 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             return nil
         end
 
-        local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, options.includeAltInventory)
-
-        -- Already at or above restock target: skip queuing this recipe.
-        if owned >= recipeMaxQueueAmount then
-            return 0
-        end
-
-        -- Optional: queue only the deficit up to the target (bags/bank/warbank/AH).
-        if options.subtractInventory then
-            return math.max(0, recipeMaxQueueAmount - owned)
-        end
-
-        return recipeMaxQueueAmount
+        return GetRestockQueueAmountForRecipeEntry(
+            recipeData,
+            recipeEntry,
+            options.includeAltInventory,
+            recipeMaxQueueAmount,
+            options.subtractInventory)
     end
 
     ---@param frameDistributor GUTIL.FrameDistributor
