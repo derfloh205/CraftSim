@@ -789,6 +789,54 @@ function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
     return count
 end
 
+--- Returns AH listings that should count toward restock for the given alt scope.
+---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean?
+---@return number
+function CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(itemIDOrLink, includeAlts)
+    if not itemIDOrLink then
+        return 0
+    end
+
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then
+        return 0
+    end
+
+    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
+        local _, _, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(ToTSMItemString(query.itemID))
+        local amount = numAuctions or 0
+        if includeAlts then
+            amount = amount + (numAltAuctions or 0)
+        end
+        return amount
+    end
+
+    if CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable()
+        and Syndicator and Syndicator.API and Syndicator.API.GetInventoryInfoByItemID then
+        local inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(query.itemID)
+        if inventoryInfo and inventoryInfo.characters then
+            local total = 0
+            local playerName, playerRealm
+            if not includeAlts then
+                playerName, playerRealm = UnitNameUnmodified("player")
+                playerRealm = playerRealm or GetNormalizedRealmName()
+            end
+            for _, characterInfo in ipairs(inventoryInfo.characters) do
+                if includeAlts
+                    or (characterInfo and characterInfo.character == playerName
+                        and characterInfo.realmNormalized == playerRealm) then
+                    total = total + (characterInfo.auctions or 0)
+                end
+            end
+            return total
+        end
+    end
+
+    -- Fallback: active inventory API (may be account-wide).
+    return self:GetAuctionAmount(itemIDOrLink) or 0
+end
+
 --- Returns inventory that counts toward restock targets: unbound bags/bank on the current
 --- character plus AH listings. Soulbound items in bags/bank are excluded.
 ---@param itemIDOrLink ItemID | string
@@ -810,22 +858,24 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
         return cached or 0
     end
 
+    -- Bags/bank unbound only — does not include AH.
     local count = CountUnboundInPlayerInventory(query)
+    count = count + self:GetTradableAuctionCount(itemIDOrLink, includeAlts)
 
-    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
-        local tsmStr = ToTSMItemString(query.itemID)
-        local _, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
-        count = count + (numAuctions or 0)
-        if includeAlts then
-            count = count + (numAltAuctions or 0)
-            if not GUTIL:isItemSoulbound(query.itemID) then
-                count = count + (numAlts or 0)
-            end
+    if includeAlts and not GUTIL:isItemSoulbound(query.itemID) then
+        if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
+            local _, numAlts = SafeTSMGetPlayerTotals(ToTSMItemString(query.itemID))
+            count = count + (numAlts or 0)
+        else
+            -- Alt bags/bank/mail/etc only. Strip alt AH so auctions aren't double-counted.
+            local total = self:GetInventoryCount(itemIDOrLink, true)
+            local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
+            local allAuctions = self:GetAuctionAmount(itemIDOrLink) or 0
+            local playerAuctions = self:GetTradableAuctionCount(itemIDOrLink, false)
+            local altAuctions = math.max(0, allAuctions - playerAuctions)
+            local altNonAuction = math.max(0, (total - playerTotal) - altAuctions)
+            count = count + altNonAuction
         end
-    elseif includeAlts and not GUTIL:isItemSoulbound(query.itemID) then
-        local total = self:GetInventoryCount(itemIDOrLink, true)
-        local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
-        count = count + math.max(0, total - playerTotal)
     end
 
     SetInventorySourceCacheEntry(cacheKey, count)

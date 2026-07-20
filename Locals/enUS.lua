@@ -577,7 +577,7 @@ function CraftSim.LOCAL_EN:GetData()
         OPTIONS_TSM_DEPOSIT_EXPRESSION_LABEL = "TSM Deposit Expression",
         OPTIONS_TSM_SMART_RESTOCK_ENABLED_LABEL = "Smart Restock (subtract inventory)",
         OPTIONS_TSM_SMART_RESTOCK_ENABLED_TOOLTIP =
-        "When sending recipes to the Craft Queue, subtract items you already own\n(bags, bank, alts, warbank) from the restock amount.",
+        "When sending recipes to the Craft Queue, subtract items you already own\n(bags, bank, AH, alts, warbank) from the restock amount.",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_ALTS_LABEL = "Include alt characters",
         OPTIONS_TSM_SMART_RESTOCK_INCLUDE_WARBANK_LABEL = "Include warbank",
         OPTIONS_MODULES_REAGENT_OPTIMIZATION = "Reagent Optimizing Module",
@@ -1048,9 +1048,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "Restock Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "Offset Queue Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
-        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank, warbank & AH for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
-        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nRecipes already at or above the restock target are always skipped.\n\nTurn off to queue up to the full target when below cap (for example, queue 20 when you have 5 but not when you already have 20).",
+        "When enabled, craft list restock queues max(0, target - bags/bank/warbank/AH you already have).\n\nRecipes already at or above the restock target are always skipped.\n\nTurn off to queue up to the full target when below cap (for example, queue 20 when you have 5 but not when you already have 20).",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "When enabled, alt characters' inventory is also subtracted from the restock target.",

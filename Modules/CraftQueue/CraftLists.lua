@@ -799,7 +799,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             return 0
         end
 
-        -- Optional: queue only the deficit up to the target (subtractInventory list option).
+        -- Optional: queue only the deficit up to the target (bags/bank/warbank/AH).
         if options.subtractInventory then
             return math.max(0, recipeMaxQueueAmount - owned)
         end
