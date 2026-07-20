@@ -53,6 +53,7 @@ DB/crafterDB.lua
 DB/priceOverrideDB.lua
 DB/craftListsDB.lua
 DB/lastCraftingCostDB.lua
+DB/knowledgePointValueDB.lua
 
 Media/Media.lua
 
@@ -110,6 +111,8 @@ Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/UI.lua
 
 Modules/SpecializationInfo/SpecializationInfo.lua
+Modules/SpecializationInfo/KnowledgePointValue.lua
+Modules/SpecializationInfo/KnowledgePointValueUI.lua
 Modules/SpecializationInfo/UI.lua
 
 Modules/Options/Options.lua
