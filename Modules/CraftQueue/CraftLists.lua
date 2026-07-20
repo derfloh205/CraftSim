@@ -101,7 +101,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
         if not expectedItem then
             return 0
         end
-        return CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
+        return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
             expectedItem:GetItemID() or expectedItem:GetItemLink(),
             includeAltInventory) or 0
     end
@@ -109,7 +109,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     local owned = 0
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
-            owned = owned + (CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
+            owned = owned + (CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
                 item:GetItemLink() or item:GetItemID(),
                 includeAltInventory,
                 qualityID) or 0)
@@ -151,7 +151,7 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
             supportedCount = supportedCount + 1
             sharedItemID = item:GetItemID() or sharedItemID
-            local owned = CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(
+            local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
                 item:GetItemLink() or item:GetItemID(),
                 includeAltInventory,
                 qualityID) or 0

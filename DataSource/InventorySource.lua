@@ -69,7 +69,7 @@ local function InventoryBackendArg(query)
     return query.itemID
 end
 
----@param kind "count"|"breakdown"|"auction"|"tradable"|"restock"
+---@param kind "count"|"breakdown"|"auction"|"tradable"
 ---@param apiName string
 ---@param query CraftSim.InventoryQueryInput
 ---@param includeAlts boolean?
@@ -972,59 +972,6 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
             local altAuctions = math.max(0, allAuctions - playerAuctions)
             local altNonAuction = math.max(0, (total - playerTotal) - altAuctions)
             count = count + altNonAuction
-        end
-    end
-
-    SetInventorySourceCacheEntry(cacheKey, count)
-    return count
-end
-
---- Restock owned count for gear qualities: bags/bank/warbank include soulbound stacks
---- (fresh crafts are often BoP) but still match crafting quality; AH stays quality-aware.
----@param itemIDOrLink ItemID | string
----@param includeAlts boolean?
----@param qualityIDOverride number?
----@return number count
-function CraftSim.INVENTORY_SOURCE:GetRestockInventoryCount(itemIDOrLink, includeAlts, qualityIDOverride)
-    if not itemIDOrLink then
-        return 0
-    end
-
-    local query = ResolveInventoryQueryInput(itemIDOrLink)
-    if not query then
-        return 0
-    end
-    if qualityIDOverride and qualityIDOverride > 0 then
-        query.qualityID = qualityIDOverride
-    end
-
-    local cacheKey = BuildInventorySourceCacheKey("restock", "CraftSim", query, includeAlts)
-    local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.count)
-    if hit then
-        return cached or 0
-    end
-
-    local count = CountInPlayerInventory(query, true)
-    count = count + self:GetTradableAuctionCount(itemIDOrLink, includeAlts, query.qualityID)
-
-    if includeAlts and type(itemIDOrLink) == "string"
-        and CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable() then
-        local item = Item:CreateFromItemLink(itemIDOrLink)
-        if item and item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
-            local total, _, sourceMap = CraftSimSYNDICATOR:GetGearInventoryCount(item, true)
-            local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-            local playerTotal = 0
-            if sourceMap then
-                local playerSources = sourceMap[playerCrafterUID]
-                    or sourceMap[CraftSim.UTIL:NormalizeCrafterUIDKey(playerCrafterUID) or ""]
-                if playerSources then
-                    playerTotal = (playerSources.bags or 0) + (playerSources.bank or 0)
-                        + (playerSources.auctions or 0)
-                end
-            end
-            -- Add alt bags/bank/AH already quality-filtered by GetGearInventoryCount.
-            -- Player bags/bank/AH were counted above; subtract player share from the total.
-            count = count + math.max(0, (total or 0) - playerTotal)
         end
     end
 
