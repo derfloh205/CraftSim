@@ -36,6 +36,7 @@ end
 ---@field itemID number
 ---@field itemIDOrLink number | string
 ---@field qualityID number
+---@field qualityItemLevels table<number, number>? recipe quality tier -> reference item level
 
 ---@param itemIDOrLink number | string
 ---@return CraftSim.InventoryQueryInput?
@@ -75,7 +76,81 @@ end
 ---@param includeAlts boolean?
 ---@return string
 local function BuildInventorySourceCacheKey(kind, apiName, query, includeAlts)
-    return string.format("%s|%s|%s|%d|%d", kind, apiName, tostring(includeAlts), query.itemID, query.qualityID)
+    local refIlvl = 0
+    if query.qualityItemLevels and query.qualityID > 0 then
+        refIlvl = query.qualityItemLevels[query.qualityID] or 0
+    end
+    return string.format("%s|%s|%s|%d|%d|%d", kind, apiName, tostring(includeAlts), query.itemID, query.qualityID,
+        refIlvl)
+end
+
+---@param itemLink string
+---@param qualityItemLevels table<number, number>?
+---@return number
+local function ResolveCraftingQualityFromItemLink(itemLink, qualityItemLevels)
+    if not itemLink or IsSecretValue(itemLink) then
+        return 0
+    end
+    local linkQuality = GUTIL:GetQualityIDFromLink(itemLink)
+    if linkQuality and linkQuality > 0 then
+        return linkQuality
+    end
+    if not qualityItemLevels then
+        return 0
+    end
+    local itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
+    if not itemLevel or itemLevel <= 0 then
+        return 0
+    end
+    for qualityID, refLevel in pairs(qualityItemLevels) do
+        if refLevel == itemLevel then
+            return qualityID
+        end
+    end
+    return 0
+end
+
+---@param itemLink string
+---@param targetQualityID number
+---@param qualityItemLevels table<number, number>?
+---@return boolean
+local function InventoryItemMatchesQuality(itemLink, targetQualityID, qualityItemLevels)
+    if targetQualityID <= 0 then
+        return true
+    end
+    return ResolveCraftingQualityFromItemLink(itemLink, qualityItemLevels) == targetQualityID
+end
+
+--- Build reference item levels for each craft result quality (used when link quality tags are missing).
+---@param recipeData CraftSim.RecipeData
+---@return table<number, number>
+function CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
+    local levels = {}
+    if not recipeData or not recipeData.resultData then
+        return levels
+    end
+    for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
+        local link = item and item:GetItemLink()
+        if link and not IsSecretValue(link) then
+            local itemLevel = C_Item.GetDetailedItemLevelInfo(link)
+            if itemLevel and itemLevel > 0 then
+                levels[qualityID] = itemLevel
+            end
+        end
+    end
+    return levels
+end
+
+---@param query CraftSim.InventoryQueryInput
+---@param qualityIDOverride number?
+---@param qualityItemLevels table<number, number>?
+local function ApplyInventoryQualityContext(query, qualityIDOverride, qualityItemLevels)
+    if qualityIDOverride and qualityIDOverride > 0 then
+        query.qualityID = qualityIDOverride
+    end
+    if qualityItemLevels then
+        query.qualityItemLevels = qualityItemLevels
+    end
 end
 
 ---@param key string
@@ -152,7 +227,7 @@ local function ItemLocationMatchesInventoryQuery(itemLoc, query)
         if not locLink then
             return false
         end
-        return (GUTIL:GetQualityIDFromLink(locLink) or 0) == query.qualityID
+        return InventoryItemMatchesQuality(locLink, query.qualityID, query.qualityItemLevels)
     end
     return true
 end
@@ -265,7 +340,9 @@ end
 ---@return number total, number warbank, table<CrafterUID, {bags: number, bank: number, auctions: number}> charMap
 function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
     includeAlts = includeAlts or false
-    local quality = GUTIL:GetQualityIDFromLink(item:GetItemLink())
+    local itemLink = item:GetItemLink()
+    local quality = GUTIL:GetQualityIDFromLink(itemLink)
+    local refItemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
     local itemID = item:GetItemID()
     local totalCount = 0
     local warbank = 0
@@ -281,6 +358,19 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
         Logger:LogFatal("SYNDICATOR_DATA not available")
     end
 
+    local function syndicatorItemMatchesQuality(invItemLink)
+        if not invItemLink then
+            return false
+        end
+        if quality and quality > 0 then
+            return InventoryItemMatchesQuality(invItemLink, quality, refItemLevel and { [quality] = refItemLevel } or nil)
+        end
+        if refItemLevel then
+            return C_Item.GetDetailedItemLevelInfo(invItemLink) == refItemLevel
+        end
+        return GUTIL:GetQualityIDFromLink(invItemLink) == quality
+    end
+
     --- sum occurances in characters
     for crafterUID, data in pairs(syndicatorData.Characters) do
         sourceMap[crafterUID] = { bags = 0, bank = 0, auctions = 0 }
@@ -288,7 +378,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
             for _, bags in ipairs(data.bags or {}) do
                 for _, invItem in pairs(bags or {}) do
                     if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
-                        and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                        and syndicatorItemMatchesQuality(invItem.itemLink) then
                         Logger:LogDebug("- Found in bags x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bags = sourceMap[crafterUID].bags + invItem.itemCount
@@ -299,7 +389,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
             for _, invInfo in ipairs(data.bankTabs or {}) do
                 for _, invItem in pairs(invInfo.slots or {}) do
                     if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
-                        and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                        and syndicatorItemMatchesQuality(invItem.itemLink) then
                         Logger:LogDebug("- Found in bankTabs x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bank = sourceMap[crafterUID].bank + invItem.itemCount
@@ -309,7 +399,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
 
             for _, invItem in ipairs(data.auctions or {}) do
                 if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
-                    and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    and syndicatorItemMatchesQuality(invItem.itemLink) then
                     Logger:LogDebug("- Found in auctions x{count}", invItem.itemCount)
 
                     totalCount = totalCount + invItem.itemCount
@@ -323,7 +413,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
         for _, invInfo in ipairs(warbandInfo.bank) do
             for _, invItem in pairs(invInfo.slots) do
                 if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
-                    and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    and syndicatorItemMatchesQuality(invItem.itemLink) then
                     Logger:LogDebug("- Found in warband bank x{count}", invItem.itemCount)
                     totalCount = totalCount + invItem.itemCount
                     warbank = warbank + invItem.itemCount
@@ -850,7 +940,7 @@ local function CountSyndicatorAuctionsForQuery(query, includeAlts)
         for _, invItem in ipairs(data.auctions or {}) do
                 if invItem and InventoryItemIDsMatch(invItem.itemID, query.itemID) then
                 if query.qualityID <= 0
-                    or (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID then
+                    or InventoryItemMatchesQuality(invItem.itemLink, query.qualityID, query.qualityItemLevels) then
                     charTotal = charTotal + (invItem.itemCount or 0)
                 end
             end
@@ -878,8 +968,9 @@ end
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean?
 ---@param qualityIDOverride number? force a crafting quality filter (1-5)
+---@param qualityItemLevels table<number, number>? recipe reference ilvls per quality tier
 ---@return number
-function CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(itemIDOrLink, includeAlts, qualityIDOverride)
+function CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(itemIDOrLink, includeAlts, qualityIDOverride, qualityItemLevels)
     if not itemIDOrLink then
         return 0
     end
@@ -888,9 +979,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(itemIDOrLink, include
     if not query then
         return 0
     end
-    if qualityIDOverride and qualityIDOverride > 0 then
-        query.qualityID = qualityIDOverride
-    end
+    ApplyInventoryQualityContext(query, qualityIDOverride, qualityItemLevels)
 
     -- Prefer Syndicator for quality-aware AH counts. TSM item strings often collapse
     -- quality variants and under-count when a quality-specific string is used.
@@ -945,8 +1034,10 @@ end
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include alt characters' tradable inventory and AH
 ---@param qualityIDOverride number? force a crafting quality filter (1-5)
+---@param qualityItemLevels table<number, number>? recipe reference ilvls per quality tier
 ---@return number count
-function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts, qualityIDOverride)
+function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts, qualityIDOverride,
+    qualityItemLevels)
     if not itemIDOrLink then
         return 0
     end
@@ -955,9 +1046,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
     if not query then
         return 0
     end
-    if qualityIDOverride and qualityIDOverride > 0 then
-        query.qualityID = qualityIDOverride
-    end
+    ApplyInventoryQualityContext(query, qualityIDOverride, qualityItemLevels)
 
     local cacheKey = BuildInventorySourceCacheKey("tradable", "CraftSim", query, includeAlts)
     local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.count)
@@ -967,7 +1056,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
 
     -- Bags/bank unbound only — does not include AH.
     local count = CountUnboundInPlayerInventory(query)
-    count = count + self:GetTradableAuctionCount(itemIDOrLink, includeAlts, query.qualityID)
+    count = count + self:GetTradableAuctionCount(itemIDOrLink, includeAlts, query.qualityID, query.qualityItemLevels)
 
     if includeAlts and not GUTIL:isItemSoulbound(query.itemID) then
         if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable()
@@ -982,7 +1071,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
             local total = self:GetInventoryCount(itemIDOrLink, true)
             local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
             local allAuctions = self:GetAuctionAmount(itemIDOrLink) or 0
-            local playerAuctions = self:GetTradableAuctionCount(itemIDOrLink, false, query.qualityID)
+            local playerAuctions = self:GetTradableAuctionCount(itemIDOrLink, false, query.qualityID, query.qualityItemLevels)
             local altAuctions = math.max(0, allAuctions - playerAuctions)
             local altNonAuction = math.max(0, (total - playerTotal) - altAuctions)
             count = count + altNonAuction

@@ -107,12 +107,14 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     end
 
     local owned = 0
+    local qualityItemLevels = CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
             owned = owned + (CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
                 item:GetItemLink() or item:GetItemID(),
                 includeAltInventory,
-                qualityID) or 0)
+                qualityID,
+                qualityItemLevels) or 0)
         end
     end
     return owned
@@ -147,6 +149,7 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
     local ownedTotal = 0
     local queueAmount = 0
     local sharedItemID = nil
+    local qualityItemLevels = CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
 
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
@@ -154,7 +157,8 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
             local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
                 item:GetItemLink() or item:GetItemID(),
                 includeAltInventory,
-                qualityID) or 0
+                qualityID,
+                qualityItemLevels) or 0
             neededTotal = neededTotal + restockPerQuality
             ownedTotal = ownedTotal + owned
             if owned < restockPerQuality then
@@ -179,7 +183,7 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
     if queueAmount > 0 and sharedItemID then
         local poolDeficit = neededTotal - ownedTotal
         local unscopedAH = CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(
-            sharedItemID, includeAltInventory) or 0
+            sharedItemID, includeAltInventory, nil, qualityItemLevels) or 0
         if unscopedAH >= poolDeficit then
             return 0
         end
