@@ -143,19 +143,20 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
         return restockPerQuality
     end
 
+    local neededTotal = 0
+    local ownedTotal = 0
     local queueAmount = 0
-    local qualityOwnedTotal = 0
-    local supportedCount = 0
     local sharedItemID = nil
+
     for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
-            supportedCount = supportedCount + 1
             sharedItemID = item:GetItemID() or sharedItemID
             local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
                 item:GetItemLink() or item:GetItemID(),
                 includeAltInventory,
                 qualityID) or 0
-            qualityOwnedTotal = qualityOwnedTotal + owned
+            neededTotal = neededTotal + restockPerQuality
+            ownedTotal = ownedTotal + owned
             if owned < restockPerQuality then
                 if subtractInventory then
                     queueAmount = queueAmount + (restockPerQuality - owned)
@@ -166,16 +167,25 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
         end
     end
 
-    -- If quality-tagged AH/bag counts found nothing, fall back to unscoped AH for the item ID
-    -- so restock still respects posts when Syndicator links lack quality info.
-    if queueAmount > 0 and qualityOwnedTotal == 0 and sharedItemID and supportedCount > 0 then
+    if neededTotal <= 0 then
+        return 0
+    end
+
+    if ownedTotal >= neededTotal then
+        return 0
+    end
+
+    -- Per-quality AH links can under-count; treat unscoped AH as a pool for the remaining deficit.
+    if queueAmount > 0 and sharedItemID then
+        local poolDeficit = neededTotal - ownedTotal
         local unscopedAH = CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(
             sharedItemID, includeAltInventory) or 0
-        local needed = supportedCount * restockPerQuality
-        if unscopedAH >= needed then
+        if unscopedAH >= poolDeficit then
             return 0
         end
-        return math.max(0, needed - unscopedAH)
+        if subtractInventory then
+            return math.max(0, poolDeficit - unscopedAH)
+        end
     end
 
     return queueAmount

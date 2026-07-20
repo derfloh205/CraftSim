@@ -106,6 +106,16 @@ local function CopyInventoryBreakdownLines(lines)
     return copy
 end
 
+---@param a number|string?
+---@param b number|string?
+---@return boolean
+local function InventoryItemIDsMatch(a, b)
+    if a == nil or b == nil then
+        return false
+    end
+    return tonumber(a) == tonumber(b)
+end
+
 ---@param itemLoc ItemLocationMixin
 ---@return string?
 local function GetItemLinkFromLocation(itemLoc)
@@ -277,7 +287,8 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
         if includeAlts or crafterUID == playerCrafterUID then
             for _, bags in ipairs(data.bags or {}) do
                 for _, invItem in pairs(bags or {}) do
-                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
+                        and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
                         Logger:LogDebug("- Found in bags x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bags = sourceMap[crafterUID].bags + invItem.itemCount
@@ -287,7 +298,8 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
 
             for _, invInfo in ipairs(data.bankTabs or {}) do
                 for _, invItem in pairs(invInfo.slots or {}) do
-                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
+                        and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
                         Logger:LogDebug("- Found in bankTabs x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bank = sourceMap[crafterUID].bank + invItem.itemCount
@@ -296,7 +308,8 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
             end
 
             for _, invItem in ipairs(data.auctions or {}) do
-                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
+                    and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
                     Logger:LogDebug("- Found in auctions x{count}", invItem.itemCount)
 
                     totalCount = totalCount + invItem.itemCount
@@ -309,7 +322,8 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
     for _, warbandInfo in ipairs(syndicatorData.Warband or {}) do
         for _, invInfo in ipairs(warbandInfo.bank) do
             for _, invItem in pairs(invInfo.slots) do
-                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                if invItem and InventoryItemIDsMatch(invItem.itemID, itemID)
+                    and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
                     Logger:LogDebug("- Found in warband bank x{count}", invItem.itemCount)
                     totalCount = totalCount + invItem.itemCount
                     warbank = warbank + invItem.itemCount
@@ -834,7 +848,7 @@ local function CountSyndicatorAuctionsForQuery(query, includeAlts)
             or CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID) == playerCrafterUID
         local charTotal = 0
         for _, invItem in ipairs(data.auctions or {}) do
-            if invItem and invItem.itemID == query.itemID then
+                if invItem and InventoryItemIDsMatch(invItem.itemID, query.itemID) then
                 if query.qualityID <= 0
                     or (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID then
                     charTotal = charTotal + (invItem.itemCount or 0)
