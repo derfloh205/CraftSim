@@ -111,10 +111,9 @@ Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/UI.lua
 
 Modules/SpecializationInfo/SpecializationInfo.lua
-Modules/SpecializationInfo/UI.lua
-
 Modules/SpecializationInfo/KnowledgePointValue.lua
 Modules/SpecializationInfo/KnowledgePointValueUI.lua
+Modules/SpecializationInfo/UI.lua
 
 Modules/Options/Options.lua
 Modules/Options/CraftSimOptionsTsm.xml

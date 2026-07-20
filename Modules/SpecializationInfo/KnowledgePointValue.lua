@@ -9,7 +9,7 @@ CraftSim.KNOWLEDGE_POINT_VALUE = {}
 ---@type GGUI.Frame
 CraftSim.KNOWLEDGE_POINT_VALUE.frame = nil
 
-local print = CraftSim.DEBUG:RegisterDebugID("Modules.SpecializationInfo.KnowledgePointValue")
+local print = CraftSim.DEBUG:RegisterLogger("Modules.SpecializationInfo.KnowledgePointValue")
 
 --- Calculates the ROI of the next knowledge point for every unfinished
 --- specialization node that affects the given recipe.
@@ -126,6 +126,17 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:SimulateNodeRankIncrease(recipeData, nod
     return result
 end
 
+--- Resolve the starting rank for a node given scan options.
+---@param liveRank number
+---@param options? CraftSim.KnowledgePointValue.ScanOptions
+---@return number
+local function ResolveStartRank(liveRank, options)
+    if options and options.startFromZero then
+        return -1 -- CraftSim convention: uninvested / blank-slate after respec
+    end
+    return liveRank
+end
+
 --- Full-scan: calculate ROI across all known recipes for the current profession.
 --- Uses the recipeMapping from the static specialization data to determine
 --- which recipes are affected by which nodes.
@@ -135,8 +146,9 @@ end
 ---
 ---@param recipeData CraftSim.RecipeData base recipe to extract profession context from
 ---@param progressCallback? fun(progress: number, total: number)
+---@param options? CraftSim.KnowledgePointValue.ScanOptions
 ---@return CraftSim.KnowledgePointValue.FullScanResult[]
-function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScan(recipeData, progressCallback)
+function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScan(recipeData, progressCallback, options)
     CraftSim.DEBUG:StartProfiling("KnowledgePointValue.FullProfessionScan")
 
     ---@type CraftSim.KnowledgePointValue.FullScanResult[]
@@ -179,7 +191,8 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScan(recipeData, progressC
         end
     end
 
-    print("FullScan: profession=" .. tostring(profession) .. " expansion=" .. tostring(expansionID))
+    print("FullScan: profession=" .. tostring(profession) .. " expansion=" .. tostring(expansionID)
+        .. (options and options.startFromZero and " mode=respec" or " mode=spend"))
     print("FullScan: recipeMapping=" .. recipeMappingCount .. " entries, nodeToRecipes=" .. GUTIL:Count(nodeToRecipes) .. " base nodes, baseNodes=" .. GUTIL:Count(baseNodes))
 
     -- Get cached recipe IDs for this profession
@@ -213,14 +226,15 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScan(recipeData, progressC
             progressCallback(progress, total)
         end
 
-        -- Get current rank from the API; fallback to 0 if API unavailable
+        -- Get current rank from the API; fallback to -1 if API unavailable
         local nodeInfo = configID and C_Traits.GetNodeInfo(configID, baseNodeID)
-        local currentRank
+        local liveRank
         if nodeInfo and nodeInfo.activeRank then
-            currentRank = nodeInfo.activeRank - 1 -- CraftSim convention: activeRank 0 = rank -1 (uninvested)
+            liveRank = nodeInfo.activeRank - 1 -- CraftSim convention: activeRank 0 = rank -1 (uninvested)
         else
-            currentRank = 0 -- Assume uninvested when API unavailable
+            liveRank = -1
         end
+        local currentRank = ResolveStartRank(liveRank, options)
 
         if currentRank < baseNodeEntry.maxRank then
             local affectedRecipeIDs = nodeToRecipes[baseNodeID]
@@ -263,7 +277,9 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScan(recipeData, progressC
                     return a.profitDelta > b.profitDelta
                 end)
 
-                local remainingRanks = baseNodeEntry.maxRank - math.max(0, currentRank)
+                -- Points remaining: activeRank span is maxRank - currentRank
+                -- (rank -1 → maxRank costs maxRank + 1 points)
+                local remainingRanks = baseNodeEntry.maxRank - currentRank
 
                 ---@type CraftSim.KnowledgePointValue.FullScanResult
                 local result = {
@@ -308,7 +324,8 @@ end
 ---@param onProgress fun(progress: number, total: number)
 ---@param onComplete fun(results: CraftSim.KnowledgePointValue.FullScanResult[])
 ---@param iterationsPerFrame? number default 3
-function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScanAsync(recipeData, onProgress, onComplete, iterationsPerFrame)
+---@param options? CraftSim.KnowledgePointValue.ScanOptions
+function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScanAsync(recipeData, onProgress, onComplete, iterationsPerFrame, options)
     ---@type CraftSim.KnowledgePointValue.FullScanResult[]
     local results = {}
 
@@ -378,12 +395,13 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScanAsync(recipeData, onPr
             end
 
             local nodeInfo = configID and C_Traits.GetNodeInfo(configID, baseNodeID)
-            local currentRank
+            local liveRank
             if nodeInfo and nodeInfo.activeRank then
-                currentRank = nodeInfo.activeRank - 1
+                liveRank = nodeInfo.activeRank - 1
             else
-                currentRank = 0
+                liveRank = -1
             end
+            local currentRank = ResolveStartRank(liveRank, options)
 
             if currentRank < baseNodeEntry.maxRank then
                 local affectedRecipeIDs = nodeToRecipes[baseNodeID]
@@ -408,7 +426,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScanAsync(recipeData, onPr
                         return a.profitDelta > b.profitDelta
                     end)
 
-                    local remainingRanks = baseNodeEntry.maxRank - math.max(0, currentRank)
+                    local remainingRanks = baseNodeEntry.maxRank - currentRank
 
                     tinsert(results, {
                         nodeID = baseNodeID,
@@ -431,15 +449,44 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:FullProfessionScanAsync(recipeData, onPr
 end
 
 
---- Calculate the profit delta for a single recipe when bumping one specific node.
+--- Apply a profession-stat delta from `fromStats` to `toStats` onto recipe professionStats.
+---@param professionStats CraftSim.ProfessionStats
+---@param fromStats CraftSim.ProfessionStats
+---@param toStats CraftSim.ProfessionStats
+local function ApplyProfessionStatDelta(professionStats, fromStats, toStats)
+    professionStats.skill:addValue(toStats.skill.value - fromStats.skill.value)
+    professionStats.multicraft:addValue(toStats.multicraft.value - fromStats.multicraft.value)
+    professionStats.resourcefulness:addValue(toStats.resourcefulness.value - fromStats.resourcefulness.value)
+    professionStats.ingenuity:addValue(toStats.ingenuity.value - fromStats.ingenuity.value)
+    professionStats.craftingspeed:addValue(toStats.craftingspeed.value - fromStats.craftingspeed.value)
+
+    local fromResExtra = fromStats.resourcefulness:GetExtraValue()
+    local toResExtra = toStats.resourcefulness:GetExtraValue()
+    if toResExtra ~= fromResExtra then
+        professionStats.resourcefulness:SetExtraValue(
+            professionStats.resourcefulness:GetExtraValue() + (toResExtra - fromResExtra))
+    end
+    local fromIngExtra = fromStats.ingenuity:GetExtraValue()
+    local toIngExtra = toStats.ingenuity:GetExtraValue()
+    if toIngExtra ~= fromIngExtra then
+        professionStats.ingenuity:SetExtraValue(
+            professionStats.ingenuity:GetExtraValue() + (toIngExtra - fromIngExtra))
+    end
+end
+
+--- Calculate the profit delta for a single recipe when bumping one specific node
+--- from `currentRank` to maxRank (full remaining investment).
+---
+--- Honors `currentRank` even when it differs from the live API rank (respec / virtual path).
+--- Key insight: RecipeData:UpdateProfessionStats() rebuilds from baseProfessionStats
+--- (API-frozen ranks), so we apply stat deltas manually instead of calling Update().
 ---@param recipeID RecipeID
 ---@param contextRecipeData CraftSim.RecipeData provides profession data context
 ---@param targetNodeID number the base node ID to bump
----@param currentRank number current rank of the node
+---@param currentRank number rank to evaluate from (may be virtual / blank-slate -1)
 ---@return number profitDelta
 ---@return CraftSim.KnowledgePointValueRecipeImpact? impact
 function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateRecipeNodeDelta(recipeID, contextRecipeData, targetNodeID, currentRank)
-    -- Create recipe data for this recipe
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
     if not recipeInfo then return 0, nil end
     if recipeInfo.isGatheringRecipe or recipeInfo.isDummyRecipe then return 0, nil end
@@ -455,15 +502,6 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateRecipeNodeDelta(recipeID, conte
     if not simRecipe.supportsCraftingStats then return 0, nil end
     if not simRecipe.specializationData then return 0, nil end
 
-    -- Base profit
-    local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
-
-    -- Find the target node in this recipe's spec data and bump its rank.
-    -- Key insight: RecipeData:UpdateProfessionStats() fetches spec contribution
-    -- from baseProfessionStats (Blizzard API, frozen at current ranks) and only
-    -- adds specData:GetExtraValues() (percentages). So bumping a node's rank and
-    -- calling recipe:Update() has NO effect on the recipe's professionStats.
-    -- Instead, we must manually apply the stat DELTA from the rank increase.
     local targetNode = nil
     for _, nodeData in ipairs(simRecipe.specializationData.nodeData) do
         if nodeData.nodeID == targetNodeID then
@@ -472,48 +510,25 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateRecipeNodeDelta(recipeID, conte
         end
     end
     if not targetNode then return 0, nil end
-    if targetNode.rank >= targetNode.maxRank then return 0, nil end
+    if currentRank >= targetNode.maxRank then return 0, nil end
 
-    -- Capture stats BEFORE rank bump
+    -- Move from live API rank to the requested evaluation rank when they differ
+    local liveStats = targetNode.professionStats:Copy()
+    if targetNode.rank ~= currentRank then
+        targetNode.rank = currentRank
+        targetNode:Update()
+        ApplyProfessionStatDelta(simRecipe.professionStats, liveStats, targetNode.professionStats)
+    end
+
+    simRecipe.resultData:Update()
+    simRecipe.priceData:Update()
+    local baseProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
+
     local oldStats = targetNode.professionStats:Copy()
-
-    -- Bump rank to maxRank (full investment simulation)
-    -- Simulating full investment captures ALL quality threshold crossings
-    -- and perk unlocks across the entire node's remaining ranks.
     targetNode.rank = targetNode.maxRank
     targetNode:Update()
+    ApplyProfessionStatDelta(simRecipe.professionStats, oldStats, targetNode.professionStats)
 
-    -- Calculate stat delta from full investment (current rank -> maxRank)
-    local newStats = targetNode.professionStats
-    local dSkill = newStats.skill.value - oldStats.skill.value
-    local dMulticraft = newStats.multicraft.value - oldStats.multicraft.value
-    local dResourcefulness = newStats.resourcefulness.value - oldStats.resourcefulness.value
-    local dIngenuity = newStats.ingenuity.value - oldStats.ingenuity.value
-    local dCraftingSpeed = newStats.craftingspeed.value - oldStats.craftingspeed.value
-
-    -- Apply stat delta directly to the recipe's professionStats
-    -- (bypassing UpdateProfessionStats which would reset from API baseProfessionStats)
-    simRecipe.professionStats.skill:addValue(dSkill)
-    simRecipe.professionStats.multicraft:addValue(dMulticraft)
-    simRecipe.professionStats.resourcefulness:addValue(dResourcefulness)
-    simRecipe.professionStats.ingenuity:addValue(dIngenuity)
-    simRecipe.professionStats.craftingspeed:addValue(dCraftingSpeed)
-
-    -- Also apply extraValues delta (resourcefulness extra items factor, ingenuity concentration factor)
-    local oldResExtra = oldStats.resourcefulness:GetExtraValue()
-    local newResExtra = newStats.resourcefulness:GetExtraValue()
-    if newResExtra ~= oldResExtra then
-        simRecipe.professionStats.resourcefulness:SetExtraValue(
-            simRecipe.professionStats.resourcefulness:GetExtraValue() + (newResExtra - oldResExtra))
-    end
-    local oldIngExtra = oldStats.ingenuity:GetExtraValue()
-    local newIngExtra = newStats.ingenuity:GetExtraValue()
-    if newIngExtra ~= oldIngExtra then
-        simRecipe.professionStats.ingenuity:SetExtraValue(
-            simRecipe.professionStats.ingenuity:GetExtraValue() + (newIngExtra - oldIngExtra))
-    end
-
-    -- Recalculate result data and prices with the modified stats (do NOT call simRecipe:Update())
     simRecipe.resultData:Update()
     simRecipe.priceData:Update()
     local newProfit = CraftSim.CALC:GetAverageProfit(simRecipe)
@@ -527,7 +542,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateRecipeNodeDelta(recipeID, conte
         currentProfit = baseProfit,
         projectedProfit = newProfit,
         profitDelta = delta,
-        weeklyEstimate = 0, -- placeholder for future CraftLog integration
+        weeklyEstimate = 0,
     }
 
     return delta, impact
@@ -581,6 +596,9 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CacheFullScanResults(crafterUID, results
 end
 
 
+--- @class CraftSim.KnowledgePointValue.ScanOptions
+--- @field startFromZero boolean? when true, evaluate all nodes from rank -1 (blank-slate respec)
+
 --- @class CraftSim.KnowledgePointValue.NodeResult
 --- @field nodeID number
 --- @field nodeName string
@@ -616,6 +634,20 @@ end
 --- @field roiPerPoint number profit delta for this single step
 --- @field cumulativeROI number cumulative total profit after all steps so far
 
+--- @class CraftSim.KnowledgePointValue.RespecNodeDelta
+--- @field nodeID number
+--- @field nodeName string
+--- @field nodeIcon number?
+--- @field currentRank number live rank before respec
+--- @field plannedRank number recommended rank after respec
+--- @field delta number plannedRank - currentRank (negative = refund)
+
+--- @class CraftSim.KnowledgePointValue.RespecComparison
+--- @field moves CraftSim.KnowledgePointValue.RespecNodeDelta[]
+--- @field plannedGain number cumulative ROI of the planned path from blank slate
+--- @field nodesChanged number
+--- @field pointsReallocated number sum of |delta| / 2-ish; absolute points moved off current tree
+
 
 --- Returns the number of unspent knowledge points for the given recipe's profession.
 --- Uses C_ProfSpecs.GetCurrencyInfoForSkillLine which provides numAvailable + currencyName.
@@ -630,6 +662,140 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:GetAvailableKnowledgePoints(recipeData)
     if not ok or not currencyInfo then return 0, nil end
 
     return currencyInfo.numAvailable or 0, currencyInfo.currencyName
+end
+
+
+--- Sum knowledge points already spent in the profession tree.
+--- CraftSim rank = activeRank - 1, so points spent on a node = activeRank.
+---@param recipeData CraftSim.RecipeData
+---@return number spentPoints
+function CraftSim.KNOWLEDGE_POINT_VALUE:GetSpentKnowledgePoints(recipeData)
+    local profession = recipeData.professionData.professionInfo.profession
+    local expansionID = recipeData.professionData.expansionID
+    local profData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not profData or not profData[profession] then return 0 end
+
+    local nodeDataMap = profData[profession].nodeData
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
+    if configID == 0 then configID = nil end
+    if not configID then return 0 end
+
+    local spent = 0
+    for nodeID, perkEntry in pairs(nodeDataMap) do
+        if perkEntry.base and perkEntry.maxRank and perkEntry.maxRank > 0 then
+            local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+            if nodeInfo and nodeInfo.activeRank then
+                spent = spent + math.max(0, nodeInfo.activeRank)
+            end
+        end
+    end
+
+    return spent
+end
+
+
+--- Total KP budget available after a full profession-tree respec: spent + unspent.
+---@param recipeData CraftSim.RecipeData
+---@return number totalBudget
+---@return number spentPoints
+---@return number unspentPoints
+function CraftSim.KNOWLEDGE_POINT_VALUE:GetRespecBudget(recipeData)
+    local unspent = self:GetAvailableKnowledgePoints(recipeData)
+    local spent = self:GetSpentKnowledgePoints(recipeData)
+    return spent + unspent, spent, unspent
+end
+
+
+--- Read live ranks for all base nodes in the profession.
+---@param recipeData CraftSim.RecipeData
+---@return table<number, {rank: number, maxRank: number, nodeName: string, nodeIcon: number?}>
+function CraftSim.KNOWLEDGE_POINT_VALUE:GetLiveBaseNodeRanks(recipeData)
+    ---@type table<number, {rank: number, maxRank: number, nodeName: string, nodeIcon: number?}>
+    local ranks = {}
+    local profession = recipeData.professionData.professionInfo.profession
+    local expansionID = recipeData.professionData.expansionID
+    local profData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID]
+    if not profData or not profData[profession] then return ranks end
+
+    local nodeDataMap = profData[profession].nodeData
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionData.skillLineID)
+    if configID == 0 then configID = nil end
+
+    for nodeID, perkEntry in pairs(nodeDataMap) do
+        if perkEntry.base and perkEntry.maxRank and perkEntry.maxRank > 0 then
+            local rank = -1
+            if configID then
+                local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+                if nodeInfo and nodeInfo.activeRank then
+                    rank = nodeInfo.activeRank - 1
+                end
+            end
+            ranks[nodeID] = {
+                rank = rank,
+                maxRank = perkEntry.maxRank,
+                nodeName = self:GetNodeName(nodeID, recipeData) or ("Node " .. nodeID),
+                nodeIcon = perkEntry.icon,
+            }
+        end
+    end
+
+    return ranks
+end
+
+
+--- Compare a planned respec path against the live tree.
+--- Collapses path steps into final planned ranks per node, then lists differences.
+---@param recipeData CraftSim.RecipeData
+---@param path CraftSim.KnowledgePointValue.PathStep[]
+---@return CraftSim.KnowledgePointValue.RespecComparison
+function CraftSim.KNOWLEDGE_POINT_VALUE:BuildRespecComparison(recipeData, path)
+    local live = self:GetLiveBaseNodeRanks(recipeData)
+    ---@type table<number, number>
+    local plannedRanks = {}
+    for nodeID, info in pairs(live) do
+        plannedRanks[nodeID] = -1 -- blank slate start
+    end
+    for _, step in ipairs(path) do
+        plannedRanks[step.nodeID] = step.rankAfter
+    end
+
+    ---@type CraftSim.KnowledgePointValue.RespecNodeDelta[]
+    local moves = {}
+    local nodesChanged = 0
+    local pointsReallocated = 0
+
+    for nodeID, info in pairs(live) do
+        local planned = plannedRanks[nodeID] or -1
+        local delta = planned - info.rank
+        if delta ~= 0 then
+            nodesChanged = nodesChanged + 1
+            pointsReallocated = pointsReallocated + math.abs(delta)
+            tinsert(moves, {
+                nodeID = nodeID,
+                nodeName = info.nodeName,
+                nodeIcon = info.nodeIcon,
+                currentRank = info.rank,
+                plannedRank = planned,
+                delta = delta,
+            })
+        end
+    end
+
+    table.sort(moves, function(a, b)
+        return math.abs(a.delta) > math.abs(b.delta)
+    end)
+
+    local plannedGain = 0
+    if #path > 0 then
+        plannedGain = path[#path].cumulativeROI or 0
+    end
+
+    return {
+        moves = moves,
+        plannedGain = plannedGain,
+        nodesChanged = nodesChanged,
+        pointsReallocated = pointsReallocated,
+    }
 end
 
 
@@ -727,6 +893,54 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:GetSavedWeeklyPlan(recipeData)
 end
 
 
+--- Saves a respec plan (blank-slate optimal path + comparison) in the DB.
+---@param recipeData CraftSim.RecipeData
+---@param path CraftSim.KnowledgePointValue.PathStep[]
+---@param availablePoints number
+---@param comparison CraftSim.KnowledgePointValue.RespecComparison
+function CraftSim.KNOWLEDGE_POINT_VALUE:SaveRespecPlan(recipeData, path, availablePoints, comparison)
+    local crafterUID = recipeData:GetCrafterUID()
+    local profession = recipeData.professionData.professionInfo.profession
+    if not crafterUID or not profession then return end
+
+    local totalGain = comparison and comparison.plannedGain or 0
+    if totalGain == 0 and #path > 0 then
+        totalGain = path[#path].cumulativeROI or 0
+    end
+
+    ---@type CraftSim.KnowledgePointValue.RespecPlan
+    local plan = {
+        path = path,
+        availablePoints = availablePoints,
+        totalGain = totalGain,
+        profession = profession,
+        savedAt = time(),
+        topNodeName = path[1] and path[1].nodeName or nil,
+        comparison = comparison,
+    }
+
+    CraftSim.DB.KNOWLEDGE_POINT_VALUE:SaveRespecPlan(crafterUID, profession, plan)
+end
+
+
+--- Returns the saved respec plan if fresh enough (3 days).
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.KnowledgePointValue.RespecPlan?
+function CraftSim.KNOWLEDGE_POINT_VALUE:GetSavedRespecPlan(recipeData)
+    local crafterUID = recipeData:GetCrafterUID()
+    local profession = recipeData.professionData.professionInfo.profession
+    if not crafterUID or not profession then return nil end
+
+    local plan = CraftSim.DB.KNOWLEDGE_POINT_VALUE:GetRespecPlan(crafterUID, profession)
+    if not plan then return nil end
+
+    local age = time() - (plan.savedAt or 0)
+    if age > 3 * 24 * 60 * 60 then return nil end
+
+    return plan
+end
+
+
 --- Greedy algorithm: given N available knowledge points, compute the optimal
 --- sequence of node investments that maximizes cumulative profit.
 ---
@@ -742,8 +956,9 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param numPoints number how many points to plan
 ---@param progressCallback? fun(phase: string, progress: number, total: number)
+---@param options? CraftSim.KnowledgePointValue.ScanOptions
 ---@return CraftSim.KnowledgePointValue.PathStep[]
-function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPath(recipeData, numPoints, progressCallback)
+function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPath(recipeData, numPoints, progressCallback, options)
     CraftSim.DEBUG:StartProfiling("KnowledgePointValue.OptimalPath")
 
     if numPoints <= 0 then
@@ -755,7 +970,7 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPath(recipeData, numPoin
     if progressCallback then progressCallback("scan", 0, 1) end
     local scanResults = self:FullProfessionScan(recipeData, function(progress, total)
         if progressCallback then progressCallback("scan", progress, total) end
-    end)
+    end, options)
 
     if #scanResults == 0 then
         CraftSim.DEBUG:StopProfiling("KnowledgePointValue.OptimalPath")
@@ -883,7 +1098,8 @@ end
 ---@param numPoints number
 ---@param onProgress fun(phase: string, progress: number, total: number)
 ---@param onComplete fun(path: CraftSim.KnowledgePointValue.PathStep[])
-function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPathAsync(recipeData, numPoints, onProgress, onComplete)
+---@param options? CraftSim.KnowledgePointValue.ScanOptions
+function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPathAsync(recipeData, numPoints, onProgress, onComplete, options)
     if numPoints <= 0 then
         onComplete({})
         return
@@ -1020,7 +1236,9 @@ function CraftSim.KNOWLEDGE_POINT_VALUE:CalculateOptimalPathAsync(recipeData, nu
                     frameDistributor:Continue()
                 end,
             }:Continue()
-        end
+        end,
+        nil, -- iterationsPerFrame default
+        options
     )
 end
 

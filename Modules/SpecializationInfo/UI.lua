@@ -194,6 +194,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         ---@class CraftSim.SPEC_INFO.FRAME.OPTIMIZE_CONTENT : Frame
         local oc = optimizeTab.content
 
+        ---@type "spend"|"respec"
+        oc.planMode = "spend"
+
         oc.modeText = GGUI.Text {
             parent = oc, anchorParent = oc,
             anchorA = "TOPLEFT", anchorB = "TOPLEFT",
@@ -201,12 +204,42 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
             offsetX = 15, offsetY = -32,
         }
 
-        -- KP label + input : même ligne que les boutons, côté gauche
+        -- Mode: Spend (unspent KP) | Respec (blank-slate full budget)
+        oc.spendModeButton = GGUI.Button {
+            parent = oc,
+            anchorPoints = { { anchorParent = oc, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 15, offsetY = -52 } },
+            label = "Spend", sizeX = 55, sizeY = 20,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                text = f.white("Spend Mode") .. "\n" ..
+                    "Plan where to put your " .. f.l("unspent") .. " knowledge points\n" ..
+                    "starting from your current tree ranks.",
+            },
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_POINT_VALUE.UI:SetPlanMode(oc, "spend")
+            end,
+        }
+        oc.respecModeButton = GGUI.Button {
+            parent = oc,
+            anchorPoints = { { anchorParent = oc.spendModeButton.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 3 } },
+            label = "Respec", sizeX = 55, sizeY = 20,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR",
+                text = f.white("Respec Mode") .. "\n" ..
+                    "Simulate a full tree reset and plan the optimal spend of\n" ..
+                    f.l("spent + unspent") .. " knowledge points (12.1 one-time respec).",
+            },
+            clickCallback = function()
+                CraftSim.KNOWLEDGE_POINT_VALUE.UI:SetPlanMode(oc, "respec")
+            end,
+        }
+
+        -- KP label + input : même ligne que les boutons d'action
         oc.pointsLabel = GGUI.Text {
             parent = oc, anchorParent = oc,
             anchorA = "TOPLEFT", anchorB = "TOPLEFT",
             text = f.white("KP:"), justifyOptions = { type = "H", align = "LEFT" },
-            offsetX = 15, offsetY = -58,
+            offsetX = 15, offsetY = -78,
         }
         -- GGUI.NumericInput utilise anchorParent/anchorA/anchorB (pas anchorPoints)
         oc.pointsInput = GGUI.NumericInput {
@@ -224,14 +257,14 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         -- Boutons alignés à droite, même ligne que KP:
         oc.fullScanButton = GGUI.Button {
             parent = oc,
-            anchorPoints = { { anchorParent = oc, anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", offsetX = -10, offsetY = -54 } },
+            anchorPoints = { { anchorParent = oc, anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", offsetX = -10, offsetY = -74 } },
             label = "Full Scan", sizeX = 80, sizeY = 22,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 text = f.white("Full Scan") .. "\n" ..
                     "Calculates ROI per knowledge point for every node\n" ..
                     "across all your cached recipes in this profession.\n\n" ..
-                    f.grey("Use once to build the value table.\n" ..
+                    f.grey("In Respec mode, evaluates from a blank tree.\n" ..
                     "Processing is spread across multiple frames."),
             },
             clickCallback = function()
@@ -242,16 +275,16 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         oc.optimizeButton = GGUI.Button {
             parent = oc,
             anchorPoints = { { anchorParent = oc.fullScanButton.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -3 } },
-            label = "Optimize", sizeX = 80, sizeY = 22,
+            label = "Optimize", sizeX = 90, sizeY = 22,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
-                text = f.white("Optimize") .. "\n" ..
+                text = f.white("Optimize / Plan Respec") .. "\n" ..
                     "Runs a full scan then greedily picks the highest-ROI\n" ..
                     "node at each step to build an optimal spending path.\n\n" ..
                     f.l("KP input") .. ": how many points to plan.\n" ..
-                    "Auto-detected from your unspent points (falls back to 5).\n\n" ..
-                    f.grey("The result is saved and can be reloaded instantly\n" ..
-                    "with " .. f.white("Load Plan") .. " without recalculating."),
+                    "Spend: unspent points (fallback 5).\n" ..
+                    "Respec: spent + unspent total budget.\n\n" ..
+                    f.grey("The result is saved and can be reloaded with Load Plan."),
             },
             clickCallback = function()
                 CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartOptimizePath(oc)
@@ -265,11 +298,8 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 text = f.white("Load Plan") .. "\n" ..
-                    "Displays the last saved plan instantly (no recalculation).\n\n" ..
-                    "If no plan has been saved yet, runs " .. f.white("Optimize") .. " automatically.\n\n" ..
-                    f.grey("Typical workflow:\n" ..
-                    "1. Click Optimize once per week.\n" ..
-                    "2. Use Load Plan to quickly review the saved path."),
+                    "Displays the last saved plan for the current mode instantly.\n\n" ..
+                    "If no plan has been saved yet, runs Optimize automatically.",
             },
             clickCallback = function()
                 CraftSim.KNOWLEDGE_POINT_VALUE.UI:StartWeeklyPlan(oc)
@@ -286,9 +316,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
         oc.nodeList = GGUI.FrameList {
             parent = oc, anchorParent = oc,
             anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-            hideScrollbar = false, sizeY = 272,
+            hideScrollbar = false, sizeY = 252,
             selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
-            rowHeight = 26, offsetX = 10, offsetY = -103, scale = 1,
+            rowHeight = 26, offsetX = 10, offsetY = -123, scale = 1,
             columnOptions = {
                 { label = "Node",    width = 165 },
                 { label = "Rank",    width = 70,  justifyOptions = { type = "H", align = "CENTER" } },
@@ -323,6 +353,8 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 rowFrame.roiBg = bg
             end,
         }
+
+        CraftSim.KNOWLEDGE_POINT_VALUE.UI:SetPlanMode(oc, "spend")
 
         GGUI.BlizzardTabSystem { infoTab, optimizeTab }
     end
