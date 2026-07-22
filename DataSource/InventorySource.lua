@@ -124,7 +124,7 @@ end
 --- Build reference item levels for each craft result quality (used when link quality tags are missing).
 ---@param recipeData CraftSim.RecipeData
 ---@return table<number, number>
-function CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
+local function BuildQualityItemLevels(recipeData)
     local levels = {}
     if not recipeData or not recipeData.resultData then
         return levels
@@ -886,6 +886,10 @@ end
 
 ---@class CraftSim.INVENTORY_SOURCE
 CraftSim.INVENTORY_SOURCE = {}
+
+function CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
+    return BuildQualityItemLevels(recipeData)
+end
 
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
