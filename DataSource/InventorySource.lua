@@ -232,9 +232,37 @@ local function ItemLocationMatchesInventoryQuery(itemLoc, query)
     return true
 end
 
+--- Whether a bound bag item still counts toward restock (warbound / account-bound).
+--- Character-soulbound stacks remain excluded when includeBound is false.
+---@param itemLoc ItemLocationMixin
+---@return boolean
+local function IsWarboundOrAccountBoundItem(itemLoc)
+    if not itemLoc:IsValid() then
+        return false
+    end
+    if C_Item.IsBoundToAccountUntilEquip and C_Item.IsBoundToAccountUntilEquip(itemLoc) then
+        return true
+    end
+    local itemID = C_Item.GetItemID(itemLoc)
+    if not itemID then
+        return false
+    end
+    if C_Item.IsItemBindToAccount and C_Item.IsItemBindToAccount(itemID) then
+        return true
+    end
+    if C_Item.IsItemBindToAccountUntilEquip and C_Item.IsItemBindToAccountUntilEquip(itemID) then
+        return true
+    end
+    local bindType = select(14, C_Item.GetItemInfo(itemID))
+    return bindType == Enum.ItemBind.ToWoWAccount
+        or bindType == Enum.ItemBind.ToBnetAccount
+        or bindType == Enum.ItemBind.ToBnetAccountUntilEquipped
+end
+
 --- Count item stacks in the current character's bags, bank, and warband bank.
 ---@param query CraftSim.InventoryQueryInput
----@param includeBound boolean? when true, soulbound stacks are included (quality still matched)
+---@param includeBound boolean? when true, character-soulbound stacks are included (quality still matched).
+--- Warbound/account-bound stacks are always counted (treatises, etc.).
 ---@return number
 local function CountInPlayerInventory(query, includeBound)
     local count = 0
@@ -249,9 +277,14 @@ local function CountInPlayerInventory(query, includeBound)
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
                 if itemLoc:IsValid()
-                    and (includeBound or not C_Item.IsBound(itemLoc))
                     and ItemLocationMatchesInventoryQuery(itemLoc, query) then
-                    count = count + (C_Item.GetStackCount(itemLoc) or 1)
+                    local isBound = C_Item.IsBound(itemLoc)
+                    local countThis = includeBound
+                        or not isBound
+                        or IsWarboundOrAccountBoundItem(itemLoc)
+                    if countThis then
+                        count = count + (C_Item.GetStackCount(itemLoc) or 1)
+                    end
                 end
             end
         end
@@ -260,7 +293,8 @@ local function CountInPlayerInventory(query, includeBound)
     return count
 end
 
---- Count unbound item stacks in the current character's bags, bank, and warband bank.
+--- Count unbound + warbound stacks in the current character's bags, bank, and warband bank.
+--- Character-soulbound stacks are excluded.
 ---@param query CraftSim.InventoryQueryInput
 ---@return number
 local function CountUnboundInPlayerInventory(query)
@@ -1058,7 +1092,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
         return cached or 0
     end
 
-    -- Bags/bank unbound only — does not include AH.
+    -- Bags/bank/warbank: unbound + warbound (exclude character-soulbound). AH posts separate.
     local count = CountUnboundInPlayerInventory(query)
     count = count + self:GetTradableAuctionCount(itemIDOrLink, includeAlts, query.qualityID, query.qualityItemLevels)
 
