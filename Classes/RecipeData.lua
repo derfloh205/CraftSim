@@ -3028,15 +3028,26 @@ end
 ---@alias RecipeCraftQueueUID string
 
 --- Returns a unique id for the recipe within the craftqueue
---- Unique in recipeID, depth, crafter, concentration usage, craft list and soulbound finishing reagent usage
+--- Unique in recipeID, depth, crafter, concentration usage, expected quality,
+--- craft list and soulbound finishing reagent usage
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
+    local expectedQuality = 0
+    if self.resultData then
+        if self.concentrating and self.resultData.expectedQualityConcentration then
+            expectedQuality = self.resultData.expectedQualityConcentration
+        else
+            expectedQuality = self.resultData.expectedQuality or 0
+        end
+    end
     return self:GetCrafterUID() ..
         ":" ..
         self.recipeID ..
         ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
         ":" .. tostring(self.craftListID or 0) ..
-        ":" .. tostring(self:IsUsingSoulboundFinishingReagent())
+        ":" .. tostring(self:IsUsingSoulboundFinishingReagent()) ..
+        ":" .. tostring(self.concentrating) ..
+        ":" .. tostring(expectedQuality)
 end
 
 ---@return boolean hasActiveSubRecipes

@@ -120,38 +120,44 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     return owned
 end
 
---- Restock target is per selected gear quality. Returns crafts still needed across those qualities.
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@return boolean
+local function UsesQualitySplitRestock(recipeData, recipeEntry)
+    local supported = recipeEntry and recipeEntry.supportedQualities
+    return recipeData.isGear
+        and recipeData.supportsQualities
+        and CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported)
+end
+
+---@class CraftSim.CRAFT_LISTS.QualityRestockTarget
+---@field qualityID number
+---@field amount number
+
+--- Per selected gear quality: crafts still needed for that quality alone.
+--- Unscoped AH stock is applied as a shared pool (highest qualities reduced first).
 ---@param recipeData CraftSim.RecipeData
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
 ---@param includeAltInventory boolean?
 ---@param restockPerQuality number
 ---@param subtractInventory boolean?
----@return number
-local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, includeAltInventory, restockPerQuality,
-                                                  subtractInventory)
-    local supported = recipeEntry and recipeEntry.supportedQualities
-    local useQualitySplit = recipeData.isGear
-        and recipeData.supportsQualities
-        and CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported)
-
-    if not useQualitySplit then
-        local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
-        if owned >= restockPerQuality then
-            return 0
-        end
-        if subtractInventory then
-            return math.max(0, restockPerQuality - owned)
-        end
-        return restockPerQuality
+---@return CraftSim.CRAFT_LISTS.QualityRestockTarget[]?
+local function GetQualityRestockTargets(recipeData, recipeEntry, includeAltInventory, restockPerQuality,
+                                        subtractInventory)
+    if not UsesQualitySplitRestock(recipeData, recipeEntry) then
+        return nil
     end
 
+    local supported = recipeEntry.supportedQualities
+    local qualityItemLevels = CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
+    ---@type CraftSim.CRAFT_LISTS.QualityRestockTarget[]
+    local targets = {}
     local neededTotal = 0
     local ownedTotal = 0
-    local queueAmount = 0
     local sharedItemID = nil
-    local qualityItemLevels = CraftSim.INVENTORY_SOURCE:BuildQualityItemLevels(recipeData)
 
-    for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
+    for qualityID = 1, recipeData.maxQuality do
+        local item = recipeData.resultData.itemsByQuality[qualityID]
         if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
             sharedItemID = item:GetItemID() or sharedItemID
             local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
@@ -161,52 +167,105 @@ local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, incl
                 qualityItemLevels) or 0
             neededTotal = neededTotal + restockPerQuality
             ownedTotal = ownedTotal + owned
+
+            local amount = 0
             if owned < restockPerQuality then
                 if subtractInventory then
-                    queueAmount = queueAmount + (restockPerQuality - owned)
+                    amount = restockPerQuality - owned
                 else
-                    queueAmount = queueAmount + restockPerQuality
+                    amount = restockPerQuality
+                end
+            end
+            if amount > 0 then
+                tinsert(targets, { qualityID = qualityID, amount = amount })
+            end
+        end
+    end
+
+    if neededTotal <= 0 or ownedTotal >= neededTotal then
+        return {}
+    end
+
+    -- Per-quality AH links can under-count; treat unscoped AH as a pool for the remaining deficit.
+    if #targets > 0 and sharedItemID then
+        local poolDeficit = neededTotal - ownedTotal
+        local unscopedAH = CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(
+            sharedItemID, includeAltInventory, nil, qualityItemLevels) or 0
+        if unscopedAH >= poolDeficit then
+            return {}
+        end
+        if subtractInventory and unscopedAH > 0 then
+            local remainingAH = unscopedAH
+            for i = #targets, 1, -1 do
+                if remainingAH <= 0 then
+                    break
+                end
+                local reduce = math.min(targets[i].amount, remainingAH)
+                targets[i].amount = targets[i].amount - reduce
+                remainingAH = remainingAH - reduce
+                if targets[i].amount <= 0 then
+                    table.remove(targets, i)
                 end
             end
         end
     end
 
-    if neededTotal <= 0 then
-        return 0
-    end
-
-    if ownedTotal >= neededTotal then
-        return 0
-    end
-
-    -- Per-quality AH links can under-count; treat unscoped AH as a pool for the remaining deficit.
-    if queueAmount > 0 and sharedItemID then
-        local poolDeficit = neededTotal - ownedTotal
-        local unscopedAH = CraftSim.INVENTORY_SOURCE:GetTradableAuctionCount(
-            sharedItemID, includeAltInventory, nil, qualityItemLevels) or 0
-        if unscopedAH >= poolDeficit then
-            return 0
-        end
-        if subtractInventory then
-            return math.max(0, poolDeficit - unscopedAH)
-        end
-    end
-
-    return queueAmount
+    return targets
 end
 
+--- Restock crafts still needed. With gear quality filters, sums per-quality deficits
+--- (prefer GetQualityRestockTargets + one queue entry per quality when queueing).
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@param includeAltInventory boolean?
+---@param restockPerQuality number
+---@param subtractInventory boolean?
+---@return number
+local function GetRestockQueueAmountForRecipeEntry(recipeData, recipeEntry, includeAltInventory, restockPerQuality,
+                                                  subtractInventory)
+    local qualityTargets = GetQualityRestockTargets(
+        recipeData, recipeEntry, includeAltInventory, restockPerQuality, subtractInventory)
+    if qualityTargets then
+        local queueAmount = 0
+        for _, target in ipairs(qualityTargets) do
+            queueAmount = queueAmount + target.amount
+        end
+        return queueAmount
+    end
+
+    local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
+    if owned >= restockPerQuality then
+        return 0
+    end
+    if subtractInventory then
+        return math.max(0, restockPerQuality - owned)
+    end
+    return restockPerQuality
+end
+
+---@param qualityID number
+---@return table
+local function OptimizeOptionsForQuality(qualityID)
+    return { minQuality = qualityID, maxQuality = qualityID }
+end
+
+--- When quality filters are checked but we are not splitting restock, constrain optimize to that range.
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
 ---@param recipeData CraftSim.RecipeData
 ---@param optimizeReagentOptions table?
 ---@return table?
 local function ApplySupportedQualitiesToOptimizeOptions(recipeEntry, recipeData, optimizeReagentOptions)
-    if not recipeData.isGear or not recipeData.supportsQualities then
+    if not UsesQualitySplitRestock(recipeData, recipeEntry) then
         return optimizeReagentOptions
     end
-    local supported = recipeEntry and recipeEntry.supportedQualities
-    if not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+    -- Prefer an existing exact target (OPTIMIZE_TARGET_N) if it is within the filter set.
+    if optimizeReagentOptions and optimizeReagentOptions.minQuality
+        and optimizeReagentOptions.maxQuality
+        and optimizeReagentOptions.minQuality == optimizeReagentOptions.maxQuality
+        and CraftSim.DB.CRAFT_LISTS.IsQualitySupported(optimizeReagentOptions.minQuality, recipeEntry.supportedQualities) then
         return optimizeReagentOptions
     end
+    local supported = recipeEntry.supportedQualities
     local minQ, maxQ = nil, nil
     for qualityID = 1, recipeData.maxQuality do
         if supported[qualityID] then
@@ -825,28 +884,23 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
     ---@param recipeData CraftSim.RecipeData
     ---@param recipeEntry CraftSim.CraftListRecipeEntry
-    ---@return number? queueAmount
-    local function getMaxQueueAmount(recipeData, recipeEntry)
+    ---@return number? restockCap restock target per quality (or overall) before inventory subtract; nil if not restocking
+    local function getRestockAmountCap(recipeData, recipeEntry)
         local offsetAmount = tonumber(options.offsetQueueAmount) or 0
-        local queueAmount
         local recipeMaxQueueAmount
 
         if not recipeData.resultData or not recipeData.resultData.expectedItem then
             return nil
         end
 
-        -- set maximum queue amount by cooldown charges if available
         if recipeData.cooldownData.isCooldownRecipe then
-            local charges = recipeData.cooldownData:GetCurrentCharges() or 0
-            recipeMaxQueueAmount = charges
+            recipeMaxQueueAmount = recipeData.cooldownData:GetCurrentCharges() or 0
         end
 
-        -- if no other max is set, the max we want to queue is the cd charges or if no cd the offsetamount if its greater than 0, otherwise just queue 1
         if not options.useTSMRestockExpression and not (recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0) then
-            return recipeMaxQueueAmount
+            return nil
         end
 
-        -- adapt by TSM restock expression if enabled and available, otherwise use restockmaxamount if set
         if TSM_API and options.useTSMRestockExpression then
             local itemLink = recipeData.resultData.expectedItem:GetItemLink()
             if itemLink then
@@ -866,7 +920,23 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 maxRestockAmount
         end
 
-        if not recipeMaxQueueAmount then
+        return recipeMaxQueueAmount
+    end
+
+    ---@param recipeData CraftSim.RecipeData
+    ---@param recipeEntry CraftSim.CraftListRecipeEntry
+    ---@return number? queueAmount
+    local function getMaxQueueAmount(recipeData, recipeEntry)
+        if not recipeData.resultData or not recipeData.resultData.expectedItem then
+            return nil
+        end
+
+        local restockCap = getRestockAmountCap(recipeData, recipeEntry)
+        if restockCap == nil then
+            -- No restock mode: queue by cooldown charges if available, else default (nil → 1 later)
+            if recipeData.cooldownData.isCooldownRecipe then
+                return recipeData.cooldownData:GetCurrentCharges() or 0
+            end
             return nil
         end
 
@@ -874,7 +944,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             recipeData,
             recipeEntry,
             options.includeAltInventory,
-            recipeMaxQueueAmount,
+            restockCap,
             options.subtractInventory)
     end
 
@@ -956,17 +1026,16 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         -- Derive reagent optimize options from the allocation mode
         -- OPTIMIZE_HIGHEST and legacy "OPTIMIZE" leave optimizeReagentOptions as nil (default: optimize to highest quality)
-        local optimizeReagentOptions = nil
+        local listOptimizeReagentOptions = nil
         local targetQuality = nil
         if reagentAllocation == "OPTIMIZE_MOST_PROFITABLE" then
-            optimizeReagentOptions = { highestProfit = true }
+            listOptimizeReagentOptions = { highestProfit = true }
         else
             targetQuality = tonumber(string.match(reagentAllocation, "^OPTIMIZE_TARGET_(%d+)$"))
             if targetQuality then
-                optimizeReagentOptions = { minQuality = targetQuality, maxQuality = targetQuality }
+                listOptimizeReagentOptions = { minQuality = targetQuality, maxQuality = targetQuality }
             end
         end
-        optimizeReagentOptions = ApplySupportedQualitiesToOptimizeOptions(recipeEntry, recipeData, optimizeReagentOptions)
 
         if recipeData.supportsQualities and options.enableConcentration then
             recipeData.concentrating = true
@@ -1005,115 +1074,191 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             end,
         } or nil
 
-        recipeData:Optimize {
-            optimizeReagentOptions = optimizeReagentOptions,
-            optimizeConcentration = options.optimizeConcentration,
-            optimizeConcentrationProgressCallback = function(progress)
-                if queueListsButton then
-                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%%s",
-                        professionIcon,
-                        recipeIcon,
-                        concentrationIcon,
-                        progress,
-                        FormatRecipeQueueProgressSuffix(recipeQueueProgress)))
+        ---@param optimizedRD CraftSim.RecipeData
+        ---@param optimizeReagentOptions table?
+        ---@param maxQueueAmount number?
+        ---@param requiredQuality number? when set, expected quality must match exactly
+        ---@param onDone fun()
+        local function finalizeOptimizedEntry(optimizedRD, optimizeReagentOptions, maxQueueAmount, requiredQuality, onDone)
+            if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                frameDistributor:Break()
+                return
+            end
+
+            if options.onlyProfitable and not options.skipOwnedMaterialCosts
+                and optimizedRD.averageProfitCached and optimizedRD.averageProfitCached <= 0 then
+                Logger:LogDebug("Skipping non-profitable recipe: " .. optimizedRD.recipeName)
+                onDone()
+                return
+            end
+
+            if targetQuality and optimizedRD.resultData.expectedQuality < targetQuality then
+                Logger:LogDebug("Skipping not targetQuality: " .. optimizedRD.recipeName)
+                onDone()
+                return
+            end
+
+            local effectiveQuality = GetEffectiveExpectedQuality(optimizedRD)
+            if requiredQuality then
+                if effectiveQuality ~= requiredQuality then
+                    Logger:LogDebug("Skipping recipe that did not reach quality " ..
+                        requiredQuality .. ": " .. optimizedRD.recipeName .. " (got " .. tostring(effectiveQuality) .. ")")
+                    onDone()
+                    return
                 end
-            end,
-            optimizeGear = options.optimizeProfessionTools,
-            optimizeFinishingReagentsOptions = finishingOptsWithSBF,
-            finally = function()
+            elseif not RecipeMeetsSupportedQualities(optimizedRD, recipeEntry) then
+                Logger:LogDebug("Skipping unsupported gear quality: " .. optimizedRD.recipeName)
+                onDone()
+                return
+            end
+
+            Logger:LogDebug("maxQueueAmount for recipe " ..
+                optimizedRD.recipeName ..
+                (requiredQuality and (" Q" .. requiredQuality) or "") ..
+                ": " .. (maxQueueAmount or "nil"))
+
+            if maxQueueAmount ~= nil and maxQueueAmount <= 0 then
+                Logger:LogDebug("Skipping recipe at or above restock cap: " .. optimizedRD.recipeName)
+                onDone()
+                return
+            end
+
+            local needsNoSBFScan = options.includeSoulboundFinishingReagents
+                and optimizedRD:IsUsingSoulboundFinishingReagent()
+
+            if needsNoSBFScan then
+                local recipeDataNoSBF = optimizedRD:Copy()
+                recipeDataNoSBF.craftListID = list.id
+
+                local finishingOptsNoSBF = options.optimizeFinishingReagents and {
+                    includeLocked = false,
+                    includeSoulbound = false,
+                    onlyHighestQualitySoulbound = false,
+                    permutationBased = (options.finishingReagentsAlgorithm or "SIMPLE") == "PERMUTATION",
+                } or nil
+
+                recipeDataNoSBF:Optimize {
+                    optimizeReagentOptions = optimizeReagentOptions,
+                    optimizeConcentration = options.optimizeConcentration,
+                    optimizeGear = options.optimizeProfessionTools,
+                    optimizeFinishingReagentsOptions = finishingOptsNoSBF,
+                    finally = function()
+                        if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
+                            frameDistributor:Break()
+                            return
+                        end
+
+                        tinsert(allScanEntries, {
+                            list = list,
+                            options = options,
+                            recipeEntry = recipeEntry,
+                            crafterUID = crafterUID,
+                            recipeData = optimizedRD,
+                            recipeDataNoSBF = recipeDataNoSBF,
+                            maxQueueAmount = maxQueueAmount,
+                        })
+                        onDone()
+                    end,
+                }
+            else
+                tinsert(allScanEntries, {
+                    list = list,
+                    options = options,
+                    recipeEntry = recipeEntry,
+                    crafterUID = crafterUID,
+                    recipeData = optimizedRD,
+                    recipeDataNoSBF = nil,
+                    maxQueueAmount = maxQueueAmount,
+                })
+                onDone()
+            end
+        end
+
+        ---@param rd CraftSim.RecipeData
+        ---@param optimizeReagentOptions table?
+        ---@param maxQueueAmount number?
+        ---@param requiredQuality number?
+        ---@param onDone fun()
+        local function optimizeAndEnqueue(rd, optimizeReagentOptions, maxQueueAmount, requiredQuality, onDone)
+            rd:Optimize {
+                optimizeReagentOptions = optimizeReagentOptions,
+                optimizeConcentration = options.optimizeConcentration,
+                optimizeConcentrationProgressCallback = function(progress)
+                    if queueListsButton then
+                        queueListsButton:SetText(string.format(" %s %s %s - %.0f%%%s",
+                            professionIcon,
+                            recipeIcon,
+                            concentrationIcon,
+                            progress,
+                            FormatRecipeQueueProgressSuffix(recipeQueueProgress)))
+                    end
+                end,
+                optimizeGear = options.optimizeProfessionTools,
+                optimizeFinishingReagentsOptions = finishingOptsWithSBF,
+                finally = function()
+                    finalizeOptimizedEntry(rd, optimizeReagentOptions, maxQueueAmount, requiredQuality, onDone)
+                end,
+            }
+        end
+
+        -- Gear quality filters + restock: one queue entry per selected quality still needed.
+        local restockCap = getRestockAmountCap(recipeData, recipeEntry)
+        local qualityTargets = restockCap and GetQualityRestockTargets(
+            recipeData,
+            recipeEntry,
+            options.includeAltInventory,
+            restockCap,
+            options.subtractInventory) or nil
+
+        if qualityTargets then
+            if #qualityTargets == 0 then
+                Logger:LogDebug("Skipping recipe at or above per-quality restock cap: " .. recipeData.recipeName)
+                frameDistributor:Continue()
+                return
+            end
+
+            -- Keep a pristine pre-optimize snapshot; each quality gets its own copy.
+            local pristineRecipeData = recipeData
+            local targetIndex = 1
+
+            local function processNextQualityTarget()
                 if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
                     frameDistributor:Break()
                     return
                 end
-
-                -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
-                -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
-                -- again during TriageAndQueue before the entry is actually queued.
-                -- When skipOwnedMaterialCosts is on, onlyProfitable is deferred to triage (pool order unknown here).
-                if options.onlyProfitable and not options.skipOwnedMaterialCosts
-                    and recipeData.averageProfitCached and recipeData.averageProfitCached <= 0 then
-                    Logger:LogDebug("Skipping non-profitable recipe: " .. recipeData.recipeName)
+                if targetIndex > #qualityTargets then
                     frameDistributor:Continue()
                     return
                 end
 
-                if targetQuality and recipeData.resultData.expectedQuality < targetQuality then
-                    Logger:LogDebug("Skipping not targetQuality: " .. recipeData.recipeName)
-                    frameDistributor:Continue()
-                    return
-                end
-                if not RecipeMeetsSupportedQualities(recipeData, recipeEntry) then
-                    Logger:LogDebug("Skipping unsupported gear quality: " .. recipeData.recipeName)
-                    frameDistributor:Continue()
-                    return
-                end
-                local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
-                Logger:LogDebug("maxQueueAmount for recipe " ..
-                    recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                local target = qualityTargets[targetIndex]
+                targetIndex = targetIndex + 1
 
-                if maxQueueAmount ~= nil and maxQueueAmount <= 0 then
-                    Logger:LogDebug("Skipping recipe at or above restock cap: " .. recipeData.recipeName)
-                    frameDistributor:Continue()
-                    return
-                end
+                local qualityRD = pristineRecipeData:Copy()
+                qualityRD.craftListID = list.id
 
-                -- If the recipe uses SBF and the list has the SBF option enabled,
-                -- also produce a without-SBF version so that the triage step can compare
-                -- the two correctly (e.g. for smart-concentration value ordering).
-                local needsNoSBFScan = options.includeSoulboundFinishingReagents
-                    and recipeData:IsUsingSoulboundFinishingReagent()
+                local qualityOptimizeOptions = OptimizeOptionsForQuality(target.qualityID)
+                Logger:LogDebug("Optimizing " .. qualityRD.recipeName .. " for quality " ..
+                    target.qualityID .. " x" .. target.amount)
 
-                if needsNoSBFScan then
-                    -- Copy the optimised state, then re-optimise finishing reagents
-                    -- with includeSoulbound = false to get the best non-SBF result.
-                    local recipeDataNoSBF = recipeData:Copy()
-                    recipeDataNoSBF.craftListID = list.id
+                optimizeAndEnqueue(
+                    qualityRD,
+                    qualityOptimizeOptions,
+                    target.amount,
+                    target.qualityID,
+                    processNextQualityTarget)
+            end
 
-                    -- Without-SBF finishing-reagent options (no progress callback needed).
-                    local finishingOptsNoSBF = options.optimizeFinishingReagents and {
-                        includeLocked = false,
-                        includeSoulbound = false,
-                        onlyHighestQualitySoulbound = false,
-                        permutationBased = (options.finishingReagentsAlgorithm or "SIMPLE") == "PERMUTATION",
-                    } or nil
+            processNextQualityTarget()
+            return
+        end
 
-                    recipeDataNoSBF:Optimize {
-                        optimizeReagentOptions = optimizeReagentOptions,
-                        optimizeConcentration = options.optimizeConcentration,
-                        optimizeGear = options.optimizeProfessionTools,
-                        optimizeFinishingReagentsOptions = finishingOptsNoSBF,
-                        finally = function()
-                            if not CraftSim.CRAFT_LISTS.isQueueingSelectedLists then
-                                frameDistributor:Break()
-                                return
-                            end
+        local optimizeReagentOptions = ApplySupportedQualitiesToOptimizeOptions(
+            recipeEntry, recipeData, listOptimizeReagentOptions)
 
-                            tinsert(allScanEntries, {
-                                list = list,
-                                options = options,
-                                recipeEntry = recipeEntry,
-                                crafterUID = crafterUID,
-                                recipeData = recipeData,
-                                recipeDataNoSBF = recipeDataNoSBF,
-                                maxQueueAmount = maxQueueAmount,
-                            })
-                            frameDistributor:Continue()
-                        end,
-                    }
-                else
-                    tinsert(allScanEntries, {
-                        list = list,
-                        options = options,
-                        recipeEntry = recipeEntry,
-                        crafterUID = crafterUID,
-                        recipeData = recipeData,
-                        recipeDataNoSBF = nil,
-                        maxQueueAmount = maxQueueAmount,
-                    })
-                    frameDistributor:Continue()
-                end
-            end,
-        }
+        optimizeAndEnqueue(recipeData, optimizeReagentOptions, getMaxQueueAmount(recipeData, recipeEntry), nil, function()
+            frameDistributor:Continue()
+        end)
     end
 
     GUTIL.FrameDistributor {
