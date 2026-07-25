@@ -1,13 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local GUTIL = CraftSim.GUTIL
-
 ---@class CraftSim.CooldownData : CraftSim.CraftSimObject
 ---@overload fun(recipeID: RecipeID): CraftSim.CooldownData
 CraftSim.CooldownData = CraftSim.CraftSimObject:extend()
-
-local Logger = CraftSim.DEBUG:RegisterLogger("CooldownData")
 
 ---@param recipeID RecipeID
 function CraftSim.CooldownData:new(recipeID)
@@ -44,25 +40,22 @@ function CraftSim.CooldownData:Update()
         return
     end
 
-    Logger:LogDebug("Update Recipe Cooldown: " .. tostring(self.recipeID))
     self.currentCharges = tonumber(currentCharges) or 0
     self.maxCharges = maxCharges or 0
 
     -- daily cooldowns will be treated as cooldown recipes with 1 charge and a cooldown of 24h per charge
     if isDayCooldown or (self.maxCharges == 0 and currentCooldown > 0) then
-        Logger:LogDebug("Is Day Cooldown or other cooldown")
         local spellCooldownInfo = C_Spell.GetSpellCooldown(self.recipeID)
-        self.cooldownPerCharge = spellCooldownInfo.duration
+        self.cooldownPerCharge = (spellCooldownInfo and spellCooldownInfo.duration) or 0
         self.maxCharges = 1
         self.currentCharges = 1
-        if spellCooldownInfo.startTime > 0 then
+        if spellCooldownInfo and spellCooldownInfo.startTime > 0 then
             self.currentCharges = 0
             local elapsedTimeSinceCooldownStart = (self.cooldownPerCharge - currentCooldown)
             self.startTimeCurrentCharge = GetServerTime() - elapsedTimeSinceCooldownStart
             self.startTime = self.startTimeCurrentCharge
         end
     else
-        Logger:LogDebug("not IsDayCooldown")
         local spellCharges = C_Spell.GetSpellCharges(self.recipeID)
         self.cooldownPerCharge = (spellCharges and spellCharges.cooldownDuration) or 0
         local apiCharges = tonumber(currentCharges) or 0

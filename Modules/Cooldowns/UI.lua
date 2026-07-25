@@ -117,32 +117,38 @@ local function TryRefreshCooldownDataFromTradeSkillUI(crafterUID, recipeID, cool
 end
 
 function CraftSim.COOLDOWNS.UI:OnTradeSkillItemCrafted()
-    CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
-    if CraftSim.COOLDOWNS.frame and CraftSim.COOLDOWNS.frame:IsVisible() then
-        CraftSim.COOLDOWNS.UI:UpdateTimers()
-    end
+    -- TRADE_SKILL_ITEM_CRAFTED_RESULT is synchronous and shared with CraftQueue/CraftLog.
+    -- Only persist the crafted recipe (shared CDs consolidate in Save), deferred off this frame.
+    local recipeData = CraftSim.CRAFTQ.currentlyCraftedRecipeData or CraftSim.MODULES.recipeData
+    local recipeID = recipeData and recipeData.recipeID
+    RunNextFrame(function()
+        if recipeID then
+            CraftSim.COOLDOWNS.UI:PersistPlayerCooldownForRecipe(recipeID)
+        end
+        if CraftSim.COOLDOWNS.frame and CraftSim.COOLDOWNS.frame:IsVisible() then
+            CraftSim.COOLDOWNS.UI:UpdateTimers()
+        end
+    end)
 end
 
---- Writes live cooldown state for learned recipes so saved data matches after a craft (all professions, not only the open tab).
-function CraftSim.COOLDOWNS.UI:PersistPlayerCooldownsForOpenProfession()
-    local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+--- Writes live cooldown state for one learned recipe. Shared profession CDs are stored under their shared key in Save.
+---@param recipeID RecipeID
+function CraftSim.COOLDOWNS.UI:PersistPlayerCooldownForRecipe(recipeID)
+    if not recipeID then
+        return
+    end
     if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
         return
     end
-    local allCooldowns = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
-    local recipeCooldowns = allCooldowns[playerUID]
-    if not recipeCooldowns then
+    local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local live = CraftSim.CooldownData(recipeID)
+    live:Update()
+    if not live.isCooldownRecipe then
         return
     end
-    for _, cooldownDataSerialized in pairs(recipeCooldowns) do
-        local cd = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
-        local recipeID = cd.recipeID
-        local live = CraftSim.CooldownData(recipeID)
-        live:Update()
-        local rInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-        if live.isCooldownRecipe and rInfo and rInfo.learned then
-            live:Save(playerUID)
-        end
+    local rInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(playerUID, recipeID) or C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if rInfo and rInfo.learned then
+        live:Save(playerUID)
     end
 end
 
