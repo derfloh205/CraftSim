@@ -48,7 +48,8 @@ CraftSim.CRAFTQ.pendingCraftResultUIRefresh = false
 --- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
 ---@type table<number, number>
 CraftSim.CRAFTQ.pendingWorkOrderSubmit = {}
-CraftSim.CRAFTQ.pendingWorkOrderSubmitLockSeconds = 1.0
+-- Keep long enough for CLAIMED_ORDER_UPDATED / isFulfillable to arrive under load; Sync clears early.
+CraftSim.CRAFTQ.pendingWorkOrderSubmitLockSeconds = 3.0
 
 --- Last claimed order ID seen from Blizzard; used to remove the queue row on release/fulfill without re-fetching all order lists.
 ---@type number?
@@ -1188,8 +1189,26 @@ function CraftSim.CRAFTQ:AddRecipe(options)
 end
 
 function CraftSim.CRAFTQ:ClearAll()
-    CraftSim.CRAFTQ.craftQueue:ClearAll()
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY") then
+        CraftSim.CRAFTQ.craftQueue:ClearAllForCharacter(CraftSim.UTIL:GetPlayerCrafterData())
+    else
+        CraftSim.CRAFTQ.craftQueue:ClearAll()
+    end
     CraftSim.CRAFTQ.UI:Update()
+end
+
+--- Whether a queue item should appear in the filtered Craft Queue view (and Clear / shopping list scope).
+---@param craftQueueItem CraftSim.CraftQueueItem
+---@return boolean
+function CraftSim.CRAFTQ:IsCraftQueueItemVisibleForFilter(craftQueueItem)
+    if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY") then
+        return true
+    end
+    local recipeData = craftQueueItem and craftQueueItem.recipeData
+    if not recipeData then
+        return false
+    end
+    return recipeData:GetCrafterUID() == CraftSim.UTIL:GetPlayerCrafterUID()
 end
 
 function CraftSim.CRAFTQ:QueueFavorites()

@@ -824,6 +824,10 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_MOXIE_SURPLUS_TT_PER_MOXIE = "Per " .. f.bb("Moxie"),
         PATRON_MOXIE_SURPLUS_BAG_ITEM_TOOLTIP_EXPECTED_VALUE = "Expected Value",
         CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL = "Clear All",
+        CRAFT_QUEUE_CLEAR_CHARACTER_BUTTON_LABEL = "Clear Character",
+        CRAFT_QUEUE_MENU_SHOW_CURRENT_CHARACTER_ONLY = "Show " .. f.bb("Current Character") .. " Only",
+        CRAFT_QUEUE_MENU_SHOW_CURRENT_CHARACTER_ONLY_TOOLTIP =
+        "When enabled, the Craft Queue list, Clear button, and shopping list only include recipes for the character you are logged in on.",
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING = f.bb("Smart ") ..
             f.gold("Concentration") .. f.bb(" Queueing"),
         CRAFT_QUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING_TOOLTIP = "If enabled, " ..

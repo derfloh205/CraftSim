@@ -938,6 +938,21 @@ function CraftSim.CRAFTQ.UI:Init()
                             not value)
                     end)
 
+                local currentCharacterOnlyCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_MENU_SHOW_CURRENT_CHARACTER_ONLY"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY", not value)
+                        CraftSim.CRAFTQ.UI:UpdateClearAllButtonLabel()
+                        CraftSim.CRAFTQ.UI:Update()
+                    end)
+                currentCharacterOnlyCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_MENU_SHOW_CURRENT_CHARACTER_ONLY_TOOLTIP"));
+                end);
+
                 local autoShoppingListCB = rootDescription:CreateCheckbox(
                     L("CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST"),
                     function()
@@ -1935,6 +1950,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 CraftSim.CRAFTQ:ClearAll()
             end
         })
+        self:UpdateClearAllButtonLabel()
 
         ---@type GGUI.Button
         queueTab.content.craftNextButton = GGUI.Button({
@@ -3419,10 +3435,12 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
         CraftSim.DEBUG:StartProfiling("- CraftQueue.FrameListUpdate Add Rows")
         for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
-            craftList:Add(
-                function(row)
-                    self:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
-                end)
+            if CraftSim.CRAFTQ:IsCraftQueueItemVisibleForFilter(craftQueueItem) then
+                craftList:Add(
+                    function(row)
+                        self:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
+                    end)
+            end
         end
 
         CraftSim.DEBUG:StopProfiling("- CraftQueue.FrameListUpdate Add Rows")
@@ -3856,9 +3874,24 @@ end
 
 function CraftSim.CRAFTQ.UI:Update()
     CraftSim.CRAFTQ.UI:UpdateQuickAccessBarDisplay()
+    CraftSim.CRAFTQ.UI:UpdateClearAllButtonLabel()
     CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+end
+
+function CraftSim.CRAFTQ.UI:UpdateClearAllButtonLabel()
+    local clearAllButton = CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame.content
+        and CraftSim.CRAFTQ.frame.content.queueTab
+        and CraftSim.CRAFTQ.frame.content.queueTab.content.clearAllButton
+    if not clearAllButton then
+        return
+    end
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOW_CURRENT_CHARACTER_ONLY") then
+        clearAllButton:SetText(f.l(L("CRAFT_QUEUE_CLEAR_CHARACTER_BUTTON_LABEL")))
+    else
+        clearAllButton:SetText(f.l(L("CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL")))
+    end
 end
 
 ---@param row GGUI.FrameList.Row
@@ -4153,11 +4186,10 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 local belowClaimedMinQuality = (woMinQCond and not woMinQCond.isMet)
                     or (claimedOrder.minQuality and
                         craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality)
-                local isPersonalOrder = recipeData.orderData and
-                    recipeData.orderData.orderType == Enum.CraftingOrderType.Personal
-                local canPreferSubmit = claimedOrder.isFulfillable and
-                    (not isPersonalOrder or pendingSubmit or not pc:IsAllowedToCraft())
-                if canPreferSubmit then
+                -- Always prefer Submit once Blizzard marks the order fulfillable. Personal orders can
+                -- still look "craftable" (recraft) after the first craft; showing Craft there causes
+                -- a second CraftRecipe call instead of FulfillOrder.
+                if claimedOrder.isFulfillable then
                     CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_SUBMIT"))
@@ -4180,9 +4212,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     end
                 elseif pendingSubmit then
                     -- Crafted just happened; wait for claimed-order state to flip to fulfillable.
-                    -- Keep button non-clickable here to avoid a "Craft" button without an action.
+                    -- Show Submit (disabled) so the next click is not aimed at another craft/recraft.
                     craftButtonColumn.craftButton:SetEnabled(false)
-                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_SUBMIT"))
                 elseif belowClaimedMinQuality then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     local minQIcon = claimedOrder.minQuality or
@@ -4207,6 +4239,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         local currentClaimedOrder = C_CraftingOrders.GetClaimedOrder()
                         if not (currentClaimedOrder and recipeData.orderData and
                                 currentClaimedOrder.orderID == recipeData.orderData.orderID) then
+                            CraftSim.CRAFTQ.UI:Update()
+                            return
+                        end
+                        -- Order already ready to turn in: never craft/recraft from this button.
+                        if currentClaimedOrder.isFulfillable then
                             CraftSim.CRAFTQ.UI:Update()
                             return
                         end

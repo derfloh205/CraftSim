@@ -261,8 +261,12 @@ end
 ---@param crafterData CraftSim.CrafterData
 function CraftSim.CraftQueue:ClearAllForCharacter(crafterData)
     self.craftQueueItems = GUTIL:Filter(self.craftQueueItems, function(craftQueueItem)
-        return craftQueueItem.recipeData:CrafterDataEquals(crafterData)
+        return not craftQueueItem.recipeData:CrafterDataEquals(crafterData)
     end)
+    wipe(self.recipeCrafterMap)
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCraftQueueUID()] = craftQueueItem
+    end
     self:CacheQueueItems()
 end
 
