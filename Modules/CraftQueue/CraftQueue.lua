@@ -28,7 +28,8 @@ local QB_STATUS = {
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "COMMODITY_PURCHASE_FAILED",
     "AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
-    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED" })
+    "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED", "BAG_UPDATE_DELAYED", "UNIT_AURA", "UNIT_SPELLCAST_SUCCEEDED",
+    "CRAFTINGORDERS_CRAFTER_AVAILABLE" })
 
 GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
     "CRAFTSIM_SETTINGS_UPDATED",
@@ -37,6 +38,10 @@ GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
+
+--- Pending callback stored by RequestCrafterOrdersWithRetry, invoked by CRAFTINGORDERS_CRAFTER_AVAILABLE.
+---@type function | nil
+CraftSim.CRAFTQ.pendingCrafterOrdersCallback = nil
 
 ---@type CraftSim.RecipeData | nil
 CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
@@ -379,6 +384,50 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
     self.UI:UpdateDisplay()
 end
 
+--- Replaces the (now-removed) callback field in CraftingOrderRequest.
+--- Calls C_CraftingOrders.RequestCrafterOrders and waits for the
+--- CRAFTINGORDERS_CRAFTER_AVAILABLE event.  On throttle/failure it retries
+--- up to maxRetries times (0.5 s delay each) before forwarding the failed
+--- result to onResult.
+---@param request table
+---@param onResult fun(result: Enum.CraftingOrderResult)
+---@param maxRetries? number default 3
+---@param _retryCount? number internal – do not pass
+function CraftSim.CRAFTQ:RequestCrafterOrdersWithRetry(request, onResult, maxRetries, _retryCount)
+    maxRetries = maxRetries or 3
+    _retryCount = _retryCount or 0
+    self.pendingCrafterOrdersCallback = function(result)
+        if result == Enum.CraftingOrderResult.Ok then
+            onResult(result)
+        elseif _retryCount < maxRetries then
+            Logger:LogDebug(
+                "RequestCrafterOrders retry {retry}/{maxRetries}",
+                _retryCount + 1, maxRetries)
+            C_Timer.After(0.5, function()
+                self:RequestCrafterOrdersWithRetry(request, onResult, maxRetries, _retryCount + 1)
+            end)
+        else
+            Logger:LogDebug(
+                "RequestCrafterOrders failed after {retries} retries: result {result}",
+                _retryCount,
+                result)
+            onResult(result)
+        end
+    end
+    C_CraftingOrders.RequestCrafterOrders(request)
+end
+
+--- Fires when C_CraftingOrders.RequestCrafterOrders completes (replaces the
+--- removed callback field in CraftingOrderRequest).
+---@param result Enum.CraftingOrderResult
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CRAFTER_AVAILABLE(result)
+    local cb = self.pendingCrafterOrdersCallback
+    self.pendingCrafterOrdersCallback = nil
+    if cb then
+        cb(result)
+    end
+end
+
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
@@ -442,8 +491,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 forCrafter = true,
                 offset = 0,
                 profession = profession,
-                ---@diagnostic disable-next-line: redundant-parameter
-                callback = C_FunctionContainers.CreateCallback(function(result)
+            }
+            self:RequestCrafterOrdersWithRetry(request, function(result)
                     if result == Enum.CraftingOrderResult.Ok then
                         local orders = C_CraftingOrders.GetCrafterOrders()
                         local claimedOrder = C_CraftingOrders.GetClaimedOrder()
@@ -773,10 +822,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                             "RequestCrafterOrders failed for {orderType}: result {result}",
                             CraftSim.UTIL:GetOrderTypeText(orderType),
                             result)
+                        frameDistributor:Continue()
                     end
-                end),
-            }
-            C_CraftingOrders.RequestCrafterOrders(request)
+                end)
         end
     }:Continue()
 end
