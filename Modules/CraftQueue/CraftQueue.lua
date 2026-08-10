@@ -508,10 +508,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 fetchedOrderTypes[orderType] = true
                 self:AccumulateWorkOrderIDs(availableOrderIDs)
                 local orders = C_CraftingOrders.GetCrafterOrders()
-                local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                if claimedOrder then
-                    tinsert(orders, claimedOrder)
-                end
+                        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                        if claimedOrder then
+                            tinsert(orders, claimedOrder)
+                        end
 
                 local isPublicOrder = orderType == Enum.CraftingOrderType.Public
                 local publicOrderCandidates = {}
@@ -790,38 +790,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 distributor:Continue()
                             end
-                            -- try to optimize for target quality
-                            if order.minQuality and order.minQuality > 0 then
-                                local maxQuality = (isPatronOrder and
-                                        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION"))
-                                    and math.max(order.minQuality - 1, 1) or order.minQuality
-                                recipeData:Optimize {
-                                    optimizeGear = true,
-                                    optimizeReagentOptions = {
-                                        maxQuality = maxQuality,
-                                    },
-                                    finally = queueRecipe,
-                                }
-                            else
-                                -- No target quality, but still run gear optimization so the queued
-                                -- entry uses TopGear's recommendation (and benefits from the
-                                -- multicraft-tool demotion for orders) instead of whatever was
-                                -- equipped when the RecipeData was constructed.
-                                recipeData:Optimize {
-                                    optimizeGear = true,
-                                    finally = queueRecipe,
-                                }
-                            end
-                        else
-                            local reason = "recipe not learned"
-                            if not recipeInfo then
-                                reason = "recipe info unavailable"
-                            end
-                            logSkippedWorkOrder(order, reason)
-                            distributor:Continue()
-                        end
-                    end
-                }:Continue()
+                        }:Continue()
             end)
         end
     }:Continue()
