@@ -216,6 +216,22 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+---@param skillLineID number
+---@return Enum.Profession? profession
+function CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+    local skillLineIDMap = CraftSim.CONST.TRADESKILLLINEIDS
+
+    for profession, expansionData in pairs(skillLineIDMap) do
+        for _, _skillLineID in pairs(expansionData) do
+            if _skillLineID == skillLineID then
+                return profession
+            end
+        end
+    end
+
+    return nil -- sometimes happens if not yet initialized
+end
+
 ---@param recipeExpansionID CraftSim.EXPANSION_IDS?
 ---@param itemID number?
 ---@param context string? debug context
@@ -383,7 +399,14 @@ function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
-function CraftSim.UTIL:GetSchematicFormByVisibility()
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return string crafterProfessionUID
+function CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
+    return tostring(crafterUID) .. ":" .. tostring(profession)
+end
+
+function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
     elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
@@ -440,13 +463,6 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
         table.insert(linksByQuality, outputItemData.hyperlink)
     end
     return linksByQuality
-end
-
----@return fun(ID: CraftSim.LOCALIZATION_IDS | string): string
-function CraftSim.UTIL:GetLocalizer()
-    return function(ID)
-        return CraftSim.LOCAL:GetText(ID)
-    end
 end
 
 --- Clock icon + localized current/max charges. Same data path as Recipe Scan (`GetCooldownDataForRecipeCrafter`).
@@ -651,6 +667,17 @@ function CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
         end
     end
     return nil
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return boolean
+function CraftSim.UTIL:CrafterHasProfession(crafterUID, profession)
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        return CraftSim.UTIL:IsProfessionLearned(profession)
+    end
+    local cachedRecipes = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
+    return cachedRecipes ~= nil and #cachedRecipes > 0
 end
 
 ---@param profession Enum.Profession
@@ -959,4 +986,28 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo, maxCount)
             end
         }:Continue()
     end)
+end
+
+---@return CraftSim.PROFESSIONS_TAB? selectedTab
+function CraftSim.UTIL:GetSelectedProfessionTab()
+    if not ProfessionsFrame:IsVisible() then
+        return nil
+    end
+
+    local selectedTabID = ProfessionsFrame.TabSystem.selectedTabID
+
+    local selectedTab
+    if selectedTabID == 1 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    elseif selectedTabID == 2 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO
+    elseif selectedTabID == 3 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    else
+        -- if its the first time opening after login/reload its nil
+        -- but also we can safely assume here its the recipe tab because its the default to open to
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    end
+
+    return selectedTab
 end

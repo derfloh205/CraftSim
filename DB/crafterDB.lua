@@ -377,6 +377,32 @@ function CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID, profession
 end
 
 ---@param crafterUID CrafterUID
+---@param profession? Enum.Profession when nil, invalidates all professions for this crafter
+function CraftSim.DB.CRAFTER:InvalidateProfessionGearCache(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local professionGear = CraftSimDB.crafterDB.data[crafterUID].professionGear
+    if not professionGear then
+        return
+    end
+
+    local function invalidate(professionID)
+        local professionGearData = professionGear[professionID]
+        if professionGearData then
+            professionGearData.cached = false
+            wipe(professionGearData.availableProfessionGear)
+        end
+    end
+
+    if profession then
+        invalidate(profession)
+    else
+        for professionID in pairs(professionGear) do
+            invalidate(professionID)
+        end
+    end
+end
+
+---@param crafterUID CrafterUID
 ---@return ClassFile?
 function CraftSim.DB.CRAFTER:GetClass(crafterUID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
@@ -476,6 +502,28 @@ function CraftSim.DB.CRAFTER:GetCrafterMoxieData(crafterUID, profession, expansi
     CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID] = CraftSimDB.crafterDB.data[crafterUID]
         .moxieData[expansionID] or {}
     local amount = CraftSimDB.crafterDB.data[crafterUID].moxieData[expansionID][profession]
+    if amount == nil then
+        return nil
+    end
+    return amount
+end
+
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@param quantity number
+function CraftSim.DB.CRAFTER:SaveCrafterAcuityData(crafterUID, expansionID, quantity)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData = CraftSimDB.crafterDB.data[crafterUID].acuityData or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData[expansionID] = quantity
+end
+
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@return number?
+function CraftSim.DB.CRAFTER:GetCrafterAcuityData(crafterUID, expansionID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].acuityData = CraftSimDB.crafterDB.data[crafterUID].acuityData or {}
+    local amount = CraftSimDB.crafterDB.data[crafterUID].acuityData[expansionID]
     if amount == nil then
         return nil
     end

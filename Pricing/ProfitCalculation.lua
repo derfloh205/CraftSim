@@ -12,8 +12,10 @@ function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor,
-            priceData.craftingCostsRequired)
+        local costBasis = recipeData.orderData
+            and priceData.craftingCostsNoOrderReagents
+            or priceData.craftingCostsRequired
+        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor, costBasis)
     end
 
     return savedCosts
@@ -54,7 +56,8 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
             local itemID = recipeData:GetItemIDFromReagentInfo(reagentdata)
             if itemID then
                 local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false)
-                local quantity = reagentdata.reagentInfo and reagentdata.reagentInfo.quantity or reagentdata.quantity or 0
+                local quantity = reagentdata.reagentInfo and reagentdata.reagentInfo.quantity or reagentdata.quantity or
+                    0
                 comissionProfit = comissionProfit + (quantity * price)
             end
         end
@@ -71,7 +74,8 @@ function CraftSim.CALC:CalculateCommissionProfit(recipeData)
             else
                 local itemID = Item:CreateFromItemLink(reward.itemLink):GetItemID()
                 if CraftSim.CONST.PATRON_ORDERS_REAGENT_BAG_REWARD_ITEMS[itemID] then
-                    comissionProfit = comissionProfit + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
+                    comissionProfit = comissionProfit +
+                        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE")
                 else
                     local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID)
                     price = price * CraftSim.CONST.AUCTION_HOUSE_CUT

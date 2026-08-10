@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CRAFT_LISTS
@@ -13,6 +13,15 @@ CraftSim.CRAFT_LISTS = {}
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftLists")
 
 CraftSim.CRAFT_LISTS.isQueueingSelectedLists = false
+
+---@param progress { total: number, count: number }?
+---@return string
+local function FormatRecipeQueueProgressSuffix(progress)
+    if not progress or progress.total < 1 then
+        return ""
+    end
+    return string.format(" (%d/%d)", progress.count, progress.total)
+end
 
 function CraftSim.CRAFT_LISTS:StopQueueSelectedLists()
     self.isQueueingSelectedLists = false
@@ -210,7 +219,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
                 if not concentrationGroups[key] then
                     concentrationGroups[key] = {
-                        currentAmount = (rd.concentrationData and rd.concentrationData:GetCurrentAmount()) or 0,
+                        currentAmount = (rd.concentrationData and rd.concentrationData:GetSpendableAmount()) or 0,
                         entries = {},
                     }
                 end
@@ -349,7 +358,7 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
         end
     end
 
-    CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:Update()
 end
 
 --- Build a tooltip text string summarizing a craft list's optimization and restock options
@@ -406,6 +415,12 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         return
     end
 
+    ---@type { total: number, count: number }
+    local recipeQueueProgress = { total = 0, count = 0 }
+    for _, list in ipairs(selectedLists) do
+        recipeQueueProgress.total = recipeQueueProgress.total + #GetRecipeEntries(list)
+    end
+
     ---@type CraftSim.CRAFT_LISTS.ScanEntry[]
     local allScanEntries = {}
 
@@ -418,9 +433,9 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
         end
         self.isQueueingSelectedLists = false
         self:SetQueueCraftListsButtonState(false)
-        CraftSim.CRAFTQ.UI:UpdateDisplay()
+        CraftSim.CRAFTQ.UI:Update()
         if not cancelled then
-            CraftSim.CRAFTQ:CreateAutoShoppingListAfterQueue()
+            CraftSim.CRAFTQ:TriggerQueueProcessFinishedEvent("craft_lists")
         end
     end
 
@@ -442,7 +457,7 @@ function CraftSim.CRAFT_LISTS:QueueSelectedLists(crafterUID)
 
         Logger:LogDebug("Scanning list: " .. list.name)
 
-        CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, processNextList)
+        CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, processNextList, recipeQueueProgress)
     end
 
     processNextList()
@@ -460,7 +475,8 @@ end
 ---@param crafterUID? CrafterUID
 ---@param allScanEntries CraftSim.CRAFT_LISTS.ScanEntry[] entries are appended in-place
 ---@param finally? function called after all recipes in the list have been scanned
-function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally)
+---@param recipeQueueProgress { total: number, count: number }? when set (e.g. multi-list queue), button text appends (n/total) while simulating
+function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally, recipeQueueProgress)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
@@ -544,6 +560,16 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
     ---@param frameDistributor GUTIL.FrameDistributor
     ---@param recipeEntry CraftSim.CraftListRecipeEntry
     local function processRecipe(frameDistributor, recipeEntry)
+        if recipeQueueProgress then
+            recipeQueueProgress.count = recipeQueueProgress.count + 1
+            if queueListsButton then
+                local suffix = FormatRecipeQueueProgressSuffix(recipeQueueProgress)
+                if suffix ~= "" then
+                    queueListsButton:SetText(L("CRAFT_LISTS_QUEUE_BUTTON_LABEL") .. suffix)
+                end
+            end
+        end
+
         local recipeID = recipeEntry.recipeID
         -- Try Cache
         local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
@@ -647,11 +673,12 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             permutationBased = (options.finishingReagentsAlgorithm or "SIMPLE") == "PERMUTATION",
             progressUpdateCallback = function(progress)
                 if queueListsButton then
-                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
+                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%%s",
                         professionIcon,
                         recipeIcon,
                         bagIcon,
-                        progress))
+                        progress,
+                        FormatRecipeQueueProgressSuffix(recipeQueueProgress)))
                 end
             end,
         } or nil
@@ -661,11 +688,12 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
             optimizeConcentration = options.optimizeConcentration,
             optimizeConcentrationProgressCallback = function(progress)
                 if queueListsButton then
-                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%",
+                    queueListsButton:SetText(string.format(" %s %s %s - %.0f%%%s",
                         professionIcon,
                         recipeIcon,
                         concentrationIcon,
-                        progress))
+                        progress,
+                        FormatRecipeQueueProgressSuffix(recipeQueueProgress)))
                 end
             end,
             optimizeGear = options.optimizeProfessionTools,
@@ -692,7 +720,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 end
                 local maxQueueAmount = getMaxQueueAmount(recipeData, recipeEntry)
                 Logger:LogDebug("maxQueueAmount for recipe " ..
-                recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
+                    recipeData.recipeName .. ": " .. (maxQueueAmount or "nil"))
 
                 -- If the recipe uses SBF and the list has the SBF option enabled,
                 -- also produce a without-SBF version so that the triage step can compare

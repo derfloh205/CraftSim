@@ -5,16 +5,16 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.SIMULATION_MODE.UI
+---@class CraftSim.SIMULATION_MODE.UI : CraftSim.Module.UI
 CraftSim.SIMULATION_MODE.UI = {}
 
----@class CraftSim.SIMULATION_MODE.UI.WORKORDER : GGUI.Frame
-CraftSim.SIMULATION_MODE.UI.WORKORDER = nil
+---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+CraftSim.SIMULATION_MODE.frame = nil
 
----@class CraftSim.SIMULATION_MODE.UI.NO_WORKORDER : GGUI.Frame
-CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = nil
+---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+CraftSim.SIMULATION_MODE.frameWO = nil
 
 local Logger = CraftSim.DEBUG:RegisterLogger("SimulationMode.UI")
 
@@ -33,9 +33,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         sizeX = x - sizeOffsetX,
         sizeY = y - sizeOffsetY,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = ProfessionsFrame.CraftingPage.SchematicForm:GetFrameLevel() + 10,
         hide = true,
@@ -48,257 +46,219 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         sizeX = woX,
         sizeY = woY - sizeOffsetY,
         offsetY = offsetY,
-        frameID = CraftSim.CONST.FRAMES.SIMULATION_MODE_WO,
         title = L("SIMULATION_MODE_LABEL"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.INIT.FRAMES,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = ProfessionsFrame.OrdersPage.OrderView.OrderDetails:GetFrameLevel() + 10,
         hide = true,
     })
 
-    local function createContent(frame)
-        local anchorPoints = {
-            {
-                anchorParent = frame.content,
-                offsetX = 10,
-                offsetY = -40,
-                anchorA = "TOPLEFT",
-                anchorB = "TOPLEFT",
-            },
-        }
+    local function createContent(frame, isWorkOrder)
+        ---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+        local frame = frame
+        local schematicForm = isWorkOrder and ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm or
+            ProfessionsFrame.CraftingPage.SchematicForm
 
-        local function onHeaderClick(qualityID)
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
-        end
+        -- Reagent Frames (Required + Optionals)
+        do
+            local anchorPoints = {
+                {
+                    anchorParent = frame.content,
+                    offsetX = 10,
+                    offsetY = -40,
+                    anchorA = "TOPLEFT",
+                    anchorB = "TOPLEFT",
+                },
+            }
 
-        local function onQuantityChanged(row, columns, qualityIndex)
-            local column = columns[qualityIndex + 1]
-            if not column or not column.itemID or not column.input then
-                return
+            local function onHeaderClick(qualityID)
+                CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
             end
 
-            local itemID = column.itemID
-            local quantity = column.input.currentValue
-
-            CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
-        end
-
-        frame.content.reagentList = CraftSim.WIDGETS.ReagentList {
-            parent = frame.content,
-            anchorPoints = anchorPoints,
-            onHeaderClick = onHeaderClick,
-            onQuantityChanged = onQuantityChanged,
-        }
-
-        local function CreateOptionalReagentItemSelector(offsetX)
-            local optionalReagentDropdown = GGUI.ItemSelector({
-                parent = frame.content,
-                anchorParent = frame.content,
-                anchorA = "BOTTOMLEFT",
-                anchorB = "BOTTOMLEFT",
-                offsetX = 10 + offsetX,
-                offsetY = 30,
-                sizeX = 30,
-                sizeY = 30,
-                emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
-                selectionFrameOptions = {
-                    backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-                    scale = 1.2,
-                },
-                onSelectCallback = function()
-                    CraftSim.MODULES:UpdateUI()
+            local function onQuantityChanged(row, columns, qualityIndex)
+                local column = columns[qualityIndex + 1]
+                if not column or not column.itemID or not column.input then
+                    return
                 end
-            })
-            return optionalReagentDropdown
-        end
 
-        ---@type GGUI.ItemSelector[]
-        frame.optionalReagentItemSelectors = {}
-        local dropdownSpacingX = 35
-        table.insert(frame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(0))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX * 2))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX * 3))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX * 4))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX * 5))
-        table.insert(frame.optionalReagentItemSelectors,
-            CreateOptionalReagentItemSelector(dropdownSpacingX * 6))
+                local itemID = column.itemID
+                local quantity = column.input.currentValue
+
+                CraftSim.SIMULATION_MODE:UpdateRequiredReagent(itemID, quantity, row)
+            end
+
+            frame.content.reagentList = CraftSim.WIDGETS.ReagentList {
+                parent = frame.content,
+                anchorPoints = anchorPoints,
+                onHeaderClick = onHeaderClick,
+                onQuantityChanged = onQuantityChanged,
+            }
+
+            local function CreateOptionalReagentItemSelector(offsetX)
+                local optionalReagentDropdown = GGUI.ItemSelector({
+                    parent = frame.content,
+                    anchorParent = frame.content,
+                    anchorA = "BOTTOMLEFT",
+                    anchorB = "BOTTOMLEFT",
+                    offsetX = 15 + offsetX,
+                    offsetY = 30,
+                    sizeX = 30,
+                    sizeY = 30,
+                    emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
+                    selectionFrameOptions = {
+                        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+                        scale = 1.2,
+                    },
+                    onSelectCallback = function()
+                        CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+                    end
+                })
+                return optionalReagentDropdown
+            end
+
+            ---@type GGUI.ItemSelector[]
+            frame.optionalReagentItemSelectors = {}
+            local dropdownSpacingX = 35
+            table.insert(frame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(0))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX * 2))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX * 3))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX * 4))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX * 5))
+            table.insert(frame.optionalReagentItemSelectors,
+                CreateOptionalReagentItemSelector(dropdownSpacingX * 6))
+        end
+        -- Crafting Details List
+        do
+            -- DETAILS FRAME
+            local detailsFrame = GGUI.Frame({
+                parent = frame.frame,
+                anchorParent = ProfessionsFrame,
+                anchorA = "TOPRIGHT",
+                anchorB = "TOPRIGHT",
+                offsetX = -5,
+                offsetY = -155,
+                sizeX = 350,
+                sizeY = 410,
+                frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+                frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+                frameLevel = 50,
+                raiseOnInteraction = true,
+            })
+
+            frame.content.detailsFrame = detailsFrame
+
+            local labelColumnWidth = 175
+            local valueColumnWidth = 105
+            local modColumnWidth = 45
+
+            detailsFrame.content.statsList = GGUI.FrameList {
+                parent = detailsFrame.content,
+                anchorParent = detailsFrame.content,
+                anchorA = "TOPLEFT",
+                anchorB = "TOPLEFT",
+                offsetX = 5,
+                offsetY = -10,
+                sizeY = 220,
+                hideScrollbar = true,
+                rowHeight = 22,
+                autoAdjustHeight = true,
+                selectionOptions = {
+                    noSelectionColor = true,
+                    hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
+                },
+                columnOptions = {
+                    { width = labelColumnWidth },
+                    { width = valueColumnWidth },
+                    { width = modColumnWidth },
+                },
+                rowConstructor = function(columns, row)
+                    local labelColumn = columns[1]
+                    local valueColumn = columns[2]
+                    local modColumn = columns[3]
+
+                    labelColumn.text = GGUI.Text {
+                        parent = labelColumn,
+                        anchorParent = labelColumn,
+                        anchorA = "LEFT",
+                        anchorB = "LEFT",
+                        justifyOptions = { type = "H", align = "LEFT" },
+                        offsetX = 5,
+                    }
+
+                    valueColumn.text = GGUI.Text {
+                        parent = valueColumn,
+                        anchorParent = valueColumn,
+                        anchorA = "RIGHT",
+                        anchorB = "RIGHT",
+                        justifyOptions = { type = "H", align = "RIGHT" },
+                        scale = 0.85,
+                    }
+
+                    modColumn.modInput = GGUI.NumericInput {
+                        parent = modColumn,
+                        anchorParent = modColumn,
+                        anchorA = "CENTER",
+                        anchorB = "CENTER",
+                        sizeX = 38,
+                        sizeY = 18,
+                        allowNegative = true,
+                        mouseWheelStep = 1,
+                        allowDecimals = false,
+                        initialValue = 0,
+                        onNumberValidCallback = function()
+                            CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+                        end,
+                        borderAdjustHeight = 1.4,
+                        borderAdjustWidth = 1.25,
+                    }
+                end,
+            }
+
+            -- Concentration toggle button (centered below the stats list)
+            local concentrationLabel = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
+                " " .. CraftSim.LOCAL:GetText("SIMULATION_MODE_CONCENTRATION")
+            local concentrationToggleButton = GGUI.ToggleButton {
+                parent = detailsFrame.content,
+                anchorPoints = { {
+                    anchorParent = detailsFrame.content.statsList.frame,
+                    anchorA = "TOP", anchorB = "BOTTOM",
+                    offsetY = -6,
+                } },
+                label = concentrationLabel,
+                adjustWidth = true,
+                sizeX = 20,
+                sizeY = 30,
+                isOn = false,
+                labelOn = concentrationLabel,
+                labelOff = concentrationLabel,
+                onToggleCallback = function()
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+                end,
+            }
+
+            detailsFrame.content.concentrationToggleButton = concentrationToggleButton
+
+            -- Quality meter widget (centered below concentration toggle button)
+            detailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
+                parent = detailsFrame.content,
+                anchorPoints = { {
+                    anchorParent = concentrationToggleButton.frame,
+                    anchorA = "TOP", anchorB = "BOTTOM",
+                    offsetY = -10,
+                } },
+                sizeX = detailsFrame:GetWidth() - 30,
+            }
+        end
     end
 
     createContent(CraftSim.SIMULATION_MODE.frame)
-    createContent(CraftSim.SIMULATION_MODE.frameWO)
-
-    local function createSimulationModeFrames(schematicForm, workOrder)
-        local frames = {}
-        local clickCallback =
-        ---@param self GGUI.Checkbox
-            function(self)
-                Logger:LogDebug("sim mode click callback")
-                CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
-                local bestQBox = schematicForm.AllocateBestQualityCheckbox
-                if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
-                    bestQBox:Click()
-                end
-                if CraftSim.SIMULATION_MODE.isActive then
-                    CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MODULES.recipeData)
-                end
-
-                CraftSim.MODULES:UpdateUI()
-            end
-
-        frames.toggleButton = GGUI.Checkbox {
-            parent = schematicForm,
-            anchorParent = schematicForm.Details,
-            anchorA = "BOTTOM",
-            anchorB = "TOP",
-            offsetX = -65,
-            offsetY = 40,
-            label = L("SIMULATION_MODE_LABEL"),
-            tooltip = L("SIMULATION_MODE_TOOLTIP"),
-            clickCallback = clickCallback,
-        }
-
-        frames.toggleButton:Hide()
-
-
-        -- DETAILS FRAME
-        local simModeDetailsFrame = GGUI.Frame({
-            parent = workOrder and CraftSim.SIMULATION_MODE.frameWO.frame or CraftSim.SIMULATION_MODE.frame.frame,
-            anchorParent = ProfessionsFrame,
-            anchorA = "TOPRIGHT",
-            anchorB = "TOPRIGHT",
-            offsetX = -5,
-            offsetY = -155,
-            sizeX = 350,
-            sizeY = 410,
-            frameID = (workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES
-                .CRAFTING_DETAILS,
-            frameTable = CraftSim.INIT.FRAMES,
-            frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
-            frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-            frameLevel = 50,
-            raiseOnInteraction = true,
-        })
-
-        frames.detailsFrame = simModeDetailsFrame
-
-        -- Stats FrameList (replaces old static layout)
-        local labelColumnWidth = 175
-        local valueColumnWidth = 105
-        local modColumnWidth = 45
-
-        simModeDetailsFrame.content.statsList = GGUI.FrameList {
-            parent = simModeDetailsFrame.content,
-            anchorParent = simModeDetailsFrame.content,
-            anchorA = "TOPLEFT",
-            anchorB = "TOPLEFT",
-            offsetX = 5,
-            offsetY = -10,
-            sizeY = 220,
-            hideScrollbar = true,
-            rowHeight = 22,
-            autoAdjustHeight = true,
-            selectionOptions = {
-                noSelectionColor = true,
-                hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE,
-            },
-            columnOptions = {
-                { width = labelColumnWidth },
-                { width = valueColumnWidth },
-                { width = modColumnWidth },
-            },
-            rowConstructor = function(columns, row)
-                local labelColumn = columns[1]
-                local valueColumn = columns[2]
-                local modColumn = columns[3]
-
-                labelColumn.text = GGUI.Text {
-                    parent = labelColumn,
-                    anchorParent = labelColumn,
-                    anchorA = "LEFT",
-                    anchorB = "LEFT",
-                    justifyOptions = { type = "H", align = "LEFT" },
-                    offsetX = 5,
-                }
-
-                valueColumn.text = GGUI.Text {
-                    parent = valueColumn,
-                    anchorParent = valueColumn,
-                    anchorA = "RIGHT",
-                    anchorB = "RIGHT",
-                    justifyOptions = { type = "H", align = "RIGHT" },
-                    scale = 0.85,
-                }
-
-                modColumn.modInput = GGUI.NumericInput {
-                    parent = modColumn,
-                    anchorParent = modColumn,
-                    anchorA = "CENTER",
-                    anchorB = "CENTER",
-                    sizeX = 38,
-                    sizeY = 18,
-                    allowNegative = true,
-                    mouseWheelStep = 1,
-                    allowDecimals = false,
-                    initialValue = 0,
-                    onNumberValidCallback = function()
-                        CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
-                    end,
-                    borderAdjustHeight = 1.4,
-                    borderAdjustWidth = 1.25,
-                }
-            end,
-        }
-
-        -- Concentration toggle button (centered below the stats list)
-        local concentrationLabel = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) ..
-            " " .. CraftSim.LOCAL:GetText("SIMULATION_MODE_CONCENTRATION")
-        local concentrationToggleBtn = GGUI.ToggleButton {
-            parent = simModeDetailsFrame.content,
-            anchorPoints = { {
-                anchorParent = simModeDetailsFrame.content.statsList.frame,
-                anchorA = "TOP", anchorB = "BOTTOM",
-                offsetY = -6,
-            } },
-            label = concentrationLabel,
-            adjustWidth = true,
-            sizeX = 20,
-            sizeY = 30,
-            isOn = false,
-            labelOn = concentrationLabel,
-            labelOff = concentrationLabel,
-            onToggleCallback = function()
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
-            end,
-        }
-
-        simModeDetailsFrame.content.concentrationToggleBtn = concentrationToggleBtn
-        frames.concentrationToggleMod = concentrationToggleBtn
-
-        -- Quality meter widget (centered below concentration toggle button)
-        simModeDetailsFrame.content.qualityMeter = CraftSim.WIDGETS.QualityMeter {
-            parent = simModeDetailsFrame.content,
-            anchorPoints = { {
-                anchorParent = concentrationToggleBtn.frame,
-                anchorA = "TOP", anchorB = "BOTTOM",
-                offsetY = -10,
-            } },
-            sizeX = simModeDetailsFrame:GetWidth() - 30,
-        }
-
-        return frames
-    end
-
-    CraftSim.SIMULATION_MODE.UI.NO_WORKORDER =
-        createSimulationModeFrames(ProfessionsFrame.CraftingPage.SchematicForm)
-    CraftSim.SIMULATION_MODE.UI.WORKORDER =
-        createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, true)
+    createContent(CraftSim.SIMULATION_MODE.frameWO, true)
 end
 
 function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
@@ -315,21 +275,23 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     -- would cause spec diff to be double-counted on every update cycle.
     local userMods = CraftSim.SIMULATION_MODE.userStatModifiers or {}
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local detailsFrame = simModeFrames.detailsFrame
+    ---@class CraftSim.SIMULATION_MODE.FRAME : GGUI.Frame
+    local frame = CraftSim.UTIL:IsWorkOrder() and CraftSim.SIMULATION_MODE.frameWO or CraftSim.SIMULATION_MODE.frame
+    local detailsFrame = frame.content.detailsFrame
 
     local statsList = detailsFrame.content.statsList --[[@as GGUI.FrameList]]
     statsList:Remove()
 
-    local function addStatRow(labelText, tooltipText, valueText, modValue, statKey)
+    local function addStatRow(label, tooltipText, value, modValue, statKey)
         statsList:Add(function(row)
             local columns = row.columns
-            local labelColumn = columns[1]
-            local valueColumn = columns[2]
+            local labelText = columns[1].text --[[@as GGUI.Text]]
+            local valueText = columns[2].text --[[@as GGUI.Text]]
             local modColumn = columns[3]
+            local modInput = modColumn.modInput --[[@as GGUI.NumericInput]]
 
-            labelColumn.text:SetText(labelText)
-            valueColumn.text:SetText(valueText)
+            labelText:SetText(label)
+            valueText:SetText(value)
 
             -- Row hover tooltip instead of legacy help button
             if tooltipText and tooltipText ~= "" then
@@ -343,23 +305,23 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             end
 
             if modValue ~= nil and statKey then
-                modColumn.modInput:SetValue(modValue)
-                modColumn.modInput.stat = statKey
-                modColumn.modInput:Show()
+                modInput:SetValue(modValue)
+                modInput.stat = statKey
+                modInput:Show()
                 -- Store reference for UpdateProfessionStatModifiersByInputs
                 if statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY then
-                    simModeFrames.recipeDifficultyMod = modColumn.modInput
+                    frame.recipeDifficultyMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT then
-                    simModeFrames.multicraftMod = modColumn.modInput
+                    frame.multicraftMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS then
-                    simModeFrames.resourcefulnessMod = modColumn.modInput
+                    frame.resourcefulnessMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL then
-                    simModeFrames.baseSkillMod = modColumn.modInput
+                    frame.baseSkillMod = modInput
                 elseif statKey == CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INGENUITY then
-                    simModeFrames.ingenuityMod = modColumn.modInput
+                    frame.ingenuityMod = modInput
                 end
             else
-                modColumn.modInput:Hide()
+                modInput:Hide()
             end
         end)
     end
@@ -507,7 +469,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             local formatMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
             local useUSFormat = formatMode == CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE.AMERICA_MAX_DATE
             local timeValueText
-            if concentrationData:GetCurrentAmount() < cost then
+            if not concentrationData:CanAfford(cost) then
                 timeValueText = f.bb(concentrationData:GetFormattedDateUntil(cost, useUSFormat))
             else
                 timeValueText = f.g("Ready")
@@ -527,14 +489,14 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     statsList:UpdateDisplay()
 
     -- Concentration toggle button visibility and state
-    simModeFrames.concentrationToggleMod:SetVisible(showConcentration)
+    frame.content.detailsFrame.content.concentrationToggleButton:SetVisible(showConcentration)
     if showConcentration then
-        --simModeFrames.concentrationToggleMod:SetToggle(recipeData.concentrating)
+        frame.content.detailsFrame.content.concentrationToggleButton:SetToggle(recipeData.concentrating)
     end
 
     -- Quality meter
     if recipeData.supportsQualities then
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
+        local thresholds = CraftSim.RECIPE_INFO:GetQualityThresholds(recipeData.maxQuality,
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         detailsFrame.content.qualityMeter:Update(recipeData, thresholds)
     else
@@ -561,20 +523,23 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
         itemSelector.isCurrencySlot = false
         itemSelector.selectedCurrencyID = nil
         itemSelector.currencyOptionalSlot = nil
+        itemSelector.slot = nil
         itemSelector:Hide()
     end
 
     local selectorIndex = 1
 
     local requiredSelectableReagentSlot = recipeData.reagentData.requiredSelectableReagentSlot
-
     for _, optionalReagentSlot in pairs(GUTIL:Concat({ { requiredSelectableReagentSlot }, optionalReagentSlots, finishingReagentSlots })) do
         local currentSelector = optionalReagentItemSelectors[selectorIndex]
+        if not currentSelector or not optionalReagentSlot then
+            break
+        end
         selectorIndex = selectorIndex + 1
 
+        currentSelector.slot = optionalReagentSlot
         currentSelector.currencyOptionalSlot = optionalReagentSlot
         currentSelector.isCurrencySlot = optionalReagentSlot:IsCurrency()
-
         currentSelector:SetItems(optionalReagentSlot:GetItemSelectorEntries())
 
         if optionalReagentSlot.activeReagent then
@@ -592,56 +557,33 @@ function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData
     end
 end
 
-function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
-    local recipeData = CraftSim.MODULES.recipeData
-    if not recipeData then
-        return -- In what case is this nil?
-    end
+function CraftSim.SIMULATION_MODE.UI:VisibleByContext()
+    return CraftSim.SIMULATION_MODE.isActive
+end
 
-
-    Logger:LogDebug("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
-
-    -- frame visiblities
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+function CraftSim.SIMULATION_MODE.UI:Update()
+    CraftSim.SIMULATION_MODE.frame:Hide()
+    CraftSim.SIMULATION_MODE.frameWO:Hide()
 
     if not CraftSim.SIMULATION_MODE.isActive then
-        CraftSim.SIMULATION_MODE.frame:Hide()
-        CraftSim.SIMULATION_MODE.frameWO:Hide()
         return
     end
 
-    local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frameWO or
-        CraftSim.SIMULATION_MODE.frame
-    local otherFrame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and CraftSim.SIMULATION_MODE.frame or
-        CraftSim.SIMULATION_MODE.frameWO
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    if not recipeData then
+        return
+    end
+
+    Logger:LogVerbose("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
+
+    local frame = CraftSim.UTIL:IsWorkOrder() and CraftSim.SIMULATION_MODE.frameWO or
+        CraftSim.SIMULATION_MODE.frame --[[@as CraftSim.SIMULATION_MODE.FRAME]]
     frame:Show()
-    otherFrame:Hide()
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+    -- TODO: move to buff module and react to event
+    --CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
 
-    local craftingDetailsFrame = simModeFrames.detailsFrame
-    Logger:LogDebug("craftingDetailsFrame: " .. tostring(craftingDetailsFrame))
-
-
-    if not CraftSim.SIMULATION_MODE.isActive then
-        -- only hide, they will be shown automatically if available
-        for _, selector in pairs(frame.optionalReagentItemSelectors) do
-            selector:Hide()
-        end
-    end
-
-    --CraftSim.FRAME:ToggleFrame(craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
-end
-
-function CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local simModeFrames = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        simModeFrames = CraftSim.SIMULATION_MODE.UI.WORKORDER
-    else
-        simModeFrames = CraftSim.SIMULATION_MODE.UI.NO_WORKORDER
-    end
-
-    return simModeFrames
+    -- Rebuild selector visibility/options from current simulated recipe state.
+    -- This ensures optional + finishing reagent selectors are visible after UI refreshes.
+    self:InitOptionalReagentItemSelectors(recipeData)
 end

@@ -2,14 +2,20 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.CUSTOMER_HISTORY : Frame
+---@class CraftSim.CUSTOMER_HISTORY : CraftSim.Module
 ---@field UI CraftSim.CUSTOMER_HISTORY.UI
 ---@field frame CraftSim.CUSTOMER_HISTORY.FRAME
 CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
+
+CraftSim.MODULES:RegisterModule("MODULE_CUSTOMER_HISTORY", CraftSim.CUSTOMER_HISTORY, {
+    label = L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
+})
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory")
 
@@ -84,7 +90,7 @@ end
 ---@param customerHistory CraftSim.DB.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
     CraftSim.DB.CUSTOMER_HISTORY:Delete(customerHistory)
-    CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
+    CraftSim.CUSTOMER_HISTORY.UI:Update()
     if row == CraftSim.CUSTOMER_HISTORY.frame.content.customerList.selectedRow then
         CraftSim.CUSTOMER_HISTORY.frame.content.customerList:SelectRow(1)
     end

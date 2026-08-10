@@ -10,7 +10,7 @@ import requests
 debugBuild = None
 debugModule = None
 
-dataScripts = ["ToolEnchantData", "ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData", "SpecializationData"]
+dataScripts = ["ToolEnchantData", "ConcentrationCurveData", "EnchantData", "OptionalReagentData", "ReagentWeightData", "MulticraftSupportData", "SpecializationData"]
 
 def getLatestBuildVersion(product="wow"):  # "wow" = retail
     url = "https://wago.tools/api/builds/latest"
