@@ -39,9 +39,10 @@ GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ, {
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
 
---- Pending callback stored by RequestCrafterOrdersWithRetry, invoked by CRAFTINGORDERS_CRAFTER_AVAILABLE.
----@type function | nil
-CraftSim.CRAFTQ.pendingCrafterOrdersCallback = nil
+--- FIFO queue of pending callbacks stored by RequestCrafterOrdersWithRetry,
+--- consumed one-by-one by CRAFTINGORDERS_CRAFTER_AVAILABLE.
+---@type fun(result: Enum.CraftingOrderResult)[]
+CraftSim.CRAFTQ.pendingCrafterOrdersCallbacks = {}
 
 ---@type CraftSim.RecipeData | nil
 CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
@@ -396,7 +397,7 @@ end
 function CraftSim.CRAFTQ:RequestCrafterOrdersWithRetry(request, onResult, maxRetries, _retryCount)
     maxRetries = maxRetries or 3
     _retryCount = _retryCount or 0
-    self.pendingCrafterOrdersCallback = function(result)
+    tinsert(self.pendingCrafterOrdersCallbacks, function(result)
         if result == Enum.CraftingOrderResult.Ok then
             onResult(result)
         elseif _retryCount < maxRetries then
@@ -413,7 +414,7 @@ function CraftSim.CRAFTQ:RequestCrafterOrdersWithRetry(request, onResult, maxRet
                 result)
             onResult(result)
         end
-    end
+    end)
     C_CraftingOrders.RequestCrafterOrders(request)
 end
 
@@ -421,8 +422,7 @@ end
 --- removed callback field in CraftingOrderRequest).
 ---@param result Enum.CraftingOrderResult
 function CraftSim.CRAFTQ:CRAFTINGORDERS_CRAFTER_AVAILABLE(result)
-    local cb = self.pendingCrafterOrdersCallback
-    self.pendingCrafterOrdersCallback = nil
+    local cb = tremove(self.pendingCrafterOrdersCallbacks, 1)
     if cb then
         cb(result)
     end
