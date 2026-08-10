@@ -508,10 +508,10 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 fetchedOrderTypes[orderType] = true
                 self:AccumulateWorkOrderIDs(availableOrderIDs)
                 local orders = C_CraftingOrders.GetCrafterOrders()
-                        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                        if claimedOrder then
-                            tinsert(orders, claimedOrder)
-                        end
+                local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                if claimedOrder then
+                    tinsert(orders, claimedOrder)
+                end
 
                 local isPublicOrder = orderType == Enum.CraftingOrderType.Public
                 local publicOrderCandidates = {}
@@ -662,7 +662,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 totalKpForCostCheck = totalKpForCostCheck + 1
                             end
 
-                            recipeData:SetCheapestQualityReagentsMax()         -- considers patron reagents
+                            recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                             recipeData:Update()
 
                             Logger:LogDebug("Knowledge points rewarded: {knowledgePointsRewarded}",
@@ -790,7 +790,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 distributor:Continue()
                             end
-                        }:Continue()
+                        end
+                    end,
+                }:Continue()
             end)
         end
     }:Continue()
