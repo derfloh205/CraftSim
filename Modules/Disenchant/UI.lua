@@ -232,7 +232,7 @@ function CraftSim.DISENCHANT.UI:Update()
 end
 
 function CraftSim.DISENCHANT.UI:VisibleByContext()
-
+    return CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_DISENCHANT")
 end
 
 function CraftSim.DISENCHANT.UI:ShowAndLoad()
