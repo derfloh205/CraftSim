@@ -760,8 +760,23 @@ function CraftSim.LOCAL_KO:GetData()
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "제작 목록 가져오기",
         CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "집중 활성화",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "집중 최적화",
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("스마트 집중") .. f.bb(" 대기열 추가"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP = "포인트당 집중 효율이 가장 높은 순서대로 제작법을 대기열에 추가하여 사용 가능한 집중력을 모두 소모합니다.",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION_TOOLTIP =
+            "집중 포인트당 수익을 최대화하도록 재료 품질을 상향 조정",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION = f.gold("집중"),
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED = "끔",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED_TOOLTIP =
+            "이 목록을 스캔하거나 대기열에 넣을 때 집중을 사용하지 않음",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED = "활성화",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED_TOOLTIP =
+            "집중으로 최적화하되, 현재 집중력 풀에 맞춰 대기열 수량을 제한하지 않고 전체 보충 수량을 대기열에 추가",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE = "최고 효율 1개",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE_TOOLTIP =
+            "전문 기술당 집중 효율이 가장 높은 제작법만 사용 가능한 집중력만큼 대기열에 추가",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI = "여러 제작법",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI_TOOLTIP =
+            "집중 효율 순으로 여러 제작법을 대기열에 추가하여 사용 가능한 집중력을 모두 사용",
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_POOL_ONLY =
+            f.bb("최고 효율 1개") .. " 및 " .. f.bb("여러 제작법") .. "에서만 적용",
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "집중" .. f.bb(" 대기열 수량 보정"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP = "활성화하면 " .. f.bb("독창") .. "에 따른 예상 제작 횟수만큼 집중 제작 대기열을 추가합니다.",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "전문 기술 도구 최적화",
