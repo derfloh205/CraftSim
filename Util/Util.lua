@@ -425,6 +425,18 @@ function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craf
 end
 
 ---@param recipeID number
+---@param recipeInfo TradeSkillRecipeInfo?
+---@return boolean
+function CraftSim.UTIL:IsGearRecipe(recipeID, recipeInfo)
+    recipeInfo = recipeInfo or C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if not recipeInfo or not recipeInfo.hyperlink or recipeInfo.isEnchantingRecipe then
+        return false
+    end
+    local itemInfoInstant = { C_Item.GetItemInfoInstant(recipeInfo.hyperlink) }
+    return not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
+end
+
+---@param recipeID number
 function CraftSim.UTIL:IsCurrentExpansionRecipe(recipeID)
     local currentExpansionID = GetExpansionLevel()
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
