@@ -377,6 +377,32 @@ function CraftSim.DB.CRAFTER:ClearProfessionGearAvailable(crafterUID, profession
 end
 
 ---@param crafterUID CrafterUID
+---@param profession? Enum.Profession when nil, invalidates all professions for this crafter
+function CraftSim.DB.CRAFTER:InvalidateProfessionGearCache(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    local professionGear = CraftSimDB.crafterDB.data[crafterUID].professionGear
+    if not professionGear then
+        return
+    end
+
+    local function invalidate(professionID)
+        local professionGearData = professionGear[professionID]
+        if professionGearData then
+            professionGearData.cached = false
+            wipe(professionGearData.availableProfessionGear)
+        end
+    end
+
+    if profession then
+        invalidate(profession)
+    else
+        for professionID in pairs(professionGear) do
+            invalidate(professionID)
+        end
+    end
+end
+
+---@param crafterUID CrafterUID
 ---@return ClassFile?
 function CraftSim.DB.CRAFTER:GetClass(crafterUID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
