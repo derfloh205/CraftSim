@@ -12,8 +12,10 @@ function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor,
-            priceData.craftingCostsRequired)
+        local costBasis = recipeData.orderData
+            and priceData.craftingCostsNoOrderReagents
+            or priceData.craftingCostsRequired
+        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor, costBasis)
     end
 
     return savedCosts
