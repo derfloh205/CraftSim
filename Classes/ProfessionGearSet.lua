@@ -113,7 +113,39 @@ function CraftSim.ProfessionGearSet:GetProfessionGearListOrderedRight()
     end
 end
 
-function CraftSim.ProfessionGearSet:Equals(professionGearSet)
+--- Whether the expected tool slot is satisfied by equipped gear (multicraft-aware).
+---@param equippedSet CraftSim.ProfessionGearSet
+---@return boolean
+function CraftSim.ProfessionGearSet:ToolSlotMatchesEquipped(equippedSet)
+    local expected = self.tool
+    local equipped = equippedSet.tool
+    local recipeData = self.recipeData
+
+    if not expected.item then
+        return equipped.item == nil
+    end
+    if not equipped.item then
+        return false
+    end
+
+    if recipeData:ShouldAvoidMulticraftOnlyTools() then
+        if equipped:IsMulticraftOnlyTool() then
+            return false
+        end
+        if expected:IsMulticraftOnlyTool() then
+            if equipped:GetResourcefulnessValue() > 0 then
+                return equipped.professionStats.skill.value >= expected.professionStats.skill.value
+            end
+            return false
+        end
+    end
+
+    return equipped:Equals(expected)
+end
+
+---@param professionGearSet CraftSim.ProfessionGearSet
+---@param equippedAware? boolean when true, tool slot uses ToolSlotMatchesEquipped (expected vs equipped)
+function CraftSim.ProfessionGearSet:Equals(professionGearSet, equippedAware)
     if self.recipeData.recipeID ~= professionGearSet.recipeData.recipeID then
         return false
     end
@@ -141,7 +173,11 @@ function CraftSim.ProfessionGearSet:Equals(professionGearSet)
 
         local existsTool = toolA.item == nil and toolB.item == nil
         if not existsTool then
-            existsTool = toolB.item and toolB:Equals(toolA)
+            if equippedAware then
+                existsTool = self:ToolSlotMatchesEquipped(professionGearSet)
+            else
+                existsTool = toolB.item and toolB:Equals(toolA)
+            end
         end
 
         if existsGear1 and existsGear2 and existsTool then
@@ -162,7 +198,11 @@ function CraftSim.ProfessionGearSet:Equals(professionGearSet)
 
         local existsTool = toolA.item == nil and toolB.item == nil
         if not existsTool then
-            existsTool = toolB.item and toolB:Equals(toolA)
+            if equippedAware then
+                existsTool = self:ToolSlotMatchesEquipped(professionGearSet)
+            else
+                existsTool = toolB.item and toolB:Equals(toolA)
+            end
         end
 
         if existsGear and existsTool then
@@ -177,7 +217,7 @@ function CraftSim.ProfessionGearSet:IsEquipped()
     local equippedSet = CraftSim.ProfessionGearSet(self.recipeData)
     equippedSet:LoadCurrentEquippedSet()
 
-    return self:Equals(equippedSet)
+    return self:Equals(equippedSet, true)
 end
 
 --- Whether the expected item for this logical slot is satisfied by what is equipped (same rules as Equals).
@@ -199,15 +239,12 @@ function CraftSim.ProfessionGearSet:ExpectedSlotMatchesEquipped(slot, equippedSe
         if slot == "gear2" then
             return equippedSet.gear2.item ~= nil and equippedSet.gear2:Equals(expected)
         end
-        return equippedSet.tool.item ~= nil and equippedSet.tool:Equals(expected)
+        return self:ToolSlotMatchesEquipped(equippedSet)
     end
 
     local expected = self[slot] ---@type CraftSim.ProfessionGear
     if slot == "tool" then
-        if not expected.item then
-            return equippedSet.tool.item == nil
-        end
-        return equippedSet.tool.item ~= nil and equippedSet.tool:Equals(expected)
+        return self:ToolSlotMatchesEquipped(equippedSet)
     end
 
     -- gear1 / gear2: either jewelry slot may hold the piece

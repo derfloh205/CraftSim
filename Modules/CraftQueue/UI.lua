@@ -1533,6 +1533,34 @@ function CraftSim.CRAFTQ.UI:Init()
                         L("CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP"))
                 end);
 
+                local optimizeFinishingCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS", not value)
+                    end)
+
+                optimizeFinishingCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_TOOLTIP"))
+                end);
+
+                local includeSoulboundFinishingCB = rootDescription:CreateCheckbox(
+                    L("CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND")
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND", not value)
+                    end)
+
+                includeSoulboundFinishingCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_TOOLTIP"))
+                end);
+
                 local orderTypeSubMenu = rootDescription:CreateButton(L("CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON"))
 
                 orderTypeSubMenu:CreateCheckbox(L("CRAFT_QUEUE_PATRON_ORDERS_BUTTON"), function()
@@ -1723,6 +1751,49 @@ function CraftSim.CRAFTQ.UI:Init()
                         end,
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST_INPUT")
+
+                local maxDurationOptionKey = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"),
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get(maxDurationOptionKey),
+                        borderAdjustWidth = 1.32,
+                        minValue = 0,
+                        tooltipOptions = {
+                            anchor = "ANCHOR_TOP",
+                            owner = frame,
+                            text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_TOOLTIP")),
+                        },
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey,
+                                tonumber(input.currentValue) or 0)
+                        end,
+                    }
+                    frame.resetButton = GGUI.Button {
+                        parent = frame,
+                        anchorParent = frame.input.frame,
+                        anchorA = "RIGHT",
+                        anchorB = "LEFT",
+                        offsetX = -2,
+                        sizeX = 12,
+                        sizeY = 20,
+                        adjustWidth = true,
+                        label = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET"),
+                        clickCallback = function()
+                            local defaultValue = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS[maxDurationOptionKey]
+                            frame.input:SetValue(defaultValue)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey, defaultValue)
+                        end,
+                    }
+                end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_INPUT")
 
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
                     frame.label = GGUI.Text {
