@@ -7,6 +7,7 @@ local Auctionator = Auctionator
 local GUTIL = CraftSim.GUTIL
 
 local f = GUTIL:GetFormatter()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Shopping")
 
@@ -87,6 +88,113 @@ function CraftSim.SHOPPING:DeleteAllCraftSimShoppingLists()
         self:DeleteAuctionatorShoppingList(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME ..
             " " .. tostring(crafterUID))
     end
+end
+
+---@return boolean
+function CraftSim.SHOPPING:IsAuctionatorAvailable()
+    return C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])
+        and Auctionator ~= nil
+        and Auctionator.API ~= nil
+        and Auctionator.API.v1 ~= nil
+        and Auctionator.API.v1.ConvertToSearchString ~= nil
+end
+
+---@param searchTerm table
+---@param listName string?
+---@return boolean
+function CraftSim.SHOPPING:AddSearchTermToShoppingList(searchTerm, listName)
+    if not self:IsAuctionatorAvailable() then
+        return false
+    end
+
+    listName = listName or CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
+    local api = Auctionator.API.v1
+    local searchString = api.ConvertToSearchString(addonName, searchTerm)
+
+    if api.AddToShoppingList then
+        local ok = pcall(api.AddToShoppingList, addonName, listName, { searchTerm })
+        if ok then
+            return true
+        end
+        ok = pcall(api.AddToShoppingList, listName, { searchTerm })
+        if ok then
+            return true
+        end
+    end
+
+    local listManager = Auctionator.Shopping and Auctionator.Shopping.ListManager
+    local listExists = listManager and listManager:GetIndexForName(listName)
+    if not listExists then
+        local ok = pcall(api.CreateShoppingList, addonName, listName, { searchString })
+        return ok == true
+    end
+
+    local success, items = pcall(api.GetShoppingListItems, addonName, listName)
+    if not success or not items then
+        return false
+    end
+
+    local oldSearchString = GUTIL:Find(items, function(existingSearchString)
+        local terms = api.ConvertFromSearchString(addonName, existingSearchString)
+        return terms
+            and terms.searchString == searchTerm.searchString
+            and (terms.tier or 0) == (searchTerm.tier or 0)
+            and (terms.categoryKey or "") == (searchTerm.categoryKey or "")
+    end)
+
+    if oldSearchString then
+        local oldTerms = api.ConvertFromSearchString(addonName, oldSearchString)
+        searchTerm.quantity = (oldTerms.quantity or 1) + (searchTerm.quantity or 1)
+        local newSearchString = api.ConvertToSearchString(addonName, searchTerm)
+        local ok = pcall(api.AlterShoppingListItem, addonName, listName, oldSearchString, newSearchString)
+        return ok == true
+    end
+
+    local mergedSearchStrings = GUTIL:Map(items, function(existingSearchString)
+        return existingSearchString
+    end)
+    tinsert(mergedSearchStrings, searchString)
+    local ok = pcall(api.CreateShoppingList, addonName, listName, mergedSearchStrings)
+    return ok == true
+end
+
+---@param recipeID number
+---@param recipeName string?
+---@param sourceText string?
+---@return boolean
+function CraftSim.SHOPPING:AddRecipeToShoppingList(recipeID, recipeName, sourceText)
+    if not CraftSim.RECIPE_ACQUISITION then
+        return false
+    end
+
+    local shoppingSearch = CraftSim.RECIPE_ACQUISITION:GetRecipeShoppingSearch(recipeID, recipeName, sourceText)
+    if not shoppingSearch then
+        return false
+    end
+
+    ---@type table
+    local searchTerm = {
+        searchString = shoppingSearch.itemName,
+        isExact = false,
+        quantity = 1,
+    }
+    if shoppingSearch.categoryKey then
+        searchTerm.categoryKey = shoppingSearch.categoryKey
+    end
+
+    if not self:AddSearchTermToShoppingList(searchTerm) then
+        return false
+    end
+
+    CraftSim.DEBUG:SystemPrint(
+        f.l("CraftSim: ")
+            .. string.format(L("RECIPE_ACQUISITION_ADDED_TO_SHOPPING_LIST"), f.bb(shoppingSearch.itemName)))
+
+    if self.shoppingListViewFrame and self.shoppingListViewFrame:IsVisible() then
+        self:UpdateShoppingListViewDisplay()
+    end
+
+    return true
 end
 
 function CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
