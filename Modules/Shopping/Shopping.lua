@@ -8,6 +8,7 @@ local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
 local f = GUTIL:GetFormatter()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Shopping")
 

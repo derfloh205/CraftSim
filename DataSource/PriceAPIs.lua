@@ -360,17 +360,10 @@ function CraftSimTSM:GetSmartRestockAmount(recipeData)
     local restockExpr = CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS")
     local target = TSM_API.GetCustomPriceValue(restockExpr, tsmStr) or 0
 
-    -- Owned inventory via TSM_API
-    local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
-    local owned = numPlayer + numAuctions
-
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS") then
-        owned = owned + numAlts + numAltAuctions
-    end
-
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK") then
-        owned = owned + (TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0)
-    end
+    -- Owned inventory via tradable stock only (exclude soulbound bags/bank).
+    local includeAlts = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    local itemID = resultData.expectedItem:GetItemID()
+    local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemLink or itemID, includeAlts)
 
     local needed = math.max(0, target - owned)
     return needed, target, owned

@@ -1724,6 +1724,49 @@ function CraftSim.CRAFTQ.UI:Init()
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST_INPUT")
 
+                local maxDurationOptionKey = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"
+                GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
+                    frame.label = GGUI.Text {
+                        parent = frame,
+                        anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                        text = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS"),
+                        justifyOptions = { type = "H", align = "LEFT" },
+                    }
+                    frame.input = GGUI.NumericInput {
+                        parent = frame, anchorParent = frame,
+                        sizeX = 30, sizeY = 25, offsetX = 5,
+                        anchorA = "RIGHT", anchorB = "RIGHT",
+                        initialValue = CraftSim.DB.OPTIONS:Get(maxDurationOptionKey),
+                        borderAdjustWidth = 1.32,
+                        minValue = 0,
+                        tooltipOptions = {
+                            anchor = "ANCHOR_TOP",
+                            owner = frame,
+                            text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_TOOLTIP")),
+                        },
+                        onNumberValidCallback = function(input)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey,
+                                tonumber(input.currentValue) or 0)
+                        end,
+                    }
+                    frame.resetButton = GGUI.Button {
+                        parent = frame,
+                        anchorParent = frame.input.frame,
+                        anchorA = "RIGHT",
+                        anchorB = "LEFT",
+                        offsetX = -2,
+                        sizeX = 12,
+                        sizeY = 20,
+                        adjustWidth = true,
+                        label = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET"),
+                        clickCallback = function()
+                            local defaultValue = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS[maxDurationOptionKey]
+                            frame.input:SetValue(defaultValue)
+                            CraftSim.DB.OPTIONS:Save(maxDurationOptionKey, defaultValue)
+                        end,
+                    }
+                end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_INPUT")
+
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
                     frame.label = GGUI.Text {
                         parent = frame,
@@ -1749,6 +1792,23 @@ function CraftSim.CRAFTQ.UI:Init()
                         end,
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_INPUT")
+
+                local skipOwnedMaterialCostsCB = patronOrderOptions:CreateCheckbox(
+                    L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_CHECKBOX"),
+                    function()
+                        return CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                    end, function()
+                        local value = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS")
+                        CraftSim.DB.OPTIONS:Save(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS", not value)
+                    end)
+
+                skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"));
+                end);
 
                 patronOrderOptions:CreateDivider()
 
@@ -1866,11 +1926,45 @@ function CraftSim.CRAFTQ.UI:Init()
                 adjustWidth = true,
                 sizeX = 15,
                 offsetY = -2,
-                offsetX = 5,
+                offsetX = 0,
                 clickCallback = function()
                     CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
                 end,
                 label = L("CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL")
+            })
+
+            queueTab.content.shoppingListViewButton = GGUI.Button({
+                parent = queueTab.content,
+                anchorParent = queueTab.content.createAuctionatorShoppingList.frame,
+                anchorA = "BOTTOM",
+                anchorB = "TOP",
+                adjustWidth = true,
+                sizeX = 15,
+                offsetY = -2,
+                offsetX = 0,
+                clickCallback = function()
+                    if CraftSim.SHOPPING and CraftSim.SHOPPING.ToggleShoppingListView then
+                        CraftSim.SHOPPING:ToggleShoppingListView()
+                    end
+                end,
+                label = "Shopping List",
+            })
+        else
+            queueTab.content.shoppingListViewButton = GGUI.Button({
+                parent = queueTab.content,
+                anchorParent = queueTab.content,
+                anchorA = "BOTTOM",
+                anchorB = "BOTTOM",
+                adjustWidth = true,
+                sizeX = 15,
+                offsetY = -2,
+                offsetX = 0,
+                clickCallback = function()
+                    if CraftSim.SHOPPING and CraftSim.SHOPPING.ToggleShoppingListView then
+                        CraftSim.SHOPPING:ToggleShoppingListView()
+                    end
+                end,
+                label = "Shopping List",
             })
         end
 
@@ -2394,7 +2488,7 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                         content.selectedListID,
                         crafterUID,
                         row.recipeID)
-                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, {
+                    local menuItems = {
                         {
                             type = "custom",
                             build = function(rootDescription)
@@ -2432,19 +2526,63 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                     content.selectedListID .. ":" .. row.recipeID)
                             end
                         },
-                        {
-                            type = "button",
-                            label = f.r("Remove Recipe"),
-                            onClick = function()
-                                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-                                CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
-                                    content.selectedListID,
-                                    crafterUID,
-                                    row.recipeID)
-                                CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                    }
+
+                    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(row.recipeID)
+                    if CraftSim.UTIL:IsGearRecipe(row.recipeID, recipeInfo) and recipeInfo.supportsQualities then
+                        local maxQuality = recipeInfo.maxQuality or 5
+                        local qualityChildren = {}
+                        for qualityID = 1, maxQuality do
+                            local q = qualityID
+                            local qualityLabel = GUTIL:GetQualityIconString(q, 20, 20)
+                            if q <= 2 then
+                                qualityLabel = qualityLabel .. " | " .. GUTIL:GetQualityIconStringSimplified(q, 20, 20)
                             end
-                        },
+                            table.insert(qualityChildren, {
+                                type = "checkbox",
+                                label = qualityLabel,
+                                get = function()
+                                    local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
+                                        content.selectedListID, crafterUID, row.recipeID)
+                                    return entry and entry.supportedQualities and entry.supportedQualities[q] == true
+                                end,
+                                set = function()
+                                    local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
+                                        content.selectedListID, crafterUID, row.recipeID)
+                                    local enabled = not (entry and entry.supportedQualities and entry.supportedQualities[q])
+                                    CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(
+                                        content.selectedListID,
+                                        crafterUID,
+                                        row.recipeID,
+                                        q,
+                                        enabled)
+                                    CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                                end,
+                                tooltip = function(tooltip)
+                                    GameTooltip_SetTitle(tooltip, L("CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP"))
+                                end,
+                            })
+                        end
+                        table.insert(menuItems, {
+                            type = "submenu",
+                            label = L("CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES"),
+                            children = qualityChildren,
+                        })
+                    end
+
+                    table.insert(menuItems, {
+                        type = "button",
+                        label = f.r("Remove Recipe"),
+                        onClick = function()
+                            CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
+                                content.selectedListID,
+                                crafterUID,
+                                row.recipeID)
+                            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                        end,
                     })
+
+                    CraftSim.WIDGETS.ContextMenu.Open(row.frame, menuItems)
                 end
             end,
         },
@@ -2528,15 +2666,12 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 crafterUID)
             if not list then return end
 
-            list.options = list.options or CraftSim.DB.CRAFT_LISTS.DefaultOptions()
+            list.options = CraftSim.DB.CRAFT_LISTS.NormalizeListOptions(list.options)
             local opts = list.options
+            local CONC_MODE = CraftSim.CRAFT_LISTS.CONCENTRATION_MODE
+            local CRAFT_LISTS = CraftSim.CRAFT_LISTS
 
             rootDescription:CreateTitle(f.bb(list.name) .. " Options:")
-
-            rootDescription:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION"),
-                function() return opts.enableConcentration end,
-                function() opts.enableConcentration = not opts.enableConcentration end)
 
             rootDescription:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_ENABLE_UNLEARNED"),
@@ -2620,10 +2755,68 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     end)
             end
 
-            optimizationButton:CreateCheckbox(
+            local concentrationButton = optimizationButton:CreateButton(L("CRAFT_LISTS_OPTIONS_CONCENTRATION"))
+
+            local disabledRadio = concentrationButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED"),
+                function() return CRAFT_LISTS:GetConcentrationMode(opts) == CONC_MODE.DISABLED end,
+                function()
+                    CRAFT_LISTS:SetConcentrationMode(opts, CONC_MODE.DISABLED)
+                    return MenuResponse.Refresh
+                end)
+            disabledRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED_TOOLTIP"))
+            end)
+
+            local enabledRadio = concentrationButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED"),
+                function() return CRAFT_LISTS:GetConcentrationMode(opts) == CONC_MODE.ENABLED end,
+                function()
+                    CRAFT_LISTS:SetConcentrationMode(opts, CONC_MODE.ENABLED)
+                    return MenuResponse.Refresh
+                end)
+            enabledRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED_TOOLTIP"))
+            end)
+
+            local singleRadio = concentrationButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE"),
+                function() return CRAFT_LISTS:GetConcentrationMode(opts) == CONC_MODE.SINGLE end,
+                function()
+                    CRAFT_LISTS:SetConcentrationMode(opts, CONC_MODE.SINGLE)
+                    return MenuResponse.Refresh
+                end)
+            singleRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE_TOOLTIP"))
+            end)
+
+            local multiRadio = concentrationButton:CreateRadio(
+                L("CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI"),
+                function() return CRAFT_LISTS:GetConcentrationMode(opts) == CONC_MODE.MULTI end,
+                function()
+                    CRAFT_LISTS:SetConcentrationMode(opts, CONC_MODE.MULTI)
+                    return MenuResponse.Refresh
+                end)
+            multiRadio:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI_TOOLTIP"))
+            end)
+
+            local optimizeConCB = concentrationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION"),
                 function() return opts.optimizeConcentration end,
                 function() opts.optimizeConcentration = not opts.optimizeConcentration end)
+            optimizeConCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION_TOOLTIP"))
+            end)
+
+            local offsetConCB = concentrationButton:CreateCheckbox(
+                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
+                function() return opts.offsetConcentrationCraftAmount end,
+                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
+            offsetConCB:SetTooltip(function(tooltip)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_POOL_ONLY"))
+            end)
 
             optimizationButton:CreateCheckbox(
                 L("CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS"),
@@ -2706,20 +2899,16 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                 GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP"))
             end)
 
-            local offsetConCB = restockingButton:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION"),
-                function() return opts.offsetConcentrationCraftAmount end,
-                function() opts.offsetConcentrationCraftAmount = not opts.offsetConcentrationCraftAmount end)
-            offsetConCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP"))
-            end)
-
-            local smartCB = restockingButton:CreateCheckbox(
-                L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION"),
-                function() return opts.smartConcentrationQueuing end,
-                function() opts.smartConcentrationQueuing = not opts.smartConcentrationQueuing end)
-            smartCB:SetTooltip(function(tooltip)
-                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP"))
+            local skipOwnedMaterialCostsCB = restockingButton:CreateCheckbox(
+                L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL"),
+                function()
+                    return opts.skipOwnedMaterialCosts
+                end,
+                function()
+                    opts.skipOwnedMaterialCosts = not opts.skipOwnedMaterialCosts
+                end)
+            skipOwnedMaterialCostsCB:SetTooltip(function(tooltip, _)
+                GameTooltip_AddInstructionLine(tooltip, L("CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP"))
             end)
 
             -- Queue options
@@ -2894,6 +3083,20 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
             local target = math.max(0, tonumber(entry.restockMaxAmount) or 0)
             if target > 0 then
                 restockText = " " .. f.l("[" .. tostring(target) .. "]")
+            end
+            if CraftSim.UTIL:IsGearRecipe(id, recipeInfo) and recipeInfo and recipeInfo.supportsQualities then
+                local supported = entry.supportedQualities
+                if CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+                    local qualityIcons = ""
+                    for qualityID = 1, (recipeInfo.maxQuality or 5) do
+                        if supported[qualityID] then
+                            qualityIcons = qualityIcons .. GUTIL:GetQualityIconString(qualityID, 14, 14)
+                        end
+                    end
+                    if qualityIcons ~= "" then
+                        restockText = restockText .. " " .. qualityIcons
+                    end
+                end
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
 
@@ -3434,6 +3637,11 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     if queueTab.content.createAuctionatorShoppingList then
         queueTab.content.createAuctionatorShoppingList:SetEnabled(CraftSim.CRAFTQ.craftQueue and
             #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0)
+    end
+
+    if CraftSim.SHOPPING and CraftSim.SHOPPING.shoppingListViewFrame and
+        CraftSim.SHOPPING.shoppingListViewFrame:IsVisible() then
+        CraftSim.SHOPPING:UpdateShoppingListViewDisplay()
     end
 
     --- disable cache
