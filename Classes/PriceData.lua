@@ -83,7 +83,7 @@ function CraftSim.PriceData:Update()
 
     Logger:LogDebug("Calculating Crafting Costs: ")
 
-    local isWorkOrder = self.recipeData.orderData ~= 0
+    local isWorkOrder = self.recipeData.orderData ~= nil
 
     if self.recipeData.isSalvageRecipe and reagentData.salvageReagentSlot.activeItem then
         local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
