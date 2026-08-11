@@ -40,6 +40,8 @@ CraftSim.CRAFTQ.currentlyCraftedCraftListID = nil
 --- used to cache player item counts during sorting and recalculation of craft queue
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
+CraftSim.CRAFTQ.pendingBagUpdateRefresh = false
+CraftSim.CRAFTQ.pendingCraftResultUIRefresh = false
 
 --- Prevent double-crafting of claimed orders during the short crafted->fulfillable update gap.
 ---@type table<number, number>
@@ -65,6 +67,24 @@ CraftSim.CRAFTQ.SHATTER_MOTE_SELECTION_CHEAPEST_OWNED = "__CHEAPEST_OWNED__"
 --- Shattering Essence often appears a few frames after TRADE_SKILL_ITEM_CRAFTED_RESULT; refresh until buff state matches.
 function CraftSim.CRAFTQ:ScheduleCraftQueueDisplayRefreshForDelayedCraftingState()
     CraftSim.PRE_CRAFT_BUFF_GATE:ScheduleQueueDisplayRefreshForDelayedCraftingState()
+end
+
+--- Coalesce burst craft-result UI refreshes to at most one per frame.
+function CraftSim.CRAFTQ:RequestDeferredCraftResultUIUpdate()
+    if not self.frame or not self.frame:IsVisible() then
+        return
+    end
+    if self.pendingCraftResultUIRefresh then
+        return
+    end
+    self.pendingCraftResultUIRefresh = true
+    RunNextFrame(function()
+        self.pendingCraftResultUIRefresh = false
+        local frame = self.frame
+        if frame and frame:IsVisible() then
+            self.UI:Update()
+        end
+    end)
 end
 
 function CraftSim.CRAFTQ:BeginCraftClickLock()
@@ -444,6 +464,193 @@ function CraftSim.CRAFTQ:PruneStaleWorkOrdersForProfession(profession, onComplet
             onComplete(removed)
         end
     end)
+end
+
+---@param crafterUID CrafterUID
+---@param itemID number
+---@param includeAlts boolean?
+---@return string
+local function OwnedReagentPoolKey(crafterUID, itemID, includeAlts)
+    if includeAlts then
+        return crafterUID .. ":" .. itemID .. ":alts"
+    end
+    return crafterUID .. ":" .. itemID
+end
+
+---@param crafterUID CrafterUID
+---@param itemID number
+---@param includeAlts boolean?
+---@return number
+function CraftSim.CRAFTQ:GetOwnedReagentInventoryCount(crafterUID, itemID, includeAlts)
+    if includeAlts then
+        return CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID, true) or 0
+    end
+    return self:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
+end
+
+--- Lazy-init pool of remaining owned reagent counts while queuing patron orders / craft lists.
+--- Subtracts reagents already committed in the craft queue.
+---@param crafterUID CrafterUID
+---@param itemID number
+---@param includeAlts boolean?
+---@return number
+function CraftSim.CRAFTQ:GetOwnedReagentPoolAvailable(crafterUID, itemID, includeAlts)
+    if not self.ownedReagentPool then
+        return self:GetOwnedReagentInventoryCount(crafterUID, itemID, includeAlts)
+    end
+
+    local key = OwnedReagentPoolKey(crafterUID, itemID, includeAlts)
+    if self.ownedReagentPool[key] ~= nil then
+        return self.ownedReagentPool[key]
+    end
+
+    local available = self:GetOwnedReagentInventoryCount(crafterUID, itemID, includeAlts)
+
+    local craftQueue = self.craftQueue
+    if craftQueue then
+        for _, queueItem in ipairs(craftQueue.craftQueueItems) do
+            if queueItem.recipeData:GetCrafterUID() == crafterUID then
+                local demand = self:CollectReagentDemand(queueItem.recipeData, queueItem.amount)
+                available = math.max(0, available - (demand[itemID] or 0))
+            end
+        end
+    end
+
+    self.ownedReagentPool[key] = available
+    return available
+end
+
+function CraftSim.CRAFTQ:InitOwnedReagentPool()
+    ---@type table<string, number>
+    self.ownedReagentPool = {}
+end
+
+function CraftSim.CRAFTQ:ClearOwnedReagentPool()
+    self.ownedReagentPool = nil
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param craftAmount number
+---@return table<number, number>
+function CraftSim.CRAFTQ:CollectReagentDemand(recipeData, craftAmount)
+    craftAmount = craftAmount or 1
+    ---@type table<number, number>
+    local demand = {}
+    local reagentData = recipeData.reagentData
+
+    local function addDemand(itemID, qtyPerCraft)
+        if itemID and qtyPerCraft and qtyPerCraft > 0 then
+            demand[itemID] = (demand[itemID] or 0) + qtyPerCraft * craftAmount
+        end
+    end
+
+    for _, reagent in ipairs(reagentData.requiredReagents) do
+        if not reagent:IsOrderReagentIn(recipeData) then
+            if reagent.hasQuality then
+                for _, reagentItem in ipairs(reagent.items) do
+                    if reagentItem.quantity > 0 then
+                        addDemand(reagentItem.item:GetItemID(), reagentItem.quantity)
+                    end
+                end
+            else
+                local reagentItem = reagent.items[1]
+                if reagentItem then
+                    addDemand(reagentItem.item:GetItemID(), reagent.requiredQuantity)
+                end
+            end
+        end
+    end
+
+    local slots = GUTIL:Concat({
+        reagentData.optionalReagentSlots or {},
+        reagentData.finishingReagentSlots or {},
+    })
+    if reagentData:HasRequiredSelectableReagent() then
+        tinsert(slots, reagentData.requiredSelectableReagentSlot)
+    end
+
+    for _, slot in ipairs(slots) do
+        if slot.activeReagent and not slot.activeReagent:IsCurrency()
+            and not slot:IsOrderReagentIn(recipeData) then
+            local qty = slot.maxQuantity or 1
+            addDemand(slot.activeReagent.item:GetItemID(), qty)
+        end
+    end
+
+    if recipeData.isEnchantingRecipe then
+        addDemand(CraftSim.CONST.ENCHANTING_VELLUM_ID, 1)
+    end
+
+    return demand
+end
+
+---@param crafterUID CrafterUID
+---@param recipeData CraftSim.RecipeData
+---@param craftAmount number
+---@param includeAlts boolean?
+function CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(crafterUID, recipeData, craftAmount, includeAlts)
+    if not self.ownedReagentPool then
+        return
+    end
+    local demand = self:CollectReagentDemand(recipeData, craftAmount)
+    for itemID, qty in pairs(demand) do
+        local key = OwnedReagentPoolKey(crafterUID, itemID, includeAlts)
+        local available = self:GetOwnedReagentPoolAvailable(crafterUID, itemID, includeAlts)
+        self.ownedReagentPool[key] = math.max(0, available - qty)
+    end
+end
+
+---@class CraftSim.CRAFTQ.OwnedMaterialProfitOptions
+---@field includeAlts boolean?
+---@field consume boolean?
+
+---@param recipeData CraftSim.RecipeData
+---@param craftAmount number
+---@param options CraftSim.CRAFTQ.OwnedMaterialProfitOptions?
+---@return number averageProfit
+---@return number costReduction
+function CraftSim.CRAFTQ:GetProfitWithOwnedMaterials(recipeData, craftAmount, options)
+    options = options or {}
+    craftAmount = craftAmount or 1
+    local baseProfit = recipeData.averageProfitCached or select(1, recipeData:GetAverageProfit())
+    if not self.ownedReagentPool then
+        return baseProfit, 0
+    end
+
+    local crafterUID = recipeData:GetCrafterUID()
+    local includeAlts = options.includeAlts
+    local demand = self:CollectReagentDemand(recipeData, craftAmount)
+    local priceData = recipeData.priceData
+    local costReduction = 0
+
+    for itemID, needed in pairs(demand) do
+        local available = self:GetOwnedReagentPoolAvailable(crafterUID, itemID, includeAlts)
+        local freeQty = math.min(needed, available)
+        if freeQty > 0 then
+            local reagentPriceInfo = priceData.reagentPriceInfos[itemID]
+            if reagentPriceInfo then
+                costReduction = costReduction + freeQty * reagentPriceInfo.itemPrice
+            end
+            if options.consume then
+                local key = OwnedReagentPoolKey(crafterUID, itemID, includeAlts)
+                self.ownedReagentPool[key] = math.max(0, available - freeQty)
+            end
+        end
+    end
+
+    if costReduction <= 0 then
+        return baseProfit, 0
+    end
+
+    local profitIncrease = costReduction
+    if recipeData.supportsResourcefulness then
+        local resChance = recipeData.professionStats.resourcefulness:GetPercent(true)
+        local resExtra = 1 + recipeData.professionStats.resourcefulness:GetExtraValue()
+        local resConstant = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT")
+        profitIncrease = costReduction * (1 - resChance * resConstant * resExtra)
+    end
+
+    return baseProfit + profitIncrease, costReduction
 end
 
 ---@param crafterUID CrafterUID
@@ -1393,7 +1600,7 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftingItemResultData)
         CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData, craftingItemResultData)
     end
     if CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
-        CraftSim.CRAFTQ.UI:Update()
+        CraftSim.CRAFTQ:RequestDeferredCraftResultUIUpdate()
     end
 end
 

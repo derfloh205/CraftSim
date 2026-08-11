@@ -582,8 +582,9 @@ function CraftSim.PRICING.UI:UpdateResultItemsList(recipeData)
                 local avgCraftingCostPerItem = avgCraftingCost / averageYield
                 avgCostColumn.text:SetText(CraftSim.UTIL:FormatMoney(avgCraftingCostPerItem))
 
-                local itemCount = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemLink) or 0
-                local ahCount = CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemLink) or 0
+                local itemID = resultItem:GetItemID()
+                local itemCount = CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemID or itemLink) or 0
+                local ahCount = CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemID or itemLink) or 0
 
                 if ahCount > 0 then
                     invColumn.text:SetText(itemCount .. "/" .. ahCount)
