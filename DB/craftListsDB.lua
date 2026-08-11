@@ -9,7 +9,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.CraftList.Options
 ---@field enableConcentration boolean
 ---@field optimizeConcentration boolean
----@field smartConcentrationQueuing boolean
+---@field concentrationAllocationMode string one of OFF, SINGLE, MULTI
 ---@field offsetConcentrationCraftAmount boolean
 ---@field optimizeProfessionTools boolean
 ---@field optimizeFinishingReagents boolean
@@ -25,6 +25,7 @@ CraftSim.DB = CraftSim.DB
 ---@field tsmRestockExpression string TSM expression for restock quantity (per-list)
 ---@field subtractInventory boolean if true, subtract inventory from restock amount
 ---@field includeAltInventory boolean if true, include alt characters' inventory when subtracting from restock amount
+---@field skipOwnedMaterialCosts boolean if true, treat owned reagents as zero cost for profit checks (shared pool per queue batch)
 ---@field onlyProfitable boolean if true, only queue profitable recipes
 
 ---@class CraftSim.CraftList
@@ -38,6 +39,7 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.CraftListRecipeEntry
 ---@field recipeID RecipeID
 ---@field restockMaxAmount number target stock when > 0 (restock); 0 = use normal queue amount (TSM / 1 + offset)
+---@field supportedQualities table<number, boolean>? gear output qualities to restock/queue; none checked = all qualities
 
 ---@class CraftSim.DB.CRAFT_LISTS : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_LISTS = CraftSim.DB:RegisterRepository("CraftListsDB")
@@ -49,7 +51,7 @@ local function DefaultOptions()
     return {
         enableConcentration = true,
         optimizeConcentration = true,
-        smartConcentrationQueuing = false,
+        concentrationAllocationMode = "OFF",
         offsetConcentrationCraftAmount = false,
         optimizeProfessionTools = true,
         optimizeFinishingReagents = false,
@@ -65,11 +67,63 @@ local function DefaultOptions()
         tsmRestockExpression = "1",
         subtractInventory = false,
         includeAltInventory = false,
+        skipOwnedMaterialCosts = false,
         onlyProfitable = false,
     }
 end
 
 CraftSim.DB.CRAFT_LISTS.DefaultOptions = DefaultOptions
+
+---@param options CraftSim.CraftList.Options?
+---@return CraftSim.CraftList.Options
+local function NormalizeListOptions(options)
+    options = options or DefaultOptions()
+    if options.smartConcentrationQueuing ~= nil then
+        if options.smartConcentrationQueuing then
+            options.concentrationAllocationMode = options.concentrationAllocationMode or "SINGLE"
+        elseif not options.concentrationAllocationMode then
+            options.concentrationAllocationMode = "OFF"
+        end
+        options.smartConcentrationQueuing = nil
+    end
+    options.concentrationAllocationMode = options.concentrationAllocationMode or "OFF"
+    if not options.enableConcentration then
+        options.concentrationAllocationMode = "OFF"
+    end
+    return options
+end
+
+CraftSim.DB.CRAFT_LISTS.NormalizeListOptions = NormalizeListOptions
+
+---@param supportedQualities table<number, boolean>?
+---@return table<number, boolean>
+local function NormalizeSupportedQualities(supportedQualities)
+    local normalized = {}
+    for qualityID, enabled in pairs(supportedQualities or {}) do
+        local q = tonumber(qualityID)
+        if q and q >= 1 and q <= 5 then
+            normalized[q] = enabled == true
+        end
+    end
+    return normalized
+end
+
+---@param supportedQualities table<number, boolean>?
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supportedQualities)
+    return GUTIL:Some(NormalizeSupportedQualities(supportedQualities), function(v) return v end)
+end
+
+---@param qualityID number
+---@param supportedQualities table<number, boolean>?
+---@return boolean
+function CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supportedQualities)
+    if not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supportedQualities) then
+        return true
+    end
+    supportedQualities = NormalizeSupportedQualities(supportedQualities)
+    return supportedQualities[qualityID] == true
+end
 
 ---@param recipeID RecipeID
 ---@return CraftSim.CraftListRecipeEntry
@@ -77,6 +131,7 @@ local function CreateDefaultRecipeEntry(recipeID)
     return {
         recipeID = recipeID,
         restockMaxAmount = 0,
+        supportedQualities = {},
     }
 end
 
@@ -86,7 +141,7 @@ local function NormalizeListRecipes(list)
 
     list.recipeEntries = list.recipeEntries or {}
     list.recipeIDs = list.recipeIDs or {}
-    list.options = list.options or DefaultOptions()
+    list.options = NormalizeListOptions(list.options or DefaultOptions())
 
     if #list.recipeEntries == 0 and #list.recipeIDs > 0 then
         for _, recipeID in ipairs(list.recipeIDs) do
@@ -99,6 +154,7 @@ local function NormalizeListRecipes(list)
     local normalizedRecipeIDs = {}
     for _, entry in ipairs(list.recipeEntries) do
         entry.restockMaxAmount = math.max(0, tonumber(entry.restockMaxAmount) or 0)
+        entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
         if not tContains(normalizedRecipeIDs, entry.recipeID) then
             tinsert(normalizedRecipeIDs, entry.recipeID)
         end
@@ -299,6 +355,33 @@ end
 
 ---@param id number
 ---@param crafterUID? CrafterUID
+---@param recipeID RecipeID
+---@param qualityID number
+---@param enabled boolean
+function CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(id, crafterUID, recipeID, qualityID, enabled)
+    local list = self:GetList(id, crafterUID)
+    if not list then return end
+    local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+    if not entry then
+        self:AddRecipe(id, crafterUID, recipeID)
+        entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+        if not entry then return end
+    end
+    entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
+    qualityID = tonumber(qualityID)
+    if not qualityID or qualityID < 1 or qualityID > 5 then
+        return
+    end
+    if enabled then
+        entry.supportedQualities[qualityID] = true
+    else
+        entry.supportedQualities[qualityID] = nil
+    end
+    NormalizeListRecipes(list)
+end
+
+---@param id number
+---@param crafterUID? CrafterUID
 ---@param options CraftSim.CraftList.Options
 function CraftSim.DB.CRAFT_LISTS:SaveOptions(id, crafterUID, options)
     local list = self:GetList(id, crafterUID)
@@ -372,8 +455,8 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                 if CraftSimDB.optionsDB and CraftSimDB.optionsDB.data then
                     local od = CraftSimDB.optionsDB.data
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] ~= nil then
-                        options.smartConcentrationQueuing = od
-                            ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"]
+                        options.concentrationAllocationMode = od
+                            ["CRAFTQUEUE_RESTOCK_FAVORITES_SMART_CONCENTRATION_QUEUING"] and "SINGLE" or "OFF"
                     end
                     if od["CRAFTQUEUE_RESTOCK_FAVORITES_OFFSET_CONCENTRATION_CRAFT_AMOUNT"] ~= nil then
                         options.offsetConcentrationCraftAmount = od
@@ -405,6 +488,53 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
                     [crafterUID] or {}
                 CraftSimDB.craftListsDB.selectedForQueue[crafterUID][newID] = true
             end
+        end
+    end
+end
+
+function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_1_2_Normalize_crafterUID_keys()
+    local normalizedCharacterLists = {}
+    for crafterUID, listMap in pairs(CraftSimDB.craftListsDB.characterLists or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedCharacterLists[normalizedCrafterUID] = normalizedCharacterLists[normalizedCrafterUID] or {}
+            for listID, craftList in pairs(listMap or {}) do
+                normalizedCharacterLists[normalizedCrafterUID][listID] = normalizedCharacterLists[normalizedCrafterUID]
+                    [listID] or craftList
+            end
+        end
+    end
+
+    local normalizedSelectedForQueue = {}
+    for crafterUID, selectedMap in pairs(CraftSimDB.craftListsDB.selectedForQueue or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedSelectedForQueue[normalizedCrafterUID] = normalizedSelectedForQueue[normalizedCrafterUID] or {}
+            for listID, selected in pairs(selectedMap or {}) do
+                if selected then
+                    normalizedSelectedForQueue[normalizedCrafterUID][listID] = true
+                end
+            end
+        end
+    end
+
+    CraftSimDB.craftListsDB.characterLists = normalizedCharacterLists
+    CraftSimDB.craftListsDB.selectedForQueue = normalizedSelectedForQueue
+end
+
+function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_2_3_Concentration_allocation_mode()
+    local function migrateList(list)
+        if list and list.options then
+            list.options = NormalizeListOptions(list.options)
+        end
+    end
+
+    for _, list in pairs(CraftSimDB.craftListsDB.globalLists or {}) do
+        migrateList(list)
+    end
+    for _, listMap in pairs(CraftSimDB.craftListsDB.characterLists or {}) do
+        for _, list in pairs(listMap or {}) do
+            migrateList(list)
         end
     end
 end

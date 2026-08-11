@@ -741,6 +741,13 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_CHECKBOX = f.g("Auto Queue ") .. f.bb("Work Orders"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP =
         "Automatically queue work orders upon opening a profession table the first time after login",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_CHECKBOX = "Optimize " .. f.bb("Finishing Reagents"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_TOOLTIP =
+        "Optimize finishing reagents when queuing work orders. Customer-provided finishing reagents are preserved.",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_CHECKBOX = "Include " ..
+            f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_TOOLTIP =
+        "When optimizing finishing reagents for work orders, also consider soulbound finishing reagents you own.",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "Patron Orders",
         CRAFT_QUEUE_GUILD_ORDERS_BUTTON = "Guild Orders",
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Personal Orders",
@@ -766,9 +773,19 @@ function CraftSim.LOCAL_EN:GetData()
         "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST = f.bb("Patron Order") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS = f.bb("Patron Order") .. " Max Duration (hours): ",
+        CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS_TOOLTIP =
+            "Only queue patron orders expiring within this many hours.\n\nSet to " ..
+            f.bb("0") .. " to disable.",
+        CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET = "Reset",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE = f.bb("Reagent Bag") .. " Value: ",
         CRAFT_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE_TOOLTIP = "Value of the " ..
             f.bb("Reagent Bag Reward") .. " that will be added to your profit.\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_CHECKBOX = "Skip costs for " .. f.g("owned") .. " materials",
+        CRAFT_QUEUE_PATRON_ORDERS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP = "When enabled, " ..
+            f.bb("patron order") .. " profit, max-cost, and knowledge-point cost checks treat reagents you already have in " ..
+            f.bb("bags, bank, and warbank") .. " as zero gold cost.\n\n" ..
+            "Materials are tracked across all patron orders queued in the same batch so the same stack is not counted twice.",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_CHECKBOX = "Include " .. f.bb("Moxie") .. " in expected profit",
         CRAFT_QUEUE_PATRON_ORDERS_INCLUDE_MOXIE_IN_PROFIT_TOOLTIP = "When enabled, " ..
             f.bb("NPC (patron)") ..
@@ -994,13 +1011,27 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_IMPORT_POPUP_TITLE = "Import Craft List",
         CRAFT_LISTS_OPTIONS_ENABLE_CONCENTRATION = "Enable Concentration",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION = "Optimize Concentration",
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION = f.bb("Smart ") .. "Concentration" .. f.bb(" Queueing"),
-        CRAFT_LISTS_OPTIONS_SMART_CONCENTRATION_TOOLTIP =
-        "Queue recipes in order of most concentration value per point, spending all available concentration",
+        CRAFT_LISTS_OPTIONS_OPTIMIZE_CONCENTRATION_TOOLTIP =
+            "Upgrade reagents to maximize profit per concentration point spent",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION = f.gold("Concentration"),
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED = "Disabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_DISABLED_TOOLTIP =
+            "Do not use concentration when scanning or queuing this list",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED = "Enabled",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_ENABLED_TOOLTIP =
+            "Use concentration for optimization; queue full restock amounts without limiting to your current pool",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE = "Single Best",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_SINGLE_TOOLTIP =
+            "Queue only the recipe with the highest concentration value per profession, limited to available concentration",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI = "Multi-Recipe",
+        CRAFT_LISTS_OPTIONS_CONCENTRATION_MULTI_TOOLTIP =
+            "Queue multiple recipes in concentration value order until all available concentration is used",
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION = "Offset Concentration" .. f.bb(" Queue Amount"),
         CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_TOOLTIP =
             "If enabled, concentration crafts will be queued for the amount of expected crafts based on your " ..
             f.bb("Ingenuity"),
+        CRAFT_LISTS_OPTIONS_OFFSET_CONCENTRATION_POOL_ONLY =
+            "Only applies to " .. f.bb("Single Best") .. " and " .. f.bb("Multi-Recipe"),
         CRAFT_LISTS_OPTIONS_OPTIMIZE_TOOLS = "Optimize Profession Tools",
         CRAFT_LISTS_OPTIONS_TOP_PROFIT_QUALITY = "Autoselect Top Profit Quality",
         CRAFT_LISTS_OPTIONS_OPTIMIZE_FINISHING = "Optimize Finishing Reagents",
@@ -1023,6 +1054,12 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "When enabled, alt characters' inventory is also subtracted from the restock target.",
+        CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL = "Skip costs for " .. f.g("owned") .. " materials",
+        CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP = "When enabled, " ..
+            f.bb("only profitable") .. " and related profit checks treat reagents you already have as zero gold cost.\n\n" ..
+            "Uses " .. f.bb("bags, bank, and warbank") .. " for the crafter. If " ..
+            f.bb("Include Alt Inventory") .. " is enabled, alt characters are included too.\n\n" ..
+            "Materials are shared across all craft lists queued together so the same stack is not counted twice.",
         CRAFT_LISTS_OPTIONS_AUTO_SHOPPING_LIST = "Automatically create Shopping List after queueing",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST = "Update " .. f.bb("Last Crafting Cost") .. " DB",
         CRAFT_LISTS_OPTIONS_UPDATE_LAST_CRAFTING_COST_TOOLTIP = "If enabled, the " .. f.bb("Last Crafting Cost") ..
@@ -1033,6 +1070,9 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RECIPE_RESTOCK_TAG = "Restock",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_TITLE = "Restock target (0 = off)",
         CRAFT_LISTS_RECIPE_RESTOCK_POPUP_HINT = f.grey("0 disables restock for this recipe."),
+        CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES = "Supported Qualities",
+        CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP =
+            "Only queue and count inventory for checked gear qualities.\n\nIf none are checked, any quality is allowed.",
 
         -- craft buffs
 
@@ -1087,6 +1127,59 @@ greater or equal the configured sale rate threshold.
         CONCENTRATION_TRACKER_OPTIONS_TAB_SORT_MODE = "Sort Mode: ",
         CONCENTRATION_TRACKER_OPTIONS_TAB_TIME_FORMAT = "Time Format: ",
 
+        -- work order tracker module
+
+        WORK_ORDER_TRACKER_TITLE = "CraftSim Patron Work Orders",
+        CONTROL_PANEL_MODULES_WORK_ORDER_TRACKER_LABEL = "Patron Orders",
+        CONTROL_PANEL_MODULES_WORK_ORDER_TRACKER_TOOLTIP = "Track cached " ..
+            f.bb("Patron Work Orders") .. " across your alts with expiry windows and craftability status",
+        WORK_ORDER_TRACKER_LIST_TAB_LABEL = "Orders",
+        WORK_ORDER_TRACKER_OPTIONS_TAB_LABEL = "Options",
+        WORK_ORDER_TRACKER_REFRESH_BUTTON = "Refresh",
+        WORK_ORDER_TRACKER_COLUMN_CRAFTER = "Crafter",
+        WORK_ORDER_TRACKER_COLUMN_RECIPE = "Recipe",
+        WORK_ORDER_TRACKER_COLUMN_TIME = "Time",
+        WORK_ORDER_TRACKER_COLUMN_STATUS = "Status",
+        WORK_ORDER_TRACKER_TIME_EXPIRED = f.grey("Expired"),
+        WORK_ORDER_TRACKER_TIME_LT_6H = f.r("<6h"),
+        WORK_ORDER_TRACKER_TIME_6_12H = f.l("6-12h"),
+        WORK_ORDER_TRACKER_TIME_12_24H = f.bb("12-24h"),
+        WORK_ORDER_TRACKER_TIME_GT_24H = f.g(">24h"),
+        WORK_ORDER_TRACKER_CLAIMED = "Claimed",
+        WORK_ORDER_TRACKER_UNKNOWN_RECIPE = "Unknown Recipe",
+        WORK_ORDER_TRACKER_LAST_SNAPSHOT_FMT = "Last checked %s ago",
+        WORK_ORDER_TRACKER_TOOLTIP_STATUS = "Status",
+        WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_QUALITY = "Required quality",
+        WORK_ORDER_TRACKER_TOOLTIP_QUALITY = "Expected quality",
+        WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_SHORT = "Req.",
+        WORK_ORDER_TRACKER_TOOLTIP_EXPECTED_SHORT = "Exp.",
+        WORK_ORDER_TRACKER_TOOLTIP_EXPIRES = "Expires: %s",
+        WORK_ORDER_TRACKER_TOOLTIP_CLAIM_ENDS = "Claim ends: %s",
+        WORK_ORDER_TRACKER_OPTION_AUTO_SNAPSHOT = "Auto-snapshot when opening profession orders",
+        WORK_ORDER_TRACKER_OPTION_USE_CONCENTRATION = "Use concentration for quality evaluation",
+        WORK_ORDER_TRACKER_OPTION_SORT_MODE = "Sort Mode: ",
+        WORK_ORDER_TRACKER_STATUS_FILTER_TITLE = "Filter by Status",
+        WORK_ORDER_TRACKER_STATUS_FILTER_TOOLTIP = "Filter orders by craftability status",
+        WORK_ORDER_TRACKER_SORT_MODE_TIME = "Time (urgency)",
+        WORK_ORDER_TRACKER_SORT_MODE_CHARACTER = "Crafter",
+        WORK_ORDER_TRACKER_SORT_MODE_PROFESSION = "Profession",
+        WORK_ORDER_TRACKER_SORT_MODE_RECIPE = "Recipe",
+        WORK_ORDER_TRACKER_CRAFTABILITY_READY = f.g("Ready"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_NEEDS_RECIPE = f.r("Need Recipe"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_NEEDS_QUALITY = f.r("Need Spec/Quality"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_NEEDS_REAGENTS = f.l("Need Reagents"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_ON_COOLDOWN = f.l("On Cooldown"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_IN_PROGRESS = f.bb("Claimed"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_BLOCKED = f.r("Blocked"),
+        WORK_ORDER_TRACKER_CRAFTABILITY_READY_TO_CRAFT = "Ready to craft",
+        WORK_ORDER_TRACKER_TOOLTIP_RECIPE_SOURCE = "Recipe source",
+        WORK_ORDER_TRACKER_TOOLTIP_SUGGESTED_SPEC = "Suggested spec",
+        WORK_ORDER_TRACKER_HINT_OPEN_SPEC = "Open specialization",
+        WORK_ORDER_TRACKER_HINT_VIEW_RECIPE_SOURCE = "View recipe source",
+        WORK_ORDER_TRACKER_HINT_ADD_TO_SHOPPING_LIST = "Add recipe to Auctionator shopping list",
+        WORK_ORDER_TRACKER_HINT_UNAVAILABLE = "Open profession to see source",
+        RECIPE_ACQUISITION_ADDED_TO_SHOPPING_LIST = "Added %s to Auctionator shopping list",
+
         -- static popups
         STATIC_POPUPS_YES = "Yes",
         STATIC_POPUPS_NO = "No",
@@ -1118,6 +1211,11 @@ greater or equal the configured sale rate threshold.
         SOURCE_COLUMN_WO = "WO",
 
         -- disenchant
+        CONTROL_PANEL_MODULES_DISENCHANT_LABEL = "Disenchanting",
+        CONTROL_PANEL_MODULES_DISENCHANT_TOOLTIP = "Open the " .. f.bb("Disenchanting") .. " helper window",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_LABEL = "Shopping List",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_TOOLTIP = "Open the " .. f.bb("Shopping List") ..
+            " to see what reagents you need to buy for your queued crafts",
         DISENCHANT_TITLE = "CraftSim Disenchanting",
         DISENCHANT_BUTTON = "Disenchant Next",
         DISENCHANT_OPTIONS_MIN_ILVL = "Minimum Item Level: ",

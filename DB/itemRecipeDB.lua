@@ -57,6 +57,21 @@ function CraftSim.DB.ITEM_RECIPE:GetAll()
 end
 
 ---@param recipeID RecipeID
+---@return string? itemName
+---@return number? qualityID
+function CraftSim.DB.ITEM_RECIPE:FindItemForRecipe(recipeID)
+    for itemID, data in pairs(CraftSimDB.itemRecipeDB.data or {}) do
+        if data.recipeID == recipeID then
+            local item = Item:CreateFromItemID(itemID)
+            local itemName = item:GetItemName()
+            if itemName and itemName ~= "" then
+                return itemName, data.qualityID
+            end
+        end
+    end
+end
+
+---@param recipeID RecipeID
 ---@param qualityID QualityID
 ---@param itemID ItemID
 ---@param crafterUID CrafterUID
