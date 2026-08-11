@@ -608,6 +608,13 @@ function CraftSim.LOCAL_KO:GetData()
             f.l("집중") .. "을 사용합니다.",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_CHECKBOX = "이익 발생 시만",
         CRAFT_QUEUE_ADD_WORK_ORDERS_ONLY_PROFITABLE_TOOLTIP = "예상 이익이 양수인 제작 주문만 대기열에 추가합니다.",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_CHECKBOX = f.bb("마무리 재료") .. " 최적화",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_TOOLTIP =
+        "제작 주문을 대기열에 추가할 때 마무리 재료를 최적화합니다. 고객이 제공한 마무리 재료는 유지됩니다.",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_CHECKBOX = f.e("획득 시 귀속") ..
+            f.bb(" 마무리 재료") .. " 포함",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_TOOLTIP =
+        "제작 주문의 마무리 재료 최적화 시 보유한 귀속 마무리 재료도 고려합니다.",
         CRAFT_QUEUE_WORK_ORDER_TYPE_BUTTON = "제작 주문 유형",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "NPC 주문",
         CRAFT_QUEUE_GUILD_ORDERS_BUTTON = "길드 주문",

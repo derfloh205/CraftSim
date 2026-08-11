@@ -402,7 +402,87 @@ function CraftSim.RecipeData:ApplyBaseProfessionStatsFromOperationInfo(forceCach
     if self.orderData then
         self.supportsMulticraft = false
         self.baseProfessionStats.multicraft:Clear()
+        self:RefreshWorkOrderProcStatSupport()
     end
+end
+
+--- Order operation info omits proc stats; infer resourcefulness from the personal recipe (multicraft never applies).
+function CraftSim.RecipeData:RefreshWorkOrderProcStatSupport()
+    if not self.orderData or not self.supportsCraftingStats then
+        return
+    end
+
+    self.supportsMulticraft = false
+
+    if not self.supportsResourcefulness then
+        local reagentTbl = self.reagentData and self.reagentData:GetCraftingReagentInfoTbl() or {}
+        local refOpInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, reagentTbl, self.allocationItemGUID,
+                false)
+            or C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID, false)
+        local resourcefulness = string.lower(CraftSim.LOCAL:GetText("STAT_RESOURCEFULNESS"))
+        for _, statInfo in pairs((refOpInfo and refOpInfo.bonusStats) or {}) do
+            if string.lower(statInfo.bonusStatName or "") == resourcefulness then
+                self.supportsResourcefulness = true
+                break
+            end
+        end
+    end
+
+    -- Work orders never benefit from multicraft; default crafting-stat orders to resourcefulness.
+    if not self.supportsResourcefulness then
+        self.supportsResourcefulness = true
+    end
+end
+
+--- True when multicraft-only tools should be excluded (work orders or recipes without multicraft).
+---@return boolean
+function CraftSim.RecipeData:ShouldAvoidMulticraftOnlyTools()
+    return self.orderData ~= nil or not self.supportsMulticraft
+end
+
+---@return string topGearMode localized mode string for CraftSim.TOPGEAR:OptimizeTopGear
+function CraftSim.RecipeData:GetOptimizeGearMode()
+    if self.orderData then
+        self:RefreshWorkOrderProcStatSupport()
+    end
+    if self:ShouldAvoidMulticraftOnlyTools() and self.supportsResourcefulness and self.supportsCraftingStats then
+        return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS)
+    end
+    return CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT)
+end
+
+--- Work orders should pick tools after reagents/finishing so resourcefulness savings reflect real costs.
+---@param options CraftSim.RecipeData.Optimize.Options
+---@return string[]
+function CraftSim.RecipeData:BuildOptimizationTaskList(options)
+    options = options or {}
+    -- When using permutation-based finishing reagent optimisation, reagent and concentration
+    -- optimisation run per-permutation inside OptimizeFinishingReagentsPermutation, so we
+    -- must skip them here to avoid running them twice.
+    local usePermutation = options.optimizeFinishingReagentsOptions and
+        options.optimizeFinishingReagentsOptions.permutationBased
+    local gearLast = self.orderData ~= nil and options.optimizeGear
+
+    local tasks = {}
+    local function add(task)
+        if task then
+            tinsert(tasks, task)
+        end
+    end
+
+    if not gearLast then
+        add(options.optimizeGear and "GEAR")
+    end
+    add((not usePermutation) and options.optimizeReagentOptions and "REAGENTS")
+    add((not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and
+        "CONCENTRATION")
+    add(options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS")
+    add(options.optimizeSubRecipesOptions and "SUB_RECIPES")
+    if gearLast then
+        add("GEAR")
+    end
+
+    return tasks
 end
 
 ---@param orderData CraftingOrderInfo
@@ -1380,7 +1460,9 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
     end
 
     for _, slot in ipairs(reagentData.finishingReagentSlots) do
-        slot:SetReagent(nil)
+        if not slot:IsOrderReagentIn(self) then
+            slot:SetReagent(nil)
+        end
     end
     self:Update()
 
@@ -1411,6 +1493,11 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
         continue = function(frameDistributor, _, slot, _, _)
             ---@type CraftSim.OptionalReagentSlot
             local slot = slot
+
+            if slot:IsOrderReagentIn(self) then
+                frameDistributor:Continue()
+                return
+            end
 
             if not options.includeLocked and slot.locked then
                 frameDistributor:Continue()
@@ -1590,75 +1677,79 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
     local crafterUID = self:GetCrafterUID()
     local slotCandidates = {}
     for _, slot in ipairs(slots) do
-        local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
+        if slot:IsOrderReagentIn(self) and slot.activeReagent then
+            table.insert(slotCandidates, { slot.activeReagent })
+        else
+            local candidates = { false } -- always include the "empty" option (false = no reagent sentinel)
 
-        if options.includeLocked or not slot.locked then
-            -- When onlyHighestQualitySoulbound is set, pre-compute the max stat value among
-            -- soulbound reagents in this slot that the player owns.
+            if options.includeLocked or not slot.locked then
+                -- When onlyHighestQualitySoulbound is set, pre-compute the max stat value among
+                -- soulbound reagents in this slot that the player owns.
 
-            local possibleReagents = slot.possibleReagents
-            if options.includeSoulbound and options.onlyHighestQualitySoulbound then
-                -- fetch highest soulbounds per stat
-                local reagentStatMap = {}
-                for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
-                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
-                            local currentBest = reagentStatMap[stat.name]
-                            local statValue = stat.value
-                            if not currentBest or statValue > currentBest.value then
-                                reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
+                local possibleReagents = slot.possibleReagents
+                if options.includeSoulbound and options.onlyHighestQualitySoulbound then
+                    -- fetch highest soulbounds per stat
+                    local reagentStatMap = {}
+                    for _, reagent in ipairs(possibleReagents) do
+                        if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                            for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                                local currentBest = reagentStatMap[stat.name]
+                                local statValue = stat.value
+                                if not currentBest or statValue > currentBest.value then
+                                    reagentStatMap[stat.name] = { reagent = reagent, value = statValue }
+                                end
                             end
                         end
                     end
-                end
 
-                -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
-                local filteredReagents = {}
-                for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
-                        local isHighest = false
-                        for _, stat in pairs(reagent.professionStats:GetStatList()) do
-                            local bestForStat = reagentStatMap[stat.name]
-                            if bestForStat and bestForStat.reagent == reagent then
-                                isHighest = true
-                                break
+                    -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
+                    local filteredReagents = {}
+                    for _, reagent in ipairs(possibleReagents) do
+                        if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                            local isHighest = false
+                            for _, stat in pairs(reagent.professionStats:GetStatList()) do
+                                local bestForStat = reagentStatMap[stat.name]
+                                if bestForStat and bestForStat.reagent == reagent then
+                                    isHighest = true
+                                    break
+                                end
                             end
-                        end
-                        if isHighest then
+                            if isHighest then
+                                table.insert(filteredReagents, reagent)
+                            end
+                        else
                             table.insert(filteredReagents, reagent)
                         end
-                    else
-                        table.insert(filteredReagents, reagent)
                     end
+
+                    possibleReagents = filteredReagents
                 end
 
-                possibleReagents = filteredReagents
-            end
-
-            for _, reagent in ipairs(possibleReagents) do
-                local isViable = false
-                if reagent:IsCurrency() then
-                    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
-                    isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
-                else
-                    local itemID = reagent.item:GetItemID()
-                    local isSoulbound = GUTIL:isItemSoulbound(itemID)
-                    if isSoulbound then
-                        if options.includeSoulbound then
-                            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
-                            isViable = count and count > 0
+                for _, reagent in ipairs(possibleReagents) do
+                    local isViable = false
+                    if reagent:IsCurrency() then
+                        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(reagent.currencyID)
+                        isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
+                    else
+                        local itemID = reagent.item:GetItemID()
+                        local isSoulbound = GUTIL:isItemSoulbound(itemID)
+                        if isSoulbound then
+                            if options.includeSoulbound then
+                                local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                                isViable = count and count > 0
+                            end
+                        else
+                            isViable = true
                         end
-                    else
-                        isViable = true
+                    end
+                    if isViable then
+                        table.insert(candidates, reagent)
                     end
                 end
-                if isViable then
-                    table.insert(candidates, reagent)
-                end
             end
-        end
 
-        table.insert(slotCandidates, candidates)
+            table.insert(slotCandidates, candidates)
+        end
     end
 
     -- Generate the cartesian product of all slot candidate lists.
@@ -1766,7 +1857,8 @@ end
 --- when the crafter has enough quantity to cover all planned crafts. Non-soulbound finishers
 --- (and currencies) may still be used even if not fully owned, as they can be bought.
 ---@param amount number number of crafts that will be queued
-function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
+---@param availableOverride number? when set, use this item count instead of bag count for soulbound availability
+function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount, availableOverride)
     amount = amount or 0
     if amount <= 0 then return end
 
@@ -1780,7 +1872,9 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
         if active and not active:IsCurrency() and active.item then
             local itemID = active.item:GetItemID()
             if GUTIL:isItemSoulbound(itemID) then
-                local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
+                local owned = availableOverride
+                    or CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
+                    or 0
                 local perCraft = slot.maxQuantity or 1
                 local neededTotal = perCraft * amount
 
@@ -1919,6 +2013,9 @@ end
 ---Optimizes the recipeData's professionGearSet by the given mode.
 ---@param topGearMode string
 function CraftSim.RecipeData:OptimizeGear(topGearMode)
+    if self.orderData then
+        topGearMode = self:GetOptimizeGearMode()
+    end
     local optimizedGear = CraftSim.TOPGEAR:OptimizeTopGear(self, topGearMode)
     local bestResult = optimizedGear[1]
     if bestResult then
@@ -1951,7 +2048,7 @@ end
 function CraftSim.RecipeData:OptimizeProfit(options)
     options = options or {}
     if options.optimizeGear then
-        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+        self:OptimizeGear(self:GetOptimizeGearMode())
     end
     if options.optimizeReagentOptions then
         self:OptimizeReagents(options.optimizeReagentOptions)
@@ -1976,20 +2073,7 @@ end
 function CraftSim.RecipeData:Optimize(options)
     options = options or {}
 
-    -- When using permutation-based finishing reagent optimisation, reagent and concentration
-    -- optimisation run per-permutation inside OptimizeFinishingReagentsPermutation, so we
-    -- must skip them here to avoid running them twice.
-    local usePermutation = options.optimizeFinishingReagentsOptions and
-        options.optimizeFinishingReagentsOptions.permutationBased
-
-    local optimizationTaskList = {
-        options.optimizeGear and "GEAR",
-        (not usePermutation) and options.optimizeReagentOptions and "REAGENTS",
-        (not usePermutation) and self.concentrating and self.supportsQualities and options.optimizeConcentration and
-        "CONCENTRATION",
-        options.optimizeFinishingReagentsOptions and "FINISHING_REAGENTS",
-        options.optimizeSubRecipesOptions and "SUB_RECIPES",
-    }
+    local optimizationTaskList = self:BuildOptimizationTaskList(options)
 
     GUTIL.FrameDistributor {
         iterationTable = optimizationTaskList,
@@ -1999,7 +2083,7 @@ function CraftSim.RecipeData:Optimize(options)
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
                 Logger:LogDebug("Optimizing Gear..")
-                self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+                self:OptimizeGear(self:GetOptimizeGearMode())
                 frameDistributorTasks:Continue()
             elseif optimizationTask == "REAGENTS" then
                 Logger:LogDebug("Optimizing Reagents..")
