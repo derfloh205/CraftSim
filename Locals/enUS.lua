@@ -741,6 +741,13 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_CHECKBOX = f.g("Auto Queue ") .. f.bb("Work Orders"),
         CRAFT_QUEUE_ADD_WORK_ORDERS_AUTO_QUEUE_TOOLTIP =
         "Automatically queue work orders upon opening a profession table the first time after login",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_CHECKBOX = "Optimize " .. f.bb("Finishing Reagents"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_OPTIMIZE_FINISHING_REAGENTS_TOOLTIP =
+        "Optimize finishing reagents when queuing work orders. Customer-provided finishing reagents are preserved.",
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_CHECKBOX = "Include " ..
+            f.e("Soulbound") .. f.bb(" Finishing Reagents"),
+        CRAFT_QUEUE_ADD_WORK_ORDERS_FINISHING_REAGENTS_INCLUDE_SOULBOUND_TOOLTIP =
+        "When optimizing finishing reagents for work orders, also consider soulbound finishing reagents you own.",
         CRAFT_QUEUE_PATRON_ORDERS_BUTTON = "Patron Orders",
         CRAFT_QUEUE_GUILD_ORDERS_BUTTON = "Guild Orders",
         CRAFT_QUEUE_PERSONAL_ORDERS_BUTTON = "Personal Orders",
