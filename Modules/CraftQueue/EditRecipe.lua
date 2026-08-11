@@ -33,6 +33,21 @@ GUTIL:RegisterCustomEvents(CraftSim.CRAFTQ.EditRecipe, {
     "CRAFTSIM_MODULE_CLOSED",
 })
 
+---@return boolean
+function CraftSim.CRAFTQ.EditRecipe:IsEditorVisible()
+    local editor = self.editor
+    return editor ~= nil and editor.frame ~= nil and editor.frame:IsShown()
+end
+
+---@return CraftSim.CraftQueueItem?
+function CraftSim.CRAFTQ.EditRecipe:GetOpenCraftQueueItem()
+    local editor = self.editor
+    if self:IsEditorVisible() and editor.craftQueueItem then
+        return editor.craftQueueItem
+    end
+    return nil
+end
+
 -- Edit popup layering:
 -- DIALOG keeps it above queue UI while still allowing MenuUtil context menus/submenus above it.
 local CRAFTQ_EDIT_FRAME_STRATA = "DIALOG"
@@ -824,31 +839,25 @@ function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
             return compareLink
         end)
 
-        local gearSlotItems = GUTIL:Filter(allGear, function(gear)
-            local isGearItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType
-            if not isGearItem then
-                return false
-            end
+        ---@param excludeGear CraftSim.ProfessionGear?
+        local function gearSlotItemsForSelector(excludeGear)
+            return GUTIL:Filter(allGear, function(gear)
+                if gear.item:GetInventoryType() ~= Enum.InventoryType.IndexProfessionGearType then
+                    return false
+                end
+                if excludeGear and excludeGear.item and excludeGear:Equals(gear) then
+                    return false
+                end
+                return true
+            end)
+        end
 
-            if gearSelectors[1].professionGear:Equals(gear) or gearSelectors[2].professionGear:Equals(gear) then
-                return false
-            end
-            return true
-        end)
         local toolSlotItems = GUTIL:Filter(allGear, function(gear)
-            local isToolItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
-            if not isToolItem then
-                return false
-            end
-
-            if gearSelectors[3].professionGear:Equals(gear) then
-                return false
-            end
-            return true
+            return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
         end)
 
-        gearSelectors[1]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
-        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
+        gearSelectors[1]:SetItems(GUTIL:Map(gearSlotItemsForSelector(professionGearSet.gear2), function(g) return g.item end))
+        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItemsForSelector(professionGearSet.gear1), function(g) return g.item end))
         gearSelectors[3]:SetItems(GUTIL:Map(toolSlotItems, function(g) return g.item end))
     else
         gearSelectors[1]:Hide()
@@ -866,30 +875,29 @@ function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
             function(gear) return gear and gear.item ~= nil end)
         local allGear = CraftSim.GUTIL:Concat({ inventoryGear, equippedGearList })
 
-        local gearSlotItems = GUTIL:Filter(allGear, function(gear)
-            local isGearItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType
-            if not isGearItem then
-                return false
-            end
-
-            if gearSelectors[2].professionGear:Equals(gear) then
-                return false
-            end
-            return true
+        allGear = GUTIL:ToSet(allGear, function(gear)
+            local compareLink = gear.item:GetItemLink():gsub("Player.':", "")
+            return compareLink
         end)
+
+        ---@param excludeGear CraftSim.ProfessionGear?
+        local function gearSlotItemsForSelector(excludeGear)
+            return GUTIL:Filter(allGear, function(gear)
+                if gear.item:GetInventoryType() ~= Enum.InventoryType.IndexProfessionGearType then
+                    return false
+                end
+                if excludeGear and excludeGear.item and excludeGear:Equals(gear) then
+                    return false
+                end
+                return true
+            end)
+        end
+
         local toolSlotItems = GUTIL:Filter(allGear, function(gear)
-            local isToolItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
-            if not isToolItem then
-                return false
-            end
-
-            if gearSelectors[3].professionGear:Equals(gear) then
-                return false
-            end
-            return true
+            return gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
         end)
 
-        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
+        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItemsForSelector(nil), function(g) return g.item end))
         gearSelectors[3]:SetItems(GUTIL:Map(toolSlotItems, function(g) return g.item end))
     end
 
@@ -915,7 +923,7 @@ end
 
 function CraftSim.CRAFTQ.EditRecipe.UI:Hide()
     local editRecipeFrame = CraftSim.CRAFTQ.EditRecipe.editor
-    if editRecipeFrame and editRecipeFrame:IsVisible() then
+    if CraftSim.CRAFTQ.EditRecipe:IsEditorVisible() then
         editRecipeFrame:Hide()
     end
 end
