@@ -328,6 +328,8 @@ function CraftSim.INIT:HookToEvents()
 	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified,
 		OpenRecipeAllocationUpdated)
 
+	CraftSim.RECIPE_ACQUISITION:Init()
+
 	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
 	local specTab = ProfessionsFrame.TabSystem.tabs[2]
 	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]
@@ -530,6 +532,9 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
+			CraftSim.MODULES:UpdateVisibilityByContext()
+			CraftSim.MODULES:ShowRecipeIndependentModules()
+
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()

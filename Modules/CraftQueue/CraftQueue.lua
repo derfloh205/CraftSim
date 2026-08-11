@@ -466,6 +466,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
     local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+    local maxPatronDurationHours = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS")
 
     local workOrderTypes = self:GetEnabledWorkOrderTypes()
     local availableOrderIDs = {}
@@ -508,91 +509,64 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                 fetchedOrderTypes[orderType] = true
                 self:AccumulateWorkOrderIDs(availableOrderIDs)
                 local orders = C_CraftingOrders.GetCrafterOrders()
-                local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                if claimedOrder then
-                    tinsert(orders, claimedOrder)
-                end
+                        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                        if claimedOrder then
+                            tinsert(orders, claimedOrder)
+                        end
 
-                local isPublicOrder = orderType == Enum.CraftingOrderType.Public
-                local publicOrderCandidates = {}
+                        if orderType == Enum.CraftingOrderType.Npc and CraftSim.WORK_ORDER_TRACKER then
+                            CraftSim.WORK_ORDER_TRACKER:StagePatronOrdersFromQueue(orders, profession)
+                        end
 
-                Logger:LogDebug(
-                    "Processing {orderCount} {orderType} work orders",
-                    #orders,
-                    CraftSim.UTIL:GetOrderTypeText(orderType))
+                        local isPublicOrder = orderType == Enum.CraftingOrderType.Public
+                        local publicOrderCandidates = {}
 
-                GUTIL.FrameDistributor {
-                    iterationTable = orders,
-                    iterationsPerFrame = 1,
-                    maxIterations = 100,
-                    finally = function()
-                        if isPublicOrder then
-                            if #publicOrderCandidates > 0 then
-                                table.sort(publicOrderCandidates, function(a, b)
-                                    return a.averageProfit > b.averageProfit
-                                end)
-                                local maxCount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT")
-                                if maxCount == 0 then
-                                    local claimInfo = C_CraftingOrders.GetOrderClaimInfo(profession)
-                                    maxCount = (claimInfo and claimInfo.claimsRemaining) or 0
-                                end
-                                if maxCount < 1 then
-                                    Logger:LogDebug(
-                                        "Public orders: {candidateCount} candidates but none queued (maxCount/claimsRemaining is 0)",
-                                        #publicOrderCandidates)
-                                else
-                                    local queued = math.min(maxCount, #publicOrderCandidates)
-                                    Logger:LogDebug(
-                                        "Public orders: queued {queued} of {candidateCount} candidates (max {maxCount})",
-                                        queued, #publicOrderCandidates, maxCount)
-                                    for i = 1, queued do
+                        GUTIL.FrameDistributor {
+                            iterationTable = orders,
+                            iterationsPerFrame = 1,
+                            maxIterations = 100,
+                            finally = function()
+                                if isPublicOrder and #publicOrderCandidates > 0 then
+                                    table.sort(publicOrderCandidates, function(a, b)
+                                        return a.averageProfit > b.averageProfit
+                                    end)
+                                    local maxCount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT")
+                                    if maxCount == 0 then
+                                        local claimInfo = C_CraftingOrders.GetOrderClaimInfo(profession)
+                                        maxCount = (claimInfo and claimInfo.claimsRemaining) or 0
+                                    end
+                                    for i = 1, math.min(maxCount, #publicOrderCandidates) do
                                         CraftSim.CRAFTQ:AddRecipe { recipeData = publicOrderCandidates[i].recipeData }
                                     end
                                 end
-                            else
-                                Logger:LogDebug("Public orders: no candidates passed filters")
-                            end
-                        end
-                        frameDistributor:Continue()
-                    end,
-                    continue = function(distributor, _, order, _, progress)
-                        order = order --[[@as CraftingOrderInfo]]
-                        local orderTypeText = CraftSim.UTIL:GetOrderTypeText(orderType)
+                                frameDistributor:Continue()
+                            end,
+                            continue = function(distributor, _, order, _, progress)
+                                order = order --[[@as CraftingOrderInfo]]
+                                local orderTypeText = CraftSim.UTIL:GetOrderTypeText(orderType)
 
-                        queueWorkOrdersButton:SetText(string.format("%s - %.0f%%", orderTypeText, progress))
+                                queueWorkOrdersButton:SetText(string.format("%s - %.0f%%", orderTypeText, progress))
 
-                        local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
-                        local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
-                        local knowledgePointsRewarded = 0
+                                local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
+                                local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
+                                local knowledgePointsRewarded = 0
 
-                        if isGuildOrder then
-                            if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
-                                -- check for alts.. consider that alts on same realm do not have the realm name in customerName
-                                local cleanedCustomerName = gsub(order.customerName,
-                                    "-" .. realmName, "")
-                                if not tContains(cleanedCrafterUIDs, cleanedCustomerName) then
-                                    logSkippedWorkOrder(order, "guild alt filter",
-                                        "customer {customerName}", order.customerName)
-                                    distributor:Continue()
-                                    return
+                                if isPatronOrder and maxPatronDurationHours > 0 then
+                                    local isClaimed = claimedOrder ~= nil and order.orderID == claimedOrder.orderID
+                                    local endTime = isClaimed and order.claimEndTime or order.expirationTime
+                                    local remaining = CraftSim.WORK_ORDER_TRACKER:GetOrderRemainingSeconds(endTime)
+                                    if remaining > maxPatronDurationHours * 3600 then
+                                        distributor:Continue()
+                                        return
+                                    end
                                 end
-                            end
-                        end
 
-                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
-                        if recipeInfo and recipeInfo.learned then
-                            local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
-
-                            recipeData:SetOrder(order)
-
-                            if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
-                                if recipeData:HasRequiredSelectableReagent() then
-                                    local slot = recipeData.reagentData.requiredSelectableReagentSlot
-                                    if slot and slot:IsPossibleReagent(CraftSim.CONST.ITEM_IDS
-                                            .REQUIRED_SELECTABLE_ITEMS.SPARK_OF_OMENS) then
-                                        if slot:IsAllocated() and not slot:IsOrderReagentIn(recipeData) then
-                                            logSkippedWorkOrder(order,
-                                                "spark required by crafter (CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES off)")
+                                if isGuildOrder then
+                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY") then
+                                        -- check for alts.. consider that alts on same realm do not have the realm name in customerName
+                                        local cleanedCustomerName = gsub(order.customerName,
+                                            "-" .. realmName, "")
+                                        if not tContains(cleanedCrafterUIDs, cleanedCustomerName) then
                                             distributor:Continue()
                                             return
                                         end
@@ -790,9 +764,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                 distributor:Continue()
                             end
-                        end
-                    end,
-                }:Continue()
+                        }:Continue()
             end)
         end
     }:Continue()
