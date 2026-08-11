@@ -60,10 +60,12 @@ function CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
 end
 
 function CraftSim.ITEM_COUNT:BAG_UPDATE_DELAYED()
+    CraftSim.INVENTORY_SOURCE:ClearInventoryCache()
     CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
 end
 
 function CraftSim.ITEM_COUNT:BANKFRAME_OPENED()
+    CraftSim.INVENTORY_SOURCE:ClearInventoryCache()
     CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
 end
 
