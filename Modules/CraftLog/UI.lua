@@ -1139,7 +1139,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
 
     -- Comparison Graph
     do
-        --CraftSim.DEBUG:SystemPrint("Updating Graph")
         local craftingStatDataSnapshots = craftRecipeData:GetCraftingStatDataSnapshotsBySelectedReagentCombinationID()
         local comparisonGraph = comparisonTabContent.statComparisonGraph
         local graphTitle = comparisonTabContent.statComparisonGraphTitle
@@ -1177,7 +1176,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
         if craftingStatData.numCrafts == 0 then
             comparisonGraph:ResetData()
             comparisonGraph:SetDefault()
-            --CraftSim.DEBUG:SystemPrint("- Setting Default Data, numCrafts: 0")
         else
             comparisonGraph:ResetData()
             local expectedPoints = { { 0, 0 } }
@@ -1215,7 +1213,6 @@ function CraftSim.CRAFT_LOG.UI:UpdateCalculationComparison(craftRecipeData, reci
                     .STAT_COMPARISON_GRAPH_OBSERVED_LINE_COLOR)
             else
                 comparisonGraph:SetDefault()
-                --CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") .. f.r("Did no refresh graph cause gridSpacingY is 0"))
             end
         end
     end

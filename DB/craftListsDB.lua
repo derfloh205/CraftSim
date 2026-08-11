@@ -408,3 +408,33 @@ function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_0_1_Import_Character_Favorites_from
         end
     end
 end
+
+function CraftSim.DB.CRAFT_LISTS.MIGRATION:M_1_2_Normalize_crafterUID_keys()
+    local normalizedCharacterLists = {}
+    for crafterUID, listMap in pairs(CraftSimDB.craftListsDB.characterLists or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedCharacterLists[normalizedCrafterUID] = normalizedCharacterLists[normalizedCrafterUID] or {}
+            for listID, craftList in pairs(listMap or {}) do
+                normalizedCharacterLists[normalizedCrafterUID][listID] = normalizedCharacterLists[normalizedCrafterUID]
+                    [listID] or craftList
+            end
+        end
+    end
+
+    local normalizedSelectedForQueue = {}
+    for crafterUID, selectedMap in pairs(CraftSimDB.craftListsDB.selectedForQueue or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedSelectedForQueue[normalizedCrafterUID] = normalizedSelectedForQueue[normalizedCrafterUID] or {}
+            for listID, selected in pairs(selectedMap or {}) do
+                if selected then
+                    normalizedSelectedForQueue[normalizedCrafterUID][listID] = true
+                end
+            end
+        end
+    end
+
+    CraftSimDB.craftListsDB.characterLists = normalizedCharacterLists
+    CraftSimDB.craftListsDB.selectedForQueue = normalizedSelectedForQueue
+end

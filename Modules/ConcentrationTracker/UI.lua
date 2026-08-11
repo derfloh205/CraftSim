@@ -63,7 +63,7 @@ local function ApplyConcentrationTrackerMoxieIcon(moxieIcon, profession, moxieQt
     end
     moxieIcon:SetCurrency(moxieCurrencyID)
     moxieIcon.frame:Show()
-    local meetsThreshold = moxieQty and moxieQty > MOXIE_ICON_THRESHOLD
+    local meetsThreshold = moxieQty and moxieQty >= MOXIE_ICON_THRESHOLD
     moxieIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
 end
 
@@ -73,7 +73,7 @@ local function ApplyConcentrationTrackerAcuityIcon(acuityIcon, acuityQty)
     acuityIcon:SetCurrency(nil)
     acuityIcon:SetItem(CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY)
     acuityIcon.frame:Show()
-    local meetsThreshold = acuityQty and acuityQty > ACUITY_ICON_THRESHOLD
+    local meetsThreshold = acuityQty and acuityQty >= ACUITY_ICON_THRESHOLD
     acuityIcon.frame:SetAlpha(meetsThreshold and REWARD_ICON_ALPHA_ACTIVE or REWARD_ICON_ALPHA_FADED)
 end
 

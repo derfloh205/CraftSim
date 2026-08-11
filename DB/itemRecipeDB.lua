@@ -138,3 +138,25 @@ end
 function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_3_4_TWW_Refactor()
     CraftSim.DB.ITEM_RECIPE:ClearAll()
 end
+
+function CraftSim.DB.ITEM_RECIPE.MIGRATION:M_4_5_Normalize_registered_crafter_UID_keys()
+    -- Item tooltip "Registered crafters" reads crafters[]; legacy rows may list the same
+    -- character twice (e.g. realm with spaces vs normalized realm key).
+    for _, data in pairs(CraftSimDB.itemRecipeDB.data or {}) do
+        local crafters = data.crafters
+        if type(crafters) == "table" then
+            ---@type table<CrafterUID, boolean>
+            local seen = {}
+            ---@type CrafterUID[]
+            local normalizedList = {}
+            for _, crafterUID in ipairs(crafters) do
+                local normalizedUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+                if normalizedUID and not seen[normalizedUID] then
+                    seen[normalizedUID] = true
+                    tinsert(normalizedList, normalizedUID)
+                end
+            end
+            data.crafters = normalizedList
+        end
+    end
+end

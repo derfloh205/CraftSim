@@ -691,7 +691,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:UpdateDisplay(craftQueueItem)
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
     if recipeData.supportsQualities and recipeData.concentrationData and recipeData.concentrationCost > 0 then
         local concentrationData = recipeData.concentrationData
-        if craftQueueItem.isCrafter then
+        if craftQueueItem:IsCrafter() then
             concentrationData:Update()
         end
         local requiredAmount = recipeData.concentrationCost * craftQueueItem.amount

@@ -359,3 +359,27 @@ end
 function CraftSim.DB.OPTIONS.MIGRATION:M_17_18_Remove_DebugID_SavedVariable()
     CraftSimDB.optionsDB.data["DEBUG_IDS"] = nil
 end
+
+function CraftSim.DB.OPTIONS.MIGRATION:M_18_19_Normalize_Cooldowns_Blacklist_CrafterUID_Keys()
+    local blacklist = CraftSimDB.optionsDB.data["COOLDOWNS_BLACKLIST"]
+    if type(blacklist) ~= "table" then
+        return
+    end
+
+    local normalized = {}
+    for key, selected in pairs(blacklist) do
+        if selected then
+            local sepPos = string.find(key, "::", 1, true)
+            if sepPos then
+                local crafterUID = string.sub(key, 1, sepPos - 1)
+                local serializationID = string.sub(key, sepPos + 2)
+                local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID) or crafterUID
+                normalized[normalizedCrafterUID .. "::" .. serializationID] = true
+            else
+                normalized[key] = true
+            end
+        end
+    end
+
+    CraftSimDB.optionsDB.data["COOLDOWNS_BLACKLIST"] = normalized
+end

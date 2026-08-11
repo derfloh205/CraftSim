@@ -818,3 +818,16 @@ function CraftSim.DB.CRAFTER.MIGRATION.M_6_7_Normalize_shared_cooldown_storage()
         end
     end
 end
+
+function CraftSim.DB.CRAFTER.MIGRATION.M_7_8_Normalize_crafterUID_keys()
+    ---@type table<CrafterUID, CraftSim.DB.CrafterDBData>
+    local normalizedData = {}
+    for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+        local normalizedCrafterUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedCrafterUID then
+            normalizedData[normalizedCrafterUID] = normalizedData[normalizedCrafterUID] or {}
+            CraftSim.UTIL:MergePreserveData(normalizedData[normalizedCrafterUID], crafterData)
+        end
+    end
+    CraftSimDB.crafterDB.data = normalizedData
+end

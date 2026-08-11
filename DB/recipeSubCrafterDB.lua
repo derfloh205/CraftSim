@@ -76,3 +76,12 @@ end
 function CraftSim.DB.RECIPE_SUB_CRAFTER.MIGRATION:M_2_3_TWW_Refactor_Reset()
     CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()
 end
+
+function CraftSim.DB.RECIPE_SUB_CRAFTER.MIGRATION:M_3_4_Normalize_crafter_UID_keys()
+    for recipeID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data or {}) do
+        local normalizedUID = CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+        if normalizedUID then
+            CraftSimDB.recipeSubCrafterDB.data[recipeID] = normalizedUID
+        end
+    end
+end

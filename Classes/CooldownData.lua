@@ -100,8 +100,6 @@ function CraftSim.CooldownData:GetFormattedTimerNextCharge()
     if self.maxCharges > 0 then
         local charges = self:GetCurrentCharges()
 
-        Logger:LogDebug("GetFormattedTimerNextCharge", false, true)
-
         if charges == self.maxCharges then
             return "00:00:00", true
         end
