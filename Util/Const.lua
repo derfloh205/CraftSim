@@ -532,6 +532,7 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
         ["MODULE_CONCENTRATION_TRACKER"] = true,
         ["MODULE_WORK_ORDER_TRACKER"] = false,
         ["MODULE_DISENCHANT"] = false,
+        ["MODULE_SHOPPING"] = false,
     },
 
     -- RECIPE INFO display options (single table key)

@@ -1172,6 +1172,11 @@ greater or equal the configured sale rate threshold.
         WORK_ORDER_TRACKER_HINT_ADD_TO_SHOPPING_LIST = "Add recipe to Auctionator shopping list",
         WORK_ORDER_TRACKER_HINT_UNAVAILABLE = "Open profession to see source",
         RECIPE_ACQUISITION_ADDED_TO_SHOPPING_LIST = "Added %s to Auctionator shopping list",
+        RECIPE_ACQUISITION_FAILED_TO_ADD_TO_SHOPPING_LIST = "Could not add %s to Auctionator shopping list",
+        RECIPE_ACQUISITION_SHOPPING_LIST_AUCTIONATOR_REQUIRED = "Auctionator is required to use the shopping list",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_LABEL = "Shopping List",
+        CONTROL_PANEL_MODULES_SHOPPING_LIST_TOOLTIP = "Open the " .. f.bb("Shopping List") ..
+            " to see what reagents you need to buy for your queued crafts",
 
         -- static popups
         STATIC_POPUPS_YES = "Yes",
