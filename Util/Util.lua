@@ -288,13 +288,18 @@ function CraftSim.UTIL:toBits(num, bits)
 end
 
 local playerCrafterDataCached = nil
+
+function CraftSim.UTIL:InvalidatePlayerCrafterDataCache()
+    playerCrafterDataCached = nil
+end
+
 ---@return CraftSim.CrafterData
 function CraftSim.UTIL:GetPlayerCrafterData()
     -- utilize cache to speed up api calls
     if playerCrafterDataCached then return playerCrafterDataCached end
 
     local name, realm = UnitNameUnmodified("player")
-    realm = realm or GetNormalizedRealmName()
+    realm = realm or GetNormalizedRealmName() or GetRealmName()
     ---@type CraftSim.CrafterData
     local crafterData = {
         name = name,
@@ -302,15 +307,25 @@ function CraftSim.UTIL:GetPlayerCrafterData()
         class = select(2, UnitClass("player")),
     }
 
-    playerCrafterDataCached = crafterData
+    -- Realm APIs may be unavailable during ADDON_LOADED; do not cache incomplete data.
+    if name and realm then
+        playerCrafterDataCached = crafterData
+    end
 
     return crafterData
 end
 
 ---@param crafterData CraftSim.CrafterData
----@return string crafterUID
+---@return string? crafterUID nil if name or realm unavailable (e.g. during ADDON_LOADED)
 function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
-    return crafterData.name .. "-" .. crafterData.realm
+    local realm = crafterData.realm
+    if not realm and crafterData.name == UnitNameUnmodified("player") then
+        realm = GetNormalizedRealmName() or GetRealmName()
+    end
+    if not crafterData.name or not realm then
+        return nil
+    end
+    return crafterData.name .. "-" .. realm
 end
 
 --- Player name cannot contain '-'; realm may contain hyphens. Split on the first '-' only.
@@ -394,7 +409,7 @@ function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
     end
 end
 
----@return string crafterUID
+---@return string? crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end

@@ -291,6 +291,9 @@ end
 ---@return "moxie"|"acuity"|nil
 function CraftSim.CONCENTRATION_TRACKER.UI:CollectCurrentPlayerMinimizedRowData()
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    if not playerCrafterUID then
+        return {}, nil, nil
+    end
     local openExpansionID, rewardColumnMode = GetTrackerExpansionContext()
     if not openExpansionID then
         return {}, openExpansionID, rewardColumnMode
