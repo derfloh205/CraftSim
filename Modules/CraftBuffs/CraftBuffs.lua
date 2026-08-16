@@ -726,7 +726,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 
     local haveActiveBuffsChanged = false
 
-    if info.isFullUpdate then
+    if (not canaccessvalue or canaccessvalue(info.isFullUpdate)) and info.isFullUpdate then
         -- Full update on login/reload: scan all tracked buffs directly
         local newActiveIds = {}
         for _, spellId in pairs(CraftSim.CONST.BUFF_IDS) do
@@ -756,7 +756,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
         return
     end
 
-	if info.addedAuras then
+	if (not canaccessvalue or canaccessvalue(info.addedAuras)) and info.addedAuras then
 		for _, v in pairs(info.addedAuras) do
             local isTrackedBuff = (not issecretvalue or not issecretvalue(v.spellId)) and tContains(CraftSim.CONST.BUFF_IDS, tonumber(v.spellId))
             local isAlreadyActive = tContains(self.activeBuffInstanceIds, v.auraInstanceID)
@@ -768,7 +768,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
     end
 
     -- Add buffs that are already active but did not exist in the table before (on login etc.)
-    if info.updatedAuraInstanceIDs then
+    if (not canaccessvalue or canaccessvalue(info.updatedAuraInstanceIDs)) and info.updatedAuraInstanceIDs then
 		for _, v in pairs(info.updatedAuraInstanceIDs) do
 			local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(unitTarget, v)
             if aura then
@@ -783,7 +783,7 @@ function CraftSim.CRAFT_BUFFS:UNIT_AURA(unitTarget, info)
 	end
 
     -- Remove buffs that are no longer active
-    if info.removedAuraInstanceIDs then
+    if (not canaccessvalue or canaccessvalue(info.removedAuraInstanceIDs)) and info.removedAuraInstanceIDs then
 		for _, v in pairs(info.removedAuraInstanceIDs) do
             tremove(self.activeBuffInstanceIds, tIndexOf(self.activeBuffInstanceIds, v))
             haveActiveBuffsChanged = true
