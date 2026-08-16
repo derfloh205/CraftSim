@@ -65,6 +65,9 @@ end
 
 local hookedEvent = false
 
+-- defer/re-verify delay for the fresh-login callback workarounds below
+local FRESH_LOGIN_SETTLE_DELAY = 0.1
+
 local freshLoginRecall = true
 local lastCallTime = 0
 function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
@@ -88,7 +91,7 @@ function CraftSim.INIT:InitializeVisibleRecipeID(isInit)
 		freshLoginRecall = false
 
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
-		C_Timer.After(0.1, function()
+		C_Timer.After(FRESH_LOGIN_SETTLE_DELAY, function()
 			CraftSim.INIT:InitializeVisibleRecipeID(true)
 		end)
 		return
@@ -389,6 +392,7 @@ end
 
 local professionFrameHooked = false
 local craftingOrdersPreloadedThisSession = {}
+local freshLoginModulesRecall = true
 function CraftSim.INIT:HookToProfessionsFrame()
 	if professionFrameHooked then
 		return
@@ -397,7 +401,18 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
 		function()
-			CraftSim.MODULES:ShowRecipeIndependentModules()
+			if freshLoginModulesRecall then
+				freshLoginModulesRecall = false
+				-- same fresh-login workaround as freshLoginRecall above; separate
+				-- flag since this guards a different, independently-firing hook
+				C_Timer.After(FRESH_LOGIN_SETTLE_DELAY, function()
+					if ProfessionsFrame:IsVisible() then
+						CraftSim.MODULES:ShowRecipeIndependentModules()
+					end
+				end)
+			else
+				CraftSim.MODULES:ShowRecipeIndependentModules()
+			end
 
 			CraftSim.DEBUG:StartProfiling("Update Customer History")
 			CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
