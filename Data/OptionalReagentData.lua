@@ -2481,6 +2481,86 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			increasedifficulty = 5,
 		},
 	},
+	[270898] = {
+		qualityID = 1,
+		name = "Snakeskin Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[270899] = {
+		qualityID = 2,
+		name = "Snakeskin Lining",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[273059] = {
+		qualityID = 1,
+		name = "Hunter's Ritual Stone",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[273060] = {
+		qualityID = 2,
+		name = "Hunter's Ritual Stone",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[273062] = {
+		qualityID = 1,
+		name = "Coiled Snake-Eye",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[273063] = {
+		qualityID = 2,
+		name = "Coiled Snake-Eye",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[273065] = {
+		qualityID = 1,
+		name = "Polished Ammolite",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[273066] = {
+		qualityID = 2,
+		name = "Polished Ammolite",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
+	[273068] = {
+		qualityID = 1,
+		name = "Adorned Fang",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 15,
+		},
+	},
+	[273069] = {
+		qualityID = 2,
+		name = "Adorned Fang",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 5,
+		},
+	},
 	[191511] = {
 		qualityID = 1,
 		name = "Stable Fluidic Draconium",
@@ -3446,6 +3526,22 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 	[256608] = {
 		qualityID = 0,
 		name = "Galactic Gladiator's Heraldry",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 150,
+		},
+	},
+	[275383] = {
+		qualityID = 0,
+		name = "Venomous Aspirant's Heraldry",
+		expansionID = 11,
+		stats = {
+			increasedifficulty = 50,
+		},
+	},
+	[275385] = {
+		qualityID = 0,
+		name = "Venomous Gladiator's Heraldry",
 		expansionID = 11,
 		stats = {
 			increasedifficulty = 150,
