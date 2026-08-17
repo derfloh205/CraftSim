@@ -67,7 +67,8 @@ def map(buildVersion):
         if currencyID is not None:
             results = wagoTools.searchTable(CraftingReagentQualityTable, {"conditions": {"CurrencyTypesID": str(currencyID)}})
             # data is dirty, there's a test entry for each type of Dawncrest (except Champion as it is not used as a reagent)
-            craftingReagentQuality = results[0] if len(results) == 1 else results[0] if results[0]["MaxDifficultyAdjustment"] != "0" else results[1]
+            if len(results) > 0:
+                craftingReagentQuality = results[0] if len(results) == 1 else results[0] if results[0]["MaxDifficultyAdjustment"] != "0" else results[1]
 
         qualityID = 0
         modifiedCraftingCategoryID = None
