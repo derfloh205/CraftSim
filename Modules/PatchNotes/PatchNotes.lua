@@ -27,6 +27,11 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("27.0.0"),
+        f.PG .. "Very Big Update",
+        f.s .. "Shoutout to " .. f.bb("Avilene") ..
+        f.a .. "for single handedly doing 99% of the work!",
+        f.p .. "Lots of new features and updates for the patch",
         newP("26.1.11"),
         data("12.0.7.68453"),
         f.a .. "- This includes Jewelcrafting Spec Updates",
