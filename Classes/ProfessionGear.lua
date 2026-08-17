@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
@@ -111,12 +111,50 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 			end
 		end
 	end
-	
+
 	if parsedSkill > 0 then
 		self.professionStats.skill.value = parsedSkill
 	end
 
 	self.professionStats:add(self:GetStatsFromEnchant())
+end
+
+---@return number
+function CraftSim.ProfessionGear:GetResourcefulnessValue()
+	local res = self.professionStats.resourcefulness.value
+	if res > 0 or not self.item then
+		return res
+	end
+	local extractedStats = C_Item.GetItemStats(self.item:GetItemLink())
+	if extractedStats then
+		return extractedStats.ITEM_MOD_RESOURCEFULNESS_SHORT or 0
+	end
+	return 0
+end
+
+---@return number
+function CraftSim.ProfessionGear:GetMulticraftValue()
+	local mc = self.professionStats.multicraft.value
+	if mc > 0 or not self.item then
+		return mc
+	end
+	local extractedStats = C_Item.GetItemStats(self.item:GetItemLink())
+	if extractedStats then
+		return extractedStats.ITEM_MOD_MULTICRAFT_SHORT or 0
+	end
+	return 0
+end
+
+--- True when the tool's primary proc stat is multicraft (multicraft does not apply to work orders or non-multicraft recipes).
+---@return boolean
+function CraftSim.ProfessionGear:IsMulticraftOnlyTool()
+	if not self.item then
+		return false
+	end
+	if self:GetResourcefulnessValue() > 0 then
+		return false
+	end
+	return self:GetMulticraftValue() > 0
 end
 
 function CraftSim.ProfessionGear:Copy()

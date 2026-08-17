@@ -44,6 +44,32 @@ function CraftSim.ConcentrationData:GetCurrentAmount()
     return math.min(self.maxQuantity, self.amount + fullCyclesCompletedSinceUpdate)
 end
 
+--- Whole concentration points for affordability (craft, queue, comparisons). Regen interpolation can sit
+--- just under the next integer (e.g. 217.999) while the currency UI shows 218; raw GetCurrentAmount then
+--- fails strict checks and math.floor(current / cost) yields 0 even though the player can craft.
+---@return number
+function CraftSim.ConcentrationData:GetSpendableAmount()
+    if self.maxQuantity <= 0 then
+        return 0
+    end
+    return math.min(self.maxQuantity, math.floor(self:GetCurrentAmount()))
+end
+
+---@param requiredAmount number
+---@return boolean
+function CraftSim.ConcentrationData:CanAfford(requiredAmount)
+    return self:GetSpendableAmount() >= requiredAmount
+end
+
+---@param costPerCraft number
+---@return number
+function CraftSim.ConcentrationData:GetQueueableAmount(costPerCraft)
+    if not costPerCraft or costPerCraft <= 0 then
+        return 0
+    end
+    return math.floor(self:GetSpendableAmount() / costPerCraft)
+end
+
 ---@param concentrationValue number
 ---@return number time in seconds with ms precision
 function CraftSim.ConcentrationData:GetTimeUntil(concentrationValue)
@@ -106,7 +132,7 @@ end
 ---@param useUSFormat? boolean passed through to GetFormattedDateUntil
 ---@return string? localized text with estimated time (date in blue), or nil if already have enough
 function CraftSim.ConcentrationData:GetEstimatedTimeUntilEnoughText(requiredAmount, useUSFormat)
-    if self:GetCurrentAmount() >= requiredAmount then
+    if self:CanAfford(requiredAmount) then
         return nil
     end
     local formattedDate = self:GetFormattedDateUntil(requiredAmount, useUSFormat)

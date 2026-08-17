@@ -3,13 +3,13 @@ local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
-local L = CraftSim.UTIL:GetLocalizer()
+local L = CraftSim.LOCAL:GetLocalizer()
 local f = CraftSim.GUTIL:GetFormatter()
 
 ---@class CraftSim.RECIPE_SCAN
 CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
 
----@class CraftSim.RECIPE_SCAN.UI
+---@class CraftSim.RECIPE_SCAN.UI : CraftSim.Module.UI
 CraftSim.RECIPE_SCAN.UI = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeScan.UI")
@@ -45,6 +45,9 @@ local function BuildRecipeTooltipText(recipeData, recipeLists)
 end
 
 function CraftSim.RECIPE_SCAN.UI:Init()
+    local onCloseCallback, onMinimizeCallback, onMaximizeCallback =
+        CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
+
     local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
     CraftSim.RECIPE_SCAN.frame = GGUI.Frame({
@@ -57,7 +60,9 @@ function CraftSim.RECIPE_SCAN.UI:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.MODULES:HandleModuleClose("MODULE_RECIPE_SCAN"),
+        onCloseCallback = onCloseCallback,
+        onCollapseCallback = onMinimizeCallback,
+        onCollapseOpenCallback = onMaximizeCallback,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -116,6 +121,23 @@ function CraftSim.RECIPE_SCAN.UI:Init()
 
     createContent(CraftSim.RECIPE_SCAN.frame)
     GGUI:EnableHyperLinksForFrameAndChilds(CraftSim.RECIPE_SCAN.frame.content)
+
+    self.module.frame = CraftSim.RECIPE_SCAN.frame
+end
+
+function CraftSim.RECIPE_SCAN.UI:Update()
+    if not self.module or not self.module.frame then
+        return
+    end
+    CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
+end
+
+function CraftSim.RECIPE_SCAN.UI:VisibleByContext()
+    local moduleEnabled = CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID)
+    if not moduleEnabled then return false end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    return selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
 end
 
 ---@param selectedRow CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
@@ -400,7 +422,7 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionList(professionChanged)
     for crafterUID, crafterDBData in pairs(crafterDBDataMap) do
         local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs or {}
         for profession, _ in pairs(cachedProfessionRecipeIDs) do
-            local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+            local crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
             local alreadyListed = GUTIL:Some(activeRows, function(activeRow)
                 return activeRow.crafterProfessionUID == crafterProfessionUID
             end)
@@ -426,9 +448,9 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListDisplay(professionChanged)
             local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
             local crafterUIDA = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowA.crafterData)
             local crafterUIDB = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowB.crafterData)
-            local playerCrafterProfessionUIDA = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUIDA, rowA
+            local playerCrafterProfessionUIDA = CraftSim.UTIL:GetCrafterProfessionUID(crafterUIDA, rowA
                 .profession)
-            local playerCrafterProfessionUIDB = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUIDB, rowB
+            local playerCrafterProfessionUIDB = CraftSim.UTIL:GetCrafterProfessionUID(crafterUIDB, rowB
                 .profession)
 
             -- current character and current profession always on top
@@ -894,7 +916,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
     local columnOptions = {
         {
             --label = L("RECIPE_SCAN_LEARNED_HEADER"),
-            width = 15,
+            width = 32,
             justifyOptions = { type = "H", align = "CENTER" }
         },
         {
@@ -1052,7 +1074,10 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             learnedColumn.text = GGUI.Text({
                 parent = learnedColumn,
                 anchorParent = learnedColumn,
-                justifyOptions = { type = "H", align = "CENTER" },
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                offsetX = 0,
+                justifyOptions = { type = "H", align = "LEFT" },
                 offsetY = -1,
                 tooltipOptions = {
                     owner = learnedColumn,
@@ -1060,6 +1085,9 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                     text = notLearnedIcon .. " .. not learned\n" .. learnedIcon .. " .. learned"
                 },
             })
+
+            learnedColumn.acquisitionButton = CraftSim.RECIPE_ACQUISITION:CreateIconButton(
+                learnedColumn, learnedColumn, "RIGHT", "RIGHT", 0, 0, 18)
 
             function learnedColumn:SetLearned(learned, isFavorite)
                 -- if its favorite it has to be learned
@@ -1246,7 +1274,7 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
         ---@type string
         row.crafterUID = crafterUID
         ---@type string
-        row.crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+        row.crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
 
         ---@type CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW[]
         row.activeRows = content.professionList.activeRows
@@ -1282,7 +1310,7 @@ function CraftSim.RECIPE_SCAN.UI:AddProfessionTabRow(crafterUID, profession)
         ---@type CraftSim.RecipeData[]
         row.currentResults = {}
 
-        local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+        local crafterProfessionUID = CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
 
         local isChecked = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDED_PROFESSIONS")[crafterProfessionUID]
 
@@ -1403,6 +1431,12 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 recipeData.recipeName .. "|r" .. cooldownInfoText .. firstCraftInfoText)
 
             learnedColumn:SetLearned(recipeData.learned, isFavorite)
+            CraftSim.RECIPE_ACQUISITION:UpdateListRowAcquisitionButton(
+                learnedColumn,
+                recipeData.recipeID,
+                recipeData.recipeName,
+                recipeData.learned,
+                recipeData.professionData.skillLineID)
 
             if enableConcentration then
                 expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemConcentration)
@@ -1480,7 +1514,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                 local itemLink = resultItem:GetItemLink()
                 if itemID or itemLink then
                     breakdownLines = CraftSim.INVENTORY_SOURCE:GetInventoryBreakdownLines(
-                        itemLink or itemID, includeAlts)
+                        itemID or itemLink, includeAlts)
                     for _, line in ipairs(breakdownLines) do
                         totalCount = totalCount + line.count
                     end
@@ -1510,4 +1544,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             }
         end)
     resultList:UpdateDisplay()
+end
+
+function CraftSim.RECIPE_SCAN.UI:RestoreFrameConfig()
+    CraftSim.RECIPE_SCAN.frame:RestoreSavedConfig(ProfessionsFrame)
 end

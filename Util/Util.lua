@@ -216,6 +216,22 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+---@param skillLineID number
+---@return Enum.Profession? profession
+function CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+    local skillLineIDMap = CraftSim.CONST.TRADESKILLLINEIDS
+
+    for profession, expansionData in pairs(skillLineIDMap) do
+        for _, _skillLineID in pairs(expansionData) do
+            if _skillLineID == skillLineID then
+                return profession
+            end
+        end
+    end
+
+    return nil -- sometimes happens if not yet initialized
+end
+
 ---@param recipeExpansionID CraftSim.EXPANSION_IDS?
 ---@param itemID number?
 ---@param context string? debug context
@@ -272,13 +288,18 @@ function CraftSim.UTIL:toBits(num, bits)
 end
 
 local playerCrafterDataCached = nil
+
+function CraftSim.UTIL:InvalidatePlayerCrafterDataCache()
+    playerCrafterDataCached = nil
+end
+
 ---@return CraftSim.CrafterData
 function CraftSim.UTIL:GetPlayerCrafterData()
     -- utilize cache to speed up api calls
     if playerCrafterDataCached then return playerCrafterDataCached end
 
     local name, realm = UnitNameUnmodified("player")
-    realm = realm or GetNormalizedRealmName()
+    realm = realm or GetNormalizedRealmName() or GetRealmName()
     ---@type CraftSim.CrafterData
     local crafterData = {
         name = name,
@@ -286,15 +307,25 @@ function CraftSim.UTIL:GetPlayerCrafterData()
         class = select(2, UnitClass("player")),
     }
 
-    playerCrafterDataCached = crafterData
+    -- Realm APIs may be unavailable during ADDON_LOADED; do not cache incomplete data.
+    if name and realm then
+        playerCrafterDataCached = crafterData
+    end
 
     return crafterData
 end
 
 ---@param crafterData CraftSim.CrafterData
----@return string crafterUID
+---@return string? crafterUID nil if name or realm unavailable (e.g. during ADDON_LOADED)
 function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
-    return crafterData.name .. "-" .. crafterData.realm
+    local realm = crafterData.realm
+    if not realm and crafterData.name == UnitNameUnmodified("player") then
+        realm = GetNormalizedRealmName() or GetRealmName()
+    end
+    if not crafterData.name or not realm then
+        return nil
+    end
+    return crafterData.name .. "-" .. realm
 end
 
 --- Player name cannot contain '-'; realm may contain hyphens. Split on the first '-' only.
@@ -378,12 +409,19 @@ function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
     end
 end
 
----@return string crafterUID
+---@return string? crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
 end
 
-function CraftSim.UTIL:GetSchematicFormByVisibility()
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return string crafterProfessionUID
+function CraftSim.UTIL:GetCrafterProfessionUID(crafterUID, profession)
+    return tostring(crafterUID) .. ":" .. tostring(profession)
+end
+
+function CraftSim.UTIL:GetSchematicFormByContext()
     if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
         return ProfessionsFrame.CraftingPage.SchematicForm
     elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
@@ -399,6 +437,18 @@ function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craf
         table.insert(qualityIDs, outputItemData.itemID)
     end
     return qualityIDs
+end
+
+---@param recipeID number
+---@param recipeInfo TradeSkillRecipeInfo?
+---@return boolean
+function CraftSim.UTIL:IsGearRecipe(recipeID, recipeInfo)
+    recipeInfo = recipeInfo or C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if not recipeInfo or not recipeInfo.hyperlink or recipeInfo.isEnchantingRecipe then
+        return false
+    end
+    local itemInfoInstant = { C_Item.GetItemInfoInstant(recipeInfo.hyperlink) }
+    return not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
 end
 
 ---@param recipeID number
@@ -440,13 +490,6 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
         table.insert(linksByQuality, outputItemData.hyperlink)
     end
     return linksByQuality
-end
-
----@return fun(ID: CraftSim.LOCALIZATION_IDS | string): string
-function CraftSim.UTIL:GetLocalizer()
-    return function(ID)
-        return CraftSim.LOCAL:GetText(ID)
-    end
 end
 
 --- Clock icon + localized current/max charges. Same data path as Recipe Scan (`GetCooldownDataForRecipeCrafter`).
@@ -651,6 +694,17 @@ function CraftSim.UTIL:GetRecipeProfessionMoxieCurrencyID(recipeData)
         end
     end
     return nil
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return boolean
+function CraftSim.UTIL:CrafterHasProfession(crafterUID, profession)
+    if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
+        return CraftSim.UTIL:IsProfessionLearned(profession)
+    end
+    local cachedRecipes = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
+    return cachedRecipes ~= nil and #cachedRecipes > 0
 end
 
 ---@param profession Enum.Profession
@@ -959,4 +1013,28 @@ function CraftSim.UTIL:MoveItemIntoInventory(itemInfo, maxCount)
             end
         }:Continue()
     end)
+end
+
+---@return CraftSim.PROFESSIONS_TAB? selectedTab
+function CraftSim.UTIL:GetSelectedProfessionTab()
+    if not ProfessionsFrame:IsVisible() then
+        return nil
+    end
+
+    local selectedTabID = ProfessionsFrame.TabSystem.selectedTabID
+
+    local selectedTab
+    if selectedTabID == 1 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    elseif selectedTabID == 2 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO
+    elseif selectedTabID == 3 then
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    else
+        -- if its the first time opening after login/reload its nil
+        -- but also we can safely assume here its the recipe tab because its the default to open to
+        selectedTab = CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    end
+
+    return selectedTab
 end

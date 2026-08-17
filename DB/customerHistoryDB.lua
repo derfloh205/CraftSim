@@ -111,35 +111,35 @@ end
 --- Migrations
 function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_0_1_Import_from_CraftSimRecipeDataCache()
     local CraftSimCustomerHistoryV2 = _G["CraftSimCustomerHistoryV2"]
-        if CraftSimCustomerHistoryV2 then
-            for _, data in pairs(CraftSimCustomerHistoryV2) do
-                data["v"] = nil
-            end
-            CraftSimDB.customerHistoryDB.data = CraftSimCustomerHistoryV2
+    if CraftSimCustomerHistoryV2 then
+        for _, data in pairs(CraftSimCustomerHistoryV2) do
+            data["v"] = nil
         end
+        CraftSimDB.customerHistoryDB.data = CraftSimCustomerHistoryV2
+    end
 end
 
 function CraftSim.DB.CUSTOMER_HISTORY.MIGRATION:M_1_2_CraftingOrderReagentInfo_Structure_Update()
     for _, customerHistory in pairs(CraftSimDB.customerHistoryDB.data) do
-            for _, craft in ipairs(customerHistory.craftHistory) do
-                if craft.reagents then
-                    for _, craftingOrderReagentInfo in ipairs(craft.reagents) do
-                        -- Only migrate if old structure is detected
-                        ---@diagnostic disable-next-line: undefined-field
-                        if not craftingOrderReagentInfo.reagentInfo and craftingOrderReagentInfo.reagent then
-                            craftingOrderReagentInfo.reagentInfo = {
-                                reagent = {
-                                    ---@diagnostic disable-next-line: undefined-field
-                                    itemID = craftingOrderReagentInfo.reagent.itemID,
-                                },
+        for _, craft in ipairs(customerHistory.craftHistory) do
+            if craft.reagents then
+                for _, craftingOrderReagentInfo in ipairs(craft.reagents) do
+                    -- Only migrate if old structure is detected
+                    ---@diagnostic disable-next-line: undefined-field
+                    if not craftingOrderReagentInfo.reagentInfo and craftingOrderReagentInfo.reagent then
+                        craftingOrderReagentInfo.reagentInfo = {
+                            reagent = {
                                 ---@diagnostic disable-next-line: undefined-field
-                                quantity = craftingOrderReagentInfo.reagent.quantity,
-                                ---@diagnostic disable-next-line: undefined-field
-                                dataSlotIndex = craftingOrderReagentInfo.reagent.dataSlotIndex,
-                            }
-                        end
+                                itemID = craftingOrderReagentInfo.reagent.itemID,
+                            },
+                            ---@diagnostic disable-next-line: undefined-field
+                            quantity = craftingOrderReagentInfo.reagent.quantity,
+                            ---@diagnostic disable-next-line: undefined-field
+                            dataSlotIndex = craftingOrderReagentInfo.reagent.dataSlotIndex,
+                        }
                     end
                 end
             end
         end
+    end
 end

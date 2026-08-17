@@ -93,9 +93,10 @@ function CraftSim.LOCAL_TW:GetData()
             f.bb("情況 A 機率 30%") ..
             " 利潤 " .. f.m(-100 * 10000) ..
             " 和一個" ..
-            f.bb("情況 B 機率 70%") .. " 利潤 " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " 那該情況的期望利潤就是\n" ..
+            f.bb("情況 B 機率 70%") ..
+            " 利潤 " .. CraftSim.GUTIL:FormatMoney(300 * 10000, true, 0, true, false, false) .. " 那該情況的期望利潤就是\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7 ") ..
-            " 是 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            " 是 " .. CraftSim.GUTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true, 0, true, false, false) .. "\n" ..
             "你可以在" .. f.bb("統計資料") .. "視窗中檢視當前配方的所有情況！"
         ,
 
@@ -351,7 +352,7 @@ function CraftSim.LOCAL_TW:GetData()
         CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP = "提供與客戶對談的歷史記錄、製作過的物品和佣金的模組",
         CONTROL_PANEL_RESET_FRAMES = "重置框架位置",
         CONTROL_PANEL_OPTIONS = "選項",
-        CONTROL_PANEL_NEWS = "更新資訊",
+        CONTROL_PANEL_PATCH_NOTES = "Patch Notes",
         CONTROL_PANEL_EASYCRAFT_EXPORT = f.l("Easycraft") .. " 匯出",
         CONTROL_PANEL_EASYCRAFT_EXPORTING = "正在匯出",
         CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND = "没有适用于 The War Within 扩展包的导出配方",
@@ -442,5 +443,6 @@ function CraftSim.LOCAL_TW:GetData()
         -- static popups
         STATIC_POPUPS_YES = "是",
         STATIC_POPUPS_NO = "否",
+        PATCH_NOTES_TITLE = "CraftSim 更新說明",
     }
 end
