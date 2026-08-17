@@ -32,6 +32,7 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         f.s .. "Shoutout to " .. f.bb("Avilene"),
         f.a .. "for single handedly doing 99% of the work!",
         f.p .. "Lots of new features and updates for the patch",
+        f.p .. "Lots of internal code structure changes",
         newP("26.1.11"),
         data("12.0.7.68453"),
         f.a .. "- This includes Jewelcrafting Spec Updates",
