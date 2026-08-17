@@ -9,6 +9,19 @@ CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
 local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueueItem")
 
+--- Used by WorkOrderTracker until feat/precraftconditions lands.
+---@enum CraftSim.PRE_CRAFT_CONDITION_IDS
+CraftSim.PRE_CRAFT_CONDITION_IDS = {
+    LEARNED = "LEARNED",
+    COOLDOWN = "COOLDOWN",
+    IS_CRAFTER = "IS_CRAFTER",
+    REAGENTS = "REAGENTS",
+    WORK_ORDER_MIN_QUALITY = "WORK_ORDER_MIN_QUALITY",
+    PROFESSION_OPEN = "PROFESSION_OPEN",
+    PROFESSION_TOOLS = "PROFESSION_TOOLS",
+    PRE_CRAFT_ACTION = "PRE_CRAFT_ACTION",
+}
+
 ---@class CraftSim.CraftQueueItem.Options
 ---@field recipeData CraftSim.RecipeData
 ---@field amount? number
@@ -54,6 +67,16 @@ function CraftSim.CraftQueueItem:new(options)
     self.allDataCached = false
 
     self.crafterData = options.recipeData:GetCrafterData()
+
+    ---@class CraftSim.CraftQueueItem.PrecraftConditionData
+    ---@field IsAllowedToCraft fun(): boolean
+    local cqi = self
+    ---@type CraftSim.CraftQueueItem.PrecraftConditionData
+    self.precraftConditionData = {
+        IsAllowedToCraft = function()
+            return cqi.allowedToCraft
+        end,
+    }
 end
 
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
@@ -296,4 +319,72 @@ function CraftSim.CraftQueueItem:GetNumParentRecipesInQueue()
         end
     end
     return count
+end
+
+---@class CraftSim.PrecraftCondition
+---@field id CraftSim.PRE_CRAFT_CONDITION_IDS
+---@field reason string?
+---@field isMet boolean
+---@field priority number
+
+---@return CraftSim.PrecraftCondition[]
+function CraftSim.CraftQueueItem:GetPrecraftConditions()
+    local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
+    local orderData = self.recipeData.orderData
+    local meetsMinQuality = true
+    if orderData and orderData.minQuality and orderData.minQuality > 0 then
+        meetsMinQuality = self.recipeData.resultData.expectedQuality >= orderData.minQuality
+    end
+
+    return {
+        { id = IDS.IS_CRAFTER, isMet = self.isCrafter, reason = "Alt Character", priority = 1000 },
+        { id = IDS.LEARNED, isMet = self.learned, reason = "Not Learned", priority = 900 },
+        { id = IDS.COOLDOWN, isMet = self.notOnCooldown, reason = "On Cooldown", priority = 800 },
+        {
+            id = IDS.WORK_ORDER_MIN_QUALITY,
+            isMet = meetsMinQuality,
+            reason = "Below minimum quality",
+            priority = 99,
+        },
+        { id = IDS.REAGENTS, isMet = self.canCraftOnce, reason = "Missing Reagents", priority = 90 },
+        { id = IDS.PROFESSION_OPEN, isMet = self.correctProfessionOpen, reason = "Wrong Profession", priority = 50 },
+        { id = IDS.PROFESSION_TOOLS, isMet = self.gearEquipped, reason = "Wrong Profession Tools", priority = 40 },
+        {
+            id = IDS.PRE_CRAFT_ACTION,
+            isMet = not self.pcbgData.needsStep,
+            reason = "Pre-craft action required",
+            priority = 30,
+        },
+    }
+end
+
+---@return CraftSim.PrecraftCondition?
+function CraftSim.CraftQueueItem:GetTopFailedCondition()
+    local topFailed, topPriority = nil, nil
+    for _, condition in ipairs(self:GetPrecraftConditions()) do
+        if not condition.isMet then
+            if not topPriority or condition.priority > topPriority then
+                topFailed = condition
+                topPriority = condition.priority
+            end
+        end
+    end
+    return topFailed
+end
+
+--- Whether a work order can be claimed (reagents, recipe, cooldown, quality — not profession window/tools).
+---@return boolean
+function CraftSim.CraftQueueItem:CanClaimWorkOrder()
+    local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
+    for _, condition in ipairs(self:GetPrecraftConditions()) do
+        if condition.id == IDS.LEARNED
+            or condition.id == IDS.COOLDOWN
+            or condition.id == IDS.REAGENTS
+            or condition.id == IDS.WORK_ORDER_MIN_QUALITY then
+            if not condition.isMet then
+                return false
+            end
+        end
+    end
+    return true
 end

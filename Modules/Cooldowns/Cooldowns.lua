@@ -2,9 +2,22 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local L = CraftSim.LOCAL:GetLocalizer()
 
----@class CraftSim.COOLDOWNS : Frame
+---@class CraftSim.COOLDOWNS : CraftSim.Module
 CraftSim.COOLDOWNS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
+
+CraftSim.MODULES:RegisterModule("MODULE_COOLDOWNS", CraftSim.COOLDOWNS, {
+    label = L("CONTROL_PANEL_MODULES_COOLDOWNS_LABEL"),
+    tooltip = L("CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP"),
+})
+
+GUTIL:RegisterCustomEvents(CraftSim.COOLDOWNS,
+    {
+        "CRAFTSIM_PROFESSION_OPENED",
+        "CRAFTSIM_RECIPE_DATA_UPDATED",
+        "CRAFTSIM_MODULE_CLOSED"
+    })
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Cooldowns")
 
@@ -45,4 +58,23 @@ function CraftSim.COOLDOWNS:GetIncludedExpansions()
     end
 
     return expansionIDs
+end
+
+function CraftSim.COOLDOWNS:CRAFTSIM_PROFESSION_OPENED(_, selectedTab, _, _)
+    if selectedTab == CraftSim.CONST.PROFESSIONS_TAB.SPEC_INFO then
+        self.UI:Update()
+        self:StartTimerUpdate()
+    end
+end
+
+function CraftSim.COOLDOWNS:CRAFTSIM_RECIPE_DATA_UPDATED()
+    self.UI:Update()
+    self:StartTimerUpdate()
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.COOLDOWNS:CRAFTSIM_MODULE_CLOSED(moduleID)
+    if self.moduleID == moduleID then
+        self:StopTimerUpdate()
+    end
 end

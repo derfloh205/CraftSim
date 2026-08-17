@@ -111,7 +111,7 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     elseif exchangeLoaded then
         CraftSimPriceAPI = CraftSimEXCHANGE
     else
-        Logger:LogDebug("CraftSim: No supported price source found")
+        Logger:LogWarning("CraftSim: No supported price source found")
         Logger:LogDebug("Supported addons are: ")
         for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
             Logger:LogDebug(name)
@@ -173,8 +173,8 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
     local tsmItemString = TSM_API.ToItemString(itemLink)
     local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
     if error then
-        Logger:LogDebug(f.r("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error)), false, true)
-        Logger:LogDebug("itemLink: " .. tostring(itemLink))
+        Logger:LogError("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error))
+        Logger:LogWarning("CraftSimTSM:GetItemSaleRate itemLink: " .. tostring(itemLink))
     end
     salerate = salerate or 0 -- nil safe
     return salerate / 1000
@@ -302,18 +302,19 @@ function CraftSimTSM:GetExpectedDeposit(recipeData)
     if expression and expression ~= "" then
         local ok, result = pcall(TSM_API.GetCustomPriceValue, expression, tsmStr)
         if not ok then
-            Logger:LogDebug("GetExpectedDeposit: TSM_API.GetCustomPriceValue error for expression '",
-                tostring(expression), "' and item '", tostring(tsmStr), "': ", tostring(result))
+            Logger:LogError("GetExpectedDeposit: TSM_API.GetCustomPriceValue error for expression '" ..
+                tostring(expression) .. "' and item '" .. tostring(tsmStr) .. "': " .. tostring(result))
             deposit = nil
         else
             deposit = result
             if deposit == nil then
-                Logger:LogDebug("GetExpectedDeposit: TSM expression returned nil for '",
-                    tostring(expression), "' and item '", tostring(tsmStr), "'")
+                Logger:LogWarning("GetExpectedDeposit: TSM expression returned nil for '" ..
+                    tostring(expression) .. "' and item '" .. tostring(tsmStr) .. "'")
             end
         end
     else
-        Logger:LogDebug("GetExpectedDeposit: No TSM deposit expression configured; using 0 for item '", tostring(tsmStr), "'")
+        Logger:LogWarning("GetExpectedDeposit: No TSM deposit expression configured; using 0 for item '" ..
+            tostring(tsmStr) .. "'")
         deposit = nil
     end
     depositCache[tsmStr] = { value = deposit, t = now }
@@ -359,17 +360,10 @@ function CraftSimTSM:GetSmartRestockAmount(recipeData)
     local restockExpr = CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS")
     local target = TSM_API.GetCustomPriceValue(restockExpr, tsmStr) or 0
 
-    -- Owned inventory via TSM_API
-    local numPlayer, numAlts, numAuctions, numAltAuctions = TSM_API.GetPlayerTotals(tsmStr)
-    local owned = numPlayer + numAuctions
-
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS") then
-        owned = owned + numAlts + numAltAuctions
-    end
-
-    if CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_WARBANK") then
-        owned = owned + (TSM_API.GetWarbankQuantity and TSM_API.GetWarbankQuantity(tsmStr) or 0)
-    end
+    -- Owned inventory via tradable stock only (exclude soulbound bags/bank).
+    local includeAlts = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
+    local itemID = resultData.expectedItem:GetItemID()
+    local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemLink or itemID, includeAlts)
 
     local needed = math.max(0, target - owned)
     return needed, target, owned
