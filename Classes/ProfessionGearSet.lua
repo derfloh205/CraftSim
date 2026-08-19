@@ -121,21 +121,29 @@ function CraftSim.ProfessionGearSet:ToolSlotMatchesEquipped(equippedSet)
     local equipped = equippedSet.tool
     local recipeData = self.recipeData
 
-    if not expected.item then
-        return equipped.item == nil
-    end
     if not equipped.item then
-        return false
+        return expected.item == nil
+    end
+
+    -- Identity match: the equipped tool is exactly the expected one, regardless of its stats.
+    if expected.item and equipped:Equals(expected) then
+        return true
     end
 
     if recipeData:ShouldAvoidMulticraftOnlyTools() then
-        if equipped:IsMulticraftOnlyTool() then
-            return false
+        if not expected.item then
+            -- No non-multicraft tool available to recommend; accept whatever tool is currently
+            -- equipped instead of demanding an empty tool slot (which would mean unequipping it).
+            return true
         end
         if expected:IsMulticraftOnlyTool() then
             if equipped:GetResourcefulnessValue() > 0 then
                 return equipped.professionStats.skill.value >= expected.professionStats.skill.value
             end
+            return false
+        end
+        if equipped:IsMulticraftOnlyTool() then
+            -- A different, non-multicraft tool is expected and available: prompt to swap.
             return false
         end
     end
@@ -229,17 +237,14 @@ function CraftSim.ProfessionGearSet:ExpectedSlotMatchesEquipped(slot, equippedSe
         if slot == "gear1" then
             return true
         end
-        local expected = slot == "gear2" and self.gear2 or self.tool
+        if slot == "tool" then
+            return self:ToolSlotMatchesEquipped(equippedSet)
+        end
+        local expected = self.gear2
         if not expected.item then
-            if slot == "gear2" then
-                return equippedSet.gear2.item == nil
-            end
-            return equippedSet.tool.item == nil
+            return equippedSet.gear2.item == nil
         end
-        if slot == "gear2" then
-            return equippedSet.gear2.item ~= nil and equippedSet.gear2:Equals(expected)
-        end
-        return self:ToolSlotMatchesEquipped(equippedSet)
+        return equippedSet.gear2.item ~= nil and equippedSet.gear2:Equals(expected)
     end
 
     local expected = self[slot] ---@type CraftSim.ProfessionGear
@@ -271,8 +276,14 @@ function CraftSim.ProfessionGearSet:Equip()
             EquipPendingItem(0)
         end
     elseif equippedSet.tool.item then
-        PickupInventoryItem(self.professionGearSlots[1])
-        PutItemInBackpack()
+        -- Target has no tool because work-order optimization filtered out multicraft-only tools
+        -- and found nothing better to recommend; keep the equipped tool rather than unequipping it.
+        local keepEquipped = self.recipeData:ShouldAvoidMulticraftOnlyTools() and
+            equippedSet.tool:IsMulticraftOnlyTool()
+        if not keepEquipped then
+            PickupInventoryItem(self.professionGearSlots[1])
+            PutItemInBackpack()
+        end
     end
 
     if self.isCooking then
