@@ -288,7 +288,17 @@ function CraftSim.TOPGEAR:GetWorkOrderToolSlotItems(uniqueGear, defaultToolSlotI
     end
 
     if #result == 0 then
-        tinsert(result, CraftSim.TOPGEAR.EMPTY_SLOT)
+        -- No non-multicraft tool owned. A multicraft-only tool's other stats (e.g. skill) still
+        -- help the craft even though its multicraft proc is wasted on orders, so prefer equipping
+        -- the best one over leaving the tool slot empty.
+        local bestMulticraftTool ---@type CraftSim.ProfessionGear?
+        for _, gear in ipairs(defaultToolSlotItems) do
+            if gear ~= CraftSim.TOPGEAR.EMPTY_SLOT and (not bestMulticraftTool or
+                    gear.professionStats.skill.value > bestMulticraftTool.professionStats.skill.value) then
+                bestMulticraftTool = gear
+            end
+        end
+        tinsert(result, bestMulticraftTool or CraftSim.TOPGEAR.EMPTY_SLOT)
     end
 
     return result
@@ -544,6 +554,11 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
                     local tool = result.professionGearSet.tool
                     return not tool or not tool:IsMulticraftOnlyTool()
                 end)
+            end
+            if #results == 0 then
+                -- No combo without a multicraft-only tool exists (e.g. it's the only tool owned);
+                -- fall back to the full set so a multicraft tool can still be recommended over none.
+                results = unfiltered
             end
         else
             results = GUTIL:Filter(results, function(result)
