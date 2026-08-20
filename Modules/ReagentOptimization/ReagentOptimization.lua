@@ -104,7 +104,24 @@ function CraftSim.REAGENT_OPTIMIZATION:Update()
         return
     end
 
-    self.UI:Update(self.recipeData)
+    local recipeData = self.recipeData
+    local optimizedRecipeData = recipeData:Copy()
+
+    if optimizedRecipeData then
+        local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY") or
+            {}
+        local maxQuality = maxOptimizationQualities[recipeData.recipeID] or recipeData.maxQuality
+        local highestProfit = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED")
+
+        optimizedRecipeData:OptimizeReagents({
+            maxQuality = maxQuality,
+            highestProfit = highestProfit
+        })
+    else
+        optimizedRecipeData = recipeData
+    end
+
+    self.UI:Update(optimizedRecipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
