@@ -3,13 +3,16 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 local L = CraftSim.LOCAL:GetLocalizer()
-local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CUSTOMER_HISTORY : CraftSim.Module
 ---@field UI CraftSim.CUSTOMER_HISTORY.UI
 ---@field frame CraftSim.CUSTOMER_HISTORY.FRAME
 CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
-    { "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
+    {
+        "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE",
+        "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED",
+        "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED",
+    }
 )
 
 CraftSim.MODULES:RegisterModule("MODULE_CUSTOMER_HISTORY", CraftSim.CUSTOMER_HISTORY, {
@@ -17,55 +20,115 @@ CraftSim.MODULES:RegisterModule("MODULE_CUSTOMER_HISTORY", CraftSim.CUSTOMER_HIS
     tooltip = L("CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP"),
 })
 
+GUTIL:RegisterCustomEvents(CraftSim.CUSTOMER_HISTORY, {
+    "CRAFTSIM_PROFESSION_INITIALIZED",
+    "CRAFTSIM_MODULE_OPENED",
+})
+
 local Logger = CraftSim.DEBUG:RegisterLogger("CustomerHistory")
+
+---@type CraftingOrderInfo?
+CraftSim.CUSTOMER_HISTORY.cachedClaimedOrder = nil
 
 function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY:AutoPurge()
+    self:CacheClaimedOrder()
+end
+
+function CraftSim.CUSTOMER_HISTORY:CRAFTSIM_PROFESSION_INITIALIZED()
+    if self.UI then
+        self.UI:Update()
+    end
+end
+
+---@param moduleID CraftSim.ModuleID
+function CraftSim.CUSTOMER_HISTORY:CRAFTSIM_MODULE_OPENED(moduleID)
+    if moduleID == "MODULE_CUSTOMER_HISTORY" and self.UI then
+        self.UI:Update()
+    end
+end
+
+function CraftSim.CUSTOMER_HISTORY:CacheClaimedOrder()
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if claimedOrder then
+        -- Deep copy to avoid taint / cleared-by-Blizzard references after fulfill.
+        self.cachedClaimedOrder = GUTIL:CopyTableDeep(claimedOrder)
+    end
+end
+
+function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
+    self:CacheClaimedOrder()
+end
+
+function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
+    -- Do not clear cache here: fulfill may arrive after the claim is removed.
+    -- Cache is replaced on the next claim update or cleared after a successful record.
 end
 
 ---@param result Enum.CraftingOrderResult
 ---@param orderID number
 function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result, orderID)
-    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED") then return end
+    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_ENABLED") then
+        return
+    end
 
     if result ~= Enum.CraftingOrderResult.Ok then
         return -- do not save any history
     end
 
+    -- Prefer live claimed order; fall back to cache (often cleared by fulfill time).
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-    if claimedOrder then
-        if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS") then
-            if claimedOrder.orderType == Enum.CraftingOrderType.Npc then
-                return
+    if not claimedOrder
+        or (orderID and claimedOrder.orderID ~= orderID) then
+        claimedOrder = self.cachedClaimedOrder
+    end
+    if not claimedOrder or (orderID and claimedOrder.orderID ~= orderID) then
+        Logger:LogDebug("Fulfill OK but no claimed order data for orderID {orderID}", tostring(orderID))
+        return
+    end
+
+    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_RECORD_PATRON_ORDERS") then
+        if claimedOrder.orderType == Enum.CraftingOrderType.Npc then
+            if orderID and self.cachedClaimedOrder and self.cachedClaimedOrder.orderID == orderID then
+                self.cachedClaimedOrder = nil
             end
+            return
         end
+    end
 
-        Logger:LogDebug("Claimed Order: ", false, true)
-        local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
-        local customerHistory = CraftSim.DB.CUSTOMER_HISTORY:Get(customer, realm)
-        ---@type CraftSim.DB.CustomerHistory.Craft
-        local customerCraft = {
-            timestamp = C_DateAndTime.GetServerTimeLocal(),
-            itemLink = claimedOrder.outputItemHyperlink,
-            tip = tonumber(claimedOrder.tipAmount) or 0,
-            reagents = claimedOrder.reagents,
-            customerNotes = claimedOrder.customerNotes or "",
-            reagentState = claimedOrder.reagentState,
-        }
-        table.insert(customerHistory.craftHistory, customerCraft)
-        customerHistory.totalOrders = customerHistory.totalOrders + 1
-        customerHistory.totalTip = customerHistory.totalTip + customerCraft.tip
-        if customerCraft.reagentState == Enum.CraftingOrderReagentsType.All then
-            customerHistory.provisionAll = customerHistory.provisionAll + 1
-        elseif customerCraft.reagentState == Enum.CraftingOrderReagentsType.Some then
-            customerHistory.provisionSome = customerHistory.provisionSome + 1
-        elseif customerCraft.reagentState == Enum.CraftingOrderReagentsType.None then
-            customerHistory.provisionNone = customerHistory.provisionNone + 1
-        end
+    Logger:LogDebug("Recording customer history for order {orderID}", tostring(claimedOrder.orderID))
+    local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
+    local customerHistory = CraftSim.DB.CUSTOMER_HISTORY:Get(customer, realm)
+    ---@type CraftSim.DB.CustomerHistory.Craft
+    local customerCraft = {
+        timestamp = C_DateAndTime.GetServerTimeLocal(),
+        itemLink = claimedOrder.outputItemHyperlink,
+        tip = tonumber(claimedOrder.tipAmount) or 0,
+        reagents = claimedOrder.reagents,
+        customerNotes = claimedOrder.customerNotes or "",
+        reagentState = claimedOrder.reagentState,
+    }
+    table.insert(customerHistory.craftHistory, customerCraft)
+    customerHistory.totalOrders = customerHistory.totalOrders + 1
+    customerHistory.totalTip = customerHistory.totalTip + customerCraft.tip
+    if customerCraft.reagentState == Enum.CraftingOrderReagentsType.All then
+        customerHistory.provisionAll = customerHistory.provisionAll + 1
+    elseif customerCraft.reagentState == Enum.CraftingOrderReagentsType.Some then
+        customerHistory.provisionSome = customerHistory.provisionSome + 1
+    elseif customerCraft.reagentState == Enum.CraftingOrderReagentsType.None then
+        customerHistory.provisionNone = customerHistory.provisionNone + 1
+    end
 
-        customerHistory.npc = claimedOrder.orderType == Enum.CraftingOrderType.Npc
+    customerHistory.npc = claimedOrder.orderType == Enum.CraftingOrderType.Npc
 
-        CraftSim.DB.CUSTOMER_HISTORY:Save(customerHistory)
+    CraftSim.DB.CUSTOMER_HISTORY:Save(customerHistory)
+
+    if self.cachedClaimedOrder and self.cachedClaimedOrder.orderID == claimedOrder.orderID then
+        self.cachedClaimedOrder = nil
+    end
+
+    if self.UI then
+        self.UI:Update()
     end
 end
 
