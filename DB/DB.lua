@@ -104,7 +104,9 @@ function CraftSim.DB:Migrate(repository)
             if migration.msg then
                 systemPrint(f.l("CraftSimDB Updating ") .. f.bb(repository.name) .. " " .. f.g(migration.msg))
             end
-            if not pcall(migration.migrate) then
+            local migrationSuccess, migrationError = pcall(migration.migrate)
+            if not migrationSuccess then
+                Logger:LogError("CraftSimDB migration failed for " .. repository.name .. ": " .. tostring(migrationError))
                 return false
             else
                 repository.db.version = migration.to
