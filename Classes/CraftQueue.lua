@@ -192,8 +192,16 @@ end
 ---@param validOrderIDs table<number, boolean> orderIDs currently available from C_CraftingOrders
 ---@param profession Enum.Profession
 ---@param fetchedOrderTypes? table<Enum.CraftingOrderType, boolean> only prune types we successfully refreshed
+---@param skillLineID? number only prune orders for this expansion skill line (API list is skill-line scoped)
 ---@return number removedCount
-function CraftSim.CraftQueue:RemoveStaleWorkOrders(validOrderIDs, profession, fetchedOrderTypes)
+function CraftSim.CraftQueue:RemoveStaleWorkOrders(validOrderIDs, profession, fetchedOrderTypes, skillLineID)
+    -- Without a skill line we cannot tell which expansion the Blizzard list covers;
+    -- skip pruning so other expansions' queued orders are not wiped.
+    if not skillLineID or skillLineID == 0 then
+        Logger:LogDebug("RemoveStaleWorkOrders skipped: no skillLineID")
+        return 0
+    end
+
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
     local toRemove = {}
     for _, craftQueueItem in ipairs(self.craftQueueItems) do
@@ -205,6 +213,7 @@ function CraftSim.CraftQueue:RemoveStaleWorkOrders(validOrderIDs, profession, fe
             and recipeData.professionData
             and recipeData.professionData.professionInfo
             and recipeData.professionData.professionInfo.profession == profession
+            and recipeData.professionData.skillLineID == skillLineID
             and not (claimedOrder and claimedOrder.orderID == orderData.orderID)
             and (not fetchedOrderTypes or fetchedOrderTypes[orderData.orderType])
             and not validOrderIDs[orderData.orderID] then

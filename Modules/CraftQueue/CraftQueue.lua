@@ -451,11 +451,12 @@ end
 ---@param onComplete? fun(removedCount: number)
 function CraftSim.CRAFTQ:PruneStaleWorkOrdersForProfession(profession, onComplete)
     self.craftQueue = self.craftQueue or CraftSim.CraftQueue()
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     self:CollectAvailableWorkOrderIDs(profession, function(collectResult)
         local removed = 0
         if collectResult.hadSuccessfulFetch then
             removed = self.craftQueue:RemoveStaleWorkOrders(
-                collectResult.orderIDs, profession, collectResult.fetchedOrderTypes)
+                collectResult.orderIDs, profession, collectResult.fetchedOrderTypes, skillLineID)
         end
         if self.frame and self.frame:IsVisible() then
             self.UI:Update()
@@ -884,7 +885,9 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         maxIterations = 10,
         finally = function()
             if hadSuccessfulOrderFetch then
-                self.craftQueue:RemoveStaleWorkOrders(availableOrderIDs, profession, fetchedOrderTypes)
+                local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+                self.craftQueue:RemoveStaleWorkOrders(
+                    availableOrderIDs, profession, fetchedOrderTypes, skillLineID)
             end
             queueWorkOrdersButton:SetText(L("CRAFT_QUEUE_ADD_WORK_ORDERS_BUTTON_LABEL"))
             queueWorkOrdersButton:SetEnabled(CraftSim.UTIL:ShouldEnableCraftQueueAddWorkOrdersButton())
