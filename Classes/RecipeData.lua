@@ -2060,11 +2060,17 @@ function CraftSim.RecipeData:Optimize(options)
     options = options or {}
 
     local optimizationTaskList = self:BuildOptimizationTaskList(options)
+    -- Must match BuildOptimizationTaskList: permutation mode skips the outer REAGENTS /
+    -- CONCENTRATION tasks and runs them per combination inside OptimizeFinishingReagentsPermutation.
+    local usePermutation = options.optimizeFinishingReagentsOptions and
+        options.optimizeFinishingReagentsOptions.permutationBased
 
     GUTIL.FrameDistributor {
         iterationTable = optimizationTaskList,
         finally = function()
-            options.finally()
+            if options.finally then
+                options.finally()
+            end
         end,
         continue = function(frameDistributorTasks, _, optimizationTask, _, _)
             if optimizationTask == "GEAR" then
