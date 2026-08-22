@@ -704,6 +704,13 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     }
 
     UI:InitTrackerMinimizedContent(CraftSim.CONCENTRATION_TRACKER.trackerFrame)
+
+    CraftSim.CONCENTRATION_TRACKER.trackerFrame:HookScript("OnShow", function()
+        CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
+    end)
+    CraftSim.CONCENTRATION_TRACKER.trackerFrame:HookScript("OnHide", function()
+        CraftSim.CONCENTRATION_TRACKER:CancelReplenishTimer()
+    end)
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:InitTrackerMinimizedContent(trackerFrame)
@@ -949,27 +956,29 @@ end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:Update()
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
-    if not concentrationData or not concentrationData.currencyID then return end
+    local content = CraftSim.CONCENTRATION_TRACKER.frame and
+        CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT?]]
 
-    local content = CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT]]
+    if concentrationData and concentrationData.currencyID and content then
+        local currentConcentration = concentrationData:GetSpendableAmount()
+        content.value:SetText(currentConcentration)
+        content.maxValue:SetText(concentrationData.maxQuantity)
 
-    local currentConcentration = concentrationData:GetSpendableAmount()
-    content.value:SetText(currentConcentration)
-    content.maxValue:SetText(concentrationData.maxQuantity)
+        if currentConcentration >= concentrationData.maxQuantity then
+            content.maxTimer:SetText(CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_FULL"))
+        else
+            content.maxTimer:SetText(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
+        end
 
-    if currentConcentration >= concentrationData.maxQuantity then
-        content.maxTimer:SetText(CraftSim.LOCAL:GetText("CONCENTRATION_TRACKER_FULL"))
-    else
-        content.maxTimer:SetText(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
+        local isPinned = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")
+        content.pinButton:SetToggle(not isPinned)
+        if isPinned then
+            CraftSim.CONCENTRATION_TRACKER.trackerFrame:SetVisible(true)
+        end
     end
 
-    local isPinned = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")
-
-    content.pinButton:SetToggle(not isPinned)
-    if isPinned then
-        CraftSim.CONCENTRATION_TRACKER.trackerFrame:SetVisible(true)
-        CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
-    end
+    -- Collapsed overview used to skip this unless the pin path ran.
+    CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:RestoreFrameConfig()

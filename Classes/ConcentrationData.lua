@@ -55,6 +55,19 @@ function CraftSim.ConcentrationData:GetSpendableAmount()
     return math.min(self.maxQuantity, math.floor(self:GetCurrentAmount()))
 end
 
+--- Seconds until the next whole concentration point, or nil if full / not recharging.
+---@return number?
+function CraftSim.ConcentrationData:GetTimeUntilNextPoint()
+    if not self.rechargingDurationMS or self.rechargingDurationMS <= 0 or self.maxQuantity <= 0 then
+        return nil
+    end
+    local current = self:GetCurrentAmount()
+    if current >= self.maxQuantity then
+        return nil
+    end
+    return self:GetTimeUntil(math.floor(current) + 1)
+end
+
 ---@param requiredAmount number
 ---@return boolean
 function CraftSim.ConcentrationData:CanAfford(requiredAmount)
