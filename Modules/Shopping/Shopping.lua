@@ -295,7 +295,7 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
 
             if recipeData:HasRequiredSelectableReagent() then
                 local slot = reagentData.requiredSelectableReagentSlot
-                if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
+                if slot and slot:IsAllocated() and slot.activeReagent and not slot.activeReagent:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
                     tinsert(activeReagents, slot.activeReagent)
                     quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
                 end

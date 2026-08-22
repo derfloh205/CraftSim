@@ -237,8 +237,10 @@ function CraftSim.RecipeData:new(options)
 
     self.isOldWorldRecipe = self:IsOldWorldRecipe()
     self.isRecraft = isRecraft or false
-    if self.orderData then
-        self.isRecraft = self.orderData.isRecraft
+    -- orderData is assigned later via SetOrder; recraft schematics (and slot indices)
+    -- must be loaded before ReagentData is created.
+    if pendingOrderData and pendingOrderData.isRecraft then
+        self.isRecraft = true
     end
     self.isSimulationModeData = false
     self.learned = self.recipeInfo.learned or false
@@ -267,6 +269,9 @@ function CraftSim.RecipeData:new(options)
         return
     end
 
+    ---@type CraftingRecipeSchematic
+    self.recipeSchematic = schematicInfo
+
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
@@ -282,9 +287,10 @@ function CraftSim.RecipeData:new(options)
 
     self.hasReagents = #self.reagentData.requiredReagents > 0
 
-    self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
-    self.minItemAmount = schematicInfo.quantityMin
-    self.maxItemAmount = schematicInfo.quantityMax
+    local amountSchematic = self.recipeSchematic or schematicInfo
+    self.baseItemAmount = (amountSchematic.quantityMin + amountSchematic.quantityMax) / 2
+    self.minItemAmount = amountSchematic.quantityMin
+    self.maxItemAmount = amountSchematic.quantityMax
 
     -- needs to load before spec data
     ---@type CraftSim.BuffData
@@ -488,7 +494,13 @@ end
 ---@param orderData CraftingOrderInfo
 function CraftSim.RecipeData:SetOrder(orderData)
     self.orderData = GUTIL:CopyTableDeep(orderData or {}) -- avoid taint
+    local wasRecraft = self.isRecraft
     self.isRecraft = self.orderData.isRecraft
+    -- Recraft orders use a different schematic (slot indices / modifying optionals).
+    -- Queueing typically constructs RecipeData without isRecraft, then calls SetOrder.
+    if self.isRecraft ~= wasRecraft then
+        self:RebuildReagentDataFromSchematic()
+    end
     self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
         self.orderData.orderID, self.concentrating)
     self:ApplyOrderReagentsToSlots()
@@ -496,6 +508,26 @@ function CraftSim.RecipeData:SetOrder(orderData)
         self:ApplyBaseProfessionStatsFromOperationInfo(false)
         self:Update()
     end
+end
+
+--- Rebuilds reagent slots from GetRecipeSchematic using the current isRecraft flag.
+function CraftSim.RecipeData:RebuildReagentDataFromSchematic()
+    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
+    if not schematicInfo then
+        return
+    end
+
+    self.recipeSchematic = schematicInfo
+    self.reagentData = CraftSim.ReagentData(self, schematicInfo)
+
+    local qualityReagents = GUTIL:Count(self.reagentData.requiredReagents, function(reagent)
+        return reagent.hasQuality
+    end)
+    self.hasQualityReagents = qualityReagents > 0
+    self.hasReagents = #self.reagentData.requiredReagents > 0
+    self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
+    self.minItemAmount = schematicInfo.quantityMin
+    self.maxItemAmount = schematicInfo.quantityMax
 end
 
 ---@param reagentInfo table
@@ -510,7 +542,7 @@ end
 --- Applies optional/finishing/required-selectable reagents from `orderData.reagents` to the recipe's slots.
 --- This ensures queued orders always reflect customer-provided optionals (guild/personal/work orders).
 function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
-    if not (self.orderData and self.orderData.reagents and #self.orderData.reagents > 0) then
+    if not self.orderData then
         return
     end
 
@@ -532,12 +564,88 @@ function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
         end
     end
 
-    for i, reagentInfo in ipairs(self.orderData.reagents) do
-        local dataSlotIndex, itemID, currencyID = self:ExtractOrderReagentInfo(reagentInfo)
+    local function applyToBestSlot(itemID, currencyID, dataSlotIndex)
+        if not itemID and not currencyID then
+            return false
+        end
+        local preferred = dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]
+        if preferred and preferred:TryApplyOrderReagent(itemID, currencyID) then
+            return true
+        end
+        for _, slot in ipairs(orderedSlots) do
+            if slot ~= preferred and slot:TryApplyOrderReagent(itemID, currencyID) then
+                return true
+            end
+        end
+        return false
+    end
 
-        local slot = (dataSlotIndex and slotsByDataSlotIndex[dataSlotIndex]) or orderedSlots[i]
-        if slot then
-            slot:TryApplyOrderReagent(itemID, currencyID)
+    -- Recraft linings/embellishments are stored on the recrafted item, not always in order.reagents.
+    self:AppendRecraftOrderModifications()
+
+    for _, reagentInfo in ipairs(self.orderData.reagents or {}) do
+        local d = self:GetOrderReagentDescriptor(reagentInfo)
+        applyToBestSlot(d.itemID, d.currencyID, d.dataSlotIndex)
+    end
+end
+
+---@param dataSlotIndex number
+---@return number? slotIndex
+function CraftSim.RecipeData:GetSchematicSlotIndexForDataSlotIndex(dataSlotIndex)
+    if not dataSlotIndex or not self.recipeSchematic then
+        return nil
+    end
+    for slotIndex, schematicSlot in ipairs(self.recipeSchematic.reagentSlotSchematics) do
+        if schematicSlot.dataSlotIndex == dataSlotIndex then
+            return slotIndex
+        end
+    end
+end
+
+--- Pulls recraft item modifications (e.g. Arcanoweave Lining) into `orderData.reagents`
+--- so they are treated as customer-provided, matching Blizzard's order view.
+function CraftSim.RecipeData:AppendRecraftOrderModifications()
+    if not (self.orderData and self.orderData.isRecraft and self.orderData.orderID) then
+        return
+    end
+    if not C_TradeSkillUI.GetItemSlotModificationsForOrder then
+        return
+    end
+
+    local slotMods = C_TradeSkillUI.GetItemSlotModificationsForOrder(self.orderData.orderID)
+    if not slotMods then
+        return
+    end
+
+    self.orderData.reagents = self.orderData.reagents or {}
+
+    for dataSlotIndex, modification in pairs(slotMods) do
+        if type(dataSlotIndex) == "number" then
+            local reagent = modification and modification.reagent
+            if reagent then
+                local itemID = reagent.itemID
+                local currencyID = reagent.currencyID
+                if itemID == 0 then itemID = nil end
+                if currencyID == 0 then currencyID = nil end
+                if itemID or currencyID then
+                    local alreadyListed = GUTIL:Some(self.orderData.reagents, function(reagentInfo)
+                        local d = self:GetOrderReagentDescriptor(reagentInfo)
+                        return (itemID and d.itemID == itemID) or (currencyID and d.currencyID == currencyID)
+                    end)
+                    if not alreadyListed then
+                        local resolvedDataSlotIndex = modification.dataSlotIndex or dataSlotIndex
+                        table.insert(self.orderData.reagents, {
+                            slotIndex = self:GetSchematicSlotIndexForDataSlotIndex(resolvedDataSlotIndex),
+                            source = Enum.CraftingOrderReagentSource.Customer,
+                            reagentInfo = {
+                                reagent = { itemID = itemID, currencyID = currencyID },
+                                quantity = 1,
+                                dataSlotIndex = resolvedDataSlotIndex,
+                            },
+                        })
+                    end
+                end
+            end
         end
     end
 end
@@ -766,54 +874,56 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
 
     if self.reagentData:HasRequiredSelectableReagent() then
         Logger:LogDebug("- HasRequiredSelectableReagent", false, false)
-        if not self.reagentData.requiredSelectableReagentSlot.activeReagent then
+        local slot = self.reagentData.requiredSelectableReagentSlot
+        if not slot.activeReagent then
             Logger:LogDebug("- No active reagent", false, false)
-            if self.reagentData.requiredSelectableReagentSlot:IsCurrency() then
-                local firstReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
+            local orderReagent = GUTIL:Find(slot.possibleReagents or {}, function(possibleOrderReagent)
+                return possibleOrderReagent:IsOrderReagentIn(self)
+            end)
+            if orderReagent then
+                if orderReagent:IsCurrency() then
+                    slot:SetCurrencyReagent(orderReagent.currencyID)
+                else
+                    slot:SetReagent(orderReagent.item:GetItemID())
+                end
+            elseif slot:IsCurrency() then
+                local firstReagent = slot.possibleReagents[1]
                 if firstReagent then
-                    self.reagentData.requiredSelectableReagentSlot:SetCurrencyReagent(firstReagent.currencyID)
+                    slot:SetCurrencyReagent(firstReagent.currencyID)
                 end
             else
-                local orderReagent = GUTIL:Find(self.reagentData.requiredSelectableReagentSlot.possibleReagents or {},
-                    function(possibleOrderReagent)
-                        if possibleOrderReagent:IsCurrency() then return false end
-                        if possibleOrderReagent:IsOrderReagentIn(self) then
-                            return true
-                        end
-                        return false
+                local cheapestReagent
+                local cheapestPrice
+                local possibleReagents = GUTIL:Filter(
+                    slot.possibleReagents or {}, function(optionalReagent)
+                        if optionalReagent:IsCurrency() then return false end
+                        return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
                     end)
-                if orderReagent then
-                    self.reagentData.requiredSelectableReagentSlot:SetReagent(orderReagent.item:GetItemID())
-                else
-                    local cheapestReagent
-                    local cheapestPrice
-                    local possibleReagents = GUTIL:Filter(
-                        self.reagentData.requiredSelectableReagentSlot.possibleReagents or {}, function(optionalReagent)
-                            if optionalReagent:IsCurrency() then return false end
-                            return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
-                        end)
-                    -- if every possible reagent is soulbound, enforce first one
-                    if #possibleReagents == 0 then
-                        cheapestReagent = self.reagentData.requiredSelectableReagentSlot.possibleReagents[1]
-                    else -- else search for cheapest
-                        for _, optionalReagent in ipairs(possibleReagents) do
-                            local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(
-                                optionalReagent.item:GetItemID(),
-                                true, false, true)
-                            if not cheapestReagent then
-                                cheapestReagent = optionalReagent
+                -- if every possible reagent is soulbound, enforce first one
+                if #possibleReagents == 0 then
+                    cheapestReagent = slot.possibleReagents[1]
+                else -- else search for cheapest
+                    for _, optionalReagent in ipairs(possibleReagents) do
+                        local reagentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(
+                            optionalReagent.item:GetItemID(),
+                            true, false, true)
+                        if not cheapestReagent then
+                            cheapestReagent = optionalReagent
+                            cheapestPrice = reagentPrice
+                        else
+                            if reagentPrice < cheapestPrice then
                                 cheapestPrice = reagentPrice
-                            else
-                                if reagentPrice < cheapestPrice then
-                                    cheapestPrice = reagentPrice
-                                    cheapestReagent = optionalReagent
-                                end
+                                cheapestReagent = optionalReagent
                             end
                         end
                     end
+                end
 
-                    if cheapestReagent then
-                        self.reagentData.requiredSelectableReagentSlot:SetReagent(cheapestReagent.item:GetItemID())
+                if cheapestReagent then
+                    if cheapestReagent:IsCurrency() then
+                        slot:SetCurrencyReagent(cheapestReagent.currencyID)
+                    else
+                        slot:SetReagent(cheapestReagent.item:GetItemID())
                     end
                 end
             end
@@ -2347,75 +2457,70 @@ end
 
 --- Helper function to safely extract itemID from reagentInfo (handles both basic and quality reagents)
 ---@param reagentInfo table The reagent info from orderData.reagents
----@param recipeData CraftSim.RecipeData The recipe data containing reagentData
 ---@return number? itemID The itemID if found, nil otherwise
 function CraftSim.RecipeData:GetItemIDFromReagentInfo(reagentInfo)
+    return self:GetOrderReagentDescriptor(reagentInfo).itemID
+end
+
+--- Canonical CraftingReagent on a Blizzard `CraftingOrderReagentInfo` entry.
+---@param reagentInfo table
+---@return CraftingReagent?
+function CraftSim.RecipeData:GetOrderCraftingReagent(reagentInfo)
     if not reagentInfo then
         return nil
     end
-
-    -- Try various possible paths for quality reagents (handles different API structures)
+    -- Blizzard order view: reagentInfo.reagentInfo.reagent
+    if reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent then
+        return reagentInfo.reagentInfo.reagent
+    end
     if reagentInfo.reagent then
-        if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.itemID then
-            return reagentInfo.reagent.reagent.itemID
-        elseif reagentInfo.reagent.itemID then
-            return reagentInfo.reagent.itemID
+        if reagentInfo.reagent.reagent and (reagentInfo.reagent.reagent.itemID or reagentInfo.reagent.reagent.currencyID) then
+            return reagentInfo.reagent.reagent
+        end
+        if reagentInfo.reagent.itemID or reagentInfo.reagent.currencyID then
+            return reagentInfo.reagent
         end
     end
-
-    if reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.itemID then
-        return reagentInfo.reagentInfo.reagent.itemID
-    end
-
-    -- Basic reagents (or any reagent without reagent field) use slotIndex to find the reagent in requiredReagents
-    if reagentInfo.slotIndex and self.reagentData then
-        local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
-            return reagent.dataSlotIndex == reagentInfo.slotIndex
-        end)
-
-        if matchingReagent and matchingReagent.items and #matchingReagent.items > 0 then
-            return matchingReagent.items[1].item:GetItemID()
-        end
-    end
-
     return nil
 end
 
 --- Normalizes an order reagent entry into a simple descriptor.
 --- Blizzard's `orderData.reagents` shape differs between contexts; keep all extraction logic in one place.
 ---@param reagentInfo table The reagent info from orderData.reagents
----@return { dataSlotIndex: number?, itemID: number?, currencyID: number? } descriptor
+---@return { dataSlotIndex: number?, itemID: number?, currencyID: number?, slotIndex: number? } descriptor
 function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
     if not reagentInfo then
-        return { dataSlotIndex = nil, itemID = nil, currencyID = nil }
+        return { dataSlotIndex = nil, itemID = nil, currencyID = nil, slotIndex = nil }
     end
 
-    local dataSlotIndex = nil
-    if reagentInfo.reagent and reagentInfo.reagent.dataSlotIndex then
-        dataSlotIndex = reagentInfo.reagent.dataSlotIndex
-    elseif reagentInfo.reagentInfo and reagentInfo.reagentInfo.dataSlotIndex then
-        dataSlotIndex = reagentInfo.reagentInfo.dataSlotIndex
-    elseif reagentInfo.dataSlotIndex then
-        dataSlotIndex = reagentInfo.dataSlotIndex
-    elseif reagentInfo.slotIndex then
-        dataSlotIndex = reagentInfo.slotIndex
+    local slotIndex = reagentInfo.slotIndex
+    local craftingReagent = self:GetOrderCraftingReagent(reagentInfo)
+    local itemID = craftingReagent and craftingReagent.itemID
+    local currencyID = craftingReagent and craftingReagent.currencyID
+    if itemID == 0 then itemID = nil end
+    if currencyID == 0 then currencyID = nil end
+
+    local dataSlotIndex = reagentInfo.dataSlotIndex
+        or (reagentInfo.reagentInfo and reagentInfo.reagentInfo.dataSlotIndex)
+        or (reagentInfo.reagent and reagentInfo.reagent.dataSlotIndex)
+
+    -- slotIndex is the lua index into reagentSlotSchematics, not dataSlotIndex
+    if not dataSlotIndex and slotIndex and self.recipeSchematic then
+        local schematicSlot = self.recipeSchematic.reagentSlotSchematics[slotIndex]
+        dataSlotIndex = schematicSlot and schematicSlot.dataSlotIndex
     end
 
-    local currencyID = nil
-    if reagentInfo.reagent then
-        if reagentInfo.reagent.reagent and reagentInfo.reagent.reagent.currencyID then
-            currencyID = reagentInfo.reagent.reagent.currencyID
-        elseif reagentInfo.reagent.currencyID then
-            currencyID = reagentInfo.reagent.currencyID
+    if not itemID and not currencyID and dataSlotIndex and self.reagentData then
+        local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
+            return reagent.dataSlotIndex == dataSlotIndex
+        end)
+
+        if matchingReagent and matchingReagent.items and #matchingReagent.items > 0 then
+            itemID = matchingReagent.items[1].item:GetItemID()
         end
     end
-    if not currencyID and reagentInfo.reagentInfo and reagentInfo.reagentInfo.reagent and reagentInfo.reagentInfo.reagent.currencyID then
-        currencyID = reagentInfo.reagentInfo.reagent.currencyID
-    end
 
-    local itemID = self:GetItemIDFromReagentInfo(reagentInfo)
-
-    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID }
+    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID, slotIndex = slotIndex }
 end
 
 --- Requires a hardware event

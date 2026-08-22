@@ -34,7 +34,7 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
 end
 
 --- Refreshes locked/lockedReason from the current profession UI state (e.g. when opening the edit frame).
---- If the slot becomes locked, clears activeReagent so the recipe state is valid.
+--- Recraft/customer-provided slots are often locked; keep order-supplied reagents allocated.
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.OptionalReagentSlot:RefreshSlotStatus(recipeData)
     if not recipeData then return end
@@ -43,7 +43,9 @@ function CraftSim.OptionalReagentSlot:RefreshSlotStatus(recipeData)
     self.locked, self.lockedReason = C_TradeSkillUI.GetReagentSlotStatus(schematic.slotInfo.mcrSlotID,
         recipeData.recipeID, recipeData.professionData.skillLineID)
     if self.locked and self.activeReagent then
-        self.activeReagent = nil
+        if not (recipeData.orderData and self.activeReagent:IsOrderReagentIn(recipeData)) then
+            self.activeReagent = nil
+        end
     end
 end
 
@@ -78,7 +80,6 @@ end
 ---@param itemID ItemID
 ---@return boolean isPossibleReagent
 function CraftSim.OptionalReagentSlot:IsPossibleReagent(itemID)
-    if self:IsCurrency() then return false end
     return GUTIL:Some(self.possibleReagents, function(possibleReagent)
         return possibleReagent.item and possibleReagent.item:GetItemID() == itemID
     end)
@@ -87,7 +88,6 @@ end
 ---@param currencyID number
 ---@return boolean isPossibleReagent
 function CraftSim.OptionalReagentSlot:IsPossibleCurrencyReagent(currencyID)
-    if not self:IsCurrency() then return false end
     return GUTIL:Some(self.possibleReagents, function(possibleReagent)
         return possibleReagent.currencyID == currencyID
     end)
@@ -131,11 +131,11 @@ end
 ---@param currencyID number?
 ---@return boolean applied
 function CraftSim.OptionalReagentSlot:TryApplyOrderReagent(itemID, currencyID)
-    if currencyID and self:IsCurrency() and self:IsPossibleCurrencyReagent(currencyID) then
+    if currencyID and self:IsPossibleCurrencyReagent(currencyID) then
         self:SetCurrencyReagent(currencyID)
         return true
     end
-    if itemID and (not self:IsCurrency()) and self:IsPossibleReagent(itemID) then
+    if itemID and self:IsPossibleReagent(itemID) then
         self:SetReagent(itemID)
         return true
     end
