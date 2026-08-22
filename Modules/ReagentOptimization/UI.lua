@@ -200,12 +200,21 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                     advancedOptimizationButton:SetEnabled(false)
 
                     local function finalizeOptimization()
-                        CraftSim.REAGENT_OPTIMIZATION:Update()
-                        advancedOptimizationButton:SetEnabled(false) -- keep disabled until update from init
+                        -- Display the mutated snapshot. Calling module Update() would copy the
+                        -- live schematic again and discard finishing/concentration results.
+                        if CraftSim.REAGENT_OPTIMIZATION.UI.recipeData then
+                            CraftSim.REAGENT_OPTIMIZATION.UI:Update(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+                        end
+                        advancedOptimizationButton:SetEnabled(false) -- keep disabled until next recipe update
                         advancedOptimizationButton:SetText("Optimized")
                     end
 
                     if usePermutation then
+                        local maxOptimizationQualities = CraftSim.DB.OPTIONS:Get(
+                            "REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY") or {}
+                        local liveRecipeData = CraftSim.REAGENT_OPTIMIZATION.recipeData
+                        local maxQuality = (liveRecipeData and maxOptimizationQualities[liveRecipeData.recipeID])
+                            or (CraftSim.REAGENT_OPTIMIZATION.UI.recipeData and CraftSim.REAGENT_OPTIMIZATION.UI.recipeData.maxQuality)
                         -- Permutation mode: all sub-optimisations run per-combination inside the method.
                         CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeFinishingReagentsPermutation {
                             includeLocked = CraftSim.DB.OPTIONS:Get(
@@ -214,6 +223,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
                                 "REAGENT_OPTIMIZATION_OPTIMIZE_SOULBOUND_FINISHING_REAGENTS"),
                             onlyHighestQualitySoulbound = CraftSim.DB.OPTIONS:Get(
                                 "REAGENT_OPTIMIZATION_ONLY_HIGHEST_QUALITY_SOULBOUND_FINISHING_REAGENTS"),
+                            optimizeReagentOptions = {
+                                maxQuality = maxQuality,
+                                highestProfit = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED"),
+                            },
                             optimizeConcentration = optimizeConcentration,
                             progressUpdateCallback = function(progress)
                                 advancedOptimizationButton:SetText(string.format("Optimizing - %.2f%%", progress))
@@ -639,16 +652,22 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
         end
     end
 
-    local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
-        GUTIL:Filter(CraftSim.MODULES.recipeData.reagentData
-            .requiredReagents, function(reagent)
+    -- Compare the optimized snapshot against the live schematic allocation from the
+    -- last CRAFTSIM_RECIPE_DATA_UPDATED payload, not MODULES.recipeData (often stale or nil).
+    local liveRecipeData = CraftSim.REAGENT_OPTIMIZATION.recipeData or CraftSim.MODULES.recipeData
+    local isSameAllocation = false
+    if liveRecipeData and liveRecipeData.reagentData then
+        isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
+            GUTIL:Filter(liveRecipeData.reagentData.requiredReagents, function(reagent)
                 return reagent.hasQuality
             end))
+    end
 
     local equalsFinishingAllocation = true
     for i, _ in ipairs(recipeData.reagentData.finishingReagentSlots) do
         local slotA = recipeData.reagentData.finishingReagentSlots[i]
-        local slotB = CraftSim.MODULES.recipeData.reagentData.finishingReagentSlots[i]
+        local slotB = liveRecipeData and liveRecipeData.reagentData and
+            liveRecipeData.reagentData.finishingReagentSlots[i]
         local itemIDA, itemIDB
         if slotA and slotA.activeReagent then
             if slotA.activeReagent:IsCurrency() then

@@ -443,10 +443,19 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
     Logger:LogDebug("EqualsQualityReagents ?")
     -- order can be different?
     local qualityReagents = GUTIL:Filter(self.requiredReagents, function(reagent) return reagent.hasQuality end)
-    for index, reagentA in pairs(qualityReagents) do
+    if #qualityReagents ~= #reagents then
+        return false
+    end
+    for index, reagentA in ipairs(qualityReagents) do
         local reagentB = reagents[index]
+        if not reagentB then
+            return false
+        end
         for itemIndex, reagentItemA in pairs(reagentA.items) do
             local reagentItemB = reagentB.items[itemIndex]
+            if not reagentItemB then
+                return false
+            end
 
             Logger:LogDebug("compare items: " ..
                 tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
