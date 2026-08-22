@@ -514,7 +514,8 @@ function CraftSim.SHOPPING:AuctionatorQuickBuy()
 
     local qbCache = self.quickBuyCache
 
-    if not AuctionHouseFrame:IsVisible() then
+    -- AuctionHouseFrame only exists after Blizzard_AuctionHouseUI has loaded.
+    if not AuctionHouseFrame or not AuctionHouseFrame:IsVisible() then
         return
     end
 
