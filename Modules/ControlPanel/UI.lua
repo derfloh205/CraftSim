@@ -26,6 +26,8 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         offsetY = -13,
         sizeX = 180,
         sizeY = 30,
+        frameID = CraftSim.CONST.FRAMES.CONTROL_PANEL,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = CraftSim.UTIL:NextFrameLevel()

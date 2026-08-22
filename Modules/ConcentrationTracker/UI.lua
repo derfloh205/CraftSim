@@ -379,6 +379,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameID = CraftSim.CONST.FRAMES.CONCENTRATION_TRACKER,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,

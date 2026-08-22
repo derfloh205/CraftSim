@@ -756,6 +756,8 @@ function CraftSim.SHOPPING:CreateShoppingListViewFrameIfNeeded()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameID = CraftSim.CONST.FRAMES.SHOPPING,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),

@@ -40,6 +40,9 @@ GUTIL:RegisterCustomEvents(CraftSim.INIT, {
 CraftSim.INIT.initialRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
+--- Shared GGUI frame registry used to reset/restore window positions.
+---@type table<string, GGUI.Frame>
+CraftSim.INIT.FRAMES = {}
 
 local Logger = CraftSim.DEBUG:RegisterLogger("Init")
 

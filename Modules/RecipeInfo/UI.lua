@@ -196,6 +196,8 @@ function CraftSim.RECIPE_INFO.UI:Init()
         onCloseCallback        = onClose,
         onCollapseCallback     = onMinimize,
         onCollapseOpenCallback = onMaximize,
+        frameID                = CraftSim.CONST.FRAMES.AVERAGE_PROFIT,
+        frameTable             = CraftSim.INIT.FRAMES,
         frameConfigTable       = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata            = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction     = true,
