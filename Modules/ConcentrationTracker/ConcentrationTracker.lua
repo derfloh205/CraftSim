@@ -139,9 +139,15 @@ function CraftSim.CONCENTRATION_TRACKER:CURRENCY_DISPLAY_UPDATE(currencyID)
 end
 
 function CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
-    if self.trackerFrame and self.trackerFrame:IsVisible() and self.UI and self.UI.UpdateTrackerDisplay then
+    local trackerFrame = self.trackerFrame
+    if trackerFrame and trackerFrame.frame and trackerFrame.frame:IsShown()
+        and self.UI and self.UI.UpdateTrackerDisplay then
         self.UI:UpdateTrackerDisplay()
-        self:ScheduleNextReplenishRefresh()
+        if trackerFrame:IsVisible() then
+            self:ScheduleNextReplenishRefresh()
+        else
+            self:CancelReplenishTimer()
+        end
     else
         self:CancelReplenishTimer()
     end

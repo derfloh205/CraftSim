@@ -706,7 +706,16 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     UI:InitTrackerMinimizedContent(CraftSim.CONCENTRATION_TRACKER.trackerFrame)
 
     CraftSim.CONCENTRATION_TRACKER.trackerFrame:HookScript("OnShow", function()
-        CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
+        CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
+        -- First show often happens in the same frame as Collapse()'s 40px shrink; re-apply
+        -- after layout so FontStrings actually paint.
+        RunNextFrame(function()
+            local trackerFrame = CraftSim.CONCENTRATION_TRACKER.trackerFrame
+            if trackerFrame and trackerFrame.frame and trackerFrame.frame:IsShown() then
+                CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
+                CraftSim.CONCENTRATION_TRACKER:ScheduleNextReplenishRefresh()
+            end
+        end)
     end)
     CraftSim.CONCENTRATION_TRACKER.trackerFrame:HookScript("OnHide", function()
         CraftSim.CONCENTRATION_TRACKER:CancelReplenishTimer()
@@ -799,10 +808,12 @@ function CraftSim.CONCENTRATION_TRACKER.UI:InitTrackerMinimizedContent(trackerFr
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:OnTrackerCollapsed(trackerFrame)
-    self:UpdateMinimizedDisplay()
+    -- Show the minimized list before filling it. Collapse() has just forced the frame
+    -- to 40px; FontStrings created in that strip stay blank until the frame is taller.
     if trackerFrame.minimizedContent then
         trackerFrame.minimizedContent:Show()
     end
+    self:UpdateMinimizedDisplay()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:OnTrackerExpanded(trackerFrame)
@@ -814,8 +825,15 @@ end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:ResizeTrackerForMinimized(trackerFrame, rowCount)
     local list = trackerFrame.minimizedContent and trackerFrame.minimizedContent.list
-    local listHeight = list and list.frame and list.frame:GetHeight()
-        or (math.max(rowCount, 1) * MINIMIZED_ROW_HEIGHT + 10)
+    local parentHeight = trackerFrame.frame and trackerFrame.frame:GetHeight() or 0
+    local listHeight
+    -- While still on the 40px collapse strip, list:GetHeight() is not a usable layout size.
+    if parentHeight > MINIMIZED_TITLE_HEIGHT + MINIMIZED_PAD_Y then
+        listHeight = list and list.frame and list.frame:GetHeight()
+    end
+    if not listHeight or listHeight <= 0 then
+        listHeight = math.max(rowCount or 1, 1) * MINIMIZED_ROW_HEIGHT + 10
+    end
     local height = MINIMIZED_TITLE_HEIGHT + MINIMIZED_PAD_Y + listHeight + MINIMIZED_PAD_Y
     trackerFrame.frame:SetSize(MINIMIZED_WIDTH, height)
     if trackerFrame.frame.hookFrame then
@@ -833,6 +851,18 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateMinimizedDisplay()
     local noConcentrationText = L("CONCENTRATION_TRACKER_LIST_ROW_MOXIE_UNKNOWN")
     local minimizedList = trackerFrame.minimizedContent.list --[[@as GGUI.FrameList]]
 
+    trackerFrame.minimizedRowCount = #trackerRows
+    if trackerFrame.collapsed then
+        if trackerFrame.minimizedContent then
+            trackerFrame.minimizedContent:Show()
+        end
+        if minimizedList.frame then
+            minimizedList.frame:Show()
+        end
+        -- Grow off the 40px collapse strip before SetText, or row FontStrings stay blank.
+        self:ResizeTrackerForMinimized(trackerFrame, math.max(#trackerRows, 1))
+    end
+
     minimizedList:Remove()
     for _, trackerRowData in ipairs(trackerRows) do
         minimizedList:Add(function(row)
@@ -849,7 +879,6 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateMinimizedDisplay()
         return rowA.profession and rowB.profession and rowA.profession < rowB.profession
     end)
 
-    trackerFrame.minimizedRowCount = #trackerRows
     if trackerFrame.collapsed then
         if trackerFrame.minimizedContent then
             trackerFrame.minimizedContent:Show()
