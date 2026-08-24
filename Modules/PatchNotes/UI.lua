@@ -33,6 +33,8 @@ function CraftSim.PATCH_NOTES.UI:Init()
             L("PATCH_NOTES_TITLE") .. " " .. currentVersion,
             GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameID = CraftSim.CONST.FRAMES.PATCH_NOTES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "FULLSCREEN",
     })

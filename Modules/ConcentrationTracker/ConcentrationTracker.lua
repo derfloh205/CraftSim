@@ -11,7 +11,11 @@ CraftSim.MODULES:RegisterModule("MODULE_CONCENTRATION_TRACKER", CraftSim.CONCENT
 
 GUTIL:RegisterCustomEvents(CraftSim.CONCENTRATION_TRACKER, {
     "CRAFTSIM_PROFESSION_INITIALIZED",
+    "CRAFTSIM_RECIPE_DATA_UPDATED",
 })
+
+---@type cbObject?
+CraftSim.CONCENTRATION_TRACKER.replenishTimer = nil
 
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
@@ -131,9 +135,73 @@ function CraftSim.CONCENTRATION_TRACKER:CURRENCY_DISPLAY_UPDATE(currencyID)
         CraftSim.MODULES:UpdateModuleVisibility(self)
     end
 
-    if self.trackerFrame and self.trackerFrame:IsVisible() then
+    self:RefreshTrackerDisplay()
+end
+
+function CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
+    local trackerFrame = self.trackerFrame
+    if trackerFrame and trackerFrame.frame and trackerFrame.frame:IsShown()
+        and self.UI and self.UI.UpdateTrackerDisplay then
         self.UI:UpdateTrackerDisplay()
+        if trackerFrame:IsVisible() then
+            self:ScheduleNextReplenishRefresh()
+        else
+            self:CancelReplenishTimer()
+        end
+    else
+        self:CancelReplenishTimer()
     end
+end
+
+function CraftSim.CONCENTRATION_TRACKER:CancelReplenishTimer()
+    if self.replenishTimer then
+        self.replenishTimer:Cancel()
+        self.replenishTimer = nil
+    end
+end
+
+--- Fire once when the next displayed concentration point would land, not on a 1s poll.
+function CraftSim.CONCENTRATION_TRACKER:ScheduleNextReplenishRefresh()
+    self:CancelReplenishTimer()
+    if not self.trackerFrame or not self.trackerFrame:IsVisible() then
+        return
+    end
+    if not ProfessionsFrame or not ProfessionsFrame:IsVisible() then
+        return
+    end
+
+    local delay
+    local function consider(concentrationData)
+        if not concentrationData then
+            return
+        end
+        local untilNext = concentrationData:GetTimeUntilNextPoint()
+        if untilNext and (not delay or untilNext < delay) then
+            delay = untilNext
+        end
+    end
+
+    local trackerRows
+    if self.trackerFrame.collapsed then
+        trackerRows = self.UI:CollectCurrentPlayerMinimizedRowData()
+    else
+        trackerRows = self.UI:CollectTrackerRowData()
+    end
+    for _, trackerRowData in ipairs(trackerRows or {}) do
+        if trackerRowData.serializedData then
+            consider(CraftSim.ConcentrationData:Deserialize(trackerRowData.serializedData))
+        end
+    end
+    consider(self:GetCurrentConcentrationData())
+
+    if not delay then
+        return
+    end
+
+    self.replenishTimer = C_Timer.NewTimer(math.max(delay, 0.05), function()
+        CraftSim.CONCENTRATION_TRACKER.replenishTimer = nil
+        CraftSim.CONCENTRATION_TRACKER:RefreshTrackerDisplay()
+    end)
 end
 
 ---@return CraftSim.ConcentrationData?
@@ -197,4 +265,8 @@ end
 function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_PROFESSION_INITIALIZED()
     self.UI:Update()
     CraftSim.MODULES:UpdateModuleVisibility(self)
+end
+
+function CraftSim.CONCENTRATION_TRACKER:CRAFTSIM_RECIPE_DATA_UPDATED()
+    self.UI:Update()
 end

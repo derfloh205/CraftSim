@@ -97,6 +97,7 @@ function CraftSim.CRAFTQ.EditRecipe.UI:Init(parent, anchorParent)
         -- Opening from a context menu counts as an "outside" click and would close immediately if true.
         closeOnClickOutside = false,
         moveable = true, frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameTable = CraftSim.INIT.FRAMES,
     }
 
     ---@type CraftSim.CraftQueueItem?
