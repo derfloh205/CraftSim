@@ -170,7 +170,7 @@ function CraftSim.PriceData:Update()
     local quantityMap = {} -- ugly hack
     if self.recipeData.reagentData:HasRequiredSelectableReagent() then
         local reqSlot = self.recipeData.reagentData.requiredSelectableReagentSlot
-        if reqSlot.activeReagent and not reqSlot:IsCurrency() then
+        if reqSlot.activeReagent and not reqSlot.activeReagent:IsCurrency() then
             tinsert(activeOptionalReagents, reqSlot.activeReagent)
             quantityMap[reqSlot.activeReagent.item:GetItemID()] = reqSlot.maxQuantity
         end

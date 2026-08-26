@@ -130,7 +130,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
         if recipeData:HasRequiredSelectableReagent() then
             local slot = recipeData.reagentData.requiredSelectableReagentSlot
             if slot and slot.activeReagent then
-                if slot:IsCurrency() then
+                if slot.activeReagent:IsCurrency() then
                     local currencyID = slot.activeReagent.currencyID
                     local quantity = slot.maxQuantity * aNumCrafts
                     tinsert(self.reagents,
@@ -173,7 +173,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData, aNumCrafts
 
         for _, optionalReagentSlot in ipairs(GUTIL:Concat { recipeData.reagentData.optionalReagentSlots, recipeData.reagentData.finishingReagentSlots }) do
             if optionalReagentSlot:IsAllocated() then
-                if optionalReagentSlot:IsCurrency() then
+                if optionalReagentSlot.activeReagent:IsCurrency() then
                     local currencyID = optionalReagentSlot.activeReagent.currencyID
                     local quantity = optionalReagentSlot.maxQuantity * aNumCrafts
                     tinsert(self.reagents,

@@ -119,7 +119,7 @@ function CraftSim.SLASH:CMD_bruto(...)
     if tContains(args, "nomail") and MailFrame:IsVisible() then
         return
     end
-    if tContains(args, "noah") and AuctionHouseFrame:IsVisible() then
+    if tContains(args, "noah") and AuctionHouseFrame and AuctionHouseFrame:IsVisible() then
         return
     end
 

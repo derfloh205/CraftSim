@@ -473,6 +473,8 @@ function CraftSim.WORK_ORDER_TRACKER.UI:Init()
         onCollapseCallback = onMinimize,
         onCollapseOpenCallback = onMaximize,
         hide = true,
+        frameID = CraftSim.CONST.FRAMES.WORK_ORDER_TRACKER,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,

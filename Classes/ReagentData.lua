@@ -276,7 +276,7 @@ end
 -- Sets an optional currency Reagent active in a recipe if supported, if not does nothing
 ---@param currencyID number
 function CraftSim.ReagentData:SetOptionalCurrencyReagent(currencyID)
-    for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
+    for _, slot in ipairs(self:GetOrderedOptionalSlots()) do
         local optionalReagent = GUTIL:Find(slot.possibleReagents,
             function(optionalReagent)
                 return optionalReagent:IsCurrency() and optionalReagent.currencyID == currencyID
@@ -443,10 +443,19 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
     Logger:LogDebug("EqualsQualityReagents ?")
     -- order can be different?
     local qualityReagents = GUTIL:Filter(self.requiredReagents, function(reagent) return reagent.hasQuality end)
-    for index, reagentA in pairs(qualityReagents) do
+    if #qualityReagents ~= #reagents then
+        return false
+    end
+    for index, reagentA in ipairs(qualityReagents) do
         local reagentB = reagents[index]
+        if not reagentB then
+            return false
+        end
         for itemIndex, reagentItemA in pairs(reagentA.items) do
             local reagentItemB = reagentB.items[itemIndex]
+            if not reagentItemB then
+                return false
+            end
 
             Logger:LogDebug("compare items: " ..
                 tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
@@ -556,12 +565,13 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
         ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
         function(optionalReagentSlot)
-            -- Locked slots cannot be filled by the player; having an activeReagent there is invalid and blocks crafting
-            if optionalReagentSlot.locked then
-                return optionalReagentSlot.activeReagent == nil
-            end
+            -- Locked slots cannot be filled by the player unless the reagent is already on the
+            -- recraft item / supplied by the customer.
             if optionalReagentSlot:IsOrderReagentIn(self.recipeData) then
                 return true
+            end
+            if optionalReagentSlot.locked then
+                return optionalReagentSlot.activeReagent == nil
             end
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
@@ -572,10 +582,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasrequiredSelectableReagent = true
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
-        if slot.locked then
-            hasrequiredSelectableReagent = slot.activeReagent == nil
-        elseif slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
+        if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
             hasrequiredSelectableReagent = true
+        elseif slot.locked then
+            hasrequiredSelectableReagent = slot.activeReagent == nil
         else
             hasrequiredSelectableReagent = slot:HasItem(multiplier, crafterUID)
         end
@@ -583,20 +593,18 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     -- update item cache for all possible optional reagents if I am the crafter
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
         for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
-            if not slot:IsCurrency() then
-                ---@type CraftSim.OptionalReagentSlot
-                slot = slot
-                for _, possibleReagent in pairs(slot.possibleReagents) do
-                    local itemID = possibleReagent.item:GetItemID()
-                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+            ---@type CraftSim.OptionalReagentSlot
+            slot = slot
+            for _, possibleReagent in pairs(slot.possibleReagents) do
+                if possibleReagent.item then
+                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(possibleReagent.item:GetItemID())
                 end
             end
         end
-        if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent and not self.requiredSelectableReagentSlot:IsCurrency() then
+        if self:HasRequiredSelectableReagent() and hasrequiredSelectableReagent then
             for _, possiblerequiredSelectableReagent in pairs(self.requiredSelectableReagentSlot.possibleReagents or {}) do
                 if possiblerequiredSelectableReagent.item then
-                    local itemID = possiblerequiredSelectableReagent.item:GetItemID()
-                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+                    CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(possiblerequiredSelectableReagent.item:GetItemID())
                 end
             end
         end
@@ -632,13 +640,12 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
-        if slot.locked and slot.activeReagent then
+        if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
+            -- customer-provided spark/pvp currency (or recraft mods)
+        elseif slot.locked and slot.activeReagent then
             return 0
-        end
-        if slot.activeReagent then
-            if not slot.activeReagent:IsOrderReagentIn(self.recipeData) then
-                currentMinimumReagentFit = math.min(slot:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
-            end
+        elseif slot.activeReagent then
+            currentMinimumReagentFit = math.min(slot:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
         else
             currentMinimumReagentFit = 0
         end
@@ -650,11 +657,11 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     ---@type CraftSim.OptionalReagentSlot[]
     local optionalReagentSlots = GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })
     for _, optionalReagentSlot in pairs(optionalReagentSlots) do
-        -- Locked slots cannot be filled; selection in a locked slot makes the recipe uncraftable
-        if optionalReagentSlot.locked and optionalReagentSlot.activeReagent then
+        if optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
+            -- recraft/customer-provided optionals are locked but still craftable
+        elseif optionalReagentSlot.locked and optionalReagentSlot.activeReagent then
             return 0
-        end
-        if optionalReagentSlot.activeReagent and not optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
+        elseif optionalReagentSlot.activeReagent then
             if not optionalReagentSlot:HasItem(1, crafterUID) then
                 return 0
             end
@@ -787,7 +794,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
 
     if self:HasRequiredSelectableReagent() then
         if self.requiredSelectableReagentSlot.activeReagent then
-            if self.requiredSelectableReagentSlot:IsCurrency() then
+            if self.requiredSelectableReagentSlot.activeReagent:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.requiredSelectableReagentSlot.activeReagent
                     .currencyID)
                 if currencyInfo then

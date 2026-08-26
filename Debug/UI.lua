@@ -25,6 +25,8 @@ function CraftSim.DEBUG.UI:Init()
         sizeX = 220,
         sizeY = 200,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameID = CraftSim.CONST.FRAMES.DEBUG,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,

@@ -43,6 +43,8 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         onCloseCallback = onCloseCallback,
         onMinimizeCallback = onMinimizeCallback,
         onMaximizeCallback = onMaximizeCallback,
+        frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         hide = true,

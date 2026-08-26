@@ -27,6 +27,8 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("27.0.2"),
+        f.p .. "More fixes for new patch",
         newP("27.0.1"),
         f.p .. "Fixing a bug with gear recommendation in work orders",
         collab("https://github.com/Tharavol"),

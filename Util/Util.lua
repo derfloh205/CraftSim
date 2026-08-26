@@ -348,6 +348,16 @@ function CraftSim.UTIL:SplitCrafterUID(crafterUID)
     return name, realm
 end
 
+---@param crafterUID CrafterUID
+---@return CrafterUID? normalizedCrafterUID
+function CraftSim.UTIL:NormalizeCrafterUIDKey(crafterUID)
+    local name, realm = self:SplitCrafterUID(crafterUID)
+    if not name or not realm then
+        return nil
+    end
+    return name .. "-" .. realm
+end
+
 --- How many times each character name appears (case-insensitive), for Name-Realm UIDs only.
 ---@param crafterUIDs CrafterUID[]
 ---@return table<string, number> lowerNameToCount

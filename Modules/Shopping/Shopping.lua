@@ -295,7 +295,7 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
 
             if recipeData:HasRequiredSelectableReagent() then
                 local slot = reagentData.requiredSelectableReagentSlot
-                if slot and slot:IsAllocated() and not slot:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
+                if slot and slot:IsAllocated() and slot.activeReagent and not slot.activeReagent:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
                     tinsert(activeReagents, slot.activeReagent)
                     quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
                 end
@@ -514,7 +514,8 @@ function CraftSim.SHOPPING:AuctionatorQuickBuy()
 
     local qbCache = self.quickBuyCache
 
-    if not AuctionHouseFrame:IsVisible() then
+    -- AuctionHouseFrame only exists after Blizzard_AuctionHouseUI has loaded.
+    if not AuctionHouseFrame or not AuctionHouseFrame:IsVisible() then
         return
     end
 
@@ -756,6 +757,8 @@ function CraftSim.SHOPPING:CreateShoppingListViewFrameIfNeeded()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameID = CraftSim.CONST.FRAMES.SHOPPING,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
