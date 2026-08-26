@@ -3320,10 +3320,19 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     Logger:LogDebug("CraftQueue Update List", false, true)
 
-    CraftSim.DEBUG:StartProfiling("FrameListUpdate")
-
     local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as GGUI.BlizzardTab]]
     local craftList = queueTab.content.craftList --[[@as GGUI.FrameList]]
+
+    -- Background refreshes must not recycle queue rows while an amount is being edited.
+    -- Otherwise the uncommitted input is replaced with craftQueueItem.amount.
+    for _, row in ipairs(craftList.activeRows) do
+        local craftAmountColumn = row.columns[8] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+        if craftAmountColumn.input.textInput.frame:HasFocus() then
+            return
+        end
+    end
+
+    CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
@@ -3931,6 +3940,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         function(_, value)
             craftQueueItem.amount = value or 1
             craftAmountColumn.unsavedMarker:Hide()
+            craftAmountColumn.input.textInput.frame:ClearFocus()
             CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         end
 
