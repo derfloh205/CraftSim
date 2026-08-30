@@ -735,6 +735,23 @@ function CraftSim.UTIL:IsProfessionLearned(profession)
     return false
 end
 
+--- The two primary profession slots (excludes archaeology, fishing, and cooking).
+---@return Enum.Profession[]
+function CraftSim.UTIL:GetPlayerMainProfessions()
+    local prof1, prof2 = GetProfessions()
+    local professions = {}
+    for _, professionIndex in ipairs({ prof1, prof2 }) do
+        if professionIndex then
+            local skillLineID = select(7, GetProfessionInfo(professionIndex))
+            local profession = skillLineID and CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+            if profession then
+                tinsert(professions, profession)
+            end
+        end
+    end
+    return professions
+end
+
 ---@param itemLink string
 ---@return number? enchantID
 function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)

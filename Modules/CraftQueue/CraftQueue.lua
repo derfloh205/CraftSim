@@ -841,6 +841,27 @@ function CraftSim.CRAFTQ:GetProfitWithOwnedMaterials(recipeData, craftAmount, op
     return baseProfit + profitIncrease, costReduction
 end
 
+---@param profession Enum.Profession?
+---@param crafterUID CrafterUID?
+---@return number maxCostCopper gold willing to pay per knowledge point
+function CraftSim.CRAFTQ:GetPatronOrderKnowledgeMaxCost(profession, crafterUID)
+    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    local characterOverrideEnabled = CraftSim.DB.OPTIONS:Get(
+        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")
+    if crafterUID and characterOverrideEnabled[crafterUID] then
+        local characterCosts = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER")
+        return characterCosts[crafterUID] or 0
+    end
+    if profession then
+        local byProfession = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION")
+        local professionCost = byProfession[profession]
+        if professionCost ~= nil then
+            return professionCost
+        end
+    end
+    return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+end
+
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
@@ -867,7 +888,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
     end)
 
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
-    local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+    local maxKPCost = self:GetPatronOrderKnowledgeMaxCost(profession)
     local maxPatronDurationHours = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS")
 
     local workOrderTypes = self:GetEnabledWorkOrderTypes()
