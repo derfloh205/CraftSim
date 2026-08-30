@@ -763,18 +763,14 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP = "Include Orders with Knowledge Point Rewards",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST = f.bb("Knowledge Point") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP =
-        "Maximum allowed gold cost of 1 Knowledge Point.\n\nUsed as the default for all professions unless a per-profession value or character override is set.\n\nFormat: ",
+        "Maximum allowed gold cost of 1 Knowledge Point.\n\nUsed as the default unless a character override with a per-profession value is set.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE = "Override for %s",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE_TOOLTIP =
-        "When enabled, this character uses its own knowledge max cost instead of the default and per-profession values.\n\nSet the character cost to " ..
+        "When enabled, this character uses per-profession knowledge max costs instead of the default.\n\nSet a profession to " ..
             f.bb("0") .. " if this character is fully knowledge-capped and should not pay for knowledge rewards.",
-        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER = "Character Max Cost: ",
-        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_TOOLTIP =
-        "Maximum gold this character will pay per Knowledge Point while the character override is enabled.\n\n" ..
-            f.bb("0") .. " skips unprofitable knowledge orders.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION = "Per Profession",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION_TOOLTIP =
-        "Set a knowledge max cost for a specific profession. Reset to use the default cost.",
+        "Set a knowledge max cost for a specific profession while the character override is enabled. Reset to use the default cost.",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST = f.bb("Patron Order") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS = f.bb("Patron Order") .. " Max Duration (hours): ",

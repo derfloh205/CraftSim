@@ -848,11 +848,7 @@ function CraftSim.CRAFTQ:GetPatronOrderKnowledgeMaxCost(profession, crafterUID)
     crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
     local characterOverrideEnabled = CraftSim.DB.OPTIONS:Get(
         "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")
-    if crafterUID and characterOverrideEnabled[crafterUID] then
-        local characterCosts = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER")
-        return characterCosts[crafterUID] or 0
-    end
-    if profession then
+    if crafterUID and characterOverrideEnabled[crafterUID] and profession then
         local byProfession = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION")
         local professionCost = byProfession[profession]
         if professionCost ~= nil then
