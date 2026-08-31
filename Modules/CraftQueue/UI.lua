@@ -1718,36 +1718,33 @@ function CraftSim.CRAFTQ.UI:Init()
                             "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")
                         enabled[uid] = not enabled[uid]
                         CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE", enabled)
-                        return MenuResponse.Refresh
+                        if enabled[uid] then
+                            characterOverrideCB:ForceOpenSubmenu()
+                        end
                     end)
 
+                characterOverrideCB:SetShouldRespondIfSubmenu(true)
                 characterOverrideCB:SetTooltip(function(tooltip, elementDescription)
                     GameTooltip_AddInstructionLine(tooltip,
                         L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE_TOOLTIP"));
                 end)
 
-                local characterOverrideEnabled = CraftSim.DB.OPTIONS:Get(
-                    "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")[crafterUID] == true
-                if characterOverrideEnabled then
-                    local perProfessionButton = patronOrderOptions:CreateButton(
-                        L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION"))
-                    perProfessionButton:SetTooltip(function(tooltip, elementDescription)
-                        GameTooltip_AddInstructionLine(tooltip,
-                            L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION_TOOLTIP"));
-                    end)
+                -- Nested on the checkbox so Patron Orders stays compact. MenuResponse.Refresh
+                -- cannot add new rows; ForceOpenSubmenu shows this flyout when the box is checked.
+                characterOverrideCB:CreateTitle(L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION"))
 
-                    local knowledgeProfessionSet = {}
-                    for _, professionID in ipairs(CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_PROFESSIONS) do
-                        knowledgeProfessionSet[professionID] = true
-                    end
+                local knowledgeProfessionSet = {}
+                for _, professionID in ipairs(CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_PROFESSIONS) do
+                    knowledgeProfessionSet[professionID] = true
+                end
 
-                    for _, knowledgeProfessionID in ipairs(CraftSim.UTIL:GetPlayerMainProfessions()) do
-                        if knowledgeProfessionSet[knowledgeProfessionID] then
-                        local professionID = knowledgeProfessionID
-                        local locID = CraftSim.CONST.PROFESSION_LOCALIZATION_IDS[professionID]
-                        local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionID], 15, 15)
-                        local professionMenu = perProfessionButton:CreateButton(
-                            professionIcon .. " " .. (locID and L(locID) or tostring(professionID)))
+                for _, knowledgeProfessionID in ipairs(CraftSim.UTIL:GetPlayerMainProfessions()) do
+                    if knowledgeProfessionSet[knowledgeProfessionID] then
+                    local professionID = knowledgeProfessionID
+                    local locID = CraftSim.CONST.PROFESSION_LOCALIZATION_IDS[professionID]
+                    local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionID], 15, 15)
+                    local professionMenu = characterOverrideCB:CreateButton(
+                        professionIcon .. " " .. (locID and L(locID) or tostring(professionID)))
 
                         GUTIL:CreateReuseableMenuUtilContextMenuFrame(professionMenu, function(frame)
                             frame.label = GGUI.Text {
@@ -1805,8 +1802,7 @@ function CraftSim.CRAFTQ.UI:Init()
                                 end
                                 frame.input:SetValue(value)
                             end)
-                        end, 250, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_PROF_" .. tostring(professionID))
-                        end
+                    end, 250, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_PROF_" .. tostring(professionID))
                     end
                 end
 
