@@ -475,7 +475,8 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
                 for _, reagent in pairs(craft.reagents) do
                     if reagent.reagentInfo.reagent.itemID then
                         local item = Item:CreateFromItemID(reagent.reagentInfo.reagent.itemID)
-                        local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(item:GetItemLink())
+                        local itemLink = item:GetItemLink()
+                        local qualityID = itemLink and CraftSim.GUTIL:GetQualityIDFromLink(itemLink)
                         local qualityIcon = ""
                         local itemIcon = CraftSim.GUTIL:IconToText(item:GetItemIcon(), 20, 20)
                         if qualityID then
