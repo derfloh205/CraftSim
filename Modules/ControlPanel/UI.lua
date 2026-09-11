@@ -136,7 +136,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             text = L("SIMULATION_MODE_TOOLTIP"),
         },
         onToggleCallback = function(_, value)
-            CraftSim.SIMULATION_MODE.isActive = not value
+            CraftSim.SIMULATION_MODE.isActive = value
             if CraftSim.SIMULATION_MODE.isActive then
                 GUTIL:TriggerCustomEvent("CRAFTSIM_SIMULATION_MODE_ENABLED")
             else
