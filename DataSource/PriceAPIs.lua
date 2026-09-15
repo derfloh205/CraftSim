@@ -360,7 +360,8 @@ function CraftSimTSM:GetSmartRestockAmount(recipeData)
     local restockExpr = CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS")
     local target = TSM_API.GetCustomPriceValue(restockExpr, tsmStr) or 0
 
-    -- Owned inventory via tradable stock only (exclude soulbound bags/bank).
+    -- Owned inventory for restock: unbound stock for tradable items; bound copies
+    -- of inherently untradeable items (BoP treatises, warbound, etc.) are included.
     local includeAlts = CraftSim.DB.OPTIONS:Get("TSM_SMART_RESTOCK_INCLUDE_ALTS")
     local itemID = resultData.expectedItem:GetItemID()
     local owned = CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemLink or itemID, includeAlts)
