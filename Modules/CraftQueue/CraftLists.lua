@@ -88,33 +88,62 @@ local function RecipeMeetsSupportedQualities(recipeData, recipeEntry)
     return CraftSim.DB.CRAFT_LISTS.IsQualitySupported(GetEffectiveExpectedQuality(recipeData), supported)
 end
 
+---@param item ItemMixin?
+---@param includeAltInventory boolean?
+---@return number
+local function CountOwnedResultItem(item, includeAltInventory)
+    if not item then
+        return 0
+    end
+    return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
+        item:GetItemID() or item:GetItemLink(),
+        includeAltInventory) or 0
+end
+
 ---@param recipeData CraftSim.RecipeData
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
 ---@param includeAltInventory boolean?
 ---@return number
 local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
     local supported = recipeEntry and recipeEntry.supportedQualities
-    if not recipeData.isGear
-        or not recipeData.supportsQualities
-        or not CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
-        local expectedItem = recipeData.resultData.expectedItem
-        if not expectedItem then
-            return 0
+    if recipeData.isGear
+        and recipeData.supportsQualities
+        and CraftSim.DB.CRAFT_LISTS.IsAnySupportedQualityChecked(supported) then
+        local owned = 0
+        for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
+            if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) then
+                owned = owned + CountOwnedResultItem(item, includeAltInventory)
+            end
         end
-        return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
-            expectedItem:GetItemID() or expectedItem:GetItemLink(),
-            includeAltInventory) or 0
+        return owned
     end
 
-    local owned = 0
-    for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
-        if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) and item then
-            owned = owned + (CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
-                item:GetItemID() or item:GetItemLink(),
-                includeAltInventory) or 0)
+    -- Non-gear (treatises, flasks, etc.) and gear with no quality filter: count every
+    -- result item ID. Restock is "have N of this recipe", not only the currently
+    -- expected quality, so existing Q1 treatises still cover a target of 1.
+    local itemsByQuality = recipeData.resultData.itemsByQuality
+    if itemsByQuality then
+        local owned = 0
+        local seen = {}
+        local foundItem = false
+        for _, item in pairs(itemsByQuality) do
+            foundItem = true
+            local itemID = item and item:GetItemID()
+            if itemID then
+                if not seen[itemID] then
+                    seen[itemID] = true
+                    owned = owned + CountOwnedResultItem(item, includeAltInventory)
+                end
+            else
+                owned = owned + CountOwnedResultItem(item, includeAltInventory)
+            end
+        end
+        if foundItem then
+            return owned
         end
     end
-    return owned
+
+    return CountOwnedResultItem(recipeData.resultData.expectedItem, includeAltInventory)
 end
 
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
@@ -793,6 +822,8 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
         end
 
         local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, options.includeAltInventory)
+        Logger:LogDebug("Restock owned count for {name}: owned={owned} target={target} subtractInventory={subtract}",
+            recipeData.recipeName, owned, recipeMaxQueueAmount, options.subtractInventory)
 
         -- Already at or above restock target: skip queuing this recipe.
         if owned >= recipeMaxQueueAmount then
