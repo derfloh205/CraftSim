@@ -27,6 +27,9 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("27.0.5"),
+        f.p .. "Fix craft list restock ignoring soulbound treatises",
+        collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.4"),
         f.p .. f.bb("Craft Lists"),
         f.a .. "- Restock now counts soulbound items you already have (treatises, warbound, etc.)",
