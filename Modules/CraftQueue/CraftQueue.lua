@@ -1707,7 +1707,8 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     end
 
     if not recipeData then
-        print("|cffff0000CraftSim:|r Could not add to CraftQueue -- no recipe is currently selected/visible.")
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") ..
+            f.r("Could not add to CraftQueue -- no recipe is currently selected/visible."))
         return
     end
 
