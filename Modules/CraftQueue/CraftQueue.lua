@@ -1700,9 +1700,6 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             recipeData = CraftSim.MODULES.recipeData:Copy()
         else
             recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
-            if recipeData then
-                CraftSim.MODULES.recipeData = recipeData
-            end
         end
     end
 
