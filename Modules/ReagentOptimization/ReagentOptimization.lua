@@ -333,6 +333,21 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResul
     return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
+--- An order reagent's mix is the customer's allocation rather than one the optimizer derived, so it
+--- carries no guarantee of summing to the slot. Spends the slot on the highest qualities first, so
+--- anything that does not fit is lost from the lowest.
+---@param mix integer[] item counts by quality, lowest first
+---@param requiredQuantity integer
+---@return integer[] mix
+local function clampMixToRequiredQuantity(mix, requiredQuantity)
+    local remaining = requiredQuantity
+    for qualityIndex = #mix, 1, -1 do
+        mix[qualityIndex] = math.min(mix[qualityIndex] or 0, remaining)
+        remaining = remaining - mix[qualityIndex]
+    end
+    return mix
+end
+
 ---@param ksItem CraftSim.REAGENT_OPTIMIZATION.REAGENT
 ---@param useSubRecipeCosts boolean
 function CraftSim.REAGENT_OPTIMIZATION:CreateCompositions(ksItem, useSubRecipeCosts)
@@ -351,15 +366,18 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCompositions(ksItem, useSubRecipeCo
         useSubRecipeCosts)
 
     if ksItem.isOrderReagent then
-        local q3Count = ksItem.reagent.items[3].quantity
-        local q2Count = ksItem.reagent.items[2].quantity
-        local q1Count = ksItem.reagent.items[1].quantity
+        local mix = clampMixToRequiredQuantity({
+            ksItem.reagent.items[1].quantity,
+            ksItem.reagent.items[2].quantity,
+            ksItem.reagent.items[3].quantity,
+        }, requiredQuantity)
+        local q1Count, q2Count, q3Count = mix[1], mix[2], mix[3]
         local sumOfQualityFactors = 2 * q3Count + q2Count
         local goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
         ksItem.compositions = {
             [0] = {
                 weight = sumOfQualityFactors * ksItem.recipeFactoredWeight,
-                mix = { q1Count, q2Count, q3Count },
+                mix = mix,
                 value = goldCost,
             }
         }
@@ -404,8 +422,11 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateSimplifiedCompositions(ksItem, useS
         useSubRecipeCosts)
 
     if ksItem.isOrderReagent then
-        local q2Count = ksItem.reagent.items[2].quantity
-        local q1Count = ksItem.reagent.items[1].quantity
+        local mix = clampMixToRequiredQuantity({
+            ksItem.reagent.items[1].quantity,
+            ksItem.reagent.items[2].quantity,
+        }, requiredQuantity)
+        local q1Count, q2Count = mix[1], mix[2]
         local allocatedQuantity = q2Count
         local goldCost = q2Count * q2ItemPrice + q1Count * q1ItemPrice
         ---@class CraftSim.REAGENT_OPTIMIZATION.REAGENT_COMPOSITION
@@ -414,7 +435,7 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateSimplifiedCompositions(ksItem, useS
         ---@field value integer total cost of reagent items in composition
         local orderReagentComposition = {
             weight = allocatedQuantity * ksItem.recipeFactoredWeight,
-            mix = { q1Count, q2Count },
+            mix = mix,
             value = goldCost,
         }
         ksItem.compositions = { [0] = orderReagentComposition }
