@@ -1698,10 +1698,14 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
     else
         if CraftSim.MODULES.recipeData then
             recipeData = CraftSim.MODULES.recipeData:Copy()
+        else
+            recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
         end
     end
 
     if not recipeData then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") ..
+            f.r("Could not add to CraftQueue: no recipe data could be resolved."))
         return
     end
 
