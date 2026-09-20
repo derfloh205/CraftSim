@@ -31,6 +31,7 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         f.p .. "Honor the auto shopping list setting after queueing",
         f.p .. "Fix post-craft item count cache calling removed ITEM_COUNT:Save",
         f.p .. "Do not error when clearing an empty salvage slot",
+        f.p .. "Guard missing concentration data and profession skill curves",
         collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.5"),
         f.p .. "Fix craft list restock ignoring soulbound treatises",
