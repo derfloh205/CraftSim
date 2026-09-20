@@ -850,6 +850,15 @@ function CraftSim.RecipeData:SetConcentrationBySchematicForm()
     self.concentrating = currentTransaction:IsApplyingConcentration()
 end
 
+--- Refresh concentrating from the visible schematic and recompute derived profit/cost state.
+function CraftSim.RecipeData:SyncConcentrationFromSchematicForm()
+    self:SetConcentrationBySchematicForm()
+    if self.concentrating and not self.concentrationData then
+        self.concentrationData = self:GetConcentrationDataForCrafter()
+    end
+    self:Update()
+end
+
 ---@param itemID number
 function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)
