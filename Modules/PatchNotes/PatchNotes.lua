@@ -32,6 +32,7 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         f.p .. "Fix post-craft item count cache calling removed ITEM_COUNT:Save",
         f.p .. "Do not error when clearing an empty salvage slot",
         f.p .. "Guard missing concentration data and profession skill curves",
+        f.p .. "Skip cooldown updates while combat secrets are active",
         collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.5"),
         f.p .. "Fix craft list restock ignoring soulbound treatises",

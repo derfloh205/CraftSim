@@ -35,6 +35,10 @@ function CraftSim.CooldownData:Copy()
 end
 
 function CraftSim.CooldownData:Update()
+    if C_Secrets.ShouldCooldownsBeSecret() then
+        return
+    end
+
     local currentCooldown, isDayCooldown, currentCharges, maxCharges = C_TradeSkillUI.GetRecipeCooldown(self.recipeID)
     currentCooldown = currentCooldown or 0
     -- some new recipes in TWW are not marked as day cds even if they are... like inventing
