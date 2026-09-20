@@ -34,6 +34,7 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         f.p .. "Guard missing concentration data and profession skill curves",
         f.p .. "Skip cooldown updates while combat secrets are active",
         f.p .. "Queue the visible recipe and refresh Concentration when using + CraftQueue",
+        f.p .. "Craft List restock counts quality 4/5 gear already in the bank",
         collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.5"),
         f.p .. "Fix craft list restock ignoring soulbound treatises",

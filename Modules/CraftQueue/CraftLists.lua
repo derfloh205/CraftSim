@@ -95,8 +95,10 @@ local function CountOwnedResultItem(item, includeAltInventory)
     if not item then
         return 0
     end
+    -- Prefer the item link so gear qualities (Q4/Q5 share an itemID) are counted separately.
+    local itemLink = item:GetItemLink()
     return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
-        item:GetItemID() or item:GetItemLink(),
+        itemLink or item:GetItemID(),
         includeAltInventory) or 0
 end
 
