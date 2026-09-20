@@ -29,6 +29,7 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
         newP("27.0.6"),
         f.p .. "Honor the auto shopping list setting after queueing",
+        f.p .. "Fix post-craft item count cache calling removed ITEM_COUNT:Save",
         collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.5"),
         f.p .. "Fix craft list restock ignoring soulbound treatises",
