@@ -781,6 +781,10 @@ function CraftSim.SHOPPING:Init()
 end
 
 function CraftSim.SHOPPING:CRAFTSIM_CRAFTQUEUE_QUEUE_PROCESS_FINISHED()
+    if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_AUTO_SHOPPING_LIST") then
+        return
+    end
+
     CraftSim.SHOPPING:CreateShoppingListFromCraftQueue()
 end
 

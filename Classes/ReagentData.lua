@@ -965,15 +965,11 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
         return
     end
 
-    local crafterUID = self.recipeData:GetCrafterUID()
-
     local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
 
     for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
         if craftingReagentInfo.reagent.itemID then
-            local itemCount = C_Item.GetItemCount(craftingReagentInfo.reagent.itemID, true, false, true)
-            -- TODO requires update: Save() doesn't exist, only per-location values exist but this is the sum of inventory and bank
-            CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.reagent.itemID, itemCount)
+            CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(craftingReagentInfo.reagent.itemID)
         end
     end
 end

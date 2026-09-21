@@ -27,6 +27,15 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("27.0.6"),
+        f.p .. "Honor the auto shopping list setting after queueing",
+        f.p .. "Fix post-craft item count cache calling removed ITEM_COUNT:Save",
+        f.p .. "Do not error when clearing an empty salvage slot",
+        f.p .. "Guard missing concentration data and profession skill curves",
+        f.p .. "Skip cooldown updates while combat secrets are active",
+        f.p .. "Queue the visible recipe and refresh Concentration when using + CraftQueue",
+        f.p .. "Craft List restock counts quality 4/5 gear already in the bank",
+        collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),
         newP("27.0.5"),
         f.p .. "Fix craft list restock ignoring soulbound treatises",
         collab(CraftSim.PATCH_NOTES.GITHUB_COLLABS.AVILENE),

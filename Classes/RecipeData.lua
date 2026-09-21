@@ -850,6 +850,15 @@ function CraftSim.RecipeData:SetConcentrationBySchematicForm()
     self.concentrating = currentTransaction:IsApplyingConcentration()
 end
 
+--- Refresh concentrating from the visible schematic and recompute derived profit/cost state.
+function CraftSim.RecipeData:SyncConcentrationFromSchematicForm()
+    self:SetConcentrationBySchematicForm()
+    if self.concentrating and not self.concentrationData then
+        self.concentrationData = self:GetConcentrationDataForCrafter()
+    end
+    self:Update()
+end
+
 ---@param itemID number
 function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)
@@ -962,6 +971,13 @@ end
 ---@param playerSkill number
 ---@param noRounding boolean?
 function CraftSim.RecipeData:GetConcentrationCostForSkill(playerSkill, noRounding)
+    if not self.concentrationCurveData and self.baseOperationInfo then
+        self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[self.baseOperationInfo.craftingDataID]
+    end
+    if not self.concentrationCurveData then
+        return self.concentrationCost or 0
+    end
+
     -- get skill bracket and associated start and end skillCurveValues
     local recipeDifficulty = self.professionStats.recipeDifficulty.value
     playerSkill = math.min(playerSkill, recipeDifficulty) -- cap skill at max difficulty
@@ -2585,7 +2601,7 @@ function CraftSim.RecipeData:CanCraft(amount)
     local isChargeRecipe = self.cooldownData.maxCharges > 0
 
     local concentrationAmount = math.huge
-    if self.concentrating and self.concentrationCost > 0 then
+    if self.concentrating and self.concentrationCost > 0 and self.concentrationData then
         local cost = self.concentrationCost * amount
         concentrationAmount = self.concentrationData:GetQueueableAmount(cost)
     end
