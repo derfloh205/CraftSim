@@ -956,16 +956,54 @@ function CraftSim.RecipeData:SetCheapestQualityReagentsMax(nonAllocatedOnly)
                     reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
                 end
             elseif isOrderReagent then
-                for _, reagentItem in ipairs(reagent.items) do
-                    if reagentItem:IsOrderReagentIn(self) then
-                        reagentItem.quantity = reagent.requiredQuantity
-                    else
-                        reagentItem.quantity = 0
-                    end
-                end
+                self:SetOrderSuppliedQuantities(reagent)
             end
         end
     end
+end
+
+--- Allocates an order supplied reagent the quantities the customer actually provided per quality.
+--- A customer can split one slot across qualities, so more than one of the reagent's items can be an
+--- order reagent and filling each with requiredQuantity would allocate a multiple of the slot.
+---@param reagent CraftSim.Reagent
+function CraftSim.RecipeData:SetOrderSuppliedQuantities(reagent)
+    local quantitiesByItemID = self:GetOrderReagentQuantities()
+    local remaining = reagent.requiredQuantity
+    local lowestQualitySuppliedItem
+
+    for _, reagentItem in ipairs(reagent.items) do
+        local allocated = math.min(quantitiesByItemID[reagentItem.item:GetItemID()] or 0, remaining)
+        reagentItem.quantity = allocated
+        remaining = remaining - allocated
+        if not lowestQualitySuppliedItem and reagentItem:IsOrderReagentIn(self) then
+            lowestQualitySuppliedItem = reagentItem
+        end
+    end
+
+    -- the order fills the whole slot, so anything its entries did not account for goes on the lowest
+    -- supplied quality rather than leaving the slot short. Covers entries that carry no quantity.
+    if remaining > 0 and lowestQualitySuppliedItem then
+        lowestQualitySuppliedItem.quantity = lowestQualitySuppliedItem.quantity + remaining
+    end
+end
+
+--- Totals what the order supplies of each reagent item across all of its entries.
+---@return table<ItemID, number> quantitiesByItemID
+function CraftSim.RecipeData:GetOrderReagentQuantities()
+    local quantitiesByItemID = {}
+
+    if not self.orderData then
+        return quantitiesByItemID
+    end
+
+    for _, reagentInfo in ipairs(self.orderData.reagents or {}) do
+        local descriptor = self:GetOrderReagentDescriptor(reagentInfo)
+        if descriptor.itemID and descriptor.quantity then
+            quantitiesByItemID[descriptor.itemID] = (quantitiesByItemID[descriptor.itemID] or 0) + descriptor.quantity
+        end
+    end
+
+    return quantitiesByItemID
 end
 
 ---@param playerSkill number
@@ -2503,10 +2541,10 @@ end
 --- Normalizes an order reagent entry into a simple descriptor.
 --- Blizzard's `orderData.reagents` shape differs between contexts; keep all extraction logic in one place.
 ---@param reagentInfo table The reagent info from orderData.reagents
----@return { dataSlotIndex: number?, itemID: number?, currencyID: number?, slotIndex: number? } descriptor
+---@return { dataSlotIndex: number?, itemID: number?, currencyID: number?, slotIndex: number?, quantity: number? } descriptor
 function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
     if not reagentInfo then
-        return { dataSlotIndex = nil, itemID = nil, currencyID = nil, slotIndex = nil }
+        return { dataSlotIndex = nil, itemID = nil, currencyID = nil, slotIndex = nil, quantity = nil }
     end
 
     local slotIndex = reagentInfo.slotIndex
@@ -2536,7 +2574,15 @@ function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
         end
     end
 
-    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID, slotIndex = slotIndex }
+    local quantity = (reagentInfo.reagentInfo and reagentInfo.reagentInfo.quantity) or reagentInfo.quantity
+
+    return {
+        dataSlotIndex = dataSlotIndex,
+        itemID = itemID,
+        currencyID = currencyID,
+        slotIndex = slotIndex,
+        quantity = quantity,
+    }
 end
 
 --- Requires a hardware event
