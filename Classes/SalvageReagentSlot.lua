@@ -64,8 +64,13 @@ function CraftSim.SalvageReagentSlot:SetCheapestOwnedItem()
     return self.activeItem
 end
 
----@param itemID number
+---@param itemID number?
 function CraftSim.SalvageReagentSlot:SetItem(itemID)
+    if not itemID then
+        self.activeItem = nil
+        return
+    end
+
     local item = CraftSim.GUTIL:Find(self.possibleItems, function(item) return item:GetItemID() == itemID end)
 
     if not item then

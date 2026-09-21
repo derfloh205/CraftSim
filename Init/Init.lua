@@ -640,12 +640,17 @@ function CraftSim.INIT:HookToConcentrationButtons()
 	concentrationButtonHooked = true
 
 	local function OnConcentrationToggle()
-		-- only if sim mode off
-		if not CraftSim.SIMULATION_MODE.isActive and CraftSim.MODULES.recipeData then
-			GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", CraftSim.MODULES.recipeData)
-		else
+		if CraftSim.SIMULATION_MODE.isActive then
 			Logger:LogWarning("Simulation Mode Active, skip recipe data update on concentration toggle")
+			return
 		end
+		if not CraftSim.MODULES.recipeData then
+			Logger:LogWarning("No recipe data, skip recipe data update on concentration toggle")
+			return
+		end
+
+		CraftSim.MODULES.recipeData:SyncConcentrationFromSchematicForm()
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", CraftSim.MODULES.recipeData)
 	end
 
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer

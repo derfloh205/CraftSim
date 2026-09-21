@@ -1696,12 +1696,20 @@ function CraftSim.CRAFTQ:QueueOpenRecipe()
             recipeData = CraftSim.SIMULATION_MODE.recipeData:Copy() -- need a copy or changes in simulation mode just overwrite it
         end
     else
-        if CraftSim.MODULES.recipeData then
+        -- Prefer the visible schematic so a stale cached recipe (e.g. previous profession) is not queued.
+        recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+        if not recipeData and CraftSim.MODULES.recipeData then
             recipeData = CraftSim.MODULES.recipeData:Copy()
+        end
+
+        if recipeData then
+            recipeData:SyncConcentrationFromSchematicForm()
         end
     end
 
     if not recipeData then
+        CraftSim.DEBUG:SystemPrint(f.l("CraftSim: ") ..
+            f.r("Could not add to CraftQueue: no recipe data could be resolved."))
         return
     end
 
