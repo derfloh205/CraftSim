@@ -633,6 +633,41 @@ function CraftSim.INIT:HookToProfessionUnlearnedFunction()
 end
 
 local concentrationButtonHooked = false
+local concentrationSyncPending = false
+
+--- Concentration changes update the transaction but do not fire AllocationsModified.
+--- Sync from the schematic (and button fallback) on click and TransactionUpdated.
+function CraftSim.INIT:SyncConcentrationFromUI()
+	if concentrationSyncPending then
+		return
+	end
+	concentrationSyncPending = true
+	RunNextFrame(function()
+		concentrationSyncPending = false
+		if CraftSim.SIMULATION_MODE.isActive then
+			Logger:LogWarning("Simulation Mode Active, skip recipe data update on concentration toggle")
+			return
+		end
+		local recipeData = CraftSim.MODULES.recipeData
+		if not recipeData then
+			Logger:LogWarning("No recipe data, skip recipe data update on concentration toggle")
+			return
+		end
+
+		local wasConcentrating = recipeData.concentrating
+		recipeData:SetConcentrationBySchematicForm()
+		if recipeData.concentrating == wasConcentrating then
+			return
+		end
+
+		if recipeData.concentrating and not recipeData.concentrationData then
+			recipeData.concentrationData = recipeData:GetConcentrationDataForCrafter()
+		end
+		recipeData:Update()
+		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", recipeData)
+	end)
+end
+
 function CraftSim.INIT:HookToConcentrationButtons()
 	if concentrationButtonHooked then
 		return
@@ -640,25 +675,33 @@ function CraftSim.INIT:HookToConcentrationButtons()
 	concentrationButtonHooked = true
 
 	local function OnConcentrationToggle()
-		if CraftSim.SIMULATION_MODE.isActive then
-			Logger:LogWarning("Simulation Mode Active, skip recipe data update on concentration toggle")
-			return
-		end
-		if not CraftSim.MODULES.recipeData then
-			Logger:LogWarning("No recipe data, skip recipe data update on concentration toggle")
-			return
-		end
-
-		CraftSim.MODULES.recipeData:SyncConcentrationFromSchematicForm()
-		GUTIL:TriggerCustomEvent("CRAFTSIM_RECIPE_DATA_UPDATED", CraftSim.MODULES.recipeData)
+		CraftSim.INIT:SyncConcentrationFromUI()
 	end
 
-	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
-		.ConcentrateToggleButton:HookScript("OnClick", OnConcentrationToggle)
+	local function hookConcentrateButton(button)
+		if button and button.HookScript then
+			button:HookScript("OnClick", OnConcentrationToggle)
+		end
+	end
 
-	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
-		.ConcentrateContainer
-		.ConcentrateToggleButton:HookScript("OnClick", OnConcentrationToggle)
+	-- Details panel (usual crafting / orders layout)
+	hookConcentrateButton(ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer
+		.ConcentrateContainer.ConcentrateToggleButton)
+	hookConcentrateButton(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details
+		.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton)
+
+	-- Schematic-form concentrate control (used when finishing reagents stay on the form)
+	if ProfessionsFrame.CraftingPage.SchematicForm.Concentrate then
+		hookConcentrateButton(ProfessionsFrame.CraftingPage.SchematicForm.Concentrate.ConcentrateToggleButton)
+	end
+	if ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Concentrate then
+		hookConcentrateButton(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Concentrate
+			.ConcentrateToggleButton)
+	end
+
+	EventRegistry:RegisterCallback("Professions.TransactionUpdated", function()
+		CraftSim.INIT:SyncConcentrationFromUI()
+	end)
 end
 
 function CraftSim.INIT:PLAYER_LOGIN()

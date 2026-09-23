@@ -289,10 +289,42 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
     ---@type table<number, { itemName: string, qualityID: number?, quantity: number }>
     local reagentMap = {}
 
+    ---@param itemID number
+    ---@param quantity number
+    ---@param qualityID number?
+    ---@param itemName string?
+    local function addReagentDemand(itemID, quantity, qualityID, itemName)
+        if not itemID or quantity <= 0 then
+            return
+        end
+        reagentMap[itemID] = reagentMap[itemID] or {
+            itemName = resolveItemName(itemID, itemName),
+            qualityID = qualityID,
+            quantity = 0,
+        }
+        reagentMap[itemID].quantity = reagentMap[itemID].quantity + quantity
+        if qualityID then
+            reagentMap[itemID].qualityID = qualityID
+        end
+    end
+
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         local recipeData = craftQueueItem.recipeData
         local reagentData = recipeData and recipeData.reagentData
         if reagentData then
+            -- Salvage recipes (e.g. cooking sub-recipes for Plant Protein) only use salvageReagentSlot
+            if recipeData.isSalvageRecipe and reagentData.salvageReagentSlot
+                and reagentData.salvageReagentSlot.activeItem then
+                local salvageItem = reagentData.salvageReagentSlot.activeItem
+                local itemID = salvageItem:GetItemID()
+                local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
+                if not isSelfCrafted then
+                    local qty = (reagentData.salvageReagentSlot.requiredQuantity or 1) * craftQueueItem.amount
+                    local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
+                    addReagentDemand(itemID, qty, qualityID, salvageItem:GetItemName())
+                end
+            end
+
             local requiredReagents = reagentData.requiredReagents
             for _, reagent in pairs(requiredReagents) do
                 if not reagent:IsOrderReagentIn(recipeData) then
@@ -301,14 +333,8 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
                             local itemID = reagentItem.item:GetItemID()
                             local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
                             if not isSelfCrafted then
-                                reagentMap[itemID] = reagentMap[itemID] or {
-                                    itemName = resolveItemName(itemID, reagentItem.item:GetItemName()),
-                                    qualityID = reagentItem.qualityID,
-                                    quantity = 0,
-                                }
-                                reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                                    (reagentItem.quantity * craftQueueItem.amount)
-                                reagentMap[itemID].qualityID = reagentItem.qualityID
+                                addReagentDemand(itemID, reagentItem.quantity * craftQueueItem.amount,
+                                    reagentItem.qualityID, reagentItem.item:GetItemName())
                             end
                         end
                     else
@@ -316,13 +342,8 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
                         local itemID = reagentItem.item:GetItemID()
                         local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
                         if not isSelfCrafted then
-                            reagentMap[itemID] = reagentMap[itemID] or {
-                                itemName = resolveItemName(itemID, reagentItem.item:GetItemName()),
-                                qualityID = nil,
-                                quantity = 0,
-                            }
-                            reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                                (reagentItem.quantity * craftQueueItem.amount)
+                            addReagentDemand(itemID, reagentItem.quantity * craftQueueItem.amount,
+                                nil, reagentItem.item:GetItemName())
                         end
                     end
                 end
@@ -348,13 +369,8 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
 
                     if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
                         local allocatedQuantity = quantityMap[itemID] or 1
-                        reagentMap[itemID] = reagentMap[itemID] or {
-                            itemName = resolveItemName(itemID, optionalReagent.item:GetItemName()),
-                            qualityID = qualityID,
-                            quantity = 0,
-                        }
-                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                            allocatedQuantity * craftQueueItem.amount
+                        addReagentDemand(itemID, allocatedQuantity * craftQueueItem.amount, qualityID,
+                            optionalReagent.item:GetItemName())
                     end
                 end
             end

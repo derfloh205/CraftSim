@@ -847,7 +847,24 @@ function CraftSim.RecipeData:SetConcentrationBySchematicForm()
     end
 
     local currentTransaction = schematicForm:GetTransaction()
+    if not currentTransaction then
+        return
+    end
+
     self.concentrating = currentTransaction:IsApplyingConcentration()
+
+    -- Fallback: transaction can lag a frame behind the toggle; trust the visible checkbox.
+    if not self.concentrating then
+        local detailsButton = schematicForm.Details and schematicForm.Details.CraftingChoicesContainer
+            and schematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
+            and schematicForm.Details.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton
+        local formButton = schematicForm.Concentrate and schematicForm.Concentrate.ConcentrateToggleButton
+        local button = (detailsButton and detailsButton:IsShown() and detailsButton)
+            or (formButton and formButton:IsShown() and formButton)
+        if button and button.GetChecked and button:GetChecked() then
+            self.concentrating = true
+        end
+    end
 end
 
 --- Refresh concentrating from the visible schematic and recompute derived profit/cost state.
@@ -2086,29 +2103,32 @@ function CraftSim.RecipeData:GetConcentrationValue()
     local averageConcentrationCost = self.concentrationCost -
         (self.concentrationCost * ingenuityChance * ingenuityRefund)
 
-    if self.concentrating then
-        local averageProfitConcentration = self.averageProfitCached
-        self.concentrating = false
-        self:Update()
+    -- Always restore concentrating so Recipe Info cannot leave the live recipe flipped mid-update.
+    local wasConcentrating = self.concentrating
+    local concentrationValue, averageProfitConcentration = 0, 0
+    local ok, err = pcall(function()
+        if wasConcentrating then
+            averageProfitConcentration = self.averageProfitCached or self:GetAverageProfit()
+            self.concentrating = false
+            self:Update()
+            concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+        else
+            self.concentrating = true
+            self:Update()
+            averageProfitConcentration = self.averageProfitCached or self:GetAverageProfit()
+            concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+        end
+    end)
 
-        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
+    self.concentrating = wasConcentrating
+    self:Update()
 
-        self.concentrating = true
-        self:Update()
-
-        return concentrationValue, averageProfitConcentration
-    else
-        self.concentrating = true
-        self:Update()
-
-        local averageProfitConcentration = self.averageProfitCached
-        local concentrationValue = calculateConcentrationValue(averageProfitConcentration, averageConcentrationCost)
-
-        self.concentrating = false
-        self:Update()
-
-        return concentrationValue, averageProfitConcentration
+    if not ok then
+        Logger:LogWarning("GetConcentrationValue failed: " .. tostring(err))
+        return 0, 0
     end
+
+    return concentrationValue, averageProfitConcentration
 end
 
 ---@return number
@@ -2917,6 +2937,16 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                     if not ignoreCooldownRecipe then
                         recipeData.subRecipeDepth = subRecipeDepth + 1
+
+                        -- Salvage sub-recipes (e.g. cooking Plant Protein) have no required reagents;
+                        -- allocate the cheapest salvage input so costs and shopping lists resolve.
+                        if recipeData.isSalvageRecipe
+                            and recipeData.reagentData.salvageReagentSlot
+                            and not recipeData.reagentData.salvageReagentSlot.activeItem
+                            and #(recipeData.reagentData.salvageReagentSlot.possibleItems or {}) > 0 then
+                            recipeData.reagentData.salvageReagentSlot:SetCheapestItem()
+                        end
+
                         Logger:LogDebug("- Checking SubRecipe: " ..
                             recipeData.recipeName .. "( q" .. tostring(data.qualityID) .. ")")
                         -- go deep!

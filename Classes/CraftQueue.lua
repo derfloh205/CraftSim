@@ -68,6 +68,14 @@ function CraftSim.CraftQueue:AddRecipe(options)
                             subRecipe.recipeName .. " q" .. qualityID)
                         subRecipe:SetNonQualityReagentsMax()
 
+                        if subRecipe.isSalvageRecipe
+                            and subRecipe.reagentData.salvageReagentSlot
+                            and not subRecipe.reagentData.salvageReagentSlot.activeItem
+                            and #(subRecipe.reagentData.salvageReagentSlot.possibleItems or {}) > 0 then
+                            subRecipe.reagentData.salvageReagentSlot:SetCheapestItem()
+                            subRecipe:Update()
+                        end
+
                         -- its allocated but is it also necessary to craft? Or do I own enough?
                         -- include warbank only when crafter is player
                         local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(subRecipe:GetCrafterUID(), itemID, true,
