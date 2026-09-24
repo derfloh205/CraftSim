@@ -586,6 +586,8 @@ end
 function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     local changedAny = false
     local updateCount = 0
+    ---@type { group: CraftSim.MoxieCurrencyGroup, oldValue: number, newValue: number }[]
+    local changes = {}
     local stored = CraftSim.PATRON_MOXIE_VALUE_DB:GetOrCreateStoredTable()
 
     for _, group in ipairs(BuildMoxieCurrencyGroups()) do
@@ -600,14 +602,25 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
                 CraftSim.PATRON_MOXIE_VALUE_DB:SetCopperPerMoxie(storageCurrencyID, normalizedSuggested)
                 stored[storageCurrencyID] = normalizedSuggested
                 stored[tostring(storageCurrencyID)] = normalizedSuggested
+                tinsert(changes, {
+                    group = group,
+                    oldValue = currentValue,
+                    newValue = normalizedSuggested,
+                })
                 changedAny = true
             end
         end
     end
 
     if changedAny then
-        Logger:LogDebug("CraftSim: Auto-updating " ..
-            tostring(updateCount) .. " Moxie value(s) from current price source data")
+        Logger:LogDebug("Updated {count} Moxie value(s) from current price source data", updateCount)
+        for _, change in ipairs(changes) do
+            local label = GetMoxieGroupLinkLabel(change.group):gsub("\n", ", ")
+            Logger:LogDebug("{label}: {oldValue} -> {newValue}",
+                label,
+                CraftSim.UTIL:FormatMoney(change.oldValue, true),
+                CraftSim.UTIL:FormatMoney(change.newValue, true))
+        end
         SyncPatronMoxieInputsFromDB()
         CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     end
