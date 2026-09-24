@@ -2557,28 +2557,55 @@ function CraftSim.RecipeData:Craft(amount)
                     self.concentrating)
             end
         end
-    elseif self.isEnchantingRecipe then
+        return
+    end
+
+    -- Prefer live claimed-order data (outputItemGUID / reagents) over a queued snapshot.
+    local orderData = self.orderData
+    if orderData and orderData.orderID then
+        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+        if claimedOrder and claimedOrder.orderID == orderData.orderID then
+            orderData = claimedOrder
+        end
+    end
+
+    if orderData then
+        amount = 1
+        local suppliedIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
+            return self:GetItemIDFromReagentInfo(reagentInfo)
+        end)
+
+        craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
+            return not tContains(suppliedIDs, craftingReagentInfo.reagent.itemID)
+        end)
+
+        -- Recraft orders must use RecraftRecipeForOrder (same as Blizzard's order view).
+        -- CraftRecipe does not attach the result to a recraft work order for submit.
+        if orderData.isRecraft then
+            local itemGUID = orderData.outputItemGUID
+            if itemGUID then
+                C_TradeSkillUI.RecraftRecipeForOrder(orderData.orderID, itemGUID, craftingReagentInfoTbl, nil,
+                    self.concentrating)
+            end
+            return
+        end
+
+        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, orderData.orderID,
+            self.concentrating)
+        return
+    end
+
+    if self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
             ---@cast vellumLocation ItemLocation
             C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation, self
                 .concentrating)
         end
-    else
-        if self.orderData then
-            local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
-                return self:GetItemIDFromReagentInfo(reagentInfo)
-            end)
-
-            craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
-                return not tContains(suppliedIDs, craftingReagentInfo.reagent.itemID)
-            end)
-        end
-
-        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil,
-            self.orderData and self.orderData.orderID,
-            self.concentrating)
+        return
     end
+
+    C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, nil, self.concentrating)
 end
 
 --- Returns wether the recipe can be crafted with the set reagents a specified amount of times
