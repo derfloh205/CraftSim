@@ -549,18 +549,23 @@ end
 function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     multiplier = multiplier or 1
     -- check required, optional and finished reagents if the player has enough times multiplier in his inventory and bank
+    local isRecraft = self.recipeData and self.recipeData.isRecraft
 
-    local hasRequiredReagents = GUTIL:Every(self.requiredReagents,
-        ---@param requiredReagent CraftSim.Reagent
-        function(requiredReagent)
-            if requiredReagent:IsOrderReagentIn(self.recipeData) then
-                if multiplier <= 1 then
-                    return true
+    -- Recrafts reuse the existing item; base required mats are not consumed again.
+    local hasRequiredReagents = true
+    if not isRecraft then
+        hasRequiredReagents = GUTIL:Every(self.requiredReagents,
+            ---@param requiredReagent CraftSim.Reagent
+            function(requiredReagent)
+                if requiredReagent:IsOrderReagentIn(self.recipeData) then
+                    if multiplier <= 1 then
+                        return true
+                    end
+                    return requiredReagent:HasItems(multiplier - 1, crafterUID)
                 end
-                return requiredReagent:HasItems(multiplier - 1, crafterUID)
-            end
-            return requiredReagent:HasItems(multiplier, crafterUID)
-        end)
+                return requiredReagent:HasItems(multiplier, crafterUID)
+            end)
+    end
 
     local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
         ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
@@ -573,6 +578,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             if optionalReagentSlot.locked then
                 return optionalReagentSlot.activeReagent == nil
             end
+            -- Unallocated optional/finishing slots are always fine (especially on recrafts).
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
 
@@ -586,6 +592,9 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             hasrequiredSelectableReagent = true
         elseif slot.locked then
             hasrequiredSelectableReagent = slot.activeReagent == nil
+        elseif not slot.activeReagent and isRecraft then
+            -- Spark/etc. may already be on the item being recrafted.
+            hasrequiredSelectableReagent = true
         else
             hasrequiredSelectableReagent = slot:HasItem(multiplier, crafterUID)
         end
@@ -614,7 +623,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
 
     local hasVellumIfneeded = true
 
-    if self.recipeData.isEnchantingRecipe then
+    if self.recipeData.isEnchantingRecipe and not isRecraft then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
             .ENCHANTING_VELLUM_ID, true)
         hasVellumIfneeded = itemCount >= multiplier
@@ -626,15 +635,18 @@ end
 ---@param crafterUID CrafterUID
 function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     Logger:LogDebug("getCraftable amount", false, true)
+    local isRecraft = self.recipeData and self.recipeData.isRecraft
 
     local currentMinimumReagentFit = math.huge
-    for _, requiredReagent in pairs(self.requiredReagents) do
-        if not requiredReagent:IsOrderReagentIn(self.recipeData) then
-            if not requiredReagent:HasItems(1, crafterUID) then
-                return 0
+    if not isRecraft then
+        for _, requiredReagent in pairs(self.requiredReagents) do
+            if not requiredReagent:IsOrderReagentIn(self.recipeData) then
+                if not requiredReagent:HasItems(1, crafterUID) then
+                    return 0
+                end
+                currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID),
+                    currentMinimumReagentFit)
             end
-            currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID),
-                currentMinimumReagentFit)
         end
     end
 
@@ -646,7 +658,9 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
             return 0
         elseif slot.activeReagent then
             currentMinimumReagentFit = math.min(slot:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
-        else
+        elseif not isRecraft then
+            -- Empty required selectable blocks normal crafts; recrafts may leave it empty
+            -- when the spark/mod is already on the item.
             currentMinimumReagentFit = 0
         end
     end
@@ -669,11 +683,12 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
                 optionalReagentSlot:HasQuantityXTimes(crafterUID),
                 currentMinimumReagentFitOptional)
         end
+        -- Unallocated optional/finishing slots do not limit craftable amount
     end
     Logger:LogDebug("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
 
     local vellumMinimumFit = math.huge
-    if self.recipeData.isEnchantingRecipe then
+    if self.recipeData.isEnchantingRecipe and not isRecraft then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
             .ENCHANTING_VELLUM_ID, true)
         vellumMinimumFit = itemCount

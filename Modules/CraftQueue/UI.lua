@@ -586,6 +586,8 @@ end
 function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
     local changedAny = false
     local updateCount = 0
+    ---@type { group: CraftSim.MoxieCurrencyGroup, oldValue: number, newValue: number }[]
+    local changes = {}
     local stored = CraftSim.PATRON_MOXIE_VALUE_DB:GetOrCreateStoredTable()
 
     for _, group in ipairs(BuildMoxieCurrencyGroups()) do
@@ -600,14 +602,25 @@ function CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
                 CraftSim.PATRON_MOXIE_VALUE_DB:SetCopperPerMoxie(storageCurrencyID, normalizedSuggested)
                 stored[storageCurrencyID] = normalizedSuggested
                 stored[tostring(storageCurrencyID)] = normalizedSuggested
+                tinsert(changes, {
+                    group = group,
+                    oldValue = currentValue,
+                    newValue = normalizedSuggested,
+                })
                 changedAny = true
             end
         end
     end
 
     if changedAny then
-        Logger:LogDebug("CraftSim: Auto-updating " ..
-            tostring(updateCount) .. " Moxie value(s) from current price source data")
+        Logger:LogDebug("Updated {count} Moxie value(s) from current price source data", updateCount)
+        for _, change in ipairs(changes) do
+            local label = GetMoxieGroupLinkLabel(change.group):gsub("\n", ", ")
+            Logger:LogDebug("{label}: {oldValue} -> {newValue}",
+                label,
+                CraftSim.UTIL:FormatMoney(change.oldValue, true),
+                CraftSim.UTIL:FormatMoney(change.newValue, true))
+        end
         SyncPatronMoxieInputsFromDB()
         CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
     end
@@ -1701,6 +1714,110 @@ function CraftSim.CRAFTQ.UI:Init()
                         end,
                     }
                 end, 210, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST_INPUT")
+
+                local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                local crafterName = select(1, CraftSim.UTIL:SplitCrafterUID(crafterUID)) or UnitName("player")
+                local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                local characterOverrideCB = patronOrderOptions:CreateCheckbox(
+                    string.format(L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE"),
+                        f.class(crafterName, crafterClass)),
+                    function()
+                        local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                        return CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")[uid] == true
+                    end, function()
+                        local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                        local enabled = CraftSim.DB.OPTIONS:Get(
+                            "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")
+                        enabled[uid] = not enabled[uid]
+                        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE", enabled)
+                        if enabled[uid] then
+                            characterOverrideCB:ForceOpenSubmenu()
+                        end
+                    end)
+
+                characterOverrideCB:SetShouldRespondIfSubmenu(true)
+                characterOverrideCB:SetTooltip(function(tooltip, elementDescription)
+                    GameTooltip_AddInstructionLine(tooltip,
+                        L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE_TOOLTIP"));
+                end)
+
+                -- Nested on the checkbox so Patron Orders stays compact. MenuResponse.Refresh
+                -- cannot add new rows; ForceOpenSubmenu shows this flyout when the box is checked.
+                characterOverrideCB:CreateTitle(L("CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION"))
+
+                local knowledgeProfessionSet = {}
+                for _, professionID in ipairs(CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_PROFESSIONS) do
+                    knowledgeProfessionSet[professionID] = true
+                end
+
+                for _, knowledgeProfessionID in ipairs(CraftSim.UTIL:GetPlayerMainProfessions()) do
+                    if knowledgeProfessionSet[knowledgeProfessionID] then
+                    local professionID = knowledgeProfessionID
+                    local locID = CraftSim.CONST.PROFESSION_LOCALIZATION_IDS[professionID]
+                    local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[professionID], 15, 15)
+                    local professionMenu = characterOverrideCB:CreateButton(
+                        professionIcon .. " " .. (locID and L(locID) or tostring(professionID)))
+
+                        GUTIL:CreateReuseableMenuUtilContextMenuFrame(professionMenu, function(frame)
+                            frame.label = GGUI.Text {
+                                parent = frame,
+                                anchorPoints = { { anchorParent = frame, anchorA = "LEFT", anchorB = "LEFT" } },
+                                text = L("CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST"),
+                                justifyOptions = { type = "H", align = "LEFT" },
+                            }
+                            frame.input = GGUI.CurrencyInput {
+                                parent = frame, anchorParent = frame,
+                                sizeX = 60, sizeY = 25, offsetX = 5,
+                                anchorA = "RIGHT", anchorB = "RIGHT",
+                                initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST"),
+                                borderAdjustWidth = 1,
+                                tooltipOptions = {
+                                    anchor = "ANCHOR_TOP",
+                                    owner = frame,
+                                    text = f.white(L("CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP") ..
+                                        GUTIL:FormatMoney(1000000, false, nil, false, false)),
+                                },
+                                onValueValidCallback = function(input)
+                                    local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    if uid then
+                                        CraftSim.CRAFTQ:SetPatronOrderKnowledgeProfessionCost(
+                                            uid, professionID, tonumber(input.total))
+                                    end
+                                end,
+                            }
+                            frame.resetButton = GGUI.Button {
+                                parent = frame,
+                                anchorParent = frame.input.textInput.frame,
+                                anchorA = "RIGHT",
+                                anchorB = "LEFT",
+                                offsetX = -2,
+                                sizeX = 12,
+                                sizeY = 20,
+                                adjustWidth = true,
+                                label = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET"),
+                                clickCallback = function()
+                                    local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    if uid then
+                                        CraftSim.CRAFTQ:SetPatronOrderKnowledgeProfessionCost(
+                                            uid, professionID, nil)
+                                    end
+                                    frame.input:SetValue(CraftSim.DB.OPTIONS:Get(
+                                        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST"))
+                                end,
+                            }
+                            frame:HookScript("OnShow", function()
+                                local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                local value = uid and CraftSim.CRAFTQ:GetPatronOrderKnowledgeProfessionCost(
+                                    uid, professionID) or nil
+                                if value == nil then
+                                    value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+                                end
+                                frame.input:SetValue(value)
+                            end)
+                    end, 250, 25, "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_PROF_" .. tostring(professionID))
+                    end
+                end
 
                 GUTIL:CreateReuseableMenuUtilContextMenuFrame(patronOrderOptions, function(frame)
                     frame.label = GGUI.Text {
@@ -4043,8 +4160,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
                         CraftSim.CRAFTQ:BeginCraftClickLock()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                        local crafted = recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                        if not crafted then
+                            CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
+                            CraftSim.CRAFTQ:EndCraftClickLock()
+                        end
                         CraftSim.CRAFTQ.UI:Update()
                     end
                 else

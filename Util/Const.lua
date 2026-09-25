@@ -403,6 +403,15 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED = "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
     CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY = "CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY",
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
+    --- table<CrafterUID, table<Enum.Profession, number>> copper per knowledge point per character+profession;
+    --- used when that character's override is enabled; missing profession uses KP_MAX_COST.
+    --- Legacy flat table<Enum.Profession, number> is migrated on read.
+    CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION",
+    --- table<CrafterUID, boolean> when true, this character uses KP_COST_BY_PROFESSION[crafterUID] instead of the default
+    CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE =
+    "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE",
+    --- unused; kept so existing saved variables still load
+    CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER",
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST",
     --- Max hours until patron order expiry to queue (0 = no limit).
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS",
@@ -647,6 +656,9 @@ CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY] = false,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST] = 10000 * 5000,
+    [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION] = {},
+    [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE] = {},
+    [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER] = {},
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST] = 0,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS] = 0,
     [CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_REAGENT_BAG_VALUE] = 0,
@@ -1046,6 +1058,12 @@ CraftSim.CONST.GATHERING_PROFESSIONS = {
     [Enum.Profession.Skinning] = true,
 }
 
+--- Secondary / non-crafting professions that never use concentration (exclude from concentration tracker).
+---@type table<Enum.Profession, boolean>
+CraftSim.CONST.NO_CONCENTRATION_PROFESSIONS = {
+    [Enum.Profession.Cooking] = true,
+}
+
 --- Gathering professions shown on the concentration tracker for moxie (Midnight; excludes Fishing).
 ---@type table<Enum.Profession, boolean>
 CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS = {
@@ -1146,6 +1164,19 @@ CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES = {
 CraftSim.CONST.FONT_FILES = {
     ROBOTO = 'Interface/addons/CraftSim/Media/Fonts/Roboto-Regular.ttf',
     MONOSPACE = 'Interface/addons/CraftSim/Media/Fonts/SpaceMono-Regular.ttf',
+}
+
+--- Crafting professions that can award knowledge points on patron orders (excludes gathering and cooking).
+---@type Enum.Profession[]
+CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_PROFESSIONS = {
+    Enum.Profession.Alchemy,
+    Enum.Profession.Blacksmithing,
+    Enum.Profession.Enchanting,
+    Enum.Profession.Engineering,
+    Enum.Profession.Inscription,
+    Enum.Profession.Jewelcrafting,
+    Enum.Profession.Leatherworking,
+    Enum.Profession.Tailoring,
 }
 
 CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS = {

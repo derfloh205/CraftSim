@@ -778,28 +778,30 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
     ---@param recipeData CraftSim.RecipeData
     ---@param recipeEntry CraftSim.CraftListRecipeEntry
-    ---@return number? queueAmount
+    ---@return number? queueAmount number of crafts to queue (restock targets are item counts)
     local function getMaxQueueAmount(recipeData, recipeEntry)
         local offsetAmount = tonumber(options.offsetQueueAmount) or 0
-        local queueAmount
-        local recipeMaxQueueAmount
 
         if not recipeData.resultData or not recipeData.resultData.expectedItem then
             return nil
         end
 
-        -- set maximum queue amount by cooldown charges if available
+        ---@type number?
+        local chargeLimit
         if recipeData.cooldownData.isCooldownRecipe then
-            local charges = recipeData.cooldownData:GetCurrentCharges() or 0
-            recipeMaxQueueAmount = charges
+            chargeLimit = recipeData.cooldownData:GetCurrentCharges() or 0
         end
 
-        -- if no other max is set, the max we want to queue is the cd charges or if no cd the offsetamount if its greater than 0, otherwise just queue 1
-        if not options.useTSMRestockExpression and not (recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0) then
-            return recipeMaxQueueAmount
+        local hasRestockTarget = options.useTSMRestockExpression
+            or (recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0)
+
+        -- No item restock target: queue by cooldown charges only (or nil → caller uses 1).
+        if not hasRestockTarget then
+            return chargeLimit
         end
 
-        -- adapt by TSM restock expression if enabled and available, otherwise use restockmaxamount if set
+        ---@type number?
+        local targetItems
         if TSM_API and options.useTSMRestockExpression then
             local itemLink = recipeData.resultData.expectedItem:GetItemLink()
             if itemLink then
@@ -808,36 +810,38 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     local tsmAmount = TSM_API.GetCustomPriceValue(
                         options.tsmRestockExpression or "1",
                         tsmItemString) or 0
-                    local maxTSMAmount = tsmAmount + offsetAmount
-                    recipeMaxQueueAmount = recipeMaxQueueAmount and math.min(recipeMaxQueueAmount, maxTSMAmount) or
-                        maxTSMAmount
+                    targetItems = tsmAmount + offsetAmount
                 end
             end
         elseif recipeEntry and recipeEntry.restockMaxAmount and recipeEntry.restockMaxAmount > 0 then
-            local maxRestockAmount = recipeEntry.restockMaxAmount + offsetAmount
-            recipeMaxQueueAmount = recipeMaxQueueAmount and math.min(recipeMaxQueueAmount, maxRestockAmount) or
-                maxRestockAmount
+            targetItems = recipeEntry.restockMaxAmount + offsetAmount
         end
 
-        if not recipeMaxQueueAmount then
-            return nil
+        if not targetItems then
+            return chargeLimit
         end
 
         local owned = GetOwnedCountForRecipeEntry(recipeData, recipeEntry, options.includeAltInventory)
-        Logger:LogDebug("Restock owned count for {name}: owned={owned} target={target} subtractInventory={subtract}",
-            recipeData.recipeName, owned, recipeMaxQueueAmount, options.subtractInventory)
+        Logger:LogDebug(
+            "Restock owned count for {name}: owned={owned} targetItems={target} subtractInventory={subtract} itemsPerCraft={ipc}",
+            recipeData.recipeName, owned, targetItems, options.subtractInventory,
+            math.max(1, recipeData.minItemAmount or recipeData.baseItemAmount or 1))
 
         -- Already at or above restock target: skip queuing this recipe.
-        if owned >= recipeMaxQueueAmount then
+        if owned >= targetItems then
             return 0
         end
 
-        -- Optional: queue only the deficit up to the target (subtractInventory list option).
-        if options.subtractInventory then
-            return math.max(0, recipeMaxQueueAmount - owned)
+        -- Restock targets are item counts; convert to the minimum crafts needed for that yield.
+        local itemsNeeded = options.subtractInventory and (targetItems - owned) or targetItems
+        local itemsPerCraft = math.max(1, recipeData.minItemAmount or recipeData.baseItemAmount or 1)
+        local craftsNeeded = math.ceil(itemsNeeded / itemsPerCraft)
+
+        if chargeLimit then
+            craftsNeeded = math.min(craftsNeeded, chargeLimit)
         end
 
-        return recipeMaxQueueAmount
+        return math.max(0, craftsNeeded)
     end
 
     ---@param frameDistributor GUTIL.FrameDistributor

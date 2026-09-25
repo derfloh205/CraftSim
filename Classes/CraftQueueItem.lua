@@ -267,7 +267,8 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
 
     local restCount = math.max(0, totalCount - inventoryCount)
 
-    local minimumCrafts = math.max(0, restCount / self.recipeData.baseItemAmount)
+    local itemsPerCraft = math.max(1, self.recipeData.minItemAmount or self.recipeData.baseItemAmount or 1)
+    local minimumCrafts = math.ceil(restCount / itemsPerCraft)
 
     self.amount = minimumCrafts
 

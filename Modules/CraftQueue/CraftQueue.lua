@@ -841,6 +841,84 @@ function CraftSim.CRAFTQ:GetProfitWithOwnedMaterials(recipeData, craftAmount, op
     return baseProfit + profitIncrease, costReduction
 end
 
+---@param profession Enum.Profession?
+---@param crafterUID CrafterUID?
+---@return number maxCostCopper gold willing to pay per knowledge point
+function CraftSim.CRAFTQ:GetPatronOrderKnowledgeMaxCost(profession, crafterUID)
+    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    local characterOverrideEnabled = CraftSim.DB.OPTIONS:Get(
+        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE")
+    if crafterUID and characterOverrideEnabled[crafterUID] and profession then
+        local professionCost = self:GetPatronOrderKnowledgeProfessionCost(crafterUID, profession)
+        if professionCost ~= nil then
+            return professionCost
+        end
+    end
+    return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+end
+
+--- Ensures KP_COST_BY_PROFESSION is nested as table<CrafterUID, table<Enum.Profession, number>>.
+--- Migrates legacy flat table<Enum.Profession, number> into each character that has override enabled.
+---@return table<CrafterUID, table<Enum.Profession, number>>
+function CraftSim.CRAFTQ:GetPatronOrderKnowledgeCostByProfessionTable()
+    local raw = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION") or {}
+    local legacyShared = nil
+    for key, value in pairs(raw) do
+        if type(value) == "number" and type(key) == "number" then
+            legacyShared = legacyShared or {}
+            legacyShared[key] = value
+        end
+    end
+    if legacyShared then
+        local migrated = {}
+        for crafterUID, value in pairs(raw) do
+            if type(value) == "table" and type(crafterUID) == "string" then
+                migrated[crafterUID] = value
+            end
+        end
+        local overrides = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE") or {}
+        for crafterUID, enabled in pairs(overrides) do
+            if enabled and type(crafterUID) == "string" then
+                migrated[crafterUID] = migrated[crafterUID] or CopyTable(legacyShared)
+            end
+        end
+        -- Preserve legacy values for the current character even if override was not flagged yet.
+        local playerUID = CraftSim.UTIL:GetPlayerCrafterUID()
+        if playerUID and not migrated[playerUID] then
+            migrated[playerUID] = CopyTable(legacyShared)
+        end
+        CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION", migrated)
+        return migrated
+    end
+    return raw
+end
+
+---@param crafterUID CrafterUID
+---@return table<Enum.Profession, number>
+function CraftSim.CRAFTQ:GetPatronOrderKnowledgeProfessionCosts(crafterUID)
+    local byCrafter = self:GetPatronOrderKnowledgeCostByProfessionTable()
+    byCrafter[crafterUID] = byCrafter[crafterUID] or {}
+    return byCrafter[crafterUID]
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return number? copper
+function CraftSim.CRAFTQ:GetPatronOrderKnowledgeProfessionCost(crafterUID, profession)
+    local costs = self:GetPatronOrderKnowledgeProfessionCosts(crafterUID)
+    return costs[profession]
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param copper number?
+function CraftSim.CRAFTQ:SetPatronOrderKnowledgeProfessionCost(crafterUID, profession, copper)
+    local byCrafter = self:GetPatronOrderKnowledgeCostByProfessionTable()
+    byCrafter[crafterUID] = byCrafter[crafterUID] or {}
+    byCrafter[crafterUID][profession] = copper
+    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION", byCrafter)
+end
+
 function CraftSim.CRAFTQ:QueueWorkOrders()
     CraftSim.CRAFTQ.queuingWorkOrders = true
     Logger:LogDebug("QueueWorkOrders", false, true)
@@ -867,7 +945,7 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
     end)
 
     local maxPatronOrderCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_COST")
-    local maxKPCost = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
+    local maxKPCost = self:GetPatronOrderKnowledgeMaxCost(profession)
     local maxPatronDurationHours = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS")
 
     local workOrderTypes = self:GetEnabledWorkOrderTypes()
