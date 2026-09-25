@@ -570,6 +570,8 @@ function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts
 end
 
 --- Returns the count of items posted on the AH via Syndicator.
+--- Reads SYNDICATOR_DATA directly (same as gear counts) so stale item summaries
+--- cannot hide owned auctions from restock.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, sum all characters; if false/nil, current player only
 ---@return number? auctionAmount
@@ -577,32 +579,28 @@ function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    ---@type {characters: {character: string, realmNormalized: string, auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
-    local inventoryInfo
+    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    if not query then return 0 end
 
-    if Syndicator.API and Syndicator.API.GetInventoryInfo then
-        if type(itemIDOrLink) == "string" then
-            local itemID = GUTIL:GetItemIDByLink(itemIDOrLink)
-            ---@diagnostic disable-next-line: cast-local-type
-            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemID) or 0
-        else
-            ---@diagnostic disable-next-line: cast-local-type
-            inventoryInfo = Syndicator.API.GetInventoryInfoByItemID(itemIDOrLink) or 0
-        end
+    ---@type SyndicatorData?
+    local syndicatorData = SYNDICATOR_DATA
+    if not syndicatorData or not syndicatorData.Characters then
+        return 0
     end
 
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     local total = 0
-    if inventoryInfo and inventoryInfo.characters then
-        local playerName, playerRealm
-        if not includeAlts then
-            playerName, playerRealm = UnitNameUnmodified("player")
-            playerRealm = playerRealm or GetNormalizedRealmName()
-        end
-        for _, characterInfo in ipairs(inventoryInfo.characters) do
-            if includeAlts
-                or (characterInfo and characterInfo.character == playerName
-                    and characterInfo.realmNormalized == playerRealm) then
-                total = total + (characterInfo.auctions or 0)
+
+    for crafterUID, data in pairs(syndicatorData.Characters) do
+        if includeAlts or crafterUID == playerCrafterUID then
+            for _, invItem in ipairs(data.auctions or {}) do
+                if invItem and invItem.itemID == query.itemID then
+                    if query.qualityID <= 0
+                        or (invItem.itemLink
+                            and (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID) then
+                        total = total + (invItem.itemCount or 1)
+                    end
+                end
             end
         end
     end
@@ -955,34 +953,49 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
     end
 
     local count = CountInPlayerInventory(query, includeBound)
+    local backendArg = InventoryBackendArg(query)
 
-    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable() then
-        local tsmStr = ToTSMItemString(query.itemID)
-        local _, numAlts, numAuctions, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
-        count = count + (numAuctions or 0)
-        if includeAlts then
-            count = count + (numAltAuctions or 0)
-            if includeBound or not GUTIL:isItemSoulbound(query.itemID) then
-                count = count + (numAlts or 0)
-            end
-        end
-    else
-        -- Syndicator (or other inventory API): add current-character AH posts.
-        -- Alt AH is included in the GetInventoryCount delta below when includeAlts is on.
-        local playerAuctions = self:GetAuctionAmount(itemIDOrLink, false)
-        if playerAuctions and playerAuctions > 0 then
-            count = count + playerAuctions
-        end
+    -- Player AH: take the best count from every available tracker.
+    -- Do not gate on TSM alone — many setups use TSM for prices and Syndicator
+    -- for inventory/auctions; the old TSM-first branch skipped Syndicator AH.
+    local playerAuctions = 0
+    if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
+        playerAuctions = math.max(playerAuctions, CraftSim.INVENTORY_API:GetAuctionAmount(backendArg, false) or 0)
+    end
+    if CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable()
+        and CraftSim.INVENTORY_API ~= CraftSimSYNDICATOR then
+        playerAuctions = math.max(playerAuctions, CraftSimSYNDICATOR:GetAuctionAmount(backendArg, false) or 0)
+    end
+    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable()
+        and CraftSim.INVENTORY_API ~= CraftSimTSM then
+        playerAuctions = math.max(playerAuctions, CraftSimTSM:GetAuctionAmount(backendArg) or 0)
+    end
+    count = count + playerAuctions
 
-        if includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
+    if includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
+        local altExtra = 0
+        if CraftSim.INVENTORY_API == CraftSimTSM and CraftSimTSM:IsAvailable() then
+            local tsmStr = ToTSMItemString(query.itemID)
+            local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+            altExtra = (numAlts or 0) + (numAltAuctions or 0)
+        else
+            -- Syndicator (and similar): inventory delta includes alt bags/bank/AH.
             local total = self:GetInventoryCount(itemIDOrLink, true)
             local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
-            count = count + math.max(0, total - playerTotal)
+            altExtra = math.max(0, total - playerTotal)
         end
+        -- If TSM is available alongside Syndicator, also take TSM alt AH when higher.
+        if CraftSim.INVENTORY_API ~= CraftSimTSM and CraftSimTSM and CraftSimTSM:IsAvailable() then
+            local tsmStr = ToTSMItemString(query.itemID)
+            local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+            altExtra = math.max(altExtra, (numAlts or 0) + (numAltAuctions or 0))
+        end
+        count = count + altExtra
     end
 
-    Logger:LogDebug("GetTradableInventoryCount itemID={itemID} includeBound={includeBound} count={count}",
-        query.itemID, includeBound, count)
+    Logger:LogDebug(
+        "GetTradableInventoryCount itemID={itemID} includeBound={includeBound} ah={ah} count={count}",
+        query.itemID, includeBound, playerAuctions, count)
     SetInventorySourceCacheEntry(cacheKey, count)
     return count
 end
