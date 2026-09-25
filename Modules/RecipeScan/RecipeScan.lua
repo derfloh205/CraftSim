@@ -859,12 +859,16 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
                 end
             end
 
-            if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < restockAmount then
-                restockAmount = recipeData.cooldownData.currentCharges
+            -- Restock targets are item counts; convert to minimum crafts for multi-yield recipes.
+            local itemsPerCraft = math.max(1, recipeData.minItemAmount or recipeData.baseItemAmount or 1)
+            local craftsNeeded = math.ceil(restockAmount / itemsPerCraft)
+
+            if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < craftsNeeded then
+                craftsNeeded = recipeData.cooldownData.currentCharges
             end
 
-            if restockAmount >= 1 then
-                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = restockAmount }
+            if craftsNeeded >= 1 then
+                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = craftsNeeded }
             end
 
             frameDistributor:Continue()

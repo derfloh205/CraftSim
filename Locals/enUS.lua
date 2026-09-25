@@ -1050,7 +1050,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
-        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nCounts bags, reagent bag, bank, and warbank, including soulbound items such as treatises.\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
+        "When enabled, craft list restock queues enough crafts to reach the item target after subtracting what you already have.\n\nFor recipes that yield multiple items per craft (e.g. flasks x2, phials x4), the queue amount is ceil(needed items / yield).\n\nCounts bags, reagent bag, bank, and warbank, including soulbound items such as treatises.\n\nTurn off to always queue crafts for the full item target regardless of inventory.",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
         "When enabled, alt characters' inventory is also subtracted from the restock target.",
