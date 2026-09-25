@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.INVENTORY_API
 ---@field name string
 ---@field GetInventoryCount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number
----@field GetAuctionAmount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string): number?
+---@field GetAuctionAmount fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string, includeAlts: boolean?): number?
 ---@field GetInventoryBreakdownLines fun(self: CraftSim.INVENTORY_API, itemIDOrLink: ItemID | string, includeAlts: boolean?): {label: string, count: number}[]
 CraftSim.INVENTORY_API = {}
 CraftSim.INVENTORY_APIS = {}
@@ -569,14 +569,15 @@ function CraftSimSYNDICATOR:GetInventoryBreakdownLines(itemIDOrLink, includeAlts
     return lines
 end
 
---- Returns the count of items posted on the AH by the player via Syndicator.
+--- Returns the count of items posted on the AH via Syndicator.
 ---@param itemIDOrLink ItemID | string
+---@param includeAlts boolean? if true, sum all characters; if false/nil, current player only
 ---@return number? auctionAmount
-function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink)
+function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    ---@type {characters: {auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
+    ---@type {characters: {character: string, realmNormalized: string, auctions: number, bags: number, bank: number, equipped: number, mail: number, void: number}[], guild: table, warband: table<number>}
     local inventoryInfo
 
     if Syndicator.API and Syndicator.API.GetInventoryInfo then
@@ -592,8 +593,17 @@ function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink)
 
     local total = 0
     if inventoryInfo and inventoryInfo.characters then
+        local playerName, playerRealm
+        if not includeAlts then
+            playerName, playerRealm = UnitNameUnmodified("player")
+            playerRealm = playerRealm or GetNormalizedRealmName()
+        end
         for _, characterInfo in ipairs(inventoryInfo.characters) do
-            total = total + (characterInfo.auctions or 0)
+            if includeAlts
+                or (characterInfo and characterInfo.character == playerName
+                    and characterInfo.realmNormalized == playerRealm) then
+                total = total + (characterInfo.auctions or 0)
+            end
         end
     end
 
@@ -919,7 +929,7 @@ function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
 end
 
 --- Returns inventory that counts toward restock targets: bags, reagent bag, bank,
---- and warbank on the current character, plus AH listings.
+--- and warbank on the current character, plus AH listings (TSM or Syndicator).
 --- Bound copies of tradable (BoE/BoU) items are excluded. Bound copies of items
 --- that are inherently untradeable (BoP, warbound, quest bind) — such as
 --- profession treatises — are included, because they are the stock being restocked.
@@ -956,10 +966,19 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
                 count = count + (numAlts or 0)
             end
         end
-    elseif includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
-        local total = self:GetInventoryCount(itemIDOrLink, true)
-        local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
-        count = count + math.max(0, total - playerTotal)
+    else
+        -- Syndicator (or other inventory API): add current-character AH posts.
+        -- Alt AH is included in the GetInventoryCount delta below when includeAlts is on.
+        local playerAuctions = self:GetAuctionAmount(itemIDOrLink, false)
+        if playerAuctions and playerAuctions > 0 then
+            count = count + playerAuctions
+        end
+
+        if includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
+            local total = self:GetInventoryCount(itemIDOrLink, true)
+            local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
+            count = count + math.max(0, total - playerTotal)
+        end
     end
 
     Logger:LogDebug("GetTradableInventoryCount itemID={itemID} includeBound={includeBound} count={count}",
@@ -971,15 +990,16 @@ end
 --- Returns the count of items currently posted on the AH using the active inventory addon.
 --- Returns nil if the active addon does not support AH post counting.
 ---@param itemIDOrLink number | string
+---@param includeAlts boolean? if true, include alt characters' AH posts (when supported)
 ---@return number? auctionAmount
-function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink)
+function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink, includeAlts)
     if not itemIDOrLink then return nil end
 
     local query = ResolveInventoryQueryInput(itemIDOrLink)
     if not query then return nil end
 
     local apiName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or CraftSimINVENTORY_NONE.name
-    local cacheKey = BuildInventorySourceCacheKey("auction", apiName, query, nil)
+    local cacheKey = BuildInventorySourceCacheKey("auction", apiName, query, includeAlts)
     local cached, hit = GetInventorySourceCacheEntry(cacheKey, INVENTORY_SOURCE_CACHE_TTL.auction)
     if hit then
         return cached
@@ -988,7 +1008,7 @@ function CraftSim.INVENTORY_SOURCE:GetAuctionAmount(itemIDOrLink)
     local backendArg = InventoryBackendArg(query)
     local amount = nil
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
-        amount = CraftSim.INVENTORY_API:GetAuctionAmount(backendArg)
+        amount = CraftSim.INVENTORY_API:GetAuctionAmount(backendArg, includeAlts)
     end
 
     SetInventorySourceCacheEntry(cacheKey, amount)

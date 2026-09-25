@@ -1056,6 +1056,12 @@ CraftSim.CONST.GATHERING_PROFESSIONS = {
     [Enum.Profession.Skinning] = true,
 }
 
+--- Secondary / non-crafting professions that never use concentration (exclude from concentration tracker).
+---@type table<Enum.Profession, boolean>
+CraftSim.CONST.NO_CONCENTRATION_PROFESSIONS = {
+    [Enum.Profession.Cooking] = true,
+}
+
 --- Gathering professions shown on the concentration tracker for moxie (Midnight; excludes Fishing).
 ---@type table<Enum.Profession, boolean>
 CraftSim.CONST.MOXIE_GATHERING_PROFESSIONS = {

@@ -259,7 +259,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:CollectTrackerRowData(crafterUIDFilte
 
         for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID,
             openExpansionID)) do
-            if not tContains(crafterBlacklist, profession) and serializedData then
+            if CraftSim.UTIL:ProfessionUsesConcentration(profession)
+                and not tContains(crafterBlacklist, profession) and serializedData then
                 tinsert(trackerRows, {
                     crafterUID = crafterUID,
                     profession = profession,
@@ -316,7 +317,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:CollectCurrentPlayerMinimizedRowData(
 
     for profession, serializedData in pairs(CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(playerCrafterUID,
         openExpansionID)) do
-        if not tContains(crafterBlacklist, profession) and serializedData then
+        if CraftSim.UTIL:ProfessionUsesConcentration(profession)
+            and not tContains(crafterBlacklist, profession) and serializedData then
             markProfession(profession, serializedData)
         end
     end
@@ -326,7 +328,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:CollectCurrentPlayerMinimizedRowData(
         local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
         local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
         local openProfession = professionInfo and professionInfo.profession
-        if openProfession and not tContains(crafterBlacklist, openProfession) then
+        if openProfession and CraftSim.UTIL:ProfessionUsesConcentration(openProfession)
+            and not tContains(crafterBlacklist, openProfession) then
             markProfession(openProfession, liveConcentrationData:Serialize())
         end
     end
