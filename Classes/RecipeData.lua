@@ -493,7 +493,12 @@ end
 
 ---@param orderData CraftingOrderInfo
 function CraftSim.RecipeData:SetOrder(orderData)
+    -- Preserve WOWGUID fields: CopyTableDeep stringifies/may drop secret or special GUID values.
+    local outputItemGUID = orderData and orderData.outputItemGUID
     self.orderData = GUTIL:CopyTableDeep(orderData or {}) -- avoid taint
+    if outputItemGUID then
+        self.orderData.outputItemGUID = outputItemGUID
+    end
     local wasRecraft = self.isRecraft
     self.isRecraft = self.orderData.isRecraft
     -- Recraft orders use a different schematic (slot indices / modifying optionals).
@@ -873,11 +878,17 @@ function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
 end
 
 --- also sets a requiredSelectionReagent if not yet set
+--- Recrafts: do not auto-fill sparks/required-selectables or force optional slots —
+--- those may already be on the item being recrafted and are optional for the order.
 function CraftSim.RecipeData:SetNonQualityReagentsMax()
     Logger:LogDebug("SetNonQualityReagentsMax", false, true)
-    for _, reagent in pairs(self.reagentData.requiredReagents) do
-        if not reagent.hasQuality then
-            reagent.items[1].quantity = reagent.requiredQuantity
+
+    -- Recraft work orders reuse the existing item; base mats are not re-consumed.
+    if not self.isRecraft then
+        for _, reagent in pairs(self.reagentData.requiredReagents) do
+            if not reagent.hasQuality then
+                reagent.items[1].quantity = reagent.requiredQuantity
+            end
         end
     end
 
@@ -895,6 +906,9 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                 else
                     slot:SetReagent(orderReagent.item:GetItemID())
                 end
+            elseif self.isRecraft then
+                -- Leave empty: spark/lining may already be on the recrafted item.
+                Logger:LogDebug("- Recraft: leaving required selectable empty", false, false)
             elseif slot:IsCurrency() then
                 local firstReagent = slot.possibleReagents[1]
                 if firstReagent then
@@ -2541,6 +2555,7 @@ end
 
 --- Requires a hardware event
 ---@param amount number? default: 1, how many crafts should be queued
+---@return boolean crafted true if a craft/recraft API call was made
 function CraftSim.RecipeData:Craft(amount)
     amount = amount or 1
     -- TODO: maybe check if crafting is possible (correct profession window open?)
@@ -2555,21 +2570,24 @@ function CraftSim.RecipeData:Craft(amount)
                 ---@cast salvageLocation ItemLocation
                 C_TradeSkillUI.CraftSalvage(self.recipeID, amount, salvageLocation, craftingReagentInfoTbl,
                     self.concentrating)
+                return true
             end
         end
-        return
+        return false
     end
 
     -- Prefer live claimed-order data (outputItemGUID / reagents) over a queued snapshot.
+    -- Compare orderIDs as strings: BigUInteger vs copied number can fail with ==.
     local orderData = self.orderData
     if orderData and orderData.orderID then
         local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-        if claimedOrder and claimedOrder.orderID == orderData.orderID then
+        if claimedOrder and claimedOrder.orderID
+            and tostring(claimedOrder.orderID) == tostring(orderData.orderID) then
             orderData = claimedOrder
         end
     end
 
-    if orderData then
+    if orderData and orderData.orderID then
         amount = 1
         local suppliedIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
             return self:GetItemIDFromReagentInfo(reagentInfo)
@@ -2581,18 +2599,30 @@ function CraftSim.RecipeData:Craft(amount)
 
         -- Recraft orders must use RecraftRecipeForOrder (same as Blizzard's order view).
         -- CraftRecipe does not attach the result to a recraft work order for submit.
-        if orderData.isRecraft then
+        -- Also treat presence of outputItemGUID as recraft (matches Blizzard IsRecrafting).
+        local isRecraftOrder = orderData.isRecraft or self.isRecraft or orderData.outputItemGUID ~= nil
+        if isRecraftOrder then
             local itemGUID = orderData.outputItemGUID
+            if not itemGUID and self.orderData then
+                itemGUID = self.orderData.outputItemGUID
+            end
             if itemGUID then
+                Logger:LogDebug(
+                    "Craft RecraftRecipeForOrder orderID={orderID} recipeID={recipeID}",
+                    orderData.orderID, self.recipeID)
                 C_TradeSkillUI.RecraftRecipeForOrder(orderData.orderID, itemGUID, craftingReagentInfoTbl, nil,
                     self.concentrating)
+                return true
             end
-            return
+            Logger:LogWarning(
+                "Recraft order {orderID} missing outputItemGUID; cannot craft from queue",
+                orderData.orderID)
+            return false
         end
 
         C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, orderData.orderID,
             self.concentrating)
-        return
+        return true
     end
 
     if self.isEnchantingRecipe then
@@ -2601,11 +2631,13 @@ function CraftSim.RecipeData:Craft(amount)
             ---@cast vellumLocation ItemLocation
             C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation, self
                 .concentrating)
+            return true
         end
-        return
+        return false
     end
 
     C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, nil, self.concentrating)
+    return true
 end
 
 --- Returns wether the recipe can be crafted with the set reagents a specified amount of times

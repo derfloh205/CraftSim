@@ -4160,8 +4160,12 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
                         CraftSim.CRAFTQ:BeginCraftClickLock()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                        local crafted = recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                        if not crafted then
+                            CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
+                            CraftSim.CRAFTQ:EndCraftClickLock()
+                        end
                         CraftSim.CRAFTQ.UI:Update()
                     end
                 else
