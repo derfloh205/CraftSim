@@ -1779,11 +1779,11 @@ function CraftSim.CRAFTQ.UI:Init()
                                         GUTIL:FormatMoney(1000000, false, nil, false, false)),
                                 },
                                 onValueValidCallback = function(input)
-                                    local byProfession = CraftSim.DB.OPTIONS:Get(
-                                        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION")
-                                    byProfession[professionID] = tonumber(input.total)
-                                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION",
-                                        byProfession)
+                                    local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    if uid then
+                                        CraftSim.CRAFTQ:SetPatronOrderKnowledgeProfessionCost(
+                                            uid, professionID, tonumber(input.total))
+                                    end
                                 end,
                             }
                             frame.resetButton = GGUI.Button {
@@ -1797,19 +1797,19 @@ function CraftSim.CRAFTQ.UI:Init()
                                 adjustWidth = true,
                                 label = L("CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_RESET"),
                                 clickCallback = function()
-                                    local byProfession = CraftSim.DB.OPTIONS:Get(
-                                        "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION")
-                                    byProfession[professionID] = nil
-                                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION",
-                                        byProfession)
+                                    local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                    if uid then
+                                        CraftSim.CRAFTQ:SetPatronOrderKnowledgeProfessionCost(
+                                            uid, professionID, nil)
+                                    end
                                     frame.input:SetValue(CraftSim.DB.OPTIONS:Get(
                                         "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST"))
                                 end,
                             }
                             frame:HookScript("OnShow", function()
-                                local byProfession = CraftSim.DB.OPTIONS:Get(
-                                    "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION")
-                                local value = byProfession[professionID]
+                                local uid = CraftSim.UTIL:GetPlayerCrafterUID()
+                                local value = uid and CraftSim.CRAFTQ:GetPatronOrderKnowledgeProfessionCost(
+                                    uid, professionID) or nil
                                 if value == nil then
                                     value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST")
                                 end

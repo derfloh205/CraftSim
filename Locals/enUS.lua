@@ -766,11 +766,11 @@ function CraftSim.LOCAL_EN:GetData()
         "Maximum allowed gold cost of 1 Knowledge Point.\n\nUsed as the default unless a character override with a per-profession value is set.\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE = "Override for %s",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE_TOOLTIP =
-        "When enabled, this character uses per-profession knowledge max costs instead of the default.\n\nSet a profession to " ..
+        "When enabled, this character uses its own per-profession knowledge max costs instead of the default.\n\nSet a profession to " ..
             f.bb("0") .. " if this character is fully knowledge-capped and should not pay for knowledge rewards.",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION = "Per Profession",
         CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION_TOOLTIP =
-        "Set a knowledge max cost for a specific profession while the character override is enabled. Reset to use the default cost.",
+        "Set a knowledge max cost for a specific profession on this character while the override is enabled. Reset to use the default cost.",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST = f.bb("Patron Order") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS = f.bb("Patron Order") .. " Max Duration (hours): ",

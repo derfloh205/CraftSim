@@ -403,9 +403,11 @@ CraftSim.CONST.GENERAL_OPTIONS = {
     CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED = "CRAFTQUEUE_REMOVE_ON_ALL_CONCENTRATION_USED",
     CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY = "CRAFTQUEUE_WORK_ORDERS_GUILD_ALTS_ONLY",
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_MAX_COST",
-    --- table<Enum.Profession, number> copper per knowledge point; used when a character override is enabled; missing profession uses KP_MAX_COST
+    --- table<CrafterUID, table<Enum.Profession, number>> copper per knowledge point per character+profession;
+    --- used when that character's override is enabled; missing profession uses KP_MAX_COST.
+    --- Legacy flat table<Enum.Profession, number> is migrated on read.
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION = "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_BY_PROFESSION",
-    --- table<CrafterUID, boolean> when true, this character uses KP_COST_BY_PROFESSION instead of the default
+    --- table<CrafterUID, boolean> when true, this character uses KP_COST_BY_PROFESSION[crafterUID] instead of the default
     CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE =
     "CRAFTQUEUE_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE",
     --- unused; kept so existing saved variables still load
