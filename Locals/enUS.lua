@@ -763,7 +763,14 @@ function CraftSim.LOCAL_EN:GetData()
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_TOOLTIP = "Include Orders with Knowledge Point Rewards",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST = f.bb("Knowledge Point") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_MAX_COST_TOOLTIP =
-        "Maximum allowed gold cost of 1 Knowledge Point\n\nFormat: ",
+        "Maximum allowed gold cost of 1 Knowledge Point.\n\nUsed as the default unless a character override with a per-profession value is set.\n\nFormat: ",
+        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE = "Override for %s",
+        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_CHARACTER_OVERRIDE_TOOLTIP =
+        "When enabled, this character uses its own per-profession knowledge max costs instead of the default.\n\nSet a profession to " ..
+            f.bb("0") .. " if this character is fully knowledge-capped and should not pay for knowledge rewards.",
+        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION = "Per Profession",
+        CRAFT_QUEUE_PATRON_ORDERS_KP_COST_PER_PROFESSION_TOOLTIP =
+        "Set a knowledge max cost for a specific profession on this character while the override is enabled. Reset to use the default cost.",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST = f.bb("Patron Order") .. " Max Cost: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_COST_TOOLTIP = "Maximum allowed gold cost of a patron order\n\nFormat: ",
         CRAFT_QUEUE_PATRON_ORDERS_MAX_DURATION_HOURS = f.bb("Patron Order") .. " Max Duration (hours): ",
@@ -1041,12 +1048,13 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_OPTIONS_RESTOCK_AMOUNT = "Restock Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT = "Offset Queue Amount: ",
         CRAFT_LISTS_OPTIONS_OFFSET_QUEUE_AMOUNT_TOOLTIP = "Always add given amount to the number of queued crafts",
-        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank & warbank for craft list restock",
+        CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_LABEL = "Subtract bags, bank, warbank & AH for craft list restock",
         CRAFT_LISTS_RESTOCK_SUBTRACT_OWNED_TOOLTIP =
-        "When enabled, craft list restock queues max(0, target - how many you already have).\n\nCounts bags, reagent bag, bank, and warbank, including soulbound items such as treatises.\n\nTurn off to always queue up to the target number regardless of inventory (for example, craft 20 even if you already have some).",
+        "When enabled, craft list restock queues enough crafts to reach the item target after subtracting what you already have.\n\nFor recipes that yield multiple items per craft (e.g. flasks x2, phials x4), the queue amount is ceil(needed items / yield).\n\nCounts bags, reagent bag, bank, and warbank, including soulbound items such as treatises.\n\nAlso counts items you have posted on the auction house when " ..
+            f.bb("TSM") .. " or " .. f.bb("Syndicator") .. " provides inventory data.\n\nTurn off to always queue crafts for the full item target regardless of inventory.",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_LABEL = "Include " .. f.bb("Alt") .. " Inventory",
         CRAFT_LISTS_RESTOCK_INCLUDE_ALT_INVENTORY_TOOLTIP =
-        "When enabled, alt characters' inventory is also subtracted from the restock target.",
+        "When enabled, alt characters' inventory and auction house posts are also subtracted from the restock target.",
         CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_LABEL = "Skip costs for " .. f.g("owned") .. " materials",
         CRAFT_LISTS_SKIP_OWNED_MATERIAL_COSTS_TOOLTIP = "When enabled, " ..
             f.bb("only profitable") .. " and related profit checks treat reagents you already have as zero gold cost.\n\n" ..

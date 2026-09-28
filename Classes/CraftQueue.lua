@@ -74,7 +74,8 @@ function CraftSim.CraftQueue:AddRecipe(options)
                             subRecipe:IsCrafter())
                         local restCount = math.max(0, (reagentItem.quantity * craftQueueItem.amount) - inventoryCount)
                         if restCount > 0 then
-                            local minimumCrafts = math.max(0, restCount / subRecipe.baseItemAmount)
+                            local itemsPerCraft = math.max(1, subRecipe.minItemAmount or subRecipe.baseItemAmount or 1)
+                            local minimumCrafts = math.ceil(restCount / itemsPerCraft)
                             if minimumCrafts > 0 then
                                 self:AddRecipe({ recipeData = subRecipe, amount = minimumCrafts })
                             end

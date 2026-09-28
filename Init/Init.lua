@@ -748,5 +748,19 @@ function CraftSim.INIT:CRAFTSIM_CRAFT_BUFFS_UPDATED()
 end
 
 function CraftSim.INIT:CRAFTSIM_AUCTIONATOR_DB_UPDATED()
+	local changedMoxie = false
+	if CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_QUEUE_PATRON_ORDERS_AUTO_UPDATE_MOXIE_VALUES)
+		and CraftSim.CRAFTQ and CraftSim.CRAFTQ.UI and CraftSim.CRAFTQ.UI.AutoUpdatePatronMoxieValuesFromSurplus then
+		changedMoxie = CraftSim.CRAFTQ.UI:AutoUpdatePatronMoxieValuesFromSurplus()
+	elseif CraftSim.CRAFTQ and CraftSim.CRAFTQ.UI and CraftSim.CRAFTQ.UI.RefreshPatronMoxieSurplusSuggestions then
+		-- Suggested column still tracks the latest AH prices when auto-write is off.
+		CraftSim.CRAFTQ.UI:RefreshPatronMoxieSurplusSuggestions()
+	end
+
+	-- Moxie is part of patron-order profit, so refresh the open queue after a real value change.
+	if changedMoxie and CraftSim.CRAFTQ.frame and CraftSim.CRAFTQ.frame:IsVisible() then
+		CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+	end
+
 	self:UpdateRecipeData()
 end

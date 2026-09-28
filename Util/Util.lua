@@ -717,6 +717,22 @@ function CraftSim.UTIL:CrafterHasProfession(crafterUID, profession)
     return cachedRecipes ~= nil and #cachedRecipes > 0
 end
 
+--- True for crafting professions that use concentration (excludes gathering and cooking).
+---@param profession Enum.Profession?
+---@return boolean
+function CraftSim.UTIL:ProfessionUsesConcentration(profession)
+    if not profession then
+        return false
+    end
+    if CraftSim.CONST.GATHERING_PROFESSIONS[profession] then
+        return false
+    end
+    if CraftSim.CONST.NO_CONCENTRATION_PROFESSIONS[profession] then
+        return false
+    end
+    return true
+end
+
 ---@param profession Enum.Profession
 function CraftSim.UTIL:IsProfessionLearned(profession)
     local learnedProfessions = { GetProfessions() };
@@ -733,6 +749,23 @@ function CraftSim.UTIL:IsProfessionLearned(profession)
     end
 
     return false
+end
+
+--- The two primary profession slots (excludes archaeology, fishing, and cooking).
+---@return Enum.Profession[]
+function CraftSim.UTIL:GetPlayerMainProfessions()
+    local prof1, prof2 = GetProfessions()
+    local professions = {}
+    for _, professionIndex in ipairs({ prof1, prof2 }) do
+        if professionIndex then
+            local skillLineID = select(7, GetProfessionInfo(professionIndex))
+            local profession = skillLineID and CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID)
+            if profession then
+                tinsert(professions, profession)
+            end
+        end
+    end
+    return professions
 end
 
 ---@param itemLink string

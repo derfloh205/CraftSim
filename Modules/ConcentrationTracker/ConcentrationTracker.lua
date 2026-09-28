@@ -219,6 +219,10 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
 
     local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID)
 
+    if not CraftSim.UTIL:ProfessionUsesConcentration(profession) then
+        return nil
+    end
+
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
     if cached and cached.currencyID and currencyID and cached.currencyID ~= currencyID then
         CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID] = nil
@@ -239,8 +243,7 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     -- Use concentration currency from the trade skill API. Do not require
     -- C_ProfSpecs.SkillLineHasSpecialization: Midnight (and some builds) can expose
     -- concentration while that call is false, which left the compact display at 0/0.
-    local isGathering = profession and CraftSim.CONST.GATHERING_PROFESSIONS[profession]
-    if currencyID and skillLineID > 0 and not isGathering then
+    if currencyID and skillLineID > 0 then
         local concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB
