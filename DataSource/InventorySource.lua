@@ -178,13 +178,11 @@ local function CountInBagRange(query, includeBound, firstBag, lastBag)
     return count
 end
 
---- Quality-aware bank+warbank count from Syndicator's cache (readable while the bank UI is closed).
+--- Bank+warbank count from Syndicator's cache (readable while the bank UI is closed).
+--- When qualityID > 0, also match item quality from the cached item link (gear).
 ---@param query CraftSim.InventoryQueryInput
 ---@return number
-local function CountQualityInCachedBanks(query)
-    if query.qualityID <= 0 then
-        return 0
-    end
+local function CountInCachedBanks(query)
     if not (CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable()) then
         return 0
     end
@@ -198,10 +196,16 @@ local function CountQualityInCachedBanks(query)
     local count = 0
 
     local function addIfMatch(invItem)
-        if invItem and invItem.itemID == query.itemID and invItem.itemLink
-            and (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID then
-            count = count + (invItem.itemCount or 1)
+        if not invItem or invItem.itemID ~= query.itemID then
+            return
         end
+        if query.qualityID > 0 then
+            if not invItem.itemLink
+                or (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) ~= query.qualityID then
+                return
+            end
+        end
+        count = count + (invItem.itemCount or 1)
     end
 
     for crafterUID, data in pairs(syndicatorData.Characters or {}) do
@@ -228,15 +232,17 @@ end
 ---@param query CraftSim.InventoryQueryInput
 ---@param alreadyCountedBags number
 ---@return number
-local function CountQualityBankFromTSM(query, alreadyCountedBags)
-    if query.qualityID <= 0 or type(query.itemIDOrLink) ~= "string" then
-        return 0
-    end
-    if not (TSM_API and TSM_API.ToItemString and TSM_API.GetPlayerTotals) then
+local function CountBankFromTSM(query, alreadyCountedBags)
+    if not (TSM_API and TSM_API.GetPlayerTotals) then
         return 0
     end
 
-    local tsmStr = TSM_API.ToItemString(query.itemIDOrLink)
+    local tsmStr
+    if query.qualityID > 0 and type(query.itemIDOrLink) == "string" and TSM_API.ToItemString then
+        tsmStr = TSM_API.ToItemString(query.itemIDOrLink)
+    else
+        tsmStr = "i:" .. tostring(query.itemID)
+    end
     if not tsmStr or IsSecretValue(tsmStr) then
         return 0
     end
@@ -261,11 +267,6 @@ end
 ---@param includeBound boolean if false, skip bound stacks (BoE that has been equipped, etc.)
 ---@return number
 local function CountInPlayerInventory(query, includeBound)
-    if includeBound and query.qualityID == 0 then
-        -- GetItemCount includes bound items, reagent bag, bank, and warbank.
-        return C_Item.GetItemCount(query.itemID, true, false, true, true) or 0
-    end
-
     local lastBag = Enum.BagIndex.ReagentBag or Enum.BagIndex.Bag_4
     local bagCount = CountInBagRange(query, includeBound, Enum.BagIndex.Backpack, lastBag)
     local bankCount = 0
@@ -275,12 +276,17 @@ local function CountInPlayerInventory(query, includeBound)
             Enum.BagIndex.CharacterBankTab_6)
         bankCount = bankCount + CountInBagRange(query, includeBound, Enum.BagIndex.AccountBankTab_1,
             Enum.BagIndex.AccountBankTab_5)
-    elseif query.qualityID > 0 then
-        -- Bank containers are empty while the bank UI is closed. Use cached quality counts.
+    else
+        -- Bank/warbank containers are empty while the bank UI is closed.
+        -- Use Syndicator/TSM cache for both quality gear and normal itemIDs (phials, etc.).
         if CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable() then
-            bankCount = CountQualityInCachedBanks(query)
-        else
-            bankCount = CountQualityBankFromTSM(query, bagCount)
+            bankCount = CountInCachedBanks(query)
+        elseif TSM_API and TSM_API.GetPlayerTotals then
+            bankCount = CountBankFromTSM(query, bagCount)
+        elseif includeBound and query.qualityID == 0 then
+            -- Last resort: GetItemCount includes bank + warbank; subtract live bags.
+            local total = C_Item.GetItemCount(query.itemID, true, false, true, true) or 0
+            bankCount = math.max(0, total - bagCount)
         end
     end
 
