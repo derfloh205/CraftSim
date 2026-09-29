@@ -152,6 +152,41 @@ local function RestockShouldIncludeBoundCopies(itemID)
     return true
 end
 
+--- True when the item cannot be bought on the auction house.
+--- Covers BoP (OnAcquire), quest bind, and hard account/warbound binds
+--- (ToWoWAccount / ToBnetAccount). Bind-to-account-until-equipped remains
+--- AH-purchaseable while unbound (separate from hard warbound).
+---@param itemID number?
+---@return boolean
+local function IsItemUnpurchaseable(itemID)
+    if not itemID then
+        return false
+    end
+
+    -- Hard account/warbound bind (not "until equipped").
+    if C_Item.IsItemBindToAccount and C_Item.IsItemBindToAccount(itemID) then
+        return true
+    end
+
+    if GUTIL:isItemSoulbound(itemID) then
+        return true
+    end
+
+    local bindType = select(14, C_Item.GetItemInfo(itemID))
+    if bindType == nil or IsSecretValue(bindType) then
+        -- Same optimism as isItemSoulbound when item info is not loaded yet.
+        return false
+    end
+
+    if bindType == Enum.ItemBind.Quest
+        or bindType == Enum.ItemBind.ToWoWAccount
+        or bindType == Enum.ItemBind.ToBnetAccount then
+        return true
+    end
+
+    return false
+end
+
 ---@return boolean
 local function AreCharacterBankTabsReadable()
     local tab = Enum.BagIndex.CharacterBankTab_1
@@ -902,6 +937,15 @@ end
 ---@class CraftSim.INVENTORY_SOURCE
 CraftSim.INVENTORY_SOURCE = {}
 
+--- True when the item cannot be bought on the auction house.
+--- Covers BoP, quest bind, and hard account/warbound binds. Bind-to-account-
+--- until-equipped remains AH-purchaseable while unbound.
+---@param itemID number?
+---@return boolean
+function CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID)
+    return IsItemUnpurchaseable(itemID)
+end
+
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
 ---@param itemIDOrLink ItemID | string
@@ -978,7 +1022,7 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
     end
     count = count + playerAuctions
 
-    if includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
+    if includeAlts and (includeBound or not IsItemUnpurchaseable(query.itemID)) then
         local altExtra = 0
         if CraftSim.INVENTORY_API == CraftSimTSM and CraftSimTSM:IsAvailable() then
             local tsmStr = ToTSMItemString(query.itemID)
