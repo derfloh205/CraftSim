@@ -36,10 +36,70 @@ end
 ---@field itemID number
 ---@field itemIDOrLink number | string
 ---@field qualityID number
+---@field bonusIDs number[]?
+---@field matchBonusIDs boolean?
+
+--- Sorted bonus IDs from an item link (empty if none / unparseable).
+---@param itemLink string?
+---@return number[]
+local function GetBonusIDsFromItemLink(itemLink)
+    if type(itemLink) ~= "string" or IsSecretValue(itemLink) then
+        return {}
+    end
+    local itemString = itemLink:match("|Hitem:([^|]+)|h") or itemLink:match("^item:(.+)$")
+    if not itemString then
+        return {}
+    end
+    local parts = { strsplit(":", itemString) }
+    -- item:id:ench:gem1:gem2:gem3:gem4:suffix:unique:linkLevel:spec:upgrade:diff:numBonusIDs:...
+    local numBonus = tonumber(parts[13]) or 0
+    local bonuses = {}
+    for i = 1, numBonus do
+        local bonusID = tonumber(parts[13 + i])
+        if bonusID then
+            tinsert(bonuses, bonusID)
+        end
+    end
+    table.sort(bonuses)
+    return bonuses
+end
+
+---@param a number[]
+---@param b number[]
+---@return boolean
+local function BonusIDSetsEqual(a, b)
+    if #a ~= #b then
+        return false
+    end
+    for i = 1, #a do
+        if a[i] ~= b[i] then
+            return false
+        end
+    end
+    return true
+end
+
+--- Quality and optional missive/bonus identity match for gear inventory queries.
+---@param itemLink string?
+---@param query CraftSim.InventoryQueryInput
+---@return boolean
+local function InventoryItemLinkMatchesQuery(itemLink, query)
+    if query.qualityID <= 0 then
+        return true
+    end
+    if not itemLink then
+        return false
+    end
+    if query.matchBonusIDs and query.bonusIDs and #query.bonusIDs > 0 then
+        return BonusIDSetsEqual(GetBonusIDsFromItemLink(itemLink), query.bonusIDs)
+    end
+    return (GUTIL:GetQualityIDFromLink(itemLink) or 0) == query.qualityID
+end
 
 ---@param itemIDOrLink number | string
+---@param matchBonusIDs boolean?
 ---@return CraftSim.InventoryQueryInput?
-local function ResolveInventoryQueryInput(itemIDOrLink)
+local function ResolveInventoryQueryInput(itemIDOrLink, matchBonusIDs)
     if not itemIDOrLink then
         return nil
     end
@@ -59,7 +119,19 @@ local function ResolveInventoryQueryInput(itemIDOrLink)
     local item = Item:CreateFromItemLink(itemIDOrLink)
     if item and item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
         qualityID = GUTIL:GetQualityIDFromLink(itemIDOrLink) or 0
-        return { itemID = itemID, itemIDOrLink = itemIDOrLink, qualityID = qualityID }
+        local bonusIDs = nil
+        local useBonusMatch = false
+        if matchBonusIDs and qualityID > 0 then
+            bonusIDs = GetBonusIDsFromItemLink(itemIDOrLink)
+            useBonusMatch = #bonusIDs > 0
+        end
+        return {
+            itemID = itemID,
+            itemIDOrLink = itemIDOrLink,
+            qualityID = qualityID,
+            bonusIDs = bonusIDs,
+            matchBonusIDs = useBonusMatch,
+        }
     end
 
     return { itemID = itemID, itemIDOrLink = itemID, qualityID = 0 }
@@ -74,13 +146,17 @@ local function InventoryBackendArg(query)
     return query.itemID
 end
 
----@param kind "count"|"breakdown"|"auction"
+---@param kind "count"|"breakdown"|"auction"|"tradable"
 ---@param apiName string
 ---@param query CraftSim.InventoryQueryInput
 ---@param includeAlts boolean?
 ---@return string
 local function BuildInventorySourceCacheKey(kind, apiName, query, includeAlts)
-    return string.format("%s|%s|%s|%d|%d", kind, apiName, tostring(includeAlts), query.itemID, query.qualityID)
+    local bonusKey = ""
+    if query.matchBonusIDs and query.bonusIDs and #query.bonusIDs > 0 then
+        bonusKey = ":" .. table.concat(query.bonusIDs, ",")
+    end
+    return string.format("%s|%s|%s|%d|%d%s", kind, apiName, tostring(includeAlts), query.itemID, query.qualityID, bonusKey)
 end
 
 ---@param key string
@@ -124,10 +200,7 @@ local function ItemLocationMatchesInventoryQuery(itemLoc, query)
     end
     if query.qualityID > 0 then
         local locLink = C_Item.GetItemLink(itemLoc)
-        if not locLink then
-            return false
-        end
-        return (GUTIL:GetQualityIDFromLink(locLink) or 0) == query.qualityID
+        return InventoryItemLinkMatchesQuery(locLink, query)
     end
     return true
 end
@@ -150,6 +223,41 @@ local function RestockShouldIncludeBoundCopies(itemID)
         return false
     end
     return true
+end
+
+--- True when the item cannot be bought on the auction house.
+--- Covers BoP (OnAcquire), quest bind, and hard account/warbound binds
+--- (ToWoWAccount / ToBnetAccount). Bind-to-account-until-equipped remains
+--- AH-purchaseable while unbound (separate from hard warbound).
+---@param itemID number?
+---@return boolean
+local function IsItemUnpurchaseable(itemID)
+    if not itemID then
+        return false
+    end
+
+    -- Hard account/warbound bind (not "until equipped").
+    if C_Item.IsItemBindToAccount and C_Item.IsItemBindToAccount(itemID) then
+        return true
+    end
+
+    if GUTIL:isItemSoulbound(itemID) then
+        return true
+    end
+
+    local bindType = select(14, C_Item.GetItemInfo(itemID))
+    if bindType == nil or IsSecretValue(bindType) then
+        -- Same optimism as isItemSoulbound when item info is not loaded yet.
+        return false
+    end
+
+    if bindType == Enum.ItemBind.Quest
+        or bindType == Enum.ItemBind.ToWoWAccount
+        or bindType == Enum.ItemBind.ToBnetAccount then
+        return true
+    end
+
+    return false
 end
 
 ---@return boolean
@@ -178,13 +286,11 @@ local function CountInBagRange(query, includeBound, firstBag, lastBag)
     return count
 end
 
---- Quality-aware bank+warbank count from Syndicator's cache (readable while the bank UI is closed).
+--- Bank+warbank count from Syndicator's cache (readable while the bank UI is closed).
+--- When qualityID > 0, also match item quality (and bonus IDs when requested) from the cached item link.
 ---@param query CraftSim.InventoryQueryInput
 ---@return number
-local function CountQualityInCachedBanks(query)
-    if query.qualityID <= 0 then
-        return 0
-    end
+local function CountInCachedBanks(query)
     if not (CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable()) then
         return 0
     end
@@ -198,10 +304,15 @@ local function CountQualityInCachedBanks(query)
     local count = 0
 
     local function addIfMatch(invItem)
-        if invItem and invItem.itemID == query.itemID and invItem.itemLink
-            and (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID then
-            count = count + (invItem.itemCount or 1)
+        if not invItem or invItem.itemID ~= query.itemID then
+            return
         end
+        if query.qualityID > 0 then
+            if not InventoryItemLinkMatchesQuery(invItem.itemLink, query) then
+                return
+            end
+        end
+        count = count + (invItem.itemCount or 1)
     end
 
     for crafterUID, data in pairs(syndicatorData.Characters or {}) do
@@ -228,15 +339,17 @@ end
 ---@param query CraftSim.InventoryQueryInput
 ---@param alreadyCountedBags number
 ---@return number
-local function CountQualityBankFromTSM(query, alreadyCountedBags)
-    if query.qualityID <= 0 or type(query.itemIDOrLink) ~= "string" then
-        return 0
-    end
-    if not (TSM_API and TSM_API.ToItemString and TSM_API.GetPlayerTotals) then
+local function CountBankFromTSM(query, alreadyCountedBags)
+    if not (TSM_API and TSM_API.GetPlayerTotals) then
         return 0
     end
 
-    local tsmStr = TSM_API.ToItemString(query.itemIDOrLink)
+    local tsmStr
+    if query.qualityID > 0 and type(query.itemIDOrLink) == "string" and TSM_API.ToItemString then
+        tsmStr = TSM_API.ToItemString(query.itemIDOrLink)
+    else
+        tsmStr = "i:" .. tostring(query.itemID)
+    end
     if not tsmStr or IsSecretValue(tsmStr) then
         return 0
     end
@@ -261,11 +374,6 @@ end
 ---@param includeBound boolean if false, skip bound stacks (BoE that has been equipped, etc.)
 ---@return number
 local function CountInPlayerInventory(query, includeBound)
-    if includeBound and query.qualityID == 0 then
-        -- GetItemCount includes bound items, reagent bag, bank, and warbank.
-        return C_Item.GetItemCount(query.itemID, true, false, true, true) or 0
-    end
-
     local lastBag = Enum.BagIndex.ReagentBag or Enum.BagIndex.Bag_4
     local bagCount = CountInBagRange(query, includeBound, Enum.BagIndex.Backpack, lastBag)
     local bankCount = 0
@@ -275,12 +383,17 @@ local function CountInPlayerInventory(query, includeBound)
             Enum.BagIndex.CharacterBankTab_6)
         bankCount = bankCount + CountInBagRange(query, includeBound, Enum.BagIndex.AccountBankTab_1,
             Enum.BagIndex.AccountBankTab_5)
-    elseif query.qualityID > 0 then
-        -- Bank containers are empty while the bank UI is closed. Use cached quality counts.
+    else
+        -- Bank/warbank containers are empty while the bank UI is closed.
+        -- Use Syndicator/TSM cache for both quality gear and normal itemIDs (phials, etc.).
         if CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable() then
-            bankCount = CountQualityInCachedBanks(query)
-        else
-            bankCount = CountQualityBankFromTSM(query, bagCount)
+            bankCount = CountInCachedBanks(query)
+        elseif TSM_API and TSM_API.GetPlayerTotals then
+            bankCount = CountBankFromTSM(query, bagCount)
+        elseif includeBound and query.qualityID == 0 then
+            -- Last resort: GetItemCount includes bank + warbank; subtract live bags.
+            local total = C_Item.GetItemCount(query.itemID, true, false, true, true) or 0
+            bankCount = math.max(0, total - bagCount)
         end
     end
 
@@ -357,17 +470,21 @@ end
 
 ---@param item ItemMixin
 ---@param includeAlts boolean? default: false
+---@param matchBonusIDs boolean? when true, require exact bonus ID set match (missive variants)
 ---@return number total, number warbank, table<CrafterUID, {bags: number, bank: number, auctions: number}> charMap
-function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
+function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts, matchBonusIDs)
     includeAlts = includeAlts or false
-    local quality = GUTIL:GetQualityIDFromLink(item:GetItemLink())
+    local itemLink = item:GetItemLink()
+    local quality = GUTIL:GetQualityIDFromLink(itemLink)
     local itemID = item:GetItemID()
+    local expectedBonuses = matchBonusIDs and GetBonusIDsFromItemLink(itemLink) or nil
+    local useBonusMatch = expectedBonuses and #expectedBonuses > 0
     local totalCount = 0
     local warbank = 0
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     local sourceMap = {}
 
-    Logger:LogDebug("Syndicator GetGearInventoryCount: {itemLink}", item:GetItemLink())
+    Logger:LogDebug("Syndicator GetGearInventoryCount: {itemLink}", itemLink)
 
     ---@type SyndicatorData
     local syndicatorData = SYNDICATOR_DATA
@@ -376,13 +493,23 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
         Logger:LogFatal("SYNDICATOR_DATA not available")
     end
 
+    local function matchesInvItem(invItem)
+        if not invItem or invItem.itemID ~= itemID then
+            return false
+        end
+        if useBonusMatch then
+            return BonusIDSetsEqual(GetBonusIDsFromItemLink(invItem.itemLink), expectedBonuses)
+        end
+        return GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality
+    end
+
     --- sum occurances in characters
     for crafterUID, data in pairs(syndicatorData.Characters) do
         sourceMap[crafterUID] = { bags = 0, bank = 0, auctions = 0 }
         if includeAlts or crafterUID == playerCrafterUID then
             for _, bags in ipairs(data.bags or {}) do
                 for _, invItem in pairs(bags or {}) do
-                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    if matchesInvItem(invItem) then
                         Logger:LogDebug("- Found in bags x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bags = sourceMap[crafterUID].bags + invItem.itemCount
@@ -392,7 +519,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
 
             for _, invInfo in ipairs(data.bankTabs or {}) do
                 for _, invItem in pairs(invInfo.slots or {}) do
-                    if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                    if matchesInvItem(invItem) then
                         Logger:LogDebug("- Found in bankTabs x{count}", invItem.itemCount)
                         totalCount = totalCount + invItem.itemCount
                         sourceMap[crafterUID].bank = sourceMap[crafterUID].bank + invItem.itemCount
@@ -401,7 +528,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
             end
 
             for _, invItem in ipairs(data.auctions or {}) do
-                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                if matchesInvItem(invItem) then
                     Logger:LogDebug("- Found in auctions x{count}", invItem.itemCount)
 
                     totalCount = totalCount + invItem.itemCount
@@ -414,7 +541,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
     for _, warbandInfo in ipairs(syndicatorData.Warband or {}) do
         for _, invInfo in ipairs(warbandInfo.bank) do
             for _, invItem in pairs(invInfo.slots) do
-                if invItem and invItem.itemID == itemID and GUTIL:GetQualityIDFromLink(invItem.itemLink) == quality then
+                if matchesInvItem(invItem) then
                     Logger:LogDebug("- Found in warband bank x{count}", invItem.itemCount)
                     totalCount = totalCount + invItem.itemCount
                     warbank = warbank + invItem.itemCount
@@ -423,7 +550,7 @@ function CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts)
         end
     end
 
-    Logger:LogDebug("Total count for itemID {itemLink}: {count}", item:GetItemLink(), totalCount)
+    Logger:LogDebug("Total count for itemID {itemLink}: {count}", itemLink, totalCount)
 
 
     return totalCount, warbank, sourceMap
@@ -434,8 +561,9 @@ end
 --- Uses Syndicator's data to query current character inventory.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include all characters; if false/nil, only current player
+---@param matchBonusIDs boolean? when true, require exact bonus ID set match for gear
 ---@return number total
-function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
+function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts, matchBonusIDs)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
@@ -444,7 +572,7 @@ function CraftSimSYNDICATOR:GetInventoryCount(itemIDOrLink, includeAlts)
         local item = Item:CreateFromItemLink(itemIDOrLink)
         if item then
             if item:GetInventoryType() ~= Enum.InventoryType.IndexNonEquipType then
-                return select(1, CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts))
+                return select(1, CraftSimSYNDICATOR:GetGearInventoryCount(item, includeAlts, matchBonusIDs))
             end
         end
     end
@@ -574,12 +702,13 @@ end
 --- cannot hide owned auctions from restock.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, sum all characters; if false/nil, current player only
+---@param matchBonusIDs boolean? when true, require exact bonus ID set match for gear
 ---@return number? auctionAmount
-function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink, includeAlts)
+function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink, includeAlts, matchBonusIDs)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    local query = ResolveInventoryQueryInput(itemIDOrLink, matchBonusIDs)
     if not query then return 0 end
 
     ---@type SyndicatorData?
@@ -595,9 +724,7 @@ function CraftSimSYNDICATOR:GetAuctionAmount(itemIDOrLink, includeAlts)
         if includeAlts or crafterUID == playerCrafterUID then
             for _, invItem in ipairs(data.auctions or {}) do
                 if invItem and invItem.itemID == query.itemID then
-                    if query.qualityID <= 0
-                        or (invItem.itemLink
-                            and (GUTIL:GetQualityIDFromLink(invItem.itemLink) or 0) == query.qualityID) then
+                    if query.qualityID <= 0 or InventoryItemLinkMatchesQuery(invItem.itemLink, query) then
                         total = total + (invItem.itemCount or 1)
                     end
                 end
@@ -642,6 +769,38 @@ end
 ---@return string
 local function ToTSMItemString(itemID)
     return "i:" .. itemID
+end
+
+--- Prefer link-based TSM strings so gear ranks (distinct item levels) stay separate.
+--- Base `i:<itemID>` sums every rank and must not be used for quality-specific queries.
+---@param itemIDOrLink ItemID | string
+---@return string?
+local function ToTSMQueryString(itemIDOrLink)
+    if type(itemIDOrLink) == "string" and not IsSecretValue(itemIDOrLink) and TSM_API and TSM_API.ToItemString then
+        local tsmStr = TSM_API.ToItemString(itemIDOrLink)
+        if tsmStr and not IsSecretValue(tsmStr) then
+            return tsmStr
+        end
+    end
+    local itemID = type(itemIDOrLink) == "number" and itemIDOrLink or ResolveTSMItemID(itemIDOrLink)
+    if itemID then
+        return ToTSMItemString(itemID)
+    end
+    return nil
+end
+
+--- TSM string for an inventory query. Returns nil for rank-specific queries without a
+--- usable item link, so callers do not fall back to base-item totals that sum all ranks.
+---@param query CraftSim.InventoryQueryInput
+---@return string?
+local function ToTSMQueryStringForInventoryQuery(query)
+    if query.qualityID > 0 then
+        if type(query.itemIDOrLink) == "string" then
+            return ToTSMQueryString(query.itemIDOrLink)
+        end
+        return nil
+    end
+    return ToTSMItemString(query.itemID)
 end
 
 ---@param tsmStr string
@@ -695,15 +854,15 @@ local function GetTSMInventoryIncludeModes(includeAlts)
 end
 
 ---@param kind "inv"|"breakdown"|"ah"
----@param itemID number
+---@param tsmStr string
 ---@param includeAlts boolean?
 ---@return string
-local function BuildTSMInventoryCacheKey(kind, itemID, includeAlts)
+local function BuildTSMInventoryCacheKey(kind, tsmStr, includeAlts)
     if kind == "ah" then
-        return kind .. "|" .. itemID
+        return kind .. "|" .. tsmStr
     end
     local shouldIncludeAlts, shouldIncludeWarbank = GetTSMInventoryIncludeModes(includeAlts)
-    return string.format("%s|%d|alts:%s|warbank:%s", kind, itemID, tostring(shouldIncludeAlts),
+    return string.format("%s|%s|alts:%s|warbank:%s", kind, tsmStr, tostring(shouldIncludeAlts),
         tostring(shouldIncludeWarbank))
 end
 
@@ -751,11 +910,10 @@ function CraftSimTSM:GetInventoryCount(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return 0 end
     if not itemIDOrLink then return 0 end
 
-    local itemID = ResolveTSMItemID(itemIDOrLink)
-    if not itemID then return 0 end
+    local tsmStr = ToTSMQueryString(itemIDOrLink)
+    if not tsmStr then return 0 end
 
-    local tsmStr = ToTSMItemString(itemID)
-    local cacheKey = BuildTSMInventoryCacheKey("inv", itemID, includeAlts)
+    local cacheKey = BuildTSMInventoryCacheKey("inv", tsmStr, includeAlts)
     local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.inv)
     if hit then
         return cached or 0
@@ -788,11 +946,10 @@ function CraftSimTSM:GetInventoryBreakdownLines(itemIDOrLink, includeAlts)
     if not self:IsAvailable() then return {} end
     if not itemIDOrLink then return {} end
 
-    local itemID = ResolveTSMItemID(itemIDOrLink)
-    if not itemID then return {} end
+    local tsmStr = ToTSMQueryString(itemIDOrLink)
+    if not tsmStr then return {} end
 
-    local tsmStr = ToTSMItemString(itemID)
-    local cacheKey = BuildTSMInventoryCacheKey("breakdown", itemID, includeAlts)
+    local cacheKey = BuildTSMInventoryCacheKey("breakdown", tsmStr, includeAlts)
     local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.breakdown)
     if hit then
         return CopyTSMInventoryBreakdownLines(cached or {})
@@ -823,19 +980,18 @@ function CraftSimTSM:GetAuctionAmount(idOrLink)
     if not idOrLink then
         return
     end
-    local itemID = ResolveTSMItemID(idOrLink)
-    if not itemID then
+    local tsmStr = ToTSMQueryString(idOrLink)
+    if not tsmStr then
         return nil
     end
-    return CraftSimTSM:GetAuctionAmountByItemID(itemID)
+    return CraftSimTSM:GetAuctionAmountByTSMString(tsmStr)
 end
 
----@param itemID number
+---@param tsmStr string
 ---@return number? auctionAmount
-function CraftSimTSM:GetAuctionAmountByItemID(itemID)
-    if not self:IsAvailable() then return nil end
-    local tsmStr = ToTSMItemString(itemID)
-    local cacheKey = BuildTSMInventoryCacheKey("ah", itemID)
+function CraftSimTSM:GetAuctionAmountByTSMString(tsmStr)
+    if not self:IsAvailable() or not tsmStr then return nil end
+    local cacheKey = BuildTSMInventoryCacheKey("ah", tsmStr)
     local cached, hit = GetTSMInventoryCacheEntry(cacheKey, TSM_INVENTORY_CACHE_TTL.ah)
     if hit then
         return cached
@@ -845,14 +1001,16 @@ function CraftSimTSM:GetAuctionAmountByItemID(itemID)
     return amount
 end
 
+---@param itemID number
+---@return number? auctionAmount
+function CraftSimTSM:GetAuctionAmountByItemID(itemID)
+    return CraftSimTSM:GetAuctionAmountByTSMString(ToTSMItemString(itemID))
+end
+
 ---@param itemLink string
 ---@return number? auctionAmount
 function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
-    local itemID = ResolveTSMItemID(itemLink)
-    if not itemID then
-        return nil
-    end
-    return CraftSimTSM:GetAuctionAmountByItemID(itemID)
+    return CraftSimTSM:GetAuctionAmount(itemLink)
 end
 
 -- ---------------------------------------------------------------------------
@@ -896,15 +1054,25 @@ end
 ---@class CraftSim.INVENTORY_SOURCE
 CraftSim.INVENTORY_SOURCE = {}
 
+--- True when the item cannot be bought on the auction house.
+--- Covers BoP, quest bind, and hard account/warbound binds. Bind-to-account-
+--- until-equipped remains AH-purchaseable while unbound.
+---@param itemID number?
+---@return boolean
+function CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID)
+    return IsItemUnpurchaseable(itemID)
+end
+
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include alt characters' inventory; if false/nil, only current player
+---@param matchBonusIDs boolean? when true, require exact bonus ID set match for gear
 ---@return number count
-function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
+function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts, matchBonusIDs)
     if not itemIDOrLink then return 0 end
 
-    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    local query = ResolveInventoryQueryInput(itemIDOrLink, matchBonusIDs)
     if not query then return 0 end
 
     local apiName = (CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.name) or CraftSimINVENTORY_NONE.name
@@ -917,7 +1085,7 @@ function CraftSim.INVENTORY_SOURCE:GetInventoryCount(itemIDOrLink, includeAlts)
     local backendArg = InventoryBackendArg(query)
     local count = 0
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetInventoryCount then
-        count = CraftSim.INVENTORY_API:GetInventoryCount(backendArg, includeAlts) or 0
+        count = CraftSim.INVENTORY_API:GetInventoryCount(backendArg, includeAlts, matchBonusIDs) or 0
     else
         count = CraftSimINVENTORY_NONE:GetInventoryCount(backendArg) or 0
     end
@@ -933,13 +1101,14 @@ end
 --- profession treatises — are included, because they are the stock being restocked.
 ---@param itemIDOrLink ItemID | string
 ---@param includeAlts boolean? if true, include alt characters' inventory and AH
+---@param matchBonusIDs boolean? when true, require exact bonus ID set match for gear (missive variants)
 ---@return number count
-function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts)
+function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, includeAlts, matchBonusIDs)
     if not itemIDOrLink then
         return 0
     end
 
-    local query = ResolveInventoryQueryInput(itemIDOrLink)
+    local query = ResolveInventoryQueryInput(itemIDOrLink, matchBonusIDs)
     if not query then
         return 0
     end
@@ -958,44 +1127,48 @@ function CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(itemIDOrLink, inclu
     -- Player AH: take the best count from every available tracker.
     -- Do not gate on TSM alone — many setups use TSM for prices and Syndicator
     -- for inventory/auctions; the old TSM-first branch skipped Syndicator AH.
+    -- TSM base `i:<itemID>` sums every gear rank (item level). Only merge TSM when
+    -- the query is not rank-specific, or we have a link-based TSM string (#1516).
+    local tsmQueryStr = ToTSMQueryStringForInventoryQuery(query)
     local playerAuctions = 0
     if CraftSim.INVENTORY_API and CraftSim.INVENTORY_API.GetAuctionAmount then
-        playerAuctions = math.max(playerAuctions, CraftSim.INVENTORY_API:GetAuctionAmount(backendArg, false) or 0)
+        playerAuctions = math.max(playerAuctions, CraftSim.INVENTORY_API:GetAuctionAmount(backendArg, false, matchBonusIDs) or 0)
     end
     if CraftSimSYNDICATOR and CraftSimSYNDICATOR.IsAvailable and CraftSimSYNDICATOR:IsAvailable()
         and CraftSim.INVENTORY_API ~= CraftSimSYNDICATOR then
-        playerAuctions = math.max(playerAuctions, CraftSimSYNDICATOR:GetAuctionAmount(backendArg, false) or 0)
+        playerAuctions = math.max(playerAuctions, CraftSimSYNDICATOR:GetAuctionAmount(backendArg, false, matchBonusIDs) or 0)
     end
-    if CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable()
+    if tsmQueryStr and CraftSimTSM and CraftSimTSM.IsAvailable and CraftSimTSM:IsAvailable()
         and CraftSim.INVENTORY_API ~= CraftSimTSM then
-        playerAuctions = math.max(playerAuctions, CraftSimTSM:GetAuctionAmount(backendArg) or 0)
+        playerAuctions = math.max(playerAuctions, CraftSimTSM:GetAuctionAmountByTSMString(tsmQueryStr) or 0)
     end
     count = count + playerAuctions
 
-    if includeAlts and (includeBound or not GUTIL:isItemSoulbound(query.itemID)) then
+    if includeAlts and (includeBound or not IsItemUnpurchaseable(query.itemID)) then
         local altExtra = 0
         if CraftSim.INVENTORY_API == CraftSimTSM and CraftSimTSM:IsAvailable() then
-            local tsmStr = ToTSMItemString(query.itemID)
-            local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
-            altExtra = (numAlts or 0) + (numAltAuctions or 0)
+            if tsmQueryStr then
+                local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmQueryStr)
+                altExtra = (numAlts or 0) + (numAltAuctions or 0)
+            end
         else
             -- Syndicator (and similar): inventory delta includes alt bags/bank/AH.
-            local total = self:GetInventoryCount(itemIDOrLink, true)
-            local playerTotal = self:GetInventoryCount(itemIDOrLink, false)
+            local total = self:GetInventoryCount(itemIDOrLink, true, matchBonusIDs)
+            local playerTotal = self:GetInventoryCount(itemIDOrLink, false, matchBonusIDs)
             altExtra = math.max(0, total - playerTotal)
         end
-        -- If TSM is available alongside Syndicator, also take TSM alt AH when higher.
-        if CraftSim.INVENTORY_API ~= CraftSimTSM and CraftSimTSM and CraftSimTSM:IsAvailable() then
-            local tsmStr = ToTSMItemString(query.itemID)
-            local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmStr)
+        -- If TSM is available alongside Syndicator, also take TSM alt totals when higher
+        -- (and when we have a rank-safe query string).
+        if tsmQueryStr and CraftSim.INVENTORY_API ~= CraftSimTSM and CraftSimTSM and CraftSimTSM:IsAvailable() then
+            local _, numAlts, _, numAltAuctions = SafeTSMGetPlayerTotals(tsmQueryStr)
             altExtra = math.max(altExtra, (numAlts or 0) + (numAltAuctions or 0))
         end
         count = count + altExtra
     end
 
     Logger:LogDebug(
-        "GetTradableInventoryCount itemID={itemID} includeBound={includeBound} ah={ah} count={count}",
-        query.itemID, includeBound, playerAuctions, count)
+        "GetTradableInventoryCount itemID={itemID} quality={quality} includeBound={includeBound} ah={ah} count={count}",
+        query.itemID, query.qualityID, includeBound, playerAuctions, count)
     SetInventorySourceCacheEntry(cacheKey, count)
     return count
 end
