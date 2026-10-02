@@ -90,8 +90,9 @@ end
 
 ---@param item ItemMixin?
 ---@param includeAltInventory boolean?
+---@param matchBonusIDs boolean?
 ---@return number
-local function CountOwnedResultItem(item, includeAltInventory)
+local function CountOwnedResultItem(item, includeAltInventory, matchBonusIDs)
     if not item then
         return 0
     end
@@ -99,7 +100,25 @@ local function CountOwnedResultItem(item, includeAltInventory)
     local itemLink = item:GetItemLink()
     return CraftSim.INVENTORY_SOURCE:GetTradableInventoryCount(
         itemLink or item:GetItemID(),
-        includeAltInventory) or 0
+        includeAltInventory,
+        matchBonusIDs) or 0
+end
+
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+---@return boolean
+local function RecipeEntryHasOptionalReagents(recipeEntry)
+    return recipeEntry
+        and recipeEntry.optionalReagentItemIDs
+        and #recipeEntry.optionalReagentItemIDs > 0
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+local function ApplySavedOptionalReagents(recipeData, recipeEntry)
+    if not RecipeEntryHasOptionalReagents(recipeEntry) then
+        return
+    end
+    recipeData:SetOptionalReagents(recipeEntry.optionalReagentItemIDs)
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -107,6 +126,8 @@ end
 ---@param includeAltInventory boolean?
 ---@return number
 local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltInventory)
+    -- Missive/optional variants must match owned gear by bonus IDs, not quality alone.
+    local matchBonusIDs = RecipeEntryHasOptionalReagents(recipeEntry)
     local supported = recipeEntry and recipeEntry.supportedQualities
     if recipeData.isGear
         and recipeData.supportsQualities
@@ -114,7 +135,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
         local owned = 0
         for qualityID, item in pairs(recipeData.resultData.itemsByQuality) do
             if CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supported) then
-                owned = owned + CountOwnedResultItem(item, includeAltInventory)
+                owned = owned + CountOwnedResultItem(item, includeAltInventory, matchBonusIDs)
             end
         end
         return owned
@@ -123,6 +144,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
     -- Non-gear (treatises, flasks, etc.) and gear with no quality filter: count every
     -- result item ID. Restock is "have N of this recipe", not only the currently
     -- expected quality, so existing Q1 treatises still cover a target of 1.
+    -- With missive optionals, still count per quality-link so bonus IDs distinguish variants.
     local itemsByQuality = recipeData.resultData.itemsByQuality
     if itemsByQuality then
         local owned = 0
@@ -130,14 +152,18 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
         local foundItem = false
         for _, item in pairs(itemsByQuality) do
             foundItem = true
-            local itemID = item and item:GetItemID()
-            if itemID then
-                if not seen[itemID] then
-                    seen[itemID] = true
-                    owned = owned + CountOwnedResultItem(item, includeAltInventory)
-                end
+            if matchBonusIDs then
+                owned = owned + CountOwnedResultItem(item, includeAltInventory, true)
             else
-                owned = owned + CountOwnedResultItem(item, includeAltInventory)
+                local itemID = item and item:GetItemID()
+                if itemID then
+                    if not seen[itemID] then
+                        seen[itemID] = true
+                        owned = owned + CountOwnedResultItem(item, includeAltInventory, false)
+                    end
+                else
+                    owned = owned + CountOwnedResultItem(item, includeAltInventory, false)
+                end
             end
         end
         if foundItem then
@@ -145,7 +171,7 @@ local function GetOwnedCountForRecipeEntry(recipeData, recipeEntry, includeAltIn
         end
     end
 
-    return CountOwnedResultItem(recipeData.resultData.expectedItem, includeAltInventory)
+    return CountOwnedResultItem(recipeData.resultData.expectedItem, includeAltInventory, matchBonusIDs)
 end
 
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
@@ -235,6 +261,8 @@ local function GetRecipeEntries(list)
         tinsert(entries, {
             recipeID = recipeID,
             restockMaxAmount = 0,
+            optionalReagentItemIDs = {},
+            entryKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, nil),
         })
     end
     return entries
@@ -903,6 +931,10 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
 
         recipeData.craftListID = list.id
 
+        -- Apply missive / optional reagents for this list entry before optimize so
+        -- result links (bonus IDs) and queue UID reflect the restock variant.
+        ApplySavedOptionalReagents(recipeData, recipeEntry)
+
         local reagentAllocation = options.reagentAllocation or "OPTIMIZE_HIGHEST"
         local SCAN_MODES = CraftSim.RECIPE_SCAN.SCAN_MODES
         if reagentAllocation == SCAN_MODES.Q1 then
@@ -992,6 +1024,11 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     return
                 end
 
+                -- Ensure missive/optional reagents survived optimize (finishing path
+                -- only clears finishing slots, but re-apply for result-link identity).
+                ApplySavedOptionalReagents(recipeData, recipeEntry)
+                recipeData:Update()
+
                 -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
                 -- If SBF turns out to be unavailable, the effective (no-SBF) profit is checked
                 -- again during TriageAndQueue before the entry is actually queued.
@@ -1034,6 +1071,7 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     -- with includeSoulbound = false to get the best non-SBF result.
                     local recipeDataNoSBF = recipeData:Copy()
                     recipeDataNoSBF.craftListID = list.id
+                    ApplySavedOptionalReagents(recipeDataNoSBF, recipeEntry)
 
                     -- Without-SBF finishing-reagent options (no progress callback needed).
                     local finishingOptsNoSBF = options.optimizeFinishingReagents and {
