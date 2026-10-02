@@ -113,12 +113,119 @@ local function RecipeEntryHasOptionalReagents(recipeEntry)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return number[]
+local function CollectOptionalCandidateItemIDs(recipeData)
+    local candidateItemIDs = {}
+    if not recipeData.reagentData then
+        return candidateItemIDs
+    end
+    for _, slot in pairs(GUTIL:Concat({
+        recipeData.reagentData.optionalReagentSlots or {},
+        recipeData.reagentData.finishingReagentSlots or {},
+    })) do
+        for _, reagent in ipairs(slot.possibleReagents or {}) do
+            if reagent and not reagent:IsCurrency() and reagent.item then
+                tinsert(candidateItemIDs, reagent.item:GetItemID())
+            end
+        end
+    end
+    return candidateItemIDs
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@param recipeEntry CraftSim.CraftListRecipeEntry?
 local function ApplySavedOptionalReagents(recipeData, recipeEntry)
     if not RecipeEntryHasOptionalReagents(recipeEntry) then
         return
     end
-    recipeData:SetOptionalReagents(recipeEntry.optionalReagentItemIDs)
+
+    -- Apply a representative missive (highest quality) so result bonus IDs match the
+    -- selected stat family. Missive quality is refined later by OptimizeMissiveQualities.
+    local candidateItemIDs = CollectOptionalCandidateItemIDs(recipeData)
+    local resolved = {}
+    for _, itemID in ipairs(recipeEntry.optionalReagentItemIDs) do
+        tinsert(resolved, CraftSim.CRAFTQ.UI.PreferHighestQualityMissiveItemID(itemID, candidateItemIDs))
+    end
+    recipeData:SetOptionalReagents(resolved)
+end
+
+--- Try every missive quality for each selected result-stat and keep the most profitable.
+---@param recipeData CraftSim.RecipeData
+---@param recipeEntry CraftSim.CraftListRecipeEntry?
+local function OptimizeMissiveQualities(recipeData, recipeEntry)
+    if not RecipeEntryHasOptionalReagents(recipeEntry) then
+        return
+    end
+
+    local candidateItemIDs = CollectOptionalCandidateItemIDs(recipeData)
+    local fixedIDs = {}
+    ---@type number[][]
+    local missiveFamilies = {}
+
+    for _, itemID in ipairs(recipeEntry.optionalReagentItemIDs) do
+        local family = CraftSim.CRAFTQ.UI.GetMissiveFamilyItemIDs(itemID, candidateItemIDs)
+        if #family > 1 then
+            tinsert(missiveFamilies, family)
+        else
+            tinsert(fixedIDs, family[1] or itemID)
+        end
+    end
+
+    if #missiveFamilies == 0 then
+        return
+    end
+
+    local bestProfit = nil
+    local bestCombo = nil
+
+    ---@param combo number[]
+    local function evaluateCombo(combo)
+        recipeData:SetOptionalReagents(combo)
+        recipeData:Update()
+        local profit = recipeData:GetAverageProfit() or math.huge * -1
+        if bestProfit == nil or profit > bestProfit then
+            bestProfit = profit
+            bestCombo = {}
+            for _, id in ipairs(combo) do
+                tinsert(bestCombo, id)
+            end
+        end
+    end
+
+    --- Recursive cartesian product over missive families (usually 1 family).
+    ---@param familyIndex number
+    ---@param comboSoFar number[]
+    local function search(familyIndex, comboSoFar)
+        if familyIndex > #missiveFamilies then
+            evaluateCombo(comboSoFar)
+            return
+        end
+        for _, missiveID in ipairs(missiveFamilies[familyIndex]) do
+            local nextCombo = {}
+            for _, id in ipairs(comboSoFar) do
+                tinsert(nextCombo, id)
+            end
+            tinsert(nextCombo, missiveID)
+            search(familyIndex + 1, nextCombo)
+        end
+    end
+
+    local startCombo = {}
+    for _, id in ipairs(fixedIDs) do
+        tinsert(startCombo, id)
+    end
+    search(1, startCombo)
+
+    if bestCombo then
+        recipeData:SetOptionalReagents(bestCombo)
+        recipeData:Update()
+        recipeData:GetAverageProfit()
+        Logger:LogDebug(
+            "Missive quality simulate for {name}: chose itemIDs={ids} profit={profit}",
+            recipeData.recipeName,
+            table.concat(bestCombo, ","),
+            bestProfit)
+    end
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -1027,6 +1134,8 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                 -- Ensure missive/optional reagents survived optimize (finishing path
                 -- only clears finishing slots, but re-apply for result-link identity).
                 ApplySavedOptionalReagents(recipeData, recipeEntry)
+                -- Simulate each missive quality for the selected stat; keep best profit.
+                OptimizeMissiveQualities(recipeData, recipeEntry)
                 recipeData:Update()
 
                 -- Apply onlyProfitable against the WITH-SBF version (best-case scenario).
@@ -1067,11 +1176,10 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                     and recipeData:IsUsingSoulboundFinishingReagent()
 
                 if needsNoSBFScan then
-                    -- Copy the optimised state, then re-optimise finishing reagents
-                    -- with includeSoulbound = false to get the best non-SBF result.
+                    -- Copy the optimised state (including missive quality already simulated),
+                    -- then re-optimise finishing reagents with includeSoulbound = false.
                     local recipeDataNoSBF = recipeData:Copy()
                     recipeDataNoSBF.craftListID = list.id
-                    ApplySavedOptionalReagents(recipeDataNoSBF, recipeEntry)
 
                     -- Without-SBF finishing-reagent options (no progress callback needed).
                     local finishingOptsNoSBF = options.optimizeFinishingReagents and {
@@ -1091,6 +1199,9 @@ function CraftSim.CRAFT_LISTS:ScanList(list, crafterUID, allScanEntries, finally
                                 frameDistributor:Break()
                                 return
                             end
+
+                            -- Finishing re-opt can change mats; re-simulate missive qualities.
+                            OptimizeMissiveQualities(recipeDataNoSBF, recipeEntry)
 
                             tinsert(allScanEntries, {
                                 list = list,

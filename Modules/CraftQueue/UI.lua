@@ -3181,20 +3181,20 @@ end
 
 --- Profession-tool missive result stats inferred from the missive name.
 local MISSIVE_RESULT_STAT_PATTERNS = {
-    { pattern = "resourcefulness", labelID = "STAT_RESOURCEFULNESS" },
-    { pattern = "multicraft", labelID = "STAT_MULTICRAFT" },
-    { pattern = "crafting speed", labelID = "STAT_CRAFTINGSPEED" },
-    { pattern = "ingenuity", labelID = "STAT_INGENUITY" },
-    { pattern = "finesse", label = "Finesse" },
-    { pattern = "perception", label = "Perception" },
-    { pattern = "deftness", label = "Deftness" },
+    { pattern = "resourcefulness", key = "resourcefulness", labelID = "STAT_RESOURCEFULNESS" },
+    { pattern = "multicraft", key = "multicraft", labelID = "STAT_MULTICRAFT" },
+    { pattern = "crafting speed", key = "craftingspeed", labelID = "STAT_CRAFTINGSPEED" },
+    { pattern = "ingenuity", key = "ingenuity", labelID = "STAT_INGENUITY" },
+    { pattern = "finesse", key = "finesse", label = "Finesse" },
+    { pattern = "perception", key = "perception", label = "Perception" },
+    { pattern = "deftness", key = "deftness", label = "Deftness" },
     -- Combat gear missive sets (Dragonflight / TWW)
-    { pattern = "aurora", label = "Haste / Versatility" },
-    { pattern = "feverflare", label = "Haste / Mastery" },
-    { pattern = "fireflash", label = "Crit / Haste" },
-    { pattern = "quickblade", label = "Crit / Versatility" },
-    { pattern = "harmonious", label = "Versatility / Mastery" },
-    { pattern = "peerless", label = "Crit / Mastery" },
+    { pattern = "aurora", key = "aurora", label = "Haste / Versatility" },
+    { pattern = "feverflare", key = "feverflare", label = "Haste / Mastery" },
+    { pattern = "fireflash", key = "fireflash", label = "Crit / Haste" },
+    { pattern = "quickblade", key = "quickblade", label = "Crit / Versatility" },
+    { pattern = "harmonious", key = "harmonious", label = "Versatility / Mastery" },
+    { pattern = "peerless", key = "peerless", label = "Crit / Mastery" },
 }
 
 --- Profession-stat keys from OptionalReagentData to show for finishing/optional reagents.
@@ -3211,24 +3211,89 @@ local OPTIONAL_PROFESSION_STAT_ORDER = {
 }
 
 ---@param name string?
----@return string?
-local function GetMissiveResultStatLabel(name)
+---@return string? key
+---@return string? label
+local function GetMissiveResultStatInfo(name)
     if type(name) ~= "string" then
-        return nil
+        return nil, nil
     end
     local lower = name:lower()
     if not lower:find("missive", 1, true) then
-        return nil
+        return nil, nil
     end
     for _, entry in ipairs(MISSIVE_RESULT_STAT_PATTERNS) do
         if lower:find(entry.pattern, 1, true) then
-            if entry.labelID then
-                return L(entry.labelID)
-            end
-            return entry.label
+            local label = entry.labelID and L(entry.labelID) or entry.label
+            return entry.key, label
         end
     end
-    return nil
+    return nil, nil
+end
+
+---@param name string?
+---@return string?
+local function GetMissiveResultStatLabel(name)
+    local _, label = GetMissiveResultStatInfo(name)
+    return label
+end
+
+---@param itemID number
+---@return string? key
+---@return string? label
+---@return number qualityID
+local function GetMissiveInfoForItemID(itemID)
+    local data = CraftSim.OPTIONAL_REAGENT_DATA and CraftSim.OPTIONAL_REAGENT_DATA[itemID]
+    local name = (data and data.name) or (C_Item.GetItemNameByID(itemID))
+    local key, label = GetMissiveResultStatInfo(name)
+    return key, label, (data and data.qualityID) or 0
+end
+
+--- Prefer highest-quality missive of the same result-stat family.
+---@param itemID number
+---@param candidateItemIDs number[]
+---@return number
+function CraftSim.CRAFTQ.UI.PreferHighestQualityMissiveItemID(itemID, candidateItemIDs)
+    local key = GetMissiveInfoForItemID(itemID)
+    if not key then
+        return itemID
+    end
+    local bestID, bestQuality = itemID, select(3, GetMissiveInfoForItemID(itemID))
+    for _, candidateID in ipairs(candidateItemIDs or {}) do
+        local candidateKey, _, qualityID = GetMissiveInfoForItemID(candidateID)
+        if candidateKey == key and qualityID > bestQuality then
+            bestID = candidateID
+            bestQuality = qualityID
+        end
+    end
+    return bestID
+end
+
+--- All missive itemIDs in candidateItemIDs that share the same result-stat as itemID.
+--- Non-missives return { itemID }.
+---@param itemID number
+---@param candidateItemIDs number[]
+---@return number[]
+function CraftSim.CRAFTQ.UI.GetMissiveFamilyItemIDs(itemID, candidateItemIDs)
+    local key = GetMissiveInfoForItemID(itemID)
+    if not key then
+        return { itemID }
+    end
+    local family = {}
+    local seen = {}
+    for _, candidateID in ipairs(candidateItemIDs or {}) do
+        local candidateKey = GetMissiveInfoForItemID(candidateID)
+        if candidateKey == key and not seen[candidateID] then
+            seen[candidateID] = true
+            tinsert(family, candidateID)
+        end
+    end
+    if #family == 0 then
+        return { itemID }
+    end
+    table.sort(family, function(a, b)
+        return select(3, GetMissiveInfoForItemID(a)) < select(3, GetMissiveInfoForItemID(b))
+    end)
+    return family
 end
 
 ---@param stats table<string, number>?
@@ -3256,21 +3321,29 @@ local function FormatOptionalProfessionStatSuffix(stats)
 end
 
 --- Label for an optional/finishing reagent choice, including missive result stats.
+--- Missives are shown as the result-stat only (qualities collapsed elsewhere).
 ---@param itemID number
+---@param options { collapseMissiveQualities: boolean? }?
 ---@return string label
 ---@return string? shortStatLabel abbreviated result/stat text for list rows
-function CraftSim.CRAFTQ.UI:FormatOptionalReagentChoiceLabel(itemID)
+function CraftSim.CRAFTQ.UI:FormatOptionalReagentChoiceLabel(itemID, options)
+    options = options or {}
     local data = CraftSim.OPTIONAL_REAGENT_DATA and CraftSim.OPTIONAL_REAGENT_DATA[itemID]
     local name = (data and data.name) or (C_Item.GetItemNameByID(itemID)) or tostring(itemID)
+    local icon = GUTIL:IconToText(C_Item.GetItemIconByID(itemID) or 134400, 16, 16)
+
+    local missiveKey, missiveStat = GetMissiveResultStatInfo(name)
+    local professionStatSuffix = FormatOptionalProfessionStatSuffix(data and data.stats)
+
+    if missiveKey and options.collapseMissiveQualities ~= false then
+        -- Stat-only label: no R1/R2/R3 missive item name.
+        return icon .. " " .. f.bb(missiveStat), missiveStat
+    end
+
     local qualityIcon = ""
     if data and data.qualityID then
         qualityIcon = " " .. GUTIL:GetQualityIconString(data.qualityID, 14, 14)
     end
-    local icon = GUTIL:IconToText(C_Item.GetItemIconByID(itemID) or 134400, 16, 16)
-
-    local missiveStat = GetMissiveResultStatLabel(name)
-    local professionStatSuffix = FormatOptionalProfessionStatSuffix(data and data.stats)
-
     local label = icon .. " " .. name .. qualityIcon
     local shortStatLabel = nil
     if missiveStat then
@@ -3284,28 +3357,77 @@ function CraftSim.CRAFTQ.UI:FormatOptionalReagentChoiceLabel(itemID)
 end
 
 --- Optional/finishing reagent slots for a craft-list recipe, one section per slot.
+--- Missive qualities are collapsed to one choice per result-stat (highest quality preferred).
 ---@param recipeID RecipeID
----@return {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?}[], itemIDSet: table<number, boolean>}[]
+---@return {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?, memberItemIDs: number[]}[], itemIDSet: table<number, boolean>}[]
 function CraftSim.CRAFTQ.UI:GetOptionalReagentSlotsForRecipe(recipeID)
-    ---@type {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?}[], itemIDSet: table<number, boolean>}[]
+    ---@type {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?, memberItemIDs: number[]}[], itemIDSet: table<number, boolean>}[]
     local slots = {}
 
     local function addSlot(slotType, slotIndex, slotLabel, itemIDs)
-        local choices = {}
         local itemIDSet = {}
         local seen = {}
+        local uniqueItemIDs = {}
         for _, itemID in ipairs(itemIDs or {}) do
             if itemID and not seen[itemID] then
                 seen[itemID] = true
                 itemIDSet[itemID] = true
-                local label, shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID)
+                tinsert(uniqueItemIDs, itemID)
+            end
+        end
+
+        -- Collapse missives by result-stat; keep non-missives as individual items.
+        ---@type table<string, {itemID: number, qualityID: number, memberItemIDs: number[], label: string, shortStatLabel: string?}>
+        local missiveGroups = {}
+        local choices = {}
+        for _, itemID in ipairs(uniqueItemIDs) do
+            local missiveKey, missiveLabel, qualityID = GetMissiveInfoForItemID(itemID)
+            if missiveKey then
+                local group = missiveGroups[missiveKey]
+                if not group then
+                    local label, shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                        collapseMissiveQualities = true,
+                    })
+                    group = {
+                        itemID = itemID,
+                        qualityID = qualityID,
+                        memberItemIDs = { itemID },
+                        label = label,
+                        shortStatLabel = shortStatLabel or missiveLabel,
+                    }
+                    missiveGroups[missiveKey] = group
+                else
+                    tinsert(group.memberItemIDs, itemID)
+                    if qualityID > group.qualityID then
+                        group.itemID = itemID
+                        group.qualityID = qualityID
+                        group.label, group.shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                            collapseMissiveQualities = true,
+                        })
+                    end
+                end
+            else
+                local label, shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                    collapseMissiveQualities = false,
+                })
                 tinsert(choices, {
                     itemID = itemID,
                     label = label,
                     shortStatLabel = shortStatLabel,
+                    memberItemIDs = { itemID },
                 })
             end
         end
+
+        for _, group in pairs(missiveGroups) do
+            tinsert(choices, {
+                itemID = group.itemID,
+                label = group.label,
+                shortStatLabel = group.shortStatLabel,
+                memberItemIDs = group.memberItemIDs,
+            })
+        end
+
         if #choices == 0 then
             return
         end
@@ -3430,9 +3552,16 @@ function CraftSim.CRAFTQ.UI:BuildOptionalReagentMenuItems(listID, crafterUID, re
     local menuItems = {}
     for _, slotInfo in ipairs(slots) do
         local function getSelectedItemID()
-            for _, itemID in ipairs(getCurrentOptionalIDs()) do
-                if slotInfo.itemIDSet[itemID] then
-                    return itemID
+            local currentIDs = getCurrentOptionalIDs()
+            for _, choice in ipairs(slotInfo.choices) do
+                local members = choice.memberItemIDs or { choice.itemID }
+                for _, itemID in ipairs(currentIDs) do
+                    for _, memberID in ipairs(members) do
+                        if itemID == memberID then
+                            -- Any quality of this missive/stat group counts as selected.
+                            return choice.itemID
+                        end
+                    end
                 end
             end
             return 0
@@ -3446,7 +3575,12 @@ function CraftSim.CRAFTQ.UI:BuildOptionalReagentMenuItems(listID, crafterUID, re
                 end
             end
             if itemID and itemID > 0 then
-                tinsert(newOptionals, itemID)
+                -- Persist the preferred (highest quality) missive for this stat group.
+                local slotCandidates = {}
+                for candidateID in pairs(slotInfo.itemIDSet) do
+                    tinsert(slotCandidates, candidateID)
+                end
+                tinsert(newOptionals, CraftSim.CRAFTQ.UI.PreferHighestQualityMissiveItemID(itemID, slotCandidates))
             end
             setOptionalIDs(newOptionals)
         end
