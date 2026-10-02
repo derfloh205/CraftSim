@@ -1074,6 +1074,17 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES = "Supported Qualities",
         CRAFT_LISTS_RECIPE_SUPPORTED_QUALITIES_TOOLTIP =
             "Only queue and count inventory for checked gear qualities.\n\nIf none are checked, any quality is allowed.",
+        CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS = "Optional Reagents",
+        CRAFT_LISTS_RECIPE_FINISHING_REAGENTS = "Finishing Reagents",
+        CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS_TOOLTIP =
+            "Pick reagents per slot for this restock variant (e.g. missive and finishing).\nInventory is counted separately per variant.",
+        CRAFT_LISTS_RECIPE_OPTIONAL_NONE = "None",
+        CRAFT_LISTS_RECIPE_ADD_VARIANT = "Add Restock Variant",
+        CRAFT_LISTS_RECIPE_ADD_VARIANT_HINT =
+            "Adds another entry for the same recipe so you can restock different missives separately.",
+        CRAFT_LISTS_RECIPE_ADD_VARIANT_NEEDS_MISSIVE =
+            "Set optional reagents on the existing blank entry before adding another variant.",
+        CRAFT_LISTS_RECIPE_REMOVE = "Remove Recipe",
 
         -- craft buffs
 
