@@ -1077,7 +1077,7 @@ greater or equal the configured sale rate threshold.
         CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS = "Optional Reagents",
         CRAFT_LISTS_RECIPE_FINISHING_REAGENTS = "Finishing Reagents",
         CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS_TOOLTIP =
-            "Pick reagents per slot for this restock variant (e.g. missive and finishing).\nInventory is counted separately per variant.",
+            "Pick reagents per slot for this restock variant.\nMissives are listed by result-stat; each quality is simulated and the best is used.\nInventory is counted separately per variant.",
         CRAFT_LISTS_RECIPE_OPTIONAL_NONE = "None",
         CRAFT_LISTS_RECIPE_ADD_VARIANT = "Add Restock Variant",
         CRAFT_LISTS_RECIPE_ADD_VARIANT_HINT =
