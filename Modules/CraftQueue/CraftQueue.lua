@@ -1381,7 +1381,7 @@ function CraftSim.CRAFTQ:AddRecipe(options)
                     local active = slot.activeReagent
                     if active and not active:IsCurrency() and active.item then
                         local itemID = active.item:GetItemID()
-                        if GUTIL:isItemSoulbound(itemID) then
+                        if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
                             slot:SetReagent(nil)
                         end
                     end

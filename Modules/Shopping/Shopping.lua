@@ -91,9 +91,9 @@ CraftSim.SHOPPING.quickBuyCache = CraftSim.SHOPPING.quickBuyCache or {
 CraftSim.SHOPPING.purchasedItem = CraftSim.SHOPPING.purchasedItem or nil
 
 local function getNonSoulboundAlternativeItemID(itemID)
-    if GUTIL:isItemSoulbound(itemID) then
+    if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
         local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID]
-        if alternativeItemID and not GUTIL:isItemSoulbound(alternativeItemID) then
+        if alternativeItemID and not CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(alternativeItemID) then
             Logger:LogVerbose("Found non soulbound alt item: {item}", alternativeItemID)
             return alternativeItemID
         else
@@ -346,7 +346,7 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
                     local isOrderReagent = optionalReagent:IsOrderReagentIn(recipeData)
                     local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
 
-                    if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                    if not isOrderReagent and not isSelfCrafted and not CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
                         local allocatedQuantity = quantityMap[itemID] or 1
                         reagentMap[itemID] = reagentMap[itemID] or {
                             itemName = resolveItemName(itemID, optionalReagent.item:GetItemName()),
