@@ -812,6 +812,11 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
         CraftSim.WIDGETS.OptimizationOptions.OPTION_KEYS.ENABLE_CONCENTRATION,
         true)
 
+    -- Shared pool so recipes competing for the same warbound/currency reagent
+    -- (e.g. decor wood) cannot over-commit owned stock in one send-to-queue batch.
+    ---@type table<string, number>
+    local unpurchaseableUnits = {}
+
     GUTIL.FrameDistributor {
         iterationTable = filteredResults,
         iterationsPerFrame = 5,
@@ -866,6 +871,12 @@ function CraftSim.RECIPE_SCAN:SendToCraftQueue()
             if recipeData.cooldownData.isCooldownRecipe == true and recipeData.cooldownData.currentCharges < craftsNeeded then
                 craftsNeeded = recipeData.cooldownData.currentCharges
             end
+
+            -- Ensure required selectable is allocated (currency reagents like decor wood)
+            -- before checking owned unpurchaseable/currency stock.
+            recipeData:SetNonQualityReagentsMax()
+            craftsNeeded = recipeData.reagentData:LimitCraftAmountByUnpurchaseable(
+                recipeData:GetCrafterUID(), craftsNeeded, unpurchaseableUnits)
 
             if craftsNeeded >= 1 then
                 CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData, amount = craftsNeeded }
