@@ -539,6 +539,11 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
     end
 
     -- ── Step 4: Queue All Results ─────────────────────────────────────────────
+    -- Shared pool so multiple recipes competing for the same warbound/currency
+    -- reagent (e.g. decor wood) cannot over-commit owned stock in one batch.
+    ---@type table<string, number>
+    local unpurchaseableUnits = {}
+
     for _, entry in ipairs(allScanEntries) do
         if not skipEntry[entry] then
             local opts = entry.options
@@ -566,35 +571,47 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                     if totalAmount <= 0 then
                         Logger:LogDebug("Skipping recipe with no queue amount: " .. effectiveRD.recipeName)
                     else
-                        local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
+                        -- Allocate required selectable (e.g. decor currency) before ownership check.
+                        effectiveRD:SetNonQualityReagentsMax()
+                        totalAmount = effectiveRD.reagentData:LimitCraftAmountByUnpurchaseable(
+                            entry.crafterUID, totalAmount, unpurchaseableUnits)
+                        if totalAmount <= 0 then
+                            Logger:LogDebug(
+                                "Skipping recipe with insufficient unpurchaseable/currency reagents: " ..
+                                effectiveRD.recipeName)
+                        else
+                            -- SBF crafts cannot exceed the unpurchaseable-limited total.
+                            sbfCrafts = math.min(sbfCrafts, totalAmount)
+                            local noSbfCrafts = math.max(0, totalAmount - sbfCrafts)
 
-                        -- Queue the with-SBF portion.
-                        if sbfCrafts > 0 then
-                            CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                                recipeData = entry.recipeData,
-                                amount = sbfCrafts,
-                            })
-                            if opts.skipOwnedMaterialCosts then
-                                CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
-                                    entry.crafterUID, entry.recipeData, sbfCrafts, opts.includeAltInventory)
+                            -- Queue the with-SBF portion.
+                            if sbfCrafts > 0 then
+                                CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                                    recipeData = entry.recipeData,
+                                    amount = sbfCrafts,
+                                })
+                                if opts.skipOwnedMaterialCosts then
+                                    CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
+                                        entry.crafterUID, entry.recipeData, sbfCrafts, opts.includeAltInventory)
+                                end
                             end
-                        end
 
-                        -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
-                        if noSbfCrafts > 0 then
-                            local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
-                            CraftSim.CRAFTQ.craftQueue:AddRecipe({
-                                recipeData = noSbfRD,
-                                amount = noSbfCrafts,
-                            })
-                            if opts.skipOwnedMaterialCosts then
-                                CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
-                                    entry.crafterUID, noSbfRD, noSbfCrafts, opts.includeAltInventory)
+                            -- Queue the without-SBF portion using the dedicated no-SBF recipe data when available.
+                            if noSbfCrafts > 0 then
+                                local noSbfRD = (sbfCrafts > 0 and entry.recipeDataNoSBF) or effectiveRD
+                                CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                                    recipeData = noSbfRD,
+                                    amount = noSbfCrafts,
+                                })
+                                if opts.skipOwnedMaterialCosts then
+                                    CraftSim.CRAFTQ:ConsumeOwnedReagentsFromPool(
+                                        entry.crafterUID, noSbfRD, noSbfCrafts, opts.includeAltInventory)
+                                end
                             end
-                        end
 
-                        if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
-                            CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                            if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_UPDATE_LAST_CRAFTING_COST") then
+                                CraftSim.DB.LAST_CRAFTING_COST:Save(entry.recipeData)
+                            end
                         end
                     end
                 end

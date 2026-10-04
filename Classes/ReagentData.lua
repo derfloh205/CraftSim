@@ -701,6 +701,114 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     return minFit
 end
 
+--- Max crafts limited only by owned unpurchaseable required reagents and currency reagents.
+--- Purchaseable AH mats do not limit (restock/queue assumes they can be bought).
+--- Finishing reagents are excluded (SBF split / AdjustSoulboundFinishingForAmount).
+---@param crafterUID CrafterUID
+---@param desiredAmount number
+---@param remainingUnits table<string, number>? shared pool across a batch; mutated when amount is reserved
+---@return number limitedAmount
+function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desiredAmount, remainingUnits)
+    desiredAmount = desiredAmount or 0
+    if desiredAmount <= 0 then
+        return 0
+    end
+
+    ---@class CraftSim.ReagentData.UnpurchaseableDemand
+    ---@field key string
+    ---@field perCraft number
+    ---@field owned number
+
+    ---@type CraftSim.ReagentData.UnpurchaseableDemand[]
+    local demands = {}
+
+    ---@param key string
+    ---@param perCraft number
+    ---@param owned number
+    local function addDemand(key, perCraft, owned)
+        if not key or not perCraft or perCraft <= 0 then
+            return
+        end
+        tinsert(demands, {
+            key = key,
+            perCraft = perCraft,
+            owned = owned or 0,
+        })
+    end
+
+    local isRecraft = self.recipeData and self.recipeData.isRecraft
+
+    if not isRecraft then
+        for _, requiredReagent in pairs(self.requiredReagents) do
+            if not requiredReagent:IsOrderReagentIn(self.recipeData) then
+                for _, reagentItem in pairs(requiredReagent.items) do
+                    if reagentItem.quantity > 0 and reagentItem.item then
+                        local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID())
+                            or reagentItem.item:GetItemID()
+                        if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
+                            local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
+                            addDemand("i:" .. itemID, reagentItem.quantity, owned)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if self:HasRequiredSelectableReagent() then
+        local slot = self.requiredSelectableReagentSlot
+        local perCraft = slot.maxQuantity or 1
+        if slot.activeReagent and not slot.activeReagent:IsOrderReagentIn(self.recipeData) then
+            if slot.activeReagent:IsCurrency() then
+                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(slot.activeReagent.currencyID)
+                local owned = (currencyInfo and currencyInfo.quantity) or 0
+                addDemand("c:" .. slot.activeReagent.currencyID, perCraft, owned)
+            elseif slot.activeReagent.item then
+                local itemID = slot.activeReagent.item:GetItemID()
+                if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
+                    local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
+                    addDemand("i:" .. itemID, perCraft, owned)
+                end
+            end
+        elseif not isRecraft and not slot.activeReagent and slot:IsCurrency() then
+            -- Required currency slot empty: cannot buy fill; block queuing.
+            local first = slot.possibleReagents and slot.possibleReagents[1]
+            if first and first.currencyID then
+                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(first.currencyID)
+                local owned = (currencyInfo and currencyInfo.quantity) or 0
+                addDemand("c:" .. first.currencyID, perCraft, owned)
+            else
+                return 0
+            end
+        end
+    end
+
+    if #demands == 0 then
+        return desiredAmount
+    end
+
+    local limited = desiredAmount
+    for _, demand in ipairs(demands) do
+        local available = demand.owned
+        if remainingUnits then
+            if remainingUnits[demand.key] == nil then
+                remainingUnits[demand.key] = demand.owned
+            end
+            available = remainingUnits[demand.key]
+        end
+        limited = math.min(limited, math.floor(available / demand.perCraft))
+    end
+    limited = math.max(0, limited)
+
+    if remainingUnits and limited > 0 then
+        for _, demand in ipairs(demands) do
+            remainingUnits[demand.key] = remainingUnits[demand.key] - demand.perCraft * limited
+        end
+    end
+
+    return limited
+end
+
 --- if one of the given item ids is a reagent used in the recipe, this returns true
 ---@param reagentItemIDs number[]
 ---@return boolean

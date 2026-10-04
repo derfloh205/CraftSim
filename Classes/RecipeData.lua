@@ -920,7 +920,7 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                 local possibleReagents = GUTIL:Filter(
                     slot.possibleReagents or {}, function(optionalReagent)
                         if optionalReagent:IsCurrency() then return false end
-                        return not GUTIL:isItemSoulbound(optionalReagent.item:GetItemID())
+                        return not CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(optionalReagent.item:GetItemID())
                     end)
                 -- if every possible reagent is soulbound, enforce first one
                 if #possibleReagents == 0 then
@@ -1643,7 +1643,7 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 -- fetch highest soulbounds per stat
                 local reagentStatMap = {}
                 for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                    if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(reagent.item:GetItemID()) then
                         for _, stat in pairs(reagent.professionStats:GetStatList()) do
                             local currentBest = reagentStatMap[stat.name]
                             local statValue = stat.value
@@ -1657,7 +1657,7 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
                 local filteredReagents = {}
                 for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                    if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(reagent.item:GetItemID()) then
                         local isHighest = false
                         for _, stat in pairs(reagent.professionStats:GetStatList()) do
                             local bestForStat = reagentStatMap[stat.name]
@@ -1717,8 +1717,8 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                     currentItemCount = currentItemCount + 1
 
                     -- Ownership / availability handling:
-                    -- - Non-soulbound items: can always be considered (you can buy them).
-                    -- - Soulbound items: only consider if the crafter actually owns them.
+                    -- - Purchaseable items: can always be considered (you can buy them).
+                    -- - Unpurchaseable (BoP / warbound / quest): only if the crafter owns them.
                     -- - Currencies: only consider if the crafter has some amount.
                     local hasOwned = false
                     if finishingReagent:IsCurrency() then
@@ -1746,10 +1746,10 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                         slot:SetCurrencyReagent(finishingReagent.currencyID)
                     else
                         local itemID = finishingReagent.item:GetItemID()
-                        local isSoulbound = GUTIL:isItemSoulbound(itemID)
+                        local isUnpurchaseable = CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID)
 
-                        if isSoulbound then
-                            -- Respect includeSoulbound flag and require ownership for soulbound finishers
+                        if isUnpurchaseable then
+                            -- Respect includeSoulbound flag and require ownership for unpurchaseable finishers
                             if not options.includeSoulbound or not hasOwned then
                                 frameDistributor2:Continue()
                                 return
@@ -1821,7 +1821,7 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
                 -- fetch highest soulbounds per stat
                 local reagentStatMap = {}
                 for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                    if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(reagent.item:GetItemID()) then
                         for _, stat in pairs(reagent.professionStats:GetStatList()) do
                             local currentBest = reagentStatMap[stat.name]
                             local statValue = stat.value
@@ -1835,7 +1835,7 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
                 -- filter possible reagents to include only the highest soulbound per stat + non-soulbounds
                 local filteredReagents = {}
                 for _, reagent in ipairs(possibleReagents) do
-                    if GUTIL:isItemSoulbound(reagent.item:GetItemID()) then
+                    if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(reagent.item:GetItemID()) then
                         local isHighest = false
                         for _, stat in pairs(reagent.professionStats:GetStatList()) do
                             local bestForStat = reagentStatMap[stat.name]
@@ -1862,8 +1862,8 @@ function CraftSim.RecipeData:OptimizeFinishingReagentsPermutation(options)
                     isViable = currencyInfo and currencyInfo.quantity and currencyInfo.quantity > 0
                 else
                     local itemID = reagent.item:GetItemID()
-                    local isSoulbound = GUTIL:isItemSoulbound(itemID)
-                    if isSoulbound then
+                    local isUnpurchaseable = CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID)
+                    if isUnpurchaseable then
                         if options.includeSoulbound then
                             local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true)
                             isViable = count and count > 0
@@ -1999,13 +1999,13 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
         local active = slot.activeReagent
         if active and not active:IsCurrency() and active.item then
             local itemID = active.item:GetItemID()
-            if GUTIL:isItemSoulbound(itemID) then
+            if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
                 local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, true) or 0
                 local perCraft = slot.maxQuantity or 1
                 local neededTotal = perCraft * amount
 
                 if owned < neededTotal then
-                    -- Need to replace this soulbound finisher with the best non-soulbound (or currency) option
+                    -- Need to replace this unpurchaseable finisher with the best purchaseable (or currency) option
                     local bestCandidate = nil
 
                     -- start without any finishing reagent
@@ -2027,8 +2027,8 @@ function CraftSim.RecipeData:AdjustSoulboundFinishingForAmount(amount)
                         else
                             if not candidate.item then return end
                             local candID = candidate.item:GetItemID()
-                            if GUTIL:isItemSoulbound(candID) then
-                                -- For this adjustment pass we only want non-soulbound alternatives
+                            if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(candID) then
+                                -- For this adjustment pass we only want purchaseable alternatives
                                 return
                             end
                             slot:SetReagent(candID)
@@ -3132,7 +3132,8 @@ function CraftSim.RecipeData:HasActiveSubRecipeInCraftQueue()
     return CraftSim.CRAFTQ.craftQueue:RecipeHasActiveSubRecipesInQueue(self)
 end
 
---- Returns itemID and perCraft for the first active soulbound finishing reagent, or nil if none.
+--- Returns itemID and perCraft for the first active unpurchaseable finishing reagent
+--- (BoP / warbound / quest), or nil if none.
 ---@return number? itemID
 ---@return number? perCraft
 function CraftSim.RecipeData:GetSoulboundFinishingReagentInfo()
@@ -3142,7 +3143,7 @@ function CraftSim.RecipeData:GetSoulboundFinishingReagentInfo()
         local active = slot.activeReagent
         if active and not active:IsCurrency() and active.item then
             local itemID = active.item:GetItemID()
-            if GUTIL:isItemSoulbound(itemID) then
+            if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
                 return itemID, (slot.maxQuantity or 1)
             end
         end
