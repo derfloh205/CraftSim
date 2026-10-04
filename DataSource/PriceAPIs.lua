@@ -14,6 +14,7 @@ CraftSimTSM = { name = "TradeSkillMaster" }
 CraftSimAUCTIONATOR = { name = "Auctionator" }
 CraftSimRECRYSTALLIZE = { name = "RECrystallize" }
 CraftSimEXCHANGE = { name = "OribosExchange" }
+CraftSimAUCTIONCOACH = { name = "AuctionCoach" }
 CraftSimNO_PRICE_API = { name = "None" }
 
 CraftSim.PRICE_APIS.available = true
@@ -66,6 +67,8 @@ function CraftSim.PRICE_APIS:SwitchAPIByAddonName(addonName)
         CraftSim.PRICE_API = CraftSimRECRYSTALLIZE
     elseif addonName == "OribosExchange" then
         CraftSim.PRICE_API = CraftSimEXCHANGE
+    elseif addonName == "AuctionCoach" then
+        CraftSim.PRICE_API = CraftSimAUCTIONCOACH
     end
 end
 
@@ -102,6 +105,7 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     local auctionatorLoaded = C_AddOns.IsAddOnLoaded(CraftSimAUCTIONATOR.name)
     local recrystallizeLoaded = C_AddOns.IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
     local exchangeLoaded = C_AddOns.IsAddOnLoaded(CraftSimEXCHANGE.name)
+    local auctionCoachLoaded = C_AddOns.IsAddOnLoaded(CraftSimAUCTIONCOACH.name)
     if tsmLoaded then
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
@@ -110,6 +114,8 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
         CraftSimPriceAPI = CraftSimRECRYSTALLIZE
     elseif exchangeLoaded then
         CraftSimPriceAPI = CraftSimEXCHANGE
+    elseif auctionCoachLoaded then
+        CraftSim.PRICE_API = CraftSimAUCTIONCOACH
     else
         Logger:LogWarning("CraftSim: No supported price source found")
         Logger:LogDebug("Supported addons are: ")
@@ -232,6 +238,25 @@ function CraftSimEXCHANGE:GetMinBuyoutByItemLink(itemLink)
         output = OEresult["region"]
     end
     return output
+end
+
+-- Auction Coach: lowest current listing, falling back to its market value.
+-- AuctionCoachAPI returns nil (not 0) when it has no data for an item.
+
+---@param itemID ItemID
+---@param isReagent boolean?
+---@return number
+function CraftSimAUCTIONCOACH:GetMinBuyoutByItemID(itemID, isReagent)
+    if not itemID or not AuctionCoachAPI then return 0 end
+    return AuctionCoachAPI.GetMinBuyout(itemID) or AuctionCoachAPI.GetMarketValue(itemID) or 0
+end
+
+---@param itemLink string
+---@param isReagent boolean?
+---@return number
+function CraftSimAUCTIONCOACH:GetMinBuyoutByItemLink(itemLink, isReagent)
+    if not itemLink or not AuctionCoachAPI then return 0 end
+    return AuctionCoachAPI.GetMinBuyout(itemLink) or AuctionCoachAPI.GetMarketValue(itemLink) or 0
 end
 
 ---@param itemID ItemID
