@@ -745,7 +745,7 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
                     if reagentItem.quantity > 0 and reagentItem.item then
                         local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID())
                             or reagentItem.item:GetItemID()
-                        if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
+                        if CraftSim.INVENTORY_SOURCE:ShouldLimitCraftAmountByOwned(itemID) then
                             local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
                             addDemand("i:" .. itemID, reagentItem.quantity, owned)
                         end
@@ -765,7 +765,7 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
                 addDemand("c:" .. slot.activeReagent.currencyID, perCraft, owned)
             elseif slot.activeReagent.item then
                 local itemID = slot.activeReagent.item:GetItemID()
-                if CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
+                if CraftSim.INVENTORY_SOURCE:ShouldLimitCraftAmountByOwned(itemID) then
                     local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
                     addDemand("i:" .. itemID, perCraft, owned)
                 end

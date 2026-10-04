@@ -977,6 +977,21 @@ function CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID)
     return IsItemUnpurchaseable(itemID)
 end
 
+--- True when craft-list / recipe-scan queue amounts should be capped by owned stock
+--- of this unpurchaseable reagent. Excluded IDs (e.g. Stabilized Derivate) are still
+--- unpurchaseable for shopping, but do not block alchemy CD queuing.
+---@param itemID number?
+---@return boolean
+function CraftSim.INVENTORY_SOURCE:ShouldLimitCraftAmountByOwned(itemID)
+    if not itemID then
+        return false
+    end
+    if CraftSim.CONST.UNPURCHASEABLE_CRAFT_LIMIT_EXCLUDE[itemID] then
+        return false
+    end
+    return IsItemUnpurchaseable(itemID)
+end
+
 --- Returns the total inventory count for an item using the active inventory addon.
 --- For use in restock count calculations (result items), NOT reagent tracking.
 ---@param itemIDOrLink ItemID | string
