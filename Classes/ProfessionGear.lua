@@ -27,6 +27,27 @@ function CraftSim.ProfessionGear:Equals(professionGear)
 	return itemLinkA == itemLinkB
 end
 
+--- Item link without crafter GUID and without the permanent enchant, so it identifies the item itself.
+---@param itemLink string
+---@return string
+local function GetLinkIgnoringEnchant(itemLink)
+	local link = string.gsub(itemLink, "Player.-:", "")
+	-- field directly after the itemID is the enchantID: |Hitem:245776:8035:... -> |Hitem:245776::...
+	link = string.gsub(link, "(|Hitem:%d+):%d*:", "%1::", 1)
+	return link
+end
+
+--- True when both refer to the same item and differ at most in their enchant (e.g. a tool that was (re)enchanted).
+---@param professionGear CraftSim.ProfessionGear?
+---@return boolean
+function CraftSim.ProfessionGear:IsSameItemIgnoringEnchant(professionGear)
+	if not self.item or not professionGear or not professionGear.item then
+		return false
+	end
+	return GetLinkIgnoringEnchant(self.item:GetItemLink()) ==
+		GetLinkIgnoringEnchant(professionGear.item:GetItemLink())
+end
+
 --- Either returns the itemlevel of the gear item or nil if the info is not yet loaded
 ---@return number? itemLevel
 function CraftSim.ProfessionGear:GetItemLevel()
