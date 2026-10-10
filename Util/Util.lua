@@ -768,27 +768,46 @@ function CraftSim.UTIL:GetPlayerMainProfessions()
     return professions
 end
 
----@param itemLink string
----@return number? enchantID
+--- Whether the professions window was opened by interacting with a crafting station (clicking the bench),
+--- as opposed to opening the profession from the spellbook / action bar.
+---@return boolean
+function CraftSim.UTIL:IsProfessionStationInteraction()
+    if not C_PlayerInteractionManager or not Enum.PlayerInteractionType or
+        not Enum.PlayerInteractionType.Professions then
+        return false
+    end
+    return C_PlayerInteractionManager.IsInteractingWithNpcOfType(Enum.PlayerInteractionType.Professions) == true
+end
+
 --- Opens a recipe in the professions window, unless WoW would block the call.
---- C_TradeSkillUI.OpenRecipe raises ADDON_ACTION_BLOCKED ("tried to call the protected function") when called by an
---- addon for a recipe with an unmet requirement, e.g. a crafting station like "Alchemist's Lab Bench" the player is
---- not standing at. In that case nothing is opened and false is returned.
+--- C_TradeSkillUI.OpenRecipe raises ADDON_ACTION_BLOCKED ("tried to call the protected function") when an addon
+--- calls it for a recipe that requires a crafting station (e.g. "Alchemist's Lab Bench"), unless the window was
+--- opened by interacting with that station. Standing next to the station is not enough: opening the profession
+--- from the action bar at the bench is still blocked. Recipes without requirements can always be opened.
+--- In the blocked cases nothing is opened and false is returned.
 ---@param recipeID number?
 ---@return boolean opened
 function CraftSim.UTIL:OpenRecipeSafe(recipeID)
     if not recipeID then
         return false
     end
-    for _, requirement in ipairs(C_TradeSkillUI.GetRecipeRequirements(recipeID) or {}) do
-        if not requirement.met then
+    local requirements = C_TradeSkillUI.GetRecipeRequirements(recipeID) or {}
+    if #requirements > 0 then
+        if not CraftSim.UTIL:IsProfessionStationInteraction() then
             return false
+        end
+        for _, requirement in ipairs(requirements) do
+            if not requirement.met then
+                return false
+            end
         end
     end
     C_TradeSkillUI.OpenRecipe(recipeID)
     return true
 end
 
+---@param itemLink string
+---@return number? enchantID
 function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)
     if not itemLink or not itemLink:find("|Hitem:") then return nil end
 
