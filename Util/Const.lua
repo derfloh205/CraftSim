@@ -810,7 +810,7 @@ CraftSim.CONST.STAT_MAP = {
 CraftSim.CONST.EMPTY_SLOT_LINK = "empty"
 CraftSim.CONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 
-CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = { "TradeSkillMaster", "Auctionator", "RECrystallize", "OribosExchange" }
+CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = { "TradeSkillMaster", "Auctionator", "RECrystallize", "OribosExchange", "AuctionCoach" }
 
 CraftSim.CONST.SUPPORTED_INVENTORY_ADDONS = { "Syndicator", "TradeSkillMaster" }
 
