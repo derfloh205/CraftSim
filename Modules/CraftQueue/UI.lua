@@ -1151,10 +1151,10 @@ function CraftSim.CRAFTQ.UI:Init()
                                 else
                                     if not ProfessionsFrame.CraftingPage:IsVisible() then
                                         ProfessionsFrame:GetTabButton(1):Click()
-                                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                        CraftSim.UTIL:OpenRecipeSafe(recipeData.recipeID)
                                     else
                                         RunNextFrame(function()
-                                            C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                                            CraftSim.UTIL:OpenRecipeSafe(recipeData.recipeID)
                                         end)
                                     end
                                 end
