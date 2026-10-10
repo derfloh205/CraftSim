@@ -770,6 +770,25 @@ end
 
 ---@param itemLink string
 ---@return number? enchantID
+--- Opens a recipe in the professions window, unless WoW would block the call.
+--- C_TradeSkillUI.OpenRecipe raises ADDON_ACTION_BLOCKED ("tried to call the protected function") when called by an
+--- addon for a recipe with an unmet requirement, e.g. a crafting station like "Alchemist's Lab Bench" the player is
+--- not standing at. In that case nothing is opened and false is returned.
+---@param recipeID number?
+---@return boolean opened
+function CraftSim.UTIL:OpenRecipeSafe(recipeID)
+    if not recipeID then
+        return false
+    end
+    for _, requirement in ipairs(C_TradeSkillUI.GetRecipeRequirements(recipeID) or {}) do
+        if not requirement.met then
+            return false
+        end
+    end
+    C_TradeSkillUI.OpenRecipe(recipeID)
+    return true
+end
+
 function CraftSim.UTIL:GetEnchantIDFromItemLink(itemLink)
     if not itemLink or not itemLink:find("|Hitem:") then return nil end
 
