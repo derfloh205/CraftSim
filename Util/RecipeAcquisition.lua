@@ -607,7 +607,7 @@ function CraftSim.RECIPE_ACQUISITION:NavigateToRecipe(recipeID)
             if not ProfessionsFrame.CraftingPage:IsVisible() then
                 ProfessionsFrame:GetTabButton(1):Click()
             end
-            C_TradeSkillUI.OpenRecipe(recipeID)
+            CraftSim.UTIL:OpenRecipeSafe(recipeID)
         end
     end
 
