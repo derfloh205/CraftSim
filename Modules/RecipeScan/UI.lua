@@ -977,7 +977,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                         end
                         CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
                     elseif IsMouseButtonDown("LeftButton") then
-                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                        CraftSim.UTIL:OpenRecipeSafe(recipeData.recipeID)
                     elseif IsMouseButtonDown("RightButton") then
                         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
                             rootDescription:CreateButton(L("RECIPE_SCAN_ADD_TO_CRAFT_QUEUE"), function()
