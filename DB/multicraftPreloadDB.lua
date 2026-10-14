@@ -38,6 +38,7 @@ end
 ---@param profession Enum.Profession
 ---@param preloaded boolean
 function CraftSim.DB.MULTICRAFT_PRELOAD:Save(profession, preloaded)
+    if not profession then return end
     CraftSimDB.multicraftPreloadDB.data[profession] = preloaded
 end
 
@@ -124,7 +125,9 @@ function CraftSim.DB.MULTICRAFT_PRELOAD:InitializeRecipes(professions)
         iterationsPerFrame = PRELOAD_OPERATIONS_PER_FRAME,
         continue = continueFunc,
         finally = function()
-            self:Save(prof1, true)
+            if prof1 then
+                self:Save(prof1, true)
+            end
             preloadedCount = 0
             total = #recipes2
             GUTIL.FrameDistributor {
@@ -132,7 +135,9 @@ function CraftSim.DB.MULTICRAFT_PRELOAD:InitializeRecipes(professions)
                 iterationsPerFrame = PRELOAD_OPERATIONS_PER_FRAME,
                 continue = continueFunc,
                 finally = function()
-                    self:Save(prof2, true)
+                    if prof2 then
+                        self:Save(prof2, true)
+                    end
                     CraftSim.DEBUG:StopProfiling("MulticraftPreloadDB:InitializeRecipes")
                     Logger:LogInfo("Finished preloading multicraft information for professions")
                 end,
