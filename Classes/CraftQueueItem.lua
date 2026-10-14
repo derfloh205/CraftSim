@@ -85,7 +85,17 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     local _, craftAbleAmount = self.recipeData:CanCraft(1)
     self.craftAbleAmount = craftAbleAmount
     self.canCraftOnce = craftAbleAmount > 0
-    self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
+    local gearEquipped = self.recipeData.professionGearSet:IsEquipped()
+    if not gearEquipped and self.recipeData:IsCrafter() then
+        -- the planned tool may have been (re)enchanted after queueing: adopt it instead of asking to equip it
+        local equippedSet = CraftSim.ProfessionGearSet(self.recipeData)
+        equippedSet:LoadCurrentEquippedSet()
+        if self.recipeData.professionGearSet:AdoptReEnchantedEquippedItems(equippedSet) then
+            self.recipeData:Update()
+            gearEquipped = self.recipeData.professionGearSet:IsEquipped()
+        end
+    end
+    self.gearEquipped = gearEquipped or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:OnCooldown()
     self.isCrafter = self:IsCrafter()
