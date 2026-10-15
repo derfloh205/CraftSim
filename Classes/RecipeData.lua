@@ -699,11 +699,11 @@ function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagent
         end
     end
 
+    -- SetOptionalReagents clears all optional/finishing slots; apply currency after.
+    self:SetOptionalReagents(optionalReagentIDs)
     for _, currencyID in ipairs(currencyReagentIDs) do
         self.reagentData:SetOptionalCurrencyReagent(currencyID)
     end
-
-    self:SetOptionalReagents(optionalReagentIDs)
     local reagentListItems = GUTIL:Map(requiredReagents, function(craftingReagentInfo)
         return CraftSim.ReagentListItem(craftingReagentInfo.reagent.itemID, craftingReagentInfo.quantity,
             craftingReagentInfo.reagent.currencyID)
@@ -760,10 +760,41 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
         end
     end
 
+    -- Clear modifying/optional/finishing selections first so empty UI slots
+    -- (no embellishment, unset missive, etc.) do not keep a stale allocation.
+    self.reagentData:ClearOptionalReagents()
+    if self.reagentData:HasRequiredSelectableReagent() then
+        self.reagentData.requiredSelectableReagentSlot:SetReagent(nil)
+    end
+
+    --- Apply an item/currency to the matching optional or required-selectable slot.
+    ---@param itemID number?
+    ---@param currencyID number?
+    ---@param isRequiredSlot boolean
+    local function applyModifyingReagent(itemID, currencyID, isRequiredSlot)
+        if currencyID and currencyID > 0 then
+            if isRequiredSlot and self.reagentData.requiredSelectableReagentSlot then
+                self.reagentData.requiredSelectableReagentSlot:SetCurrencyReagent(currencyID)
+            else
+                self.reagentData:SetOptionalCurrencyReagent(currencyID)
+            end
+            return true
+        end
+        if itemID and itemID > 0 then
+            if isRequiredSlot and self.reagentData.requiredSelectableReagentSlot then
+                self.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
+            else
+                self:SetOptionalReagent(itemID)
+            end
+            return true
+        end
+        return false
+    end
+
     local currentOptionalReagent = 1
     local currentFinishingReagent = 1
 
-    for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+    for slotIndex, currentSlot in ipairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = currentSlot.reagentType
         local hasCurrencyReagent = currentSlot.reagents[1] and currentSlot.reagents[1].currencyID ~= nil
 
@@ -793,54 +824,77 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 craftSimReagentItem.quantity = allocations
             end
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL or hasCurrencyReagent then
-            if hasCurrencyReagent then
+            local applied = false
+
+            -- Recraft linings/embellishments live on the item as modifications.
+            if currentTransaction.GetModification and currentSlot.dataSlotIndex then
+                local modification = currentTransaction:GetModification(currentSlot.dataSlotIndex)
+                local modReagent = modification and modification.reagent
+                if modReagent then
+                    applied = applyModifyingReagent(modReagent.itemID, modReagent.currencyID, currentSlot.required)
+                end
+            end
+
+            if not applied then
                 local slotAllocations = currentTransaction:GetAllocations(slotIndex)
                 if slotAllocations then
                     for _, reagent in pairs(currentSlot.reagents) do
-                        if reagent.currencyID then
-                            local allocation = slotAllocations:FindAllocationByReagent(reagent)
-                            if allocation and allocation:GetQuantity() > 0 then
-                                self.reagentData:SetOptionalCurrencyReagent(reagent.currencyID)
+                        local allocation = slotAllocations:FindAllocationByReagent(reagent)
+                        if allocation and allocation:GetQuantity() > 0 then
+                            applied = applyModifyingReagent(reagent.itemID, reagent.currencyID, currentSlot.required)
+                            if applied then
                                 break
                             end
                         end
                     end
                 end
-                currentOptionalReagent = currentOptionalReagent + 1
-            elseif currentSlot.required then
-                local requiredSelectableReagentSlot = reagentSlots[1][1]
-                local button = requiredSelectableReagentSlot.Button
-                local allocatedItemID = button:GetItemID()
-                if allocatedItemID then
-                    self.reagentData.requiredSelectableReagentSlot:SetReagent(allocatedItemID)
-                end
-            elseif reagentSlots[reagentType] ~= nil then
-                local optionalSlots = reagentSlots[reagentType][currentOptionalReagent]
-                if not optionalSlots then
-                    return
-                end
-                local button = optionalSlots.Button
-                local allocatedItemID = button:GetItemID()
-                if allocatedItemID then
-                    self:SetOptionalReagent(allocatedItemID)
-                end
+            end
 
+            -- UI fallback (Blizzard puts required modifying slots in Basic section index 1).
+            if not applied then
+                if currentSlot.required then
+                    local requiredSlot = reagentSlots[CraftSim.CONST.REAGENT_TYPE.REQUIRED]
+                        and reagentSlots[CraftSim.CONST.REAGENT_TYPE.REQUIRED][1]
+                    local allocatedItemID = requiredSlot and requiredSlot.Button and requiredSlot.Button:GetItemID()
+                    if allocatedItemID then
+                        applyModifyingReagent(allocatedItemID, nil, true)
+                    end
+                elseif not currentSlot.required then
+                    local optionalSlots = reagentSlots[reagentType]
+                        and reagentSlots[reagentType][currentOptionalReagent]
+                    local allocatedItemID = optionalSlots and optionalSlots.Button and optionalSlots.Button:GetItemID()
+                    if allocatedItemID then
+                        applyModifyingReagent(allocatedItemID, nil, false)
+                    end
+                end
+            end
+
+            -- Only non-required modifying slots occupy OptionalReagents UI indices.
+            if not currentSlot.required then
                 currentOptionalReagent = currentOptionalReagent + 1
             end
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
-            if reagentSlots[reagentType] ~= nil then
-                local optionalSlots = reagentSlots[reagentType][currentFinishingReagent]
-                if not optionalSlots then
-                    return
+            local applied = false
+            local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+            if slotAllocations then
+                for _, reagent in pairs(currentSlot.reagents) do
+                    local allocation = slotAllocations:FindAllocationByReagent(reagent)
+                    if allocation and allocation:GetQuantity() > 0 then
+                        applied = applyModifyingReagent(reagent.itemID, reagent.currencyID, false)
+                        if applied then
+                            break
+                        end
+                    end
                 end
-                local button = optionalSlots.Button
-                local allocatedItemID = button:GetItemID()
-                if allocatedItemID then
-                    self:SetOptionalReagent(allocatedItemID)
-                end
-
-                currentFinishingReagent = currentFinishingReagent + 1
             end
+            if not applied and reagentSlots[reagentType] then
+                local optionalSlots = reagentSlots[reagentType][currentFinishingReagent]
+                local allocatedItemID = optionalSlots and optionalSlots.Button and optionalSlots.Button:GetItemID()
+                if allocatedItemID then
+                    applyModifyingReagent(allocatedItemID, nil, false)
+                end
+            end
+            currentFinishingReagent = currentFinishingReagent + 1
         end
     end
 end
@@ -871,7 +925,9 @@ end
 
 ---@param itemIDList number[]
 function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
-    for _, itemID in pairs(itemIDList) do
+    -- Clear first so callers can express "no embellishment / no missive" by omission.
+    self.reagentData:ClearOptionalReagents()
+    for _, itemID in pairs(itemIDList or {}) do
         self:SetOptionalReagent(itemID)
     end
     self:Update()
@@ -910,10 +966,8 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                 -- Leave empty: spark/lining may already be on the recrafted item.
                 Logger:LogDebug("- Recraft: leaving required selectable empty", false, false)
             elseif slot:IsCurrency() then
-                local firstReagent = slot.possibleReagents[1]
-                if firstReagent then
-                    slot:SetCurrencyReagent(firstReagent.currencyID)
-                end
+                -- Crests (Mistcrest etc.) may be left empty for base-ilvl crafts.
+                Logger:LogDebug("- Currency required selectable: leaving empty", false, false)
             else
                 local cheapestReagent
                 local cheapestPrice
@@ -2540,17 +2594,142 @@ function CraftSim.RecipeData:GetOrderReagentDescriptor(reagentInfo)
         dataSlotIndex = schematicSlot and schematicSlot.dataSlotIndex
     end
 
-    if not itemID and not currencyID and dataSlotIndex and self.reagentData then
-        local matchingReagent = CraftSim.GUTIL:Find(self.reagentData.requiredReagents, function(reagent)
-            return reagent.dataSlotIndex == dataSlotIndex
-        end)
+    -- Do not invent an itemID for empty order reagents (e.g. unset embellishment /
+    -- modifying slots). Fabricating one incorrectly marks mats as customer-supplied.
 
-        if matchingReagent and matchingReagent.items and #matchingReagent.items > 0 then
-            itemID = matchingReagent.items[1].item:GetItemID()
+    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID, slotIndex = slotIndex }
+end
+
+--- Customer-provided reagents on a work order, keyed like Blizzard's reagentSlotProvidedByCustomer.
+---@param orderData CraftingOrderInfo?
+---@return table<number, boolean> dataSlotIndexSet
+---@return table<number, boolean> itemIDSet
+---@return table<number, boolean> currencyIDSet
+function CraftSim.RecipeData:GetCustomerProvidedOrderReagentKeys(orderData)
+    ---@type table<number, boolean>
+    local dataSlotIndexSet = {}
+    ---@type table<number, boolean>
+    local itemIDSet = {}
+    ---@type table<number, boolean>
+    local currencyIDSet = {}
+
+    orderData = orderData or self.orderData
+    if not orderData then
+        return dataSlotIndexSet, itemIDSet, currencyIDSet
+    end
+
+    for _, reagentInfo in ipairs(orderData.reagents or {}) do
+        local d = self:GetOrderReagentDescriptor(reagentInfo)
+        -- Match Blizzard: every order.reagents row marks the slot customer-provided
+        -- (including empty embellishment / optional rows), so we must not send
+        -- crafter allocations for that dataSlotIndex.
+        if d.dataSlotIndex then
+            dataSlotIndexSet[d.dataSlotIndex] = true
+        end
+        if d.itemID then
+            itemIDSet[d.itemID] = true
+        end
+        if d.currencyID then
+            currencyIDSet[d.currencyID] = true
         end
     end
 
-    return { dataSlotIndex = dataSlotIndex, itemID = itemID, currencyID = currencyID, slotIndex = slotIndex }
+    return dataSlotIndexSet, itemIDSet, currencyIDSet
+end
+
+--- Work-order craft reagent table matching Blizzard's CraftOrder/RecraftOrder predicate:
+--- ModifiedReagent allocations with quantity > 0 that are not customer-provided.
+---@param orderData CraftingOrderInfo?
+---@return CraftingReagentInfo[]
+function CraftSim.RecipeData:GetWorkOrderCraftingReagentInfoTbl(orderData)
+    orderData = orderData or self.orderData
+    local customerSlots, customerItemIDs, customerCurrencyIDs = self:GetCustomerProvidedOrderReagentKeys(orderData)
+    ---@type CraftingReagentInfo[]
+    local craftingReagentInfoTbl = {}
+
+    ---@param info CraftingReagentInfo?
+    local function consider(info)
+        if not info or not info.reagent or not info.dataSlotIndex then
+            return
+        end
+        if not info.quantity or info.quantity <= 0 then
+            return
+        end
+        if customerSlots[info.dataSlotIndex] then
+            return
+        end
+        local itemID = info.reagent.itemID
+        local currencyID = info.reagent.currencyID
+        if itemID and customerItemIDs[itemID] then
+            return
+        end
+        if currencyID and customerCurrencyIDs[currencyID] then
+            return
+        end
+        tinsert(craftingReagentInfoTbl, info)
+    end
+
+    -- Quality required mats (ModifiedReagent / Basic). Non-quality required are never sent.
+    for _, reagent in ipairs(self.reagentData.requiredReagents) do
+        if reagent.hasQuality then
+            for _, info in ipairs(reagent:GetCraftingReagentInfos()) do
+                consider(info)
+            end
+        end
+    end
+
+    -- Required-selectable (spark/crest), optional/modifying, finishing.
+    if self.reagentData:HasRequiredSelectableReagent() then
+        consider(self.reagentData.requiredSelectableReagentSlot:GetCraftingReagentInfo())
+    end
+    for _, info in ipairs(self.reagentData:GetOptionalCraftingReagentInfoTbl()) do
+        consider(info)
+    end
+
+    return craftingReagentInfoTbl
+end
+
+--- Mirrors Professions.PrepareRecipeRecraft: drop reagents already present on the
+--- recrafted item at the same dataSlotIndex (Blizzard then passes nil for removals).
+---@param craftingReagentInfoTbl CraftingReagentInfo[]
+---@param orderData CraftingOrderInfo
+function CraftSim.RecipeData:PrepareRecraftCraftingReagents(craftingReagentInfoTbl, orderData)
+    if not orderData or not orderData.orderID then
+        return
+    end
+    if not C_TradeSkillUI.GetItemSlotModificationsForOrder then
+        return
+    end
+
+    local slotMods = C_TradeSkillUI.GetItemSlotModificationsForOrder(orderData.orderID)
+    if not slotMods then
+        return
+    end
+
+    for dataSlotIndex, modification in pairs(slotMods) do
+        if type(dataSlotIndex) == "number" then
+            local reagent = modification and modification.reagent
+            if reagent then
+                local modItemID = reagent.itemID
+                local modCurrencyID = reagent.currencyID
+                if modItemID == 0 then modItemID = nil end
+                if modCurrencyID == 0 then modCurrencyID = nil end
+                local modDataSlotIndex = modification.dataSlotIndex or dataSlotIndex
+                if modItemID or modCurrencyID then
+                    for i = #craftingReagentInfoTbl, 1, -1 do
+                        local info = craftingReagentInfoTbl[i]
+                        local r = info.reagent
+                        local matches = (modItemID and r.itemID == modItemID)
+                            or (modCurrencyID and r.currencyID == modCurrencyID)
+                        if matches and info.dataSlotIndex == modDataSlotIndex then
+                            tremove(craftingReagentInfoTbl, i)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 
 --- Requires a hardware event
@@ -2558,9 +2737,24 @@ end
 ---@return boolean crafted true if a craft/recraft API call was made
 function CraftSim.RecipeData:Craft(amount)
     amount = amount or 1
-    -- TODO: maybe check if crafting is possible (correct profession window open?)
-    -- Also what about recipe requirements
-    local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    -- Prefer live claimed-order data (outputItemGUID / reagents) over a queued snapshot.
+    -- Compare orderIDs as strings: BigUInteger vs copied number can fail with ==.
+    local orderData = self.orderData
+    if orderData and orderData.orderID then
+        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+        if claimedOrder and claimedOrder.orderID
+            and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, orderData.orderID) then
+            orderData = claimedOrder
+        end
+    end
+
+    local craftingReagentInfoTbl
+    if orderData and orderData.orderID then
+        -- Match Blizzard CraftOrder/RecraftOrder: only non-customer ModifiedReagent rows.
+        craftingReagentInfoTbl = self:GetWorkOrderCraftingReagentInfoTbl(orderData)
+    else
+        craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    end
 
     if self.isSalvageRecipe then
         if self.reagentData.salvageReagentSlot.activeItem then
@@ -2576,26 +2770,8 @@ function CraftSim.RecipeData:Craft(amount)
         return false
     end
 
-    -- Prefer live claimed-order data (outputItemGUID / reagents) over a queued snapshot.
-    -- Compare orderIDs as strings: BigUInteger vs copied number can fail with ==.
-    local orderData = self.orderData
-    if orderData and orderData.orderID then
-        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-        if claimedOrder and claimedOrder.orderID
-            and tostring(claimedOrder.orderID) == tostring(orderData.orderID) then
-            orderData = claimedOrder
-        end
-    end
-
     if orderData and orderData.orderID then
         amount = 1
-        local suppliedIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
-            return self:GetItemIDFromReagentInfo(reagentInfo)
-        end)
-
-        craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
-            return not tContains(suppliedIDs, craftingReagentInfo.reagent.itemID)
-        end)
 
         -- Recraft orders must use RecraftRecipeForOrder (same as Blizzard's order view).
         -- CraftRecipe does not attach the result to a recraft work order for submit.
@@ -2607,6 +2783,7 @@ function CraftSim.RecipeData:Craft(amount)
                 itemGUID = self.orderData.outputItemGUID
             end
             if itemGUID then
+                self:PrepareRecraftCraftingReagents(craftingReagentInfoTbl, orderData)
                 Logger:LogDebug(
                     "Craft RecraftRecipeForOrder orderID={orderID} recipeID={recipeID}",
                     orderData.orderID, self.recipeID)

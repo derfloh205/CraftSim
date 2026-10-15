@@ -36,6 +36,27 @@ function CraftSim.UTIL:GetOrderTypeText(orderType)
     return orderTypeText
 end
 
+--- Compare crafting order IDs safely (live BigUInteger vs queued/copied number).
+---@param a any
+---@param b any
+---@return boolean
+function CraftSim.UTIL:OrderIDsEqual(a, b)
+    if a == nil or b == nil then
+        return false
+    end
+    return tostring(a) == tostring(b)
+end
+
+--- Stable string key for pending-submit / order maps.
+---@param orderID any
+---@return string?
+function CraftSim.UTIL:OrderIDKey(orderID)
+    if orderID == nil then
+        return nil
+    end
+    return tostring(orderID)
+end
+
 --- Profession id for the open Professions UI. Prefer GetChildProfessionInfo (crafting tab); fall back to
 --- ProfessionsFrame.professionInfo (e.g. orders tab) so work-order actions still resolve a profession.
 ---@return number? profession

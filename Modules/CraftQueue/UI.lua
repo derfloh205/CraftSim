@@ -1133,13 +1133,15 @@ function CraftSim.CRAFTQ.UI:Init()
                                     -- Use fresh Blizzard order data when available to avoid tooltip taint
                                     local orderForView = recipeData.orderData
                                     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                                    if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                                    if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID,
+                                            recipeData.orderData.orderID) then
                                         orderForView = claimedOrder
                                     else
                                         local crafterOrders = C_CraftingOrders.GetCrafterOrders()
                                         if crafterOrders then
                                             for _, order in ipairs(crafterOrders) do
-                                                if order.orderID == recipeData.orderData.orderID then
+                                                if CraftSim.UTIL:OrderIDsEqual(order.orderID,
+                                                        recipeData.orderData.orderID) then
                                                     orderForView = order
                                                     break
                                                 end
@@ -3491,7 +3493,9 @@ function CraftSim.CRAFTQ.UI:GetOptionalReagentSlotsForRecipe(recipeID)
         local finishingIndex = 0
         for _, reagentSlotSchematic in ipairs((schematic and schematic.reagentSlotSchematics) or {}) do
             local slotTypeEnum = reagentSlotSchematic.reagentType
-            local isOptional = slotTypeEnum == Enum.CraftingReagentType.Optional
+            -- Blizzard renamed Optional → Modifying; keep a nil-safe fallback.
+            local modifyingType = Enum.CraftingReagentType.Modifying or Enum.CraftingReagentType.Optional
+            local isOptional = slotTypeEnum == modifyingType
             local isFinishing = slotTypeEnum == Enum.CraftingReagentType.Finishing
             if isOptional or isFinishing then
                 local itemIDs = {}
@@ -4586,7 +4590,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         if accessToOrders then
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
-            if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+            if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, recipeData.orderData.orderID) then
                 local pendingSubmit = CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(recipeData.orderData.orderID)
                 if claimedOrder.isFulfillable then
                     CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
@@ -4633,7 +4637,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         end
                         local currentClaimedOrder = C_CraftingOrders.GetClaimedOrder()
                         if not (currentClaimedOrder and recipeData.orderData and
-                                currentClaimedOrder.orderID == recipeData.orderData.orderID) then
+                                CraftSim.UTIL:OrderIDsEqual(currentClaimedOrder.orderID, recipeData.orderData.orderID)) then
                             CraftSim.CRAFTQ.UI:Update()
                             return
                         end
