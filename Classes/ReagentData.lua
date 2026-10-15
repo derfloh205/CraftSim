@@ -567,6 +567,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             end)
     end
 
+    local isWorkOrder = self.recipeData and self.recipeData:IsWorkOrder()
     local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
         ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
         function(optionalReagentSlot)
@@ -577,6 +578,11 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             end
             if optionalReagentSlot.locked then
                 return optionalReagentSlot.activeReagent == nil
+            end
+            if optionalReagentSlot.activeReagent
+                and optionalReagentSlot.activeReagent:IsCrest()
+                and isWorkOrder then
+                return true
             end
             -- Unallocated optional/finishing slots are always fine (especially on recrafts).
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
@@ -590,10 +596,15 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
         local slot = self.requiredSelectableReagentSlot
         if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
             hasrequiredSelectableReagent = true
+        elseif not slot.activeReagent then
+            -- Empty is fine: crests/sparks may be omitted, and recraft mods may
+            -- already be on the item.
+            hasrequiredSelectableReagent = true
         elseif slot.locked then
-            hasrequiredSelectableReagent = slot.activeReagent == nil
-        elseif not slot.activeReagent and isRecraft then
-            -- Spark/etc. may already be on the item being recrafted.
+            -- Locked slot with a non-order allocation cannot be crafted.
+            hasrequiredSelectableReagent = false
+        elseif slot.activeReagent:IsCrest() and isWorkOrder then
+            -- Work-order crests are for the customer; do not gate on crafter inventory.
             hasrequiredSelectableReagent = true
         else
             hasrequiredSelectableReagent = slot:HasItem(multiplier, crafterUID)
@@ -650,19 +661,19 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
         end
     end
 
+    local isWorkOrder = self.recipeData and self.recipeData:IsWorkOrder()
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
         if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
-            -- customer-provided spark/pvp currency (or recraft mods)
+            -- customer-provided spark/crest/pvp currency (or recraft mods)
         elseif slot.locked and slot.activeReagent then
             return 0
+        elseif slot.activeReagent and slot.activeReagent:IsCrest() and isWorkOrder then
+            -- Work-order crests are not limited by crafter crest inventory.
         elseif slot.activeReagent then
             currentMinimumReagentFit = math.min(slot:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
-        elseif not isRecraft then
-            -- Empty required selectable blocks normal crafts; recrafts may leave it empty
-            -- when the spark/mod is already on the item.
-            currentMinimumReagentFit = 0
         end
+        -- Empty required selectable does not limit craftable amount (crests/sparks optional).
     end
 
     Logger:LogDebug("minimum required fit: " .. tostring(currentMinimumReagentFit))
@@ -675,6 +686,10 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
             -- recraft/customer-provided optionals are locked but still craftable
         elseif optionalReagentSlot.locked and optionalReagentSlot.activeReagent then
             return 0
+        elseif optionalReagentSlot.activeReagent
+            and optionalReagentSlot.activeReagent:IsCrest()
+            and isWorkOrder then
+            -- Work-order crests are not limited by crafter crest inventory.
         elseif optionalReagentSlot.activeReagent then
             if not optionalReagentSlot:HasItem(1, crafterUID) then
                 return 0
@@ -758,7 +773,11 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
         local perCraft = slot.maxQuantity or 1
-        if slot.activeReagent and not slot.activeReagent:IsOrderReagentIn(self.recipeData) then
+        local isWorkOrder = self.recipeData and self.recipeData:IsWorkOrder()
+        -- Only count an allocated crest/spark. Empty slots invent no demand.
+        -- Work-order crests skip crafter inventory limits.
+        if slot.activeReagent and not slot.activeReagent:IsOrderReagentIn(self.recipeData)
+            and not (slot.activeReagent:IsCrest() and isWorkOrder) then
             if slot.activeReagent:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(slot.activeReagent.currencyID)
                 local owned = (currencyInfo and currencyInfo.quantity) or 0
@@ -769,16 +788,6 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
                     local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
                     addDemand("i:" .. itemID, perCraft, owned)
                 end
-            end
-        elseif not isRecraft and not slot.activeReagent and slot:IsCurrency() then
-            -- Required currency slot empty: cannot buy fill; block queuing.
-            local first = slot.possibleReagents and slot.possibleReagents[1]
-            if first and first.currencyID then
-                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(first.currencyID)
-                local owned = (currencyInfo and currencyInfo.quantity) or 0
-                addDemand("c:" .. first.currencyID, perCraft, owned)
-            else
-                return 0
             end
         end
     end
