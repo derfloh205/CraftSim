@@ -129,17 +129,18 @@ function CraftSim.CRAFTQ:IsCraftClickLocked()
     return false
 end
 
----@param orderID number?
+---@param orderID number|string?
 function CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
-    if orderID then
+    local key = CraftSim.UTIL:OrderIDKey(orderID)
+    if key then
         local expiresAt = GetTime() + (self.pendingWorkOrderSubmitLockSeconds or 1.0)
-        self.pendingWorkOrderSubmit[orderID] = expiresAt
+        self.pendingWorkOrderSubmit[key] = expiresAt
 
         -- Auto-recover if Blizzard never flips this order to fulfillable within the short lock window.
         C_Timer.After((self.pendingWorkOrderSubmitLockSeconds or 1.0) + 0.05, function()
-            local expiry = self.pendingWorkOrderSubmit[orderID]
+            local expiry = self.pendingWorkOrderSubmit[key]
             if expiry and GetTime() >= expiry then
-                self.pendingWorkOrderSubmit[orderID] = nil
+                self.pendingWorkOrderSubmit[key] = nil
                 if self.frame and self.frame:IsVisible() then
                     self.UI:Update()
                 end
@@ -148,21 +149,23 @@ function CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
     end
 end
 
----@param orderID number?
+---@param orderID number|string?
 function CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
-    if orderID then
-        self.pendingWorkOrderSubmit[orderID] = nil
+    local key = CraftSim.UTIL:OrderIDKey(orderID)
+    if key then
+        self.pendingWorkOrderSubmit[key] = nil
     end
 end
 
----@param orderID number?
+---@param orderID number|string?
 ---@return boolean
 function CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID)
-    if not orderID then
+    local key = CraftSim.UTIL:OrderIDKey(orderID)
+    if not key then
         return false
     end
 
-    local expiry = self.pendingWorkOrderSubmit[orderID]
+    local expiry = self.pendingWorkOrderSubmit[key]
     if not expiry then
         return false
     end
@@ -171,7 +174,7 @@ function CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID)
         return true
     end
 
-    self.pendingWorkOrderSubmit[orderID] = nil
+    self.pendingWorkOrderSubmit[key] = nil
     return false
 end
 
@@ -183,14 +186,15 @@ function CraftSim.CRAFTQ:SyncPendingWorkOrderSubmitState()
         return
     end
 
-    for orderID, _ in pairs(self.pendingWorkOrderSubmit) do
-        if orderID ~= claimedOrder.orderID then
-            self.pendingWorkOrderSubmit[orderID] = nil
+    local claimedKey = CraftSim.UTIL:OrderIDKey(claimedOrder.orderID)
+    for orderIDKey, _ in pairs(self.pendingWorkOrderSubmit) do
+        if orderIDKey ~= claimedKey then
+            self.pendingWorkOrderSubmit[orderIDKey] = nil
         end
     end
 
-    if claimedOrder.isFulfillable then
-        self.pendingWorkOrderSubmit[claimedOrder.orderID] = nil
+    if claimedOrder.isFulfillable and claimedKey then
+        self.pendingWorkOrderSubmit[claimedKey] = nil
     end
 end
 
@@ -371,15 +375,21 @@ function CraftSim.CRAFTQ:GetEnabledWorkOrderTypes()
     }
 end
 
----@param orderIDs table<number, boolean>
+---@param orderIDs table<string, boolean>
 function CraftSim.CRAFTQ:AccumulateWorkOrderIDs(orderIDs)
     local orders = C_CraftingOrders.GetCrafterOrders() or {}
     for _, order in ipairs(orders) do
-        orderIDs[order.orderID] = true
+        local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+        if key then
+            orderIDs[key] = true
+        end
     end
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
     if claimedOrder then
-        orderIDs[claimedOrder.orderID] = true
+        local key = CraftSim.UTIL:OrderIDKey(claimedOrder.orderID)
+        if key then
+            orderIDs[key] = true
+        end
     end
 end
 
@@ -578,7 +588,8 @@ function CraftSim.CRAFTQ:CollectReagentDemand(recipeData, craftAmount)
         end
     end
 
-    if recipeData.isEnchantingRecipe then
+    -- Enchanting WO uses CraftRecipe(orderID); crafter vellum is not consumed from bags.
+    if recipeData.isEnchantingRecipe and not recipeData:IsWorkOrder() then
         addDemand(CraftSim.CONST.ENCHANTING_VELLUM_ID, 1)
     end
 
@@ -765,7 +776,8 @@ function CraftSim.CRAFTQ:CollectReagentDemand(recipeData, craftAmount)
         end
     end
 
-    if recipeData.isEnchantingRecipe then
+    -- Enchanting WO uses CraftRecipe(orderID); crafter vellum is not consumed from bags.
+    if recipeData.isEnchantingRecipe and not recipeData:IsWorkOrder() then
         addDemand(CraftSim.CONST.ENCHANTING_VELLUM_ID, 1)
     end
 
@@ -1054,7 +1066,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                 local knowledgePointsRewarded = 0
 
                                 if isPatronOrder and maxPatronDurationHours > 0 then
-                                    local isClaimed = claimedOrder ~= nil and order.orderID == claimedOrder.orderID
+                                    local isClaimed = claimedOrder ~= nil
+                                        and CraftSim.UTIL:OrderIDsEqual(order.orderID, claimedOrder.orderID)
                                     local endTime = isClaimed and order.claimEndTime or order.expirationTime
                                     local remaining = CraftSim.WORK_ORDER_TRACKER:GetOrderRemainingSeconds(endTime)
                                     if remaining > maxPatronDurationHours * 3600 then
@@ -1209,19 +1222,21 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
                                             "CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION")
                                         local qualityWithoutConcentration = recipeData.resultData.expectedQuality
                                         local minQuality = order.minQuality
-                                        local hasMinQualityRequirement = minQuality and minQuality > 0
+                                        -- minQuality == 1 means "any quality" (Blizzard); only > 1 is a real gate.
+                                        local hasMinQualityRequirement = CraftSim.UTIL:OrderHasMinQualityRequirement(
+                                            minQuality)
                                         local queueAble = false
                                         if not hasMinQualityRequirement or
                                             recipeData.resultData.expectedQuality >= minQuality then
                                             queueAble = true
                                         end
 
-                                        if (forceConcentration or allowConcentration) and order.minQuality and
-                                            recipeData.resultData.expectedQualityConcentration == order.minQuality then
+                                        if hasMinQualityRequirement and (forceConcentration or allowConcentration) and
+                                            recipeData.resultData.expectedQualityConcentration == minQuality then
                                             recipeData.concentrating = true
                                             recipeData:Update()
                                             queueAble = true
-                                            if qualityWithoutConcentration < order.minQuality then
+                                            if qualityWithoutConcentration < minQuality then
                                                 local concentrationData = recipeData.concentrationData
                                                 if recipeData.concentrationCost <= 0 or
                                                     (not concentrationData) or
@@ -1287,8 +1302,8 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
 
                                         distributor:Continue()
                                     end
-                                    -- try to optimize for target quality
-                                    if order.minQuality and order.minQuality > 0 then
+                                    -- try to optimize for target quality (minQuality > 1 only)
+                                    if CraftSim.UTIL:OrderHasMinQualityRequirement(order.minQuality) then
                                         local maxQuality = (isPatronOrder and
                                                 CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_FORCE_CONCENTRATION"))
                                             and math.max(order.minQuality - 1, 1) or order.minQuality
@@ -1434,8 +1449,14 @@ function CraftSim.CRAFTQ:QueueFavorites()
 
     local concentrationData = CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local currentConcentration = concentrationData and concentrationData:GetSpendableAmount() or 0
+    -- Do not re-allocate concentration already reserved by crafts in the queue.
+    local openSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    if CraftSim.CRAFTQ.craftQueue and openSkillLineID and openSkillLineID > 0 then
+        currentConcentration = math.max(0, currentConcentration -
+            CraftSim.CRAFTQ.craftQueue:GetQueuedConcentrationCost(crafterUID, openSkillLineID))
+    end
 
-    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(C_TradeSkillUI.GetProfessionChildSkillLineID())
+    local currentExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(openSkillLineID)
 
     local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
 
@@ -1589,6 +1610,11 @@ function CraftSim.CRAFTQ:QueueFavorites()
                     return
                 end
                 currentConcentration = concentrationData:GetSpendableAmount()
+                if CraftSim.CRAFTQ.craftQueue then
+                    currentConcentration = math.max(0, currentConcentration -
+                        CraftSim.CRAFTQ.craftQueue:GetQueuedConcentrationCost(
+                            crafterUID, nil, profession, currentExpansionID))
+                end
 
                 GUTIL.FrameDistributor {
                     iterationTable = recipeIDs,

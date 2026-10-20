@@ -439,8 +439,14 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
             if rd.concentrating and rd.concentrationCost and rd.concentrationCost > 0 then
                 local key = entry.crafterUID .. ":" .. rd.professionData.skillLineID
                 if not concentrationGroups[key] then
+                    local spendable = (rd.concentrationData and rd.concentrationData:GetSpendableAmount()) or 0
+                    local reserved = 0
+                    if CraftSim.CRAFTQ.craftQueue then
+                        reserved = CraftSim.CRAFTQ.craftQueue:GetQueuedConcentrationCost(
+                            entry.crafterUID, rd.professionData.skillLineID)
+                    end
                     concentrationGroups[key] = {
-                        currentAmount = (rd.concentrationData and rd.concentrationData:GetSpendableAmount()) or 0,
+                        currentAmount = math.max(0, spendable - reserved),
                         entries = {},
                     }
                 end

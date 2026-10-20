@@ -258,7 +258,11 @@ end
 function CraftSim.Reagent:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 
-    local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
+    local orderData = recipeData.orderData
+    local orderItemIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
+        if not recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
+            return nil
+        end
         return recipeData:GetItemIDFromReagentInfo(reagentInfo)
     end)
 

@@ -82,6 +82,25 @@ end
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
 function CraftSim.CraftQueueItem:CalculateCanCraft()
     CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
+    -- Drop unowned crafter crests so crest-capable WO (NPC/personal) stay craftable at base ilvl.
+    if self.recipeData:IsWorkOrder() then
+        -- Align escrow with live claim before inventory checks / fills.
+        self.recipeData:SyncLiveOrderData()
+        -- Fill non-crest selectables (spark/currency) and under-allocated quality mats so
+        -- CanCraft matches craft-time prep. Crests stay empty (optional base ilvl).
+        if not self.recipeData.isRecraft then
+            self.recipeData:SetNonQualityReagentsMax()
+            self.recipeData:SetCheapestQualityReagentsMax()
+        end
+        self.recipeData:ClearUnownedCrafterCrestAllocations()
+        -- minQuality == 1 means no requirement; don't keep concentration from a prior mis-queue.
+        local orderData = self.recipeData.orderData
+        if self.recipeData.concentrating and orderData
+            and not CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality) then
+            self.recipeData.concentrating = false
+            self.recipeData:Update()
+        end
+    end
     local _, craftAbleAmount = self.recipeData:CanCraft(1)
     self.craftAbleAmount = craftAbleAmount
     self.canCraftOnce = craftAbleAmount > 0
@@ -333,7 +352,7 @@ function CraftSim.CraftQueueItem:GetPrecraftConditions()
     local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
     local orderData = self.recipeData.orderData
     local meetsMinQuality = true
-    if orderData and orderData.minQuality and orderData.minQuality > 0 then
+    if orderData and CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality) then
         meetsMinQuality = self.recipeData.resultData.expectedQuality >= orderData.minQuality
     end
 
