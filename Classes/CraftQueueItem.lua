@@ -101,9 +101,11 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
             self.recipeData:Update()
         end
     end
-    local _, craftAbleAmount = self.recipeData:CanCraft(1)
+    local hasEnoughReagents, craftAbleAmount = self.recipeData:CanCraft(1)
     self.craftAbleAmount = craftAbleAmount
-    self.canCraftOnce = craftAbleAmount > 0
+    -- Require both: HasEnough (exact allocated mats) and a positive craftable count.
+    -- craftAbleAmount alone can be math.huge when no reagent slot limits the craft.
+    self.canCraftOnce = hasEnoughReagents and craftAbleAmount > 0
     self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:OnCooldown()

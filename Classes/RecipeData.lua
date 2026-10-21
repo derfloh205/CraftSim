@@ -8,8 +8,6 @@ local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
---- LogSink category for work-order craft-from-queue diagnostics (filter: RecipeData.WorkOrderCraft).
-local WorkOrderCraftLogger = CraftSim.DEBUG:RegisterLogger("RecipeData.WorkOrderCraft")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
@@ -1061,15 +1059,23 @@ function CraftSim.RecipeData:HasRequiredSelectableReagent()
     return self.reagentData:HasRequiredSelectableReagent()
 end
 
---- Consideres Order Reagents
+--- Consideres Order Reagents.
+--- Also reallocates when the slot is full but the allocated qualities are not owned
+--- (e.g. queue optimized Q2, bags only have Q3) — prefer owned cheapest, else AH-cheapest.
 ---@param nonAllocatedOnly boolean?
 function CraftSim.RecipeData:SetCheapestQualityReagentsMax(nonAllocatedOnly)
+    local crafterUID = self:GetCrafterUID()
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local isOrderReagent = reagent:IsOrderReagentIn(self)
         if reagent.hasQuality then
             if not isOrderReagent then
-                if not nonAllocatedOnly and reagent:GetTotalQuantity() < reagent.requiredQuantity then
-                    reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
+                if not nonAllocatedOnly then
+                    local underAllocated = reagent:GetTotalQuantity() < reagent.requiredQuantity
+                    local allocatedButMissing = not underAllocated
+                        and not reagent:HasItems(1, crafterUID)
+                    if underAllocated or allocatedButMissing then
+                        reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled, crafterUID)
+                    end
                 end
             elseif isOrderReagent then
                 for _, reagentItem in ipairs(reagent.items) do
@@ -1080,8 +1086,11 @@ function CraftSim.RecipeData:SetCheapestQualityReagentsMax(nonAllocatedOnly)
                     end
                 end
                 -- Escrowed row matched the slot but not a quality item — fall back to crafter mats.
-                if reagent:GetTotalQuantity() < reagent.requiredQuantity then
-                    reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
+                local underAllocated = reagent:GetTotalQuantity() < reagent.requiredQuantity
+                local allocatedButMissing = not underAllocated
+                    and not reagent:HasItems(1, crafterUID)
+                if underAllocated or allocatedButMissing then
+                    reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled, crafterUID)
                 end
             end
         end
@@ -2893,7 +2902,8 @@ function CraftSim.RecipeData:SyncLiveOrderData()
         return live
     end
 
-    self.orderData.reagents = live.reagents
+    -- Copy reagents — do not alias Blizzard's claimed-order table (we append recraft mods below).
+    self.orderData.reagents = GUTIL:CopyTableDeep(live.reagents or {})
     self.orderData.reagentState = live.reagentState
     self.orderData.isRecraft = live.isRecraft
     self.orderData.minQuality = live.minQuality
@@ -2902,11 +2912,15 @@ function CraftSim.RecipeData:SyncLiveOrderData()
     end
     if live.isRecraft then
         self.isRecraft = true
+        -- Recraft linings/missives/crests live on the item, not always in live.reagents.
+        -- Re-inject after overwrite so IsOrderReagentIn / HasEnough don't demand bag copies
+        -- of customer-provided (on-item) mods → false "Missing Reagents".
+        self:AppendRecraftOrderModifications()
     end
     return live
 end
 
---- Structured WO craft diagnostics for LogSink / tooltips (case, IDs, tbl sample, blockers).
+--- Structured WO craft diagnostics for queue tooltips (case, IDs, tbl sample, blockers).
 ---@param orderData CraftingOrderInfo?
 ---@param craftingReagentInfoTbl CraftingReagentInfo[]?
 ---@param extras table<string, any>?
@@ -2944,7 +2958,8 @@ function CraftSim.RecipeData:BuildWorkOrderCraftDiagLine(orderData, craftingReag
                 break
             end
             local reagent = info.reagent or {}
-            tinsert(samples, string.format("{i=%s c=%s q=%s s=%s}",
+            -- Use [] not {} — LibLog treats {name} in the template string as placeholders.
+            tinsert(samples, string.format("[i=%s c=%s q=%s s=%s]",
                 tostring(reagent.itemID), tostring(reagent.currencyID),
                 tostring(info.quantity), tostring(info.dataSlotIndex)))
         end
@@ -2956,34 +2971,42 @@ function CraftSim.RecipeData:BuildWorkOrderCraftDiagLine(orderData, craftingReag
     return table.concat(parts, " ")
 end
 
---- Log WO craft diagnostics to LogSink under RecipeData.WorkOrderCraft (no chat spam).
----@param orderData CraftingOrderInfo?
----@param craftingReagentInfoTbl CraftingReagentInfo[]?
----@param extras table<string, any>?
-function CraftSim.RecipeData:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, extras)
-    WorkOrderCraftLogger:LogDebug(self:BuildWorkOrderCraftDiagLine(orderData, craftingReagentInfoTbl, extras))
-end
+--- Open Orders tab + OrderView if needed, then craft via Blizzard CraftOrder / RecraftOrder
+--- (same as Create). Falls back to false when OrderView cannot be prepared.
+---@param orderData CraftingOrderInfo
+---@return boolean crafted
+function CraftSim.RecipeData:TryCraftViaBlizzardOrderView(orderData)
+    CraftSim.UTIL:EnsureWorkOrderViewOpen(orderData)
 
---- BYO quality-reagent assert: after fill, crafter quality qty should be > 0 when required.
----@return boolean ok
-function CraftSim.RecipeData:HasAllocatedQualityReagentsWhenRequired()
-    if not self.hasQualityReagents then
-        return true
+    local orderView = ProfessionsFrame and ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage.OrderView
+    if not (orderView and orderView.order and orderView.CraftOrder) then
+        return false
     end
-    local needsCrafterQuality = false
-    local allocatedAny = false
-    for _, reagent in ipairs(self.reagentData.requiredReagents) do
-        if reagent.hasQuality and not reagent:IsOrderReagentIn(self) then
-            needsCrafterQuality = true
-            if reagent:GetTotalQuantity() > 0 then
-                allocatedAny = true
-            end
+    if not CraftSim.UTIL:OrderIDsEqual(orderView.order.orderID, orderData.orderID) then
+        return false
+    end
+    local schematicForm = orderView.OrderDetails and orderView.OrderDetails.SchematicForm
+    local transaction = schematicForm and schematicForm.transaction
+    if not transaction then
+        return false
+    end
+
+    if transaction.SetApplyConcentration then
+        transaction:SetApplyConcentration(self.concentrating and true or false)
+    end
+
+    local isRecraft = (orderView.IsRecrafting and orderView:IsRecrafting())
+        or orderData.isRecraft or self.isRecraft
+    if isRecraft then
+        if orderView.RecraftOrder then
+            orderView:RecraftOrder()
+            return true
         end
+        return false
     end
-    if not needsCrafterQuality then
-        return true
-    end
-    return allocatedAny
+
+    orderView:CraftOrder()
+    return true
 end
 
 --- Requires a hardware event
@@ -3005,18 +3028,9 @@ function CraftSim.RecipeData:Craft(amount)
 
     ---@type CraftingReagentInfo[]
     local craftingReagentInfoTbl
-    local byoQualityEmpty = false
     if orderData and orderData.orderID then
         -- Case BYO → strip nothing. Case SOME/ALL → strip customer item/currency / Customer slots.
         craftingReagentInfoTbl = self:GetWorkOrderCraftingReagentInfoTbl(orderData)
-
-        local provisionCase = self:GetWorkOrderReagentCase(orderData)
-        if provisionCase == "byo" and not self:HasAllocatedQualityReagentsWhenRequired() then
-            byoQualityEmpty = true
-            WorkOrderCraftLogger:LogWarning(
-                "BYO WO recipe {recipeID} still has 0 quality reagent qty after fill",
-                self.recipeID)
-        end
     else
         craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
     end
@@ -3037,48 +3051,34 @@ function CraftSim.RecipeData:Craft(amount)
 
     if orderData and orderData.orderID then
         amount = 1
-        local provisionCase = self:GetWorkOrderReagentCase(orderData)
         local orderID = orderData.orderID
         -- Recraft only when the order/recipe is actually a recraft — do not treat a bare
         -- outputItemGUID as recraft (non-recraft orders can carry a GUID from prior state).
         local isRecraftOrder = (orderData.isRecraft == true) or (self.isRecraft == true)
 
+        -- Prefer Blizzard OrderView Create path (opens Orders tab + order if needed).
+        if self:TryCraftViaBlizzardOrderView(orderData) then
+            return true
+        end
+
         if isRecraftOrder then
             local itemGUID = orderData.outputItemGUID
                 or (self.orderData and self.orderData.outputItemGUID)
             if not itemGUID then
-                WorkOrderCraftLogger:LogWarning(
+                Logger:LogWarning(
                     "Recraft order {orderID} missing outputItemGUID; cannot craft from queue",
                     orderID)
-                self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
-                    path = "recraft",
-                    blocker = "recraft_missing_guid",
-                })
                 return false
             end
             self:PrepareRecraftCraftingReagents(craftingReagentInfoTbl, orderData)
-            self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
-                path = "recraft",
-                blocker = byoQualityEmpty and "byo_quality_empty" or nil,
-            })
-            WorkOrderCraftLogger:LogDebug(
-                "Craft RecraftRecipeForOrder case={case} orderID={orderID} recipeID={recipeID} reagents={count}",
-                provisionCase, orderID, self.recipeID, #craftingReagentInfoTbl)
             C_TradeSkillUI.RecraftRecipeForOrder(orderID, itemGUID, craftingReagentInfoTbl, nil,
                 self.concentrating)
             return true
         end
 
-        self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
-            path = "craft",
-            blocker = byoQualityEmpty and "byo_quality_empty" or nil,
-        })
-
         -- Enchanting WO: Blizzard CraftOrder uses CraftRecipe(orderID), not CraftEnchant(vellum).
-        WorkOrderCraftLogger:LogDebug(
-            "CraftRecipe WO case={case} orderID={orderID} recipeID={recipeID} enchant={enchant} reagents={count}",
-            provisionCase, orderID, self.recipeID, self.isEnchantingRecipe, #craftingReagentInfoTbl)
-        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, orderID,
+        local recipeLevel = self.recipeInfo and self.recipeInfo.unlockedRecipeLevel or nil
+        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, recipeLevel, orderID,
             self.concentrating)
         return true
     end

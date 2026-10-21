@@ -4185,9 +4185,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         if not crafted then
                             CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
                             CraftSim.CRAFTQ:EndCraftClickLock()
-                            recipeData:LogWorkOrderCraftDiagnostics(currentClaimedOrder, nil, {
-                                blocker = "craft_api_not_called",
-                            })
                         end
                         CraftSim.CRAFTQ.UI:Update()
                     end
@@ -4225,6 +4222,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 craftButtonColumn.craftButton.clickCallback = function()
                     C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
                         recipeData.professionData.professionInfo.profession)
+                    -- Warm OrderView so the next Craft click has Blizzard's schematic ready.
+                    local claimed = C_CraftingOrders.GetClaimedOrder()
+                    if claimed and CraftSim.UTIL:OrderIDsEqual(claimed.orderID, recipeData.orderData.orderID) then
+                        CraftSim.UTIL:EnsureWorkOrderViewOpen(claimed)
+                    end
                     -- Refresh so the next click uses live claimed-order BigUInteger IDs.
                     CraftSim.CRAFTQ.UI:Update()
                 end

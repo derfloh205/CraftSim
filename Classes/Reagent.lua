@@ -142,13 +142,13 @@ function CraftSim.Reagent:GetTotalQuantity()
     return total
 end
 
---- returns wether the player has enough of the given required item's allocations (times the multiplier)
+--- returns wether the player has enough of the given required item's allocations (times the multiplier).
+--- Exact allocated qualities only — CraftSim crafts with those item IDs (no quality substitution).
 ---@param multiplier number? default: 1
 ---@param crafterUID CrafterUID?
 function CraftSim.Reagent:HasItems(multiplier, crafterUID)
     multiplier = multiplier or 1
 
-    -- check if the player owns enough of each allocated items's quantity and sum up the allocated quantities
     local totalQuantity = 0
     for _, reagentItem in pairs(self.items) do
         local hasItems = reagentItem:HasItem(multiplier, crafterUID)
@@ -158,55 +158,71 @@ function CraftSim.Reagent:HasItems(multiplier, crafterUID)
         end
     end
 
-    -- check if the allocated quantity is enough to satisfy the required quantity (times multiplier)
     totalQuantity = totalQuantity * multiplier
     local requiredQuantity = self.requiredQuantity * multiplier
-    local hasRequiredTotalQuantity = totalQuantity >= requiredQuantity
-
-    return hasRequiredTotalQuantity
+    return totalQuantity >= requiredQuantity
 end
 
---- check how many times the player can fulfill the allocated item quantity
+--- check how many times the player can fulfill the allocated item quantity (exact qualities).
 ---@param crafterUID CrafterUID
 function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
     local currentMinTimes = math.huge
-    for q, reagentItem in pairs(self.items) do
+    local anyAllocated = false
+    for _, reagentItem in pairs(self.items) do
         if reagentItem.quantity > 0 then
-            -- use original item if available
-            local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
-                reagentItem.item:GetItemID()
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+            anyAllocated = true
+            local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID())
+                or reagentItem.item:GetItemID()
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
             local itemFitCount = math.floor(itemCount / reagentItem.quantity)
             currentMinTimes = math.min(itemFitCount, currentMinTimes)
         end
     end
 
+    if not anyAllocated then
+        return 0
+    end
+
     return currentMinTimes
 end
 
+--- Allocate full required quantity to one quality: cheapest among qualities the crafter
+--- actually owns enough of; otherwise fall back to AH-cheapest (may still be uncraftable).
 ---@param considerSubCrafts boolean?
-function CraftSim.Reagent:SetCheapestQualityMax(considerSubCrafts)
-    if self.hasQuality then
-        local itemPrices = {}
-        local cheapestQuality = 1
-        local cheapest = math.huge
-        for i = 1, 3 do
-            if self.items[i] then
-                itemPrices[i] = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[i].item:GetItemID(), true, false,
-                    considerSubCrafts)
-                if itemPrices[i] < cheapest then
-                    cheapest = itemPrices[i]
-                    cheapestQuality = i
-                end
+---@param crafterUID CrafterUID?
+function CraftSim.Reagent:SetCheapestQualityMax(considerSubCrafts, crafterUID)
+    if not self.hasQuality then
+        self.items[1].quantity = self.requiredQuantity
+        return
+    end
+
+    crafterUID = crafterUID or CraftSim.UTIL:GetPlayerCrafterUID()
+    local cheapestQuality = 1
+    local cheapest = math.huge
+    local cheapestOwnedQuality = nil
+    local cheapestOwned = math.huge
+
+    for i = 1, 3 do
+        local reagentItem = self.items[i]
+        if reagentItem and reagentItem.item then
+            local itemID = reagentItem.item:GetItemID()
+            local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, considerSubCrafts)
+            if price < cheapest then
+                cheapest = price
+                cheapestQuality = i
+            end
+            local count = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
+            if count >= self.requiredQuantity and price < cheapestOwned then
+                cheapestOwned = price
+                cheapestOwnedQuality = i
             end
         end
+    end
 
-
-        self:Clear()
-
-        self.items[cheapestQuality].quantity = self.requiredQuantity
-    else
-        self.items[1].quantity = self.requiredQuantity
+    self:Clear()
+    local qualityID = cheapestOwnedQuality or cheapestQuality
+    if self.items[qualityID] then
+        self.items[qualityID].quantity = self.requiredQuantity
     end
 end
 

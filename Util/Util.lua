@@ -229,6 +229,56 @@ function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
 end
 
+--- Open Blizzard's Orders tab + OrderView for this order (same as clicking the row).
+--- Needed so CraftOrder/RecraftOrder have a ready schematic transaction — crafting from
+--- the main Crafting tab alone often leaves OrderView uninitialized.
+---@param orderData CraftingOrderInfo?
+---@return boolean opened true if OrderView is showing this order
+function CraftSim.UTIL:EnsureWorkOrderViewOpen(orderData)
+    if not orderData or not orderData.orderID then
+        return false
+    end
+    if not (ProfessionsFrame and ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage.ViewOrder) then
+        return false
+    end
+    if C_CraftingOrders.ShouldShowCraftingOrderTab and not C_CraftingOrders.ShouldShowCraftingOrderTab() then
+        return false
+    end
+    if ProfessionsFrame.isCraftingOrdersTabEnabled == false then
+        return false
+    end
+
+    -- Prefer live claimed order object (BigUInteger IDs / fresh escrow).
+    local orderForView = orderData
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, orderData.orderID) then
+        orderForView = claimedOrder
+    end
+
+    if not ProfessionsFrame.OrdersPage:IsVisible() then
+        local tabButton = ProfessionsFrame.GetTabButton and ProfessionsFrame:GetTabButton(3)
+        if tabButton then
+            tabButton:Click()
+        end
+    end
+
+    local orderView = ProfessionsFrame.OrdersPage.OrderView
+    local alreadyOpen = orderView and orderView.order
+        and CraftSim.UTIL:OrderIDsEqual(orderView.order.orderID, orderForView.orderID)
+        and orderView.OrderDetails and orderView.OrderDetails.SchematicForm
+        and orderView.OrderDetails.SchematicForm.transaction
+
+    if not alreadyOpen then
+        ProfessionsFrame.OrdersPage:ViewOrder(orderForView)
+    end
+
+    orderView = ProfessionsFrame.OrdersPage.OrderView
+    return orderView and orderView.order
+        and CraftSim.UTIL:OrderIDsEqual(orderView.order.orderID, orderForView.orderID)
+        and orderView.OrderDetails and orderView.OrderDetails.SchematicForm
+        and orderView.OrderDetails.SchematicForm.transaction ~= nil
+end
+
 ---@param skillLineID number
 ---@return CraftSim.EXPANSION_IDS expansionID
 function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
