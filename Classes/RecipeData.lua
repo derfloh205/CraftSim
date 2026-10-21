@@ -8,6 +8,8 @@ local concentrationCostCache = {}
 local concentrationCacheStats = { hits = 0, misses = 0 }
 
 local Logger = CraftSim.DEBUG:RegisterLogger("RecipeData")
+--- LogSink category for work-order craft-from-queue diagnostics (filter: RecipeData.WorkOrderCraft).
+local WorkOrderCraftLogger = CraftSim.DEBUG:RegisterLogger("RecipeData.WorkOrderCraft")
 
 -- Helper function to generate cache key for UpdateConcentrationCost
 ---@param recipeData CraftSim.RecipeData
@@ -2904,7 +2906,7 @@ function CraftSim.RecipeData:SyncLiveOrderData()
     return live
 end
 
---- Structured WO craft diagnostics for chat / Logger (case, IDs, tbl sample, blockers).
+--- Structured WO craft diagnostics for LogSink / tooltips (case, IDs, tbl sample, blockers).
 ---@param orderData CraftingOrderInfo?
 ---@param craftingReagentInfoTbl CraftingReagentInfo[]?
 ---@param extras table<string, any>?
@@ -2954,14 +2956,12 @@ function CraftSim.RecipeData:BuildWorkOrderCraftDiagLine(orderData, craftingReag
     return table.concat(parts, " ")
 end
 
---- Print WO craft diagnostics to Logger and chat.
+--- Log WO craft diagnostics to LogSink under RecipeData.WorkOrderCraft (no chat spam).
 ---@param orderData CraftingOrderInfo?
 ---@param craftingReagentInfoTbl CraftingReagentInfo[]?
 ---@param extras table<string, any>?
-function CraftSim.RecipeData:PrintWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, extras)
-    local line = self:BuildWorkOrderCraftDiagLine(orderData, craftingReagentInfoTbl, extras)
-    Logger:LogDebug(line)
-    CraftSim.DEBUG:SystemPrint(GUTIL:ColorizeText("CraftSim: ", GUTIL.COLORS.BRIGHT_BLUE) .. line)
+function CraftSim.RecipeData:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, extras)
+    WorkOrderCraftLogger:LogDebug(self:BuildWorkOrderCraftDiagLine(orderData, craftingReagentInfoTbl, extras))
 end
 
 --- BYO quality-reagent assert: after fill, crafter quality qty should be > 0 when required.
@@ -3013,7 +3013,7 @@ function CraftSim.RecipeData:Craft(amount)
         local provisionCase = self:GetWorkOrderReagentCase(orderData)
         if provisionCase == "byo" and not self:HasAllocatedQualityReagentsWhenRequired() then
             byoQualityEmpty = true
-            Logger:LogWarning(
+            WorkOrderCraftLogger:LogWarning(
                 "BYO WO recipe {recipeID} still has 0 quality reagent qty after fill",
                 self.recipeID)
         end
@@ -3047,21 +3047,21 @@ function CraftSim.RecipeData:Craft(amount)
             local itemGUID = orderData.outputItemGUID
                 or (self.orderData and self.orderData.outputItemGUID)
             if not itemGUID then
-                Logger:LogWarning(
+                WorkOrderCraftLogger:LogWarning(
                     "Recraft order {orderID} missing outputItemGUID; cannot craft from queue",
                     orderID)
-                self:PrintWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
+                self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
                     path = "recraft",
                     blocker = "recraft_missing_guid",
                 })
                 return false
             end
             self:PrepareRecraftCraftingReagents(craftingReagentInfoTbl, orderData)
-            self:PrintWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
+            self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
                 path = "recraft",
                 blocker = byoQualityEmpty and "byo_quality_empty" or nil,
             })
-            Logger:LogDebug(
+            WorkOrderCraftLogger:LogDebug(
                 "Craft RecraftRecipeForOrder case={case} orderID={orderID} recipeID={recipeID} reagents={count}",
                 provisionCase, orderID, self.recipeID, #craftingReagentInfoTbl)
             C_TradeSkillUI.RecraftRecipeForOrder(orderID, itemGUID, craftingReagentInfoTbl, nil,
@@ -3069,13 +3069,13 @@ function CraftSim.RecipeData:Craft(amount)
             return true
         end
 
-        self:PrintWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
+        self:LogWorkOrderCraftDiagnostics(orderData, craftingReagentInfoTbl, {
             path = "craft",
             blocker = byoQualityEmpty and "byo_quality_empty" or nil,
         })
 
         -- Enchanting WO: Blizzard CraftOrder uses CraftRecipe(orderID), not CraftEnchant(vellum).
-        Logger:LogDebug(
+        WorkOrderCraftLogger:LogDebug(
             "CraftRecipe WO case={case} orderID={orderID} recipeID={recipeID} enchant={enchant} reagents={count}",
             provisionCase, orderID, self.recipeID, self.isEnchantingRecipe, #craftingReagentInfoTbl)
         C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, orderID,

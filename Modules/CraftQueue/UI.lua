@@ -4185,7 +4185,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         if not crafted then
                             CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
                             CraftSim.CRAFTQ:EndCraftClickLock()
-                            recipeData:PrintWorkOrderCraftDiagnostics(currentClaimedOrder, nil, {
+                            recipeData:LogWorkOrderCraftDiagnostics(currentClaimedOrder, nil, {
                                 blocker = "craft_api_not_called",
                             })
                         end
@@ -4210,8 +4210,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonCustomTooltip = true
                 end
             elseif claimedOrder then
+                -- Another order is already claimed: show Claim disabled (tooltip explains why).
                 craftButtonColumn.craftButton:SetEnabled(false)
-                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_OTHER_CLAIMED"))
+                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIM"))
                 craftButtonColumn.craftButton.tooltipOptions = {
                     text = L("CRAFT_QUEUE_BUTTON_OTHER_CLAIMED"),
                     owner = row.frame,
