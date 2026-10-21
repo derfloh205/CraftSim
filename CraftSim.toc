@@ -1,4 +1,4 @@
-## Interface: 120005, 120007, 120100
+## Interface: 120005, 120007, 120100, 120105, 120150
 ## DefaultState: enabled
 
 ## Title: CraftSim
