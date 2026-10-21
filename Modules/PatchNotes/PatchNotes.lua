@@ -27,6 +27,8 @@ function CraftSim.PATCH_NOTES:GetPatchNotes(itemMap)
         CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local patchNotes = {
         f.bb("Hello and thank you for using CraftSim! ( You are awesome! )\n"),
+        newP("27.0.8"),
+        data("12.1.5.70391"),
         newP("27.0.7"),
         f.p .. "Per Character max kp points for orders overrides",
         f.p .. "Moxie value auto update fix",
