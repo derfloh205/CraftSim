@@ -272,9 +272,6 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
     if claimedOrder then
         self.lastClaimedOrderID = claimedOrder.orderID
-        -- Prefetch Blizzard OrderView schematic so Craft from queue works without
-        -- manually opening the order on the Orders tab first.
-        CraftSim.UTIL:EnsureWorkOrderViewOpen(claimedOrder)
     end
     self:SyncPendingWorkOrderSubmitState()
     self.UI:Update()

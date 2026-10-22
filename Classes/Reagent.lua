@@ -274,6 +274,11 @@ end
 function CraftSim.Reagent:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 
+    -- Customer owns the whole required slot (SOME/ALL), including BOP mats.
+    if self.dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(self.dataSlotIndex) then
+        return true
+    end
+
     local orderData = recipeData.orderData
     local orderItemIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
         if not recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then

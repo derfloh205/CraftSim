@@ -43,7 +43,7 @@ function CraftSim.OptionalReagentSlot:RefreshSlotStatus(recipeData)
     self.locked, self.lockedReason = C_TradeSkillUI.GetReagentSlotStatus(schematic.slotInfo.mcrSlotID,
         recipeData.recipeID, recipeData.professionData.skillLineID)
     if self.locked and self.activeReagent then
-        if not (recipeData.orderData and self.activeReagent:IsOrderReagentIn(recipeData)) then
+        if not (recipeData.orderData and self:IsOrderReagentIn(recipeData)) then
             self.activeReagent = nil
         end
     end
@@ -96,8 +96,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return boolean isOrderReagent
 function CraftSim.OptionalReagentSlot:IsOrderReagentIn(recipeData)
-    if not self.activeReagent then return false end
-
+    if not recipeData or not recipeData.orderData then
+        return false
+    end
+    -- Customer-owned missive/embellishment/finishing slots (even when empty or a
+    -- different item was briefly allocated) are never crafter shopping requirements.
+    if self.dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(self.dataSlotIndex) then
+        return true
+    end
+    if not self.activeReagent then
+        return false
+    end
     return self.activeReagent:IsOrderReagentIn(recipeData)
 end
 

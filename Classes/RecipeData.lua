@@ -595,6 +595,16 @@ function CraftSim.RecipeData:ApplyOrderReagentsToSlots()
             applyToBestSlot(d.itemID, d.currencyID, d.dataSlotIndex)
         end
     end
+
+    -- Customer-owned optional slots must not keep a crafter missive/finisher allocation
+    -- (shopping would then ask to buy it; craft would send the wrong reagent).
+    for _, slot in ipairs(orderedSlots) do
+        if slot.dataSlotIndex and self:IsCustomerOwnedDataSlotIndex(slot.dataSlotIndex) then
+            if slot.activeReagent and not slot.activeReagent:IsOrderReagentIn(self) then
+                slot.activeReagent = nil
+            end
+        end
+    end
 end
 
 ---@param dataSlotIndex number
@@ -2743,6 +2753,30 @@ function CraftSim.RecipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderDa
     return true
 end
 
+--- True when the customer owns this schematic dataSlotIndex (SOME/ALL), even if empty.
+--- Used so missives/BOP optionals are not treated as crafter shopping/craft requirements.
+---@param dataSlotIndex number?
+---@param orderData CraftingOrderInfo?
+---@return boolean
+function CraftSim.RecipeData:IsCustomerOwnedDataSlotIndex(dataSlotIndex, orderData)
+    if not dataSlotIndex then
+        return false
+    end
+    orderData = orderData or self.orderData
+    if not orderData or self:GetWorkOrderReagentCase(orderData) == "byo" then
+        return false
+    end
+    for _, reagentInfo in ipairs(orderData.reagents or {}) do
+        if self:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
+            local d = self:GetOrderReagentDescriptor(reagentInfo)
+            if d.dataSlotIndex == dataSlotIndex then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --- Customer-escrowed keys for craft-tbl filtering (Cases SOME / ALL only; BYO returns empty).
 --- Strip prefers item/currency IDs. dataSlotIndex is only marked for explicit Customer-source
 --- rows (e.g. empty embellishment slot) so shopping-list / Any rows cannot wipe a whole slot.
@@ -2971,13 +3005,11 @@ function CraftSim.RecipeData:BuildWorkOrderCraftDiagLine(orderData, craftingReag
     return table.concat(parts, " ")
 end
 
---- Open Orders tab + OrderView if needed, then craft via Blizzard CraftOrder / RecraftOrder
---- (same as Create). Falls back to false when OrderView cannot be prepared.
+--- If OrderView is already showing this claimed order, craft via Blizzard CraftOrder /
+--- RecraftOrder (same as Create). Does not switch tabs or open the order.
 ---@param orderData CraftingOrderInfo
 ---@return boolean crafted
 function CraftSim.RecipeData:TryCraftViaBlizzardOrderView(orderData)
-    CraftSim.UTIL:EnsureWorkOrderViewOpen(orderData)
-
     local orderView = ProfessionsFrame and ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage.OrderView
     if not (orderView and orderView.order and orderView.CraftOrder) then
         return false
@@ -3056,7 +3088,7 @@ function CraftSim.RecipeData:Craft(amount)
         -- outputItemGUID as recraft (non-recraft orders can carry a GUID from prior state).
         local isRecraftOrder = (orderData.isRecraft == true) or (self.isRecraft == true)
 
-        -- Prefer Blizzard OrderView Create path (opens Orders tab + order if needed).
+        -- Prefer Blizzard OrderView Create only when that order is already open.
         if self:TryCraftViaBlizzardOrderView(orderData) then
             return true
         end

@@ -146,8 +146,13 @@ function CraftSim.OptionalReagent:GetJSON(indent)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
+---@param dataSlotIndex number? when known (from the owning slot), also match customer-owned slots
+function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData, dataSlotIndex)
     if not recipeData.orderData then return false end
+
+    if dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(dataSlotIndex) then
+        return true
+    end
 
     local reagents = recipeData.orderData.reagents or {}
 
