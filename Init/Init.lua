@@ -47,6 +47,7 @@ CraftSim.INIT.FRAMES = {}
 local Logger = CraftSim.DEBUG:RegisterLogger("Init")
 
 local professionFrameHooked = false
+local openLastRecipeTimer = nil
 local craftingOrdersPreloadedThisSession = {}
 ---@type number?
 local craftingOrdersPreloadPendingProfessionID = nil
@@ -542,11 +543,20 @@ function CraftSim.INIT:HookToProfessionsFrame()
 
 			CraftSim.INIT.lastRecipeID = nil
 			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
-				C_Timer.After(1, function()
+				-- cancel a restore still pending from a previous open (e.g. switching professions within a second),
+				-- otherwise it fires for the newly opened profession
+				if openLastRecipeTimer then
+					openLastRecipeTimer:Cancel()
+				end
+				openLastRecipeTimer = C_Timer.NewTimer(1, function()
+					openLastRecipeTimer = nil
+					if not ProfessionsFrame:IsShown() then
+						return
+					end
 					local professionInfo = ProfessionsFrame:GetProfessionInfo()
-					local profession = professionInfo.parentProfessionName
-					if CraftSim.OPTIONS.lastOpenRecipeID[profession] then
-						C_TradeSkillUI.OpenRecipe(CraftSim.OPTIONS.lastOpenRecipeID[profession])
+					local profession = professionInfo and professionInfo.parentProfessionName
+					if profession and CraftSim.OPTIONS.lastOpenRecipeID[profession] then
+						CraftSim.UTIL:OpenRecipeSafe(CraftSim.OPTIONS.lastOpenRecipeID[profession])
 					end
 				end)
 			end
