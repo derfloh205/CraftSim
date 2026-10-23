@@ -295,6 +295,7 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
         if reagentData then
             local requiredReagents = reagentData.requiredReagents
             for _, reagent in pairs(requiredReagents) do
+                -- WO required mats: skip escrowed items (WORK_ORDER_REAGENTS policy).
                 if not reagent:IsOrderReagentIn(recipeData) then
                     if reagent.hasQuality then
                         for _, reagentItem in pairs(reagent.items) do
@@ -328,26 +329,23 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
                 end
             end
 
-            local activeReagents = reagentData:GetActiveOptionalReagents()
-            local quantityMap = {}
-
-            if recipeData:HasRequiredSelectableReagent() then
-                local slot = reagentData.requiredSelectableReagentSlot
-                if slot and slot:IsAllocated() and slot.activeReagent and not slot.activeReagent:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
-                    tinsert(activeReagents, slot.activeReagent)
-                    quantityMap[slot.activeReagent.item:GetItemID()] = slot.maxQuantity or 1
-                end
+            ---@type CraftSim.OptionalReagentSlot[]
+            local optionalSlots = GUTIL:Concat({
+                reagentData.optionalReagentSlots or {},
+                reagentData.finishingReagentSlots or {},
+            })
+            if recipeData:HasRequiredSelectableReagent() and reagentData.requiredSelectableReagentSlot then
+                tinsert(optionalSlots, reagentData.requiredSelectableReagentSlot)
             end
 
-            for _, optionalReagent in pairs(activeReagents) do
-                if not optionalReagent:IsCurrency() then
+            for _, slot in pairs(optionalSlots) do
+                local optionalReagent = slot.activeReagent
+                if optionalReagent and not optionalReagent:IsCurrency() and not slot:IsOrderReagentIn(recipeData) then
                     local itemID = optionalReagent.item:GetItemID()
                     local isSelfCrafted = recipeData:IsSelfCraftedReagent(itemID)
-                    local isOrderReagent = optionalReagent:IsOrderReagentIn(recipeData)
-                    local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
-
-                    if not isOrderReagent and not isSelfCrafted and not CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
-                        local allocatedQuantity = quantityMap[itemID] or 1
+                    if not isSelfCrafted and not CraftSim.INVENTORY_SOURCE:IsItemUnpurchaseable(itemID) then
+                        local allocatedQuantity = slot.maxQuantity or 1
+                        local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
                         reagentMap[itemID] = reagentMap[itemID] or {
                             itemName = resolveItemName(itemID, optionalReagent.item:GetItemName()),
                             qualityID = qualityID,

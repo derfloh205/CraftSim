@@ -118,16 +118,13 @@ end
 
 ---@param itemID ItemID
 function CraftSim.ReagentData:IsOrderReagent(itemID)
-    if not self.recipeData.orderData then return false end
-
-    for _, reagentInfo in ipairs(self.recipeData.orderData.reagents or {}) do
-        local reagentItemID = self.recipeData:GetItemIDFromReagentInfo(reagentInfo)
-        if reagentItemID == itemID then
-            if reagentInfo.source == Enum.CraftingOrderReagentSource.Customer then
-                return true
-            end
-        end
+    local recipeData = self.recipeData
+    if not recipeData or not recipeData.orderData then
+        return false
     end
+    -- Prefer required-mat escrow (item + qty); also true for escrowed optional items.
+    return CraftSim.WORK_ORDER_REAGENTS:IsCustomerRequiredItem(itemID, recipeData.orderData, recipeData)
+        or CraftSim.WORK_ORDER_REAGENTS:IsCustomerOptionalReagent(itemID, nil, recipeData.orderData, recipeData)
 end
 
 ---@return CraftSim.Reagent.Serialized[]
@@ -579,6 +576,8 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
                 return optionalReagentSlot.activeReagent == nil
             end
             -- Unallocated optional/finishing slots are always fine (especially on recrafts).
+            -- Crests allocated by the crafter (e.g. NPC BYO) must be owned — only
+            -- customer-escrowed crests skip inventory via IsOrderReagentIn above.
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
 
@@ -588,14 +587,18 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasrequiredSelectableReagent = true
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
+        local isCrestSlot = GUTIL:Some(slot.possibleReagents or {}, function(r) return r:IsCrest() end)
         if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
             hasrequiredSelectableReagent = true
+        elseif not slot.activeReagent then
+            -- Empty crest slots are valid (base ilvl). Empty spark/other selectables
+            -- are not, except on recraft where the mod may already be on the item.
+            hasrequiredSelectableReagent = isCrestSlot or isRecraft
         elseif slot.locked then
-            hasrequiredSelectableReagent = slot.activeReagent == nil
-        elseif not slot.activeReagent and isRecraft then
-            -- Spark/etc. may already be on the item being recrafted.
-            hasrequiredSelectableReagent = true
+            -- Locked slot with a non-order allocation cannot be crafted.
+            hasrequiredSelectableReagent = false
         else
+            -- Crafter-allocated crest/spark (NPC BYO etc.) requires inventory.
             hasrequiredSelectableReagent = slot:HasItem(multiplier, crafterUID)
         end
     end
@@ -622,8 +625,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
 
 
     local hasVellumIfneeded = true
-
-    if self.recipeData.isEnchantingRecipe and not isRecraft then
+    -- Enchanting work orders use CraftRecipe(orderID), not CraftEnchant(vellum).
+    -- Blizzard's order craft does not require a crafter vellum in bags.
+    local isWorkOrder = self.recipeData and self.recipeData:IsWorkOrder()
+    if self.recipeData.isEnchantingRecipe and not isRecraft and not isWorkOrder then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
             .ENCHANTING_VELLUM_ID, true)
         hasVellumIfneeded = itemCount >= multiplier
@@ -652,15 +657,15 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
+        local isCrestSlot = GUTIL:Some(slot.possibleReagents or {}, function(r) return r:IsCrest() end)
         if slot.activeReagent and slot.activeReagent:IsOrderReagentIn(self.recipeData) then
-            -- customer-provided spark/pvp currency (or recraft mods)
+            -- customer-provided spark/crest/pvp currency (or recraft mods)
         elseif slot.locked and slot.activeReagent then
             return 0
         elseif slot.activeReagent then
             currentMinimumReagentFit = math.min(slot:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
-        elseif not isRecraft then
-            -- Empty required selectable blocks normal crafts; recrafts may leave it empty
-            -- when the spark/mod is already on the item.
+        elseif not isRecraft and not isCrestSlot then
+            -- Empty spark/other selectables block normal crafts; crest/recraft may be empty.
             currentMinimumReagentFit = 0
         end
     end
@@ -688,7 +693,8 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     Logger:LogDebug("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
 
     local vellumMinimumFit = math.huge
-    if self.recipeData.isEnchantingRecipe and not isRecraft then
+    local isWorkOrder = self.recipeData and self.recipeData:IsWorkOrder()
+    if self.recipeData.isEnchantingRecipe and not isRecraft and not isWorkOrder then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
             .ENCHANTING_VELLUM_ID, true)
         vellumMinimumFit = itemCount
@@ -758,6 +764,7 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
     if self:HasRequiredSelectableReagent() then
         local slot = self.requiredSelectableReagentSlot
         local perCraft = slot.maxQuantity or 1
+        -- Only count crafter-allocated crest/spark. Empty / customer-escrowed invent no demand.
         if slot.activeReagent and not slot.activeReagent:IsOrderReagentIn(self.recipeData) then
             if slot.activeReagent:IsCurrency() then
                 local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(slot.activeReagent.currencyID)
@@ -769,16 +776,6 @@ function CraftSim.ReagentData:LimitCraftAmountByUnpurchaseable(crafterUID, desir
                     local owned = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID) or 0
                     addDemand("i:" .. itemID, perCraft, owned)
                 end
-            end
-        elseif not isRecraft and not slot.activeReagent and slot:IsCurrency() then
-            -- Required currency slot empty: cannot buy fill; block queuing.
-            local first = slot.possibleReagents and slot.possibleReagents[1]
-            if first and first.currencyID then
-                local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(first.currencyID)
-                local owned = (currencyInfo and currencyInfo.quantity) or 0
-                addDemand("c:" .. first.currencyID, perCraft, owned)
-            else
-                return 0
             end
         end
     end
@@ -1046,7 +1043,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             end
         end
     end
-    if self.recipeData.isEnchantingRecipe then
+    -- Enchanting work orders do not consume a crafter vellum (CraftRecipe + orderID).
+    if self.recipeData.isEnchantingRecipe and not self.recipeData:IsWorkOrder() then
         local vellumItemID = CraftSim.CONST.ENCHANTING_VELLUM_ID
         local vellumIcon = C_Item.GetItemIconByID(vellumItemID)
         local inlineIcon = GUTIL:IconToText(vellumIcon, iconSize, iconSize)

@@ -221,7 +221,7 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
 
     local function meetsMinQuality()
         local minQuality = order.minQuality
-        if not minQuality or minQuality <= 0 then
+        if not CraftSim.UTIL:OrderHasMinQualityRequirement(minQuality) then
             return true
         end
         if recipeData.resultData.expectedQuality >= minQuality then
@@ -239,7 +239,7 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
 
     local function finishEval()
         local minQuality = order.minQuality
-        if useConcentration and minQuality and minQuality > 0 then
+        if useConcentration and CraftSim.UTIL:OrderHasMinQualityRequirement(minQuality) then
             if recipeData.resultData.expectedQuality < minQuality
                 and recipeData.resultData.expectedQualityConcentration == minQuality then
                 recipeData.concentrating = true
@@ -288,7 +288,7 @@ function CraftSim.WORK_ORDER_TRACKER:EvaluatePatronOrder(order, profession, expa
         end
     end
 
-    if order.minQuality and order.minQuality > 0 then
+    if CraftSim.UTIL:OrderHasMinQualityRequirement(order.minQuality) then
         local maxQuality = useConcentration and math.max(order.minQuality - 1, 1) or order.minQuality
         recipeData:Optimize {
             optimizeGear = true,

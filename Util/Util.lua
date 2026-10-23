@@ -36,6 +36,35 @@ function CraftSim.UTIL:GetOrderTypeText(orderType)
     return orderTypeText
 end
 
+--- Compare crafting order IDs safely (live BigUInteger vs queued/copied number).
+---@param a any
+---@param b any
+---@return boolean
+function CraftSim.UTIL:OrderIDsEqual(a, b)
+    if a == nil or b == nil then
+        return false
+    end
+    return tostring(a) == tostring(b)
+end
+
+--- Blizzard treats minQuality == 1 as "no minimum" (any quality OK).
+--- Real requirements are minQuality > 1 (see ProfessionsCrafterOrderView UpdateMinimumQualityIcon).
+---@param minQuality number?
+---@return boolean
+function CraftSim.UTIL:OrderHasMinQualityRequirement(minQuality)
+    return type(minQuality) == "number" and minQuality > 1
+end
+
+--- Stable string key for pending-submit / order maps.
+---@param orderID any
+---@return string?
+function CraftSim.UTIL:OrderIDKey(orderID)
+    if orderID == nil then
+        return nil
+    end
+    return tostring(orderID)
+end
+
 --- Profession id for the open Professions UI. Prefer GetChildProfessionInfo (crafting tab); fall back to
 --- ProfessionsFrame.professionInfo (e.g. orders tab) so work-order actions still resolve a profession.
 ---@return number? profession
@@ -198,6 +227,56 @@ end
 
 function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
+end
+
+--- Open Blizzard's Orders tab + OrderView for this order (same as clicking the row).
+--- Needed so CraftOrder/RecraftOrder have a ready schematic transaction — crafting from
+--- the main Crafting tab alone often leaves OrderView uninitialized.
+---@param orderData CraftingOrderInfo?
+---@return boolean opened true if OrderView is showing this order
+function CraftSim.UTIL:EnsureWorkOrderViewOpen(orderData)
+    if not orderData or not orderData.orderID then
+        return false
+    end
+    if not (ProfessionsFrame and ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage.ViewOrder) then
+        return false
+    end
+    if C_CraftingOrders.ShouldShowCraftingOrderTab and not C_CraftingOrders.ShouldShowCraftingOrderTab() then
+        return false
+    end
+    if ProfessionsFrame.isCraftingOrdersTabEnabled == false then
+        return false
+    end
+
+    -- Prefer live claimed order object (BigUInteger IDs / fresh escrow).
+    local orderForView = orderData
+    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+    if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, orderData.orderID) then
+        orderForView = claimedOrder
+    end
+
+    if not ProfessionsFrame.OrdersPage:IsVisible() then
+        local tabButton = ProfessionsFrame.GetTabButton and ProfessionsFrame:GetTabButton(3)
+        if tabButton then
+            tabButton:Click()
+        end
+    end
+
+    local orderView = ProfessionsFrame.OrdersPage.OrderView
+    local alreadyOpen = orderView and orderView.order
+        and CraftSim.UTIL:OrderIDsEqual(orderView.order.orderID, orderForView.orderID)
+        and orderView.OrderDetails and orderView.OrderDetails.SchematicForm
+        and orderView.OrderDetails.SchematicForm.transaction
+
+    if not alreadyOpen then
+        ProfessionsFrame.OrdersPage:ViewOrder(orderForView)
+    end
+
+    orderView = ProfessionsFrame.OrdersPage.OrderView
+    return orderView and orderView.order
+        and CraftSim.UTIL:OrderIDsEqual(orderView.order.orderID, orderForView.orderID)
+        and orderView.OrderDetails and orderView.OrderDetails.SchematicForm
+        and orderView.OrderDetails.SchematicForm.transaction ~= nil
 end
 
 ---@param skillLineID number
