@@ -574,6 +574,27 @@ function CraftSim.CRAFT_LISTS:TriageAndQueue(allScanEntries)
                 else
                     local sbfCrafts = entrySbfCrafts[entry] or 0
                     local totalAmount = entryOverrideAmount[entry] or entry.maxQueueAmount or 1
+                    -- ENABLED concentration mode does not run pool triage; still skip a lone
+                    -- concentrating craft when current concentration cannot cover even one cast.
+                    if totalAmount > 0 and totalAmount <= 1
+                        and opts.enableConcentration
+                        and (opts.concentrationAllocationMode or CONC.OFF) == CONC.OFF
+                        and effectiveRD.concentrating
+                        and effectiveRD.concentrationCost and effectiveRD.concentrationCost > 0 then
+                        local spendable = (effectiveRD.concentrationData
+                            and effectiveRD.concentrationData:GetSpendableAmount()) or 0
+                        local reserved = 0
+                        if CraftSim.CRAFTQ.craftQueue then
+                            reserved = CraftSim.CRAFTQ.craftQueue:GetQueuedConcentrationCost(
+                                entry.crafterUID, effectiveRD.professionData.skillLineID)
+                        end
+                        if math.max(0, spendable - reserved) < effectiveRD.concentrationCost then
+                            Logger:LogDebug(
+                                "Skipping single concentrating craft with insufficient concentration: " ..
+                                effectiveRD.recipeName)
+                            totalAmount = 0
+                        end
+                    end
                     if totalAmount <= 0 then
                         Logger:LogDebug("Skipping recipe with no queue amount: " .. effectiveRD.recipeName)
                     else

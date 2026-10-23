@@ -118,17 +118,13 @@ end
 
 ---@param itemID ItemID
 function CraftSim.ReagentData:IsOrderReagent(itemID)
-    if not self.recipeData.orderData then return false end
-
-    local orderData = self.recipeData.orderData
-    for _, reagentInfo in ipairs(orderData.reagents or {}) do
-        if self.recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
-            local reagentItemID = self.recipeData:GetItemIDFromReagentInfo(reagentInfo)
-            if reagentItemID == itemID then
-                return true
-            end
-        end
+    local recipeData = self.recipeData
+    if not recipeData or not recipeData.orderData then
+        return false
     end
+    -- Prefer required-mat escrow (item + qty); also true for escrowed optional items.
+    return CraftSim.WORK_ORDER_REAGENTS:IsCustomerRequiredItem(itemID, recipeData.orderData, recipeData)
+        or CraftSim.WORK_ORDER_REAGENTS:IsCustomerOptionalReagent(itemID, nil, recipeData.orderData, recipeData)
 end
 
 ---@return CraftSim.Reagent.Serialized[]

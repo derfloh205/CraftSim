@@ -272,24 +272,6 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return boolean
 function CraftSim.Reagent:IsOrderReagentIn(recipeData)
-    if not recipeData.orderData then return false end
-
-    -- Customer owns the whole required slot (SOME/ALL), including BOP mats.
-    if self.dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(self.dataSlotIndex) then
-        return true
-    end
-
-    local orderData = recipeData.orderData
-    local orderItemIDs = GUTIL:Map(orderData.reagents or {}, function(reagentInfo)
-        if not recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
-            return nil
-        end
-        return recipeData:GetItemIDFromReagentInfo(reagentInfo)
-    end)
-
-    local isOrderReagent = GUTIL:Some(self.items, function(reagentItem)
-        return tContains(orderItemIDs, reagentItem.item:GetItemID())
-    end)
-
-    return isOrderReagent
+    -- Required-mat path: escrowed item qty only (see WORK_ORDER_REAGENTS).
+    return not CraftSim.WORK_ORDER_REAGENTS:ShouldCrafterProvideRequired(self, recipeData)
 end

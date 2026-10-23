@@ -4222,6 +4222,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 craftButtonColumn.craftButton.clickCallback = function()
                     C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
                         recipeData.professionData.professionInfo.profession)
+                    -- Warm OrderView so the next Craft click has Blizzard's schematic ready.
+                    local claimed = C_CraftingOrders.GetClaimedOrder()
+                    if claimed and CraftSim.UTIL:OrderIDsEqual(claimed.orderID, recipeData.orderData.orderID) then
+                        CraftSim.UTIL:EnsureWorkOrderViewOpen(claimed)
+                    end
                     -- Refresh so the next click uses live claimed-order BigUInteger IDs.
                     CraftSim.CRAFTQ.UI:Update()
                 end

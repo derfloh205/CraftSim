@@ -99,15 +99,12 @@ function CraftSim.OptionalReagentSlot:IsOrderReagentIn(recipeData)
     if not recipeData or not recipeData.orderData then
         return false
     end
-    -- Customer-owned missive/embellishment/finishing slots (even when empty or a
-    -- different item was briefly allocated) are never crafter shopping requirements.
-    if self.dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(self.dataSlotIndex) then
-        return true
-    end
-    if not self.activeReagent then
-        return false
-    end
-    return self.activeReagent:IsOrderReagentIn(recipeData)
+    local active = self.activeReagent
+    local itemID = (active and not active:IsCurrency() and active.item) and active.item:GetItemID() or nil
+    local currencyID = (active and active:IsCurrency()) and active.currencyID or nil
+    -- Optional path: empty Customer dataSlotIndex counts (missive/BOP), unlike required mats.
+    return not CraftSim.WORK_ORDER_REAGENTS:ShouldCrafterProvideOptional(
+        self.dataSlotIndex, itemID, currencyID, recipeData)
 end
 
 ---@param itemID number?

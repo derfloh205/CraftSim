@@ -35,9 +35,11 @@ function CraftSim.CraftQueue:AddRecipe(options)
 
     local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
-    -- make sure all required reagents are maxed out
+    -- Fill empty slots only. Do not replace an existing quality allocation
+    -- (e.g. WO Optimize for min R2) with owned-cheapest — that drops below
+    -- min quality while looking like "no mats needed".
     recipeData:SetNonQualityReagentsMax()
-    recipeData:SetCheapestQualityReagentsMax()
+    recipeData:SetCheapestQualityReagentsMax(true)
 
     local craftQueueItem = self:FindRecipe(recipeData)
 

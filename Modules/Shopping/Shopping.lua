@@ -295,6 +295,7 @@ function CraftSim.SHOPPING:GetMissingReagentsFromCraftQueue(includeSoulboundWith
         if reagentData then
             local requiredReagents = reagentData.requiredReagents
             for _, reagent in pairs(requiredReagents) do
+                -- WO required mats: skip escrowed items (WORK_ORDER_REAGENTS policy).
                 if not reagent:IsOrderReagentIn(recipeData) then
                     if reagent.hasQuality then
                         for _, reagentItem in pairs(reagent.items) do

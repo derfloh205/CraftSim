@@ -148,34 +148,13 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param dataSlotIndex number? when known (from the owning slot), also match customer-owned slots
 function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData, dataSlotIndex)
-    if not recipeData.orderData then return false end
-
-    if dataSlotIndex and recipeData:IsCustomerOwnedDataSlotIndex(dataSlotIndex) then
-        return true
+    if not recipeData or not recipeData.orderData then
+        return false
     end
 
-    local reagents = recipeData.orderData.reagents or {}
+    local itemID = (not self:IsCurrency() and self.item) and self.item:GetItemID() or nil
+    local currencyID = self:IsCurrency() and self.currencyID or nil
 
-    local orderData = recipeData.orderData
-    if self:IsCurrency() then
-        local currencyID = self.currencyID
-        if not currencyID then return false end
-        return GUTIL:Some(reagents, function(reagentInfo)
-            if not recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
-                return false
-            end
-            local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
-            return d.currencyID == currencyID
-        end)
-    end
-
-    if not self.item then return false end
-    local itemID = self.item:GetItemID()
-    return GUTIL:Some(reagents, function(reagentInfo)
-        if not recipeData:IsCustomerProvidedOrderReagent(reagentInfo, orderData) then
-            return false
-        end
-        local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
-        return d.itemID == itemID
-    end)
+    return not CraftSim.WORK_ORDER_REAGENTS:ShouldCrafterProvideOptional(
+        dataSlotIndex, itemID, currencyID, recipeData)
 end

@@ -88,16 +88,23 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
         self.recipeData:SyncLiveOrderData()
         -- Fill non-crest selectables (spark/currency) and under-allocated quality mats so
         -- CanCraft matches craft-time prep. Crests stay empty (optional base ilvl).
+        local orderData = self.recipeData.orderData
         if not self.recipeData.isRecraft then
             self.recipeData:SetNonQualityReagentsMax()
-            self.recipeData:SetCheapestQualityReagentsMax()
+            -- Min-quality WOs: never swap optimized mats for owned-cheapest (that
+            -- yields "no mats needed" + below min quality). Only top up empty slots.
+            local preserveMinQualityAllocation = orderData
+                and CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality)
+            self.recipeData:SetCheapestQualityReagentsMax(preserveMinQualityAllocation)
         end
         self.recipeData:ClearUnownedCrafterCrestAllocations()
         -- minQuality == 1 means no requirement; don't keep concentration from a prior mis-queue.
-        local orderData = self.recipeData.orderData
         if self.recipeData.concentrating and orderData
             and not CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality) then
             self.recipeData.concentrating = false
+            self.recipeData:Update()
+        elseif not self.recipeData.isRecraft then
+            -- Refresh expected quality after any reagent fill.
             self.recipeData:Update()
         end
     end
