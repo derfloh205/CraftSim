@@ -352,54 +352,60 @@ function CraftSim.CraftQueue:FilterSortByPriority()
     end)
     local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
         function(a, b)
-            -- sort work orders on top of non subrecipe recipes
             local aWorkOrder = a.recipeData:IsWorkOrder()
             local bWorkOrder = b.recipeData:IsWorkOrder()
 
-            local aSubRecipe = a.recipeData:IsSubRecipe()
-            local bSubRecipe = b.recipeData:IsSubRecipe()
+            local aIsClaimed, bIsClaimed = false, false
+            if claimedOrder then
+                aIsClaimed = aWorkOrder and a.recipeData.orderData
+                    and CraftSim.UTIL:OrderIDsEqual(a.recipeData.orderData.orderID, claimedOrder.orderID)
+                bIsClaimed = bWorkOrder and b.recipeData.orderData
+                    and CraftSim.UTIL:OrderIDsEqual(b.recipeData.orderData.orderID, claimedOrder.orderID)
+            end
 
-            -- subrecipes always on top
-            if aSubRecipe and not bSubRecipe then
+            -- 1) Submit (fulfillable claimed order)
+            local aSubmittable = aIsClaimed and claimedOrder.isFulfillable
+            local bSubmittable = bIsClaimed and claimedOrder.isFulfillable
+            if aSubmittable and not bSubmittable then
                 return true
-            elseif not aSubRecipe and bSubRecipe then
+            elseif not aSubmittable and bSubmittable then
                 return false
             end
 
+            -- 2) Claimed (claimed but not yet submittable)
+            if aIsClaimed and not bIsClaimed then
+                return true
+            elseif not aIsClaimed and bIsClaimed then
+                return false
+            end
+
+            -- 3) Ready to craft (green Craft)
+            if a.allowedToCraft and not b.allowedToCraft then
+                return true
+            elseif not a.allowedToCraft and b.allowedToCraft then
+                return false
+            end
+
+            -- 4) Current profession open
             if a.correctProfessionOpen and not b.correctProfessionOpen then
                 return true
             elseif not a.correctProfessionOpen and b.correctProfessionOpen then
                 return false
             end
 
-            -- work order recipes always above non work orders
-            if aWorkOrder and not bWorkOrder then
+            -- 5) Rest: subrecipes, other work orders, depth, profit
+            local aSubRecipe = a.recipeData:IsSubRecipe()
+            local bSubRecipe = b.recipeData:IsSubRecipe()
+
+            if aSubRecipe and not bSubRecipe then
                 return true
-            elseif bWorkOrder and not aWorkOrder then
+            elseif not aSubRecipe and bSubRecipe then
                 return false
             end
 
-            -- now recipes are either both work orders or both not work orders
-
-            -- if both work orders
-            if aWorkOrder and bWorkOrder then
-                -- submittable order always above non submittable (if there is a fulfillable order)
-                if claimedOrder and claimedOrder.isFulfillable then
-                    local aSubmittable = CraftSim.UTIL:OrderIDsEqual(a.recipeData.orderData.orderID,
-                        claimedOrder.orderID)
-                    local bSubmittable = CraftSim.UTIL:OrderIDsEqual(b.recipeData.orderData.orderID,
-                        claimedOrder.orderID)
-                    if aSubmittable and not bSubmittable then
-                        return true
-                    elseif not aSubmittable and bSubmittable then
-                        return false
-                    end
-                end
-            end
-
-            if a.allowedToCraft and not b.allowedToCraft then
+            if aWorkOrder and not bWorkOrder then
                 return true
-            elseif not a.allowedToCraft and b.allowedToCraft then
+            elseif bWorkOrder and not aWorkOrder then
                 return false
             end
 

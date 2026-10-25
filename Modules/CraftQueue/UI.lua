@@ -2751,7 +2751,13 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         label = L("CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL"),
         clickCallback = function()
             if not content.selectedListID then return end
-            local recipeData = CraftSim.MODULES.recipeData
+            -- Prefer the visible schematic, same as Queue Open Recipe. Cached
+            -- recipe data can stay on the previous profession (cooking never
+            -- finished the multicraft preload wait).
+            local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+            if not recipeData then
+                recipeData = CraftSim.MODULES.recipeData
+            end
             if not recipeData then
                 CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
                 return

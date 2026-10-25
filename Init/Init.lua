@@ -711,8 +711,27 @@ function CraftSim.INIT:IsProfessionReady()
 	local profession = professionInfo and professionInfo.profession or nil
 	local profession_available = profession ~= nil
 	local tradeSkillRdy = C_TradeSkillUI.IsTradeSkillReady()
-	local operationInfosPreloaded = profession_available and CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession)
-	return profession_available and tradeSkillRdy and operationInfosPreloaded
+	if not profession_available or not tradeSkillRdy then
+		return false
+	end
+	if CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession) then
+		return true
+	end
+	-- Login multicraft preload only covers the two primary professions.
+	-- Cooking and other secondaries never get that flag, so waiting on it
+	-- leaves recipe data stuck on the previously opened profession.
+	local prof1Index, prof2Index = GetProfessions()
+	local function toProfession(index)
+		if not index then
+			return nil
+		end
+		local skillLineID = select(7, GetProfessionInfo(index))
+		return skillLineID and CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID) or nil
+	end
+	if profession ~= toProfession(prof1Index) and profession ~= toProfession(prof2Index) then
+		return true
+	end
+	return false
 end
 
 function CraftSim.INIT:CRAFTSIM_ORDER_VIEW_CLOSED()
