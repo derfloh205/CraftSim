@@ -2858,7 +2858,9 @@ function CraftSim.RecipeData:BuildWorkOrderCraftDiagLine(orderData, craftingReag
 end
 
 --- Open Orders tab + OrderView if needed, then craft via Blizzard CraftOrder / RecraftOrder
---- (same as Create). Falls back to false when OrderView cannot be prepared.
+--- (same as Create) only when Create would be enabled. Otherwise return false so Craft()
+--- falls back to CraftRecipe with CraftSim's reagent table — OrderView often opens without
+--- crafter quality mats allocated (grey Create), and CraftOrder would no-op / send empty mats.
 ---@param orderData CraftingOrderInfo
 ---@return boolean crafted
 function CraftSim.RecipeData:TryCraftViaBlizzardOrderView(orderData)
@@ -2874,6 +2876,15 @@ function CraftSim.RecipeData:TryCraftViaBlizzardOrderView(orderData)
     local schematicForm = orderView.OrderDetails and orderView.OrderDetails.SchematicForm
     local transaction = schematicForm and schematicForm.transaction
     if not transaction then
+        return false
+    end
+
+    -- Match Blizzard UpdateCreateButton: only Create when requirements are met.
+    if orderView.UpdateCreateButton then
+        orderView:UpdateCreateButton()
+    end
+    local createButton = orderView.CreateButton
+    if not (createButton and createButton:IsEnabled()) then
         return false
     end
 
