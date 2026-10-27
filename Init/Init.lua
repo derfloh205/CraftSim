@@ -552,7 +552,8 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			end
 
 			-- Force-load crafting orders on the first ProfessionFrame open after login.
-			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click).
+			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click), unless the
+			-- frame already opens on the Crafting Orders tab (last-selected tab restored).
 			-- CRAFTSIM_CRAFTING_ORDERS_PRELOADED fires once CRAFTINGORDERS_CAN_REQUEST and profession data are ready.
 			RunNextFrame(function()
 				local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
@@ -560,22 +561,37 @@ function CraftSim.INIT:HookToProfessionsFrame()
 				if professionID and (not craftingOrdersPreloadedThisSession[professionID]
 						and C_CraftingOrders.ShouldShowCraftingOrderTab()
 						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
-					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-						craftingOrdersPreloadedThisSession[professionID] = true
-						craftingOrdersPreloadPendingProfessionID = professionID
+					if not ProfessionsFrame:IsVisible() then
+						return
+					end
+
+					local onCraftingPage = ProfessionsFrame.CraftingPage:IsVisible()
+					local onOrdersPage = ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage:IsVisible()
+					if not onCraftingPage and not onOrdersPage then
+						return
+					end
+
+					craftingOrdersPreloadedThisSession[professionID] = true
+					craftingOrdersPreloadPendingProfessionID = professionID
+					cancelCraftingOrdersPreloadFallback()
+					craftingOrdersPreloadFallbackTimer = C_Timer.NewTimer(12, function()
+						craftingOrdersPreloadFallbackTimer = nil
+						if craftingOrdersPreloadPendingProfessionID == professionID then
+							Logger:LogDebug("Crafting orders preload fallback timeout for profession " .. professionID)
+							emitCraftingOrdersPreloaded()
+						end
+					end)
+
+					if onCraftingPage then
+						-- Brief Orders tab visit so Blizzard starts the order fetch, then return.
 						craftingOrdersCanRequest = false
-						cancelCraftingOrdersPreloadFallback()
-						craftingOrdersPreloadFallbackTimer = C_Timer.NewTimer(12, function()
-							craftingOrdersPreloadFallbackTimer = nil
-							if craftingOrdersPreloadPendingProfessionID == professionID then
-								Logger:LogDebug("Crafting orders preload fallback timeout for profession " .. professionID)
-								emitCraftingOrdersPreloaded()
-							end
-						end)
 						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
-						tryEmitCraftingOrdersPreloaded()
 					end
+					-- Already on OrdersPage: Blizzard's OnShow already started the fetch; do not
+					-- clear canRequest (CRAFTINGORDERS_CAN_REQUEST may have already fired).
+
+					tryEmitCraftingOrdersPreloaded()
 				end
 			end)
 		end)
