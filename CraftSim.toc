@@ -51,6 +51,7 @@ Debug/Debug.lua
 Debug/UI.lua
 
 Util/Util.lua
+Util/WorkOrderReagents.lua
 Util/RecipeAcquisition.lua
 
 DB/DB.lua

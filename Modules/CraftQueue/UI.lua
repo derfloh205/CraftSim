@@ -1133,13 +1133,15 @@ function CraftSim.CRAFTQ.UI:Init()
                                     -- Use fresh Blizzard order data when available to avoid tooltip taint
                                     local orderForView = recipeData.orderData
                                     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                                    if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                                    if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID,
+                                            recipeData.orderData.orderID) then
                                         orderForView = claimedOrder
                                     else
                                         local crafterOrders = C_CraftingOrders.GetCrafterOrders()
                                         if crafterOrders then
                                             for _, order in ipairs(crafterOrders) do
-                                                if order.orderID == recipeData.orderData.orderID then
+                                                if CraftSim.UTIL:OrderIDsEqual(order.orderID,
+                                                        recipeData.orderData.orderID) then
                                                     orderForView = order
                                                     break
                                                 end
@@ -2749,7 +2751,13 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
         label = L("CRAFT_LISTS_ADD_RECIPE_BUTTON_LABEL"),
         clickCallback = function()
             if not content.selectedListID then return end
-            local recipeData = CraftSim.MODULES.recipeData
+            -- Prefer the visible schematic, same as Queue Open Recipe. Cached
+            -- recipe data can stay on the previous profession (cooking never
+            -- finished the multicraft preload wait).
+            local recipeData = CraftSim.MODULES:GetRecipeDataFromVisibleRecipe()
+            if not recipeData then
+                recipeData = CraftSim.MODULES.recipeData
+            end
             if not recipeData then
                 CraftSim.DEBUG:SystemPrint(f.r("No recipe open!"))
                 return
@@ -4059,6 +4067,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     craftButtonColumn.craftButton.clickCallback = nil
 
     local statusColumnTooltip = ""
+    local craftButtonCustomTooltip = false
     local craftClickLocked = CraftSim.CRAFTQ:IsCraftClickLocked()
 
     if not craftQueueItem.learned then
@@ -4100,7 +4109,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         if accessToOrders then
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
-            if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+            if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, recipeData.orderData.orderID) then
                 local pendingSubmit = CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(recipeData.orderData.orderID)
                 if claimedOrder.isFulfillable then
                     CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
@@ -4118,15 +4127,30 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         end
                         CraftSim.CRAFTQ:BeginCraftClickLock()
                         CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(recipeData.orderData.orderID)
-                        C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
+                        -- Prefer live claimed orderID (BigUInteger) over queued copy.
+                        local fulfillOrderID = (C_CraftingOrders.GetClaimedOrder()
+                            and C_CraftingOrders.GetClaimedOrder().orderID)
+                            or recipeData.orderData.orderID
+                        C_CraftingOrders.FulfillOrder(fulfillOrderID, "",
                             recipeData.professionData.professionInfo.profession)
                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
                         self:Update()
                     end
                 elseif pendingSubmit then
+                    -- Never show enabled Craft with a nil clickCallback (dead button).
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
-                elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        CraftSim.CRAFTQ.UI:Update()
+                    end
+                    craftButtonColumn.craftButton.tooltipOptions = {
+                        text = L("CRAFT_QUEUE_PENDING_SUBMIT_TOOLTIP"),
+                        owner = row.frame,
+                        anchor = "ANCHOR_CURSOR",
+                    }
+                    craftButtonCustomTooltip = true
+                elseif CraftSim.UTIL:OrderHasMinQualityRequirement(claimedOrder.minQuality)
+                    and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
                     craftButtonColumn.craftButton:SetEnabled(false)
                     craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
                 elseif not craftQueueItem.gearEquipped then
@@ -4147,11 +4171,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         end
                         local currentClaimedOrder = C_CraftingOrders.GetClaimedOrder()
                         if not (currentClaimedOrder and recipeData.orderData and
-                                currentClaimedOrder.orderID == recipeData.orderData.orderID) then
+                                CraftSim.UTIL:OrderIDsEqual(currentClaimedOrder.orderID, recipeData.orderData.orderID)) then
                             CraftSim.CRAFTQ.UI:Update()
                             return
                         end
-                        local orderID = recipeData.orderData and recipeData.orderData.orderID
+                        local orderID = currentClaimedOrder.orderID
                         if CraftSim.CRAFTQ:IsPendingWorkOrderSubmit(orderID) then
                             CraftSim.CRAFTQ.UI:Update()
                             return
@@ -4160,7 +4184,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         CraftSim.CRAFTQ:MarkPendingWorkOrderSubmit(orderID)
                         CraftSim.CRAFTQ:BeginCraftClickLock()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        local crafted = recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                        local craftAmount = math.max(1,
+                            math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
+                        local crafted = recipeData:Craft(craftAmount)
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                         if not crafted then
                             CraftSim.CRAFTQ:ClearPendingWorkOrderSubmit(orderID)
@@ -4169,18 +4195,46 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         CraftSim.CRAFTQ.UI:Update()
                     end
                 else
+                    -- Claimed but not craftable: show the real blocker, not a dead "CLAIMED" label.
+                    local failed = craftQueueItem:GetTopFailedCondition()
                     craftButtonColumn.craftButton:SetEnabled(false)
-                    craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIMED"))
+                    craftButtonColumn.craftButton:SetText(failed and failed.reason or L("CRAFT_QUEUE_BUTTON_CLAIMED"))
+                    local diagLine = recipeData:BuildWorkOrderCraftDiagLine(claimedOrder, nil, {
+                        blocker = failed and failed.reason or "not_allowed",
+                        pendingSubmit = tostring(pendingSubmit),
+                    })
+                    local failTooltip = (statusColumnTooltip ~= "" and (statusColumnTooltip .. "\n\n") or "")
+                        .. f.grey(diagLine)
+                    craftButtonColumn.craftButton.tooltipOptions = {
+                        text = failTooltip,
+                        owner = row.frame,
+                        anchor = "ANCHOR_CURSOR",
+                    }
+                    craftButtonCustomTooltip = true
                 end
             elseif claimedOrder then
+                -- Another order is already claimed: show Claim disabled (tooltip explains why).
                 craftButtonColumn.craftButton:SetEnabled(false)
-                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CRAFT"))
+                craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIM"))
+                craftButtonColumn.craftButton.tooltipOptions = {
+                    text = L("CRAFT_QUEUE_BUTTON_OTHER_CLAIMED"),
+                    owner = row.frame,
+                    anchor = "ANCHOR_CURSOR",
+                }
+                craftButtonCustomTooltip = true
             else
                 craftButtonColumn.craftButton:SetEnabled(true)
                 craftButtonColumn.craftButton:SetText(L("CRAFT_QUEUE_BUTTON_CLAIM"))
                 craftButtonColumn.craftButton.clickCallback = function()
                     C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
                         recipeData.professionData.professionInfo.profession)
+                    -- Warm OrderView so the next Craft click has Blizzard's schematic ready.
+                    local claimed = C_CraftingOrders.GetClaimedOrder()
+                    if claimed and CraftSim.UTIL:OrderIDsEqual(claimed.orderID, recipeData.orderData.orderID) then
+                        CraftSim.UTIL:EnsureWorkOrderViewOpen(claimed)
+                    end
+                    -- Refresh so the next click uses live claimed-order BigUInteger IDs.
+                    CraftSim.CRAFTQ.UI:Update()
                 end
             end
         else
@@ -4221,6 +4275,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local craftBtn = craftButtonColumn.craftButton
     if craftBtn.frame:GetText() == L("CRAFT_QUEUE_BUTTON_SUBMIT") then
         craftBtn.tooltipOptions = nil
+    elseif craftButtonCustomTooltip then
+        -- pending / failed-condition diag / other-claimed tooltip already set
     elseif craftQueueItem.pcbgData.needsStep and craftQueueItem.pcbgData.recipeData then
         -- tooltip set in SetCraftQueueRowShatterCraftButton
     else

@@ -43,7 +43,7 @@ function CraftSim.OptionalReagentSlot:RefreshSlotStatus(recipeData)
     self.locked, self.lockedReason = C_TradeSkillUI.GetReagentSlotStatus(schematic.slotInfo.mcrSlotID,
         recipeData.recipeID, recipeData.professionData.skillLineID)
     if self.locked and self.activeReagent then
-        if not (recipeData.orderData and self.activeReagent:IsOrderReagentIn(recipeData)) then
+        if not (recipeData.orderData and self:IsOrderReagentIn(recipeData)) then
             self.activeReagent = nil
         end
     end
@@ -96,9 +96,15 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return boolean isOrderReagent
 function CraftSim.OptionalReagentSlot:IsOrderReagentIn(recipeData)
-    if not self.activeReagent then return false end
-
-    return self.activeReagent:IsOrderReagentIn(recipeData)
+    if not recipeData or not recipeData.orderData then
+        return false
+    end
+    local active = self.activeReagent
+    local itemID = (active and not active:IsCurrency() and active.item) and active.item:GetItemID() or nil
+    local currencyID = (active and active:IsCurrency()) and active.currencyID or nil
+    -- Optional path: empty Customer dataSlotIndex counts (missive/BOP), unlike required mats.
+    return not CraftSim.WORK_ORDER_REAGENTS:ShouldCrafterProvideOptional(
+        self.dataSlotIndex, itemID, currencyID, recipeData)
 end
 
 ---@param itemID number?

@@ -64,6 +64,25 @@ function CraftSim.OptionalReagent:IsCurrency()
     return self.currencyID ~= nil
 end
 
+--- Crest currencies (Mistcrest etc.) and enchanted crest items.
+---@return boolean
+function CraftSim.OptionalReagent:IsCrest()
+    local name = self.name
+    if not name or name == "" then
+        if self:IsCurrency() then
+            local currencyData = CraftSim.OPTIONAL_CURRENCY_REAGENT_DATA[self.currencyID]
+            name = currencyData and currencyData.name
+        elseif self.item then
+            local reagentData = CraftSim.OPTIONAL_REAGENT_DATA[self.item:GetItemID()]
+            name = reagentData and reagentData.name
+        end
+    end
+    if not name then
+        return false
+    end
+    return string.find(string.lower(name), "crest", 1, true) ~= nil
+end
+
 --- Returns the sum of all profession stat values contributed by this reagent.
 --- Used to compare soulbound reagents of the same slot to find the highest-value one,
 --- which is more reliable than comparing qualityID (different reagent items can share
@@ -127,24 +146,15 @@ function CraftSim.OptionalReagent:GetJSON(indent)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
-    if not recipeData.orderData then return false end
-
-    local reagents = recipeData.orderData.reagents or {}
-
-    if self:IsCurrency() then
-        local currencyID = self.currencyID
-        if not currencyID then return false end
-        return GUTIL:Some(reagents, function(reagentInfo)
-            local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
-            return d.currencyID == currencyID
-        end)
+---@param dataSlotIndex number? when known (from the owning slot), also match customer-owned slots
+function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData, dataSlotIndex)
+    if not recipeData or not recipeData.orderData then
+        return false
     end
 
-    if not self.item then return false end
-    local itemID = self.item:GetItemID()
-    return GUTIL:Some(reagents, function(reagentInfo)
-        local d = recipeData:GetOrderReagentDescriptor(reagentInfo)
-        return d.itemID == itemID
-    end)
+    local itemID = (not self:IsCurrency() and self.item) and self.item:GetItemID() or nil
+    local currencyID = self:IsCurrency() and self.currencyID or nil
+
+    return not CraftSim.WORK_ORDER_REAGENTS:ShouldCrafterProvideOptional(
+        dataSlotIndex, itemID, currencyID, recipeData)
 end

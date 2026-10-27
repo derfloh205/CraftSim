@@ -82,9 +82,37 @@ end
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
 function CraftSim.CraftQueueItem:CalculateCanCraft()
     CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
-    local _, craftAbleAmount = self.recipeData:CanCraft(1)
+    -- Drop unowned crafter crests so crest-capable WO (NPC/personal) stay craftable at base ilvl.
+    if self.recipeData:IsWorkOrder() then
+        -- Align escrow with live claim before inventory checks / fills.
+        self.recipeData:SyncLiveOrderData()
+        -- Fill non-crest selectables (spark/currency) and under-allocated quality mats so
+        -- CanCraft matches craft-time prep. Crests stay empty (optional base ilvl).
+        local orderData = self.recipeData.orderData
+        if not self.recipeData.isRecraft then
+            self.recipeData:SetNonQualityReagentsMax()
+            -- Min-quality WOs: never swap optimized mats for owned-cheapest (that
+            -- yields "no mats needed" + below min quality). Only top up empty slots.
+            local preserveMinQualityAllocation = orderData
+                and CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality)
+            self.recipeData:SetCheapestQualityReagentsMax(preserveMinQualityAllocation)
+        end
+        self.recipeData:ClearUnownedCrafterCrestAllocations()
+        -- minQuality == 1 means no requirement; don't keep concentration from a prior mis-queue.
+        if self.recipeData.concentrating and orderData
+            and not CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality) then
+            self.recipeData.concentrating = false
+            self.recipeData:Update()
+        elseif not self.recipeData.isRecraft then
+            -- Refresh expected quality after any reagent fill.
+            self.recipeData:Update()
+        end
+    end
+    local hasEnoughReagents, craftAbleAmount = self.recipeData:CanCraft(1)
     self.craftAbleAmount = craftAbleAmount
-    self.canCraftOnce = craftAbleAmount > 0
+    -- Require both: HasEnough (exact allocated mats) and a positive craftable count.
+    -- craftAbleAmount alone can be math.huge when no reagent slot limits the craft.
+    self.canCraftOnce = hasEnoughReagents and craftAbleAmount > 0
     self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:OnCooldown()
@@ -333,7 +361,7 @@ function CraftSim.CraftQueueItem:GetPrecraftConditions()
     local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
     local orderData = self.recipeData.orderData
     local meetsMinQuality = true
-    if orderData and orderData.minQuality and orderData.minQuality > 0 then
+    if orderData and CraftSim.UTIL:OrderHasMinQualityRequirement(orderData.minQuality) then
         meetsMinQuality = self.recipeData.resultData.expectedQuality >= orderData.minQuality
     end
 

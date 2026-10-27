@@ -289,7 +289,9 @@ end
 ---@return string
 local function FormatQualityTooltipSection(orderSnapshot)
     local parts = {}
-    local required = FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_SHORT"), orderSnapshot.minQuality)
+    local requiredQuality = CraftSim.UTIL:OrderHasMinQualityRequirement(orderSnapshot.minQuality)
+        and orderSnapshot.minQuality or nil
+    local required = FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_REQUIRED_SHORT"), requiredQuality)
     local expected = FormatQualityTooltipLine(L("WORK_ORDER_TRACKER_TOOLTIP_EXPECTED_SHORT"), orderSnapshot.expectedQuality)
     if required ~= "" then
         tinsert(parts, required)
@@ -401,7 +403,7 @@ local function PopulateWorkOrderTrackerRow(row, rowData)
     crafterColumn.text:SetText(crafterProfessionText)
 
     local recipeText = orderSnapshot.recipeName
-    if orderSnapshot.minQuality then
+    if CraftSim.UTIL:OrderHasMinQualityRequirement(orderSnapshot.minQuality) then
         recipeText = recipeText .. " " .. GUTIL:GetQualityIconString(orderSnapshot.minQuality, 15, 15)
     end
     if orderSnapshot.isClaimed then

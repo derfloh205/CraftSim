@@ -552,7 +552,8 @@ function CraftSim.INIT:HookToProfessionsFrame()
 			end
 
 			-- Force-load crafting orders on the first ProfessionFrame open after login.
-			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click).
+			-- Blizzard only fetches orders when OrdersPage:OnShow() fires (tab 3 click), unless the
+			-- frame already opens on the Crafting Orders tab (last-selected tab restored).
 			-- CRAFTSIM_CRAFTING_ORDERS_PRELOADED fires once CRAFTINGORDERS_CAN_REQUEST and profession data are ready.
 			RunNextFrame(function()
 				local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
@@ -560,22 +561,37 @@ function CraftSim.INIT:HookToProfessionsFrame()
 				if professionID and (not craftingOrdersPreloadedThisSession[professionID]
 						and C_CraftingOrders.ShouldShowCraftingOrderTab()
 						and ProfessionsFrame.isCraftingOrdersTabEnabled) then
-					if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-						craftingOrdersPreloadedThisSession[professionID] = true
-						craftingOrdersPreloadPendingProfessionID = professionID
+					if not ProfessionsFrame:IsVisible() then
+						return
+					end
+
+					local onCraftingPage = ProfessionsFrame.CraftingPage:IsVisible()
+					local onOrdersPage = ProfessionsFrame.OrdersPage and ProfessionsFrame.OrdersPage:IsVisible()
+					if not onCraftingPage and not onOrdersPage then
+						return
+					end
+
+					craftingOrdersPreloadedThisSession[professionID] = true
+					craftingOrdersPreloadPendingProfessionID = professionID
+					cancelCraftingOrdersPreloadFallback()
+					craftingOrdersPreloadFallbackTimer = C_Timer.NewTimer(12, function()
+						craftingOrdersPreloadFallbackTimer = nil
+						if craftingOrdersPreloadPendingProfessionID == professionID then
+							Logger:LogDebug("Crafting orders preload fallback timeout for profession " .. professionID)
+							emitCraftingOrdersPreloaded()
+						end
+					end)
+
+					if onCraftingPage then
+						-- Brief Orders tab visit so Blizzard starts the order fetch, then return.
 						craftingOrdersCanRequest = false
-						cancelCraftingOrdersPreloadFallback()
-						craftingOrdersPreloadFallbackTimer = C_Timer.NewTimer(12, function()
-							craftingOrdersPreloadFallbackTimer = nil
-							if craftingOrdersPreloadPendingProfessionID == professionID then
-								Logger:LogDebug("Crafting orders preload fallback timeout for profession " .. professionID)
-								emitCraftingOrdersPreloaded()
-							end
-						end)
 						ProfessionsFrame:GetTabButton(3):Click() -- 3 is Crafting Orders Tab; triggers OrdersPage:OnShow() → order load
 						ProfessionsFrame:GetTabButton(1):Click() -- 1 is Crafting Tab; switch back
-						tryEmitCraftingOrdersPreloaded()
 					end
+					-- Already on OrdersPage: Blizzard's OnShow already started the fetch; do not
+					-- clear canRequest (CRAFTINGORDERS_CAN_REQUEST may have already fired).
+
+					tryEmitCraftingOrdersPreloaded()
 				end
 			end)
 		end)
@@ -711,8 +727,27 @@ function CraftSim.INIT:IsProfessionReady()
 	local profession = professionInfo and professionInfo.profession or nil
 	local profession_available = profession ~= nil
 	local tradeSkillRdy = C_TradeSkillUI.IsTradeSkillReady()
-	local operationInfosPreloaded = profession_available and CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession)
-	return profession_available and tradeSkillRdy and operationInfosPreloaded
+	if not profession_available or not tradeSkillRdy then
+		return false
+	end
+	if CraftSim.DB.MULTICRAFT_PRELOAD:Get(profession) then
+		return true
+	end
+	-- Login multicraft preload only covers the two primary professions.
+	-- Cooking and other secondaries never get that flag, so waiting on it
+	-- leaves recipe data stuck on the previously opened profession.
+	local prof1Index, prof2Index = GetProfessions()
+	local function toProfession(index)
+		if not index then
+			return nil
+		end
+		local skillLineID = select(7, GetProfessionInfo(index))
+		return skillLineID and CraftSim.UTIL:GetProfessionBySkillLineID(skillLineID) or nil
+	end
+	if profession ~= toProfession(prof1Index) and profession ~= toProfession(prof2Index) then
+		return true
+	end
+	return false
 end
 
 function CraftSim.INIT:CRAFTSIM_ORDER_VIEW_CLOSED()

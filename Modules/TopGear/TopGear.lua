@@ -312,7 +312,7 @@ function CraftSim.TOPGEAR:FilterResultsByWorkOrderMinQuality(recipeData, results
         return results
     end
     local minQuality = recipeData.orderData.minQuality
-    if not minQuality or minQuality <= 0 or not recipeData.supportsQualities then
+    if not CraftSim.UTIL:OrderHasMinQualityRequirement(minQuality) or not recipeData.supportsQualities then
         return results
     end
 
