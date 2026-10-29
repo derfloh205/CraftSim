@@ -228,6 +228,51 @@ function CraftSim.ProfessionGearSet:IsEquipped()
     return self:Equals(equippedSet, true)
 end
 
+--- Whether an item with exactly this link (ignoring crafter GUID) is still in the player's bags or bank.
+---@param itemLink string
+---@return boolean
+local function IsItemLinkInBags(itemLink)
+    local wanted = itemLink:gsub("Player.-:", "")
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local link = C_Container.GetContainerItemLink(bag, slot)
+            if link and link:gsub("Player.-:", "") == wanted then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--- Enchanting a tool changes its item link (enchant field) but not the item itself. A set planned before the
+--- enchant then never matches the equipped set, and Equip() cannot fix that because the planned link no longer
+--- exists anywhere. For such slots, adopt the equipped item (current link and stats) into this set.
+---@param equippedSet CraftSim.ProfessionGearSet
+---@return boolean changed
+function CraftSim.ProfessionGearSet:AdoptReEnchantedEquippedItems(equippedSet)
+    local changed = false
+    local slots = self.isCooking and { "tool", "gear2" } or { "tool", "gear1", "gear2" }
+    for _, slot in ipairs(slots) do
+        local expected = self[slot] ---@type CraftSim.ProfessionGear?
+        if expected and expected.item then
+            for _, equipped in ipairs(equippedSet:GetProfessionGearList()) do
+                if equipped and equipped.item and not equipped:Equals(expected) and
+                    equipped:IsSameItemIgnoringEnchant(expected) and
+                    not IsItemLinkInBags(expected.item:GetItemLink()) then
+                    self[slot] = equipped:Copy()
+                    changed = true
+                    break
+                end
+            end
+        end
+    end
+
+    if changed then
+        self:UpdateProfessionStats()
+    end
+    return changed
+end
+
 --- Whether the expected item for this logical slot is satisfied by what is equipped (same rules as Equals).
 ---@param slot "gear1"|"gear2"|"tool"
 ---@param equippedSet CraftSim.ProfessionGearSet
