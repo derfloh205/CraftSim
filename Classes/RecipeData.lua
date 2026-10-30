@@ -3161,15 +3161,37 @@ end
 ---@alias RecipeCraftQueueUID string
 
 --- Returns a unique id for the recipe within the craftqueue
---- Unique in recipeID, depth, crafter, concentration usage, craft list and soulbound finishing reagent usage
+--- Unique in recipeID, depth, crafter, concentration usage, craft list,
+--- soulbound finishing reagent usage, and optional/finishing reagent identity (e.g. missives)
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
+    local optionalFingerprint = CraftSim.DB.CRAFT_LISTS.GetOptionalReagentFingerprint(
+        self:GetOptionalReagentItemIDs())
     return self:GetCrafterUID() ..
         ":" ..
         self.recipeID ..
         ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0) ..
         ":" .. tostring(self.craftListID or 0) ..
-        ":" .. tostring(self:IsUsingSoulboundFinishingReagent())
+        ":" .. tostring(self:IsUsingSoulboundFinishingReagent()) ..
+        ":" .. optionalFingerprint
+end
+
+--- Active optional/finishing reagent item IDs (excludes currency reagents).
+---@return number[]
+function CraftSim.RecipeData:GetOptionalReagentItemIDs()
+    local ids = {}
+    if not self.reagentData then
+        return ids
+    end
+    for _, slot in pairs(GUTIL:Concat({
+        self.reagentData.optionalReagentSlots or {},
+        self.reagentData.finishingReagentSlots or {},
+    })) do
+        if slot.activeReagent and not slot.activeReagent:IsCurrency() and slot.activeReagent.item then
+            tinsert(ids, slot.activeReagent.item:GetItemID())
+        end
+    end
+    return ids
 end
 
 ---@return boolean hasActiveSubRecipes

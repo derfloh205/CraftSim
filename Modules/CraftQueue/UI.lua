@@ -2600,15 +2600,19 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                     CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
                         content.selectedListID,
                         crafterUID,
-                        row.recipeID)
+                        row.recipeID,
+                        row.entryKey)
                     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                 elseif IsMouseButtonDown("RightButton") then
                     -- show context menu for recipe
                     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+                    local entryKey = row.entryKey
+                        or CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(row.recipeID, nil)
                     local recipeEntry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
                         content.selectedListID,
                         crafterUID,
-                        row.recipeID)
+                        row.recipeID,
+                        entryKey)
                     local menuItems = {
                         {
                             type = "custom",
@@ -2638,13 +2642,14 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                                     content.selectedListID,
                                                     crafterUID,
                                                     row.recipeID,
-                                                    maxAmount)
+                                                    maxAmount,
+                                                    entryKey)
                                                 CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                                             end
                                         }
                                     end, 100, 20,
                                     "CRAFT_LIST_RECIPE_RESTOCK_CONTEXT_INPUT:" ..
-                                    content.selectedListID .. ":" .. row.recipeID)
+                                    content.selectedListID .. ":" .. entryKey)
                             end
                         },
                     }
@@ -2664,19 +2669,20 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                                 label = qualityLabel,
                                 get = function()
                                     local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
-                                        content.selectedListID, crafterUID, row.recipeID)
+                                        content.selectedListID, crafterUID, row.recipeID, entryKey)
                                     return entry and entry.supportedQualities and entry.supportedQualities[q] == true
                                 end,
                                 set = function()
                                     local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(
-                                        content.selectedListID, crafterUID, row.recipeID)
+                                        content.selectedListID, crafterUID, row.recipeID, entryKey)
                                     local enabled = not (entry and entry.supportedQualities and entry.supportedQualities[q])
                                     CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(
                                         content.selectedListID,
                                         crafterUID,
                                         row.recipeID,
                                         q,
-                                        enabled)
+                                        enabled,
+                                        entryKey)
                                     CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                                 end,
                                 tooltip = function(tooltip)
@@ -2691,14 +2697,37 @@ function CraftSim.CRAFTQ.UI:InitCraftListsTab(craftListsTab, parentFrame)
                         })
                     end
 
+                    local optionalMenuItems = CraftSim.CRAFTQ.UI:BuildOptionalReagentMenuItems(
+                        content.selectedListID, crafterUID, row.recipeID, entryKey)
+                    for _, optionalMenuItem in ipairs(optionalMenuItems or {}) do
+                        table.insert(menuItems, optionalMenuItem)
+                    end
+
                     table.insert(menuItems, {
                         type = "button",
-                        label = f.r("Remove Recipe"),
+                        label = L("CRAFT_LISTS_RECIPE_ADD_VARIANT"),
+                        onClick = function()
+                            local added = CraftSim.DB.CRAFT_LISTS:AddRecipeVariant(
+                                content.selectedListID, crafterUID, entryKey)
+                            if not added then
+                                CraftSim.DEBUG:SystemPrint(f.l(L("CRAFT_LISTS_RECIPE_ADD_VARIANT_NEEDS_MISSIVE")))
+                            end
+                            CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+                        end,
+                        tooltip = function(tooltip)
+                            GameTooltip_SetTitle(tooltip, L("CRAFT_LISTS_RECIPE_ADD_VARIANT_HINT"))
+                        end,
+                    })
+
+                    table.insert(menuItems, {
+                        type = "button",
+                        label = f.r(L("CRAFT_LISTS_RECIPE_REMOVE")),
                         onClick = function()
                             CraftSim.DB.CRAFT_LISTS:RemoveRecipe(
                                 content.selectedListID,
                                 crafterUID,
-                                row.recipeID)
+                                row.recipeID,
+                                entryKey)
                             CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                         end,
                     })
@@ -3150,6 +3179,444 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsDisplay()
     content.craftListsList:UpdateDisplay()
 end
 
+--- Profession-tool missive result stats inferred from the missive name.
+local MISSIVE_RESULT_STAT_PATTERNS = {
+    { pattern = "resourcefulness", key = "resourcefulness", labelID = "STAT_RESOURCEFULNESS" },
+    { pattern = "multicraft", key = "multicraft", labelID = "STAT_MULTICRAFT" },
+    { pattern = "crafting speed", key = "craftingspeed", labelID = "STAT_CRAFTINGSPEED" },
+    { pattern = "ingenuity", key = "ingenuity", labelID = "STAT_INGENUITY" },
+    { pattern = "finesse", key = "finesse", label = "Finesse" },
+    { pattern = "perception", key = "perception", label = "Perception" },
+    { pattern = "deftness", key = "deftness", label = "Deftness" },
+    -- Combat gear missive sets (Dragonflight / TWW)
+    { pattern = "aurora", key = "aurora", label = "Haste / Versatility" },
+    { pattern = "feverflare", key = "feverflare", label = "Haste / Mastery" },
+    { pattern = "fireflash", key = "fireflash", label = "Crit / Haste" },
+    { pattern = "quickblade", key = "quickblade", label = "Crit / Versatility" },
+    { pattern = "harmonious", key = "harmonious", label = "Versatility / Mastery" },
+    { pattern = "peerless", key = "peerless", label = "Crit / Mastery" },
+}
+
+--- Profession-stat keys from OptionalReagentData to show for finishing/optional reagents.
+local OPTIONAL_PROFESSION_STAT_ORDER = {
+    { key = "skill", labelID = "STAT_SKILL" },
+    { key = "multicraft", labelID = "STAT_MULTICRAFT" },
+    { key = "resourcefulness", labelID = "STAT_RESOURCEFULNESS" },
+    { key = "ingenuity", labelID = "STAT_INGENUITY" },
+    { key = "craftingspeed", labelID = "STAT_CRAFTINGSPEED", isPercent = true },
+    { key = "additionalitemscraftedwithmulticraft", labelID = "STAT_MULTICRAFT_BONUS", isPercent = true },
+    { key = "reagentssavedfromresourcefulness", labelID = "STAT_RESOURCEFULNESS_BONUS", isPercent = true },
+    { key = "ingenuityrefundincrease", labelID = "STAT_INGENUITY_BONUS", isPercent = true },
+    { key = "reduceconcentrationcost", labelID = "STAT_INGENUITY_LESS_CONCENTRATION", isPercent = true },
+}
+
+---@param name string?
+---@return string? key
+---@return string? label
+local function GetMissiveResultStatInfo(name)
+    if type(name) ~= "string" then
+        return nil, nil
+    end
+    local lower = name:lower()
+    if not lower:find("missive", 1, true) then
+        return nil, nil
+    end
+    for _, entry in ipairs(MISSIVE_RESULT_STAT_PATTERNS) do
+        if lower:find(entry.pattern, 1, true) then
+            local label = entry.labelID and L(entry.labelID) or entry.label
+            return entry.key, label
+        end
+    end
+    return nil, nil
+end
+
+---@param name string?
+---@return string?
+local function GetMissiveResultStatLabel(name)
+    local _, label = GetMissiveResultStatInfo(name)
+    return label
+end
+
+---@param itemID number
+---@return string? key
+---@return string? label
+---@return number qualityID
+local function GetMissiveInfoForItemID(itemID)
+    local data = CraftSim.OPTIONAL_REAGENT_DATA and CraftSim.OPTIONAL_REAGENT_DATA[itemID]
+    local name = (data and data.name) or (C_Item.GetItemNameByID(itemID))
+    local key, label = GetMissiveResultStatInfo(name)
+    return key, label, (data and data.qualityID) or 0
+end
+
+--- Prefer highest-quality missive of the same result-stat family.
+---@param itemID number
+---@param candidateItemIDs number[]
+---@return number
+function CraftSim.CRAFTQ.UI.PreferHighestQualityMissiveItemID(itemID, candidateItemIDs)
+    local key = GetMissiveInfoForItemID(itemID)
+    if not key then
+        return itemID
+    end
+    local bestID, bestQuality = itemID, select(3, GetMissiveInfoForItemID(itemID))
+    for _, candidateID in ipairs(candidateItemIDs or {}) do
+        local candidateKey, _, qualityID = GetMissiveInfoForItemID(candidateID)
+        if candidateKey == key and qualityID > bestQuality then
+            bestID = candidateID
+            bestQuality = qualityID
+        end
+    end
+    return bestID
+end
+
+--- All missive itemIDs in candidateItemIDs that share the same result-stat as itemID.
+--- Non-missives return { itemID }.
+---@param itemID number
+---@param candidateItemIDs number[]
+---@return number[]
+function CraftSim.CRAFTQ.UI.GetMissiveFamilyItemIDs(itemID, candidateItemIDs)
+    local key = GetMissiveInfoForItemID(itemID)
+    if not key then
+        return { itemID }
+    end
+    local family = {}
+    local seen = {}
+    for _, candidateID in ipairs(candidateItemIDs or {}) do
+        local candidateKey = GetMissiveInfoForItemID(candidateID)
+        if candidateKey == key and not seen[candidateID] then
+            seen[candidateID] = true
+            tinsert(family, candidateID)
+        end
+    end
+    if #family == 0 then
+        return { itemID }
+    end
+    table.sort(family, function(a, b)
+        return select(3, GetMissiveInfoForItemID(a)) < select(3, GetMissiveInfoForItemID(b))
+    end)
+    return family
+end
+
+---@param stats table<string, number>?
+---@return string
+local function FormatOptionalProfessionStatSuffix(stats)
+    if not stats then
+        return ""
+    end
+    local parts = {}
+    for _, entry in ipairs(OPTIONAL_PROFESSION_STAT_ORDER) do
+        local value = stats[entry.key]
+        if value and value ~= 0 then
+            local label = L(entry.labelID)
+            if entry.isPercent then
+                tinsert(parts, string.format("+%s %s", tostring(value) .. "%", label))
+            else
+                tinsert(parts, string.format("+%s %s", tostring(value), label))
+            end
+        end
+    end
+    if #parts == 0 then
+        return ""
+    end
+    return " " .. f.g("(" .. table.concat(parts, ", ") .. ")")
+end
+
+--- Label for an optional/finishing reagent choice, including missive result stats.
+--- Missives are shown as the result-stat only (qualities collapsed elsewhere).
+---@param itemID number
+---@param options { collapseMissiveQualities: boolean? }?
+---@return string label
+---@return string? shortStatLabel abbreviated result/stat text for list rows
+function CraftSim.CRAFTQ.UI:FormatOptionalReagentChoiceLabel(itemID, options)
+    options = options or {}
+    local data = CraftSim.OPTIONAL_REAGENT_DATA and CraftSim.OPTIONAL_REAGENT_DATA[itemID]
+    local name = (data and data.name) or (C_Item.GetItemNameByID(itemID)) or tostring(itemID)
+    local icon = GUTIL:IconToText(C_Item.GetItemIconByID(itemID) or 134400, 16, 16)
+
+    local missiveKey, missiveStat = GetMissiveResultStatInfo(name)
+    local professionStatSuffix = FormatOptionalProfessionStatSuffix(data and data.stats)
+
+    if missiveKey and options.collapseMissiveQualities ~= false then
+        -- Stat-only label: no R1/R2/R3 missive item name.
+        return icon .. " " .. f.bb(missiveStat), missiveStat
+    end
+
+    local qualityIcon = ""
+    if data and data.qualityID then
+        qualityIcon = " " .. GUTIL:GetQualityIconString(data.qualityID, 14, 14)
+    end
+    local label = icon .. " " .. name .. qualityIcon
+    local shortStatLabel = nil
+    if missiveStat then
+        label = label .. " " .. f.bb("→ " .. missiveStat)
+        shortStatLabel = missiveStat
+    elseif professionStatSuffix ~= "" then
+        label = label .. professionStatSuffix
+        shortStatLabel = professionStatSuffix:match("%((.+)%)") or professionStatSuffix
+    end
+    return label, shortStatLabel
+end
+
+--- Optional/finishing reagent slots for a craft-list recipe, one section per slot.
+--- Missive qualities are collapsed to one choice per result-stat (highest quality preferred).
+---@param recipeID RecipeID
+---@return {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?, memberItemIDs: number[]}[], itemIDSet: table<number, boolean>}[]
+function CraftSim.CRAFTQ.UI:GetOptionalReagentSlotsForRecipe(recipeID)
+    ---@type {key: string, label: string, slotType: string, choices: {itemID: number, label: string, shortStatLabel: string?, memberItemIDs: number[]}[], itemIDSet: table<number, boolean>}[]
+    local slots = {}
+
+    local function addSlot(slotType, slotIndex, slotLabel, itemIDs)
+        local itemIDSet = {}
+        local seen = {}
+        local uniqueItemIDs = {}
+        for _, itemID in ipairs(itemIDs or {}) do
+            if itemID and not seen[itemID] then
+                seen[itemID] = true
+                itemIDSet[itemID] = true
+                tinsert(uniqueItemIDs, itemID)
+            end
+        end
+
+        -- Collapse missives by result-stat; keep non-missives as individual items.
+        ---@type table<string, {itemID: number, qualityID: number, memberItemIDs: number[], label: string, shortStatLabel: string?}>
+        local missiveGroups = {}
+        local choices = {}
+        for _, itemID in ipairs(uniqueItemIDs) do
+            local missiveKey, missiveLabel, qualityID = GetMissiveInfoForItemID(itemID)
+            if missiveKey then
+                local group = missiveGroups[missiveKey]
+                if not group then
+                    local label, shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                        collapseMissiveQualities = true,
+                    })
+                    group = {
+                        itemID = itemID,
+                        qualityID = qualityID,
+                        memberItemIDs = { itemID },
+                        label = label,
+                        shortStatLabel = shortStatLabel or missiveLabel,
+                    }
+                    missiveGroups[missiveKey] = group
+                else
+                    tinsert(group.memberItemIDs, itemID)
+                    if qualityID > group.qualityID then
+                        group.itemID = itemID
+                        group.qualityID = qualityID
+                        group.label, group.shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                            collapseMissiveQualities = true,
+                        })
+                    end
+                end
+            else
+                local label, shortStatLabel = self:FormatOptionalReagentChoiceLabel(itemID, {
+                    collapseMissiveQualities = false,
+                })
+                tinsert(choices, {
+                    itemID = itemID,
+                    label = label,
+                    shortStatLabel = shortStatLabel,
+                    memberItemIDs = { itemID },
+                })
+            end
+        end
+
+        for _, group in pairs(missiveGroups) do
+            tinsert(choices, {
+                itemID = group.itemID,
+                label = group.label,
+                shortStatLabel = group.shortStatLabel,
+                memberItemIDs = group.memberItemIDs,
+            })
+        end
+
+        if #choices == 0 then
+            return
+        end
+        table.sort(choices, function(a, b)
+            return a.label < b.label
+        end)
+        tinsert(slots, {
+            key = slotType .. ":" .. tostring(slotIndex),
+            label = slotLabel,
+            slotType = slotType,
+            choices = choices,
+            itemIDSet = itemIDSet,
+        })
+    end
+
+    local ok, recipeData = pcall(function()
+        return CraftSim.RecipeData({ recipeID = recipeID })
+    end)
+    if ok and recipeData and recipeData.reagentData then
+        for slotIndex, slot in ipairs(recipeData.reagentData.optionalReagentSlots or {}) do
+            if slot and not slot:IsCurrency() then
+                local itemIDs = {}
+                for _, reagent in ipairs(slot.possibleReagents or {}) do
+                    if reagent and not reagent:IsCurrency() and reagent.item then
+                        tinsert(itemIDs, reagent.item:GetItemID())
+                    end
+                end
+                local label = slot.slotText
+                if not label or label == "" then
+                    label = L("CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS")
+                    if #(recipeData.reagentData.optionalReagentSlots or {}) > 1 then
+                        label = label .. " " .. tostring(slotIndex)
+                    end
+                end
+                addSlot("optional", slotIndex, label, itemIDs)
+            end
+        end
+        for slotIndex, slot in ipairs(recipeData.reagentData.finishingReagentSlots or {}) do
+            if slot and not slot:IsCurrency() then
+                local itemIDs = {}
+                for _, reagent in ipairs(slot.possibleReagents or {}) do
+                    if reagent and not reagent:IsCurrency() and reagent.item then
+                        tinsert(itemIDs, reagent.item:GetItemID())
+                    end
+                end
+                local label = slot.slotText
+                if not label or label == "" then
+                    label = L("CRAFT_LISTS_RECIPE_FINISHING_REAGENTS")
+                    if #(recipeData.reagentData.finishingReagentSlots or {}) > 1 then
+                        label = label .. " " .. tostring(slotIndex)
+                    end
+                end
+                addSlot("finishing", slotIndex, label, itemIDs)
+            end
+        end
+    end
+
+    if #slots == 0 and C_TradeSkillUI and C_TradeSkillUI.GetRecipeSchematic then
+        local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, false)
+        local optionalIndex = 0
+        local finishingIndex = 0
+        for _, reagentSlotSchematic in ipairs((schematic and schematic.reagentSlotSchematics) or {}) do
+            local slotTypeEnum = reagentSlotSchematic.reagentType
+            local isOptional = slotTypeEnum == Enum.CraftingReagentType.Optional
+            local isFinishing = slotTypeEnum == Enum.CraftingReagentType.Finishing
+            if isOptional or isFinishing then
+                local itemIDs = {}
+                for _, reagent in ipairs(reagentSlotSchematic.reagents or {}) do
+                    if reagent.itemID then
+                        tinsert(itemIDs, reagent.itemID)
+                    end
+                end
+                if isOptional then
+                    optionalIndex = optionalIndex + 1
+                    local label = (reagentSlotSchematic.slotInfo and reagentSlotSchematic.slotInfo.slotText)
+                        or L("CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS")
+                    addSlot("optional", optionalIndex, label, itemIDs)
+                else
+                    finishingIndex = finishingIndex + 1
+                    local label = (reagentSlotSchematic.slotInfo and reagentSlotSchematic.slotInfo.slotText)
+                        or L("CRAFT_LISTS_RECIPE_FINISHING_REAGENTS")
+                    addSlot("finishing", finishingIndex, label, itemIDs)
+                end
+            end
+        end
+    end
+
+    return slots
+end
+
+--- Build one submenu per optional/finishing slot for a craft-list entry.
+---@param listID number
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param entryKey string
+---@return CraftSim.WIDGETS.ContextMenu.Item[]
+function CraftSim.CRAFTQ.UI:BuildOptionalReagentMenuItems(listID, crafterUID, recipeID, entryKey)
+    local slots = self:GetOptionalReagentSlotsForRecipe(recipeID)
+    if #slots == 0 then
+        return {}
+    end
+
+    -- entryKey mutates when optionals change; keep a shared ref for menu refresh.
+    local keyState = { entryKey = entryKey }
+
+    local function getCurrentOptionalIDs()
+        local entry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(listID, crafterUID, recipeID, keyState.entryKey)
+        return (entry and entry.optionalReagentItemIDs) or {}
+    end
+
+    local function setOptionalIDs(optionals)
+        local updated = CraftSim.DB.CRAFT_LISTS:SetRecipeOptionalReagents(
+            listID, crafterUID, keyState.entryKey, optionals)
+        if updated then
+            keyState.entryKey = updated.entryKey
+        else
+            CraftSim.DEBUG:SystemPrint(f.r("That optional reagent variant already exists in this list."))
+        end
+        CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
+    end
+
+    local menuItems = {}
+    for _, slotInfo in ipairs(slots) do
+        local function getSelectedItemID()
+            local currentIDs = getCurrentOptionalIDs()
+            for _, choice in ipairs(slotInfo.choices) do
+                local members = choice.memberItemIDs or { choice.itemID }
+                for _, itemID in ipairs(currentIDs) do
+                    for _, memberID in ipairs(members) do
+                        if itemID == memberID then
+                            -- Any quality of this missive/stat group counts as selected.
+                            return choice.itemID
+                        end
+                    end
+                end
+            end
+            return 0
+        end
+
+        local function setSelectedItemID(itemID)
+            local newOptionals = {}
+            for _, existingID in ipairs(getCurrentOptionalIDs()) do
+                if not slotInfo.itemIDSet[existingID] then
+                    tinsert(newOptionals, existingID)
+                end
+            end
+            if itemID and itemID > 0 then
+                -- Persist the preferred (highest quality) missive for this stat group.
+                local slotCandidates = {}
+                for candidateID in pairs(slotInfo.itemIDSet) do
+                    tinsert(slotCandidates, candidateID)
+                end
+                tinsert(newOptionals, CraftSim.CRAFTQ.UI.PreferHighestQualityMissiveItemID(itemID, slotCandidates))
+            end
+            setOptionalIDs(newOptionals)
+        end
+
+        local children = {
+            {
+                type = "radio",
+                label = L("CRAFT_LISTS_RECIPE_OPTIONAL_NONE"),
+                value = 0,
+                get = getSelectedItemID,
+                set = setSelectedItemID,
+            },
+        }
+        for _, choice in ipairs(slotInfo.choices) do
+            tinsert(children, {
+                type = "radio",
+                label = choice.label,
+                value = choice.itemID,
+                get = getSelectedItemID,
+                set = setSelectedItemID,
+            })
+        end
+
+        tinsert(menuItems, {
+            type = "submenu",
+            label = slotInfo.label,
+            children = children,
+            tooltip = function(tooltip)
+                GameTooltip_SetTitle(tooltip, L("CRAFT_LISTS_RECIPE_OPTIONAL_REAGENTS_TOOLTIP"))
+            end,
+        })
+    end
+
+    return menuItems
+end
+
 --- Update the recipe display for the selected craft list (right panel)
 function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
     if not CraftSim.CRAFTQ.frame or not CraftSim.CRAFTQ.frame.content then return end
@@ -3191,8 +3658,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
     for _, recipeEntry in ipairs(recipeEntries) do
         local id = recipeEntry.recipeID
         local entry = recipeEntry
+        local entryKey = entry.entryKey
+            or CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(id, entry.optionalReagentItemIDs)
         content.recipeList:Add(function(row)
             row.recipeID = id
+            row.entryKey = entryKey
             local nameColumn = row.columns[1]
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
             local name = (recipeInfo and recipeInfo.name) or (f.grey("Unknown Recipe (ID: " .. tostring(id) .. ")"))
@@ -3218,6 +3688,20 @@ function CraftSim.CRAFTQ.UI:UpdateCraftListsRecipeDisplay()
                         restockText = restockText .. " " .. qualityIcons
                     end
                 end
+            end
+            if entry.optionalReagentItemIDs and #entry.optionalReagentItemIDs > 0 then
+                local optionalIcons = ""
+                for _, optionalItemID in ipairs(entry.optionalReagentItemIDs) do
+                    local _, shortStatLabel = CraftSim.CRAFTQ.UI:FormatOptionalReagentChoiceLabel(optionalItemID)
+                    local optIcon = C_Item.GetItemIconByID(optionalItemID)
+                    local iconText = optIcon and GUTIL:IconToText(optIcon, 14, 14) or ""
+                    if shortStatLabel and shortStatLabel ~= "" then
+                        optionalIcons = optionalIcons .. " " .. iconText .. f.bb(shortStatLabel)
+                    elseif iconText ~= "" then
+                        optionalIcons = optionalIcons .. " " .. iconText
+                    end
+                end
+                restockText = restockText .. optionalIcons
             end
             nameColumn.text:SetText(professionIconText .. " " .. icon .. " " .. name .. restockText)
 
@@ -3844,8 +4328,10 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             f.bb("1KP"))
     end
     local recipeRestockMaxText = ""
+    local craftListEntryKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(
+        recipeData.recipeID, recipeData:GetOptionalReagentItemIDs())
     local recipeEntry = CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(recipeData.craftListID, recipeData:GetCrafterUID(),
-        recipeData.recipeID)
+        recipeData.recipeID, craftListEntryKey)
     if recipeEntry then
         local recipeRestockMax = recipeEntry.restockMaxAmount
         if recipeRestockMax and recipeRestockMax > 0 then

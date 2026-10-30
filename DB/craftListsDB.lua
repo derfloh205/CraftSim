@@ -40,11 +40,56 @@ CraftSim.DB = CraftSim.DB
 ---@field recipeID RecipeID
 ---@field restockMaxAmount number target stock when > 0 (restock); 0 = use normal queue amount (TSM / 1 + offset)
 ---@field supportedQualities table<number, boolean>? gear output qualities to restock/queue; none checked = all qualities
+---@field optionalReagentItemIDs number[]? optional/finishing item IDs (e.g. missives) for this restock variant
+---@field entryKey string? recipeID[:optionalFingerprint] identity for multi-variant entries
 
 ---@class CraftSim.DB.CRAFT_LISTS : CraftSim.DB.Repository
 CraftSim.DB.CRAFT_LISTS = CraftSim.DB:RegisterRepository("CraftListsDB")
 
 local Logger = CraftSim.DEBUG:RegisterLogger("craftListsDB")
+
+--- Sorted fingerprint of optional/finishing item IDs for entry / queue identity.
+---@param optionalReagentItemIDs number[]?
+---@return string
+function CraftSim.DB.CRAFT_LISTS.GetOptionalReagentFingerprint(optionalReagentItemIDs)
+    local ids = {}
+    for _, itemID in ipairs(optionalReagentItemIDs or {}) do
+        local id = tonumber(itemID)
+        if id and id > 0 then
+            tinsert(ids, id)
+        end
+    end
+    table.sort(ids)
+    return table.concat(ids, ",")
+end
+
+--- Unique key for a craft-list recipe entry (allows multiple missive variants per recipe).
+---@param recipeID RecipeID
+---@param optionalReagentItemIDs number[]?
+---@return string
+function CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, optionalReagentItemIDs)
+    local fingerprint = CraftSim.DB.CRAFT_LISTS.GetOptionalReagentFingerprint(optionalReagentItemIDs)
+    if fingerprint == "" then
+        return tostring(recipeID)
+    end
+    return tostring(recipeID) .. ":" .. fingerprint
+end
+
+---@param optionalReagentItemIDs number[]?
+---@return number[]
+local function NormalizeOptionalReagentItemIDs(optionalReagentItemIDs)
+    local ids = {}
+    local seen = {}
+    for _, itemID in ipairs(optionalReagentItemIDs or {}) do
+        local id = tonumber(itemID)
+        if id and id > 0 and not seen[id] then
+            seen[id] = true
+            tinsert(ids, id)
+        end
+    end
+    table.sort(ids)
+    return ids
+end
 
 ---@return CraftSim.CraftList.Options
 local function DefaultOptions()
@@ -126,13 +171,26 @@ function CraftSim.DB.CRAFT_LISTS.IsQualitySupported(qualityID, supportedQualitie
 end
 
 ---@param recipeID RecipeID
+---@param optionalReagentItemIDs number[]?
 ---@return CraftSim.CraftListRecipeEntry
-local function CreateDefaultRecipeEntry(recipeID)
+local function CreateDefaultRecipeEntry(recipeID, optionalReagentItemIDs)
+    local optionals = NormalizeOptionalReagentItemIDs(optionalReagentItemIDs)
     return {
         recipeID = recipeID,
         restockMaxAmount = 0,
         supportedQualities = {},
+        optionalReagentItemIDs = optionals,
+        entryKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, optionals),
     }
+end
+
+---@param entry CraftSim.CraftListRecipeEntry
+local function NormalizeRecipeEntry(entry)
+    if not entry then return end
+    entry.restockMaxAmount = math.max(0, tonumber(entry.restockMaxAmount) or 0)
+    entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
+    entry.optionalReagentItemIDs = NormalizeOptionalReagentItemIDs(entry.optionalReagentItemIDs)
+    entry.entryKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(entry.recipeID, entry.optionalReagentItemIDs)
 end
 
 ---@param list CraftSim.CraftList
@@ -151,10 +209,20 @@ local function NormalizeListRecipes(list)
         end
     end
 
+    -- Deduplicate by entryKey (recipe + optional fingerprint); keep first occurrence.
+    local seenKeys = {}
+    local dedupedEntries = {}
+    for _, entry in ipairs(list.recipeEntries) do
+        NormalizeRecipeEntry(entry)
+        if not seenKeys[entry.entryKey] then
+            seenKeys[entry.entryKey] = true
+            tinsert(dedupedEntries, entry)
+        end
+    end
+    list.recipeEntries = dedupedEntries
+
     local normalizedRecipeIDs = {}
     for _, entry in ipairs(list.recipeEntries) do
-        entry.restockMaxAmount = math.max(0, tonumber(entry.restockMaxAmount) or 0)
-        entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
         if not tContains(normalizedRecipeIDs, entry.recipeID) then
             tinsert(normalizedRecipeIDs, entry.recipeID)
         end
@@ -297,56 +365,116 @@ function CraftSim.DB.CRAFT_LISTS:GetList(id, crafterUID)
     return list
 end
 
----@param id number
----@param crafterUID? CrafterUID
----@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, crafterUID, recipeID)
-    local list = self:GetList(id, crafterUID)
-    if not list then return end
-    if not GUTIL:Find(list.recipeEntries, function(entry) return entry.recipeID == recipeID end) then
-        tinsert(list.recipeEntries, CreateDefaultRecipeEntry(recipeID))
-        tinsert(list.recipeIDs, recipeID)
-    end
-end
-
----@param id number
----@param crafterUID? CrafterUID
----@param recipeID RecipeID
-function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, crafterUID, recipeID)
-    local list = self:GetList(id, crafterUID)
-    if not list then return end
-    local _, entryIndex = GUTIL:Find(list.recipeEntries, function(entry) return entry.recipeID == recipeID end)
-    if entryIndex then
-        tremove(list.recipeEntries, entryIndex)
-    end
-    local _, index = GUTIL:Find(list.recipeIDs, function(rid) return rid == recipeID end)
-    if index then
-        tremove(list.recipeIDs, index)
-    end
-end
-
----@param id number
----@param crafterUID? CrafterUID
----@param recipeID RecipeID
+---@param list CraftSim.CraftList
+---@param entryKey string
 ---@return CraftSim.CraftListRecipeEntry?
-function CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(id, crafterUID, recipeID)
+local function FindEntryByKey(list, entryKey)
+    return GUTIL:Find(list.recipeEntries, function(entry) return entry.entryKey == entryKey end)
+end
+
+---@param id number
+---@param crafterUID? CrafterUID
+---@param recipeID RecipeID
+---@param optionalReagentItemIDs number[]?
+---@return CraftSim.CraftListRecipeEntry?
+function CraftSim.DB.CRAFT_LISTS:AddRecipe(id, crafterUID, recipeID, optionalReagentItemIDs)
     local list = self:GetList(id, crafterUID)
     if not list then return nil end
-    local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+    local entryKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, optionalReagentItemIDs)
+    local existing = FindEntryByKey(list, entryKey)
+    if existing then
+        return existing
+    end
+    local entry = CreateDefaultRecipeEntry(recipeID, optionalReagentItemIDs)
+    tinsert(list.recipeEntries, entry)
+    if not tContains(list.recipeIDs, recipeID) then
+        tinsert(list.recipeIDs, recipeID)
+    end
     return entry
+end
+
+--- Duplicate an entry as a new restock variant (same recipe, empty optionals by default).
+---@param id number
+---@param crafterUID? CrafterUID
+---@param sourceEntryKey string
+---@return CraftSim.CraftListRecipeEntry?
+function CraftSim.DB.CRAFT_LISTS:AddRecipeVariant(id, crafterUID, sourceEntryKey)
+    local list = self:GetList(id, crafterUID)
+    if not list then return nil end
+    local source = FindEntryByKey(list, sourceEntryKey)
+    if not source then return nil end
+
+    -- Prefer a blank optional variant; if that already exists, do nothing.
+    local blankKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(source.recipeID, nil)
+    if not FindEntryByKey(list, blankKey) then
+        local entry = CreateDefaultRecipeEntry(source.recipeID)
+        entry.restockMaxAmount = source.restockMaxAmount
+        local qualities = {}
+        for qualityID, enabled in pairs(source.supportedQualities or {}) do
+            qualities[qualityID] = enabled
+        end
+        entry.supportedQualities = qualities
+        NormalizeRecipeEntry(entry)
+        tinsert(list.recipeEntries, entry)
+        NormalizeListRecipes(list)
+        return FindEntryByKey(list, entry.entryKey)
+    end
+    return nil
+end
+
+---@param id number
+---@param crafterUID? CrafterUID
+---@param recipeID RecipeID
+---@param entryKey string? when set, remove that variant only; otherwise remove all variants of recipeID
+function CraftSim.DB.CRAFT_LISTS:RemoveRecipe(id, crafterUID, recipeID, entryKey)
+    local list = self:GetList(id, crafterUID)
+    if not list then return end
+
+    if entryKey then
+        local _, entryIndex = GUTIL:Find(list.recipeEntries, function(entry) return entry.entryKey == entryKey end)
+        if entryIndex then
+            tremove(list.recipeEntries, entryIndex)
+        end
+    else
+        for i = #list.recipeEntries, 1, -1 do
+            if list.recipeEntries[i].recipeID == recipeID then
+                tremove(list.recipeEntries, i)
+            end
+        end
+    end
+
+    NormalizeListRecipes(list)
+end
+
+---@param id number
+---@param crafterUID? CrafterUID
+---@param recipeID RecipeID
+---@param entryKey string?
+---@return CraftSim.CraftListRecipeEntry?
+function CraftSim.DB.CRAFT_LISTS:GetRecipeEntry(id, crafterUID, recipeID, entryKey)
+    local list = self:GetList(id, crafterUID)
+    if not list then return nil end
+    if entryKey then
+        return FindEntryByKey(list, entryKey)
+    end
+    -- Backward compatible: first entry for recipeID (blank optionals preferred).
+    local blankKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, nil)
+    return FindEntryByKey(list, blankKey)
+        or GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
 end
 
 ---@param id number
 ---@param crafterUID? CrafterUID
 ---@param recipeID RecipeID
 ---@param restockMaxAmount number
-function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, crafterUID, recipeID, restockMaxAmount)
+---@param entryKey string?
+function CraftSim.DB.CRAFT_LISTS:SetRecipeRestockOptions(id, crafterUID, recipeID, restockMaxAmount, entryKey)
     local list = self:GetList(id, crafterUID)
     if not list then return end
-    local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+    entryKey = entryKey or CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, nil)
+    local entry = FindEntryByKey(list, entryKey)
     if not entry then
-        self:AddRecipe(id, crafterUID, recipeID)
-        entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+        entry = self:AddRecipe(id, crafterUID, recipeID)
         if not entry then return end
     end
     entry.restockMaxAmount = math.max(0, tonumber(restockMaxAmount) or 0)
@@ -358,13 +486,14 @@ end
 ---@param recipeID RecipeID
 ---@param qualityID number
 ---@param enabled boolean
-function CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(id, crafterUID, recipeID, qualityID, enabled)
+---@param entryKey string?
+function CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(id, crafterUID, recipeID, qualityID, enabled, entryKey)
     local list = self:GetList(id, crafterUID)
     if not list then return end
-    local entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+    entryKey = entryKey or CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(recipeID, nil)
+    local entry = FindEntryByKey(list, entryKey)
     if not entry then
-        self:AddRecipe(id, crafterUID, recipeID)
-        entry = GUTIL:Find(list.recipeEntries, function(re) return re.recipeID == recipeID end)
+        entry = self:AddRecipe(id, crafterUID, recipeID)
         if not entry then return end
     end
     entry.supportedQualities = NormalizeSupportedQualities(entry.supportedQualities)
@@ -378,6 +507,31 @@ function CraftSim.DB.CRAFT_LISTS:SetRecipeSupportedQuality(id, crafterUID, recip
         entry.supportedQualities[qualityID] = nil
     end
     NormalizeListRecipes(list)
+end
+
+--- Set optional/finishing reagent item IDs for a recipe entry variant (updates entryKey).
+---@param id number
+---@param crafterUID? CrafterUID
+---@param entryKey string
+---@param optionalReagentItemIDs number[]?
+---@return CraftSim.CraftListRecipeEntry?
+function CraftSim.DB.CRAFT_LISTS:SetRecipeOptionalReagents(id, crafterUID, entryKey, optionalReagentItemIDs)
+    local list = self:GetList(id, crafterUID)
+    if not list then return nil end
+    local entry = FindEntryByKey(list, entryKey)
+    if not entry then return nil end
+
+    local newOptionals = NormalizeOptionalReagentItemIDs(optionalReagentItemIDs)
+    local newKey = CraftSim.DB.CRAFT_LISTS.GetRecipeEntryKey(entry.recipeID, newOptionals)
+    if newKey ~= entry.entryKey and FindEntryByKey(list, newKey) then
+        -- Collision with another variant — refuse overwrite.
+        return nil
+    end
+
+    entry.optionalReagentItemIDs = newOptionals
+    entry.entryKey = newKey
+    NormalizeListRecipes(list)
+    return FindEntryByKey(list, newKey)
 end
 
 ---@param id number
