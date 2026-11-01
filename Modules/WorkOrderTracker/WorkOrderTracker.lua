@@ -418,7 +418,7 @@ function CraftSim.WORK_ORDER_TRACKER:SnapshotCurrentProfession(onComplete)
             return
         end
 
-        local orders = C_CraftingOrders.GetCrafterOrders() or {}
+        local orders = CraftSim.CRAFTQ:GetCrafterOrdersForType(Enum.CraftingOrderType.Npc)
         self:SnapshotFromOrders(orders, profession, expansionID, crafterUID, function()
             if onComplete then
                 onComplete(true)

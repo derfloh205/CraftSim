@@ -337,16 +337,17 @@ function CraftSim.CRAFTQ:WhenCraftingOrdersCanRequest(callback, timeoutSeconds)
 end
 
 ---@param request table
----@param onResult fun(result: Enum.CraftingOrderResult)
+---@param onResult fun(result: Enum.CraftingOrderResult, orderType?: Enum.CraftingOrderType, displayBuckets?: boolean, expectMoreRows?: boolean, offset?: number, isSorted?: boolean)
 ---@param retriesLeft? number
 function CraftSim.CRAFTQ:RequestCrafterOrdersWithRetry(request, onResult, retriesLeft)
     retriesLeft = retriesLeft or self.craftingOrdersRequestRetriesMax
 
     self:WhenCraftingOrdersCanRequest(function()
         self.craftingOrdersCanRequest = false
-        request.callback = C_FunctionContainers.CreateCallback(function(result)
+        request.callback = C_FunctionContainers.CreateCallback(function(result, responseOrderType, displayBuckets,
+                                                                        expectMoreRows, offset, isSorted)
             if result == Enum.CraftingOrderResult.Ok then
-                onResult(result)
+                onResult(result, responseOrderType, displayBuckets, expectMoreRows, offset, isSorted)
                 return
             end
 
@@ -370,37 +371,85 @@ end
 
 ---@return Enum.CraftingOrderType[]
 function CraftSim.CRAFTQ:GetEnabledWorkOrderTypes()
-    return {
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") and Enum.CraftingOrderType.Npc,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS") and Enum.CraftingOrderType.Guild,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS") and Enum.CraftingOrderType.Personal,
-        CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS") and Enum.CraftingOrderType.Public,
-    }
+    --- Build an explicit list. Do not use `flag and Enum.X` — Public == 0 would be fine in Lua,
+    --- but false entries make FrameDistributor harder to reason about.
+    local types = {}
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PATRON_ORDERS") then
+        tinsert(types, Enum.CraftingOrderType.Npc)
+    end
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_GUILD_ORDERS") then
+        tinsert(types, Enum.CraftingOrderType.Guild)
+    end
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PERSONAL_ORDERS") then
+        tinsert(types, Enum.CraftingOrderType.Personal)
+    end
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_WORK_ORDERS_INCLUDE_PUBLIC_ORDERS") then
+        tinsert(types, Enum.CraftingOrderType.Public)
+    end
+    return types
 end
 
----@param orderIDs table<string, boolean>
-function CraftSim.CRAFTQ:AccumulateWorkOrderIDs(orderIDs)
+--- Flat crafter orders for a type only. Ignores stale results left over from a prior request
+--- (e.g. guild rows still in GetCrafterOrders after a public bucketed response).
+---@param orderType Enum.CraftingOrderType
+---@return CraftingOrderInfo[]
+function CraftSim.CRAFTQ:GetCrafterOrdersForType(orderType)
+    local filtered = {}
+    local seen = {}
     local orders = C_CraftingOrders.GetCrafterOrders() or {}
     for _, order in ipairs(orders) do
-        local key = CraftSim.UTIL:OrderIDKey(order.orderID)
-        if key then
-            orderIDs[key] = true
+        if order and order.orderType == orderType then
+            local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+            if key and not seen[key] then
+                seen[key] = true
+                tinsert(filtered, order)
+            elseif not key then
+                tinsert(filtered, order)
+            end
         end
     end
     local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-    if claimedOrder then
+    if claimedOrder and claimedOrder.orderType == orderType then
         local key = CraftSim.UTIL:OrderIDKey(claimedOrder.orderID)
-        if key then
-            orderIDs[key] = true
+        if key and not seen[key] then
+            tinsert(filtered, claimedOrder)
+        end
+    end
+    return filtered
+end
+
+---@param orderIDs table<string, boolean>
+---@param orderType? Enum.CraftingOrderType when set, only accumulate matching orders
+function CraftSim.CRAFTQ:AccumulateWorkOrderIDs(orderIDs, orderType)
+    local orders = orderType and self:GetCrafterOrdersForType(orderType)
+        or (C_CraftingOrders.GetCrafterOrders() or {})
+    for _, order in ipairs(orders) do
+        if not orderType or order.orderType == orderType then
+            local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+            if key then
+                orderIDs[key] = true
+            end
+        end
+    end
+    if not orderType then
+        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+        if claimedOrder then
+            local key = CraftSim.UTIL:OrderIDKey(claimedOrder.orderID)
+            if key then
+                orderIDs[key] = true
+            end
         end
     end
 end
 
 ---@param profession Enum.Profession
+---@param orderType Enum.CraftingOrderType
+---@param selectedSkillLineAbility? number
 ---@return table
-function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType)
+function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType, selectedSkillLineAbility)
     return {
         orderType = orderType,
+        selectedSkillLineAbility = selectedSkillLineAbility,
         searchFavorites = false,
         initialNonPublicSearch = false,
         primarySort = {
@@ -415,6 +464,65 @@ function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType)
         offset = 0,
         profession = profession,
     }
+end
+
+--- Fetch flat crafter orders for a type. Public often returns buckets — expand each bucket
+--- into flat orders so we never reuse a previous type's GetCrafterOrders() buffer.
+---@param profession Enum.Profession
+---@param orderType Enum.CraftingOrderType
+---@param onComplete fun(orders: CraftingOrderInfo[], success: boolean)
+function CraftSim.CRAFTQ:FetchCrafterOrders(profession, orderType, onComplete)
+    local request = self:CreateWorkOrderListRequest(profession, orderType)
+    self:RequestCrafterOrdersWithRetry(request, function(result, _, displayBuckets)
+        if result ~= Enum.CraftingOrderResult.Ok then
+            onComplete({}, false)
+            return
+        end
+
+        if not displayBuckets then
+            onComplete(self:GetCrafterOrdersForType(orderType), true)
+            return
+        end
+
+        -- Public (and rarely others) can return recipe buckets instead of flat orders.
+        -- Never read GetCrafterOrders() here — it may still hold guild/personal rows.
+        local buckets = C_CraftingOrders.GetCrafterBuckets() or {}
+        Logger:LogDebug(
+            "Work orders returned {bucketCount} buckets for {orderType}; expanding",
+            #buckets,
+            CraftSim.UTIL:GetOrderTypeText(orderType))
+
+        local allOrders = {}
+        local seen = {}
+        GUTIL.FrameDistributor {
+            iterationTable = buckets,
+            iterationsPerFrame = 1,
+            maxIterations = 250,
+            finally = function()
+                onComplete(allOrders, true)
+            end,
+            continue = function(distributor, _, bucket)
+                local abilityID = bucket and bucket.skillLineAbilityID
+                if not abilityID then
+                    distributor:Continue()
+                    return
+                end
+                local bucketRequest = self:CreateWorkOrderListRequest(profession, orderType, abilityID)
+                self:RequestCrafterOrdersWithRetry(bucketRequest, function(bucketResult, _, bucketDisplayBuckets)
+                    if bucketResult == Enum.CraftingOrderResult.Ok and not bucketDisplayBuckets then
+                        for _, order in ipairs(self:GetCrafterOrdersForType(orderType)) do
+                            local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+                            if key and not seen[key] then
+                                seen[key] = true
+                                tinsert(allOrders, order)
+                            end
+                        end
+                    end
+                    distributor:Continue()
+                end)
+            end,
+        }:Continue()
+    end)
 end
 
 ---@class CraftSim.CRAFTQ.WorkOrderCollectResult
@@ -443,16 +551,21 @@ function CraftSim.CRAFTQ:CollectAvailableWorkOrderIDs(profession, onComplete)
         end,
         continue = function(frameDistributor, _, workOrderType)
             local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
-            if not orderType then
+            -- Public == 0; only skip nil/false placeholders.
+            if orderType == nil or orderType == false then
                 frameDistributor:Continue()
                 return
             end
-            local request = self:CreateWorkOrderListRequest(profession, orderType)
-            self:RequestCrafterOrdersWithRetry(request, function(result)
-                if result == Enum.CraftingOrderResult.Ok then
+            self:FetchCrafterOrders(profession, orderType, function(orders, success)
+                if success then
                     hadSuccessfulFetch = true
                     fetchedOrderTypes[orderType] = true
-                    self:AccumulateWorkOrderIDs(orderIDs)
+                    for _, order in ipairs(orders) do
+                        local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+                        if key then
+                            orderIDs[key] = true
+                        end
+                    end
                 end
                 frameDistributor:Continue()
             end)
@@ -993,80 +1106,88 @@ function CraftSim.CRAFTQ:QueueWorkOrders()
         end,
         continue = function(frameDistributor, _, workOrderType, _, progress)
             local orderType = workOrderType --[[@as Enum.CraftingOrderType]]
-            if not orderType then
+            -- Public == 0; only skip nil/false placeholders.
+            if orderType == nil or orderType == false then
                 frameDistributor:Continue()
                 return
             end
-            local request = self:CreateWorkOrderListRequest(profession, orderType)
-            self:RequestCrafterOrdersWithRetry(request, function(result)
-                if result ~= Enum.CraftingOrderResult.Ok then
+            self:FetchCrafterOrders(profession, orderType, function(orders, success)
+                if not success then
                     frameDistributor:Continue()
                     return
                 end
                 hadSuccessfulOrderFetch = true
                 fetchedOrderTypes[orderType] = true
-                self:AccumulateWorkOrderIDs(availableOrderIDs)
-                local orders = C_CraftingOrders.GetCrafterOrders()
-                        local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-                        if claimedOrder then
-                            tinsert(orders, claimedOrder)
-                        end
+                for _, order in ipairs(orders) do
+                    local key = CraftSim.UTIL:OrderIDKey(order.orderID)
+                    if key then
+                        availableOrderIDs[key] = true
+                    end
+                end
 
-                        if orderType == Enum.CraftingOrderType.Npc and CraftSim.WORK_ORDER_TRACKER then
-                            CraftSim.WORK_ORDER_TRACKER:StagePatronOrdersFromQueue(orders, profession)
-                        end
+                if orderType == Enum.CraftingOrderType.Npc and CraftSim.WORK_ORDER_TRACKER then
+                    CraftSim.WORK_ORDER_TRACKER:StagePatronOrdersFromQueue(orders, profession)
+                end
 
-                        local isPublicOrder = orderType == Enum.CraftingOrderType.Public
-                        local publicOrderCandidates = {}
+                -- Public-only path: claim caps / profit ranking must never apply to guild/personal/npc.
+                local isPublicOrderType = orderType == Enum.CraftingOrderType.Public
+                local publicOrderCandidates = {}
+                local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
-                        Logger:LogDebug(
-                            "Processing {orderCount} {orderType} work orders",
-                            #orders,
-                            CraftSim.UTIL:GetOrderTypeText(orderType))
+                Logger:LogDebug(
+                    "Processing {orderCount} {orderType} work orders",
+                    #orders,
+                    CraftSim.UTIL:GetOrderTypeText(orderType))
 
-                        GUTIL.FrameDistributor {
-                            iterationTable = orders,
-                            iterationsPerFrame = 1,
-                            maxIterations = 100,
-                            finally = function()
-                                if isPublicOrder then
-                                    if #publicOrderCandidates > 0 then
-                                        table.sort(publicOrderCandidates, function(a, b)
-                                            return a.averageProfit > b.averageProfit
-                                        end)
-                                        local maxCount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT")
-                                        if maxCount == 0 then
-                                            local claimInfo = C_CraftingOrders.GetOrderClaimInfo(profession)
-                                            maxCount = (claimInfo and claimInfo.claimsRemaining) or 0
-                                        end
-                                        if maxCount < 1 then
-                                            Logger:LogDebug(
-                                                "Public orders: {candidateCount} candidates but none queued (maxCount/claimsRemaining is 0)",
-                                                #publicOrderCandidates)
-                                        else
-                                            local queued = math.min(maxCount, #publicOrderCandidates)
-                                            Logger:LogDebug(
-                                                "Public orders: queued {queued} of {candidateCount} candidates (max {maxCount})",
-                                                queued, #publicOrderCandidates, maxCount)
-                                            for i = 1, queued do
-                                                CraftSim.CRAFTQ:AddRecipe { recipeData = publicOrderCandidates[i].recipeData }
-                                            end
-                                        end
-                                    else
-                                        Logger:LogDebug("Public orders: no candidates passed filters")
+                GUTIL.FrameDistributor {
+                    iterationTable = orders,
+                    iterationsPerFrame = 1,
+                    maxIterations = 250,
+                    finally = function()
+                        if isPublicOrderType then
+                            if #publicOrderCandidates > 0 then
+                                table.sort(publicOrderCandidates, function(a, b)
+                                    return a.averageProfit > b.averageProfit
+                                end)
+                                local maxCount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PUBLIC_ORDERS_MAX_COUNT")
+                                if maxCount == 0 then
+                                    local claimInfo = C_CraftingOrders.GetOrderClaimInfo(profession)
+                                    maxCount = (claimInfo and claimInfo.claimsRemaining) or 0
+                                end
+                                if maxCount < 1 then
+                                    Logger:LogDebug(
+                                        "Public orders: {candidateCount} candidates but none queued (maxCount/claimsRemaining is 0)",
+                                        #publicOrderCandidates)
+                                else
+                                    local queued = math.min(maxCount, #publicOrderCandidates)
+                                    Logger:LogDebug(
+                                        "Public orders: queued {queued} of {candidateCount} candidates (max {maxCount})",
+                                        queued, #publicOrderCandidates, maxCount)
+                                    for i = 1, queued do
+                                        CraftSim.CRAFTQ:AddRecipe { recipeData = publicOrderCandidates[i].recipeData }
                                     end
                                 end
-                                frameDistributor:Continue()
-                            end,
-                            continue = function(distributor, _, order, _, progress)
-                                order = order --[[@as CraftingOrderInfo]]
-                                local orderTypeText = CraftSim.UTIL:GetOrderTypeText(orderType)
+                            else
+                                Logger:LogDebug("Public orders: no candidates passed filters")
+                            end
+                        end
+                        frameDistributor:Continue()
+                    end,
+                    continue = function(distributor, _, order, _, progress)
+                        order = order --[[@as CraftingOrderInfo]]
+                        -- Defense in depth: never process a mismatched type from a stale buffer.
+                        if not order or order.orderType ~= orderType then
+                            distributor:Continue()
+                            return
+                        end
+                        local orderTypeText = CraftSim.UTIL:GetOrderTypeText(orderType)
 
-                                queueWorkOrdersButton:SetText(string.format("%s - %.0f%%", orderTypeText, progress))
+                        queueWorkOrdersButton:SetText(string.format("%s - %.0f%%", orderTypeText, progress))
 
-                                local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
-                                local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
-                                local knowledgePointsRewarded = 0
+                        local isGuildOrder = order.orderType == Enum.CraftingOrderType.Guild
+                        local isPatronOrder = order.orderType == Enum.CraftingOrderType.Npc
+                        local isPublicOrder = order.orderType == Enum.CraftingOrderType.Public
+                        local knowledgePointsRewarded = 0
 
                                 if isPatronOrder and maxPatronDurationHours > 0 then
                                     local isClaimed = claimedOrder ~= nil
