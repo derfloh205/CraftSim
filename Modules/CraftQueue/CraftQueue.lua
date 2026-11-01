@@ -447,11 +447,17 @@ end
 ---@param selectedSkillLineAbility? number
 ---@return table
 function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType, selectedSkillLineAbility)
+    -- Blizzard StartDefaultSearch for Guild/Personal/Npc uses initialNonPublicSearch when
+    -- default filters are active so recipe-list filters (e.g. SetOnlyShowAvailableForOrders
+    -- from OrdersPage:OnShow) do not empty the results. Public never uses that flag.
+    -- Bucket drill-downs pass selectedSkillLineAbility and must keep filters off this path.
+    local isPublic = orderType == Enum.CraftingOrderType.Public
+    local initialNonPublicSearch = (not isPublic) and (selectedSkillLineAbility == nil)
     return {
         orderType = orderType,
         selectedSkillLineAbility = selectedSkillLineAbility,
         searchFavorites = false,
-        initialNonPublicSearch = false,
+        initialNonPublicSearch = initialNonPublicSearch,
         primarySort = {
             sortType = Enum.CraftingOrderSortType.ItemName,
             reversed = false,
@@ -466,8 +472,8 @@ function CraftSim.CRAFTQ:CreateWorkOrderListRequest(profession, orderType, selec
     }
 end
 
---- Fetch flat crafter orders for a type. Public often returns buckets — expand each bucket
---- into flat orders so we never reuse a previous type's GetCrafterOrders() buffer.
+--- Fetch flat crafter orders for a type. Public (and sometimes Personal) return buckets —
+--- expand each bucket so we never reuse a previous type's GetCrafterOrders() buffer.
 ---@param profession Enum.Profession
 ---@param orderType Enum.CraftingOrderType
 ---@param onComplete fun(orders: CraftingOrderInfo[], success: boolean)
@@ -480,17 +486,28 @@ function CraftSim.CRAFTQ:FetchCrafterOrders(profession, orderType, onComplete)
         end
 
         if not displayBuckets then
-            onComplete(self:GetCrafterOrdersForType(orderType), true)
+            local flatOrders = self:GetCrafterOrdersForType(orderType)
+            Logger:LogDebug(
+                "Fetched {orderCount} flat {orderType} work orders",
+                #flatOrders,
+                CraftSim.UTIL:GetOrderTypeText(orderType))
+            onComplete(flatOrders, true)
             return
         end
 
-        -- Public (and rarely others) can return recipe buckets instead of flat orders.
-        -- Never read GetCrafterOrders() here — it may still hold guild/personal rows.
+        -- Public (and sometimes Personal when grouped by recipe) return buckets.
+        -- Do not read GetCrafterOrders() as the primary source — it may still hold another type.
         local buckets = C_CraftingOrders.GetCrafterBuckets() or {}
         Logger:LogDebug(
             "Work orders returned {bucketCount} buckets for {orderType}; expanding",
             #buckets,
             CraftSim.UTIL:GetOrderTypeText(orderType))
+
+        if #buckets == 0 then
+            -- Server said buckets but provided none; fall back to any flat rows of this type.
+            onComplete(self:GetCrafterOrdersForType(orderType), true)
+            return
+        end
 
         local allOrders = {}
         local seen = {}
@@ -499,6 +516,10 @@ function CraftSim.CRAFTQ:FetchCrafterOrders(profession, orderType, onComplete)
             iterationsPerFrame = 1,
             maxIterations = 250,
             finally = function()
+                Logger:LogDebug(
+                    "Expanded buckets to {orderCount} {orderType} work orders",
+                    #allOrders,
+                    CraftSim.UTIL:GetOrderTypeText(orderType))
                 onComplete(allOrders, true)
             end,
             continue = function(distributor, _, bucket)
