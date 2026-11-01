@@ -225,9 +225,6 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(recipeData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local frame = exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER and self.frameWO or self.frame
 
-    -- optional/finishing
-    recipeData.reagentData:ClearOptionalReagents()
-
     local possibleRequiredSelectableItemIDs = {}
     if recipeData.reagentData:HasRequiredSelectableReagent() and not recipeData.reagentData.requiredSelectableReagentSlot:IsCurrency() then
         possibleRequiredSelectableItemIDs = GUTIL:Map(
@@ -240,10 +237,15 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(recipeData)
     local optionalReagentItemSelectors = frame.optionalReagentItemSelectors --[[@as GGUI.ItemSelector[] ]]
 
     local itemIDs = {}
+    ---@type {slot: CraftSim.OptionalReagentSlot, currencyID: number}[]
+    local currencySelections = {}
     for _, optionalReagentItemSelector in pairs(optionalReagentItemSelectors) do
         local slot = optionalReagentItemSelector.slot
         if slot and optionalReagentItemSelector.isCurrencySlot and optionalReagentItemSelector.selectedCurrencyID then
-            slot:SetCurrencyReagent(optionalReagentItemSelector.selectedCurrencyID)
+            tinsert(currencySelections, {
+                slot = slot,
+                currencyID = optionalReagentItemSelector.selectedCurrencyID,
+            })
         else
             local itemID = optionalReagentItemSelector.selectedItem and
                 optionalReagentItemSelector.selectedItem:GetItemID()
@@ -251,15 +253,23 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs(recipeData)
                 -- try to set required selectable if available else put to optional/finishing
                 if slot == recipeData.reagentData.requiredSelectableReagentSlot or
                     tContains(possibleRequiredSelectableItemIDs, itemID) then
+                    -- deferred: SetOptionalReagents clears required-selectable item slots too
+                    -- only via ClearOptionalReagents (not required selectable). Set item now.
                     recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(itemID)
                 else
                     table.insert(itemIDs, itemID)
                 end
+            elseif slot == recipeData.reagentData.requiredSelectableReagentSlot then
+                recipeData.reagentData.requiredSelectableReagentSlot:SetReagent(nil)
             end
         end
     end
 
+    -- Clears optional/finishing first so empty selectors drop embellishments/missives.
     recipeData:SetOptionalReagents(itemIDs)
+    for _, selection in ipairs(currencySelections) do
+        selection.slot:SetCurrencyReagent(selection.currencyID)
+    end
 end
 
 ---@param recipeData CraftSim.RecipeData

@@ -118,13 +118,11 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return boolean
 function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
-    if not recipeData.orderData then return false end
-
-    local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
-        return recipeData:GetOrderReagentDescriptor(reagentInfo).itemID
-    end)
-
-    return tContains(orderItemIDs, self.item:GetItemID())
+    if not recipeData or not recipeData.orderData or not self.item then
+        return false
+    end
+    return CraftSim.WORK_ORDER_REAGENTS:IsCustomerRequiredItem(
+        self.item:GetItemID(), recipeData.orderData, recipeData)
 end
 
 ---@deprecated

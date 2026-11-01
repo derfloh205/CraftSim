@@ -35,9 +35,11 @@ function CraftSim.CraftQueue:AddRecipe(options)
 
     local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
-    -- make sure all required reagents are maxed out
+    -- Fill empty slots only. Do not replace an existing quality allocation
+    -- (e.g. WO Optimize for min R2) with owned-cheapest — that drops below
+    -- min quality while looking like "no mats needed".
     recipeData:SetNonQualityReagentsMax()
-    recipeData:SetCheapestQualityReagentsMax()
+    recipeData:SetCheapestQualityReagentsMax(true)
 
     local craftQueueItem = self:FindRecipe(recipeData)
 
@@ -183,7 +185,8 @@ function CraftSim.CraftQueue:Remove(craftQueueItem, removeParentSubcraftInformat
     if craftQueueItem.recipeData:IsWorkOrder() then
         -- check if claimed if yes release
         local claimedOrder = C_CraftingOrders.GetClaimedOrder()
-        if claimedOrder and claimedOrder.orderID == craftQueueItem.recipeData.orderData.orderID then
+        if claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID,
+                craftQueueItem.recipeData.orderData.orderID) then
             C_CraftingOrders.ReleaseOrder(claimedOrder.orderID,
                 craftQueueItem.recipeData.professionData.professionInfo.profession)
         end
@@ -215,9 +218,9 @@ function CraftSim.CraftQueue:RemoveStaleWorkOrders(validOrderIDs, profession, fe
             and recipeData.professionData.professionInfo
             and recipeData.professionData.professionInfo.profession == profession
             and recipeData.professionData.skillLineID == skillLineID
-            and not (claimedOrder and claimedOrder.orderID == orderData.orderID)
+            and not (claimedOrder and CraftSim.UTIL:OrderIDsEqual(claimedOrder.orderID, orderData.orderID))
             and (not fetchedOrderTypes or fetchedOrderTypes[orderData.orderType])
-            and not validOrderIDs[orderData.orderID] then
+            and not validOrderIDs[CraftSim.UTIL:OrderIDKey(orderData.orderID)] then
             tinsert(toRemove, craftQueueItem)
         end
     end
@@ -241,7 +244,7 @@ function CraftSim.CraftQueue:RemoveWorkOrdersByOrderID(orderID)
         local orderData = craftQueueItem.recipeData.orderData
         return craftQueueItem.recipeData:IsWorkOrder()
             and orderData
-            and orderData.orderID == orderID
+            and CraftSim.UTIL:OrderIDsEqual(orderData.orderID, orderID)
     end)
 
     for _, craftQueueItem in ipairs(toRemove) do
@@ -349,52 +352,60 @@ function CraftSim.CraftQueue:FilterSortByPriority()
     end)
     local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
         function(a, b)
-            -- sort work orders on top of non subrecipe recipes
             local aWorkOrder = a.recipeData:IsWorkOrder()
             local bWorkOrder = b.recipeData:IsWorkOrder()
 
-            local aSubRecipe = a.recipeData:IsSubRecipe()
-            local bSubRecipe = b.recipeData:IsSubRecipe()
+            local aIsClaimed, bIsClaimed = false, false
+            if claimedOrder then
+                aIsClaimed = aWorkOrder and a.recipeData.orderData
+                    and CraftSim.UTIL:OrderIDsEqual(a.recipeData.orderData.orderID, claimedOrder.orderID)
+                bIsClaimed = bWorkOrder and b.recipeData.orderData
+                    and CraftSim.UTIL:OrderIDsEqual(b.recipeData.orderData.orderID, claimedOrder.orderID)
+            end
 
-            -- subrecipes always on top
-            if aSubRecipe and not bSubRecipe then
+            -- 1) Submit (fulfillable claimed order)
+            local aSubmittable = aIsClaimed and claimedOrder.isFulfillable
+            local bSubmittable = bIsClaimed and claimedOrder.isFulfillable
+            if aSubmittable and not bSubmittable then
                 return true
-            elseif not aSubRecipe and bSubRecipe then
+            elseif not aSubmittable and bSubmittable then
                 return false
             end
 
+            -- 2) Claimed (claimed but not yet submittable)
+            if aIsClaimed and not bIsClaimed then
+                return true
+            elseif not aIsClaimed and bIsClaimed then
+                return false
+            end
+
+            -- 3) Ready to craft (green Craft)
+            if a.allowedToCraft and not b.allowedToCraft then
+                return true
+            elseif not a.allowedToCraft and b.allowedToCraft then
+                return false
+            end
+
+            -- 4) Current profession open
             if a.correctProfessionOpen and not b.correctProfessionOpen then
                 return true
             elseif not a.correctProfessionOpen and b.correctProfessionOpen then
                 return false
             end
 
-            -- work order recipes always above non work orders
-            if aWorkOrder and not bWorkOrder then
+            -- 5) Rest: subrecipes, other work orders, depth, profit
+            local aSubRecipe = a.recipeData:IsSubRecipe()
+            local bSubRecipe = b.recipeData:IsSubRecipe()
+
+            if aSubRecipe and not bSubRecipe then
                 return true
-            elseif bWorkOrder and not aWorkOrder then
+            elseif not aSubRecipe and bSubRecipe then
                 return false
             end
 
-            -- now recipes are either both work orders or both not work orders
-
-            -- if both work orders
-            if aWorkOrder and bWorkOrder then
-                -- submittable order always above non submittable (if there is a fulfillable order)
-                if claimedOrder and claimedOrder.isFulfillable then
-                    local aSubmittable = a.recipeData.orderData.orderID == claimedOrder.orderID
-                    local bSubmittable = b.recipeData.orderData.orderID == claimedOrder.orderID
-                    if aSubmittable and not bSubmittable then
-                        return true
-                    elseif not aSubmittable and bSubmittable then
-                        return false
-                    end
-                end
-            end
-
-            if a.allowedToCraft and not b.allowedToCraft then
+            if aWorkOrder and not bWorkOrder then
                 return true
-            elseif not a.allowedToCraft and b.allowedToCraft then
+            elseif bWorkOrder and not aWorkOrder then
                 return false
             end
 
@@ -560,6 +571,45 @@ function CraftSim.CraftQueue:GetMaxRecipeDepth()
             return maxDepth
         end
     end)
+end
+
+--- Concentration already reserved by concentrating crafts in the queue.
+--- Match by skillLineID when known, otherwise by profession (+ optional expansionID).
+--- Used so craft-list / favorites concentration allocation does not re-spend the same pool.
+---@param crafterUID CrafterUID
+---@param skillLineID number?
+---@param profession Enum.Profession?
+---@param expansionID number?
+---@return number reserved
+function CraftSim.CraftQueue:GetQueuedConcentrationCost(crafterUID, skillLineID, profession, expansionID)
+    local reserved = 0
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        local recipeData = craftQueueItem.recipeData
+        if not (recipeData
+            and recipeData.concentrating
+            and recipeData.concentrationCost
+            and recipeData.concentrationCost > 0
+            and recipeData:GetCrafterUID() == crafterUID
+            and recipeData.professionData) then
+            -- skip
+        else
+            local matches = false
+            if skillLineID and recipeData.professionData.skillLineID == skillLineID then
+                matches = true
+            elseif profession then
+                local recipeProfession = recipeData.professionData.professionInfo
+                    and recipeData.professionData.professionInfo.profession
+                if recipeProfession == profession
+                    and (not expansionID or recipeData.expansionID == expansionID) then
+                    matches = true
+                end
+            end
+            if matches then
+                reserved = reserved + (recipeData.concentrationCost * (craftQueueItem.amount or 0))
+            end
+        end
+    end
+    return reserved
 end
 
 -- add subrecipes not yet existing
