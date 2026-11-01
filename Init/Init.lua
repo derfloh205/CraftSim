@@ -512,7 +512,8 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 
 		CraftSim.ITEM_TOOLTIPS:HookItemTooltips()
 
-		CraftSim.CONTROL_PANEL.UI:Init()
+		-- CONTROL_PANEL is registered as a module and already initialized in MODULES:Init().
+		-- Do not call CONTROL_PANEL.UI:Init() again — a second create orphans the restored frame.
 		CraftSim.INIT:InitStaticPopups()
 
 		CraftSim.OPTIONS:Init()

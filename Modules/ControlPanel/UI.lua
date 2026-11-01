@@ -15,7 +15,16 @@ CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
 CraftSim.CONTROL_PANEL.UI = {}
 
 function CraftSim.CONTROL_PANEL.UI:Init()
+    -- Guard against double-init (MODULES:Init + legacy callers). A second frame would
+    -- orphan the first and leave Simulate/CraftSim stacked on top of each other.
+    if CraftSim.CONTROL_PANEL.frame then
+        return
+    end
+
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
+    -- Wide enough for the CraftSim dropdown (~160) + gap + Simulate toggle.
+    local controlPanelWidth = 260
+    local craftSimButtonWidth = 160
 
     local frame = GGUI.Frame({
         parent = ProfessionsFrame,
@@ -24,23 +33,33 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         anchorB = "TOPLEFT",
         offsetX = 23,
         offsetY = -13,
-        sizeX = 180,
+        sizeX = controlPanelWidth,
         sizeY = 30,
         frameID = CraftSim.CONST.FRAMES.CONTROL_PANEL,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        -- Not moveable: omit frameConfigTable so old saved CENTER offsets cannot
+        -- relocate this chrome strip or collapse its layout after /reload.
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        frameLevel = CraftSim.UTIL:NextFrameLevel()
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        hide = true,
     })
 
     ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     CraftSim.CONTROL_PANEL.frame = frame
+    if self.module then
+        self.module.frame = frame
+    end
 
     frame.content.controlPanelButton = CreateFrame("DropdownButton", nil, frame.content,
         "WowStyle1FilterDropdownTemplate") --[[@as Button]]
     frame.content.controlPanelButton:SetText(f.l(" CraftSim ") .. f.white(currentVersion))
-    frame.content.controlPanelButton:SetSize(160, 23)
-    frame.content.controlPanelButton:SetPoint("CENTER", frame.content, "CENTER")
+    -- SetWidth after SetText: WowStyle1FilterDropdownTemplate can reflow wider than SetSize.
+    frame.content.controlPanelButton:SetSize(craftSimButtonWidth, 23)
+    frame.content.controlPanelButton:SetWidth(craftSimButtonWidth)
+    -- Left-align so Simulate has stable room to the right (CENTER + narrow frame
+    -- pinned Simulate on top of the dropdown chevron).
+    frame.content.controlPanelButton:ClearAllPoints()
+    frame.content.controlPanelButton:SetPoint("LEFT", frame.content, "LEFT", 0, 0)
 
     frame.content.controlPanelButton:HookScript("OnClick", function()
         CraftSim.WIDGETS.ContextMenu.Open(UIParent, function(ownerRegion, rootDescription)
@@ -151,5 +170,5 @@ function CraftSim.CONTROL_PANEL.UI:Update()
 end
 
 function CraftSim.CONTROL_PANEL.UI:VisibleByContext()
-    return true
+    return CraftSim.MODULES:VisibleByContext()
 end

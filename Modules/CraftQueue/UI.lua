@@ -923,8 +923,12 @@ function CraftSim.CRAFTQ.UI:Init()
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
-        frameLevel = CraftSim.UTIL:NextFrameLevel()
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        hide = true,
     })
+    if self.module then
+        self.module.frame = CraftSim.CRAFTQ.frame
+    end
 
     ---@param frame CraftSim.CraftQueue.Frame
     local function createContent(frame)
@@ -4289,6 +4293,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 end
 
 function CraftSim.CRAFTQ.UI:VisibleByContext()
+    if not CraftSim.MODULES:VisibleByContext() then
+        return false
+    end
     if not CraftSim.DB.OPTIONS:IsModuleEnabled("MODULE_CRAFT_QUEUE") then
         return false
     end
@@ -4296,6 +4303,10 @@ function CraftSim.CRAFTQ.UI:VisibleByContext()
 end
 
 function CraftSim.CRAFTQ.UI:RestoreFrameConfig()
-    CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.CRAFTQ.patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
+    if CraftSim.CRAFTQ.frame then
+        CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+    end
+    if CraftSim.CRAFTQ.patronRewardValuesFrame then
+        CraftSim.CRAFTQ.patronRewardValuesFrame:RestoreSavedConfig(ProfessionsFrame)
+    end
 end
