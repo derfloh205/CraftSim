@@ -914,6 +914,8 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
                 if firstReagent then
                     slot:SetCurrencyReagent(firstReagent.currencyID)
                 end
+            elseif self:IsPvPItem() then
+                self:SetCurrentSeasonPvPHeraldry()
             else
                 local cheapestReagent
                 local cheapestPrice
@@ -957,6 +959,47 @@ end
 ---@return boolean hasRequiredSelectableReagent
 function CraftSim.RecipeData:HasRequiredSelectableReagent()
     return self.reagentData:HasRequiredSelectableReagent()
+end
+
+---@return boolean isPvPItem
+function CraftSim.RecipeData:IsPvPItem()
+	return self.reagentData:HasRequiredSelectableReagent() and self.reagentData.requiredSelectableReagentSlot.slotText == "Competitor's Heraldry"
+end
+
+---@return boolean selected
+function CraftSim.RecipeData:SetCurrentSeasonPvPHeraldry()
+    if not self:IsPvPItem() or self.orderData or self.isRecraft then
+        return false
+    end
+
+    local slot = self.reagentData.requiredSelectableReagentSlot
+    local latestHeraldry
+    local latestItemID = 0
+
+    for _, possibleReagent in ipairs(slot.possibleReagents or {}) do
+        if not possibleReagent:IsCurrency() and possibleReagent.item then
+            local itemID = possibleReagent.item:GetItemID()
+            local itemName = possibleReagent.name or possibleReagent.item:GetItemName() or
+                C_Item.GetItemNameByID(itemID)
+            local itemExpansionID = possibleReagent.expansionID or select(15, C_Item.GetItemInfo(itemID))
+            if itemID and itemID > latestItemID and itemName and
+                string.find(itemName, "Combatant's Heraldry", 1, true) and
+                (not itemExpansionID or itemExpansionID == self.expansionID) then
+                latestHeraldry = possibleReagent
+                latestItemID = itemID
+            end
+        end
+    end
+
+    if not latestHeraldry then
+        return false
+    end
+
+    if slot.activeReagent ~= latestHeraldry then
+        slot.activeReagent = latestHeraldry
+        self:Update()
+    end
+    return true
 end
 
 --- Consideres Order Reagents
