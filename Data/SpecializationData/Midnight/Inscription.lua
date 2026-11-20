@@ -5040,7 +5040,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 2,
 			},
-			icon = 7549074,
+			icon = 7549069,
 			base = true,
 		},
 		[106285] = {
@@ -5320,7 +5320,7 @@ CraftSim.SPECIALIZATION_DATA.MIDNIGHT.INSCRIPTION_DATA = {
 			stats = {
 				skill = 1,
 			},
-			icon = 7549069,
+			icon = 7549074,
 			base = true,
 		},
 		[106289] = {
